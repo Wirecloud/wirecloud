@@ -44,12 +44,11 @@
             result.affectedVersions.forEach(function (version) {
                 var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
                 if (new_meta != null) {
-                    Wirecloud.activeWorkspace.getIWidgets().forEach(function (widget) {
-                        var iwidget_meta = widget.internal_iwidget.meta;
-                        if (iwidget_meta.uri == this.uri) {
-                            widget.internal_iwidget.meta = this;
+                    Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
+                        if (widget.meta.uri == new_meta.uri) {
+                            widget.upgrade(new_meta);
                         }
-                    }, new_meta);
+                    });
                 }
             });
             layoutManager.logSubTask(utils.gettext('Purging widget info'));
@@ -299,9 +298,9 @@
         case 'widget':
             resource = new Wirecloud.WidgetMeta(resource_data);
             if (Wirecloud.activeWorkspace != null) {
-                Wirecloud.activeWorkspace.getIWidgets().forEach(function (widget) {
-                    if (widget.internal_iwidget.meta.uri == resource.uri) {
-                        widget.internal_iwidget.meta = resource;
+                Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
+                    if (widget.missing && widget.meta.uri == resource.uri) {
+                        widget.upgrade(resource);
                     }
                 });
             }

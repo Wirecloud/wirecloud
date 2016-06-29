@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,176 +19,774 @@
  *
  */
 
-/*global gettext, interpolate, Tab, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function (utils) {
+
+(function (ns, se, utils) {
 
     "use strict";
 
-    var renameSuccess = function renameSuccess(options, old_title, new_title, response) {
-        this.title = new_title;
-        this.contextManager.modify({title: new_title});
-
-        var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
-        msg = interpolate(msg, {oldName: old_title, newName: new_title}, true);
-        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
-
-        this.events.title_changed.dispatch(new_title);
-
-        if (options.onSuccess === 'function') {
-            try {
-                options.onSuccess();
-            } catch (e) {}
-        }
-    };
-
-    var renameFailure = function renameFailure(options, response) {
-        var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
-        msg = this.logManager.formatError(msg, response);
-        this.log(msg);
-
-        if (options.onFailure === 'function') {
-            try {
-                options.onFailure(msg);
-            } catch (e) {}
-        }
-    };
-
-    var removeSuccess = function removeSuccess(options, response) {
-        var msg = gettext("IWidget \"%(title)s\" removed from workspace succesfully");
-        msg = interpolate(msg, {title: this.title}, true);
-        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
-
-        this.trigger('removed');
-        Wirecloud.Utils.callCallback(options.onSuccess);
-        this.destroy();
-    };
-
-    var removeFailure = function removeFailure(options, response) {
-        var msg = gettext("Error removing iwidget from persistence: %(errorMsg)s.");
-        msg = this.logManager.formatError(msg, response);
-        this.logManager.log(msg);
-
-        if (options.onFailure === 'function') {
-            try {
-                options.onFailure(msg);
-            } catch (e) {}
-        }
-    };
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
 
     /**
+     * @name Wirecloud.Widget
+     *
+     * @extends {StyledElements.ObjectWithEvents}
+     * @constructor
+     *
+     * @param {Wirecloud.WorkspaceTab} tab
+     * @param {Wirecloud.WidgetMeta} resource
+     * @param {Object} data
      */
-    var Widget = function Widget(widget, tab, options) {
-        if (options == null) {
-            options = {};
+    ns.Widget = function Widget(tab, resource, data) {
+        se.ObjectWithEvents.call(this, [
+            'change',
+            'load',
+            'remove',
+            'unload'
+        ]);
+
+        data = utils.merge({
+            preferences: {},
+            properties: {}
+        }, data);
+
+        this.pending_events = [];
+        this.prefCallback = null;
+
+        this.permissions = Wirecloud.Utils.merge({
+            'close': true,
+            'configure': true,
+            'move': true,
+            'rename': true,
+            'resize': true,
+            'minimize': true,
+            'upgrade': true
+        }, data.permissions);
+
+        if (data.readonly) {
+            this.permissions.close = false;
+            this.permissions.move = false;
+            this.permissions.resize = false;
+            this.permissions.upgrade = false;
+            this.permissions.minimize = false;
         }
-        options.volatile = false;
-        options.persist = function persist(changes, onSuccess, onFailure) {
-            var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                workspace_id: this.workspace.id,
-                tab_id: this.tab.id,
-                iwidget_id: this.id
-            });
-            Wirecloud.io.makeRequest(url, {
-                method: 'POST',
-                contentType: 'application/json',
-                requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify(changes),
-                onSuccess: onSuccess,
-                onFailure: onFailure
-            });
+
+        _private.set(this, {
+            position: {
+                x: data.left,
+                y: data.top,
+                z: data.zIndex
+            },
+            resource: resource,
+            shape: {
+                width: data.width,
+                height: data.height
+            },
+            status: STATUS.CREATED,
+            tab: tab,
+            on_preremovetab: on_preremovetab.bind(this)
+        });
+
+        Object.defineProperties(this, {
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {String}
+             */
+            codeurl: {
+                get: function () {
+                    return this.meta.codeurl + "#id=" + this.id;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {String}
+             */
+            id: {
+                value: data.id
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Boolean}
+             */
+            loaded: {
+                get: function () {
+                    return _private.get(this).status === STATUS.RUNNING;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Boolean}
+             */
+            logManager: {
+                value: new Wirecloud.WidgetLogManager(this)
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Wirecloud.WidgetMeta}
+             */
+            meta: {
+                get: function () {
+                    return _private.get(this).resource;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Boolean}
+             */
+            missing: {
+                get: function () {
+                    return this.meta.missing;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Wirecloud.WorkspaceTab}
+             */
+            tab: {
+                get: function () {
+                    return _private.get(this).tab;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {String}
+             */
+            title: {
+                get: function () {
+                    return this.contextManager.get('title');
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Boolean}
+             */
+            volatile: {
+                value: !!data.volatile
+            }
+        });
+
+        this.wrapperElement = document.createElement('iframe');
+        this.wrapperElement.className = "wc-widget-content";
+        this.wrapperElement.setAttribute('frameBorder', "0");
+        this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+
+        this.meta.requirements.some(function (requirement) {
+            if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
+                this.wrapperElement.setAttribute('allowfullscreen', 'true');
+                return true;
+            }
+        }, this);
+
+
+        build_endpoints.call(this);
+        build_prefs.call(this, data.preferences);
+
+        Object.defineProperties(this, {
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Number}
+             */
+            layout: {
+                writable: true,
+                value: data.layout
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Boolean}
+             */
+            minimized: {
+                writable: true,
+                value: data.minimized
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Object}
+             */
+            position: {
+                get: function () {
+                    return utils.clone(_private.get(this).position);
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Object}
+             */
+            shape: {
+                get: function () {
+                    return utils.clone(_private.get(this).shape);
+                }
+            }
+        });
+
+        var i, properties, prop_info;
+
+        properties = this.meta.propertyList;
+        this.propertyList = [];
+        this.properties = {};
+        this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
+        for (i = 0; i < properties.length; i++) {
+            prop_info = data.properties[properties[i].name];
+            if (prop_info != null) {
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, prop_info.readonly, prop_info.value);
+            } else {
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
+            }
+            this.properties[properties[i].name] = this.propertyList[i];
+        }
+
+        this.callbacks = {
+            'iwidget': [],
+            'mashup': [],
+            'platform': []
         };
 
-        Wirecloud.WidgetBase.call(this, widget, tab, options);
+        this.contextManager = new Wirecloud.ContextManager(this, {
+            'title': {
+                label: utils.gettext("Title"),
+                description: utils.gettext("Widget's title"),
+                value: data.title
+            },
+            'xPosition': {
+                label: utils.gettext("X-Position"),
+                description: utils.gettext("Specifies the x-coordinate at which the widget is placed"),
+                value: data.left
+            },
+            'yPosition': {
+                label: utils.gettext("Y-Position"),
+                description: utils.gettext("Specifies the y-coordinate at which the widget is placed"),
+                value: data.top
+            },
+            'zPosition': {
+                label: utils.gettext("Z-Position"),
+                description: utils.gettext("Specifies the z-coordinate at which the widget is placed"),
+                value: data.zIndex
+            },
+            'height': {
+                label: utils.gettext("Height"),
+                description: utils.gettext("Widget's height in layout cells"),
+                value: data.height
+            },
+            'width': {
+                label: utils.gettext("Width"),
+                description: utils.gettext("Widget's width in layout cells"),
+                value: data.width
+            },
+            'heightInPixels': {
+                label: utils.gettext("Height in pixels (deprecated)"),
+                description: utils.gettext("Widget's height in pixels"),
+                value: 0
+            },
+            'widthInPixels': {
+                label: utils.gettext("Width in pixels"),
+                description: utils.gettext("Widget's width in pixels"),
+                value: 0
+            }
+        });
+
+        this.tab.addEventListener('preremove', _private.get(this).on_preremovetab);
+
         this.logManager.log(utils.gettext("The widget was created successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
     };
-    Wirecloud.Utils.inherit(Widget, Wirecloud.WidgetBase);
 
-    Widget.prototype.isAllowed = function isAllowed(action) {
-        if (this.workspace.restricted) {
-            return false;
-        }
+    // ==================================================================================
+    // PUBLIC MEMBERS
+    // ==================================================================================
 
-        switch (action) {
-        case "close":
-            return this.permissions.close && this.workspace.isAllowed('add_remove_iwidgets');
-        case "move":
-        case "resize":
-            return this.permissions[action] && !this.tab.readonly && this.workspace.isAllowed('edit_layout');
-        case "minimize":
-            return this.workspace.isAllowed('edit_layout');
-        default:
-            if (action in this.permissions) {
-                return this.permissions[action];
-            } else {
+    utils.inherit(ns.Widget, se.ObjectWithEvents, /** @lends Wirecloud.Widget.prototype */{
+
+        changeTab: function changeTab(tab) {
+            return new Promise(function (resolve, reject) {
+                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                    workspace_id: this.tab.workspace.id,
+                    tab_id: this.tab.id,
+                    iwidget_id: this.id
+                });
+
+                var content = {
+                    tab: tab.id
+                };
+
+                if (_private.get(this).tab === tab) {
+                    resolve(this);
+                } else {
+                    Wirecloud.io.makeRequest(url, {
+                        method: 'POST',
+                        requestHeaders: {'Accept': 'application/json'},
+                        contentType: 'application/json',
+                        postBody: JSON.stringify(content),
+                        onComplete: function (response) {
+                            if (response.status === 204) {
+                                _private.get(this).tab = tab;
+                                this.trigger('change', ['tab']);
+                                resolve(this);
+                            } else {
+                                reject(/* TODO */);
+                            }
+                        }.bind(this)
+                    });
+                }
+            }.bind(this));
+        },
+
+        fullDisconnect: function fullDisconnect() {
+            var name;
+
+            for (name in this.inputs) {
+                this.inputs[name].fullDisconnect();
+            }
+
+            for (name in this.outputs) {
+                this.outputs[name].fullDisconnect();
+            }
+
+            return this;
+        },
+
+        hasEndpoints: function hasEndpoints() {
+            return this.meta.hasEndpoints();
+        },
+
+        hasPreferences: function hasPreferences() {
+            return !!this.preferenceList.length;
+        },
+
+        is: function is(component) {
+            return this.meta.type == component.meta.type && this.id == component.id;
+        },
+
+        /**
+         * @param {String} name
+         *
+         * @returns {Boolean}
+         */
+        isAllowed: function isAllowed(name) {
+
+            if (this.tab.workspace.restricted) {
                 return false;
             }
+
+            switch (name) {
+            case "close":
+                return this.permissions.close && this.tab.workspace.isAllowed('add_remove_iwidgets');
+            case "move":
+            case "resize":
+                return this.permissions[name] && !this.tab.workspace.restricted && this.tab.workspace.isAllowed('edit_layout');
+            case "minimize":
+                return this.permissions.minimize && this.tab.workspace.isAllowed('edit_layout');
+            }
+
+            if (!(name in this.permissions)) {
+                throw new TypeError(utils.gettext("The argument `name` is not valid."));
+            }
+
+            return this.permissions[name];
+        },
+
+        /**
+         * @returns {Wirecloud.Widget}
+         */
+        load: function load() {
+
+            if (_private.get(this).status !== STATUS.CREATED) {
+                return this;
+            }
+
+            _private.get(this).status = STATUS.LOADING;
+            this.wrapperElement.setAttribute('src', this.meta.codeurl + "#id=" + this.id);
+            this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
+
+            return this;
+        },
+
+        /**
+         * @returns {Wirecloud.Widget}
+         */
+        refresh: function refresh() {
+            var src = this.wrapperElement.src;
+
+            if (_private.get(this).status !== STATUS.RUNNING) {
+                return this;
+            }
+
+            this.wrapperElement.setAttribute('src', this.meta.codeurl + "#id=" + this.id);
+            this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
+
+            if (this.wrapperElement.src === src) {
+                this.wrapperElement.contentDocument.location.reload();
+            }
+
+            return this;
+        },
+
+        registerContextAPICallback: function registerContextAPICallback(scope, callback) {
+            switch (scope) {
+            case 'iwidget':
+                this.contextManager.addCallback(callback);
+                break;
+            case 'mashup':
+                this.tab.workspace.contextManager.addCallback(callback);
+                break;
+            case 'platform':
+                Wirecloud.contextManager.addCallback(callback);
+                break;
+            default:
+                throw new TypeError('invalid scope');
+            }
+
+            this.callbacks[scope].push(callback);
+        },
+
+        /**
+         * @param {Function} callback
+         *
+         * @returns {Wirecloud.Widget}
+         */
+        registerPrefCallback: function registerPrefCallback(callback) {
+            this.prefCallback = callback;
+            return this;
+        },
+
+        /**
+         * @returns {Promise}
+         */
+        remove: function remove() {
+            return new Promise(function (resolve, reject) {
+                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                    workspace_id: this.tab.workspace.id,
+                    tab_id: this.tab.id,
+                    iwidget_id: this.id
+                });
+
+                if (this.volatile) {
+                    _remove.call(this);
+                    resolve(this);
+                }
+
+                Wirecloud.io.makeRequest(url, {
+                    method: 'DELETE',
+                    requestHeaders: {'Accept': 'application/json'},
+                    onComplete: function (response) {
+                        if (response.status === 204) {
+                            _remove.call(this);
+                            resolve(this);
+                        } else {
+                            reject(/* TODO */);
+                        }
+                    }.bind(this)
+                });
+            }.bind(this));
+        },
+
+        /**
+         * @param {String} title
+         *
+         * @returns {Promise}
+         */
+        rename: function rename(title) {
+            title = clean_title.call(this, title);
+
+            return new Promise(function (resolve, reject) {
+                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                    workspace_id: this.tab.workspace.id,
+                    tab_id: this.tab.id,
+                    iwidget_id: this.id
+                });
+
+                if (this.volatile) {
+                    _rename.call(this, title);
+                }
+
+                var content = {
+                    title: title
+                };
+
+                Wirecloud.io.makeRequest(url, {
+                    method: 'POST',
+                    requestHeaders: {'Accept': 'application/json'},
+                    contentType: 'application/json',
+                    postBody: JSON.stringify(content),
+                    onComplete: function (response) {
+                        if (response.status === 204) {
+                            _rename.call(this, title);
+                            resolve(this);
+                        } else {
+                            reject(/* TODO */);
+                        }
+                    }.bind(this)
+                });
+            }.bind(this));
+        },
+
+        setPosition: function setPosition(position) {
+            utils.update(_private.get(this).position, position);
+            return this;
+        },
+
+        setShape: function setShape(shape) {
+            // TODO: is minimized
+            utils.update(_private.get(this).shape, shape);
+            return this;
+        },
+
+        /**
+         * @returns {Wirecloud.Widget}
+         */
+        showLogs: function showLogs() {
+            var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
+            dialog.htmlElement.classList.add("wc-component-logs-modal");
+            dialog.show();
+            return this;
+        },
+
+        /**
+         * @returns {Wirecloud.Widget}
+         */
+        showSettings: function showSettings() {
+            var dialog = new Wirecloud.Widget.PreferencesWindowMenu();
+            dialog.show(this);
+            return this;
+        },
+
+        /**
+         * @param {Wirecloud.WidgetMeta} resource
+         */
+        upgrade: function upgrade(resource) {
+
+            if (!is_valid_resource.call(this, resource)) {
+                throw new TypeError(utils.gettext("The argument `resource` is not valid."));
+            }
+
+            return new Promise(function (resolve, reject) {
+                var url, content;
+
+                if (this.meta.uri === resource.uri) {
+                    // From/to missing
+                    change_meta.call(this, resource);
+                    resolve(this);
+                }
+
+                url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                    workspace_id: this.tab.workspace.id,
+                    tab_id: this.tab.id,
+                    iwidget_id: this.id
+                });
+
+                content = {
+                    widget: resource.id
+                };
+
+                Wirecloud.io.makeRequest(url, {
+                    method: 'POST',
+                    requestHeaders: {'Accept': 'application/json'},
+                    contentType: 'application/json',
+                    postBody: JSON.stringify(content),
+                    onComplete: function (response) {
+                        var message;
+
+                        if (response.status === 204) {
+                            var cmp = resource.version.compareTo(_private.get(this).resource.version);
+
+                            if (cmp > 0) { // upgrade
+                                message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
+                                    type: this.meta.type,
+                                    version: resource.version.text
+                                });
+                                this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                            } else if (cmp < 0) { // downgrade
+                                message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
+                                    type: this.meta.type,
+                                    version: resource.version.text
+                                });
+                                this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                            }
+
+                            change_meta.call(this, resource);
+                            resolve(this);
+                        } else {
+                            reject(/* TODO */);
+                        }
+                    }.bind(this)
+                });
+            }.bind(this));
         }
+
+    });
+
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var _private = new WeakMap();
+
+    var STATUS = {
+        CREATED: 0,
+        LOADING: 1,
+        RUNNING: 2
     };
 
-    /**
-     * Renames this iWidget.
-     *
-     * @param {String} iwidgetTitle New title for this iWidget.
-     */
-    Widget.prototype.setTitle = function setTitle(new_title, options) {
-        var old_title = this.title;
-
-        if (options == null) {
-            options = {};
-        }
-
-        if (new_title !== null && new_title.length > 0) {
-            var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                workspace_id: this.workspace.id,
-                tab_id: this.tab.id,
-                iwidget_id: this.id
-            });
-            Wirecloud.io.makeRequest(iwidgetUrl, {
-                method: 'POST',
-                contentType: 'application/json',
-                requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify({title: new_title}),
-                onSuccess: renameSuccess.bind(this, options, old_title, new_title),
-                onFailure: renameFailure.bind(this, options)
-            });
-        }
+    var build_endpoints = function build_endpoints() {
+        this.inputs = {};
+        this.meta.inputList.forEach(function (endpoint) {
+            this.inputs[endpoint.name] = new Wirecloud.wiring.WidgetTargetEndpoint(this, endpoint);
+        }, this);
+        this.outputs = {};
+        this.meta.outputList.forEach(function (endpoint) {
+            this.outputs[endpoint.name] = new Wirecloud.wiring.WidgetSourceEndpoint(this, endpoint);
+        }, this);
     };
 
-    Widget.prototype.remove = function remove(options) {
-        var url;
+    var build_prefs = function build_prefs(initial_values) {
+        var preference_name, operator_pref_info;
 
-        if (options == null) {
-            options = {};
+        this.preferenceList = [];
+        this.preferences = {};
+
+        for (preference_name in initial_values) {
+            operator_pref_info = initial_values[preference_name];
+            this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
         }
 
-        url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: this.workspace.id,
-            tab_id: this.tab.id,
-            iwidget_id: this.id
-        });
-        Wirecloud.io.makeRequest(url, {
-            method: 'DELETE',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: removeSuccess.bind(this, options),
-            onFailure: removeFailure.bind(this, options)
-        });
+        this.meta.preferenceList.forEach(function (preference) {
+            if (!(preference.name in this.preferences)) {
+                this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
+            }
+
+            this.preferenceList.push(this.preferences[preference.name]);
+        }, this);
     };
 
-    /**
-     * This method must be called to avoid memory leaks caused by circular references.
-     */
-    Widget.prototype.destroy = function destroy() {
+    var _remove = function _remove() {
+        /*jshint validthis:true */
+        this.fullDisconnect();
 
         if (this.loaded) {
-            this.events.unload.dispatch(this);
-            this.loaded = false;
+            on_unload.call(this);
         }
 
-        this.contextManager = null;
-        this.logManager.close();
+        this.trigger('remove');
     };
 
-    Wirecloud.Widget = Widget;
+    var change_meta = function change_meta(resource) {
+        _private.get(this).resource = resource;
+        build_endpoints.call(this);
+        build_prefs.call(this, this.preferences);
 
-})(StyledElements.Utils);
+        if (this.loaded) {
+            on_unload.call(this);
+            this.load();
+        }
+
+        this.trigger('change', ['meta']);
+    };
+
+    var _rename = function _rename(title) {
+        /*jshint validthis:true */
+        this.contextManager.modify({
+            title: title
+        });
+        this.trigger('change', ['title']);
+    };
+
+    var clean_title = function clean_title(title) {
+        /*jshint validthis:true */
+        if (typeof title !== 'string' || !title.trim().length) {
+            throw new TypeError(utils.gettext("The argument `title` is not valid."));
+        }
+
+        return title.trim();
+    };
+
+    var is_valid_resource = function is_valid_resource(resource) {
+        /*jshint validthis:true */
+        return resource instanceof Wirecloud.WidgetMeta && resource.group_id === this.meta.group_id;
+    };
+
+    var remove_context_callbacks = function remove_context_callbacks() {
+        var i;
+
+        for (i = 0; i < this.callbacks.iwidget.length; i += 1) {
+            this.contextManager.removeCallback(this.callbacks.iwidget[i]);
+        }
+
+        for (i = 0; i < this.callbacks.mashup.length; i += 1) {
+            this.tab.workspace.contextManager.removeCallback(this.callbacks.mashup[i]);
+        }
+
+        for (i = 0; i < this.callbacks.platform.length; i += 1) {
+            Wirecloud.contextManager.removeCallback(this.callbacks.platform[i]);
+        }
+
+        this.callbacks = {
+            'iwidget': [],
+            'mashup': [],
+            'platform': []
+        };
+    };
+
+    var send_pending_event = function send_pending_event(pendingEvent) {
+        this.inputs[pendingEvent.endpoint].propagate(pendingEvent.value);
+    };
+
+    // ==================================================================================
+    // EVENT HANDLERS
+    // ==================================================================================
+
+    var on_preremovetab = function on_preremovetab(tab) {
+        _remove.call(this);
+        tab.removeEventListener('preremove', _private.get(this).on_preremovetab);
+    };
+
+    var on_load = function on_load() {
+
+        if (!this.wrapperElement.hasAttribute('src')) {
+            return;
+        }
+
+        _private.get(this).status = STATUS.RUNNING;
+        this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
+
+        if (this.missing) {
+            this.logManager.log(utils.gettext("Failed to load widget."), {
+                level: Wirecloud.constants.LOGGING.ERROR_MSG,
+                details: new se.Fragment(utils.gettext("<p>This widget is currently not available. You or an administrator probably uninstalled it.</p><h5>Suggestions:</h5><ul><li>Remove this widget from the dashboard</li><li>Reinstall the appropiated version of the widget</li><li>Or install another version of the widget and then use the <em>Upgrade/Downgrade</em> option</li></ul>"))
+            });
+        } else {
+            this.logManager.log(utils.gettext("Widget loaded successfully."), {
+                level: Wirecloud.constants.LOGGING.INFO_MSG
+            });
+        }
+
+        this.trigger('load');
+
+        this.pending_events.forEach(send_pending_event, this);
+        this.pending_events = [];
+    };
+
+    var on_unload = function on_unload() {
+
+        if (!this.loaded) {
+            return;
+        }
+
+        _private.get(this).status = STATUS.CREATED;
+        this.prefCallback = null;
+
+        remove_context_callbacks.call(this);
+        this.propertyCommiter.commit();
+
+        for (var name in this.inputs) {
+            this.inputs[name].callback = null;
+        }
+
+        this.logManager.log(utils.gettext("Widget unloaded successfully."), {
+            level: Wirecloud.constants.LOGGING.INFO_MSG
+        });
+        this.logManager.newCycle();
+
+        this.trigger('unload');
+    };
+
+})(Wirecloud, StyledElements, StyledElements.Utils);

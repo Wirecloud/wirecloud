@@ -133,7 +133,7 @@
             document.addEventListener("mousemove", resize, false);
             document.addEventListener("touchmove", resize, false);
 
-            var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
+            var dragboard = document.body;
             dragboardCover = document.createElement("div");
             dragboardCover.className = "cover";
             dragboardCover.addEventListener("mouseup", endresize, true);
