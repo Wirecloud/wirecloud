@@ -25,6 +25,7 @@ import json
 import os
 import zipfile
 
+from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -40,7 +41,7 @@ from wirecloud.commons.utils.template import TemplateParseException, Unsupported
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_all_users, fix_dev_version
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_all_users, fix_dev_version, install_resource_to_group
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget, Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
@@ -75,7 +76,7 @@ class ResourceCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
-            public = request.POST.get('public', 'false').strip().lower() == 'true'
+            user_list = [user.strip() for user in request.POST.get('user_list', 'false').split(',')]
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if not 'file' in request.FILES:
                 return build_error_response(request, 400, _('Missing component file in the request'))
@@ -95,7 +96,8 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
             force_create = request.GET.get('force_create', 'false').strip().lower() == 'true'
-            public = request.GET.get('public', 'false').strip().lower() == 'true'
+            user_list = [user.strip() for user in request.GET.get('user_list', 'false').split(',')]
+            group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
         else:  # if content_type == 'application/json'
 
@@ -105,7 +107,8 @@ class ResourceCollection(Resource):
 
             install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
             force_create = data.get('force_create', False)
-            public = request.GET.get('public', 'false').strip().lower() == 'true'
+            user_list = [user.strip() for user in request.GET.get('user_list', 'false').split(',')]
+            group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
             templateURL = data.get('url')
             market_endpoint = data.get('market_endpoint', None)
 
@@ -138,7 +141,7 @@ class ResourceCollection(Resource):
 
                 return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
-        if public and not request.user.is_superuser:
+        if user_list[0] == '*' and not request.user.is_superuser:
             return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
 
         try:
@@ -150,8 +153,17 @@ class ResourceCollection(Resource):
             elif not added:
                 status_code = 200
 
-            if public:
+            if user_list[0] == '*':
                 install_resource_to_all_users(executor_user=request.user, file_contents=file_contents)
+            else:
+                users = User.objects.filter(username__in = user_list)
+                groups = Group.objects.filter(name__in = group_list)
+
+                for user in users:
+                    install_resource_to_user(user, file_contents=file_contents, templateURL=templateURL)
+
+                for group in groups:
+                    install_resource_to_group(group, file_contents=file_contents, templateURL=templateURL)
 
         except zipfile.BadZipfile as e:
 
