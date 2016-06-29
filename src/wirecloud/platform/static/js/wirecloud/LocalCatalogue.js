@@ -60,12 +60,11 @@
             result.affectedVersions.forEach(function (version) {
                 var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
                 if (new_meta != null) {
-                    for (i in Wirecloud.activeWorkspace.wiring.ioperators) {
-                        operator = Wirecloud.activeWorkspace.wiring.ioperators[i];
+                    Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
                         if (operator.meta.uri == new_meta.uri) {
-                            operator.meta = new_meta;
+                            operator.upgrade(new_meta);
                         }
-                    }
+                    });
                 }
             });
             layoutManager.logSubTask(utils.gettext('Purging operator info'));
@@ -309,9 +308,13 @@
             break;
         case 'operator':
             resource = new Wirecloud.wiring.OperatorMeta(resource_data);
-            if (Wirecloud.activeWorkspace != null && Wirecloud.activeWorkspace.wiring != null) {
+            if (Wirecloud.activeWorkspace != null) {
                 try {
-                    Wirecloud.activeWorkspace.wiring._notifyOperatorInstall(resource);
+                    Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
+                        if (operator.missing && operator.meta.uri == resource.uri) {
+                            operator.upgrade(resource);
+                        }
+                    });
                 } catch (error) {}
             }
             break;

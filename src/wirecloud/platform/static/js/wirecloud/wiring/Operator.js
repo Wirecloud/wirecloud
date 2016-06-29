@@ -31,279 +31,297 @@
     // ==================================================================================
 
     /**
-     * Create a new instance of class Operator.
+     * @name Wirecloud.Wiring.Operator
      *
-     * @extends StyledElements.ObjectWithEvents
-     * @name Wirecloud.wiring.Operator
-     *
+     * @extends {StyledElements.ObjectWithEvents}
      * @constructor
-     * @param {Number} id id of the operator
-     * @param {Wirecloud.wiring.OperatorMeta} meta OperatorMeta used by this operator
-     * @param {Wirecloud.Wiring} wiringEngine Wiring Engine associated with this operator
-     * @param {Object} [businessInfo] operator info from persistence
+     *
+     * @param {Wirecloud.Wiring} wiring
+     * @param {Wirecloud.OperatorMeta} resource
+     * @param {Object} data
      */
-    ns.Operator = utils.defineClass({
+    ns.Operator = function Operator(wiring, resource, data) {
+        se.ObjectWithEvents.call(this, [
+            'change',
+            'load',
+            'remove',
+            'unload'
+        ]);
 
-        constructor: function Operator(id, meta, wiringEngine, businessInfo) {
-            var upgrade, get_meta, set_meta;
+        data = utils.merge({}, ns.Operator.JSON_TEMPLATE, data);
 
-            if (!(meta instanceof Wirecloud.wiring.OperatorMeta)) {
-                throw new TypeError('meta must be an instance of Wirecloud.wiring.OperatorMeta');
-            }
+        this.pending_events = [];
+        this.prefCallback = null;
 
-            if (!(wiringEngine instanceof Wirecloud.Wiring)) {
-                throw new TypeError('wiringEngine must be an instance of Wirecloud.Wiring');
-            }
+        this.permissions = utils.merge({
+            'close': true,
+            'configure': true,
+            'rename': true,
+            'upgrade': true
+        }, data.permissions);
 
-            this.superClass(['load', 'remove', 'unload', 'upgraded', 'upgradeerror']);
+        _private.set(this, {
+            resource: resource,
+            status: STATUS.CREATED
+        });
 
-            businessInfo = utils.merge(ns.Operator.JSON_TEMPLATE, businessInfo);
-
-            this.loading = false;
-            this.loaded = false;
-            this.pending_events = [];
-
-            this.permissions = Wirecloud.Utils.merge({
-                'close': true,
-                'configure': true,
-                'rename': true,
-                'upgrade': true
-            }, businessInfo.permissions);
-
-            upgrade = function upgrade(new_meta) {
-                meta = new_meta;
-                build_endpoints.call(this);
-                build_prefs.call(this, this.preferences);
-                this.trigger('upgraded', new_meta);
-                if (this.loaded) {
-                    this.loading = true;
-                    this.wrapperElement.src = this.meta.codeurl + "#id=" + this.id;
-                }
-            };
-
-            get_meta = function get_meta() {return meta;};
-            set_meta = function set_meta(new_meta) {
-                if (!(new_meta instanceof Wirecloud.wiring.OperatorMeta)) {
-                    throw new TypeError();
-                }
-
-                if (meta.uri !== new_meta.uri) {
-                    this.persist.call(this,
-                        {operator: new_meta.id},
-                        upgrade.bind(this, new_meta),
-                        function (error) {
-                            this.events.upgradeerror.dispatch(error);
-                        }.bind(this)
-                    );
-                } else if (meta !== new_meta) {
-                    upgrade.call(this, new_meta);
-                }
-            };
-
-            Object.defineProperties(this, {
-                id: {value: id},
-                logManager: {value: new Wirecloud.wiring.OperatorLogManager(this, wiringEngine)},
-                meta: {
-                    get: get_meta,
-                    set: set_meta
-                },
-                missing: {get: function () {return this.meta.missing;}},
-                title: {get: function () {return this.meta.title}},
-                volatile: {value: businessInfo.volatile},
-                wiring: {value: wiringEngine}
-            });
-
-            build_endpoints.call(this);
-            build_prefs.call(this, businessInfo.preferences);
-
-            this.logManager.log(utils.gettext("The operator was created successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
-        },
-
-        inherit: se.ObjectWithEvents,
-
-        statics: {
-
-            JSON_TEMPLATE: {
-                id: null,
-                name: "",
-                preferences: {},
-                volatile: false
-            }
-
-        },
-
-        members: {
-
-            persist: function persist(changes, onSuccess, onFailure) {
-                onSuccess();
-            },
-
+        Object.defineProperties(this, {
             /**
-             * [TODO: destroy description]
-             *
-             * @returns {Operator}
-             *      The instance on which the member is called.
+             * @memberOf Wirecloud.Widget#
+             * @type {String}
              */
-            destroy: function destroy() {
+            codeurl: {
+                get: function () {
+                    return this.meta.codeurl + "#id=" + this.id;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {String}
+             */
+            id: {
+                value: data.id
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {Boolean}
+             */
+            loaded: {
+                get: function () {
+                    return _private.get(this).status === STATUS.RUNNING;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {Wirecloud.LogManager}
+             */
+            logManager: {
+                value: new Wirecloud.wiring.OperatorLogManager(this, wiring)
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {Wirecloud.Wiring.OperatorMeta}
+             */
+            meta: {
+                get: function () {
+                    return _private.get(this).resource;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {Boolean}
+             */
+            missing: {
+                get: function () {
+                    return this.meta.missing;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {String}
+             */
+            title: {
+                get: function () {
+                    return this.meta.title;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {Boolean}
+             */
+            volatile: {
+                value: !!data.volatile
+            },
+            /**
+             * @memberOf Wirecloud.Wiring.Operator#
+             * @type {Wirecloud.Wiring}
+             */
+            wiring: {
+                value: wiring
+            }
+        });
+
+        this.wrapperElement = document.createElement('iframe');
+        this.wrapperElement.className = "wc-operator wc-operator-content";
+        this.wrapperElement.setAttribute('type', "application/xhtml+xml");
+        this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+
+        build_endpoints.call(this);
+        build_prefs.call(this, data.preferences);
+
+        this.logManager.log(utils.gettext("The operator was created successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
+    };
+
+    ns.Operator.JSON_TEMPLATE = {
+        id: "",
+        name: "",
+        preferences: {},
+        volatile: false
+    };
+
+    // ==================================================================================
+    // PUBLIC MEMBERS
+    // ==================================================================================
+
+    utils.inherit(ns.Operator, se.ObjectWithEvents, /** @lends Wirecloud.Wiring.Operator.prototype */{
+
+        fullDisconnect: function fullDisconnect() {
+            var name;
+
+            for (name in this.inputs) {
+                this.inputs[name].fullDisconnect();
+            }
+
+            for (name in this.outputs) {
+                this.outputs[name].fullDisconnect();
+            }
+
+            return this;
+        },
+
+        hasEndpoints: function hasEndpoints() {
+            return this.meta.hasEndpoints();
+        },
+
+        hasPreferences: function hasPreferences() {
+            return !!this.preferenceList.length;
+        },
+
+        is: function is(component) {
+            return this.meta.type == component.meta.type && this.id == component.id;
+        },
+
+        /**
+         * @param {String} name
+         *
+         * @returns {Boolean}
+         */
+        isAllowed: function isAllowed(name) {
+
+            if (!(name in this.permissions)) {
+                throw new TypeError(utils.gettext("The argument `name` is not valid."));
+            }
+
+            return this.permissions[name];
+        },
+
+        /**
+         * @returns {Wirecloud.Wiring.Operator}
+         */
+        load: function load() {
+
+            if (_private.get(this).status !== STATUS.CREATED) {
+                return this;
+            }
+
+            _private.get(this).status = STATUS.LOADING;
+            this.wrapperElement.setAttribute('src', this.codeurl);
+
+            return this;
+        },
+
+        /**
+         * @param {Function} callback
+         */
+        registerPrefCallback: function registerPrefCallback(callback) {
+            this.prefCallback = callback;
+            return this;
+        },
+
+        /**
+         * @returns {Promise}
+         */
+        remove: function remove() {
+            return new Promise(function (resolve, reject) {
                 this.fullDisconnect();
 
                 if (this.loaded) {
-                    this.trigger('unload');
+                    on_unload.call(this);
                 }
 
-                if (this.wrapperElement.parentNode) {
-                    this.wrapperElement.parentNode.removeChild(this.wrapperElement);
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: fullDisconnect description]
-             *
-             * @returns {Operator}
-             *      The instance on which the member is called.
-             */
-            fullDisconnect: function fullDisconnect() {
-                var name;
-
-                for (name in this.inputs) {
-                    this.inputs[name].fullDisconnect();
-                }
-
-                for (name in this.outputs) {
-                    this.outputs[name].fullDisconnect();
-                }
-
-                return this;
-            },
-
-            hasEndpoints: function hasEndpoints() {
-                return this.meta.hasEndpoints();
-            },
-
-            is: function is(component) {
-                return this.meta.type == component.meta.type && this.id == component.id;
-            },
-
-            /**
-             * Returns whether an user can carry out a given action over this
-             * operator
-             *
-             * @returns {Boolean}
-             *      true if the user is able to do the queried action
-             */
-            isAllowed: function isAllowed(action) {
-                if (action in this.permissions) {
-                    return this.permissions[action];
-                } else {
-                    return false;
-                }
-            },
-
-            /**
-             * [TODO: load description]
-             *
-             * @returns {Wirecloud.wiring.Operator}
-             *      The instance on which the member is called.
-             */
-            load: function load() {
-
-                if (this.loaded || this.loading) {
-                    return this;
-                }
-
-                this.loading = true;
-
-                this.wrapperElement = document.createElement('iframe');
-                this.wrapperElement.className = "ioperator";
-
-                this.wrapperElement.setAttribute('type', "application/xhtml+xml");
-                this.wrapperElement.setAttribute('src', this.meta.codeurl + "#id=" + this.id);
-
-                this.wrapperElement.addEventListener('load', operator_onload.bind(this), true);
-
-                document.getElementById('workspace').appendChild(this.wrapperElement);
-
-                return this;
-            },
-
-            /**
-             * [TODO: registerPrefCallback description]
-             *
-             * @param {[type]} prefCallback [description]
-             * @returns {Wirecloud.wiring.Operator}
-             *      The instance on which the member is called.
-             */
-            registerPrefCallback: function registerPrefCallback(prefCallback) {
-
-                this.prefCallback = prefCallback;
-
-                return this;
-            },
-
-            /**
-             * [TODO: remove description]
-             *
-             * @returns {Wirecloud.wiring.Operator}
-             *      The instance on which the member is called.
-             */
-            remove: function remove() {
-                this.destroy();
                 this.trigger('remove');
+                resolve(this);
+            }.bind(this));
+        },
 
-                return this;
-            },
+        /**
+         * @returns {Wirecloud.Wiring.Operator}
+         */
+        showLogs: function showLogs() {
+            var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
+            dialog.htmlElement.classList.add("wc-component-logs-modal");
+            dialog.show();
+            return this;
+        },
 
-            /**
-             * [TODO: showLogs description]
-             *
-             * @returns {Wirecloud.wiring.Operator}
-             *      The instance on which the member is called.
-             */
-            showLogs: function showLogs() {
-                var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
-                dialog.htmlElement.classList.add("wc-component-logs-modal");
-                dialog.show();
+        /**
+         * @returns {Wirecloud.Wiring.Operator}
+         */
+        showSettings: function showSettings() {
+            var dialog = new Wirecloud.ui.OperatorPreferencesWindowMenu();
+            dialog.show(this);
+            return this;
+        },
 
-                return this;
-            },
+        /**
+         * @returns {Object}
+         */
+        toJSON: function toJSON() {
+            var name, preferences = {};
 
-            /**
-             * [TODO: showSettings description]
-             *
-             * @returns {Wirecloud.wiring.Operator}
-             *      The instance on which the member is called.
-             */
-            showSettings: function showSettings() {
-                var dialog = new Wirecloud.ui.OperatorPreferencesWindowMenu();
-                dialog.show(this);
+            for (name in this.preferences) {
+                preferences[name] = {
+                    hidden: this.preferences[name].hidden,
+                    readonly: this.preferences[name].readonly,
+                    value: this.preferences[name].value
+                };
+            }
 
-                return this;
-            },
+            return {
+                id: this.id,
+                name: this.meta.uri,
+                preferences: preferences
+            };
+        },
 
-            /**
-             * [TODO: toJSON description]
-             *
-             * @returns {Object}
-             */
-            toJSON: function toJSON() {
-                var name, preferences = {};
+        /**
+         * @param {Wirecloud.Wiring.OperatorMeta} resource
+         */
+        upgrade: function upgrade(resource) {
 
-                for (name in this.preferences) {
-                    preferences[name] = {
-                        hidden: this.preferences[name].hidden,
-                        readonly: this.preferences[name].readonly,
-                        value: this.preferences[name].value
-                    };
+            if (!is_valid_resource.call(this, resource)) {
+                throw new TypeError(utils.gettext("The argument `resource` is not valid."));
+            }
+
+            return new Promise(function (resolve, reject) {
+                var message;
+
+                if (this.meta.uri === resource.uri) {
+                    // From/to missing
+                    change_meta.call(this, resource);
+                    resolve(this);
                 }
 
-                return JSON.parse(JSON.stringify({
-                    id: this.id,
-                    name: this.meta.uri,
-                    preferences: preferences
-                }));
-            }
+                switch (resource.version.compareTo(_private.get(this).resource.version)) {
+                case 1: // upgrade
+                    message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
+                        type: this.meta.type,
+                        version: resource.version.text
+                    });
+                    this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                    break;
+                case -1: // downgrade
+                    message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
+                        type: this.meta.type,
+                        version: resource.version.text
+                    });
+                    this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                    break;
+                }
+
+                change_meta.call(this, resource);
+                resolve(this);
+            }.bind(this));
         }
 
     });
@@ -311,6 +329,14 @@
     // ==================================================================================
     // PRIVATE MEMBERS
     // ==================================================================================
+
+    var _private = new WeakMap();
+
+    var STATUS = {
+        CREATED: 0,
+        LOADING: 1,
+        RUNNING: 2
+    };
 
     var build_endpoints = function build_endpoints() {
         this.inputs = {};
@@ -343,19 +369,40 @@
         }, this);
     };
 
-    var send_pending_event = function (pendingEvent) {
+    var send_pending_event = function send_pending_event(pendingEvent) {
         this.inputs[pendingEvent.endpoint].propagate(pendingEvent.value);
     };
 
-    var operator_onload = function operator_onload() {
+    var is_valid_resource = function is_valid_resource(resource) {
+        /*jshint validthis:true */
+        return resource instanceof Wirecloud.wiring.OperatorMeta && resource.group_id === this.meta.group_id;
+    };
 
-        this.loading = false;
-        this.loaded = true;
+    var change_meta = function change_meta(resource) {
+        _private.get(this).resource = resource;
+        build_endpoints.call(this);
+        build_prefs.call(this, this.preferences);
 
-        this.wrapperElement.contentDocument.defaultView.addEventListener('unload', operator_onunload.bind(this), true);
+        if (this.loaded) {
+            on_unload.call(this);
+            this.load();
+        }
 
-        this.pending_events.forEach(send_pending_event, this);
-        this.pending_events = [];
+        this.trigger('change', ['meta']);
+    };
+
+    // ==================================================================================
+    // EVENT HANDLERS
+    // ==================================================================================
+
+    var on_load = function on_load() {
+
+        if (!this.wrapperElement.hasAttribute('src')) {
+            return;
+        }
+
+        _private.get(this).status = STATUS.RUNNING;
+        this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
 
         if (this.missing) {
             this.logManager.log(utils.gettext("Failed to load operator."), {
@@ -369,17 +416,30 @@
         }
 
         this.trigger('load');
+
+        this.pending_events.forEach(send_pending_event, this);
+        this.pending_events = [];
     };
 
-    var operator_onunload = function operator_onunload() {
+    var on_unload = function on_unload() {
 
-        this.loaded = false;
+        if (!this.loaded) {
+            return;
+        }
+
+        _private.get(this).status = STATUS.CREATED;
+        this.prefCallback = null;
+
+        for (var name in this.inputs) {
+            this.inputs[name].callback = null;
+        }
 
         this.logManager.log(utils.gettext("Operator unloaded successfully."), {
             level: Wirecloud.constants.LOGGING.INFO_MSG
         });
         this.logManager.newCycle();
+
         this.trigger('unload');
     };
 
-})(Wirecloud, StyledElements, StyledElements.Utils);
+})(Wirecloud.wiring, StyledElements, StyledElements.Utils);
