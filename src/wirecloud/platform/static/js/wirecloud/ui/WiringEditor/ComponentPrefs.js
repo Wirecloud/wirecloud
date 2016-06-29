@@ -109,7 +109,7 @@
 
         dialog.executeOperation = function (data) {
             if (data.title) {
-                this.component._component.setTitle(data.title);
+                this.component._component.rename(data.title);
             }
         }.bind(this);
 

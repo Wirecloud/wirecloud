@@ -321,7 +321,9 @@
                     return this;
                 }
 
-                establishConnection.call(this, wiringEngine.createConnection(readonly, source, target));
+                establishConnection.call(this, wiringEngine.createConnection(source, target, {
+                    readonly: readonly
+                }));
                 this.refresh();
 
                 return this;

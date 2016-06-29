@@ -153,31 +153,27 @@
             this.heading.notice.className = "component-notice";
             this.heading.notice.appendChild(this.heading.noticeTitle);
 
-            if (wiringComponent.missing) {
-                wiringComponent.meta.outputList.forEach(function (endpoint_meta) {
-                    var endpoint;
-
-                    if (!(endpoint_meta.name in wiringComponent)) {
-                        endpoint = new Wirecloud.wiring.GhostSourceEndpoint(wiringComponent, endpoint_meta.name);
-                        wiringComponent.outputs[endpoint_meta.name] = endpoint;
-                    }
-                });
-
-                wiringComponent.meta.inputList.forEach(function (endpoint_meta) {
-                    var endpoint;
-
-                    if (!(endpoint_meta.name in wiringComponent)) {
-                        endpoint = new Wirecloud.wiring.GhostTargetEndpoint(wiringComponent, endpoint_meta.name);
-                        wiringComponent.inputs[endpoint_meta.name] = endpoint;
-                    }
-                });
-            }
-
             this._endpoint_onconnectionadded_bound = endpoint_onconnectionadded.bind(this);
             this._endpoint_onconnectionremoved_bound = endpoint_onconnectionremoved.bind(this);
 
             appendEndpoints.call(this, 'source', wiringComponent.meta.outputList.map(function (data) {return wiringComponent.outputs[data.name];}));
             appendEndpoints.call(this, 'target', wiringComponent.meta.inputList.map(function (data) {return wiringComponent.inputs[data.name];}));
+
+            var name, endpoint;
+
+            for (name in wiringComponent.outputs) {
+                endpoint = wiringComponent.outputs[name];
+                if (endpoint.missing) {
+                    this.appendEndpoint('source', endpoint);
+                }
+            }
+
+            for (name in wiringComponent.inputs) {
+                endpoint = wiringComponent.inputs[name];
+                if (endpoint.missing) {
+                    this.appendEndpoint('target', endpoint);
+                }
+            }
 
             wiringComponent.logManager.addEventListener('newentry', notifyErrors.bind(this));
 
@@ -192,19 +188,13 @@
 
             this.position(options.position);
 
-            this._component_onupgrade_bound = component_onupgrade.bind(this);
-            this._component_onrename_bound = component_onrename.bind(this);
-
-            if (this.type == 'widget') {
-                wiringComponent.addEventListener('title_changed', this._component_onrename_bound);
-            }
+            this._on_change_model = on_change_model.bind(this);
 
             notifyErrors.call(this);
             makeDraggable.call(this);
 
             this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener);
-
-            wiringComponent.addEventListener('upgraded', this._component_onupgrade_bound);
+            wiringComponent.addEventListener('change', this._on_change_model);
         },
 
         inherit: se.Panel,
@@ -526,11 +516,7 @@
             remove: function remove(childElement) {
 
                 if (!arguments.length && !this.hasClassName('cloned')) {
-                    this._component.removeEventListener('upgraded', this._component_onupgrade_bound);
-
-                    if (this.type == 'widget') {
-                        this._component.removeEventListener('title_changed', this._component_onrename_bound);
-                    }
+                    this._component.removeEventListener('change', this._on_change_model);
                     this.trigger('remove');
                 }
 
@@ -776,25 +762,29 @@
     };
 
     var component_onrename = function component_onrename(title) {
-        this.setTitle(title).refresh();
     };
 
-    var component_onupgrade = function component_onupgrade(componentUpdated) {
+    var on_change_model = function on_change_model(model, changes) {
         /* jshint validthis: true */
+        if (changes.indexOf('title') !== -1) {
+            this.setTitle(model.title).refresh();
+        }
 
-        this.setTitle(componentUpdated.title);
+        if (changes.indexOf('meta') !== -1) {
+            this.setTitle(model.title);
 
-        this._missingEndpoints = {source: {}, target: {}};
-        cleanEndpoints.call(this);
+            this._missingEndpoints = {source: {}, target: {}};
+            cleanEndpoints.call(this);
 
-        appendEndpoints.call(this, 'source', componentUpdated.meta.outputList.map(function (data) {return componentUpdated.outputs[data.name];}));
-        appendEndpoints.call(this, 'target', componentUpdated.meta.inputList.map(function (data) {return componentUpdated.inputs[data.name];}));
+            appendEndpoints.call(this, 'source', model.meta.outputList.map(function (data) {return model.outputs[data.name];}));
+            appendEndpoints.call(this, 'target', model.meta.inputList.map(function (data) {return model.inputs[data.name];}));
 
-        appendMissingEndpoints.call(this, componentUpdated, 'source', 'outputs');
-        appendMissingEndpoints.call(this, componentUpdated, 'target', 'inputs');
+            appendMissingEndpoints.call(this, model, 'source', 'outputs');
+            appendMissingEndpoints.call(this, model, 'target', 'inputs');
 
-        delete this._missingEndpoints;
-        this.refresh();
+            delete this._missingEndpoints;
+            this.refresh();
+        }
     };
 
     var appendMissingEndpoints = function appendMissingEndpoints(componentUpdated, type, namespace) {

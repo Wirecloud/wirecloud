@@ -45,7 +45,7 @@
         version.addEntries([resource.version].concat(resource.others));
 
         var button = new se.Button({
-            class: 'btn-create',
+            class: 'btn-create wc-create-resource-component',
             title: utils.gettext("New component"),
             iconClass: 'icon-plus'
         });
@@ -64,6 +64,7 @@
             vendor: resource.vendor,
             description: this.descriptionElement
         }).children[1];
+        this.wrapperElement.classList.add("wc-resource");
 
         this.components = {};
 
