@@ -591,6 +591,9 @@ MashupPlatform.operator.outputs
 
 This method creates a dynamic input endpoint.
 
+This method is only available when making use of the `DashboardManagement`
+feature.
+
 ```javascript
 MashupPlatform.operator.createInputEndpoint(callback);
 ```
@@ -611,7 +614,10 @@ MashupPlatform.operator.createInputEndpoint(function (data_string) {
 #### `MashupPlatform.operator.createOutputEndpoint` method
 > new in WireCloud 0.8.0 / Widget API v2
 
-This method creates a dynamic input endpoint.
+This method creates a dynamic output endpoint.
+
+This method is only available when making use of the `DashboardManagement`
+feature.
 
 ```javascript
 MashupPlatform.operator.createOutputEndpoint();
@@ -718,6 +724,9 @@ MashupPlatform.widget.outputs
 
 This method creates a dynamic input endpoint.
 
+This method is only available when making use of the `DashboardManagement`
+feature.
+
 ```javascript
 MashupPlatform.widget.createInputEndpoint(callback);
 ```
@@ -739,6 +748,9 @@ MashupPlatform.widget.createInputEndpoint(function (data_string) {
 > new in WireCloud 0.8.0 / Widget API v2
 
 This method creates a dynamic output endpoint.
+
+This method is only available when making use of the `DashboardManagement`
+feature.
 
 ```javascript
 MashupPlatform.widget.createOutputEndpoint();
@@ -1014,7 +1026,6 @@ Endpoint instances provide one attribute:
 and the following methods (depending on the type of endpoint):
 
 - [`connect`](#endpointconnect-method)
-- [`disconnect`](#endpointdisconnect-method)
 - [`pushEvent`](#endpointpushevent-method)
 
 #### `Endpoint.connected` attribute
@@ -1044,7 +1055,7 @@ instance and the endpoint passed as parameter.
 Endpoint.connect(endpoint)
 ```
 
-- `endpoint` (*required, `Endpoint`): the input/output endpoint to connect on
+- `endpoint` (*required, `Endpoint`*): the input/output endpoint to connect on
   the other end of the connection.
 
 **Example usage**
@@ -1056,21 +1067,6 @@ var widget = MashupPlatform.mashup.addWidget('CoNWeT/map-viewer/2.5.7', ...);
 MashupPlatform.widget.outputs.entity.connect(operator.inputs.entityInput);
 operator.outputs.poiOutput.connect(widget.inputs.poiInput);
 ```
-
-#### `Endpoint.disconnect` method
-
-Removes dynamic connections starting or ending in this endpoint. This method
-cannot be used for disconnecting connections created by the user using the
-Wiring Editor.
-
-```javascript
-Endpoint.disconnect(endpoint)
-```
-
-- `endpoint` (*optional, `Endpoint`*): the endpoint on the other end of the
-  connection to remove. If `endpoint` is `null`, all the dynamic connections
-  related to this endpoint will be disconnected.
-
 
 #### `Endpoint.pushEvent` method
 
