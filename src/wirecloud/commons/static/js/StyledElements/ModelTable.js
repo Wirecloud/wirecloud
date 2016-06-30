@@ -288,6 +288,16 @@
 
         this.wrapperElement = priv.layout.wrapperElement;
 
+        // Deselect rows if clicked no row is clicked
+        this.wrapperElement.addEventListener("click", function (evt) {
+            // Only deselect if no modifier key is pressed
+            if (!evt.shiftKey && !evt.ctrlKey) {
+                this.select([]);
+                this.trigger("select", []);
+            }
+
+        }.bind(this));
+
         /*
          * Header
          */
@@ -492,6 +502,9 @@
 
     // Row clicked callback
     var rowCallback = function rowCallback(evt) {
+        // Stop propagation so wrapperElement's click is not called
+        evt.stopPropagation();
+
         changeSelection.call(this.table, this.item, evt, this.index);
         this.table.events.click.dispatch(this.item, evt);
     };

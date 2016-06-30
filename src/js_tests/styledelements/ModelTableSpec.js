@@ -566,6 +566,30 @@
                         expect(observed).toEqual(observed);
                     });
                 });
+
+                it("should deselect rows when no row is clicked", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new Event("click");
+                    cell.dispatchEvent(event);
+
+                    cell = rows[2].querySelector(".se-model-table-cell");
+                    event = new Event("click");
+                    event.shiftKey = true;
+                    cell.dispatchEvent(event);
+
+
+                    expected = [true, true, true];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(observed);
+
+                    table.wrapperElement.click();
+
+                    // Check if css are applied properly
+                    expected = [false, false, false];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(observed);
+
+                });
             });
         });
 
