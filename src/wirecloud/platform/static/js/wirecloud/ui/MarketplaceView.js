@@ -54,7 +54,7 @@
     };
 
     onGetMarketsSuccess = function onGetMarketsSuccess(options, response) {
-        var market_key, old_views, view_element, view_constructor, i;
+        var market_key, old_views, view_element, view_constructor, i, p;
 
         this.loading = false;
 
@@ -84,23 +84,33 @@
             this.number_of_alternatives += 1;
         }
 
+        p = Promise.resolve();
         for (market_key in old_views) {
-            this.alternatives.removeAlternative(old_views[market_key]);
-            old_views[market_key].destroy();
+            p = p.then(function () {
+                return new Promise(function (alt, resolve) {
+                    this.alternatives.removeAlternative(alt, {onComplete: resolve});
+                }.bind(this, old_views[market_key]));
+            }.bind(this));
         }
 
-        if (this.isVisible()) {
-            if (this.temporalAlternatives.indexOf(this.alternatives.getCurrentAlternative()) !== -1) {
-                auto_select_initial_market.call(this);
-            } else {
-                // Refresh wirecloud header as current marketplace may have been changed
-                Wirecloud.trigger('viewcontextchanged');
-            }
-        }
+        p = p.then(function () {
+            return new Promise(function (resolve, reject) {
+                for (market_key in old_views) {
+                    old_views[market_key].destroy();
+                }
 
-        if (typeof options.onSuccess === 'function') {
-            options.onSuccess();
-        }
+                if (this.isVisible()) {
+                    if (this.temporalAlternatives.indexOf(this.alternatives.getCurrentAlternative()) !== -1) {
+                        auto_select_initial_market.call(this);
+                    } else {
+                        // Refresh wirecloud header as current marketplace may have been changed
+                        Wirecloud.trigger('viewcontextchanged');
+                    }
+                }
+                utils.callCallback(options.onSuccess);
+            }.bind(this));
+        }.bind(this));
+
     };
 
     onGetMarketsFailure = function onGetMarketsFailure(options, msg) {
