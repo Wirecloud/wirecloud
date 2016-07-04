@@ -77,6 +77,9 @@
                 // Remove xhtml namespace
                 var outerHTML = element.outerHTML.replace(' xmlns="http://www.w3.org/1999/xhtml"', '');
 
+                // Work around chrome and firefox using a different order for attributes
+                outerHTML = outerHTML.replace(' tabindex="0"', '');
+
                 expect(outerHTML).toBe(rendered_value);
             }
         };
@@ -216,8 +219,8 @@
                 }
                 return element;
             },
-            '<div class="se-btn" tabindex="0"></div>',
-            '<div class="se-btn my-class" tabindex="0"></div>'
+            '<div class="se-btn"></div>',
+            '<div class="se-btn my-class"></div>'
         );
         check_template_context_type("function returning null", function (options) {return null;});
 
