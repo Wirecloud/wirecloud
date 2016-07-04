@@ -208,7 +208,7 @@
                 };
             },
             mac_wallet_close_button: function mac_wallet_close_button() {
-                return Utils.basic_selectors.button('.widget_wallet .icon-remove');
+                return Utils.basic_selectors.button('.wc-toolbar .wc-show-component-sidebar');
             },
             mac_wallet_input: function mac_wallet_input() {
                 return Utils.basic_selectors.element('.wc-workspace .wc-resource-list .se-field-search');

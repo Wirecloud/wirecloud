@@ -26,6 +26,7 @@ import requests
 import shutil
 import stat
 import sys
+import time
 from tempfile import mkdtemp
 from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import urlparse
@@ -45,7 +46,7 @@ from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.searchers import get_available_search_engines
 from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import REASON_PHRASES
-from wirecloud.commons.utils.remote import MobileWirecloudRemoteTestCase, WirecloudRemoteTestCase
+from wirecloud.commons.utils.remote import MobileWirecloudRemoteTestCase, WirecloudRemoteTestCase, FieldTester
 from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
@@ -612,6 +613,12 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         LiveServerTestCase.tearDown(self)
         WirecloudRemoteTestCase.tearDown(self)
+
+    def send_basic_event(self, widget, event="hello world!!"):
+        with widget:
+            field = FieldTester(self, self.driver.find_element_by_css_selector("#send input"))
+            field.set_value(event)
+            self.driver.find_element_by_css_selector("#send button").click()
 
 
 class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteTestCase):

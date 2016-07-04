@@ -22,7 +22,6 @@ import time
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 
 
 class element_be_clickable(object):
@@ -149,13 +148,13 @@ class visibility_of_element_located(object):
 class workspace_tab_name(object):
     """An expectation for checking the name of a workspace tab.
     returns True if the name matches, false otherwise."""
-    def __init__(self, testcase, expected_name):
+    def __init__(self, testcase, expected_title):
         self.testcase = testcase
-        self.expected_name = expected_name
+        self.expected_title = expected_title
 
     def __call__(self, driver):
         try:
-            return self.testcase.get_current_workspace_tab().name == self.expected_name
+            return self.testcase.active_tab.title == self.expected_title
         except StaleElementReferenceException:
             return False
 
@@ -187,17 +186,18 @@ class marketplace_name(object):
         except StaleElementReferenceException:
             return False
 
+
 class component_instantiable(object):
     """An expectation for checking that a component is instantiable from the
-    dashboard wallet.
+    dashboard sibebar.
     returns the instantiate button if the component is instantiable, false otherwise."""
-    def __init__(self, wallet_tester, component_name):
-        self.wallet_tester = wallet_tester
+    def __init__(self, sidebar, component_name):
+        self.sidebar = sidebar
         self.component_name = component_name
 
     def __call__(self, driver):
         try:
-            resource = self.wallet_tester.search_in_results(self.component_name)
-            return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
+            resource = self.sidebar.find_resource(title=self.component_name)
+            return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.wc-create-resource-component'), base_element=resource.element)(driver)
         except StaleElementReferenceException:
             return False

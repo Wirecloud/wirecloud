@@ -132,6 +132,7 @@ def create_box(widg, offs=3):
             int(widg.location['x'] + widg.size['width'] + offs) * DENSITY_FACTOR,
             int(widg.location['y'] + widg.size['height'] + offs) * DENSITY_FACTOR)
 
+
 def get_by_condition(driver, css, f):
     for d in driver.find_elements_by_css_selector(css):
         if f(d):
@@ -151,14 +152,6 @@ def get_first_displayed(driver, css):
     return get_by_condition(driver, css, lambda x: x.is_displayed())
 
 
-def get_anchors(w1, w2, label1, label2):
-    froml = get_by_text(w1, '.labelDiv', label1)
-    tol = get_by_text(w2, '.labelDiv', label2)
-    fromc = froml.find_element_by_css_selector('.anchor.icon-circle')
-    toc = tol.find_element_by_css_selector('.anchor.icon-circle')
-    return (fromc, toc)
-
-
 def move_elem(driver, elem, x, y):
     ActionChains(driver).click_and_hold(
         elem).move_by_offset(x, y).release().perform()
@@ -167,8 +160,8 @@ def move_elem(driver, elem, x, y):
 def resize_widget(driver, widget, width, height):
 
     driver.execute_script('''
-        var iwidget = Wirecloud.activeWorkspace.getIWidget(arguments[0]);
-        iwidget.setSize(arguments[1], arguments[2]);
+        var widget = LayoutManagerFactory.getInstance().viewsByName.workspace.findWidget(arguments[0]);
+        widget.setShape({width: arguments[1], height: arguments[2]});
     ''', widget.id, width, height)
 
 
@@ -307,7 +300,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready()
         imgp = take_capture(self.driver, 'new_workspace')
         crop_down(
-            imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
+            imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
 
         # Workspace Settings
         self.open_menu().click_entry('Settings')
@@ -455,28 +448,28 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, "get_more_components")
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
         crop_down(
-            imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
+            imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
 
         # Open widget wallet
-        add_widget_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-plus')
+        add_widget_button = self.driver.find_element_by_css_selector('.wc-toolbar .wc-show-component-sidebar')
         ActionChains(self.driver).move_to_element(add_widget_button).perform()
         time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, "add_widget_button")
         add_pointer(imgp, get_position(add_widget_button, 0.8, 0.5))
-        crop_down(imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
+        crop_down(imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
 
         # Add to workspace
-        with self.wallet as wallet:
-            resource = wallet.search_in_results('Linear Graph')
+        with self.resource_sidebar as sidebar:
+            resource = sidebar.find_resource(title='Linear Graph')
 
-            btn = resource.element.find_element_by_css_selector('.mainbutton')
+            btn = resource.find_element(".wc-create-resource-component")
             ActionChains(self.driver).move_to_element(btn).perform()
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "add_linear_graph")
             add_pointer(imgp, get_position(btn, 0.8, 0.8))
             crop_down(imgp, resource.element)
 
-            linear_graph_widget = resource.instantiate()
+            linear_graph_widget = resource.create_component()
 
         # Initial layout
         resize_widget(self.driver, linear_graph_widget, 12, 41)
@@ -486,7 +479,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         crop_down(imgp, linear_graph_widget)
 
         # Add a Map Viewer Widget
-        map_viewer_widget = self.add_widget_to_mashup('Map Viewer')
+        map_viewer_widget = self.create_widget('Map Viewer')
         resize_widget(self.driver, map_viewer_widget, 8, 41)
         ActionChains(self.driver).move_to_element(linear_graph_widget.element).perform()
         time.sleep(0.6) # Wait until all the effects are applied
@@ -527,7 +520,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Reload map viewer widget so it updates the view using the initial zoom and initial location
         popup = map_viewer_widget.open_menu()
-        setts_btn = popup.get_entry("Reload")
+        setts_btn = popup.get_entry("Refresh")
         ActionChains(self.driver).move_to_element(setts_btn).perform()
         imgp = take_capture(self.driver, name='mapviewer_reload_entry')
         box = create_box(popup.element, 40)
@@ -544,7 +537,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         imgp = take_capture(self.driver, "workspace_mapviewer_configured")
         crop_down(
-            imgp, get_by_contains(self.driver, '.fade.iwidget.in', 'Linear Graph'))
+            imgp, get_by_contains(self.driver, '.wc-widget', 'Linear Graph'))
 
         # Wiring button
         dialog = self.driver.find_element_by_css_selector(
@@ -773,18 +766,17 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, mapservcw, 50)
             # Captura reshape_arrow_pre
             cprefs.click_entry("Customize")
-
-            _, ball_handler = mycon.element.find_elements_by_css_selector(".handle-ball")
+            _, ball_handler = mycon.element.find_elements_by_css_selector(".we-connection-handle-ball")
 
             move_elem(self.driver, ball_handler, 30, -30)
-            _, ball_handler = mycon.element.find_elements_by_css_selector(".handle-ball")
+            _, ball_handler = mycon.element.find_elements_by_css_selector(".we-connection-handle-ball")
             imgp = take_capture(self.driver, 'reshape_arrow2')
             add_pointer(imgp, get_position(ball_handler, 0.3, 0.3))
             crop_down(imgp, mapservcw, 10)
 
             move_elem(self.driver, ball_handler, -30, 30)
 
-            _, ball_handler = mycon.element.find_elements_by_css_selector(".handle-ball")
+            _, ball_handler = mycon.element.find_elements_by_css_selector(".we-connection-handle-ball")
             imgp = take_capture(self.driver, 'reshape_arrow1')
             add_pointer(imgp, get_position(ball_handler, 0.3, 0.3))
             crop_down(imgp, mapservcw, 10)
@@ -1115,12 +1107,12 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # My Resources button
         btn = self.driver.find_element_by_css_selector(
-            '.wc-toolbar .icon-archive')
+            '.wc-toolbar .wc-show-catalogue')
         ActionChains(self.driver).move_to_element(btn).perform()
         time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, "my_resources_button")
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
-        crop_down(imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
+        crop_down(imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
 
         with self.myresources_view as myresources:
 

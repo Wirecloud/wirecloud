@@ -428,6 +428,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/WorkspacePreferencesDef.js',
             'js/wirecloud/TabPreferencesDef.js',
         ) + STYLED_ELEMENTS_FILES + (
+            'js/wirecloud/WorkspaceTab.js',
+            'js/wirecloud/Workspace.js',
             'js/wirecloud/Preferences.js',
             'js/wirecloud/PlatformPreferences.js',
             'js/wirecloud/PreferenceManager.js',
@@ -475,8 +477,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
         if view in ('classic', 'embedded'):
             scripts = common + (
                 'js/interfaceLayout/LayoutManager.js',
-                'js/wirecloud/WorkspaceTab.js',
-                'js/wirecloud/Workspace.js',
                 'js/wirecloud/ui/WorkspaceListItems.js',
                 'js/wirecloud/ui/WorkspaceViewMenuItems.js',
                 'js/wirecloud/ui/MACSearch.js',
