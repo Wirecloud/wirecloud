@@ -19,11 +19,13 @@
  *
  */
 
-/* globals Promise, StyledElements*/
+/* globals Map, Promise, StyledElements, WeakMap */
 
 (function (utils) {
 
     "use strict";
+
+    var privates = window.WeakMap ? new WeakMap() : new Map();
 
     /**
      * El componente Styled Alternatives permite guardar una colección de
@@ -43,10 +45,8 @@
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = utils.prependWord(options['class'], "se-alternatives");
 
-        this.visibleAlt = null;
         this.alternatives = {};
         this.alternativeList = [];
-        this.nextAltId = 0;
 
         /* Process options */
         if (options.id) {
@@ -61,72 +61,51 @@
 
         /* Transitions code */
         var initFunc = function initFunc(context, command) {
-            var inAlternative, outAlternative, p;
+            var inAlternative, outAlternative, p, _privates = privates.get(context);
 
-            inAlternative = command.inAlternative;
-            outAlternative = command.outAlternative;
-            context.onComplete = command.onComplete;
+            p = Promise.resolve();
 
-            if (inAlternative === outAlternative) {
-                utils.callCallback(context.onComplete, context, outAlternative, inAlternative);
-                return false; // we are not going to process this command
-            }
+            switch (command.type) {
+            case "transit":
+                inAlternative = command.inAlternative;
+                outAlternative = context.visibleAlt;
 
-            // Throw an event notifying we are going to change the visible alternative
-            context.events.preTransition.dispatch(context, outAlternative, inAlternative);
+                if (inAlternative === outAlternative) {
+                    utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
+                    return false; // we are not going to process this command
+                }
 
-            switch (command.effect) {
-            case StyledElements.Alternatives.HORIZONTAL_SLIDE:
-                outAlternative.addClassName('slide');
-                inAlternative.addClassName([
-                    'slide',
-                    inAlternative.getId() < outAlternative.getId() ? 'left' : 'right'
-                ]).show();
-                p = Promise.all([
-                    utils.waitTransition(inAlternative.get()),
-                    utils.waitTransition(outAlternative.get())
-                ]).then(function () {
-                    inAlternative.removeClassName('slide');
-                    outAlternative.removeClassName('slide left right').hide();
-                });
-                // Trigger slide effects
-                setTimeout(function () {
-                    outAlternative.addClassName(inAlternative.getId() < outAlternative.getId() ? 'right' : 'left');
-                    inAlternative.removeClassName('left right');
-                }, 10);
+                p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
                 break;
-            case StyledElements.Alternatives.CROSS_DISSOLVE:
-                inAlternative.addClassName('fade').show();
-                outAlternative.addClassName('fade in');
-                p = Promise.all([
-                    utils.waitTransition(inAlternative.get()),
-                    utils.waitTransition(outAlternative.get())
-                ]).then(function () {
-                    inAlternative.removeClassName('fade in');
-                    outAlternative.removeClassName('fade').hide();
-                });
-                // Trigger fade effects
-                setTimeout(function () {
-                    inAlternative.addClassName('in');
-                    outAlternative.removeClassName('in');
-                }, 0);
-                break;
-            default:
-            case StyledElements.Alternatives.NONE:
-                inAlternative.show();
-                outAlternative.hide();
-                p = new Promise(function (fullfile) {fullfile();});
+            case "remove":
+                outAlternative = command.outAlternative;
+                if (_privates.visibleAlt === outAlternative) {
+                    if (context.alternativeList.length > 0) {
+                        inAlternative = context.alternativeList[command.index];
+                        if (!inAlternative) {
+                            inAlternative = context.alternativeList[command.index - 1];
+                        }
+                        p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
+                    } else {
+                        _privates.visibleAlt = null;
+                    }
+                }
+                p = p.then(function () {
+                    context.wrapperElement.removeChild(outAlternative.wrapperElement);
+                }.bind(this));
             }
 
             return p.then(function () {
-                // Throw an event notifying we are going to change the visible alternative
-                context.events.postTransition.dispatch(context, outAlternative, inAlternative);
                 // Call the onComplete callback
-                utils.callCallback(context.onComplete, context, outAlternative, inAlternative);
+                utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
             });
         };
 
-        this.transitionsQueue = new StyledElements.CommandQueue(this, initFunc);
+        privates.set(this, {
+            nextAltId: 0,
+            transitionsQueue: new StyledElements.CommandQueue(this, initFunc),
+            visibleAlt: null
+        });
     };
     Alternatives.prototype = new StyledElements.StyledElement();
     Alternatives.HORIZONTAL_FLIP = "horizontalflip";
@@ -135,15 +114,18 @@
     Alternatives.NONE = "none";
 
     Alternatives.prototype.repaint = function repaint(temporal) {
+        var _privates = privates.get(this);
+
         // Resize content
-        if (this.visibleAlt != null) {
-            this.visibleAlt.repaint(!!temporal);  // Convert temporal to boolean
+        if (_privates.visibleAlt != null) {
+            _privates.visibleAlt.repaint(!!temporal);  // Convert temporal to boolean
         }
 
         return this;
     };
 
     Alternatives.prototype.createAlternative = function createAlternative(options) {
+        var _privates = privates.get(this);
         var defaultOptions = {
             alternative_constructor: StyledElements.Alternative,
             containerOptions: {},
@@ -151,7 +133,7 @@
         };
         options = utils.update(defaultOptions, options);
 
-        var altId = this.nextAltId++;
+        var altId = privates.get(this).nextAltId++;
 
         if ((options.alternative_constructor !== StyledElements.Alternative) && !(options.alternative_constructor.prototype instanceof StyledElements.Alternative)) {
             throw new TypeError();
@@ -163,8 +145,8 @@
         this.alternatives[altId] = alt;
         this.alternativeList.push(alt);
 
-        if (!this.visibleAlt) {
-            this.visibleAlt = alt;
+        if (!_privates.visibleAlt) {
+            _privates.visibleAlt = alt;
             alt.setVisible(true);
         } else if (options.initiallyVisible) {
             this.showAlternative(alt);
@@ -174,8 +156,13 @@
         return alt;
     };
 
-    Alternatives.prototype.removeAlternative = function removeAlternative(alternative) {
-        var index, id, nextAlternative = null;
+    Alternatives.prototype.removeAlternative = function removeAlternative(alternative, options) {
+        var index, id;
+
+        options = utils.update({
+            effect: this.defaultEffect,
+            onComplete: null
+        }, options);
 
         if (alternative instanceof StyledElements.Alternative) {
             id = alternative.getId();
@@ -187,6 +174,7 @@
             alternative = this.alternatives[alternative];
             if (!alternative) {
                 // Do nothing
+                utils.callCallback(options.onComplete);
                 return this;
             }
         }
@@ -195,40 +183,38 @@
         index = this.alternativeList.indexOf(alternative);
         this.alternativeList.splice(index, 1);
 
-        alternative.setVisible(false);
-        this.wrapperElement.removeChild(alternative.wrapperElement);
-
-        if (this.visibleAlt === alternative) {
-            if (this.alternativeList.length > 0) {
-                nextAlternative = this.alternativeList[index];
-                if (!nextAlternative) {
-                    nextAlternative = this.alternativeList[index - 1];
-                }
-                nextAlternative.setVisible(true);
-                this.visibleAlt = nextAlternative;
-            } else {
-                this.visibleAlt = null;
-            }
-
-            this.events.postTransition.dispatch(this, alternative, nextAlternative);
-        }
+        privates.get(this).transitionsQueue.addCommand({
+            effect: options.effect,
+            index: index,
+            type: "remove",
+            onComplete: options.onComplete,
+            outAlternative: alternative
+        });
 
         return this;
     };
 
     Alternatives.prototype.clear = function clear() {
+        var _privates = privates.get(this);
         this.alternatives = {};
         this.alternativeList = [];
-        this.nextAltId = 0;
-        this.visibleAlt = null;
+        _privates.nextAltId = 0;
+        _privates.visibleAlt = null;
         this.wrapperElement.innerHTML = '';
 
         return this;
     };
 
     Alternatives.prototype.getCurrentAlternative = function getCurrentAlternative() {
-        return this.visibleAlt;
+        return privates.get(this).visibleAlt;
     };
+
+    Object.defineProperties(Alternatives.prototype, {
+        visibleAlt: {
+            get: Alternatives.prototype.getCurrentAlternative
+        }
+    });
+
 
     /**
      * Changes current visible alternative.
@@ -256,14 +242,71 @@
             command.inAlternative = this.alternatives[alternative];
         }
 
-        command.outAlternative = this.visibleAlt;
+        command.type = "transit";
         command.onComplete = options.onComplete;
         command.effect = options.effect;
 
-        this.transitionsQueue.addCommand(command);
-        this.visibleAlt = command.inAlternative;
+        privates.get(this).transitionsQueue.addCommand(command);
 
         return this;
+    };
+
+    var build_transit_promise = function build_transit_promise(effect, outAlternative, inAlternative, context) {
+        var p = new Promise(function (fulfill) {
+            // Throw an event notifying we are going to change the visible alternative
+            context.events.preTransition.dispatch(context, outAlternative, inAlternative);
+            fulfill();
+        });
+
+        switch (effect) {
+        case StyledElements.Alternatives.HORIZONTAL_SLIDE:
+            outAlternative.addClassName('slide');
+            inAlternative.addClassName([
+                'slide',
+                inAlternative.getId() < outAlternative.getId() ? 'left' : 'right'
+            ]).show();
+            p = p.then(Promise.all([
+                utils.waitTransition(inAlternative.get()),
+                utils.waitTransition(outAlternative.get())
+            ])).then(function () {
+                inAlternative.removeClassName('slide');
+                outAlternative.removeClassName('slide left right').hide();
+            });
+            // Trigger slide effects
+            setTimeout(function () {
+                outAlternative.addClassName(inAlternative.getId() < outAlternative.getId() ? 'right' : 'left');
+                inAlternative.removeClassName('left right');
+            }, 10);
+            break;
+        case StyledElements.Alternatives.CROSS_DISSOLVE:
+            inAlternative.addClassName('fade').show();
+            outAlternative.addClassName('fade in');
+            p = p.then(Promise.all([
+                utils.waitTransition(inAlternative.get()),
+                utils.waitTransition(outAlternative.get())
+            ])).then(function () {
+                inAlternative.removeClassName('fade in');
+                outAlternative.removeClassName('fade').hide();
+            });
+            // Trigger fade effects
+            setTimeout(function () {
+                inAlternative.addClassName('in');
+                outAlternative.removeClassName('in');
+            }, 0);
+            break;
+        default:
+        case StyledElements.Alternatives.NONE:
+            p = p.then(function () {
+                inAlternative.show();
+                outAlternative.hide();
+            });
+        }
+
+        return p.then(function () {
+            privates.get(context).visibleAlt = inAlternative;
+            // Throw an event notifying we have changed the visible alternative
+            context.events.postTransition.dispatch(context, outAlternative, inAlternative);
+        });
     };
 
     StyledElements.Alternatives = Alternatives;

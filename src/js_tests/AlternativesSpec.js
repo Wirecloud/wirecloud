@@ -111,12 +111,15 @@
             it("should support create new alternatives using the initiallyVisible option", function () {
                 var alt1, alt2;
 
+                spyOn(element, "showAlternative");
+
                 expect(element.visibleAlt).toBe(null);
                 alt1 = element.createAlternative({initiallyVisible: true});
                 expect(element.visibleAlt).toBe(alt1);
+                // Once we have a visibleAlt, the alternative is switched the using showAlternative method
                 alt2 = element.createAlternative({initiallyVisible: true});
-                expect(element.visibleAlt).toBe(alt2);
 
+                expect(element.showAlternative).toHaveBeenCalledWith(alt2);
                 expect(element.alternativeList).toEqual([alt1, alt2]);
             });
 
@@ -149,37 +152,51 @@
             });
 
             it("does nothing if alternative is null", function () {
-                expect(element.removeAlternative(null)).toBe(element);
+                var listener = jasmine.createSpy("listener", function listener() {
+                    expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
+                    expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
+                    expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
+                });
+                expect(element.removeAlternative(null, {onComplete: listener})).toBe(element);
 
                 expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
-                expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
-                expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
-                expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
+                expect(listener).toHaveBeenCalled();
             });
 
             it("does nothing if alternative is not found", function () {
-                expect(element.removeAlternative("myalt4")).toBe(element);
+                var listener = function listener() {
+                    expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
+                    expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
+                    expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
+                    expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
+                };
+
+                expect(element.removeAlternative("myalt4", {onComplete: listener})).toBe(element);
 
                 expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
-                expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
-                expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
-                expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
             });
 
-            it("should allow removing alternatives by id", function () {
-                expect(element.removeAlternative(alt2.getId())).toBe(element);
+            it("should allow to remove alternatives by id", function (done) {
+                var listener = function listener() {
+                    expect(element.alternativeList).toEqual([alt1, alt3]);
+                    expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
+                    expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
+                    done();
+                };
 
+                expect(element.removeAlternative(alt2.getId(), {onComplete: listener})).toBe(element);
                 expect(element.alternativeList).toEqual([alt1, alt3]);
-                expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
-                expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
             });
 
-            it("should allow removing alternatives using Alternative instances", function () {
-                expect(element.removeAlternative(alt2)).toBe(element);
+            it("should allow to remove alternatives using Alternative instances", function (done) {
+                var listener = function listener() {
+                    expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
+                    expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
+                    done();
+                };
+                expect(element.removeAlternative(alt2, {onComplete: listener})).toBe(element);
 
                 expect(element.alternativeList).toEqual([alt1, alt3]);
-                expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
-                expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
             });
 
             it("should raise an exception if the passed alternative is not owned by the alternatives element", function () {
@@ -193,37 +210,52 @@
                 expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
             });
 
-            it("should allow removing the active alternative", function () {
+            it("should allow to remove the active alternative", function (done) {
+                var listener = function listener() {
+                    expect(element.visibleAlt).toBe(alt2);
+                    expect(element.wrapperElement.children[0]).toBe(alt2.wrapperElement);
+                    expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
+                    done();
+                };
+
                 expect(element.visibleAlt).toBe(alt1);
 
-                expect(element.removeAlternative(alt1)).toBe(element);
+                expect(element.removeAlternative(alt1, {onComplete: listener})).toBe(element);
 
-                expect(element.visibleAlt).toBe(alt2);
                 expect(element.alternativeList).toEqual([alt2, alt3]);
-                expect(element.wrapperElement.children[0]).toBe(alt2.wrapperElement);
-                expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
             });
 
-            it("should allow removing the active alternative when the active alternative is the right most alternative", function () {
-                element.showAlternative(alt3);
-                expect(element.visibleAlt).toBe(alt3);
+            it("should allow removing the active alternative when the active alternative is the right most alternative", function (done) {
 
-                expect(element.removeAlternative(alt3)).toBe(element);
+                var listener = function () {
+                    expect(element.visibleAlt).toBe(alt2);
+                    expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
+                    expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
+                    done();
+                };
 
-                expect(element.visibleAlt).toBe(alt2);
-                expect(element.alternativeList).toEqual([alt1, alt2]);
-                expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
-                expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
+                element.showAlternative(alt3, {
+                    onComplete: function () {
+                        expect(element.visibleAlt).toBe(alt3);
+
+                        expect(element.removeAlternative(alt3, {onComplete: listener})).toBe(element);
+                        expect(element.alternativeList).toEqual([alt1, alt2]);
+                    }
+                });
             });
 
-            it("should allow removing all the alternatives", function () {
+            it("should allow to remove all the alternatives", function (done) {
+                var listener = function listener() {
+                    expect(element.visibleAlt).toEqual(null);
+                    expect(element.wrapperElement.children.length).toBe(0);
+                    done();
+                };
+
                 element.removeAlternative(alt1);
                 element.removeAlternative(alt2);
-                element.removeAlternative(alt3);
+                element.removeAlternative(alt3, {onComplete: listener});
 
-                expect(element.visibleAlt).toEqual(null);
                 expect(element.alternativeList).toEqual([]);
-                expect(element.wrapperElement.children.length).toBe(0);
             });
 
         });
@@ -294,31 +326,37 @@
                 // TODO
             });
 
-            it("should allow to use alternative ids", function () {
-                expect(element.showAlternative(alt2.getId())).toBe(element);
+            it("should allow to use alternative ids", function (done) {
+                var listener = function listener(_element, _alt1, _alt2) {
+                    expect(element.visibleAlt).toBe(alt2);
+                    expect(_element).toBe(element);
+                    expect(_alt1).toBe(alt1);
+                    expect(_alt2).toBe(alt2);
+                    expect(element.visibleAlt).toBe(alt2);
+                    done();
+                };
 
-                // visibleAlt should be updated immediatelly
-                expect(element.visibleAlt).toBe(alt2);
+                expect(element.showAlternative(alt2.getId(), {onComplete: listener})).toBe(element);
             });
 
             it("should allow to use the effect option (horizontal slide)", function (done) {
-                var callback = function (_element, _alt1, _alt2) {
+                var listener = function listener(_element, _alt1, _alt2) {
+                    expect(element.visibleAlt).toBe(alt2);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
                     expect(_alt2).toBe(alt2);
 
+                    expect(alt1.addClassName).toHaveBeenCalledWith("slide");
+                    expect(alt2.addClassName).toHaveBeenCalledWith(['slide', 'right']);
                     expect(alt1.hasClassName('slide')).toBeFalsy();
                     expect(alt2.hasClassName('slide')).toBeFalsy();
 
                     done();
                 };
 
-                element.showAlternative(alt2, {effect: StyledElements.Alternatives.HORIZONTAL_SLIDE, onComplete: callback});
-
-                // visibleAlt should be updated immediatelly
-                expect(element.visibleAlt).toBe(alt2);
-                expect(alt1.hasClassName('slide')).toBeTruthy();
-                expect(alt2.hasClassName('slide')).toBeTruthy();
+                spyOn(alt1, "addClassName").and.callThrough();
+                spyOn(alt2, "addClassName").and.callThrough();
+                element.showAlternative(alt2, {effect: StyledElements.Alternatives.HORIZONTAL_SLIDE, onComplete: listener});
 
                 // Continue with the animation effect
                 endTransition(alt1.get());
@@ -326,11 +364,14 @@
             });
 
             it("should allow to use the effect option (horizontal slide, left-to-right)", function (done) {
-                var callback = function (_element, _alt2, _alt1) {
+                var listener = function listener(_element, _alt2, _alt1) {
+                    expect(element.visibleAlt).toBe(alt1);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
                     expect(_alt2).toBe(alt2);
 
+                    expect(alt1.addClassName).toHaveBeenCalledWith(['slide', 'left']);
+                    expect(alt2.addClassName).toHaveBeenCalledWith("slide");
                     expect(alt1.hasClassName('slide')).toBeFalsy();
                     expect(alt2.hasClassName('slide')).toBeFalsy();
 
@@ -338,40 +379,34 @@
                 };
 
                 element.showAlternative(alt2);
-                element.showAlternative(alt1, {effect: StyledElements.Alternatives.HORIZONTAL_SLIDE, onComplete: callback});
 
-                // visibleAlt should be updated immediatelly
-                expect(element.visibleAlt).toBe(alt1);
+                spyOn(alt1, "addClassName").and.callThrough();
+                spyOn(alt2, "addClassName").and.callThrough();
+                element.showAlternative(alt1, {effect: StyledElements.Alternatives.HORIZONTAL_SLIDE, onComplete: listener});
 
-                setTimeout(function () {
-                    // Wait until the command queue is processed
-                    expect(alt1.hasClassName('slide')).toBeTruthy();
-                    expect(alt2.hasClassName('slide')).toBeTruthy();
-
-                    // Continue with the animation effect
-                    endTransition(alt1.get());
-                    endTransition(alt2.get());
-                }, 0);
+                // Continue with the animation effect
+                endTransition(alt1.get());
+                endTransition(alt2.get());
             });
 
             it("should allow to use the effect option (cross dissolve)", function (done) {
-                var callback = function (_element, _alt1, _alt2) {
+                var listener = function listener(_element, _alt1, _alt2) {
+                    expect(element.visibleAlt).toBe(alt2);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
                     expect(_alt2).toBe(alt2);
 
+                    expect(alt1.addClassName).toHaveBeenCalledWith("fade in");
+                    expect(alt2.addClassName).toHaveBeenCalledWith("fade");
                     expect(alt1.hasClassName('fade')).toBeFalsy();
                     expect(alt2.hasClassName('fade')).toBeFalsy();
 
                     done();
                 };
 
-                element.showAlternative(alt2, {effect: StyledElements.Alternatives.CROSS_DISSOLVE, onComplete: callback});
-
-                // visibleAlt should be updated immediatelly
-                expect(element.visibleAlt).toBe(alt2);
-                expect(alt1.hasClassName('fade')).toBeTruthy();
-                expect(alt2.hasClassName('fade')).toBeTruthy();
+                spyOn(alt1, "addClassName").and.callThrough();
+                spyOn(alt2, "addClassName").and.callThrough();
+                element.showAlternative(alt2, {effect: StyledElements.Alternatives.CROSS_DISSOLVE, onComplete: listener});
 
                 // Continue with the animation effect
                 endTransition(alt1.get());
@@ -379,7 +414,8 @@
             });
 
             it("should allow to use the effect option (none)", function (done) {
-                var callback = function (_element, _alt1, _alt2) {
+                var listener = function listener(_element, _alt1, _alt2) {
+                    expect(element.visibleAlt).toBe(alt2);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
                     expect(_alt2).toBe(alt2);
@@ -387,17 +423,20 @@
                     done();
                 };
 
-                element.showAlternative(alt2, {effect: StyledElements.Alternatives.NONE, onComplete: callback});
-
-                // visibleAlt should be updated immediatelly
-                expect(element.visibleAlt).toBe(alt2);
+                element.showAlternative(alt2, {effect: StyledElements.Alternatives.NONE, onComplete: listener});
             });
 
-            it("should allow to use the effect option (invalid value, should be equivalent to none)", function () {
-                element.showAlternative(alt2, {effect: "invalid"});
+            it("should allow to use the effect option (invalid value, should be equivalent to none)", function (done) {
+                var listener = function listener(_element, _alt1, _alt2) {
+                    expect(element.visibleAlt).toBe(alt2);
+                    expect(_element).toBe(element);
+                    expect(_alt1).toBe(alt1);
+                    expect(_alt2).toBe(alt2);
 
-                // visibleAlt should be updated immediatelly
-                expect(element.visibleAlt).toBe(alt2);
+                    done();
+                };
+
+                element.showAlternative(alt2, {effect: "invalid", onComplete: listener});
             });
         });
     });

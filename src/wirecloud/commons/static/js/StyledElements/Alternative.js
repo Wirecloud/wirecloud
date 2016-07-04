@@ -41,7 +41,7 @@
             return;
         }
 
-        this.superClass(options);
+        this.superClass(options, ['hide', 'show']);
 
         this.addClassName('hidden');
         this.altId = id;
