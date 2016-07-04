@@ -19,8 +19,7 @@
  *
  */
 
-/* globals moment, StyledElements */
-
+/* globals moment, StyledElements, WeakMap */
 
 (function (utils) {
 
@@ -218,6 +217,10 @@
 
         StyledElements.StyledElement.call(this, ['click', 'select']);
 
+        // Initialize private variables
+        var priv = {};
+        privates.set(this, priv);
+
         priv.selection = [];
         var source;
         if (options.source != null) {
@@ -293,7 +296,8 @@
             // Only deselect if no modifier key is pressed
             if (!evt.shiftKey && !evt.ctrlKey) {
                 this.select([]);
-                this.trigger("select", []);
+                // this.trigger("select", []);
+                this.events.select.dispatch([]);
             }
 
         }.bind(this));
@@ -327,6 +331,7 @@
         this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
         if (this.source.options.pageSize !== 0) {
+
             priv.paginationInterface = new StyledElements.PaginationInterface(this.source);
             priv.statusBar.appendChild(priv.paginationInterface);
         }
@@ -635,7 +640,6 @@
     };
 
     var privates = new WeakMap();
-
 
     StyledElements.ModelTable = ModelTable;
 
