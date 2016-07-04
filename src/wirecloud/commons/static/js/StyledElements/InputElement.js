@@ -109,6 +109,12 @@
         return this;
     };
 
+    InputElement.prototype.blur = function blur() {
+        this.inputElement.blur();
+
+        return this;
+    };
+
     InputElement.prototype.focus = function focus() {
         this.inputElement.focus();
 
