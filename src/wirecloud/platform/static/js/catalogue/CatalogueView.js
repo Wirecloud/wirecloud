@@ -91,7 +91,7 @@
         var details, parts, currentResource;
 
         if (state.subview === 'search') {
-            this.changeCurrentView(state.subview, {onComplete: replace_nav_history.bind(this)});
+            this.changeCurrentView(state.subview);
         } else {
             parts = state.resource.split('/');
             details = {
@@ -104,7 +104,7 @@
             if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
                 details = currentResource.changeVersion(details.version);
             }
-            this.createUserCommand('showDetails', details, {history: "replace"})();
+            this.createUserCommand('showDetails', details, {history: "ignore"})();
         }
     };
 
@@ -135,6 +135,8 @@
         if (!(view_name in this.viewsByName)) {
             throw new TypeError();
         }
+
+        options = options != null ? options : {};
 
         this.alternatives.showAlternative(this.viewsByName[view_name], {
             onComplete: options.onComplete
