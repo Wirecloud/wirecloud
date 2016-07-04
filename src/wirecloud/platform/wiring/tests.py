@@ -1934,20 +1934,28 @@ class ComponentVolatileTestCase(WirecloudSeleniumTestCase):
             # use execute_script as we are not testing if the button is visible
             # and directly clickable without scrolling the view
             self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
-            # Two widgets are created when clicking the dashboard management button
-            # one of them is connected directly, the other is connected through and
-            # operator
+            # Wait until the test finish with a success message
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
 
+        # Two widgets are created when clicking the dashboard management button
+        # one of them is connected directly, the other is connected through and
+        # operator. The test will drop direct connections once passed, leaving
+        # the connection between the volatile operator and the volatile widget
         WebDriverWait(self.driver, timeout=5).until(lambda driver: len(self.find_iwidgets()) == (iwidgets_count + 2))
 
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_draggable_components('operator')), 1)
             self.assertEqual(len(wiring.find_draggable_components('widget')), 3)
-            self.assertEqual(len(wiring.find_connections()), 2)
 
             with wiring.component_sidebar as sidebar:
+                # The dasboard management test creates a volatile operator,
                 self.assertEqual(len(sidebar.find_components('operator', "Wirecloud/TestOperator", state='volatile')), 1)
+                # two volatile widgets
                 self.assertEqual(len(sidebar.find_components('widget', "Wirecloud/api-test", state='volatile')), 2)
+
+            # and a volatile connection between the operator and one the volatile widgets
+            # Wiring Editor should only display the initial connections
+            self.assertEqual(len(wiring.find_connections()), 2)
 
         # Check dynamic connections created by the dashboard_management_button works as expected
         with iwidgets[1]:

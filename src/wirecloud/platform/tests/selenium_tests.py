@@ -1334,7 +1334,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Two widgets are created when clicking the dashboard management button
         # one of them is connected directly, the other is connected through and
-        # operator
+        # operator. The test will drop direct connections once passed, leaving
+        # the connection between the volatile operator and the volatile widget
         WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.find_iwidgets()) == (initial_iwidget_count + 2))
 
         # An event is sent from the widget using the pushEvent method
@@ -1357,10 +1358,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         initial_iwidget_count = len(initial_iwidgets)
 
         self.send_basic_event(initial_iwidgets[2], 'dashboard_management_test')
-        # Two widgets are created when sending the dashboard_management_test
-        # event, one of them is connected directly to the initial TestOperator,
-        # the other is connected through and new TestOperator instance
 
+        # Two widgets are created when clicking the dashboard management button
+        # one of them is connected directly, the other is connected through and
+        # operator. The test will drop direct connections once passed, leaving
+        # the connection between the volatile operator and the volatile widget
         WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.find_iwidgets()) == (initial_iwidget_count + 2))
 
         iwidgets = self.find_iwidgets()

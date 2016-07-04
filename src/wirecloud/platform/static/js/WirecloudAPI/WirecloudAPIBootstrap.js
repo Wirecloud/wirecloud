@@ -50,12 +50,9 @@
     // Endpoint facades
     var InputEndpoint = function InputEndpoint(real_endpoint, dynamic) {
 
-        Object.defineProperty(this, privateKeys.real_endpoint, {
-            value: real_endpoint
-        });
-
-        Object.defineProperty(this, privateKeys.dynamic, {
-            value: dynamic
+        privates.set(this, {
+            dynamic: dynamic,
+            real_endpoint: real_endpoint
         });
 
         Object.defineProperty(this, "connected", {
@@ -64,38 +61,42 @@
     };
 
     var inputendpoint_get_connected = function inputendpoint_get_connected() {
-        return this[privateKeys.real_endpoint].inputs.length !== 0;
+        return privates.get(this).real_endpoint.inputs.length !== 0;
     };
 
     InputEndpoint.prototype.connect = function connect(outputendpoint) {
+        var real_inputendpoint, real_outputendpoint;
+
         if (outputendpoint == null || !(outputendpoint instanceof OutputEndpoint)) {
             throw new TypeError("outputendpoint must be an output endpoint instance");
         }
-        if (this[privateKeys.real_endpoint].component === outputendpoint[privateKeys.real_endpoint].component) {
-            throw new TypeError("connections between endpoints of the same component are not allowed");
-        }
 
-        var connection = Wirecloud.activeWorkspace.wiring.createConnection(false, outputendpoint[privateKeys.real_endpoint], this[privateKeys.real_endpoint]);
-        Wirecloud.activeWorkspace.wiring.status.connections.push(connection);
-        connection.establish();
+        real_inputendpoint = privates.get(this).real_endpoint;
+        real_outputendpoint = privates.get(outputendpoint).real_endpoint;
+
+        create_connection(real_outputendpoint, real_inputendpoint);
     };
 
     InputEndpoint.prototype.disconnect = function disconnect(outputendpoint) {
-        var connection, index, wiring;
+        var connection, index, real_inputendpoint, real_outputendpoint;
 
         if (outputendpoint != null && !(outputendpoint instanceof OutputEndpoint)) {
             throw new TypeError("outputendpoint must be null or an output endpoint instance");
         }
+
+        real_inputendpoint = privates.get(this).real_endpoint;
+
         if (outputendpoint != null) {
-            index = outputendpoint[privateKeys.real_endpoint].outputList.indexOf(this[privateKeys.real_endpoint]);
+            real_outputendpoint = privates.get(outputendpoint).real_endpoint;
+            index = real_outputendpoint.outputList.indexOf(real_inputendpoint);
             if (index !== -1) {
-                connection = outputendpoint[privateKeys.real_endpoint].connections[index];
+                connection = real_outputendpoint.connections[index];
                 remove_connection(connection);
             }
         } else {
             // Currently, all the connections associated with volatile components
             // are the ones created by the widget/operator
-            this[privateKeys.real_endpoint].connections.filter(function (connection) {
+            real_inputendpoint.connections.filter(function (connection) {
                 return connection.source.component.volatile || connection.target.component.volatile;
             }).forEach(remove_connection);
         }
@@ -104,12 +105,9 @@
 
     var OutputEndpoint = function OutputEndpoint(real_endpoint, dynamic) {
 
-        Object.defineProperty(this, privateKeys.real_endpoint, {
-            value: real_endpoint
-        });
-
-        Object.defineProperty(this, privateKeys.dynamic, {
-            value: dynamic
+        privates.set(this, {
+            dynamic: dynamic,
+            real_endpoint: real_endpoint
         });
 
         Object.defineProperty(this, "connected", {
@@ -118,48 +116,64 @@
     };
 
     var outputendpoint_get_connected = function get_connected() {
-        return this[privateKeys.real_endpoint].outputList.length !== 0;
+        return privates.get(this).real_endpoint.outputList.length !== 0;
     };
 
     OutputEndpoint.prototype.connect = function connect(inputendpoint) {
+        var real_inputendpoint, real_outputendpoint;
+
         if (inputendpoint == null || !(inputendpoint instanceof InputEndpoint)) {
             throw new TypeError("inputendpoint must be an input endpoint instance");
         }
-        if (this[privateKeys.real_endpoint].component === inputendpoint[privateKeys.real_endpoint].component) {
-            throw new TypeError("connections between endpoints of the same component are not allowed");
-        }
 
-        var connection = Wirecloud.activeWorkspace.wiring.createConnection(false, this[privateKeys.real_endpoint], inputendpoint[privateKeys.real_endpoint]);
-        Wirecloud.activeWorkspace.wiring.status.connections.push(connection);
-        connection.establish();
+        real_inputendpoint = privates.get(inputendpoint).real_endpoint;
+        real_outputendpoint = privates.get(this).real_endpoint;
+
+        create_connection(real_outputendpoint, real_inputendpoint);
     };
 
     OutputEndpoint.prototype.disconnect = function disconnect(inputendpoint) {
-        var connection, index;
+        var connection, index, real_inputendpoint, real_outputendpoint;
 
         if (inputendpoint != null && !(inputendpoint instanceof InputEndpoint)) {
             throw new TypeError("inputendpoint must be null or an input endpoint instance");
         }
+
+        real_outputendpoint = privates.get(this).real_endpoint;
+
         if (inputendpoint != null) {
-            index = this[privateKeys.real_endpoint].outputList.indexOf(inputendpoint[privateKeys.real_endpoint]);
+            real_inputendpoint = privates.get(inputendpoint).real_endpoint;
+            index = real_outputendpoint.outputList.indexOf(real_inputendpoint);
             if (index !== -1) {
-                connection = this[privateKeys.real_endpoint].connections[index];
+                connection = real_outputendpoint.connections[index];
                 remove_connection(connection);
             }
         } else {
             // Currently, all the connections associated with volatile components
             // are the ones created by the widget/operator
-            this[privateKeys.real_endpoint].connections.filter(function (connection) {
+            real_outputendpoint.connections.filter(function (connection) {
                 return connection.source.component.volatile || connection.target.component.volatile;
             }).forEach(remove_connection);
         }
     };
 
     OutputEndpoint.prototype.pushEvent = function pushEvent(data) {
-        this[privateKeys.real_endpoint].propagate(data);
+        privates.get(this).real_endpoint.propagate(data);
     };
 
     MashupPlatform.priv.OutputEndpoint = OutputEndpoint;
+
+    var create_connection = function create_connection(output, input) {
+        var connection;
+
+        if (output.component === input.component) {
+            throw new TypeError("connections between endpoints of the same component are not allowed");
+        }
+
+        connection = Wirecloud.activeWorkspace.wiring.createConnection(false, output, input);
+        Wirecloud.activeWorkspace.wiring.status.connections.push(connection);
+        connection.establish();
+    };
 
     var remove_connection = function remove_connection(connection) {
         var index, wiring;
@@ -167,9 +181,9 @@
         wiring = Wirecloud.activeWorkspace.wiring;
         connection.detach();
         index = wiring.connections.indexOf(connection);
-        wiring.connections.splice(connection, 1);
+        wiring.connections.splice(index, 1);
     };
 
-    var privateKeys = utils.privateKeys("dynamic", "real_endpoint");
+    var privates = new WeakMap();
 
 })(window.parent.Wirecloud, window.parent.Wirecloud.Utils);
