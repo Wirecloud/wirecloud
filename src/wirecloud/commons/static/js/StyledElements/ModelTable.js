@@ -19,7 +19,7 @@
  *
  */
 
-/* globals moment, StyledElements, Symbol */
+/* globals moment, StyledElements, WeakMap */
 
 (function (utils) {
 
@@ -28,7 +28,9 @@
     var buildHeader = function buildHeader() {
         var i, column, cell, label, tooltip;
 
-        this[_attrs.headerCells] = [];
+        var priv = privates.get(this);
+
+        priv.headerCells = [];
         for (i = 0; i < this.columns.length; i += 1) {
             column = this.columns[i];
 
@@ -54,15 +56,16 @@
                 cell.callback = sortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }
-            this[_attrs.header].appendChild(cell);
-            this[_attrs.headerCells].push(cell);
+            priv.header.appendChild(cell);
+            priv.headerCells.push(cell);
         }
     };
 
     var highlight_selection = function highlight_selection() {
+        var priv = privates.get(this);
         this.selection.forEach(function (id) {
-            if (id in this[_attrs.current_elements]) {
-                this[_attrs.current_elements][id].row.classList.add('highlight');
+            if (id in priv.current_elements) {
+                priv.current_elements[id].row.classList.add('highlight');
             }
         }, this);
     };
@@ -71,6 +74,7 @@
         var i, j, item, row, cell, callback, today, cellContent,
             column, state;
 
+        var priv = privates.get(this);
         clearTable.call(this);
 
         for (i = 0; i < items.length; i += 1) {
@@ -83,7 +87,7 @@
             if ((i % 2) === 1) {
                 row.classList.add('odd');
             }
-            state = this[_attrs.stateFunc](item);
+            state = priv.stateFunc(item);
             if (state != null) {
                 row.classList.add('se-model-table-row-' + state);
             }
@@ -93,7 +97,7 @@
 
                 cell = document.createElement('div');
                 cell.className = 'se-model-table-cell';
-                this[_attrs.columnsCells][j].push(cell);
+                priv.columnsCells[j].push(cell);
                 if (typeof column.width === 'string' && column.width !== "css") {
 
                     cell.style.width = column.width;
@@ -134,24 +138,24 @@
                     cell.textContent = "" + cellContent;
                 } else if (cellContent instanceof StyledElements.StyledElement) {
                     cellContent.insertInto(cell);
-                    this[_attrs.components].push(cellContent);
+                    priv.components.push(cellContent);
                 } else {
                     cell.appendChild(cellContent);
                 }
 
                 cell.addEventListener('click', callback, false);
-                this[_attrs.listeners].push({element: cell, callback: callback});
+                priv.listeners.push({element: cell, callback: callback});
 
                 row.appendChild(cell);
-                if (typeof this[_attrs.extractIdFunc] === 'function') {
-                    this[_attrs.current_elements][this[_attrs.extractIdFunc](item)] = {
+                if (typeof priv.extractIdFunc === 'function') {
+                    priv.current_elements[priv.extractIdFunc(item)] = {
                         row: row,
                         data: item
                     };
                 }
             }
 
-            this[_attrs.tableBody].appendChild(row);
+            priv.tableBody.appendChild(row);
         }
 
         if (items.length === 0 && this.source.currentPage) {
@@ -159,7 +163,7 @@
             row.className = 'alert alert-info se-model-table-msg';
             row.textContent = this.emptyMessage;
 
-            this[_attrs.tableBody].appendChild(row);
+            priv.tableBody.appendChild(row);
         }
 
         highlight_selection.call(this);
@@ -169,11 +173,12 @@
         if (error == null) {
             this.reload();
         } else {
+            var priv = privates.get(this);
             clearTable.call(this);
             var message = document.createElement('div');
             message.className = "alert alert-danger";
             message.textContent = error;
-            this[_attrs.tableBody].appendChild(message);
+            priv.tableBody.appendChild(message);
         }
     };
 
@@ -202,9 +207,14 @@
             className = 'se-model-table full';
         }
 
+        // Initialize private variables
+        var priv = {};
+        privates.set(this, priv);
+
+
         StyledElements.StyledElement.call(this, ['click']);
 
-        this[_attrs.selection] = [];
+        priv.selection = [];
         var source;
         if (options.source != null) {
             source = options.source;
@@ -226,7 +236,7 @@
             source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info});
         }
 
-        this[_attrs.layout] = new StyledElements.VerticalLayout({'class': className});
+        priv.layout = new StyledElements.VerticalLayout({'class': className});
 
         Object.defineProperties(this, {
             columns: {
@@ -239,7 +249,7 @@
             },
             selection: {
                 get: function () {
-                    return this[_attrs.selection];
+                    return priv.selection;
                 },
                 set: function (value) {
                     if (!Array.isArray(value)) {
@@ -247,14 +257,14 @@
                     }
 
                     // Unhighlihgt previous selection
-                    if (this[_attrs.selection] != null) {
-                        this[_attrs.selection].forEach(function (id) {
-                            if (id in this[_attrs.current_elements]) {
-                                this[_attrs.current_elements][id].row.classList.remove('highlight');
+                    if (priv.selection != null) {
+                        priv.selection.forEach(function (id) {
+                            if (id in priv.current_elements) {
+                                priv.current_elements[id].row.classList.remove('highlight');
                             }
                         }, this);
                     }
-                    this[_attrs.selection] = value;
+                    priv.selection = value;
 
                     // Highlight the new selection
                     highlight_selection.call(this);
@@ -266,45 +276,45 @@
             },
             statusBar: {
                 get: function () {
-                    return this[_attrs.statusBar];
+                    return priv.statusBar;
                 }
             }
 
         });
 
-        this.wrapperElement = this[_attrs.layout].wrapperElement;
+        this.wrapperElement = priv.layout.wrapperElement;
 
         /*
          * Header
          */
-        this[_attrs.header] = this[_attrs.layout].north;
-        this[_attrs.header].addClassName('se-model-table-headrow');
+        priv.header = priv.layout.north;
+        priv.header.addClassName('se-model-table-headrow');
 
         buildHeader.call(this);
 
         /*
          * Table body
          */
-        this[_attrs.components] = [];
-        this[_attrs.listeners] = [];
-        this[_attrs.tableBody] = this[_attrs.layout].center;
-        this[_attrs.tableBody].addClassName('se-model-table-body');
+        priv.components = [];
+        priv.listeners = [];
+        priv.tableBody = priv.layout.center;
+        priv.tableBody.addClassName('se-model-table-body');
 
         /*
          * Status bar
          */
-        this[_attrs.statusBar] = this[_attrs.layout].south;
-        this[_attrs.statusBar].addClassName('se-model-table-statusrow');
+        priv.statusBar = priv.layout.south;
+        priv.statusBar.addClassName('se-model-table-statusrow');
 
-        this[_attrs.sortColumn] = null;
+        priv.sortColumn = null;
 
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
 
         this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
         if (this.source.pOptions.pageSize !== 0) {
-            this[_attrs.paginationInterface] = new StyledElements.PaginationInterface(this.source);
-            this[_attrs.statusBar].appendChild(this[_attrs.paginationInterface]);
+            priv.paginationInterface = new StyledElements.PaginationInterface(this.source);
+            priv.statusBar.appendChild(priv.paginationInterface);
         }
 
         if (options.initialSortColumn === -1) {
@@ -331,19 +341,19 @@
 
         sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
 
-        this[_attrs.current_elements] = {};
+        priv.current_elements = {};
         if (typeof options.id === 'string') {
-            this[_attrs.extractIdFunc] = function (data) {
+            priv.extractIdFunc = function (data) {
                 return data[options.id];
             };
         } else if (typeof options.id === 'function') {
-            this[_attrs.extractIdFunc] = options.id;
+            priv.extractIdFunc = options.id;
         }
 
         if (typeof options.stateFunc === 'function') {
-            this[_attrs.stateFunc] = options.stateFunc;
+            priv.stateFunc = options.stateFunc;
         } else {
-            this[_attrs.stateFunc] = function () {};
+            priv.stateFunc = function () {};
         }
     };
     ModelTable.prototype = new StyledElements.StyledElement();
@@ -370,17 +380,19 @@
     var sortByColumn = function sortByColumn(column, descending) {
         var sort_id, order, oldSortHeaderCell, sortHeaderCell;
 
-        if (this[_attrs.sortColumn] != null) {
-            oldSortHeaderCell = this[_attrs.headerCells][this[_attrs.sortColumn]];
+        var priv = privates.get(this);
+
+        if (priv.sortColumn != null) {
+            oldSortHeaderCell = priv.headerCells[priv.sortColumn];
             oldSortHeaderCell.classList.remove('ascending');
             oldSortHeaderCell.classList.remove('descending');
         }
-        this[_attrs.sortInverseOrder] = descending;
-        this[_attrs.sortColumn] = column;
+        priv.sortInverseOrder = descending;
+        priv.sortColumn = column;
 
-        if (this[_attrs.sortColumn] != null) {
-            sortHeaderCell = this[_attrs.headerCells][this[_attrs.sortColumn]];
-            if (this[_attrs.sortInverseOrder]) {
+        if (priv.sortColumn != null) {
+            sortHeaderCell = priv.headerCells[priv.sortColumn];
+            if (priv.sortInverseOrder) {
                 sortHeaderCell.classList.remove('ascending');
                 sortHeaderCell.classList.add('descending');
             } else {
@@ -388,13 +400,13 @@
                 sortHeaderCell.classList.add('ascending');
             }
 
-            column = this.columns[this[_attrs.sortColumn]];
+            column = this.columns[priv.sortColumn];
             if (column.sort_id != null) {
                 sort_id = column.sort_id;
             } else {
                 sort_id = column.field;
             }
-            if (this[_attrs.sortInverseOrder]) {
+            if (priv.sortInverseOrder) {
                 sort_id = '-' + sort_id;
             }
             order = [sort_id];
@@ -405,8 +417,9 @@
     };
 
     var sortByColumnCallback = function sortByColumnCallback() {
-        var descending = this.widget[_attrs.sortColumn] === this.column ?
-            !this.widget[_attrs.sortInverseOrder] :
+        var priv = privates.get(this.widget);
+        var descending = priv.sortColumn === this.column ?
+            !priv.sortInverseOrder :
             false;
 
         sortByColumn.call(this.widget, this.column, descending);
@@ -479,19 +492,20 @@
 
     var clearTable = function clearTable() {
         var i, entry;
+        var priv = privates.get(this);
 
-        for (i = 0; i < this[_attrs.listeners].length; i += 1) {
-            entry = this[_attrs.listeners][i];
+        for (i = 0; i < priv.listeners.length; i += 1) {
+            entry = priv.listeners[i];
             entry.element.removeEventListener('click', entry.callback, false);
         }
-        this[_attrs.components] = [];
-        this[_attrs.listeners] = [];
-        this[_attrs.columnsCells] = [];
+        priv.components = [];
+        priv.listeners = [];
+        priv.columnsCells = [];
         for (i = 0; i < this.columns.length; i += 1) {
-            this[_attrs.columnsCells][i] = [];
+            priv.columnsCells[i] = [];
         }
-        this[_attrs.tableBody].clear();
-        this[_attrs.current_elements] = {};
+        priv.tableBody.clear();
+        priv.current_elements = {};
     };
 
     ModelTable.prototype.reload = function reload() {
@@ -500,9 +514,10 @@
 
     ModelTable.prototype.destroy = function destroy() {
         var i, cell;
+        var priv = privates.get(this);
 
-        for (i = 0; i < this[_attrs.headerCells].length; i += 1) {
-            cell = this[_attrs.headerCells][i];
+        for (i = 0; i < priv.headerCells.length; i += 1) {
+            cell = priv.headerCells[i];
             if (cell.callback) {
                 cell.removeEventListener('click', cell.callback, true);
                 cell.callback = null;
@@ -510,34 +525,18 @@
         }
         clearTable.call(this);
 
-        this[_attrs.layout].destroy();
-        this[_attrs.layout] = null;
+        priv.layout.destroy();
+        priv.layout = null;
 
-        if (this[_attrs.paginationInterface]) {
-            this[_attrs.paginationInterface].destroy();
-            this[_attrs.paginationInterface] = null;
+        if (priv.paginationInterface) {
+            priv.paginationInterface.destroy();
+            priv.paginationInterface = null;
         }
 
         this.source.destroy();
     };
 
-    var _attrs = {
-        headerCells: Symbol("headerCells"),
-        listeners: Symbol("listeners"),
-        components: Symbol("components"),
-        layout: Symbol("layout"),
-        header: Symbol("header"),
-        tableBody: Symbol("tableBody"),
-        statusBar: Symbol("statusBar"),
-        sortColumn: Symbol("sortColumn"),
-        sortInverseOrder: Symbol("sortInverseOrder"),
-        current_elements: Symbol("currentElements"),
-        paginationInterface: Symbol("paginationInterface"),
-        stateFunc: Symbol("stateFunc"),
-        extractIdFunc: Symbol("extractIdFunc"),
-        columnsCells: Symbol("columnsCells"),
-        selection: Symbol("selection")
-    };
+    var privates = new WeakMap();
 
     StyledElements.ModelTable = ModelTable;
 
