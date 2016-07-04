@@ -129,7 +129,7 @@
         var options, options_element;
 
         options = {};
-        options_element = element.getElementsByTagNameNS(NAMESPACE, 'options')[0];
+        options_element = element.ownerDocument.evaluate('s:options', element, function () { return NAMESPACE; }, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         if (options_element != null) {
             options_element.parentNode.removeChild(options_element);
             try {
