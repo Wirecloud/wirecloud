@@ -49,8 +49,6 @@
             var queue, context, callback;
 
             beforeEach(function () {
-                jasmine.clock().install();
-
                 context = {context: true};
                 callback = jasmine.createSpy('callback').and.callFake(function (context, command) {
                     return new Promise(function (resolve, reject) {
@@ -63,10 +61,6 @@
                 queue = new CommandQueue(context, callback);
             });
 
-            afterEach(function () {
-                jasmine.clock().uninstall();
-            });
-
             it("ignore undefined commands", function () {
                 expect(queue.running).toBe(false);
                 queue.addCommand(undefined);
@@ -75,40 +69,33 @@
                 expect(queue.running).toBe(false);
             });
 
-            it("supports adding commands to empty queues", function () {
+            it("supports adding commands to empty queues", function (done) {
                 expect(queue.running).toBe(false);
                 queue.addCommand(1);
                 expect(queue.running).toBe(true);
-                jasmine.clock().tick(201);
-                expect(queue.running).toBe(false);
-                expect(callback.calls.count()).toBe(1);
-                expect(callback.calls.argsFor(0)).toEqual([context, 1]);
+                setTimeout(function () {
+                    expect(queue.running).toBe(false);
+                    expect(callback.calls.count()).toBe(1);
+                    expect(callback.calls.argsFor(0)).toEqual([context, 1]);
+                    done();
+                }, 200);
             });
 
-            it("supports adding several commands", function () {
+            it("supports adding several commands", function (done) {
                 expect(queue.running).toBe(false);
                 queue.addCommand(1);
                 queue.addCommand(2);
                 queue.addCommand(3);
-
-                expect(queue.running).toBe(true);
-                expect(callback.calls.count()).toBe(1);
-
-                jasmine.clock().tick(201);
-                expect(callback.calls.count()).toBe(2);
                 expect(queue.running).toBe(true);
 
-                jasmine.clock().tick(200);
-                expect(callback.calls.count()).toBe(3);
-                expect(queue.running).toBe(true);
-
-                jasmine.clock().tick(200);
-                expect(callback.calls.count()).toBe(3);
-                expect(queue.running).toBe(false);
-
-                expect(callback.calls.argsFor(0)).toEqual([context, 1]);
-                expect(callback.calls.argsFor(1)).toEqual([context, 2]);
-                expect(callback.calls.argsFor(2)).toEqual([context, 3]);
+                setTimeout(function () {
+                    expect(queue.running).toBe(false);
+                    expect(callback.calls.count()).toBe(3);
+                    expect(callback.calls.argsFor(0)).toEqual([context, 1]);
+                    expect(callback.calls.argsFor(1)).toEqual([context, 2]);
+                    expect(callback.calls.argsFor(2)).toEqual([context, 3]);
+                    done();
+                }, 620);
             });
 
         });

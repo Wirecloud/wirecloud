@@ -25,6 +25,7 @@
  */
 
 var dependencies = [
+    'wirecloud/platform/static/js/common/ComputedStyle.js',
     'wirecloud/commons/static/js/lib/moment-with-locales.min.js',
 ];
 
@@ -102,35 +103,26 @@ module.exports = function (grunt) {
             }
         },
 
-        jasmine: {
-
-            test: {
-                src: styledElementsFiles,
-                options: {
-                    vendor: dependencies.concat(['js_tests/vendor/*.js']),
-                    specs: ['js_tests/*Spec.js']
-                }
+        karma: {
+            options: {
+                files: dependencies.concat(styledElementsFiles).concat(['js_tests/*Spec.js']),
+                frameworks: ['jasmine'],
+                reporters: ['progress', 'coverage'],
+                preprocessors: {
+                    "wirecloud/commons/static/js/StyledElements/*.js": ['coverage'],
+                },
+                coverageReporter: {
+                    type : 'html',
+                    dir : 'build/coverage/'
+                },
+                browsers: ['Chrome', 'Firefox'],
+                singleRun: true
             },
-
-            coverage: {
-                src: '<%= jasmine.test.src %>',
-                options: {
-                    summary: true,
-                    junit: {
-                        path: 'build/junit'
-                    },
-                    specs: '<%= jasmine.test.options.specs %>',
-                    vendor: '<%= jasmine.test.options.vendor %>',
-                    template: require('grunt-template-jasmine-istanbul'),
-                    templateOptions: {
-                        coverage: 'build/coverage/json/coverage.json',
-                        report: [
-                            {type: 'html', options: {dir: 'build/coverage/html'}},
-                            {type: 'cobertura', options: {dir: 'build/coverage/xml'}},
-                            {type: 'text-summary'}
-                        ]
-                    }
-                }
+            chrome: {
+                browsers: ['Chrome']
+            },
+            firefox: {
+                browsers: ['Firefox']
             }
         },
 
@@ -168,14 +160,14 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks("grunt-jscs");
 
     grunt.registerTask('test', [
         'jshint',
         'jscs',
-        'jasmine:coverage'
+        'karma'
     ]);
 
     grunt.registerTask('default', [

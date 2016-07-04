@@ -206,7 +206,9 @@
                 expect(element.hasClassName('focus')).toBe(true);
                 done();
             });
-            element.focus();
+            setTimeout(function () {
+                expect(element.focus()).toBe(element);
+            }, 0);
 
         });
 
@@ -224,7 +226,6 @@
             });
             element.focus();
             element2.focus();
-
         });
 
     });
