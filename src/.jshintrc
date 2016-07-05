@@ -13,6 +13,7 @@
     "trailing": true,
     "white": true,
     "globals": {
-        "URL": false
+        "URL": false,
+        "WeakMap": true
     }
 }

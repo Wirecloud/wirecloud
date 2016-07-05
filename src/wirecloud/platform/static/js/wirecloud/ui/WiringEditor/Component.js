@@ -86,10 +86,10 @@
             this.get().setAttribute('data-id', this.id);
 
             if (this.type == 'widget') {
-                wiringComponent.on('title_changed', component_onrename.bind(this));
+                wiringComponent.addEventListener('title_changed', component_onrename.bind(this));
             }
 
-            wiringComponent.on('upgraded', function (component) {
+            wiringComponent.addEventListener('upgraded', function (component) {
                 this.setTitle(component.title);
                 this.setSubtitle("v" + component.meta.version);
 

@@ -47,21 +47,21 @@
                 extraClass: "btn-enable",
                 iconClass: "icon-lock"
             });
-            this.btnEnable.on('click', btnenable_onclick.bind(this));
+            this.btnEnable.addEventListener('click', btnenable_onclick.bind(this));
 
             this.btnCreate = new se.Button({
                 title: gettext("Create behaviour"),
                 extraClass: "btn-create",
                 iconClass: "icon-plus"
             });
-            this.btnCreate.on('click', btncreate_onclick.bind(this));
+            this.btnCreate.addEventListener('click', btncreate_onclick.bind(this));
 
             this.btnOrder = new se.ToggleButton({
                 title: gettext("Order behaviours"),
                 extraClass: "btn-order",
                 iconClass: "icon-sort"
             });
-            this.btnOrder.on('click', btnorder_onclick.bind(this));
+            this.btnOrder.addEventListener('click', btnorder_onclick.bind(this));
             this.btnOrder.disable();
 
             this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.behaviour_sidebar, {
@@ -172,17 +172,17 @@
                 var behaviour;
 
                 behaviour = (new ns.Behaviour(this.behaviours.length, behaviourInfo))
-                    .on('change', function () {
+                    .addEventListener('change', function () {
                         if (this.behaviour.equals(behaviour)) {
                             this.trigger('change', behaviour.getCurrentStatus(), this.enabled);
                         }
                     }.bind(this))
-                    .on('click', function () {
+                    .addEventListener('click', function () {
                         if (!this.orderingEnabled) {
                             this.activate(behaviour);
                         }
                     }.bind(this))
-                    .on('optremove', function () {
+                    .addEventListener('optremove', function () {
                         this.removeBehaviour(behaviour);
                     }.bind(this));
 

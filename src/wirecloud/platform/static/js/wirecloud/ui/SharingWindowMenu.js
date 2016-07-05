@@ -64,7 +64,7 @@
         this.inputSearchTypeahead = new Wirecloud.ui.UserTypeahead({autocomplete: false});
 
         this.inputSearchTypeahead.bind(this.inputSearch);
-        this.inputSearchTypeahead.on('select', menuitem_onselect.bind(this));
+        this.inputSearchTypeahead.addEventListener('select', menuitem_onselect.bind(this));
 
         this.userGroup = new se.Container({extraClass: "wc-dashboard-share-list"});
         this.userGroup.appendTo(this.windowContent);
@@ -80,14 +80,14 @@
 
         this.btnAccept = new se.Button({text: utils.gettext("Save"), state: "primary", class: 'btn-accept'});
         this.btnAccept.appendTo(this.windowBottom);
-        this.btnAccept.on('click', accept.bind(this));
+        this.btnAccept.addEventListener('click', accept.bind(this));
 
         this.btnCancel = new se.Button({text: utils.gettext("Cancel"), class: 'btn-cancel'});
         this.btnCancel.appendTo(this.windowBottom);
-        this.btnCancel.on('click', this._closeListener);
+        this.btnCancel.addEventListener('click', this._closeListener);
 
         this.visibilityOptions.setValue(workspace.preferences.get('public') ? 'public' : 'private');
-        this.visibilityOptions.on('change', on_visibility_option_change.bind(this));
+        this.visibilityOptions.addEventListener('change', on_visibility_option_change.bind(this));
         on_visibility_option_change.call(this);
     };
 
@@ -182,7 +182,7 @@
                 if (data.accesslevel === 'owner') {
                     button.disable();
                 } else {
-                    button.on('click', function () {
+                    button.addEventListener('click', function () {
                         this.userGroup.removeChild(createdElement);
                         delete this.sharingUsers[data.username];
                     }.bind(this));

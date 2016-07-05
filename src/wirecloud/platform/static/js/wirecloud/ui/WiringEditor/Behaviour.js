@@ -67,7 +67,7 @@
                 extraClass: "btn-remove",
                 iconClass: "icon-remove-sign"
             });
-            this.btnRemove.on('click', btnremove_onclick.bind(this));
+            this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
 
             this.superClass({
                 events: events,

@@ -61,7 +61,7 @@
         });
 
         this.popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
-        this.popupMenu.on('click', popupMenu_onselect.bind(this));
+        this.popupMenu.addEventListener('click', popupMenu_onselect.bind(this));
     };
 
     // ==================================================================================
@@ -90,11 +90,11 @@
             this.textField.inputElement.setAttribute('autocorrect', 'off');
             this.textField.inputElement.setAttribute('spellcheck', 'false');
 
-            this.textField.on('change', textField_onchange.bind(this));
-            this.textField.on('keydown', textField_onkeydown.bind(this));
-            this.textField.on('submit', textField_onsubmit.bind(this));
-            this.textField.on('focus', textField_onchange.bind(this));
-            this.textField.on('blur', textField_onblur.bind(this));
+            this.textField.addEventListener('change', textField_onchange.bind(this));
+            this.textField.addEventListener('keydown', textField_onkeydown.bind(this));
+            this.textField.addEventListener('submit', textField_onsubmit.bind(this));
+            this.textField.addEventListener('focus', textField_onchange.bind(this));
+            this.textField.addEventListener('blur', textField_onblur.bind(this));
 
             return this;
         }

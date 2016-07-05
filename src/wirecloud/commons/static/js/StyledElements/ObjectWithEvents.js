@@ -1,21 +1,25 @@
-/**
- *  This file is part of Wirecloud.
- *  Copyright (C) 2008-2015  CoNWeT Lab., Universidad Politécnica de Madrid
+/*
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
+ *     This file is part of Wirecloud Platform.
  *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
  */
 
-/* global StyledElements */
+/* globals StyledElements */
 
 
 (function (se, utils) {
@@ -44,54 +48,6 @@
         },
 
         members: /** @lends StyledElements.ObjectWithEvents.prototype */ {
-
-            /**
-             * Remove an event handler from one or more existing events.
-             * @since 0.6
-             *
-             * @param {String} [names]
-             *      Optional. One or more space-separated event names. If not
-             *      provided, this method will be applied to all the events.
-             * @param {Function} [handler]
-             *      Optional. An event handler previously attached. If not
-             *      provided, all the event handlers registered for the affected
-             *      events will be removed
-             * @returns {StyledElements.ObjectWithEvents}
-             *      The instance on which the member is called.
-             */
-            off: function off(names, handler) {
-                names = typeof names !== 'string' ? "" : names.trim();
-                names = names ? names.split(/\s+/) : Object.keys(this.events);
-                for (var i = 0; i < names.length; i++) {
-                    this.events[names[i]].off(handler);
-                }
-
-                return this;
-            },
-
-            /**
-             * Attach an event handler for one or more existing events.
-             * @since 0.6
-             *
-             * @param {String} names
-             *      One or more space-separated event names.
-             * @param {Function} handler
-             *      An event handler to execute when the event is triggered.
-             * @returns {StyledElements.ObjectWithEvents}
-             *      The instance on which the member is called.
-             */
-            on: function on(names, handler) {
-                names = typeof names !== 'string' ? "" : names.trim();
-
-                if (names) {
-                    names = names.split(/\s+/);
-                    for (var i = 0; i < names.length; i++) {
-                        this.events[names[i]].on(handler);
-                    }
-                }
-
-                return this;
-            },
 
             /**
              * Execute all event handlers attached for the existing event.

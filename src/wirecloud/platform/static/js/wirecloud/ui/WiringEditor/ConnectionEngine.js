@@ -107,10 +107,10 @@
                 this.endpoints[endpoint.type].push(endpoint);
 
                 endpoint
-                    .on('mousedown', this.endpoint_ondragstart)
-                    .on('mouseenter', this.endpoint_onmouseenter)
-                    .on('mouseleave', this.endpoint_onmouseleave)
-                    .on('mouseup', this.endpoint_ondragend);
+                    .addEventListener('mousedown', this.endpoint_ondragstart)
+                    .addEventListener('mouseenter', this.endpoint_onmouseenter)
+                    .addEventListener('mouseleave', this.endpoint_onmouseleave)
+                    .addEventListener('mouseup', this.endpoint_ondragend);
 
                 return this;
             },
@@ -229,10 +229,10 @@
 
                 if (index != -1) {
                     endpoint
-                        .off('mousedown', this.endpoint_ondragstart)
-                        .off('mouseenter', this.endpoint_onmouseenter)
-                        .off('mouseleave', this.endpoint_onmouseleave)
-                        .off('mouseup', this.endpoint_ondragend);
+                        .removeEventListener('mousedown', this.endpoint_ondragstart)
+                        .removeEventListener('mouseenter', this.endpoint_onmouseenter)
+                        .removeEventListener('mouseleave', this.endpoint_onmouseleave)
+                        .removeEventListener('mouseup', this.endpoint_ondragend);
 
                     this.endpoints[endpoint.type].splice(index, 1);
                 }
@@ -275,9 +275,9 @@
         connection.options.appendTo(this.optionsElement);
 
         connection
-            .on('click', connection_onclick.bind(this))
-            .on('customizestart', connection_oncustomizestart.bind(this))
-            .on('remove', connection_onremove.bind(this));
+            .addEventListener('click', connection_onclick.bind(this))
+            .addEventListener('customizestart', connection_oncustomizestart.bind(this))
+            .addEventListener('remove', connection_onremove.bind(this));
 
         return this.trigger('establish', connection, backupConnection);
     };

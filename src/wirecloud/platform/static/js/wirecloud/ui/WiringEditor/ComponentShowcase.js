@@ -43,7 +43,7 @@
             text: utils.gettext('Operators')
         });
         this.operatorButton
-            .on('click', function () {
+            .addEventListener('click', function () {
                 this.operatorButton.active = true;
                 this.widgetButton.active = false;
                 this.searchComponents.search_scope = 'operator';
@@ -56,7 +56,7 @@
             text: utils.gettext('Widgets')
         });
         this.widgetButton
-            .on('click', function () {
+            .addEventListener('click', function () {
                 this.operatorButton.active = false;
                 this.widgetButton.active = true;
                 this.searchComponents.search_scope = 'widget';
