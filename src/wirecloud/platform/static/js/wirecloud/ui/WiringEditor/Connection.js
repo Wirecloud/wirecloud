@@ -64,7 +64,7 @@
                 extraClass: "btn-show-logs",
                 iconClass: "icon-bell-alt"
             });
-            this.btnLogs.on('click', btnerrors_onclick.bind(this));
+            this.btnLogs.addEventListener('click', btnerrors_onclick.bind(this));
             this.btnLogs.appendTo(this.options);
 
             this.btnRemove = new se.Button({
@@ -74,7 +74,7 @@
                 extraClass: "btn-remove",
                 iconClass: "icon-remove"
             });
-            this.btnRemove.on('click', btnremove_onclick.bind(this));
+            this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
             this.btnRemove.appendTo(this.options);
 
             this.btnPrefs = new se.PopupButton({
@@ -760,11 +760,11 @@
             return this;
         }
 
-        this.source.handle.on('drag', handle_ondrag.bind(this));
-        this.source.handle.on('dragend', handle_ondragend.bind(this));
+        this.source.handle.addEventListener('drag', handle_ondrag.bind(this));
+        this.source.handle.addEventListener('dragend', handle_ondragend.bind(this));
 
-        this.target.handle.on('drag', handle_ondrag.bind(this));
-        this.target.handle.on('dragend', handle_ondragend.bind(this));
+        this.target.handle.addEventListener('drag', handle_ondrag.bind(this));
+        this.target.handle.addEventListener('dragend', handle_ondragend.bind(this));
 
         bindWiringConnection.call(this, wiringConnection);
 

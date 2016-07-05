@@ -164,16 +164,16 @@
     var _append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.on('mouseenter', this._menuItem_onactivate_bound);
-            child.on('mouseleave', this._menuItem_ondeactivate_bound);
-            child.on('focus', this._menuItem_onfocus_bound);
-            child.on('blur', this._menuItem_onblur_bound);
+            child.addEventListener('mouseenter', this._menuItem_onactivate_bound);
+            child.addEventListener('mouseleave', this._menuItem_ondeactivate_bound);
+            child.addEventListener('focus', this._menuItem_onfocus_bound);
+            child.addEventListener('blur', this._menuItem_onblur_bound);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.menuItem.on('mouseenter', this._menuItem_onactivate_bound);
-            child.menuItem.on('mouseleave', this._menuItem_ondeactivate_bound);
-            child.menuItem.on('focus', this._menuItem_onfocus_bound);
-            child.menuItem.on('blur', this._menuItem_onblur_bound);
+            child.menuItem.addEventListener('mouseenter', this._menuItem_onactivate_bound);
+            child.menuItem.addEventListener('mouseleave', this._menuItem_ondeactivate_bound);
+            child.menuItem.addEventListener('focus', this._menuItem_onfocus_bound);
+            child.menuItem.addEventListener('blur', this._menuItem_onblur_bound);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do

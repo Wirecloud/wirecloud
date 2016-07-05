@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,11 +19,16 @@
  *
  */
 
-/*global StyledElements*/
+/* globals StyledElements */
 
-(function () {
+
+(function (se, utils) {
 
     "use strict";
+
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
 
     /**
      * This class manages the callbacks of the <code>StyledElement</code>s' events.
@@ -33,28 +38,25 @@
             context: {value: context},
             handlers: {value: []}
         });
+
+        map.set(this, {
+            dispatching: false
+        });
     };
 
-    Event.prototype.on = function on(handler) {
-        if (typeof handler !== 'function') {
-            throw new TypeError('Handlers must be functions');
-        }
-        this.handlers.push(handler);
-    };
-
-    Event.prototype.off = function off(handler) {
-        if (handler == null) {
-            this.handlers.length = 0;
-        } else {
-            var index = this.handlers.indexOf(handler);
-            if (index != -1) {
-                this.handlers.splice(index, 1);
-            }
-        }
-    };
+    // ==================================================================================
+    // PUBLIC MEMBERS
+    // ==================================================================================
 
     Event.prototype.trigger = function trigger() {
-        for (var i = 0; i < this.handlers.length; i++) {
+        var i;
+
+        map.get(this).dispatching = true;
+
+        for (i = 0; i < this.handlers.length; i++) {
+            if (this.handlers[i] == null) {
+                continue;
+            }
             try {
                 this.handlers[i].apply(this.context, arguments);
             } catch (e) {
@@ -63,28 +65,61 @@
                 }
             }
         }
+
+        for (i = this.handlers.length - 1; i >= 0; i--) {
+            if (this.handlers[i] == null) {
+                this.handlers.splice(i, 1);
+            }
+        }
+
+        map.get(this).dispatching = false;
     };
 
     Event.prototype.addEventListener = function addEventListener(handler) {
-        this.on(handler);
+        if (typeof handler !== 'function') {
+            throw new TypeError('Handlers must be functions');
+        }
+        this.handlers.push(handler);
     };
 
     Event.prototype.removeEventListener = function removeEventListener(handler) {
+        var i;
+
         if (typeof handler !== 'function') {
             throw new TypeError('Handlers must be functions');
         }
 
-        this.off(handler);
+        for (i = this.handlers.length - 1; i >= 0; i--) {
+            if (this.handlers[i] === handler) {
+                if (map.get(this).dispatching) {
+                    this.handlers[i] = null;
+                } else {
+                    this.handlers.splice(i, 1);
+                }
+            }
+        }
     };
 
     Event.prototype.clearEventListeners = function clearEventListeners() {
-        this.off();
+        if (map.get(this).dispatching) {
+            this.handlers.forEach(function (callback, index, array) {
+                array[index] = null;
+            });
+        } else {
+            this.handlers.length = 0;
+        }
     };
 
     Event.prototype.dispatch = function dispatch() {
         this.trigger.apply(this, arguments);
     };
 
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var map = new WeakMap();
+
     StyledElements.Event = Event;
 
-})();
+})(StyledElements, StyledElements.Utils);

@@ -116,9 +116,9 @@
                 var operator = operatorMeta.instantiate(id, this, businessInfo);
 
                 operator
-                    .on('upgraded', component_onupgraded.bind(this))
-                    .on('unload', component_onunload)
-                    .on('remove', operator_onremove.bind(this))
+                    .addEventListener('upgraded', component_onupgraded.bind(this))
+                    .addEventListener('unload', component_onunload)
+                    .addEventListener('remove', operator_onremove.bind(this))
                     .load();
 
                 this.status.operators[operator.id] = operator;
@@ -190,9 +190,9 @@
                     }
 
                     operator
-                        .on('upgraded', component_onupgraded.bind(this))
-                        .on('unload', component_onunload)
-                        .on('remove', operator_onremove.bind(this))
+                        .addEventListener('upgraded', component_onupgraded.bind(this))
+                        .addEventListener('unload', component_onunload)
+                        .addEventListener('remove', operator_onremove.bind(this))
                         .load();
                 }
 
@@ -500,8 +500,8 @@
             this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) already exist."), widget));
         } else {
             widget
-                .on('upgraded', component_onupgraded.bind(this))
-                .on('unload', component_onunload);
+                .addEventListener('upgraded', component_onupgraded.bind(this))
+                .addEventListener('unload', component_onunload);
             this.widgets[widget.id] = widget;
         }
     };
@@ -515,7 +515,7 @@
 
         if (widget.id in this.widgets) {
             removeComponent.call(this, widget);
-            widget.off('unload', component_onunload);
+            widget.removeEventListener('unload', component_onunload);
             delete this.widgets[widget.id];
         } else {
             this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) to remove does not exist."), widget));

@@ -59,7 +59,7 @@
                 extraClass: "btn-remove",
                 iconClass: "icon-remove-sign"
             });
-            this.btnRemove.on('click', btnremove_onclick.bind(this));
+            this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
 
             this.superClass({
                 title: wiringComponent.title,
@@ -196,7 +196,7 @@
             this._component_onrename_bound = component_onrename.bind(this);
 
             if (this.type == 'widget') {
-                wiringComponent.on('title_changed', this._component_onrename_bound);
+                wiringComponent.addEventListener('title_changed', this._component_onrename_bound);
             }
 
             notifyErrors.call(this);
@@ -204,7 +204,7 @@
 
             this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener);
 
-            wiringComponent.on('upgraded', this._component_onupgrade_bound);
+            wiringComponent.addEventListener('upgraded', this._component_onupgrade_bound);
         },
 
         inherit: se.Panel,
@@ -324,8 +324,8 @@
             appendEndpoint: function appendEndpoint(type, wiringEndpoint) {
                 var endpoint = this.endpoints[type].appendEndpoint(wiringEndpoint);
 
-                endpoint.on('connectionadded', endpoint_onconnectionadded.bind(this));
-                endpoint.on('connectionremoved', endpoint_onconnectionremoved.bind(this));
+                endpoint.addEventListener('connectionadded', endpoint_onconnectionadded.bind(this));
+                endpoint.addEventListener('connectionremoved', endpoint_onconnectionremoved.bind(this));
                 this.trigger('endpointadded', endpoint);
 
                 return this;
@@ -526,10 +526,10 @@
             remove: function remove(childElement) {
 
                 if (!arguments.length && !this.hasClassName('cloned')) {
-                    this._component.off('upgraded', this._component_onupgrade_bound);
+                    this._component.removeEventListener('upgraded', this._component_onupgrade_bound);
 
                     if (this.type == 'widget') {
-                        this._component.off('title_changed', this._component_onrename_bound);
+                        this._component.removeEventListener('title_changed', this._component_onrename_bound);
                     }
                     this.trigger('remove');
                 }
@@ -768,8 +768,8 @@
             this._missingEndpoints[endpoint.type][endpoint.name] = endpoint;
         }
 
-        endpoint.off('connectionadded', this._endpoint_onconnectionadded_bound);
-        endpoint.off('connectionremoved', this._endpoint_onconnectionremoved_bound);
+        endpoint.removeEventListener('connectionadded', this._endpoint_onconnectionadded_bound);
+        endpoint.removeEventListener('connectionremoved', this._endpoint_onconnectionremoved_bound);
 
         this.endpoints[endpoint.type].removeChild(endpoint);
         this.trigger('endpointremoved', endpoint);

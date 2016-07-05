@@ -103,27 +103,27 @@ Wirecloud.ui = Wirecloud.ui || {};
 
                 component = new ns.WiringEditor.ComponentDraggable(wiringComponent, options);
                 component
-                    .on('endpointadded', component_onendpointadded.bind(this))
-                    .on('endpointremoved', component_onendpointremoved.bind(this))
-                    .on('change', function () {
+                    .addEventListener('endpointadded', component_onendpointadded.bind(this))
+                    .addEventListener('endpointremoved', component_onendpointremoved.bind(this))
+                    .addEventListener('change', function () {
                         this.behaviourEngine.updateComponent(component, component.toJSON());
                     }.bind(this))
-                    .on('click', component_onclick.bind(this))
-                    .on('dragstart', component_ondragstart.bind(this))
-                    .on('drag', component_ondrag.bind(this))
-                    .on('dragend', component_ondragend.bind(this))
-                    .on('orderstart', component_onorderstart.bind(this))
-                    .on('orderend', component_onorderend.bind(this))
-                    .on('optremove', function () {
+                    .addEventListener('click', component_onclick.bind(this))
+                    .addEventListener('dragstart', component_ondragstart.bind(this))
+                    .addEventListener('drag', component_ondrag.bind(this))
+                    .addEventListener('dragend', component_ondragend.bind(this))
+                    .addEventListener('orderstart', component_onorderstart.bind(this))
+                    .addEventListener('orderend', component_onorderend.bind(this))
+                    .addEventListener('optremove', function () {
                         this.behaviourEngine.removeComponent(component);
                     }.bind(this))
-                    .on('optremovecascade', function () {
+                    .addEventListener('optremovecascade', function () {
                         this.behaviourEngine.removeComponent(component, true);
                     }.bind(this))
-                    .on('optshare', function () {
+                    .addEventListener('optshare', function () {
                         this.behaviourEngine.updateComponent(component, component.toJSON(), true);
                     }.bind(this))
-                    .on('remove', component_onremove.bind(this));
+                    .addEventListener('remove', component_onremove.bind(this));
 
                 component.forEachEndpoint(bindEndpoint.bind(this));
                 this.initialMessage.hide();
@@ -234,12 +234,12 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.suggestionManager.appendEndpoint(endpoint);
 
         endpoint
-            .on('mouseenter', function () {
+            .addEventListener('mouseenter', function () {
                 if (!this.connectionEngine.temporalConnection) {
                     this.suggestionManager.showSuggestions(endpoint);
                 }
             }.bind(this))
-            .on('mouseleave', function () {
+            .addEventListener('mouseleave', function () {
                 if (!this.connectionEngine.temporalConnection) {
                     this.suggestionManager.hideSuggestions(endpoint);
                 }
@@ -251,9 +251,9 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.behaviourEngine = new ns.WiringEditor.BehaviourEngine();
         this.behaviourEngine
-            .on('activate', behaviour_onactivate.bind(this))
-            .on('change', behaviour_onchange.bind(this))
-            .on('enable', behaviourengine_onenable.bind(this));
+            .addEventListener('activate', behaviour_onactivate.bind(this))
+            .addEventListener('change', behaviour_onchange.bind(this))
+            .addEventListener('enable', behaviourengine_onenable.bind(this));
 
         this.layout.appendChild(this.behaviourEngine);
 
@@ -289,11 +289,11 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.connectionEngine = new ns.WiringEditor.ConnectionEngine(this.layout.content, findWiringEngine.bind(this));
         this.connectionEngine
-            .on('click', connection_onclick.bind(this))
-            .on('dragstart', connection_ondragstart.bind(this))
-            .on('dragend', connection_ondragend.bind(this))
-            .on('establish', connection_onestablish.bind(this))
-            .on('duplicate', connection_onduplicate.bind(this));
+            .addEventListener('click', connection_onclick.bind(this))
+            .addEventListener('dragstart', connection_ondragstart.bind(this))
+            .addEventListener('dragend', connection_ondragend.bind(this))
+            .addEventListener('establish', connection_onestablish.bind(this))
+            .addEventListener('duplicate', connection_onduplicate.bind(this));
 
         return this;
     };
@@ -322,12 +322,12 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.layout.content.appendChild(this.initialMessage);
 
         this.layout
-            .on('slideOut', function () {
+            .addEventListener('slideOut', function () {
                 this.btnFindComponents.active = false;
                 this.btnListBehaviours.active = false;
                 this.behaviourEngine.stopOrdering();
             }.bind(this))
-            .on('slideIn', function (offcanvas, panel) {
+            .addEventListener('slideIn', function (offcanvas, panel) {
                 this.btnFindComponents.active = panel.hasClassName("we-panel-components");
                 this.btnListBehaviours.active = panel.hasClassName("we-panel-behaviours");
 
@@ -384,7 +384,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             iconClass: "icon-archive",
             stackedIconClass: "icon-plus-sign"
         });
-        this.btnFindComponents.on('click', function (button) {
+        this.btnFindComponents.addEventListener('click', function (button) {
             if (button.active) {
                 this.componentManager.searchComponents.refresh();
             }
@@ -396,7 +396,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             extraClass: "btn-list-behaviours",
             iconClass: "icon-sitemap"
         });
-        this.btnListBehaviours.on('click', function (button) {
+        this.btnListBehaviours.addEventListener('click', function (button) {
             showSelectedPanel.call(this, button, 0);
         }.bind(this));
 
@@ -725,13 +725,13 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.behaviourEngine.updateConnection(connection, connection.toJSON());
 
         connection
-            .on('change', function () {
+            .addEventListener('change', function () {
                 this.behaviourEngine.updateConnection(connection, connection.toJSON());
             }.bind(this))
-            .on('optremove', function () {
+            .addEventListener('optremove', function () {
                 this.behaviourEngine.removeConnection(connection);
             }.bind(this))
-            .on('optshare', function () {
+            .addEventListener('optshare', function () {
                 this.behaviourEngine.updateConnection(connection, connection.toJSON(), true);
             }.bind(this));
 
