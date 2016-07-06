@@ -29,20 +29,20 @@
     var TextField, oninput, onfocus, onblur, onkeypress;
 
     oninput = function oninput() {
-        this.events.change.dispatch(this);
+        this.dispatchEvent('change');
     };
 
     onfocus = function onfocus() {
-        this.events.focus.dispatch(this);
+        this.dispatchEvent('focus');
     };
 
     onblur = function onblur() {
-        this.events.blur.dispatch(this);
+        this.dispatchEvent('blur');
     };
 
     onkeypress = function onkeypress(event) {
         if (utils.normalizeKey(event) === "Enter") {
-            this.trigger('submit');
+            this.dispatchEvent('submit');
         }
     };
 
@@ -147,7 +147,7 @@
             modifiers.preventDefault = event.preventDefault.bind(event);
             modifiers.stopPropagation = event.stopPropagation.bind(event);
             modifiers.key = key;
-            this.trigger('keydown', modifiers, key);
+            this.dispatchEvent('keydown', modifiers, key);
         }
     };
 

@@ -46,9 +46,9 @@
                     popupMenu = new StyledElements.PopupMenu();
                     menuItem1 = new StyledElements.MenuItem("First", empty);
                     menuItem2 = new StyledElements.MenuItem("Second", empty, {test: "helloWorld"});
-                    spyOn(menuItem1, "trigger").and.callThrough();
+                    spyOn(menuItem1, "dispatchEvent").and.callThrough();
                     spyOn(menuItem1, "run").and.callThrough();
-                    spyOn(menuItem2, "trigger").and.callThrough();
+                    spyOn(menuItem2, "dispatchEvent").and.callThrough();
                     spyOn(menuItem2, "run").and.callThrough();
                 });
 
@@ -61,15 +61,15 @@
 
                 it ("Should receive menuItem's click callbacks", function () {
                     menuItem1.click();
-                    expect(menuItem1.trigger).toHaveBeenCalled();
-                    expect(menuItem2.trigger).not.toHaveBeenCalled();
+                    expect(menuItem1.dispatchEvent).toHaveBeenCalled();
+                    expect(menuItem2.dispatchEvent).not.toHaveBeenCalled();
                     expect(menuItem1.run).toHaveBeenCalled();
                     expect(menuItem2.run).not.toHaveBeenCalled();
                 });
 
                 it("Should handle menuItem custom context", function () {
                     menuItem2.click();
-                    expect(menuItem2.trigger).toHaveBeenCalled();
+                    expect(menuItem2.dispatchEvent).toHaveBeenCalled();
                     expect(menuItem2.run).toHaveBeenCalledWith(null, {test: "helloWorld"});
                 });
 

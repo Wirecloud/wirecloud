@@ -157,7 +157,7 @@
                     this.viewpoint = this.viewpoint === ns.BehaviourEngine.GLOBAL ? ns.BehaviourEngine.INDEPENDENT : ns.BehaviourEngine.GLOBAL;
                 }
 
-                return this.trigger('activate', this.behaviour, this.viewpoint);
+                return this.dispatchEvent('activate', this.behaviour, this.viewpoint);
             },
 
             /**
@@ -174,7 +174,7 @@
                 behaviour = (new ns.Behaviour(this.behaviours.length, behaviourInfo))
                     .addEventListener('change', function () {
                         if (this.behaviour.equals(behaviour)) {
-                            this.trigger('change', behaviour.getCurrentStatus(), this.enabled);
+                            this.dispatchEvent('change', behaviour.getCurrentStatus(), this.enabled);
                         }
                     }.bind(this))
                     .addEventListener('click', function () {
@@ -398,7 +398,7 @@
                     this.enabled = true;
                     this.activate();
                 } else {
-                    this.trigger('change', this.getCurrentStatus(), this.enabled);
+                    this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
                 }
 
                 return this;
@@ -531,7 +531,7 @@
                 _removeConnection.call(this, index, connection);
 
                 if (!this.enabled) {
-                    this.trigger('change', this.getCurrentStatus(), this.enabled);
+                    this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
                 }
 
                 return this;
@@ -612,7 +612,7 @@
                 this.components[component.type][component.id] = component;
 
                 if (!this.enabled) {
-                    this.trigger('change', this.getCurrentStatus(), this.enabled);
+                    this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
                 }
 
                 return this;
@@ -657,7 +657,7 @@
                 }
 
                 if (!this.enabled) {
-                    this.trigger('change', this.getCurrentStatus(), this.enabled);
+                    this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
                 }
 
                 return this;
@@ -700,7 +700,7 @@
         removeConnections.call(this, component, true);
         component.remove();
 
-        this.trigger('change', this.getCurrentStatus(), this.enabled);
+        this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
 
         return this;
     };
@@ -772,13 +772,13 @@
                 this.behaviours.length = 0;
                 delete this.behaviour;
                 this.enabled = false;
-                this.trigger('enable', this.enabled);
+                this.dispatchEvent('enable', this.enabled);
             }.bind(this);
             dialog.show();
         } else {
             this.enabled = true;
             this.createBehaviour();
-            this.trigger('enable', this.enabled);
+            this.dispatchEvent('enable', this.enabled);
         }
     };
 

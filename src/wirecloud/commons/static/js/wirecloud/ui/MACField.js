@@ -39,7 +39,7 @@
             scope: this.scope,
         });
         dialog.show(this.parent_dialog);
-        dialog.addEventListener('select', function (selected_mashup) {
+        dialog.addEventListener('select', function (menu, selected_mashup) {
             this.setValue(selected_mashup);
         }.bind(this));
 
@@ -47,12 +47,12 @@
 
     onfocus = function onfocus() {
         this.wrapperElement.classList.add('focus');
-        this.events.focus.dispatch(this);
+        this.dispatchEvent('focus');
     };
 
     onblur = function onblur() {
         this.wrapperElement.classList.remove('focus');
-        this.events.blur.dispatch(this);
+        this.dispatchEvent('blur');
     };
 
     /**
@@ -137,7 +137,7 @@
 
         this.name_preview.textContent = mac_title;
         this.close_button.setDisabled(new_value === '');
-        this.events.change.dispatch(this);
+        this.dispatchEvent('change');
     };
 
     MACField.prototype.getValue = function getValue() {

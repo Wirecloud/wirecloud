@@ -199,7 +199,7 @@
 
             if (this.enabled && !this.hasFocus()) {
                 this.wrapperElement.focus();
-                this.trigger('focus');
+                this.dispatchEvent('focus');
             }
 
             return this;
@@ -227,7 +227,7 @@
         click: function click() {
 
             if (this.enabled) {
-                this.trigger('click');
+                this.dispatchEvent('click');
             }
 
             return this;
@@ -311,25 +311,25 @@
 
     var element_onmouseenter = function element_onmouseenter(event) {
         if (this.enabled) {
-            this.trigger('mouseenter');
+            this.dispatchEvent('mouseenter');
         }
     };
 
     var element_onmouseleave = function element_onmouseleave(event) {
         if (this.enabled) {
-            this.trigger('mouseleave');
+            this.dispatchEvent('mouseleave');
         }
     };
 
     var element_onblur = function element_onblur(event) {
         if (this.enabled) {
-            this.trigger('blur');
+            this.dispatchEvent('blur');
         }
     };
 
     var element_onfocus = function element_onfocus(event) {
         if (this.enabled) {
-            this.trigger('focus');
+            this.dispatchEvent('focus');
         }
     };
 

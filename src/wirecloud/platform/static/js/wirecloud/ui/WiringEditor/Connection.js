@@ -244,11 +244,11 @@
                 if (editable) {
                     this.source.handle.appendTo(this.wrapperElement);
                     this.target.handle.appendTo(this.wrapperElement);
-                    this.trigger('customizestart');
+                    this.dispatchEvent('customizestart');
                 } else {
                     this.source.handle.remove();
                     this.target.handle.remove();
-                    this.trigger('customizeend');
+                    this.dispatchEvent('customizeend');
                 }
 
                 return this;
@@ -294,7 +294,7 @@
 
                 if (this.enabled && !this.editable) {
                     this.active = !this.active;
-                    this.trigger('click');
+                    this.dispatchEvent('click');
                 }
 
                 return this;
@@ -403,7 +403,7 @@
                         this.target.endpoint.removeConnection(this);
                     }
 
-                    this.trigger('remove');
+                    this.dispatchEvent('remove');
                 }
 
 
@@ -426,7 +426,7 @@
                     this.source.handle.auto = true;
                     this.target.handle.auto = true;
 
-                    this.refresh().trigger('change', this.toJSON());
+                    this.refresh().dispatchEvent('change', this.toJSON());
                 }
 
                 return this;
@@ -718,10 +718,10 @@
     var btnremove_onclick = function btnremove_onclick(event) {
 
         if (this.background) {
-            this.trigger('optshare', event);
+            this.dispatchEvent('optshare', event);
         } else {
             if (!this.readonly) {
-                this.trigger('optremove', event);
+                this.dispatchEvent('optremove', event);
             }
         }
     };
@@ -784,7 +784,7 @@
     };
 
     var handle_ondragend = function handle_ondragend() {
-        return this.trigger('change', this.toJSON());
+        return this.dispatchEvent('change', this.toJSON());
     };
 
     var formatDistance = function formatDistance(s, sHandle, t, tHandle) {

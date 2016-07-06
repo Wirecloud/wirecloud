@@ -61,7 +61,7 @@
             this.parentLogger._addEntry(entry);
         }
 
-        this.events.newentry.dispatch(this, entry);
+        this.dispatchEvent('newentry', entry);
     };
 
     LogManager.prototype.newCycle = function newCycle() {

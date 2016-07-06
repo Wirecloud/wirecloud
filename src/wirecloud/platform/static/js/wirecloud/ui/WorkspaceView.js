@@ -408,7 +408,7 @@
             alert_msg.textContent = utils.gettext('The requested workspace is no longer available (it was deleted).');
             this.clear();
             this.appendChild(alert_msg);
-            Wirecloud.trigger('viewcontextchanged');
+            Wirecloud.dispatchEvent('viewcontextchanged');
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
             Wirecloud.changeActiveWorkspace(nextWorkspace, newState.tab, {replaceNavigationState: 'leave'});
         } else if (newState.tab != null) {

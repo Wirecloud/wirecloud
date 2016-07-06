@@ -94,7 +94,7 @@
 
                 if (this.component.removeCascadeAllowed) {
                     list = list.concat(this._createMenuItem(utils.gettext("Delete cascade"), "trash", function () {
-                        this.trigger("optremovecascade");
+                        this.dispatchEvent("optremovecascade");
                     }.bind(this.component), canDeleteCascade));
                 }
 

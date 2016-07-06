@@ -136,7 +136,7 @@
             this.toggleButton.active = expanded;
         }
 
-        this.events.expandChange.dispatch(this, expanded);
+        this.dispatchEvent('expandChange', expanded);
     };
 
     Expander.prototype.getTitleContainer = function getTitleContainer() {

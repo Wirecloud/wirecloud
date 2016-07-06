@@ -30,7 +30,7 @@
 
     onchange = function onchange() {
         if (this.inputElement.files) {
-            this.events.fileselect.dispatch(this, this.inputElement.files);
+            this.dispatchEvent('fileselect', this.inputElement.files);
             this.inputElement.value = '';
         }
     };

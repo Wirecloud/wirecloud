@@ -50,12 +50,12 @@
 
     var onfocus = function onfocus() {
         this.wrapperElement.classList.add('focus');
-        this.events.focus.dispatch(this);
+        this.dispatchEvent('focus');
     };
 
     var onblur = function onblur() {
         this.wrapperElement.classList.remove('focus');
-        this.events.blur.dispatch(this);
+        this.dispatchEvent('blur');
     };
 
     /**

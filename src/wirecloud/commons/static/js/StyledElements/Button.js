@@ -41,7 +41,7 @@
             if (this.inputElement != null) {
                 this.inputElement.click();
             }
-            this.events.click.trigger(this);
+            this.dispatchEvent('click');
         }
     };
 
@@ -49,7 +49,7 @@
         e.preventDefault();
         e.stopPropagation();
         if (this.enabled) {
-            this.events.dblclick.dispatch(this);
+            this.dispatchEvent('dblclick');
         }
     };
 
@@ -65,19 +65,19 @@
     };
 
     var onmouseenter = function onmouseenter() {
-        this.events.mouseenter.dispatch(this);
+        this.dispatchEvent('mouseenter');
     };
 
     var onmouseleave = function onmouseleave() {
-        this.events.mouseleave.dispatch(this);
+        this.dispatchEvent('mouseleave');
     };
 
     var onfocus = function onfocus() {
-        this.events.focus.dispatch(this);
+        this.dispatchEvent('focus');
     };
 
     var onblur = function onblur() {
-        this.events.blur.dispatch(this);
+        this.dispatchEvent('blur');
     };
 
     var update_tabindex = function update_tabindex() {
@@ -339,7 +339,7 @@
 
     Button.prototype.click = function click() {
         if (this.enabled) {
-            this.events.click.dispatch(this);
+            this.dispatchEvent('click');
         }
         return this;
     };

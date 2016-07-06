@@ -43,7 +43,7 @@
                             var new_status = this.mainview.buildStateData();
                             Wirecloud.HistoryManager.pushState(new_status);
                         }
-                        Wirecloud.trigger('viewcontextchanged');
+                        Wirecloud.dispatchEvent('viewcontextchanged');
                     }.bind(this));
 
                     var select = new StyledElements.Select({'class': 'versions'});
@@ -145,7 +145,7 @@
                 context: {init: true}
             });
         }
-        Wirecloud.trigger('viewcontextchanged');
+        Wirecloud.dispatchEvent('viewcontextchanged');
     };
 
     Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView = ResourceDetailsView;

@@ -381,7 +381,7 @@
             this.wrapperElement.classList.remove('panel-default');
             if (!this.wrapperElement.classList.contains('wc-widget-highlight')) {
                 this.wrapperElement.classList.add('wc-widget-highlight');
-                this.trigger('highlight');
+                this.dispatchEvent('highlight');
             } else {
                 // Reset highlighting animation
                 this.wrapperElement.classList.remove('wc-widget-highlight');
@@ -396,7 +396,7 @@
             this.wrapperElement.classList.add('panel-default');
             if (this.wrapperElement.classList.contains('wc-widget-highlight')) {
                 this.wrapperElement.classList.remove('wc-widget-highlight');
-                this.trigger('unhighlight');
+                this.dispatchEvent('unhighlight');
             }
         },
 
@@ -614,7 +614,7 @@
     };
 
     var on_remove = function on_remove() {
-        this.trigger('remove');
+        this.dispatchEvent('remove');
     };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

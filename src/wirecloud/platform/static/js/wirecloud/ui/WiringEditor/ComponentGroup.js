@@ -52,7 +52,7 @@
             iconClass: 'fa fa-plus'
         });
         button.addEventListener('click', function () {
-            this.trigger('btncreate.click', button);
+            this.dispatchEvent('btncreate.click', button);
         }.bind(this));
 
         this.descriptionElement = document.createElement('div');

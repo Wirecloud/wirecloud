@@ -155,7 +155,7 @@
     Tab.prototype.close = function close() {
         this.notebook.removeTab(this.tabId);
 
-        return this.trigger("close");
+        return this.dispatchEvent("close");
     };
 
     /**

@@ -29,15 +29,15 @@
     var TextArea, oninput, onfocus, onblur;
 
     oninput = function oninput() {
-        this.events.change.dispatch(this);
+        this.dispatchEvent('change');
     };
 
     onfocus = function onfocus() {
-        this.events.focus.dispatch(this);
+        this.dispatchEvent('focus');
     };
 
     onblur = function onblur() {
-        this.events.blur.dispatch(this);
+        this.dispatchEvent('blur');
     };
 
     /**

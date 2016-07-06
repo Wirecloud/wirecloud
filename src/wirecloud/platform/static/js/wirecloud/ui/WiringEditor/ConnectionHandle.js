@@ -227,7 +227,7 @@
             function ondragstart(draggable, context) {
                 context.initialPosition = context.handle.relativePosition;
                 context.handle.auto = false;
-                context.handle.trigger('dragstart');
+                context.handle.dispatchEvent('dragstart');
             },
             function ondrag(event, draggable, context, offsetX, offsetY) {
                 var newPosition = {
@@ -237,10 +237,10 @@
 
                 context.handle
                     .position(newPosition)
-                    .trigger('drag', newPosition);
+                    .dispatchEvent('drag', newPosition);
             },
             function ondragend(draggable, context) {
-                context.handle.trigger('dragend');
+                context.handle.dispatchEvent('dragend');
             },
             function canDrag() {return true;}
         );

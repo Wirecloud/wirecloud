@@ -216,7 +216,7 @@
 
                 if (!this.hidden) {
                     this.hidden = true;
-                    this.events.hide.trigger(this);
+                    this.dispatchEvent('hide');
                 }
 
                 return this;
@@ -322,7 +322,7 @@
 
                 if (this.hidden) {
                     this.hidden = false;
-                    this.events.show.trigger(this);
+                    this.dispatchEvent('show');
                 }
 
                 return this;

@@ -180,7 +180,7 @@
         }
         this.popupMenu.show(this.textField.getBoundingClientRect());
 
-        return this.trigger('show', data);
+        return this.dispatchEvent('show', data);
     };
 
     var popupMenu_onselect = function popupMenu_onselect(popupMenu, menuItem) {
@@ -189,7 +189,7 @@
         this.textField.focus();
 
         menuItem.context = menuItem.context.context;
-        this.trigger('select', menuItem);
+        this.dispatchEvent('select', menuItem);
     };
 
     var createMenuItem = function createMenuItem(data) {

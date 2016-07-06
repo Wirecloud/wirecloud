@@ -123,7 +123,7 @@
             priv.request.abort();
         }
         priv.list.disable();
-        this.trigger('search');
+        this.dispatchEvent('search');
         priv.request = Wirecloud.LocalCatalogue.search({
             scope: this.search_scope,
             search_criteria: keywords,

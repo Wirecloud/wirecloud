@@ -73,7 +73,7 @@
         this.inputElement.addEventListener('change',
                                     function () {
                                         if (this.enabled) {
-                                            this.events.change.dispatch(this);
+                                            this.dispatchEvent('change');
                                         }
                                     }.bind(this),
                                     true);

@@ -79,7 +79,7 @@
         this.inputElement.value = newValue;
 
         if ('change' in this.events && newValue !== oldValue) {
-            this.trigger('change');
+            this.dispatchEvent('change');
         }
 
         return this;

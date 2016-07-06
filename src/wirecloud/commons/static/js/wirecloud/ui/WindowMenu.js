@@ -38,6 +38,7 @@
             insert: insert.bind(this)
         });
 
+        StyledElements.ObjectWithEvents.call(this, events || []);
         this._closeListener = this._closeListener.bind(this);
 
         ui_fragment = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/base'], {

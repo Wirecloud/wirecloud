@@ -74,7 +74,7 @@
         this.viewsByName.search.init();
 
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
-            Wirecloud.trigger('viewcontextchanged');
+            Wirecloud.dispatchEvent('viewcontextchanged');
         }.bind(this));
 
         this.addEventListener('show', this.refresh_if_needed.bind(this));

@@ -926,7 +926,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 selectedComponent.active = true;
 
                 if (component.type !== type || component.id != id) {
-                    selectedComponent.trigger('change', {position: selectedComponent.position()});
+                    selectedComponent.dispatchEvent('change', {position: selectedComponent.position()});
                 }
             }
         }

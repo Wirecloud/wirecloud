@@ -50,17 +50,17 @@
         }
         this.name_preview.textContent = filename;
         this.name_preview.setAttribute('title', filename);
-        this.events.change.dispatch(this);
+        this.dispatchEvent('change');
     };
 
     onfocus = function onfocus() {
         this.wrapperElement.classList.add('focus');
-        this.events.focus.dispatch(this);
+        this.dispatchEvent('focus');
     };
 
     onblur = function onblur() {
         this.wrapperElement.classList.remove('focus');
-        this.events.blur.dispatch(this);
+        this.dispatchEvent('blur');
     };
 
     /**

@@ -239,7 +239,7 @@
                     on_unload.call(this);
                 }
 
-                this.trigger('remove');
+                this.dispatchEvent('remove');
                 resolve(this);
             }.bind(this));
         },
@@ -388,7 +388,7 @@
             this.load();
         }
 
-        this.trigger('change', ['meta']);
+        this.dispatchEvent('change', ['meta']);
     };
 
     // =========================================================================
@@ -415,7 +415,7 @@
             });
         }
 
-        this.trigger('load');
+        this.dispatchEvent('load');
 
         this.pending_events.forEach(send_pending_event, this);
         this.pending_events = [];
@@ -439,7 +439,7 @@
         });
         this.logManager.newCycle();
 
-        this.trigger('unload');
+        this.dispatchEvent('unload');
     };
 
 })(Wirecloud.wiring, StyledElements, StyledElements.Utils);

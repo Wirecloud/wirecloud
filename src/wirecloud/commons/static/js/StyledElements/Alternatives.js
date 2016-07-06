@@ -299,7 +299,7 @@
     var build_transit_promise = function build_transit_promise(effect, outAlternative, inAlternative, context) {
         var p = new Promise(function (fulfill) {
             // Throw an event notifying we are going to change the visible alternative
-            context.events.preTransition.dispatch(context, outAlternative, inAlternative);
+            context.dispatchEvent('preTransition', outAlternative, inAlternative);
             context.wrapperElement.classList.add('se-on-transition');
             fulfill();
         });
@@ -356,7 +356,7 @@
             privates.get(context).visibleAlt = inAlternative;
             context.wrapperElement.classList.remove('se-on-transition');
             // Throw an event notifying we have changed the visible alternative
-            context.events.postTransition.dispatch(context, outAlternative, inAlternative);
+            context.dispatchEvent('postTransition', outAlternative, inAlternative);
         });
     };
 

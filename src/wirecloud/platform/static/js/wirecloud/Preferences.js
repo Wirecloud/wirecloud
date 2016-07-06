@@ -31,7 +31,7 @@
      */
     var onSuccessSavePreferences = function onSuccessSavePreferences(options) {
         utils.callCallback(options.onSuccess, this.preferences);
-        this.preferences.events['post-commit'].dispatch(this.preferences, this.modifiedValues);
+        this.preferences.dispatchEvent('post-commit', this.modifiedValues);
     };
 
     /**
@@ -135,7 +135,7 @@
             newEffectiveValues[name] = preference.getEffectiveValue();
         }
 
-        this.events['pre-commit'].dispatch(this, newEffectiveValues);
+        this.dispatchEvent('pre-commit', newEffectiveValues);
         persist.call(this, modifiedValues, options);
     };
 
@@ -151,7 +151,7 @@
         }
 
         if (propagate) {
-            this.events['pre-commit'].dispatch(this, valuesToPropagate);
+            this.dispatchEvent('pre-commit', valuesToPropagate);
         }
     };
 

@@ -114,7 +114,7 @@
             var component = new ns.WiringEditor.Component(wiringComponent);
 
             component.addEventListener('click', function () {
-                this.trigger('add', component);
+                this.dispatchEvent('add', component);
             }.bind(this));
 
             this.components[type][group_id][component.id] = component;
@@ -174,7 +174,7 @@
     };
 
     var createcomponent_onclick = function createcomponent_onclick(group, button) {
-        this.trigger('create', group, button);
+        this.dispatchEvent('create', group, button);
     };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

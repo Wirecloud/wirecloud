@@ -44,7 +44,7 @@
         this.buttons[this.buttons.length] = button;
         button.addEventListener('change',
                                 function () {
-                                    this.events.change.dispatch(this);
+                                    this.dispatchEvent('change');
                                 }.bind(this));
 
         return this;

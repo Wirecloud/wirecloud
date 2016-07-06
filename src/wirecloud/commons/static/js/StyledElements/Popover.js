@@ -139,7 +139,7 @@
 
         searchBestPosition.call(this, refPosition, this.options.placement);
         this.element.classList.add('in');
-        this.trigger('show');
+        this.dispatchEvent('show');
 
         return this;
     };
@@ -203,7 +203,7 @@
                 Wirecloud.UserInterfaceManager._unregisterPopup(this);
             }
             document.removeEventListener('click', this._disableCallback, true);
-            this.trigger('hide');
+            this.dispatchEvent('hide');
         }
     };
 

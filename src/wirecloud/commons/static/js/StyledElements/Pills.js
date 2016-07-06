@@ -76,7 +76,7 @@
         this.activePill = id;
         this.pills[this.activePill].classList.add('active');
 
-        this.events.change.dispatch(this, id);
+        this.dispatchEvent('change', id);
     };
 
     StyledElements.Pills = Pills;
