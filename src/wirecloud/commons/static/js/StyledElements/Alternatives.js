@@ -19,13 +19,13 @@
  *
  */
 
-/* globals Map, Promise, StyledElements, WeakMap */
+/* globals StyledElements */
 
 (function (utils) {
 
     "use strict";
 
-    var privates = window.WeakMap ? new WeakMap() : new Map();
+    var privates = new WeakMap();
 
     /**
      * El componente Styled Alternatives permite guardar una colección de

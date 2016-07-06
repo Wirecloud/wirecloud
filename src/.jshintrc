@@ -13,7 +13,8 @@
     "trailing": true,
     "white": true,
     "globals": {
-        "URL": false,
+        "Promise": true,
+        "URL": true,
         "WeakMap": true
     }
 }

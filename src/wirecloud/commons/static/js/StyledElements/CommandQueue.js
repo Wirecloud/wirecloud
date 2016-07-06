@@ -19,7 +19,7 @@
  *
  */
 
-/* globals Promise, StyledElements */
+/* globals StyledElements */
 
 (function (utils) {
 

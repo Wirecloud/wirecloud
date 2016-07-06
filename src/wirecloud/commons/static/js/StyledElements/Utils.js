@@ -19,7 +19,7 @@
  *
  */
 
-/* globals Promise, Symbol, StyledElements */
+/* globals Symbol, StyledElements */
 
 // TODO
 if (window.StyledElements == null) {

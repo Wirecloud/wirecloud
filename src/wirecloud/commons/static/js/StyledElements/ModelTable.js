@@ -19,7 +19,7 @@
  *
  */
 
-/* globals moment, StyledElements, WeakMap */
+/* globals moment, StyledElements */
 
 (function (utils) {
 
