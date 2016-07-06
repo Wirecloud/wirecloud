@@ -42,8 +42,8 @@
                     {test: value}
                 ];
                 table.source.changeElements(data);
-
-                expect(table.columnsCells[0][0].innerHTML).toBe(expected);
+                var cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
+                expect(cell.innerHTML).toBe(expected);
             });
         };
 
@@ -55,22 +55,25 @@
 
             it(label, function () {
 
-                var data, observed;
+                var cell, column, data, observed;
 
                 // Create and push the data
                 data = values.map(function (value) {return {test: value};});
                 table.source.changeElements(data);
 
                 // Check if data was sorted correctly
-                observed = table.columnsCells[0].map(function (cell) {return cell.innerHTML;});
+                column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+                observed = Array.prototype.map.call(column, function (cell) {return cell.innerHTML;});
                 expect(observed).toEqual(expected);
 
                 // Change the sort order
-                table.pSortByColumn(0, true);
+                cell = table.wrapperElement.querySelector(".se-model-table-headrow .se-model-table-cell");
+                cell.click();
                 expected.reverse();
 
                 // Check if data was sorted correctly
-                observed = table.columnsCells[0].map(function (cell) {return cell.innerHTML;});
+                column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+                observed = Array.prototype.map.call(column, function (cell) {return cell.innerHTML;});
                 expect(observed).toEqual(expected);
 
             });
@@ -133,9 +136,36 @@
                 {test: "world"}
             ];
             table.source.changeElements(data);
-            table.columnsCells[0].forEach(function (cell) {
-                expect(cell.classList.contains('my-css-class')).toBeTruthy();
-            });
+
+            var column = table.wrapperElement.querySelectorAll(".my-css-class");
+            expect(column.length).toBe(3); // 1 header + 2 rows
+        });
+
+        it("can be created with custom cell width", function () {
+            var columns = [
+                {field: "test", type: "string", width: "100px"}
+            ];
+
+            var options = {
+                initialSortColumn: "test2"
+            };
+
+            table = new StyledElements.ModelTable(columns, options);
+
+            // Create and push the data
+            var data = [
+                {test: "Hello"},
+                {test: "world"}
+            ];
+            table.source.changeElements(data);
+
+            var column = table.wrapperElement.querySelectorAll(".se-model-table-cell");
+
+            expect(column.length).toBe(3);
+            for (var i = 0; i < column.length; i++) {
+                expect(column[i].style.width).toBe("100px");
+            }
+
         });
 
         it("can be created using the initialSortColumn option", function () {
@@ -160,7 +190,8 @@
             table.source.changeElements(data);
 
             // Check if data was sorted correctly
-            var observed = table.columnsCells[0].map(function (cell) {return cell.innerHTML;});
+            var column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+            var observed = Array.prototype.map.call(column, function (cell) {return cell.innerHTML;});
             expect(observed).toEqual(["b", "a"]);
         });
 
@@ -180,12 +211,12 @@
             table.source.changeElements(data);
             table.source.addElement({test: "Bye", test2: "5"});
 
-            var cols = table.columnsCells;
+            var cols = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell");
 
             // Check data was added
-            for (var i = 0; i < cols.length; i++) {
-                for (var j = 0; j < cols[i].length; j++) {
-                    expect(table.columnsCells[i][j].innerHTML).toBe(data[j][keys[i]]);
+            for (var i = 0; i < 2; i++) { // 2 columns
+                for (var j = 0; j < 2; j++) { // 2 Rows
+                    expect(cols[j + 2 * i].innerHTML).toBe(data[i][keys[j]]);
                 }
             }
         });
@@ -297,19 +328,21 @@
                 ];
 
                 table.source.changeElements(data);
+                var col = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
 
-                expect(table.columnsCells[0][0].innerHTML).toBe(initial_expected);
+                expect(col.innerHTML).toBe(initial_expected);
 
                 jasmine.clock().tick(61000);
 
-                expect(table.columnsCells[0][0].innerHTML).toBe(expected);
+                expect(col.innerHTML).toBe(expected);
 
             });
         });
 
         describe("should handle element selection", function () {
-
+            var expected, observed, rows;
             beforeEach(function () {
+
                 var columns = [
                     {field: "id", type: "number"},
                     {field: "test", type: "number"}
@@ -330,45 +363,108 @@
             it ("should allow simple selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.selection).toEqual([1]);
-                // Check model table highlited the correct row
-                for (var key in table._current_elements) {
-                    var highlited = table._current_elements[key].row.classList.contains('highlight');
-                    expect(highlited).toBe(key === "1");
-                }
+
+                // Check if css are applied properly
+                expected = [false, true, false];
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+
+                expect(observed).toEqual(observed);
             });
 
             it ("should allow multiple selections", function () {
                 expect(table.select([1, 2])).toBe(table);
                 expect(table.selection).toEqual([1, 2]);
-                // Check model table highlited the correct rows
-                for (var key in table._current_elements) {
-                    var highlited = table._current_elements[key].row.classList.contains('highlight');
-                    expect(highlited).toBe(["1", "2"].indexOf(key) !== -1);
-                }
+
+                // Check if css are applied properly
+                expected = [false, true, true];
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+
+                expect(observed).toEqual(observed);
             });
 
             it ("should allow cleaning selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.select()).toBe(table);
                 expect(table.selection).toEqual([]);
-                // Check model table unhighlight the previously selected rows
-                for (var key in table._current_elements) {
-                    expect(table._current_elements[key].row.classList.contains('highlight')).toBeFalsy();
-                }
+
+                // Check if css are applied properly
+                expected = [false, false, false];
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                expect(observed).toEqual(observed);
             });
 
             it ("should ignore not matching ids", function () {
                 expect(table.select(4)).toBe(table);
                 expect(table.selection).toEqual([4]);
-                // Check model table doesn't highlight any row
-                for (var key in table._current_elements) {
-                    expect(table._current_elements[key].row.classList.contains('highlight')).toBeFalsy();
-                }
-            });
 
+                // Check if css are applied properly
+                expected = [false, false, false];
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                expect(observed).toEqual(observed);
+            });
+        });
+
+        it("Should handle row's content builder", function () {
+            var rows;
+            var contentBuilder = function contentBuilder (el) {
+                return "hello " + el.test;
+            };
+
+            var columns = [
+                {field: "test", "label": "TestName", sortable: false, type: "number", contentBuilder: contentBuilder}
+            ];
+            var data = [
+                {test: 0},
+                {test: 1},
+                {test: 2}
+            ];
+
+            // Create a new table
+            table = new StyledElements.ModelTable(columns, {});
+            table.source.changeElements(data);
+
+            rows = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell");
+            for (var i = 0; i < rows.length; i++) {
+                expect(rows[i].innerHTML).toBe("hello " + i);
+            }
+        });
+
+        it("Should handle state functions", function () {
+            var rows;
+            var stateFunc = function stateFunc (el) {
+                if (el.test >= 2) {
+                    return "success";
+                } else {
+                    return "warning";
+                }
+            };
+
+            var columns = [
+                {field: "test", "label": "TestName", sortable: false, type: "number"}
+            ];
+            var data = [
+                {test: 0},
+                {test: 1},
+                {test: 2}
+            ];
+
+            // Create a new table
+            table = new StyledElements.ModelTable(columns, {stateFunc: stateFunc});
+            table.source.changeElements(data);
+
+            rows = table.wrapperElement.querySelectorAll(".se-model-table-row-success");
+            expect(rows.length).toBe(1);
+
+            rows = table.wrapperElement.querySelectorAll(".se-model-table-row-warning");
+            expect(rows.length).toBe(2);
         });
 
         it("Model table should be able to get reset", function () {
+            var cell;
             var columns = [
                 {field: "test", "label": "TestName", sortable: false, type: "number"}
             ];
@@ -382,15 +478,18 @@
             ];
             table.source.changeElements(data);
 
-            expect(table.columnsCells[0][0].innerHTML).toBe("hello world");
+            cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
+            expect(cell.innerHTML).toBe("hello world");
 
             // Wipe the data
             table.source.changeElements();
 
-            expect(table.columnsCells[0].length).toBe(0);
+            cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
+            expect(cell).toBe(null);
         });
 
         it("Destroy model table", function () {
+            var cell;
             var columns = [
                 {field: "test", "label": "TestName", sortable: false, type: "number"}
             ];
@@ -405,14 +504,14 @@
             ];
             table.source.changeElements(data);
 
-            expect(table.columnsCells[0][0].innerHTML).toBe("hello world");
+            cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
+            expect(cell.innerHTML).toBe("hello world");
 
             // Wipe the data
             table.destroy();
 
-            expect(table.columnsCells[0].length).toBe(0);
-            expect(table.layout).toBe(null);
-            expect(table.source).toBe(null);
+            cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
+            expect(cell).toBe(null);
         });
     });
 
