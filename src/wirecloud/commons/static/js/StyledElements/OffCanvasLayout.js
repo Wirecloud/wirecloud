@@ -65,7 +65,7 @@
         this.content.appendTo(this.wrapperElement);
     };
 
-    utils.inherit(se.OffCanvasLayout, se.StyledElement, {
+    utils.inherit(se.OffCanvasLayout, se.StyledElement, /** @lends StyledElements.OffCanvasLayout.prototype */ {
 
         /**
          * @param {StyledElements.StyledElement} element

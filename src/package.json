@@ -6,6 +6,7 @@
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-uglify": "~0.9.1",
     "grunt-jscs": "^2.8.0",
+    "grunt-jsdoc": "^2.1.0",
     "grunt-karma": "^2.0.0",
     "karma": "^1.1.0",
     "karma-chrome-launcher": "^1.0.1",

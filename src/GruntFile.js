@@ -95,14 +95,6 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        uglify: {
-            my_target: {
-                files: {
-                    'dist/StyledElements.min.js': styledElementsFiles
-                }
-            }
-        },
-
         karma: {
             options: {
                 files: dependencies.concat(styledElementsFiles).concat(['js_tests/*Spec.js']),
@@ -141,6 +133,16 @@ module.exports = function (grunt) {
             }
         },
 
+        jsdoc: {
+            lib: {
+                src: styledElementsFiles,
+                options: {
+                    destination: 'dist/docs/StyledElements',
+                    configure: '.jsdocrc'
+                }
+            }
+        },
+
         jshint: {
             options: {
                 jshintrc: true
@@ -155,6 +157,14 @@ module.exports = function (grunt) {
                     src: 'js_tests/*Spec.js'
                 }
             }
+        },
+
+        uglify: {
+            my_target: {
+                files: {
+                    'dist/StyledElements.min.js': styledElementsFiles
+                }
+            }
         }
 
     });
@@ -163,6 +173,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks("grunt-jscs");
+    grunt.loadNpmTasks("grunt-jsdoc");
 
     grunt.registerTask('test', [
         'jshint',
@@ -172,6 +183,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', [
         'test',
-        'uglify'
+        'uglify',
+        'jsdoc'
     ]);
 };

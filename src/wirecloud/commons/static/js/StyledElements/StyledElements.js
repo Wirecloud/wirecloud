@@ -483,11 +483,13 @@
             /**
              * Repaints this StyledElement.
              *
-             * @param {Boolean} temporal `true` if the repaint should be
+             * @param {Boolean} [temporal] `true` if the repaint should be
              * handled as temporal repaint that will be followed, in a short
              * period of time, by more calls to this method. In that case, the
              * sequence should end with a call to this method using `false`
              * for the temporal parameter. `false` by default.
+             * @returns {StyledElements.StyledElement}
+             *      The instance on which the member is called.
              */
             repaint: function repaint(temporal) {return this;},
 
