@@ -74,6 +74,10 @@
         if (!('Promise' in window)) {
             throw new Error('Missing Promise support');
         }
+
+        if (!('WeakMap' in window)) {
+            throw new Error('Missing WeakMap support');
+        }
     };
 
     Wirecloud.check_basic_requirements = check_basic_requirements;
