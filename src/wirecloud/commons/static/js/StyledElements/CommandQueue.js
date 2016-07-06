@@ -25,14 +25,18 @@
 
     "use strict";
 
+    var privates = new WeakMap();
+
     /**
      * Creates an asyncrhonous FIFO queue.
      */
     var CommandQueue = function CommandQueue(context, callback, stepFunc) {
-        this[_attrs.elements] = [];
-        this[_attrs.running] = false;
-        this[_attrs.step] = 0;
-        this[_attrs.stepTimes] = null;
+        privates.set(this, {
+            elements: [],
+            running: false,
+            step: 0,
+            stepTimes: null
+        });
 
         Object.defineProperties(this, {
             callback: {
@@ -60,30 +64,31 @@
             return;
         }
 
-        this[_attrs.elements].push(command);
+        var priv = privates.get(this);
+        priv.elements.push(command);
 
-        if (!this.running) {
-            this[_attrs.running] = true;
+        if (!priv.running) {
+            priv.running = true;
             doInit.call(this);
         }
     };
 
     var doStep = function doStep() {
-        var cont;
+        var cont, priv = privates.get(this);
 
         try {
-            cont = this.stepFunc(this[_attrs.step], this.context);
+            cont = this.stepFunc(priv.step, this.context);
         } catch (e) {
             doInit.call(this);
         }
 
         if (cont) {
-            var timeDiff = this[_attrs.stepTimes][this[_attrs.step]] - (new Date()).getTime();
+            var timeDiff = priv.stepTimes[priv.step] - (new Date()).getTime();
             if (timeDiff < 0) {
                 timeDiff = 0;
             }
 
-            this[_attrs.step]++;
+            priv.step++;
             setTimeout(doStep.bind(this), timeDiff);
         } else {
             doInit.call(this);
@@ -91,21 +96,21 @@
     };
 
     var doInit = function doInit() {
-        var command, action, timeDiff;
+        var command, action, timeDiff, priv = privates.get(this);
 
         do {
-            command = this[_attrs.elements].shift();
+            command = priv.elements.shift();
         } while (command !== undefined && !(action = this.callback(this.context, command)));
 
         if (command === undefined) {
-            this[_attrs.running] = false;
+            priv.running = false;
         } else if (action instanceof Promise) {
             action.then(doInit.bind(this), doInit.bind(this));
         } else {
-            this[_attrs.step] = 0;
-            this[_attrs.stepTimes] = action;
+            priv.step = 0;
+            priv.stepTimes = action;
 
-            timeDiff = this[_attrs.stepTimes][this[_attrs.step]] - (new Date()).getTime();
+            timeDiff = priv.stepTimes[priv.step] - (new Date()).getTime();
             if (timeDiff < 0) {
                 timeDiff = 0;
             }
@@ -114,10 +119,8 @@
     };
 
     var running_getter = function running_getter() {
-        return this[_attrs.running];
+        return privates.get(this).running;
     };
-
-    var _attrs = utils.privateKeys("callback", "elements", "running", "step", "stepTimes");
 
     StyledElements.CommandQueue = CommandQueue;
 
