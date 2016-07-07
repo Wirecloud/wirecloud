@@ -35,13 +35,15 @@ from wirecloud.platform.widget.views import serve_showcase_media
 __test__ = False
 
 
-@override_settings(FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
+@override_settings(FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=(), COMPRESS_ENABLED=False, COMPRESS_OFFLINE=False, DEBUG=False)
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
+@patch('wirecloud.platform.widget.utils._widget_api_files', new=None)
 class CodeTransformationTestCase(TestCase):
 
     tags = ('wirecloud-widget-module', 'wirecloud-widget-code-transformation', 'wirecloud-noselenium')
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
+    COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\.js')
 
     @classmethod
     def setUpClass(cls):
@@ -122,6 +124,14 @@ class CodeTransformationTestCase(TestCase):
         initial_code = self.read_file('test-data/xhtml2-initial.html')
         final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
         expected_code = self.read_file('test-data/xhtml2-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    @override_settings(COMPRESS_ENABLED=True)
+    def test_basic_xhtml_compressed(self):
+        initial_code = self.read_file('test-data/xhtml2-initial.html')
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.COMPRESS_HASH_RE.sub(b'/widgetapi.js', final_code)
+        expected_code = self.read_file('test-data/xhtml2-compressed-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_xhtml_iso8859_15(self):

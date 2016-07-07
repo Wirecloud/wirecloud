@@ -20,11 +20,11 @@
 from __future__ import unicode_literals
 
 from io import BytesIO
-from lxml import etree
 
 from django.conf import settings
 from django.db.models import Q
 from django.template import Context, Template
+from lxml import etree
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.http import ERROR_FORMATTERS, get_absolute_static_url
@@ -110,18 +110,20 @@ def xpath(tree, query, xmlns):
 
 
 _widget_platform_style = {}
+
+
 def get_widget_platform_style(theme):
     global _widget_platform_style
 
     if theme not in _widget_platform_style or settings.DEBUG is True:
         from wirecloud.platform.core.plugins import BASE_CSS, STYLED_ELEMENTS_CSS
-        code = '{% load compress %}{% compress css %}{% load static from staticfiles %}\n'
+        code = '{% load compress %}{% load static from staticfiles %}{% compress css %}\n'
 
         for cssfile in ('css/gadget.scss',) + BASE_CSS + STYLED_ELEMENTS_CSS:
             css_type = 'text/x-scss' if cssfile.endswith('.scss') else 'text/css'
             code += '    <link rel="stylesheet" href="{{% static "theme/{}/{}" %}}" context="widget" type="{}" />\n'.format(theme, cssfile, css_type)
 
-        code+= '{% endcompress %}'
+        code += '{% endcompress %}'
 
         result = Template(code).render(Context({}))
         doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
@@ -131,6 +133,29 @@ def get_widget_platform_style(theme):
         _widget_platform_style[theme] = tuple(files)
 
     return _widget_platform_style[theme]
+
+
+_widget_api_files = None
+
+
+def get_widget_api_files(request):
+    global _widget_api_files
+
+    if _widget_api_files is None or settings.DEBUG is True:
+        code = '''{% load compress %}{% load static from staticfiles %}{% compress js %}
+        <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPIBootstrap.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudWidgetAPI.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPICommon.js" %}"></script>
+        {% endcompress %}'''
+
+        result = Template(code).render(Context({}))
+        doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
+
+        files = [script.get('src') for script in doc.getroot()]
+        files.reverse()
+        _widget_api_files = tuple(files)
+
+    return [get_absolute_static_url(file, request=request, versioned=True) for file in _widget_api_files]
 
 
 def fix_widget_code(widget_code, content_type, request, encoding, use_platform_style, requirements, mode, theme):
@@ -184,9 +209,8 @@ def fix_widget_code(widget_code, content_type, request, encoding, use_platform_s
     files.reverse()
     for file in files:
         head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request, versioned=True)))
-    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPICommon.js', request=request, versioned=True)))
-    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudWidgetAPI.js', request=request, versioned=True)))
-    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIBootstrap.js', request=request, versioned=True)))
+    for file in get_widget_api_files(request):
+        head_element.insert(0, etree.Element('script', type="text/javascript", src=file))
 
     if use_platform_style:
         for file in get_widget_platform_style(theme):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,7 +19,10 @@
 
 from __future__ import unicode_literals
 
-from django.template import loader, Context
+from io import BytesIO
+
+from django.template import loader, Context, Template
+from lxml import etree
 
 from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.platform.plugins import get_operator_api_extensions
@@ -62,14 +65,34 @@ def get_operator_cache_key(operator, domain, mode):
     return '_operator_xhtml/%s/%s/%s?mode=%s' % (operator.cache_version, domain, operator.id, mode)
 
 
+_operator_api_files = None
+
+
+def get_operator_api_files(request):
+    global _operator_api_files
+
+    if _operator_api_files is None or settings.DEBUG is True:
+        code = '''{% load compress %}{% load static from staticfiles %}{% compress js %}
+        <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPIBootstrap.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudOperatorAPI.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPICommon.js" %}"></script>
+        {% endcompress %}'''
+
+        result = Template(code).render(Context({}))
+        doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
+
+        files = [script.get('src') for script in doc.getroot()]
+        _operator_api_files = tuple(files)
+
+    return [get_absolute_static_url(file, request=request, versioned=True) for file in _operator_api_files]
+
+
+
 def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode):
 
-    api_bootstrap = get_absolute_static_url('js/WirecloudAPI/WirecloudAPIBootstrap.js', request=request, versioned=True)
-    api_url = get_absolute_static_url('js/WirecloudAPI/WirecloudOperatorAPI.js', request=request, versioned=True)
-    api_common_url = get_absolute_static_url('js/WirecloudAPI/WirecloudAPICommon.js', request=request, versioned=True)
     api_closure_url = get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request, versioned=True)
-    api_js_files = [get_absolute_static_url(url, request=request, versioned=True) for url in get_operator_api_extensions(mode, requirements)]
-    api_js = [api_bootstrap, api_url, api_common_url] + api_js_files + [api_closure_url]
+    extra_api_js_files = [get_absolute_static_url(url, request=request, versioned=True) for url in get_operator_api_extensions(mode, requirements)]
+    api_js = get_operator_api_files(request) + extra_api_js_files + [api_closure_url]
 
     t = loader.get_template('wirecloud/operator_xhtml.html')
     c = Context({'base_url': base_url, 'js_files': api_js + js_files})

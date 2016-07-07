@@ -26,6 +26,7 @@ import re
 import time
 import unittest
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.test import Client, override_settings
@@ -578,12 +579,15 @@ class WiringTestCase(WirecloudTestCase):
 
 
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
-@override_settings(FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
+@patch('wirecloud.platform.wiring.utils._operator_api_files', new=None)
+@override_settings(DEBUG=False, FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
 class OperatorCodeEntryTestCase(WirecloudTestCase):
 
-    XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium', 'wirecloud-operator-code-transformation')
+
+    XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
+    COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\.js')
 
     @classmethod
     def setUpClass(cls):
@@ -604,7 +608,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 
         return contents
 
-    def test_operator_code_entry_get(self):
+    def check_operator_code_entry_get(self):
 
         client = Client()
 
@@ -623,8 +627,20 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/xhtml+xml')
         final_code = self.XML_NORMALIZATION_RE.sub(b'><', response.content)
 
-        expected_code = self.read_file('test-data/xhtml1-expected.xhtml')
+        if settings.COMPRESS_ENABLED:
+            final_code = self.COMPRESS_HASH_RE.sub(b'/operatorapi.js', final_code)
+            expected_code = self.read_file('test-data/xhtml1-compressed-expected.xhtml')
+        else:
+            expected_code = self.read_file('test-data/xhtml1-expected.xhtml')
         self.assertEqual(final_code, expected_code)
+
+    @override_settings(COMPRESS_ENABLED=False)
+    def test_operator_code_entry_get(self):
+        self.check_operator_code_entry_get()
+
+    @override_settings(COMPRESS_ENABLED=True)
+    def test_operator_code_entry_get_compressed(self):
+        self.check_operator_code_entry_get()
 
 
 @wirecloud_selenium_test_case
