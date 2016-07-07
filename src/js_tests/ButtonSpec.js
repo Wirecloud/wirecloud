@@ -20,7 +20,7 @@
  */
 
 /* jshint jasmine:true */
-/* globals StyledElements */
+/* globals FocusEvent, KeyboardEvent, MouseEvent, StyledElements */
 
 (function () {
 
@@ -42,28 +42,31 @@
             }
         });
 
-        it("can be created without passing any option", function () {
+        describe("new Button([options])", function () {
 
-            var element = new StyledElements.Button();
-            expect(element.wrapperElement.textContent).toBe("");
-            expect(element.state).toBe("");
-            expect(element.depth).toBe(null);
-            expect(element.wrapperElement.className).toBe("se-btn");
+            it("can be created without passing any option", function () {
+                var element = new StyledElements.Button();
+                expect(element.wrapperElement.textContent).toBe("");
+                expect(element.state).toBe("");
+                expect(element.depth).toBe(null);
+                expect(element.wrapperElement.className).toBe("se-btn");
+            });
 
-        });
+            it("can be created only with a text label", function () {
+                var element = new StyledElements.Button({text: "hello world!!"});
+                expect(element.wrapperElement.textContent).toBe("hello world!!");
+            });
 
-        it("can be created only with a text label", function () {
+            it("should support the id option", function () {
+                var element = new StyledElements.Button({id: "my-button"});
+                expect(element.wrapperElement.getAttribute('id')).toBe("my-button");
+            });
 
-            var element = new StyledElements.Button({text: "hello world!!"});
-            expect(element.wrapperElement.textContent).toBe("hello world!!");
-
-        });
-
-        it("should handle initial depth", function () {
-
-            var element = new StyledElements.Button({text: "hello world!!", depth: 2});
-            expect(element.depth).toBe(2);
-            expect(element.hasClassName('z-depth-2')).toBeTruthy();
+            it("should handle initial depth", function () {
+                var element = new StyledElements.Button({text: "hello world!!", depth: 2});
+                expect(element.depth).toBe(2);
+                expect(element.hasClassName('z-depth-2')).toBeTruthy();
+            });
 
         });
 
@@ -72,6 +75,14 @@
             var element = new StyledElements.Button({text: "hello world!!", depth: 2});
             element.depth = 1;
             expect(element.depth).toBe(1);
+
+        });
+
+        it("should handle depth changes with the same value", function () {
+
+            var element = new StyledElements.Button({text: "hello world!!", depth: 2});
+            element.depth = 2;
+            expect(element.depth).toBe(2);
 
         });
 
@@ -106,6 +117,14 @@
 
         });
 
+        it("should handle state changes with the same value", function () {
+
+            var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
+            element.state = "primary";
+            expect(element.state).toBe("primary");
+
+        });
+
         it("should handle state cleaning", function () {
 
             var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
@@ -122,18 +141,110 @@
 
         });
 
+        it("should trigger blur events", function (done) {
+
+            var element = new StyledElements.Button();
+            element.addEventListener('blur', function (button) {
+                expect(button).toBe(element);
+                done();
+            });
+            element.wrapperElement.dispatchEvent(new FocusEvent("focus"));
+            element.wrapperElement.dispatchEvent(new FocusEvent("blur"));
+
+        });
+
+        it("should trigger click events", function (done) {
+
+            var element = new StyledElements.Button();
+            element.addEventListener('click', function (button) {
+                expect(button).toBe(element);
+                done();
+            });
+            element.wrapperElement.dispatchEvent(new MouseEvent("click"));
+
+        });
+
+        it("should trigger focus events", function (done) {
+
+            var element = new StyledElements.Button();
+            element.addEventListener('focus', function (button) {
+                expect(button).toBe(element);
+                done();
+            });
+            element.wrapperElement.dispatchEvent(new FocusEvent("focus"));
+
+        });
+
+        it("should trigger click events when the user press the Enter key", function (done) {
+
+            var element = new StyledElements.Button();
+            element.addEventListener('click', function (button) {
+                expect(button).toBe(element);
+                done();
+            });
+            element.wrapperElement.dispatchEvent(new KeyboardEvent("keydown", {"key": "Enter"}));
+
+        });
+
+        it("should trigger click events when the user press the Space key", function (done) {
+
+            var element = new StyledElements.Button();
+            element.addEventListener('click', function (button) {
+                expect(button).toBe(element);
+                done();
+            });
+            element.wrapperElement.dispatchEvent(new KeyboardEvent("keydown", {"key": " "}));
+
+        });
+
+        it("should trigger click events when the user press the Space key", function () {
+
+            var element = new StyledElements.Button();
+            var listener = jasmine.createSpy();
+            element.addEventListener('click', listener);
+            element.wrapperElement.dispatchEvent(new KeyboardEvent("keydown", {"key": "a"}));
+            expect(listener).not.toHaveBeenCalled();
+
+        });
+
+        it("should trigger mouseenter events", function (done) {
+
+            var element = new StyledElements.Button();
+            element.addEventListener('mouseenter', function (button) {
+                expect(button).toBe(element);
+                done();
+            });
+            element.wrapperElement.dispatchEvent(new MouseEvent("mouseenter"));
+
+        });
+
+        it("should trigger mouseleave events", function (done) {
+
+            var element = new StyledElements.Button();
+            element.addEventListener('mouseleave', function (button) {
+                expect(button).toBe(element);
+                done();
+            });
+            element.wrapperElement.dispatchEvent(new MouseEvent("mouseleave"));
+
+        });
+
         describe("addIconClassName(classList)", function () {
 
             var element;
 
             beforeEach(function () {
-                // TODO addIconClassName should work also if the button is not
-                // initialized using the iconClass option
+                // Provide a default instance of Button for testing
                 element = new StyledElements.Button({iconClass: 'a'});
             });
 
             it("should do nothing when passing a empty string", function () {
                 expect(element.addIconClassName('  ')).toBe(element);
+                expect(element.icon.className).toBe("se-icon a");
+            });
+
+            it("should do nothing when passing a empty array", function () {
+                expect(element.addIconClassName([])).toBe(element);
                 expect(element.icon.className).toBe("se-icon a");
             });
 
@@ -152,8 +263,200 @@
                 expect(element.icon.className).toBe("se-icon a");
             });
 
+            it("should also work if the button was not created using the iconClass option", function () {
+                element = new StyledElements.Button();
+                expect(element.addIconClassName('fa fa-plus')).toBe(element);
+                expect(element.icon.className).toBe("se-icon fa fa-plus");
+            });
         });
 
+        describe("blur()", function () {
+            var element;
+
+            beforeEach(function () {
+                // Provide a default instance of Button for testing
+                element = new StyledElements.Button();
+            });
+
+            it("should trigger blur events", function () {
+                spyOn(element.wrapperElement, 'blur');
+                expect(element.blur()).toBe(element);
+                expect(element.wrapperElement.blur.calls.count()).toBe(1);
+            });
+
+        });
+
+        describe("click()", function () {
+            var element;
+
+            beforeEach(function () {
+                // Provide a default instance of Button for testing
+                element = new StyledElements.Button();
+                element.appendTo(dom);
+            });
+
+            it("should trigger click events if enabled", function () {
+                spyOn(element.events.click, 'dispatch');
+                expect(element.click()).toBe(element);
+                expect(element.events.click.dispatch.calls.count()).toBe(1);
+            });
+
+            it("shouldn't trigger click events if disabled", function () {
+                spyOn(element.events.click, 'dispatch');
+                element.disable();
+                expect(element.click()).toBe(element);
+                expect(element.events.click.dispatch.calls.count()).toBe(0);
+            });
+
+        });
+
+        describe('destroy() [deprecated]', function () {
+            var element;
+
+            beforeEach(function () {
+                // Provide a default instance of Button for testing
+                element = new StyledElements.Button();
+                element.appendTo(dom);
+            });
+
+
+            it("should destroy the button", function () {
+
+                expect(element.destroy()).toBe(undefined);
+                expect(element.wrapperElement.parentElement).toBe(null);
+
+            });
+
+        });
+
+        describe("focus()", function () {
+            var element;
+
+            beforeEach(function () {
+                // Provide a default instance of Button for testing
+                element = new StyledElements.Button();
+            });
+
+            it("should trigger a focus event", function () {
+                spyOn(element.wrapperElement, 'focus');
+                expect(element.focus()).toBe(element);
+                expect(element.wrapperElement.focus.calls.count()).toBe(1);
+            });
+
+        });
+
+        describe("setBadge([content, state, isAlert])", function () {
+
+            var element;
+
+            beforeEach(function () {
+                element = new StyledElements.Button();
+            });
+
+            it("should support passing only the content parameter", function () {
+                expect(element.setBadge('new')).toBe(element);
+                expect(element.badgeElement.textContent).toBe("new");
+                expect(element.badgeElement.className).toBe("badge z-depth-1");
+            });
+
+            it("should support passing only the content and the state parameter", function () {
+                expect(element.setBadge('new', 'info')).toBe(element);
+                expect(element.badgeElement.textContent).toBe("new");
+                expect(element.badgeElement.className).toBe("badge badge-info z-depth-1");
+            });
+
+            it("should support the isAlert parameter", function () {
+                expect(element.setBadge('1 error', 'danger', true)).toBe(element);
+                expect(element.badgeElement.textContent).toBe("1 error");
+                expect(element.badgeElement.className).toBe("badge badge-danger z-depth-1");
+                expect(element.hasClassName('has-alert')).toBeTruthy();
+            });
+
+            it("should overwrite previous badge", function () {
+                expect(element.setBadge('new', 'info')).toBe(element);
+                expect(element.setBadge('1 error', 'danger')).toBe(element);
+                expect(element.badgeElement.textContent).toBe("1 error");
+                expect(element.badgeElement.className).toBe("badge badge-danger z-depth-1");
+            });
+
+            it("should do nothing when not passing parameters and the button didn't have a badge", function () {
+                element = new StyledElements.Button();
+                expect(element.setBadge()).toBe(element);
+                expect(element.badgeElement).toEqual(null);
+            });
+
+            it("should remove current badge when not passing parameters", function () {
+                element = new StyledElements.Button();
+                expect(element.setBadge('1')).toBe(element);
+                expect(element.setBadge()).toBe(element);
+                expect(element.badgeElement).toEqual(null);
+            });
+
+        });
+
+        describe("setLabel([text])", function () {
+
+            var element;
+
+            it("should add labels", function () {
+                element = new StyledElements.Button();
+                expect(element.setLabel('Label')).toBe(element);
+                expect(element.label).not.toBe(null);
+                expect(element.label.textContent).toBe("Label");
+            });
+
+            it("should update labels", function () {
+                element = new StyledElements.Button({text: "new"});
+                expect(element.setLabel('Label')).toBe(element);
+                expect(element.label).not.toBe(null);
+                expect(element.label.textContent).toBe("Label");
+            });
+
+            it("should remove current label if text is empty", function () {
+                element = new StyledElements.Button({text: "new"});
+                expect(element.setLabel('')).toBe(element);
+                expect(element.label).toBe(null);
+            });
+
+        });
+
+        describe("setTitle(title)", function () {
+
+            var element;
+
+            beforeEach(function () {
+                element = new StyledElements.Button();
+            });
+
+            it("should create a tooltip if content is not empty", function () {
+                expect(element.setTitle('title')).toBe(element);
+                expect(element.tooltip).not.toBe(null);
+            });
+
+            it("does nothing if content is null and the button doesn't have a tooltip", function () {
+                expect(element.setTitle()).toBe(element);
+                expect(element.tooltip).toBe(null);
+            });
+
+            it("should remove previous tooltip if content is empty", function () {
+                expect(element.setTitle('title')).toBe(element);
+                expect(element.setTitle('')).toBe(element);
+                expect(element.tooltip).toBe(null);
+            });
+
+            it("should remove previous tooltip if content is null", function () {
+                expect(element.setTitle('title')).toBe(element);
+                expect(element.setTitle()).toBe(element);
+                expect(element.tooltip).toBe(null);
+            });
+
+            it("should update previous tooltips", function () {
+                expect(element.setTitle('title1')).toBe(element);
+                expect(element.setTitle('title2')).toBe(element);
+                expect(element.tooltip).not.toBe(null);
+            });
+
+        });
     });
 
 })();

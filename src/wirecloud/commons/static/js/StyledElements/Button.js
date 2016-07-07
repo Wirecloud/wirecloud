@@ -54,8 +54,13 @@
     };
 
     var element_onkeydown = function element_onkeydown(event) {
+        var modifiers;
+
         if (this.enabled) {
-            this._onkeydown(event, utils.normalizeKey(event));
+            modifiers = utils.extractModifiers(event);
+            modifiers.preventDefault = event.preventDefault.bind(event);
+            modifiers.stopPropagation = event.stopPropagation.bind(event);
+            this._onkeydown(modifiers, utils.normalizeKey(event));
         }
     };
 
@@ -106,6 +111,10 @@
         }
 
         this.wrapperElement.className = "se-btn";
+        this.label = null;
+        this.iconElement = null;
+        this.badgeElement = null;
+        this.tooltip = null;
 
         this.addClassName(options['class']);
         this.addClassName(options.extraClass);
@@ -118,35 +127,15 @@
             this.addClassName("plain");
         }
 
-        if (options.icon != null) {
-            this.icon = document.createElement("img");
-            this.icon.className = "icon";
-            this.icon.style.width = options.iconWidth + 'px';
-            this.icon.style.height = options.iconHeight + 'px';
-            this.icon.src = options.icon;
-            this.wrapperElement.appendChild(this.icon);
-        }
-
-        if (options.iconClass != null && options.iconClass.trim() !== "") {
-            this.icon = document.createElement('i');
-            this.icon.classList.add('se-icon');
-            this.wrapperElement.appendChild(this.icon);
-
-            this.addIconClassName(options.iconClass);
-        }
-
-        if (options.text) {
-            this.setLabel(options.text);
-        }
+        // Set initial label, icon and tooltip
+        this.addIconClassName(options.iconClass);
+        this.setLabel(options.text);
+        this.setTitle(options.title);
 
         if (options.iconClass && options.stackedIconClass) {
             this.stackedIcon = document.createElement('span');
             this.stackedIcon.className = [options.stackedIconClass, 'se-stacked-icon', options.stackedIconPlacement].join(' ');
             this.icon.appendChild(this.stackedIcon);
-        }
-
-        if (options.title) {
-            this.setTitle(options.title);
         }
 
         /* Properties */
@@ -195,18 +184,7 @@
                     tabindex = new_tabindex;
                     update_tabindex.call(this);
                 }
-            },
-
-            visible: {
-                get: function get() {
-                    return !this.hasClassName('invisible');
-                },
-                set: function set(value) {
-                    this.toggleClassName('invisible', !value)
-                        ._onvisible(value);
-                }
             }
-
         });
 
         /* Initial status */
@@ -259,33 +237,29 @@
         }
     };
 
-    /**
-     * @since 0.6.0
-     * @abstract
-     */
-    Button.prototype._onvisible = function _onvisible(visible) {
-        // This member can be implemented by subclass.
-    };
-
     Button.prototype.focus = function focus() {
         this.wrapperElement.focus();
+        return this;
     };
 
     Button.prototype.blur = function blur() {
         this.wrapperElement.blur();
+        return this;
     };
 
     /**
-     * [setLabel description]
+     * Sets the label of the button. If `text` is empty, any label currently
+     * used by the button will be removed.
+     *
      * @since 0.6.0
      *
-     * @param {String} [textContent]
-     *      [description]
+     * @param {String} [text]
+     *      Text to use as the label of the button
      * @returns {Button}
      *      The instance on which the member is called.
      */
-    Button.prototype.setLabel = function setLabel(textContent) {
-        return textContent ? addLabel.call(this, textContent) : removeLabel.call(this);
+    Button.prototype.setLabel = function setLabel(text) {
+        return text ? addLabel.call(this, text) : removeLabel.call(this);
     };
 
     Button.prototype.clearClassName = function clearClassName() {
@@ -301,6 +275,15 @@
                 return this;
             }
             classList = classList.split(/\s+/);
+        }
+
+        if (classList.length === 0) {
+            // Nothing to do
+            return this;
+        } else if (this.icon == null) {
+            this.icon = document.createElement('i');
+            this.icon.classList.add('se-icon');
+            this.wrapperElement.appendChild(this.icon);
         }
 
         classList.forEach(function (classname) {
@@ -344,6 +327,7 @@
         if (this.enabled) {
             this.events.click.dispatch(this);
         }
+        return this;
     };
 
     Button.prototype.destroy = function destroy() {
@@ -391,9 +375,6 @@
         text: "",
         depth: null,
         'title': '',
-        'iconHeight': 24,
-        'iconWidth': 24,
-        'icon': null,
         'stackedIconPlacement': 'bottom-right',
         'tabindex': 0
     };
@@ -448,8 +429,8 @@
     var removeLabel = function removeLabel() {
 
         if (this.label != null) {
-            this.remove(this.label);
-            delete this.label;
+            this.label.remove();
+            this.label = null;
         }
 
         return this;
@@ -472,14 +453,14 @@
 
         if (this.badgeElement == null) {
             this.badgeElement = document.createElement('span');
-            this.badgeElement.className = "badge";
-            if (states.indexOf(state) !== -1) {
-                this.badgeElement.classList.add("badge-" + state);
-            }
-            this.badgeElement.classList.add("z-depth-" + (this.depth + 1));
             this.wrapperElement.insertBefore(this.badgeElement, this.wrapperElement.firstChild);
         }
 
+        this.badgeElement.className = "badge";
+        if (states.indexOf(state) !== -1) {
+            this.badgeElement.classList.add("badge-" + state);
+        }
+        this.badgeElement.classList.add("z-depth-" + (this.depth + 1));
         this.toggleClassName('has-alert', isAlert);
         this.badgeElement.textContent = content;
 
@@ -489,8 +470,8 @@
     var removeBadge = function removeBadge() {
 
         if (this.badgeElement != null) {
-            this.wrapperElement.removeChild(this.badgeElement);
-            delete this.badgeElement;
+            this.badgeElement.remove();
+            this.badgeElement = null;
         }
 
         this.removeClassName('has-alert');
