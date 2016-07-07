@@ -77,6 +77,7 @@ class ResourceCollection(Resource):
         if content_type == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             user_list = [user.strip() for user in request.POST.get('user_list', 'false').split(',')]
+            group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if not 'file' in request.FILES:
                 return build_error_response(request, 400, _('Missing component file in the request'))
@@ -200,7 +201,7 @@ class ResourceCollection(Resource):
                     resource_file = BytesIO(file_contents.read(embedded_resource['src']))
 
                     extra_resource_contents = WgtFile(resource_file)
-                    if public:
+                    if user_list[0] == '*':
                         extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
                     else:
                         extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
