@@ -19,11 +19,13 @@
  *
  */
 
-/* globals moment, StyledElements, WeakMap */
+/* globals moment, StyledElements, WeakMap, Wirecloud */
 
 (function (utils) {
 
     "use strict";
+
+    var emptyFunction = function emptyFunction() {};
 
     var buildHeader = function buildHeader() {
         var i, column, cell, label, tooltip;
@@ -38,6 +40,8 @@
 
             cell = document.createElement('div');
             cell.className = 'se-model-table-cell';
+            cell.style.position = "relative";
+            cell.index = i;
             if (typeof column.class === 'string') {
                 cell.classList.add(column.class);
             }
@@ -58,9 +62,28 @@
                 cell.callback = sortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }
+
+            // Handle resize
+            var resizeHandler = document.createElement("div");
+            resizeHandler.className = "se-model-table-resize";
+            cell.appendChild(resizeHandler);
+            Wirecloud.ui.ResizeHandle(cell, resizeHandler, null, onStartResize, onResize.bind(this), emptyFunction, function () {
+                return true;
+            });
+
             priv.header.appendChild(cell);
             priv.headerCells.push(cell);
         }
+    };
+
+    var onStartResize = function onStartResize(cell, handle)  {
+        cell.resizeOffset = cell.offsetLeft + handle.offsetLeft + (handle.offsetWidth / 2);
+        cell.initialSize = cell.offsetWidth;
+    };
+
+    var onResize = function onResize(cell, handle, data, x, y) {
+        var size = cell.currentSize + x - cell.resizeOffset;
+        resizeCol.call(this, size + "px", cell.index);
     };
 
     var highlight_selection = function highlight_selection() {
@@ -213,10 +236,6 @@
             className = 'se-model-table full';
         }
 
-        // Initialize private variables
-        var priv = {};
-        privates.set(this, priv);
-
         StyledElements.StyledElement.call(this, ['click', 'select']);
 
         // Initialize private variables
@@ -269,15 +288,18 @@
                     if (!Array.isArray(value)) {
                         throw new TypeError();
                     }
+
                     if (priv.selectionType === "single" && value.length > 1) {
                         throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
                     }
                     // Unhighlihgt previous selection
-                    priv.selection.forEach(function (id) {
-                        if (id in priv.current_elements) {
-                            priv.current_elements[id].row.classList.remove('highlight');
-                        }
-                    }, this);
+                    if (priv.selection != null) {
+                        priv.selection.forEach(function (id) {
+                            if (id in priv.current_elements) {
+                                priv.current_elements[id].row.classList.remove('highlight');
+                            }
+                        }, this);
+                    }
 
                     priv.selection = value;
 
@@ -344,7 +366,6 @@
         this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
         if (this.source.options.pageSize !== 0) {
-
             priv.paginationInterface = new StyledElements.PaginationInterface(this.source);
             priv.statusBar.appendChild(priv.paginationInterface);
         }
@@ -635,6 +656,24 @@
         }
         priv.tableBody.clear();
         priv.current_elements = {};
+    };
+
+    var resizeCol = function resizeCol(size, col) {
+        var column;
+        var priv = privates.get(this);
+
+        column = [priv.headerCells[col]];
+        column = column.concat(priv.columnsCells[col]);
+        for (var i = 0; i < column.length; i++) {
+            var cell = column[i];
+            if (size === "auto") {
+                cell.style.width = 0;
+                cell.style.flexGrow = 1;
+            } else {
+                cell.style.width = size;
+                cell.style.flexGrow = 0;
+            }
+        }
     };
 
     ModelTable.prototype.reload = function reload() {

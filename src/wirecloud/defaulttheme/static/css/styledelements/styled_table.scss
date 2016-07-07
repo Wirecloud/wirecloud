@@ -34,6 +34,15 @@
     }
 }
 
+.se-model-table-resize {
+    position: absolute;
+    cursor: e-resize;
+    width: 7px;
+    height: 20px;
+    right: 0px;
+    bottom: 0px;
+}
+
 .se-model-table {
     font-size: $font-size-base;
     line-height: $line-height-base;
