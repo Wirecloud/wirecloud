@@ -19,17 +19,20 @@
 
 from __future__ import unicode_literals
 
+from datetime import datetime
 import os
 import time
 import types
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
-from whoosh.fields import BOOLEAN, ID, NGRAM, SchemaClass, TEXT
+from whoosh.fields import BOOLEAN, DATETIME, ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, LockError, open_dir
 from whoosh.qparser import MultifieldParser, QueryParser
+from whoosh.query import And, Every
 from whoosh.reading import MultiReader
 from whoosh.writing import IndexWriter as WhooshIndexWriter
+import pytz
 
 
 class IndexManager(object):
@@ -115,14 +118,21 @@ class IndexWriter(IndexManager):
 def build_fields_adapter(schema):
 
     bool_fields = []
+    date_fields = []
     for fieldname in schema.stored_names():
         if isinstance(schema[fieldname], BOOLEAN):
             bool_fields.append(fieldname)
+        elif isinstance(schema[fieldname], DATETIME):
+            date_fields.append(fieldname)
 
     def adapter(hit):
         fields = hit.fields()
         for fieldname in bool_fields:
-            fields[fieldname] = fields[fieldname].lower() == "true"
+            if not isinstance(fields[fieldname], bool):
+                fields[fieldname] = fields[fieldname].lower() == "true"
+        for fieldname in date_fields:
+            fields[fieldname] = (fields[fieldname].replace(tzinfo=pytz.utc) - datetime(1970, 1, 1, tzinfo=pytz.utc)).total_seconds()
+
         return fields
 
     return adapter
@@ -145,14 +155,18 @@ class BaseSearcher(IndexWriter):
 
         super(BaseSearcher, self).__init__(*args, **kwargs)
 
-    def search(self, querytext):
+    def restrict_query(self, request):
+        return Every()
+
+    def search(self, querytext, request):
         ix = self.open_index()
 
-        user_q = self.parser.parse(querytext)
+        user_q = querytext and self.parser.parse(querytext) or Every()
+        restricted_q = And([user_q, self.restrict_query(request)])
         result = {}
 
         with self.searcher() as searcher:
-            hits = searcher.search(user_q)
+            hits = searcher.search(restricted_q)
 
             if querytext and hits.is_empty():
                 corrected = searcher.correct_query(user_q, querytext)
@@ -160,7 +174,8 @@ class BaseSearcher(IndexWriter):
                 if corrected.query != user_q:
                     querytext = corrected.string
                     result['corrected_q'] = querytext
-                    hits = searcher.search(corrected.query)
+                    restricted_q = And([corrected.query, self.restrict_query(request)])
+                    hits = searcher.search(restricted_q)
 
             result.update({'results': [self.result_adapter(hit) for hit in hits]})
 
