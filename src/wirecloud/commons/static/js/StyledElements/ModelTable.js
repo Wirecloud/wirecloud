@@ -82,7 +82,7 @@
     };
 
     var onResize = function onResize(cell, handle, data, x, y) {
-        var size = cell.currentSize + x - cell.resizeOffset;
+        var size = cell.initialSize + x - cell.resizeOffset;
         resizeCol.call(this, size + "px", cell.index);
     };
 
