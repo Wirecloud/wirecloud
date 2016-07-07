@@ -24,7 +24,7 @@ import os
 from unittest.mock import Mock, patch
 
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.test import Client, TestCase, TransactionTestCase
 
 from wirecloud.catalogue import utils as catalogue
@@ -3404,7 +3404,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     def test_resource_collection_post_public(self):
 
-        url = reverse('wirecloud.resource_collection') + '?public=true'
+        url = reverse('wirecloud.resource_collection') + '?user_list=*'
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -3420,7 +3420,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     def test_resource_collection_post_public_normuser(self):
 
-        url = reverse('wirecloud.resource_collection') + '?public=true'
+        url = reverse('wirecloud.resource_collection') + '?user_list=*'
 
         # Authenticate
         self.client.login(username='normuser', password='admin')
@@ -3431,6 +3431,71 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(response.status_code, 403)
 
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
+
+    def test_resource_collection_post_user_list(self):
+
+        url = reverse('wirecloud.resource_collection') + '?user_list=user_with_workspaces,user_with_markets'
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin','user_with_markets','user_with_workspaces'])
+
+    def test_resource_collection_post_user_list_empty(self):
+        url = reverse('wirecloud.resource_collection') + '?user_list='
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
+
+    def test_resource_collection_post_group_list(self):
+
+        grp1 = Group.objects.create(name='grp1')
+        usr1 = User.objects.get(username='user_with_markets')
+        usr2 = User.objects.get(username='user_with_workspaces')
+        usr1.groups.add(grp1)
+        usr2.groups.add(grp1)
+        url = reverse('wirecloud.resource_collection') + '?group_list=grp1'
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
+        self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['grp1'])
+
+    def test_resource_collection_post_group_list_empty(self):
+        url = reverse('wirecloud.resource_collection') + '?group_list='
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
+        self.assertEqual(list(resource.groups.values_list('name', flat=True)), [])
 
     def test_resource_entry_get_requires_authentication(self):
 
