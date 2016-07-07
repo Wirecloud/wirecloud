@@ -639,7 +639,7 @@ if (window.StyledElements == null) {
         var key;
 
         key = event.key;
-        if (key) {
+        if (event.altKey === false && key) {
             if (key in keyFixes) {
                 key = keyFixes[key];
             }

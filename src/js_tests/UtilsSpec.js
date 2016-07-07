@@ -190,20 +190,33 @@
         describe("normalizeKey(event)", function () {
             var normalizeKey = StyledElements.Utils.normalizeKey;
 
+            var initkeyevent = function initkeyevent(event) {
+                ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].forEach(function (attr) {
+                    if (!(attr in event)) {
+                        event[attr] = false;
+                    }
+                });
+                return event;
+            };
+
             it("returns Unidentified for unknown keyCodes", function () {
-                expect(normalizeKey({keyCode: 0})).toBe("Unidentified");
+                expect(normalizeKey(initkeyevent({keyCode: 0}))).toBe("Unidentified");
             });
 
             it("returns a translated value for known keyCodes", function () {
-                expect(normalizeKey({keyCode: 8})).toBe("Backspace");
+                expect(normalizeKey(initkeyevent({keyCode: 8}))).toBe("Backspace");
             });
 
             it("returns key value if present", function () {
-                expect(normalizeKey({key: "Escape"})).toBe("Escape");
+                expect(normalizeKey(initkeyevent({key: "Escape"}))).toBe("Escape");
             });
 
             it("returns fixed key value if needed", function () {
-                expect(normalizeKey({key: "Left"})).toBe("ArrowLeft");
+                expect(normalizeKey(initkeyevent({key: "Left"}))).toBe("ArrowLeft");
+            });
+
+            it("return unaltered key value if the alt key is pressed", function () {
+                expect(normalizeKey(initkeyevent({altKey: true, key: "å", keyCode: 65}))).toBe("a");
             });
 
         });
