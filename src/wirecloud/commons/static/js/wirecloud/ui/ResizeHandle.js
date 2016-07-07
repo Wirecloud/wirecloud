@@ -21,7 +21,6 @@
 
 /* globals Wirecloud */
 
-
 (function () {
 
     "use strict";
@@ -50,13 +49,20 @@
                 return;
             }
 
-            document.removeEventListener("mouseup", endresize, false);
-            document.removeEventListener("touchend", endresize, false);
-            document.removeEventListener("mousemove", resize, false);
-            document.removeEventListener("touchmove", resize, false);
+            if (handleElement.ownerDocument !== document) {
+                handleElement.ownerDocument.removeEventListener("mouseup", endresize, false);
+                handleElement.ownerDocument.removeEventListener("touchend", endresize, false);
+                handleElement.ownerDocument.removeEventListener("mousemove", resize, false);
+                handleElement.ownerDocument.removeEventListener("touchmove", resize, false);
+            } else {
+                document.removeEventListener("mouseup", endresize, false);
+                document.removeEventListener("touchend", endresize, false);
+                document.removeEventListener("mousemove", resize, false);
+                document.removeEventListener("touchmove", resize, false);
+            }
 
             dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
-            dragboardCover.parentNode.removeChild(dragboardCover);
+            dragboardCover.remove();
             dragboardCover = null;
 
             handleElement.removeEventListener("mouseup", endresize, false);
@@ -115,6 +121,8 @@
                 return false;
             }
 
+            e.stopPropagation();
+
             document.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener, false); // disable context menu
             document.addEventListener('mousedown', Wirecloud.Utils.preventDefaultListener, false); // disable text selection
             handleElement.removeEventListener("mousedown", startresize, false);
@@ -129,10 +137,18 @@
             }
             x = resizableElement.offsetLeft + handleElement.offsetLeft + (handleElement.offsetWidth / 2);
             y = resizableElement.offsetTop + handleElement.offsetTop + (handleElement.offsetHeight / 2);
-            document.addEventListener("mouseup", endresize, false);
-            document.addEventListener("touchend", endresize, false);
-            document.addEventListener("mousemove", resize, false);
-            document.addEventListener("touchmove", resize, false);
+
+            if (handleElement.ownerDocument !== document) {
+                handleElement.ownerDocument.addEventListener("mouseup", endresize, false);
+                handleElement.ownerDocument.addEventListener("touchend", endresize, false);
+                handleElement.ownerDocument.addEventListener("mousemove", resize, false);
+                handleElement.ownerDocument.addEventListener("touchmove", resize, false);
+            } else {
+                document.addEventListener("mouseup", endresize, false);
+                document.addEventListener("touchend", endresize, false);
+                document.addEventListener("mousemove", resize, false);
+                document.addEventListener("touchmove", resize, false);
+            }
 
             var dragboard = document.body;
             dragboardCover = document.createElement("div");
@@ -153,11 +169,6 @@
             dragboard.addEventListener("scroll", scroll, true);
 
             dragboard.insertBefore(dragboardCover, dragboard.firstChild);
-
-            handleElement.addEventListener("mouseup", endresize, false);
-            handleElement.addEventListener("touchend", endresize, false);
-            handleElement.addEventListener("mousemove", resize, false);
-            handleElement.addEventListener("touchmove", resize, false);
 
             onStart(resizableElement, handleElement, data);
 
