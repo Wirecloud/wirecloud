@@ -33,7 +33,7 @@
         var xDelta = 0, yDelta = 0;
         var xStart = 0, yStart = 0;
         var scrollDelta, scrollStart = 0;
-        var dragboardCover;
+        var dragboardCover, dragboard;
         var x, y;
         var endresize, resize, startresize, scroll;
         canBeResized = canBeResized ? canBeResized : returnTrue;
@@ -61,7 +61,10 @@
                 document.removeEventListener("touchmove", resize, false);
             }
 
-            dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
+            if (dragboard != null) {
+                dragboard.removeEventListener("scroll", scroll, true);
+                dragboard = null;
+            }
             dragboardCover.remove();
             dragboardCover = null;
 
@@ -101,7 +104,6 @@
 
         // fire each time the dragboard is scrolled while dragging
         scroll = function scroll() {
-            var dragboard = dragboardCover.parentNode;
             dragboardCover.style.height = dragboard.scrollHeight + "px";
             var scrollTop = parseInt(dragboard.scrollTop, 10);
             scrollDelta = scrollStart - scrollTop;
@@ -161,14 +163,20 @@
             dragboardCover.style.top = "0";
             dragboardCover.style.left = "0";
             dragboardCover.style.width = "100%";
-            dragboardCover.style.height = dragboard.scrollHeight + "px";
 
-            scrollStart = dragboard.scrollTop;
-            scrollDelta = 0;
+            document.body.insertBefore(dragboardCover, document.body.firstChild);
 
-            dragboard.addEventListener("scroll", scroll, true);
-
-            dragboard.insertBefore(dragboardCover, dragboard.firstChild);
+            if (handleElement.ownerDocument === document) {
+                dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
+                dragboardCover.style.height = dragboard.scrollHeight + "px";
+                scrollStart = dragboard.scrollTop;
+                scrollDelta = 0;
+                dragboard.addEventListener("scroll", scroll, true);
+            } else {
+                dragboardCover.style.height = document.body.scrollHeight + "px";
+                scrollStart = 0;
+                scrollDelta = 0;
+            }
 
             onStart(resizableElement, handleElement, data);
 
