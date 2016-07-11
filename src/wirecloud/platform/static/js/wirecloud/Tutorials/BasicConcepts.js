@@ -87,8 +87,8 @@
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/input-box/1.0')},
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/youtube-browser/3.0')},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
-            {'type': 'userAction', 'msg': gettext("Click the <em>Add widget</em> button"), 'elem': BS.toolbar_button('icon-plus'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('icon-plus'), 'action': BA.sleep(500)},
+            {'type': 'userAction', 'msg': gettext("Click the <em>Add widget</em> button"), 'elem': BS.toolbar_button('wc-show-component-sidebar'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-component-sidebar'), 'action': BA.sleep(500)},
             {'type': 'autoAction', 'msg': gettext('By typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('browser', {send: true})},
             {'type': 'autoAction', 'elem': BS.mac_wallet_input(), 'action': BA.editorView.wait_mac_wallet_ready()},
             {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton("YouTube Browser"), 'pos': 'downRight'},
@@ -123,8 +123,8 @@
 
             // WiringEditor
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring Editor</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>")},
-            {'type': 'userAction', 'msg': gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('icon-archive'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('icon-archive'), 'action': BA.sleep(250)},
+            {'type': 'userAction', 'msg': gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('wc-show-catalogue'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-catalogue'), 'action': BA.sleep(250)},
             {'type': 'userAction', 'msg': gettext("Click <em>Widgets</em>"), 'elem': BS.button('.wiring-sidebar .btn-list-widget-group'), 'pos': 'downLeft'},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In this sidebar you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets as well as a combination of these behaviours.</p>"), 'elem': get_menubar},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
@@ -148,8 +148,8 @@
                 'elemToApplyNextStepEvent': BS.wiringView.behaviour_engine(),
 
             },
-            {'type': 'userAction', 'msg': gettext("Click <em>Find components</em> to close the sidebar"), 'elem': BS.toolbar_button('icon-archive'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('icon-archive'), 'action': BA.sleep(250)},
+            {'type': 'userAction', 'msg': gettext("Click <em>Find components</em> to close the sidebar"), 'elem': BS.toolbar_button('wc-show-catalogue'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-catalogue'), 'action': BA.sleep(250)},
             {
                 'type': 'userAction',
                 'msg': gettext("Drag &amp; drop a new connection from <em>Search Box</em>'s <em>keyword</em> endpoint ..."),
