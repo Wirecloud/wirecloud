@@ -170,18 +170,13 @@
             throw new TypeError("connections between endpoints of the same component are not allowed");
         }
 
-        connection = Wirecloud.activeWorkspace.wiring.createConnection(false, output, input);
-        Wirecloud.activeWorkspace.wiring.status.connections.push(connection);
-        connection.establish();
+        connection = Wirecloud.activeWorkspace.wiring.createConnection(output, input, {
+            commit: true
+        });
     };
 
     var remove_connection = function remove_connection(connection) {
-        var index, wiring;
-
-        wiring = Wirecloud.activeWorkspace.wiring;
-        connection.detach();
-        index = wiring.connections.indexOf(connection);
-        wiring.connections.splice(index, 1);
+        connection.remove();
     };
 
     var privates = new WeakMap();

@@ -159,9 +159,9 @@
             if ('wiring' in resource) {
                 wiring = resource.wiring;
             } else {
-                wiring = resource.workspace.wiring;
+                wiring = resource.tab.workspace.wiring;
             }
-            wiring.addEventListener('loaded', callback);
+            wiring.addEventListener('load', callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
