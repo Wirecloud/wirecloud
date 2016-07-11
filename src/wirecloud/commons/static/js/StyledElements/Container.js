@@ -44,7 +44,7 @@
          */
         constructor: function Container(options, events) {
             options = utils.merge(utils.clone(defaults), options);
-            this.superClass(events);
+            se.StyledElement.call(this, events);
 
             this.wrapperElement = document.createElement(options.tagname);
             this.wrapperElement.className = 'se-container';
