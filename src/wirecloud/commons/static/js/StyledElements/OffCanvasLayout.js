@@ -81,6 +81,16 @@
             return this;
         },
 
+        repaint: function repaint() {
+
+            if (this.slipped) {
+                this.sidebar.repaint();
+            }
+
+            this.content.repaint();
+            return this;
+        },
+
         /**
          * @param {Number} [index]
          * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
