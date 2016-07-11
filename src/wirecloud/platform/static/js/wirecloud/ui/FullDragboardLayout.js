@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global IWidget, Wirecloud */
+/* globals Wirecloud */
 
 (function () {
 
@@ -69,19 +69,19 @@
     };
 
     FullDragboardLayout.prototype.getColumnOffset = function getColumnOffset(column) {
-        return this.dragboard.dragboardElement.getBoundingClientRect().left + this.dragboardLeftMargin;
+        return this.dragboard.tab.wrapperElement.getBoundingClientRect().left + this.dragboardLeftMargin;
     };
 
     FullDragboardLayout.prototype.getRowOffset = function getRowOffset(row) {
-        return this.dragboard.dragboardElement.getBoundingClientRect().top;
+        return this.dragboard.tab.wrapperElement.getBoundingClientRect().top;
     };
 
     FullDragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {
-        return new Wirecloud.ui.MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().left, 0);
+        return new Wirecloud.ui.MultiValuedSize(this.dragboard.tab.wrapperElement.getBoundingClientRect().left, 0);
     };
 
     FullDragboardLayout.prototype.adaptRowOffset = function adaptRowOffset(size) {
-        return new Wirecloud.ui.MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().top, 0);
+        return new Wirecloud.ui.MultiValuedSize(this.dragboard.tab.wrapperElement.getBoundingClientRect().top, 0);
     };
 
     FullDragboardLayout.prototype.adaptHeight = function adaptHeight(size) {
@@ -111,10 +111,10 @@
         return new Wirecloud.DragboardPosition(0, 0);
     };
 
-    FullDragboardLayout.prototype.addIWidget = function addIWidget(iWidget, affectsDragboard) {
-        iWidget.element.classList.add('wc-widget-fulldragboard');
+    FullDragboardLayout.prototype.addWidget = function addWidget(iWidget, affectsDragboard) {
+        iWidget.wrapperElement.classList.add('wc-widget-fulldragboard');
 
-        Wirecloud.ui.DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
+        Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, iWidget, affectsDragboard);
 
         if (!this.initialized) {
             return;
@@ -123,52 +123,10 @@
         iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0));
     };
 
-    FullDragboardLayout.prototype.removeIWidget = function removeIWidget(iWidget, affectsDragboard) {
-        iWidget.element.classList.remove('wc-widget-fulldragboard');
+    FullDragboardLayout.prototype.removeWidget = function removeWidget(iWidget, affectsDragboard) {
+        iWidget.wrapperElement.classList.remove('wc-widget-fulldragboard');
 
-        Wirecloud.ui.DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
-    };
-
-
-    FullDragboardLayout.prototype.initializeMove = function initializeMove(iwidget, draggable) {
-        // Check for pendings moves
-        if (this.iwidgetToMove !== null) {
-            var msg = "Dragboard: There was a pending move that was cancelled because initializedMove function was called before it was finished.";
-            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
-            this.cancelMove();
-        }
-
-        this.iwidgetToMove = iwidget;
-    };
-
-    FullDragboardLayout.prototype.moveTemporally = function moveTemporally(x, y) {
-        if (!(this.iwidgetToMove instanceof IWidget)) {
-            var msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
-            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
-            return;
-        }
-    };
-
-    FullDragboardLayout.prototype.acceptMove = function acceptMove() {
-        if (!(this.iwidgetToMove instanceof IWidget)) {
-            var msg = "Dragboard: Function acceptMove called when there is not an started iwidget move.";
-            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
-            return;
-        }
-
-        this.iwidgetToMove = null;
-    };
-
-    FullDragboardLayout.prototype.cancelMove = function cancelMove() {
-        if (!(this.iwidgetToMove instanceof IWidget)) {
-            var msg = "Trying to cancel an inexistant temporal move.";
-            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
-            return;
-        }
-
-        this.iwidgetToMove._notifyWindowResizeEvent();
-        this.iwidgetToMove = null;
-        this.newPosition = null;
+        Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, iWidget, affectsDragboard);
     };
 
     Wirecloud.ui.FullDragboardLayout = FullDragboardLayout;

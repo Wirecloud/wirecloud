@@ -44,7 +44,9 @@
         }
 
         this.dragboard = dragboard;
-        this.iWidgets = {};
+        this.widgets = {};
+
+        this._on_remove_widget_bound = on_remove_widget.bind(this);
     };
 
     /**
@@ -53,9 +55,9 @@
     DragboardLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
         // Notify each iwidget
         var iwidget_key, iWidget;
-        for (iwidget_key in this.iWidgets) {
-            iWidget = this.iWidgets[iwidget_key];
-            iWidget._notifyWindowResizeEvent();
+        for (iwidget_key in this.widgets) {
+            iWidget = this.widgets[iwidget_key];
+            iWidget.repaint();
         }
     };
 
@@ -222,38 +224,26 @@
         }
     });
 
-    /**
-     * Adds an iWidget to this layout.
-     *
-     * @param {IWidget} iWidget          iWidget to add
-     * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
-     */
-    DragboardLayout.prototype.addIWidget = function addIWidget(iWidget, affectsDragboard) {
-        if (iWidget.layout != null) {
-            var msg = gettext("the iWidget could not be associated with this layout as it already has an associated layout.");
+    DragboardLayout.prototype.addWidget = function addWidget(widget, affectsDragboard) {
+        if (widget.layout != null) {
+            var msg = gettext("the widget could not be associated with this layout as it already has an associated layout.");
             throw new Error(msg);
         }
-        iWidget.layout = this;
+        widget.layout = this;
 
         if (affectsDragboard) {
-            this.dragboard._registerIWidget(iWidget);
-
-            if (iWidget.isVisible()) { // TODO
-                this.dragboard.dragboardElement.appendChild(iWidget.element);
-            }
+            this.dragboard._addWidget(widget);
         }
 
-        this.iWidgets[iWidget.code] = iWidget;
-
-        if (iWidget.isVisible()) {
-            iWidget.repaint();
-        }
+        this.widgets[widget.id] = widget;
+        widget.addEventListener('remove', this._on_remove_widget_bound);
+        widget.repaint();
     };
 
     /**
      * @private
      *
-     * This function should be called at the end of the implementation of addIWidget.
+     * This function should be called at the end of the implementation of addWidget.
      */
     DragboardLayout.prototype._adaptIWidget = function _adaptIWidget(iWidget) {
         if (iWidget.element !== null) {
@@ -269,11 +259,11 @@
      */
     DragboardLayout.prototype._ensureMinimalSize = function _ensureMinimalSize(iWidget, persist) {
         var minWidth = Math.ceil(this.fromPixelsToHCells(80));
-        var minHeight = Math.ceil(this.fromPixelsToVCells(24));
+        var minHeight = Math.ceil(this.fromPixelsToVCells(80));
 
         var sizeChange = false;
-        var newWidth = iWidget.getContentWidth();
-        var newHeight = iWidget.getContentHeight();
+        var newWidth = iWidget.shape.width;
+        var newHeight = iWidget.shape.height;
 
         if (newWidth < minWidth) {
             sizeChange = true;
@@ -286,28 +276,19 @@
         }
 
         if (sizeChange) {
-            iWidget.setContentSize(newWidth, newHeight, false, persist);
+            iWidget.setShape({width: newWidth, height: newHeight});
         }
     };
 
-    /**
-     * Removes an iWidget from this layout.
-     *
-     * @param {IWidget} iWidget          iWidget to remove
-     * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
-     */
-    DragboardLayout.prototype.removeIWidget = function removeIWidget(iWidget, affectsDragboard) {
-        delete this.iWidgets[iWidget.code];
+    DragboardLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
+        delete this.widgets[widget.id];
 
         if (affectsDragboard) {
-            this.dragboard._deregisterIWidget(iWidget);
-
-            if (iWidget.element !== null) {
-                this.dragboard.dragboardElement.removeChild(iWidget.element);
-            }
+            this.dragboard._removeWidget(widget);
         }
 
-        iWidget.layout = null;
+        widget.layout = null;
+        widget.removeEventListener('remove', this._on_remove_widget_bound);
     };
 
     /**
@@ -319,24 +300,10 @@
     DragboardLayout.prototype.moveTo = function moveTo(destLayout) {
         var iwidget_key, iWidget;
 
-        for (iwidget_key in this.iWidgets) {
-            iWidget = this.iWidgets[iwidget_key];
+        for (iwidget_key in this.widgets) {
+            iWidget = this.widgets[iwidget_key];
             iWidget.moveToLayout(destLayout);
         }
-    };
-
-    /**
-     * This method must be called to avoid memory leaks caused by circular
-     * references.
-     */
-    DragboardLayout.prototype.destroy = function destroy() {
-        var iwidget_key;
-
-        for (iwidget_key in this.iWidgets) {
-            this.iWidgets[iwidget_key].destroy();
-        }
-        this.iWidgets = null;
-        this.dragboard = null;
     };
 
     /////////////////////////////////////
@@ -419,7 +386,7 @@
         var res, cssStyle;
 
         testElement.style.visibility = "hidden";
-        this.dragboard.dragboardElement.appendChild(testElement);
+        this.dragboard.tab.appendChild(testElement);
 
         // Retrieve target measurements
         res = [];
@@ -428,7 +395,7 @@
         res[1] = cssStyle.getPropertyCSSValue("height").getFloatValue(units);
 
         // Remove the test element
-        testElement.parentNode.removeChild(testElement);
+        testElement.remove();
 
         return res;
     };
@@ -454,6 +421,11 @@
         testDiv.style.width = value;
 
         return this.measure(testDiv, newUnits);
+    };
+
+    var on_remove_widget = function on_remove_widget(widget) {
+        this.removeWidget(widget, true);
+        this.dragboard.update();
     };
 
     Wirecloud.ui.DragboardLayout = DragboardLayout;

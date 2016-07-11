@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,13 +19,13 @@
  *
  */
 
-/* global IWidget, Wirecloud */
+/* globals Wirecloud */
 
 /////////////////////////////////////
 // FreeLayout
 /////////////////////////////////////
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -148,19 +148,19 @@
     FreeLayout.prototype._notifyResizeEvent = function _notifyResizeEvent(iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
         if (resizeLeftSide) {
             var widthDiff = newWidth - oldWidth;
-            var position = iWidget.getPosition();
+            var position = iWidget.position;
             position.x -= widthDiff;
 
             if (persist) {
                 iWidget.setPosition(position);
             } else {
-                iWidget._notifyWindowResizeEvent();
+                iWidget.repaint();
             }
         }
 
         if (persist) {
             // Save new position into persistence
-            this.dragboard._commitChanges([iWidget.code]);
+            this.dragboard.update([iWidget.id]);
         }
     };
 
@@ -168,9 +168,9 @@
         var iWidget, key;
 
         // Insert iwidgets
-        for (key in this.iWidgets) {
-            iWidget = this.iWidgets[key];
-            iWidget.paint(true);
+        for (key in this.widgets) {
+            iWidget = this.widgets[key];
+            iWidget.repaint();
         }
 
         this.initialized = true;
@@ -183,19 +183,12 @@
         return new Wirecloud.DragboardPosition(((x - this.dragboardLeftMargin) * this.MAX_HLU) / this.getWidth(), y - this.dragboardTopMargin);
     };
 
-    FreeLayout.prototype.addIWidget = function addIWidget(iWidget, affectsDragboard) {
-        Wirecloud.ui.DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
+    FreeLayout.prototype.addWidget = function addWidget(iWidget, affectsDragboard) {
+        Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, iWidget, affectsDragboard);
 
         if (!this.initialized) {
             return;
         }
-
-        var position = iWidget.getPosition();
-        if (!(position instanceof Wirecloud.DragboardPosition)) {
-            position = new Wirecloud.DragboardPosition(0, 0);
-        }
-
-        iWidget.setPosition(position);
 
         this._adaptIWidget(iWidget);
     };
@@ -205,6 +198,10 @@
 
         draggable = draggable || null; // default value for the draggable parameter
 
+        if (!(iwidget instanceof Wirecloud.ui.WidgetView)) {
+            throw new TypeError("widget must be an WidgetView instance");
+        }
+
         // Check for pendings moves
         if (this.iwidgetToMove !== null) {
             msg = "Dragboard: There was a pending move that was cancelled because initializedMove function was called before it was finished.";
@@ -213,7 +210,7 @@
         }
 
         this.iwidgetToMove = iwidget;
-        this.newPosition = iwidget.getPosition().clone();
+        this.newPosition = iwidget.position;
 
         if (draggable) {
             draggable.setXOffset(0);
@@ -222,7 +219,7 @@
     };
 
     FreeLayout.prototype.moveTemporally = function moveTemporally(x, y) {
-        if (!(this.iwidgetToMove instanceof IWidget)) {
+        if (this.iwidgetToMove == null) {
             var msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
@@ -233,7 +230,7 @@
     };
 
     FreeLayout.prototype.acceptMove = function acceptMove() {
-        if (!(this.iwidgetToMove instanceof IWidget)) {
+        if (this.iwidgetToMove == null) {
             var msg = "Dragboard: Function acceptMove called when there is not an started iwidget move.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
@@ -247,11 +244,7 @@
         }
 
         this.iwidgetToMove.setPosition(this.newPosition);
-        // This is needed to check if the scrollbar status has changed (visible/hidden)
-        this.dragboard._notifyWindowResizeEvent();
-        // But at least "iwidgetToMove" must be updated, so force a call to its _notifyWindowResizeEvent method
-        this.iwidgetToMove._notifyWindowResizeEvent();
-        this.dragboard._commitChanges([this.iwidgetToMove.code]);
+        this.dragboard.update([this.iwidgetToMove.id]);
 
         this.iwidgetToMove = null;
         this.newPosition = null;
@@ -260,17 +253,19 @@
     FreeLayout.prototype.cancelMove = function cancelMove() {
         var msg;
 
-        if (!(this.iwidgetToMove instanceof IWidget)) {
+        if (this.iwidgetToMove == null) {
             msg = "Trying to cancel an inexistant temporal move.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
         }
 
-        this.iwidgetToMove._notifyWindowResizeEvent();
+        // We have only update the CSS of the widget but not the position attribute
+        // Repaint it using the initial position
+        this.iwidgetToMove.repaint();
         this.iwidgetToMove = null;
         this.newPosition = null;
     };
 
     Wirecloud.ui.FreeLayout = FreeLayout;
 
-})();
+})(Wirecloud.Utils);
