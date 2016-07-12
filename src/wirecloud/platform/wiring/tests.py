@@ -579,7 +579,6 @@ class WiringTestCase(WirecloudTestCase):
 
 
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
-@patch('wirecloud.platform.wiring.utils._operator_api_files', new=None)
 @override_settings(DEBUG=False, FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
 class OperatorCodeEntryTestCase(WirecloudTestCase):
 

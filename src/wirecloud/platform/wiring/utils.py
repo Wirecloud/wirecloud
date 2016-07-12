@@ -21,10 +21,12 @@ from __future__ import unicode_literals
 
 from io import BytesIO
 
+from django.core.cache import cache
+from django.conf import settings
 from django.template import loader, Context, Template
 from lxml import etree
 
-from wirecloud.commons.utils.http import get_absolute_static_url
+from wirecloud.commons.utils.http import get_absolute_static_url, get_current_domain
 from wirecloud.platform.plugins import get_operator_api_extensions
 
 
@@ -65,13 +67,14 @@ def get_operator_cache_key(operator, domain, mode):
     return '_operator_xhtml/%s/%s/%s?mode=%s' % (operator.cache_version, domain, operator.id, mode)
 
 
-_operator_api_files = None
-
-
 def get_operator_api_files(request):
-    global _operator_api_files
 
-    if _operator_api_files is None or settings.DEBUG is True:
+    from wirecloud.platform.core.plugins import get_version_hash
+
+    key = 'operator_api_files/%s?v=%s' % (get_current_domain(request), get_version_hash())
+    operator_api_files = cache.get(key)
+
+    if operator_api_files is None or settings.DEBUG is True:
         code = '''{% load compress %}{% load static from staticfiles %}{% compress js %}
         <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPIBootstrap.js" %}"></script>
         <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudOperatorAPI.js" %}"></script>
@@ -82,10 +85,10 @@ def get_operator_api_files(request):
         doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
 
         files = [script.get('src') for script in doc.getroot()]
-        _operator_api_files = tuple(files)
+        operator_api_files = tuple([get_absolute_static_url(file, request=request, versioned=True) for file in files])
+        cache.set(key, operator_api_files)
 
-    return [get_absolute_static_url(file, request=request, versioned=True) for file in _operator_api_files]
-
+    return list(operator_api_files)
 
 
 def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode):

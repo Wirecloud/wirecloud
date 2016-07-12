@@ -21,13 +21,14 @@ from __future__ import unicode_literals
 
 from io import BytesIO
 
+from django.core.cache import cache
 from django.conf import settings
 from django.db.models import Q
 from django.template import Context, Template
 from lxml import etree
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.utils.http import ERROR_FORMATTERS, get_absolute_static_url
+from wirecloud.commons.utils.http import ERROR_FORMATTERS, get_absolute_static_url, get_current_domain
 from wirecloud.commons.utils.template import UnsupportedFeature
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.models import Widget, XHTML
@@ -135,13 +136,14 @@ def get_widget_platform_style(theme):
     return _widget_platform_style[theme]
 
 
-_widget_api_files = None
-
-
 def get_widget_api_files(request):
-    global _widget_api_files
 
-    if _widget_api_files is None or settings.DEBUG is True:
+    from wirecloud.platform.core.plugins import get_version_hash
+
+    key = 'widget_api_files/%s?v=%s' % (get_current_domain(request), get_version_hash())
+    widget_api_files = cache.get(key)
+
+    if widget_api_files is None or settings.DEBUG is True:
         code = '''{% load compress %}{% load static from staticfiles %}{% compress js %}
         <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPIBootstrap.js" %}"></script>
         <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudWidgetAPI.js" %}"></script>
@@ -153,9 +155,10 @@ def get_widget_api_files(request):
 
         files = [script.get('src') for script in doc.getroot()]
         files.reverse()
-        _widget_api_files = tuple(files)
+        widget_api_files = tuple([get_absolute_static_url(file, request=request, versioned=True) for file in files])
+        cache.set(key, widget_api_files)
 
-    return [get_absolute_static_url(file, request=request, versioned=True) for file in _widget_api_files]
+    return list(widget_api_files)
 
 
 def fix_widget_code(widget_code, content_type, request, encoding, use_platform_style, requirements, mode, theme):

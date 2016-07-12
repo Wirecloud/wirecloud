@@ -37,7 +37,6 @@ __test__ = False
 
 @override_settings(FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=(), COMPRESS_ENABLED=False, COMPRESS_OFFLINE=False, DEBUG=False)
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
-@patch('wirecloud.platform.widget.utils._widget_api_files', new=None)
 class CodeTransformationTestCase(TestCase):
 
     tags = ('wirecloud-widget-module', 'wirecloud-widget-code-transformation', 'wirecloud-noselenium')
@@ -56,6 +55,13 @@ class CodeTransformationTestCase(TestCase):
         plugins.clear_cache()
 
         super(CodeTransformationTestCase, cls).tearDownClass()
+
+    def setUp(self):
+        # Clear cache
+        from django.core.cache import cache
+        cache.clear()
+
+        super(CodeTransformationTestCase, self).setUp()
 
     def read_file(self, *filename):
         f = open(os.path.join(os.path.dirname(__file__), *filename), 'rb')

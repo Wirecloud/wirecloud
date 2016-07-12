@@ -720,13 +720,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.driver.switch_to.frame(self.driver.find_element_by_id(frame_id))
 
         with target_iwidget:
-            try:
-                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
-            except:
-                pass
-
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, 'hello world!!')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
 
     def test_browser_navigation_history_management(self):
 
