@@ -42,15 +42,15 @@ Once expanded, the menu shows a list of the already created workspaces
 figure above) that allows you to quickly switch between them, followed
 by a list of options:
 
--   **Rename** changes the name of the current workspace
--   **Settings** changes the settings of the current workspace
--   **Remove** deletes the current workspace
 -   **New workspace** creates a new workspace
--   **Embed** shows info about how to embed current workspace in other
-    web pages
+-   **Rename** changes the name of the current workspace
 -   **Share** shows the sharing configuration of the current workspace
 -   **Upload to my resources** allows you to save the current
     workspace to the local catalogue for later usage
+-   **Embed** shows info about how to embed current workspace in other
+    web pages
+-   **Settings** changes the settings of the current workspace
+-   **Remove** deletes the current workspace
 
 If you want to create a new workspace named "History Info", choose *New
 workspace* in the dropdown menu:
@@ -213,11 +213,11 @@ in this example in the "My Resources" view:
 
 <img src="../images/user_guide/browsing_marketplace/my_resources.png" srcset="../images/user_guide/browsing_marketplace/my_resources.png 2x" alt="List of used components"/>
 
-Go to the editor view and click on the *Add widget* button:
+Go to the editor view and click on the *Search component* button:
 
 <img src="../images/user_guide/building_mashup/add_widget_button.png" srcset="../images/user_guide/building_mashup/add_widget_button.png 2x" alt="Click *Add Widget*"/>
 
-Look for the *Linear Graph* widget and click on the *Add to workspace*
+Look for the *Linear Graph* widget and click on the *New component*
 button:
 
 <img src="../images/user_guide/building_mashup/add_linear_graph.png" srcset="../images/user_guide/building_mashup/add_linear_graph.png 2x" alt="Click *Add to workspace*"/>
@@ -252,11 +252,11 @@ You will then be presented with a dropdown menu with several options.
 
 -   **Rename** changes the widget name shown in workspace editor and
     wiring Editor views
+-   **Refresh** refreshes the widget
+-   **Upgrade/Downgrade** allows you to change the version of the widget
+-   **Logs** shows a dialog with the log history of the widget
 -   **Settings** shows a form for changing the settings of the current
     widget
--   **Log** shows a dialog with the log history of the widget
--   **Upgrade/Downgrade** allows you to change the version of the widget
--   **Reload** reloads the widget
 -   **User's Manual** will open the widget documentation
 -   **Full Dragboard** maximises the selected widget, so it will take up
     the full canvas area. This option becomes **Exit Full Dragboard** if
@@ -277,8 +277,8 @@ mark shadow radius to customise the visualisation.
 <img src="../images/user_guide/building_mashup/linear_graph_settings.png" srcset="../images/user_guide/building_mashup/linear_graph_settings.png 2x" alt="Click *Settings*"/>
 
 As we have configure the initial position and the initial zoom, we need to
-reload the widget. To do so, we click again on the properties icon and then on
-the *Reload* option:
+refresh the widget. To do so, we click again on the properties icon and then on
+the *Refresh* option:
 
 <img src="../images/user_guide/building_mashup/mapviewer_reload_entry.png" srcset="../images/user_guide/building_mashup/mapviewer_reload_entry.png 2x" alt="Reload option"/>
 
@@ -333,7 +333,7 @@ operators are called piping operators. So we have to add it to the
 wiring.
 
 To do so, open the components side panel and search the *NGSI source* operator,
-then click on the *Create* button:
+then click on the *New component* button:
 
 <img src="../images/user_guide/wiring/create_operator_button.png" srcset="../images/user_guide/wiring/create_operator_button.png 2x" alt="Click *Create*"/>
 
