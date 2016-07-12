@@ -21,7 +21,6 @@ from __future__ import unicode_literals
 
 from io import BytesIO
 
-from django.core.cache import cache
 from django.conf import settings
 from django.template import loader, Context, Template
 from lxml import etree
@@ -69,6 +68,7 @@ def get_operator_cache_key(operator, domain, mode):
 
 def get_operator_api_files(request):
 
+    from django.core.cache import cache
     from wirecloud.platform.core.plugins import get_version_hash
 
     key = 'operator_api_files/%s?v=%s' % (get_current_domain(request), get_version_hash())
