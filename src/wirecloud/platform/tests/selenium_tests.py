@@ -56,7 +56,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_basic_workspace_operations(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
+
         # We need atleast one Workspace, so we cannot delete current workspace
         self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources'), must_be_disabled=('Remove',)).close()
 
@@ -101,18 +102,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(len(self.find_tab(id="103").widgets), dst_iwidget_count + 1)
     test_move_iwidget_between_tabs.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
-    def test_create_widget_from_resource_sidebar(self):
-        self.login()
+    def test_create_widget_from_component_sidebar(self):
+        self.login(username="admin", next="/admin/Workspace")
         self.create_widget("Test")
 
     def test_remove_widget_from_workspace(self):
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
         self.find_widget(title="Test 1").remove()
 
     def test_remove_tab_from_workspace(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
-        tab = self.find_tab(title="Tab 1")
-        tab.remove()
+        self.find_tab(title="Tab 1").remove()
 
         with self.wiring_view as wiring:
             self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
@@ -133,7 +133,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab.show_preferences().check(must_be_disabled=('Remove',))
 
     def test_refresh_widget(self):
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         tab_widget = self.find_widget(title="Test 1")
         with tab_widget:
@@ -148,7 +148,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_basic_widget_functionalities(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
         iwidget = self.find_widget(title="Test 1")
 
         with iwidget:
@@ -291,7 +291,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 5)
 
     def test_resize_widgets(self):
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         widget1 = self.widgets[1]
         old_size = widget1.size
@@ -494,7 +494,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_ParameterizedMashup_1.0.zip',), shared=True)
     def test_create_workspace_from_catalogue_using_parameters(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
         self.create_workspace(mashup='ParameterizedMashup', parameters={
             'text_param': 'parameterized value',
             'password_param': 'parameterized password',
@@ -532,7 +532,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
         self.create_workspace(name='Test Mashup')
         self.create_workspace(mashup='Test Mashup')
         self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
@@ -563,7 +563,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_merge_mashup(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
+
         with self.resource_sidebar as sidebar:
             resource = sidebar.search_mashup('Test Mashup')
             resource.merge()
@@ -581,11 +582,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(len(self.find_tab(id=tab3.id).widgets), 1)
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login')
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url.startswith(self.live_server_url + '/login'))
 
     def test_workspace_publish(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
+
         self.publish_workspace({
             'vendor': 'Wirecloud',
             'name': 'Published Workspace',
@@ -600,7 +602,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_workspace_publish_readonly_widgets_and_connections(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         self.publish_workspace({
             'vendor': 'Wirecloud',
@@ -732,7 +734,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_browser_navigation_history_management(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view:
             pass
@@ -750,7 +752,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.back()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
         self.driver.back()
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login')
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Workspace')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
@@ -852,9 +854,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_browser_navigation_from_renamed_workspace(self):
 
-        self.login(username='user_with_workspaces')
-
-        initial_workspace = self.get_current_workspace_name()
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         self.change_current_workspace('Pending Events')
         self.rename_workspace('New Name')
@@ -866,7 +866,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'New Name'))
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, initial_workspace))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'Workspace'))
 
         # Navigation history should be replayable
         self.driver.forward()
@@ -877,7 +877,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_browser_navigation_to_deleted_workspace(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         self.change_current_workspace('Pending Events')
         self.remove_workspace()
@@ -950,7 +950,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_move_widget_and_restore(self):
 
-        self.login(username="user_with_workspaces")
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         iwidgets = self.widgets
 
@@ -971,7 +971,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         if self.driver.capabilities['browserName'] != 'chrome':  # pragma: no cover
             raise unittest.SkipTest('Touch events are supported only by chrome/chromium')
 
-        self.login(username="user_with_workspaces")
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         iwidgets = self.widgets
 
@@ -993,7 +993,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_basic_add_and_move_widget(self):
 
-        self.login(username="admin")
+        self.login(username="admin", next="/admin/Workspace")
+
         with self.resource_sidebar as sidebar:
             resource = sidebar.search_resource('widget', 'Context Inspector')
             widget1 = resource.create_component()
@@ -1097,7 +1098,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_move_widget_interchange(self):
 
-        self.login(username="user_with_workspaces")
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         iwidgets = self.widgets
 
@@ -1174,7 +1175,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_basic_layout_parameter_change(self):
 
-        self.login(username="admin")
+        self.login(username="admin", next="/admin/Workspace")
 
         widget = self.create_widget('Context Inspector')
 
@@ -1264,7 +1265,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_layout_type_change(self):
 
-        self.login(username="admin")
+        self.login(username="admin", next="/admin/Workspace")
 
         widget = self.create_widget('Context Inspector')
 
@@ -1319,7 +1320,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
     def test_dashboard_management_api(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/api-test-mashup")
 
         initial_iwidgets = self.widgets
         initial_iwidget_count = len(initial_iwidgets)
@@ -1351,7 +1352,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
     def test_dashboard_management_api_from_operator(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/api-test-mashup")
 
         initial_iwidgets = self.widgets
         initial_iwidget_count = len(initial_iwidgets)
@@ -1378,7 +1379,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_widget(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         widget, other_widget = self.widgets
 

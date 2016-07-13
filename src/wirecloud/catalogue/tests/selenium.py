@@ -55,7 +55,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_reinstall_packaged_widget(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
 
         with self.myresources_view as myresources:
             myresources.delete_resource('Test')
@@ -72,7 +72,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_upload_and_instantiate_widget(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
 
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)

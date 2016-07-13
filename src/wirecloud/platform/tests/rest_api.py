@@ -3425,13 +3425,11 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         data = {
             'name': 'RenamedWorkspace',
-            'active': True,
         }
 
         def workspace_not_changed(self):
             user_workspace = UserWorkspace.objects.get(pk=2)
             self.assertEqual(user_workspace.workspace.name, 'Workspace')
-            self.assertEqual(user_workspace.active, True)
 
         check_post_requires_authentication(self, url, json.dumps(data), workspace_not_changed)
 
@@ -3441,13 +3439,11 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         data = {
             'name': 'RenamedWorkspace',
-            'active': True,
         }
 
         def workspace_not_changed(self):
             user_workspace = UserWorkspace.objects.get(pk=2)
             self.assertEqual(user_workspace.workspace.name, 'Workspace')
-            self.assertEqual(user_workspace.active, True)
 
         check_post_requires_permission(self, url, json.dumps(data), workspace_not_changed)
 
@@ -3462,30 +3458,14 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         def update_workspace_name():
             data = {
                 'name': 'RenamedWorkspace',
-                'active': False,
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
 
             user_workspace = UserWorkspace.objects.get(pk=2)
             self.assertEqual(user_workspace.workspace.name, data['name'])
-            self.assertEqual(user_workspace.active, False)
 
         check_cache_is_purged(self, 2, update_workspace_name)
-
-        # Set workspace as active
-        def mark_workspace_active():
-            data = {
-                'name': 'Workspace',
-                'active': 'True',
-            }
-            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-            self.assertEqual(response.status_code, 204)
-
-            user_workspace = UserWorkspace.objects.get(pk=2)
-            self.assertEqual(user_workspace.workspace.name, data['name'])
-            self.assertEqual(user_workspace.active, True)
-        check_cache_is_purged(self, 2, mark_workspace_active)
 
         # Update workspace descriptions
         def update_workspace_descriptions():
@@ -3498,8 +3478,8 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
             user_workspace = UserWorkspace.objects.get(pk=2)
             self.assertEqual(user_workspace.workspace.description, data['description'])
-            self.assertEqual(user_workspace.longdescription, data['longdescription'])
-        check_cache_is_purged(self, 2, mark_workspace_active)
+            self.assertEqual(user_workspace.workspace.longdescription, data['longdescription'])
+        check_cache_is_purged(self, 2, update_workspace_descriptions)
 
     def test_workspace_entry_post_workspace_not_found(self):
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})

@@ -53,7 +53,6 @@
         ]);
 
         _private.set(this, {
-            initial: !!data.active, // TODO: data.initial
             tabs: [],
             on_changetab: on_changetab.bind(this),
             on_createwidget: on_createwidget.bind(this),
@@ -84,15 +83,6 @@
              */
             id: {
                 value: data.id
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Boolean}
-             */
-            initial: {
-                get: function () {
-                    return _private.get(this).initial;
-                }
             },
             /**
              * @memberOf Wirecloud.Workspace#
@@ -456,34 +446,6 @@
                                 name: title
                             });
                             this.trigger('change', ['title']);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
-            }.bind(this));
-        },
-
-        setInitial: function setInitial() {
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
-                    workspace_id: this.id
-                });
-
-                var content = {
-                    active: true // TODO: initial: true
-                };
-
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(content),
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            _private.get(this).initial = true;
-                            this.trigger('change', ['initial']);
                             resolve(this);
                         } else {
                             reject(/* TODO */);

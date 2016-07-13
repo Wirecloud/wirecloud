@@ -78,8 +78,7 @@
         "pk": "1",
         "fields": {
             "user": "2",
-            "workspace": "1",
-            "active": false
+            "workspace": "1"
         }
     },
     {

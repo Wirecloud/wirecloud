@@ -49,29 +49,17 @@ from wirecloud.platform.markets.utils import get_local_catalogue
 
 
 def createEmptyWorkspace(workspaceName, user, allow_renaming=False):
-    active = False
-    workspaces = UserWorkspace.objects.filter(user__id=user.id, active=True)
-    if workspaces.count() == 0:
-        # there isn't yet an active workspace
-        active = True
-
     workspace = Workspace(name=workspaceName, creator=user, wiringStatus=get_wiring_skeleton())
     if allow_renaming is True:
         save_alternative(Workspace, 'name', workspace)
     else:
         workspace.save()
-    UserWorkspace.objects.create(user=user, workspace=workspace, active=active)
+    UserWorkspace.objects.create(user=user, workspace=workspace)
 
     # Tab creation
     createTab(_('Tab'), workspace)
 
     return workspace
-
-
-def setActiveWorkspace(user, workspace):
-
-    UserWorkspace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
-    UserWorkspace.objects.filter(user=user, workspace=workspace).update(active=True)
 
 
 class WorkspaceCollection(Resource):
@@ -80,7 +68,7 @@ class WorkspaceCollection(Resource):
     @commit_on_http_success
     def read(self, request):
 
-        workspaces, _junk = get_workspace_list(request.user)
+        workspaces = get_workspace_list(request.user)
         data_list = [get_workspace_data(workspace, request.user) for workspace in workspaces]
 
         return HttpResponse(json.dumps(data_list, sort_keys=True), content_type='application/json; charset=UTF-8')
@@ -207,20 +195,6 @@ class WorkspaceEntry(Resource):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-
-        if 'active' in ts:
-
-            active = ts.get('active', False)
-            if isinstance(active, string_types):
-                active = ts['active'].lower() == 'true'
-
-            if active:
-                # Only one active workspace
-                setActiveWorkspace(request.user, workspace)
-            else:
-                currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=request.user)
-                currentUserWorkspace.active = False
-                currentUserWorkspace.save()
 
         if 'name' in ts:
             workspace.name = ts['name']

@@ -154,37 +154,15 @@ def sync_base_workspaces(user):
 
 def get_workspace_list(user):
 
-    from wirecloud.platform.workspace.views import setActiveWorkspace
-
     if not user.is_authenticated():
-        workspaces = Workspace.objects.filter(public=True)
-        return workspaces, None
+        return Workspace.objects.filter(public=True)
 
     sync_base_workspaces(user)
 
     # Now we can fetch all the workspaces for the user
     workspaces = Workspace.objects.filter(Q(public=True) | Q(users__id=user.id))
 
-    # if there is no active workspace
-    active_workspaces = UserWorkspace.objects.filter(user=user, active=True)
-    if len(active_workspaces) == 0:
-
-        try:
-            # set the first workspace as active
-            active_workspace = UserWorkspace.objects.filter(user=user)[0]
-            setActiveWorkspace(user, active_workspace.workspace)
-        except IndexError:
-            active_workspace = None
-
-    elif len(active_workspaces) > 1:
-
-        active_workspaces[1:].update(active=False)
-        active_workspace = active_workspaces[0]
-
-    else:
-        active_workspace = active_workspaces[0]
-
-    return workspaces, active_workspace
+    return workspaces
 
 
 def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid):
@@ -336,7 +314,6 @@ def get_workspace_data(workspace, user):
         'shared': workspace.is_shared(),
         'owner': workspace.creator.username,
         'removable': workspace.creator == user and (user_workspace is None or user_workspace.manager == ''),
-        'active': user_workspace is not None and user_workspace.active,
         'lastmodified': workspace.last_modified,
         'description': workspace.description,
         'longdescription': longdescription,

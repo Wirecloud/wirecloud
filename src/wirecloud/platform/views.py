@@ -221,20 +221,16 @@ def auto_select_workspace(request, mode=None):
     if settings.ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
         return redirect_to_login(request.get_full_path())
 
-    _junk1, active_workspace = get_workspace_list(request.user)
-
-    if active_workspace is not None:
+    if request.user.is_authenticated():
         url = urlresolvers.reverse('wirecloud.workspace_view', kwargs={
-            'owner': active_workspace.workspace.creator.username,
-            'name': active_workspace.workspace.name,
+            'owner': 'wirecloud',
+            'name': 'home'
         })
 
         if mode:
             url += '?' + urlencode({'mode': mode})
 
         return HttpResponseRedirect(url)
-    elif request.user.is_authenticated():
-        return render_wirecloud(request, mode)
     else:
         context = {
             'THEME': get_active_theme_name(),

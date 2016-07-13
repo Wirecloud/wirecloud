@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -56,7 +56,7 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=No
         workspace.save()
 
     # Adding user reference to workspace in the many to many relationship
-    user_workspace = UserWorkspace(user=user, workspace=workspace, active=False)
+    user_workspace = UserWorkspace(user=user, workspace=workspace)
     user_workspace.save()
 
     fillWorkspaceUsingTemplate(workspace, template)

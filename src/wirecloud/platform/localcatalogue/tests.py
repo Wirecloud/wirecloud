@@ -529,10 +529,10 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_public_resources(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
         self.create_widget('Test')
 
-        self.login(username='normuser')
+        self.login(username='normuser', next="/normuser/Workspace")
         self.create_widget('Test')
 
     def test_resource_visibility(self):
@@ -581,7 +581,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_resource_deletion(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
 
         # Add a Test widget to the initial workspace and cache it
         self.create_widget('Test')
@@ -605,7 +605,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.widgets[0].error_count, 1)
 
         # Check normuser also has no access to the Test widget
-        self.login(username='normuser')
+        self.login(username='normuser', next="/normuser/Workspace")
         with self.myresources_view as myresources:
             myresources.search('Test')
             widget = myresources.search_in_results('Test')
@@ -624,7 +624,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         test_widget.public = False
         test_widget.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         # WireCloud has cached current workspace
         initial_workspace_widgets = len(self.widgets)
@@ -645,7 +645,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(len(self.widgets), initial_workspace_widgets)
 
         # Check admin still has access to the Test widget
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
 
         self.create_widget('Test')
 
@@ -660,7 +660,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         test_widget.groups.clear()
         test_widget.save()
 
-        self.login(username='normuser')
+        self.login(username="normuser", next="/normuser/Workspace")
 
         # Add a Test widget to the initial workspace and cache it
         self.create_widget('Test')
@@ -751,7 +751,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
     def test_resource_uninstall_version(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         initial_widgets = self.widgets
 

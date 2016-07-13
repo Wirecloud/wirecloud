@@ -101,7 +101,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_ngsi_available_to_widgets(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
 
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_ngsi-test-widget_1.0.1.wgt', 'Wirecloud NGSI API test widget')
@@ -112,7 +112,8 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_ngsi-test-widget_1.0.1.wgt',))
     def test_ngsi_api_reports_failures(self):
-        self.login()
+
+        self.login(username="admin", next="/admin/Workspace")
 
         widget = self.create_widget('Wirecloud NGSI API test widget')
 
@@ -132,7 +133,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_objectstorage_available_to_widgets(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
 
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_objectstorage-test-widget_1.0.1.wgt', 'Wirecloud Object Storage API test widget')
@@ -144,7 +145,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_objectstorage-test-widget_1.0.1.wgt',))
     def test_objectstorage_reports_failures(self):
 
-        self.login()
+        self.login(username="admin", next="/admin/Workspace")
 
         with self.create_widget('Wirecloud Object Storage API test widget'):
             api_element = self.driver.find_element_by_id('api_available')

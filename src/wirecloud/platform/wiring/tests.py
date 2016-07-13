@@ -652,7 +652,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         if not selenium_supports_draganddrop(self.driver):  # pragma: no cover
             raise unittest.SkipTest('This test need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
-        self.login()
+        self.login(username="admin", next="admin/Workspace")
         event = "hello world!!"
 
         with self.resource_sidebar as sidebar:
@@ -677,7 +677,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
     def test_remove_connection(self):
-        self.login()
+        self.login(username="admin", next="admin/api-test-mashup")
         tab_widgets = self.active_tab.widgets
 
         with self.wiring_view as wiring:
@@ -692,7 +692,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
     def test_wiring_status_change_events_from_widgets(self):
-        self.login()
+        self.login(username="admin", next="admin/api-test-mashup")
         tab_widget = self.find_widget(title="Wirecloud API test")
 
         with tab_widget:
@@ -718,7 +718,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
     def test_wiring_status_change_events_from_operators(self):
 
-        self.login()
+        self.login(username="admin", next="admin/api-test-mashup")
 
         with self.wiring_view as wiring:
 
@@ -785,7 +785,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     def test_widget_preferences_in_wiring_editor(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
         tab_widget = self.find_widget(title="Test 1")
 
         # Update widget preferences using the wiring editor interface
@@ -808,7 +808,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     def test_operator_preferences_in_wiring_editor(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         pref_prefix = "prefix: "
 
@@ -837,7 +837,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     def test_operator_logging_support(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             operator = wiring.find_draggable_component('operator', id=0)
@@ -913,7 +913,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus = self._read_json_fixtures('wiringstatus_missing_visual_data')
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_draggable_components()), 3)
@@ -933,7 +933,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus = self._read_json_fixtures('wiringstatus_unrecoverabledata')
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
         self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
 
         with self.wiring_view as wiring:
@@ -956,7 +956,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     def test_rename_widget_from_component_preferences(self):
         new_title = "New title"
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -970,7 +970,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     def test_rename_widget_from_component_draggable_preferences(self):
         new_title = "New title"
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             # Rename the widget draggable available in wiring diagram.
@@ -984,7 +984,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
         self.assertIsNotNone(self.find_widget(title=new_title))
 
     def test_remove_components_with_endpoint_attached_to_more_than_one_connection(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             # Ready an endpoint with more than one connection
@@ -998,7 +998,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(wiring.find_connections()), 1)
 
     def test_remove_components_using_key_delete_when_behaviour_engine_is_disabled(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
 
@@ -1052,7 +1052,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_TestOperator_2.0.zip',), shared=True)
     def test_upgrade_operator(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1080,7 +1080,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_widget(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1108,7 +1108,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_and_downgrade_widget(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
@@ -1127,7 +1127,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_remove_missing_endpoint_with_no_connections(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
@@ -1140,7 +1140,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_missing_endpoints_cannot_be_ordered(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
@@ -1149,7 +1149,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_search_components_by_keywords(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1159,7 +1159,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 self.assertEqual(group.id, "Wirecloud/api-test")
 
     def test_search_components_by_keywords_no_results(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1171,7 +1171,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_search_components_by_keywords_suggestions(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1231,7 +1231,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
         CatalogueResource.objects.get(vendor="Wirecloud", short_name="Test").delete()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_draggable_components('widget', extra_class='missing')), 2)
@@ -1245,7 +1245,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus = self._read_json_fixtures('wiringstatus_widget_missingtradeinfo_with_connections')
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         # WireCloud should ignore the extra widget described in the wiring
         # status
@@ -1269,7 +1269,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus = self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo')
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
         self.check_wiring_badge("1")
 
         with self.wiring_view as wiring:
@@ -1283,7 +1283,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus = self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo_and_connections')
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
         self.check_wiring_badge("4")
 
         with self.wiring_view as wiring:
@@ -1296,7 +1296,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         # Make operator with id 0 missing by uninstalling TestOperator
         CatalogueResource.objects.get(vendor="Wirecloud", short_name="TestOperator", version="1.0").delete()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
 
@@ -1316,7 +1316,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def test_operator_available_after_being_installed(self):
-        self.login()
+        self.login(username="admin", next="admin/Workspace")
 
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
@@ -1338,7 +1338,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
                 self.assertIsNone(sidebar.find_component_group('operator', "Wirecloud/TestOperator"))
 
     def test_operator_not_usable_after_being_deleted(self):
-        self.login()
+        self.login(username="admin", next="admin/Workspace")
 
         with self.myresources_view as myresources:
             myresources.delete_resource('TestOperator')
@@ -1350,7 +1350,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_Test_NoImage_3.0.wgt',), shared=True)
     def test_widget_with_no_image(self):
         # Add a widget with no image included.
-        self.login()
+        self.login(username="admin", next="admin/Workspace")
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1365,7 +1365,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 
     def _reupload_and_use_operator(self, reload=False):
         prefix = 'test_'
-        workspace = Workspace.objects.get(id=3)
+        workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus['operators']['0']['preferences'] = {
             'prefix': {"readonly": False, "hidden": False, "value": prefix},
             'exception_on_event': {"readonly": False, "hidden": False, "value": 'true'},
@@ -1373,7 +1373,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         }
         workspace.save()
 
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
         with self.wiring_view as wiring:
             modal = wiring.find_draggable_component('operator', id=0).show_settings()
@@ -1396,9 +1396,6 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         event = 'hello world!!'
 
         # Check operator connections are restored sucessfully
-        # Open Tab 2 to load target_iwidget
-        tab = self.find_tab(title="Tab 2")
-        tab.click()
         (target_iwidget, source_iwidget) = self.widgets
         self.send_basic_event(source_iwidget, event)
 
@@ -1426,7 +1423,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus['connections'][1]['readonly'] = True
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             # Such connection should be readonly and its button 'delete'
@@ -1441,7 +1438,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus['connections'][1]['readonly'] = True
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             # Both components of the readonly connection should also be readonly and
@@ -1459,7 +1456,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus['connections'][0]['target']['endpoint'] = 'nothandled'
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             # The workspace should have three connections loaded
@@ -1467,7 +1464,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(wiring.find_connections(extra_class='missing')), 0)
 
     def test_active_connection_should_allow_to_change_their_endpoints(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
             target1 = wiring.find_draggable_component('operator', id=0).find_endpoint('target', 'input')
@@ -1607,7 +1604,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             target1.create_connection(source3, must_suggest=(source2, source3))
 
     def test_endpoints_can_be_collapsed_and_expanded(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1620,7 +1617,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             wiring.find_draggable_component('operator', id=operators[0].id).expand_endpoints()
 
     def test_endpoints_collapsed_should_expand_while_connection_is_creating(self):
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1653,7 +1650,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
     def check_input_endpoint_exceptions(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
         iwidgets = self.widgets
         source_iwidget = iwidgets[0]
@@ -1722,7 +1719,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
         workspace.wiringStatus['connections'][1]['source']['endpoint'] = 'missing'
         workspace.save()
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_connections(extra_class='missing')), 2)
@@ -1786,7 +1783,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
     def test_behaviour_engine_is_disabled_by_default(self):
         # Create a new workspace to ensure we are testing the default status of
         # the behaviour engine
-        self.login()
+        self.login(username="admin", next="admin/Workspace")
         self.create_workspace(name="Test")
 
         with self.wiring_view as wiring:
@@ -1879,7 +1876,7 @@ class ComponentVolatileTestCase(WirecloudSeleniumTestCase):
         #
         # Volatile widgets and operators should be displayed in the showcase
         # using a volatile label and being disabled
-        self.login()
+        self.login(username="admin", next="admin/api-test-mashup")
         iwidgets = self.widgets
         iwidgets_count = len(iwidgets)
 

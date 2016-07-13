@@ -284,7 +284,6 @@
         "pk": 2,
         "model": "platform.userworkspace",
         "fields": {
-            "active": true,
             "reason_ref": "",
             "manager": "",
             "user": 4,
@@ -295,7 +294,6 @@
         "pk": 3,
         "model": "platform.userworkspace",
         "fields": {
-            "active": false,
             "reason_ref": "",
             "manager": "",
             "user": 4,
@@ -306,7 +304,6 @@
         "pk": 4,
         "model": "platform.userworkspace",
         "fields": {
-            "active": false,
             "reason_ref": "",
             "manager": "",
             "user": 4,
@@ -317,7 +314,6 @@
         "pk": 5,
         "model": "platform.userworkspace",
         "fields": {
-            "active": false,
             "reason_ref": "",
             "manager": "",
             "user": 4,
@@ -328,7 +324,6 @@
         "pk": 6,
         "model": "platform.userworkspace",
         "fields": {
-            "active": false,
             "reason_ref": "",
             "manager": "",
             "user": 4,
