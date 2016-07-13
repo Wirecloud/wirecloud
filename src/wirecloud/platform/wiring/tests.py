@@ -676,7 +676,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
-    def test_sends_event_after_removing_connections(self):
+    def test_remove_connection(self):
         self.login()
         tab_widgets = self.active_tab.widgets
 
@@ -691,7 +691,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
-    def test_checks_connections_from_widget_endpoints(self):
+    def test_wiring_status_change_events_from_widgets(self):
         self.login()
         tab_widget = self.find_widget(title="Wirecloud API test")
 

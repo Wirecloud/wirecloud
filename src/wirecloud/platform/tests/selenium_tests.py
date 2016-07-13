@@ -105,11 +105,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
         self.create_widget("Test")
 
-    def test_remove_widget_from_workspace_tab(self):
+    def test_remove_widget_from_workspace(self):
         self.login(username='user_with_workspaces')
         self.find_widget(title="Test 1").remove()
 
-    def test_remove_workspace_tab(self):
+    def test_remove_tab_from_workspace(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
         tab = self.find_tab(title="Tab 1")
         tab.remove()
