@@ -52,7 +52,7 @@ def check_default_settings_values(test):
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-platform-selenium')
+    tags = ('wirecloud-selenium', 'wirecloud-basics-selenium')
 
     def test_basic_workspace_operations(self):
 
@@ -99,7 +99,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(len(self.find_tab(id="102").widgets), src_iwidget_count - 1)
         self.assertEqual(len(self.find_tab(id="103").widgets), dst_iwidget_count + 1)
-    test_move_iwidget_between_tabs.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_move_iwidget_between_tabs.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     def test_create_widget_from_resource_sidebar(self):
         self.login()
@@ -925,7 +925,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(-offset, 300).release().perform()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
 
-    test_move_widget_and_restore.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_move_widget_and_restore.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     def test_move_widget_and_restore_touch(self):
 
@@ -950,7 +950,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(0, 300).release(0, 300).perform()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
 
-    test_move_widget_and_restore_touch.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_move_widget_and_restore_touch.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_basic_add_and_move_widget(self):
@@ -1055,7 +1055,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
             self.assertEqual(width_changes, "0")
-    test_basic_add_and_move_widget.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_basic_add_and_move_widget.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     def test_move_widget_interchange(self):
 
@@ -1090,7 +1090,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidgets[0].layout_position, (6, 0))
         self.assertEqual(iwidgets[1].layout_position, (0, 0))
 
-    test_move_widget_interchange.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_move_widget_interchange.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
@@ -1104,7 +1104,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         _, new_size = self.get_widget_sizes_from_context(iwidget.wait_still())
 
         self.assertEqual(old_size, new_size)
-    test_extract_widget_from_grid.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_extract_widget_from_grid.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_ColumnLayoutTests_1.0.wgt', shared=True)
@@ -1131,7 +1131,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(old_size_in_pixels, new_size_in_pixels)
         self.assertEqual(old_affected_iwidget_position, affected_iwidget.layout_position)
 
-    test_minimize_widget.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_minimize_widget.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_basic_layout_parameter_change(self):
@@ -1171,7 +1171,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             height_in_pixels_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
             self.assertEqual(height_in_pixels_changes, '0')
 
-    test_basic_layout_parameter_change.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_basic_layout_parameter_change.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     def get_widget_sizes_from_context(self, widget):
         # Check initial sizes
@@ -1221,7 +1221,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(new_size_from_context2[1], old_size_from_context2[1])
         self.assertNotEqual(new_size_in_pixels_from_context2[0], old_size_in_pixels_from_context2[0])
         #self.assertEqual(new_size_in_pixels_from_context2[1], old_size_in_pixels_from_context2[1])
-    test_basic_layout_parameter_change_several_widgets.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_basic_layout_parameter_change_several_widgets.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_layout_type_change(self):
@@ -1246,7 +1246,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertNotEqual(new_size_from_context[1], old_size_from_context[1])
         self.assertEqual(new_size_in_pixels_from_context[0], old_size_in_pixels_from_context[0])
 
-    test_layout_type_change.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_layout_type_change.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
@@ -1275,7 +1275,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         finally:
             self.driver.set_window_size(old_browser_size['width'], old_browser_size['height'])
 
-    test_window_resize.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-platform-selenium')
+    test_window_resize.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
