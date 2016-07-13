@@ -38,7 +38,7 @@
                 'type': 'group',
                 'shortTitle': utils.gettext('General info'),
                 'fields': [
-                    {name: 'name', label: utils.gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.getName(), defaultValue: workspace.getName()},
+                    {name: 'name', label: utils.gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.title, defaultValue: workspace.title},
                     {name: 'vendor', label: utils.gettext('Vendor'), type: 'text',  required: true},
                     {name: 'version', label: utils.gettext('Version'), type: 'version',  required: true},
                     {name: 'email', label: utils.gettext('Email'), type: 'email'},
@@ -73,6 +73,7 @@
         // Disable preference and property parametrization for now
         //this._addVariableParametrization(workspace, fields);
         Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Upload workspace to my resources'), 'publish_workspace', {autoHide: false});
+        this.workspace = workspace;
 
         //fill a warning message
         var warning = document.createElement('div');
@@ -86,24 +87,23 @@
         var key, tab_field;
 
         this.workspace = workspace;
-
-        for (key in workspace.tabInstances) {
-            tab_field = this._parseTab(workspace.tabInstances[key]);
+        this.workspace.tabs.forEach(function (tab) {
+            tab_field = this._parseTab(tab);
             if (tab_field !== null) {
                 fields.push(tab_field);
             }
-        }
+        }, this);
     };
 
     PublishWorkspaceWindowMenu.prototype._parseTab = function _parseTab(tab) {
 
         var i, j, iwidget, iwidgets, pref_params, prop_params, var_elements, fields;
 
-        iwidgets = tab.getDragboard().getIWidgets();
+        iwidgets = tab.widgets;
         fields = [];
 
         for (i = 0; i < iwidgets.length; i++) {
-            iwidget = iwidgets[i].internal_iwidget;
+            iwidget = iwidgets[i];
             pref_params = [];
             for (j = 0; j < iwidget.preferenceList.length; j += 1) {
                 pref_params.push({
@@ -144,7 +144,7 @@
             if (pref_params.length + prop_params.length !== 0) {
                 fields.push({
                     name: iwidget.id,
-                    label: iwidget.name,
+                    label: iwidget.title,
                     type: 'fieldset',
                     nested: true,
                     fields: var_elements
@@ -154,10 +154,10 @@
 
         if (fields.length > 0) {
             return {
-                'shortTitle': tab.tabInfo.name,
+                'shortTitle': tab.title,
                 'fields': fields,
                 'nested': true,
-                'name': 'tab-' + tab.tabInfo.name
+                'name': 'tab-' + tab.title
             };
         } else {
             return null;
@@ -187,19 +187,15 @@
             }
         }
 
-        Wirecloud.activeWorkspace.publish(data, {
-            onFailure: function (msg) {
-                // TODO
-                this.form.pSetMsgs([msg]);
-            }.bind(this),
-            onSuccess: function () {
-                this.hide();
-            }.bind(this),
-            onComplete: function () {
-                this.form.acceptButton.enable();
-                this.form.cancelButton.enable();
-            }.bind(this)
-        });
+        this.workspace.publish(data).then(function () {
+            this.form.acceptButton.enable();
+            this.form.cancelButton.enable();
+            this.hide();
+        }.bind(this), function (reason) {
+            this.form.acceptButton.enable();
+            this.form.cancelButton.enable();
+            this.form.pSetMsgs([reason]);
+        }.bind(this));
     };
 
     Wirecloud.ui.PublishWorkspaceWindowMenu = PublishWorkspaceWindowMenu;

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/*globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -34,8 +35,7 @@
     WorkspacePreferences.prototype = new Wirecloud.Preferences();
 
     WorkspacePreferences.prototype.buildTitle = function buildTitle() {
-        var msg = gettext("Workspace preferences (%(workspaceName)s)");
-        return interpolate(msg, {workspaceName: this._workspace.workspaceState.name}, true);
+        return utils.gettext("Settings");
     };
 
     WorkspacePreferences.prototype.getParentValue = function getParentValue(name) {
@@ -43,7 +43,7 @@
     };
 
     WorkspacePreferences.prototype._build_save_url = function _build_save_url() {
-        return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workspaceState.id});
+        return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.id});
     };
 
     WorkspacePreferences.prototype.destroy = function destroy() {
@@ -55,5 +55,4 @@
 
     Wirecloud.WorkspacePreferences = WorkspacePreferences;
 
-})();
-
+})(Wirecloud.Utils);

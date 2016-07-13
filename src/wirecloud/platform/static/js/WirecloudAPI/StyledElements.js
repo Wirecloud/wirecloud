@@ -28,7 +28,7 @@
     // StyledElements
     var RealStyledElements = window.parent.StyledElements;
     var platform = window.parent;
-    var iwidget = platform.Wirecloud.activeWorkspace.getIWidget(MashupPlatform.widget.id);
+    var iwidget = platform.LayoutManagerFactory.getInstance().viewsByName.workspace.findWidget(MashupPlatform.widget.id);
 
     window.StyledElements = {
         'Accordion': window.parent.StyledElements.Accordion,

@@ -145,7 +145,7 @@
 
         this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
         this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;
-        this._list = new StyledElements.Container({'class': 'widget_wallet_list loading'});
+        this._list = new StyledElements.Container({'class': 'widget_wallet_list wc-resource-results loading'});
         this.resource_painter = options.resource_painter;
 
         var input;
@@ -153,7 +153,7 @@
         var template = Wirecloud.currentTheme.templates[options.template];
         this.wrapperElement = builder.parse(template, Wirecloud.Utils.merge({
             searchinput: function () {
-                input = new StyledElements.TextField({'placeholder': gettext('Keywords...')});
+                input = new StyledElements.TextField({class: "se-field-search", 'placeholder': gettext('Keywords...')});
                 input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
                 input.addEventListener('change', _onSearchInput.bind(this));
                 return input;

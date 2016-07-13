@@ -1,3 +1,6 @@
+@import "variables";
+
+
 #workspace {
     overflow: hidden;
 }
@@ -12,8 +15,14 @@
     margin: 2ex 5ex;
 }
 
-.wc-workspace-tab.dragging {
-    cursor: -webkit-grabbing;
-    cursor: -moz-grabbing;
-    cursor: grabbing;
+.workspace {
+    .se-offcanvas {
+        margin-bottom: ($margin-vertical-base / 2);
+
+        .se-offcanvas-content {
+            background-color: $wiring-content-bg;
+            border: solid 1px $panel-default-border-color;
+            border-radius: $border-radius-base;
+        }
+    }
 }

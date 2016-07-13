@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,14 +25,16 @@
 
     "use strict";
 
-    var platform, iwidget, IWidgetVariable, endpoint_name, inputs, outputs;
+    var platform, view, model, IWidgetVariable, endpoint_name, inputs, outputs;
 
     platform = window.parent;
 
     // Init resource entry (in this case a widget) so other API files can make
     // use of it
-    iwidget = platform.Wirecloud.activeWorkspace.getIWidget(MashupPlatform.priv.id).internal_iwidget;
-    MashupPlatform.priv.resource = iwidget;
+    view = platform.LayoutManagerFactory.getInstance().viewsByName.workspace.findWidget(MashupPlatform.priv.id);
+    model = view.model;
+    MashupPlatform.priv.view = view;
+    MashupPlatform.priv.resource = model;
 
     IWidgetVariable = function IWidgetVariable(variable) {
         this.set = function set(value) {
@@ -50,7 +52,7 @@
     Object.defineProperty(window.MashupPlatform.widget, 'id', {value: MashupPlatform.priv.id});
     Object.defineProperty(window.MashupPlatform.widget, 'getVariable', {
         value: function getVariable(name) {
-            var variable = iwidget.properties[name];
+            var variable = model.properties[name];
             if (variable != null) {
                 return new IWidgetVariable(variable);
             }
@@ -59,24 +61,24 @@
 
     Object.defineProperty(window.MashupPlatform.widget, 'drawAttention', {
         value: function drawAttention() {
-            iwidget.workspace.drawAttention(iwidget.id);
+            view.workspace.drawAttention(model.id);
         }
     });
 
     Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget, 'log', {
         value: function log(msg, level) {
-            iwidget.logManager.log(msg, level);
+            model.logManager.log(msg, level);
         }
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {
         value: function getAvailableContext() {
-            return iwidget.contextManager.getAvailableContext();
+            return model.contextManager.getAvailableContext();
         }
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'get', {
         value: function get(name) {
-            return iwidget.contextManager.get(name);
+            return model.contextManager.get(name);
         }
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'registerCallback', {
@@ -85,22 +87,22 @@
                 throw new TypeError('callback must be a function');
             }
 
-            iwidget.registerContextAPICallback('iwidget', callback);
+            model.registerContextAPICallback('iwidget', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.widget.context);
 
     // Inputs
     inputs = {};
-    for (endpoint_name in iwidget.inputs) {
-        inputs[endpoint_name] = new MashupPlatform.priv.InputEndpoint(iwidget.inputs[endpoint_name], true);
+    for (endpoint_name in model.inputs) {
+        inputs[endpoint_name] = new MashupPlatform.priv.InputEndpoint(model.inputs[endpoint_name], true);
     }
     Object.defineProperty(window.MashupPlatform.widget, 'inputs', {value: inputs});
 
     // Outputs
     outputs = {};
-    for (endpoint_name in iwidget.outputs) {
-        outputs[endpoint_name] = new MashupPlatform.priv.OutputEndpoint(iwidget.outputs[endpoint_name], true);
+    for (endpoint_name in model.outputs) {
+        outputs[endpoint_name] = new MashupPlatform.priv.OutputEndpoint(model.outputs[endpoint_name], true);
     }
     Object.defineProperty(window.MashupPlatform.widget, 'outputs', {value: outputs});
 

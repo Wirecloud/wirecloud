@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global StyledElements*/
+/* globals StyledElements */
 
-(function () {
+
+(function (se, utils) {
 
     "use strict";
 
@@ -86,7 +87,7 @@
                                          false);
         }
 
-        this.rename(options.name);
+        Tab.prototype.rename.call(this, options.name);
         this.setTitle(options.title);
     };
     Tab.prototype = new StyledElements.Container({extending: true});
@@ -153,16 +154,24 @@
     };
 
     Tab.prototype.setVisible = function setVisible(newStatus) {
-        if (newStatus) {
-            this.tabElement.classList.add("selected");
-            this.wrapperElement.classList.remove("hidden");
-            this.repaint(false);
-            this.events.show.dispatch(this);
-        } else {
-            this.tabElement.classList.remove("selected");
-            this.wrapperElement.classList.add("hidden");
-            this.events.hide.dispatch(this);
-        }
+        return newStatus ? this.show() : this.hide();
+    };
+
+    Tab.prototype.hide = function hide() {
+        se.Container.prototype.hide.call(this);
+        this.tabElement.classList.remove("selected");
+        return this;
+    };
+
+    Tab.prototype.remove = function remove() {
+        this.notebook.removeTab(this.tabId);
+    };
+
+    Tab.prototype.show = function show() {
+        se.Container.prototype.show.call(this);
+        this.tabElement.classList.add("selected");
+        this.repaint(false);
+        return this;
     };
 
     Tab.prototype.getId = function getId() {
@@ -178,4 +187,4 @@
 
     StyledElements.Tab = Tab;
 
-})();
+})(StyledElements, StyledElements.Utils);

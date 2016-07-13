@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/*global MashupPlatform*/
+/* globals MashupPlatform */
+
 
 (function () {
 
@@ -31,7 +32,7 @@
 
     // Init resource entry (in this case an operator) so other API files can make
     // use of it
-    ioperator = platform.Wirecloud.activeWorkspace.wiring.ioperators[MashupPlatform.priv.id];
+    ioperator = platform.LayoutManagerFactory.getInstance().viewsByName.workspace.model.findOperator(MashupPlatform.priv.id);
     MashupPlatform.priv.resource = ioperator;
 
     // Operator Module

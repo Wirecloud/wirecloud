@@ -26,7 +26,7 @@
     "use strict";
 
     var PreferencesWindowMenu = function PreferencesWindowMenu() {
-        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Widget Settings'), 'wc-component-preferences-modal');
+        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext("Settings"), 'wc-component-preferences-modal');
     };
     PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
@@ -34,11 +34,11 @@
         var oldValue, newValue, varName, details;
 
         for (varName in new_values) {
-            oldValue = this._current_iwidget.preferences[varName].value;
+            oldValue = this.widgetModel.preferences[varName].value;
             newValue = new_values[varName];
 
             if (newValue !== oldValue) {
-                this._current_iwidget.preferences[varName].value = newValue;
+                this.widgetModel.preferences[varName].value = newValue;
             } else {
                 delete new_values[varName];
             }
@@ -47,9 +47,9 @@
         this.hide();
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
-                workspace_id: this._current_iwidget.workspace.id,
-                tab_id: this._current_iwidget.tab.id,
-                iwidget_id: this._current_iwidget.id
+                workspace_id: this.widgetModel.tab.workspace.id,
+                tab_id: this.widgetModel.tab.id,
+                widgetModel_id: this.widgetModel.id
             }), {
                 method: 'POST',
                 contentType: 'application/json',
@@ -58,21 +58,21 @@
             }
         );
 
-        if (typeof this._current_iwidget.prefCallback === 'function') {
+        if (typeof this.widgetModel.prefCallback === 'function') {
             try {
-                this._current_iwidget.prefCallback(new_values);
+                this.widgetModel.prefCallback(new_values);
             } catch (error) {
-                details = this._current_iwidget.logManager.formatException(error);
-                this._current_iwidget.logManager.log(Wirecloud.Utils.gettext('Exception catched while processing preference changes'), {details: details});
+                details = this.widgetModel.logManager.formatException(error);
+                this.widgetModel.logManager.log(Wirecloud.Utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
     };
 
-    PreferencesWindowMenu.prototype.show = function show(iwidget, parentWindow) {
+    PreferencesWindowMenu.prototype.show = function show(widgetModel, parentWindow) {
         var i, prefs, pref, fields;
 
         fields = {};
-        prefs = iwidget.preferenceList;
+        prefs = widgetModel.preferenceList;
 
         for (i = 0; i < prefs.length; i++) {
             pref = prefs[i];
@@ -81,7 +81,7 @@
                 fields[pref.meta.name] = pref.getInterfaceDescription();
             }
         }
-        this._current_iwidget = iwidget;
+        this.widgetModel = widgetModel;
         this.form = new StyledElements.Form(fields, {
             setdefaultsButton: true,
             buttonArea: this.windowBottom

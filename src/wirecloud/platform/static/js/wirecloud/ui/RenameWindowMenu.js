@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/* global Wirecloud */
+/* globals Wirecloud */
+
 
 (function (utils) {
 
@@ -28,26 +29,25 @@
     var RenameWindowMenu = function RenameWindowMenu(what, rename_method) {
 
         var fields = {
-            'name': {
-                label: utils.gettext('New Name'),
+            'title': {
+                label: utils.gettext("Title"),
                 type: 'text',
                 required: true,
-                initialValue: what.getName()
+                initialValue: what.title
             }
         };
         this.what = what;
         this.rename_method = rename_method;
-        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Rename Workspace'));
-
+        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext("New title"));
     };
     RenameWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     RenameWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.fieldInterfaces.name.focus();
+        this.form.fieldInterfaces.title.focus();
     };
 
     RenameWindowMenu.prototype.executeOperation = function executeOperation(data) {
-        this.what[this.rename_method](data.name);
+        this.what[this.rename_method](data.title);
     };
 
     Wirecloud.ui.RenameWindowMenu = RenameWindowMenu;

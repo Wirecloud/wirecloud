@@ -106,159 +106,6 @@ class PopupMenuTester(object):
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
 
 
-class IWidgetTester(object):
-
-    def __init__(self, testcase, element):
-
-        self.testcase = testcase
-        self.id = element.get_attribute('data-id')
-        self.element = element
-
-    def __getitem__(self, key):
-
-        if key == 'id':
-            return self.id
-
-    def __eq__(self, other):
-        return isinstance(other, IWidgetTester) and other.id == self.id
-
-    def __enter__(self):
-        self.wait_loaded()
-
-        self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget("%s").content;' % self.id)
-
-        self.testcase.driver.switch_to.frame(self.content_element)
-        return None
-
-    def __exit__(self, type, value, traceback):
-        self.testcase.driver.switch_to.frame(None)
-
-        # TODO work around webdriver bugs
-        self.testcase.driver.switch_to.default_content()
-
-    @property
-    def btn_preferences(self):
-        return ButtonTester(self.testcase, WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-menu-btn"), base_element=self.element)))
-
-    @property
-    def title_element(self):
-        return self.element.find_element_by_css_selector('.wc-widget-heading span')
-
-    @property
-    def name(self):
-        return self.title_element.text
-
-    @property
-    def title(self):
-        return self.name
-
-    @property
-    def error_count(self):
-        driver = self.testcase.driver
-
-        old_frame = driver.execute_script("return window.frameElement")
-        driver.switch_to.default_content()
-        error_count = driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget.logManager.errorCount' % self.id)
-        driver.switch_to.frame(old_frame)
-
-        return error_count
-
-    @property
-    def log_entries(self):
-        driver = self.testcase.driver
-
-        old_frame = driver.execute_script("return window.frameElement")
-        driver.switch_to.default_content()
-        log_entries = driver.execute_script('''
-            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget;
-            return iwidget.logManager.entries.map(function (entry) { return {date: entry.date.getTime(), level: entry.level, msg: entry.msg}; });
-        ''' % self.id)
-        driver.switch_to.frame(old_frame)
-
-        return log_entries
-
-    @property
-    def layout_position(self):
-
-        return tuple(self.testcase.driver.execute_script('''
-            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
-            var position = iwidget.getPosition();
-            return [position.x, position.y];
-        ''' % self.id))
-
-    def open_menu(self):
-        button = self.btn_preferences.click()
-        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
-
-    def show_settings(self):
-        self.open_menu().click_entry("Settings")
-        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
-
-    def rename(self, new_name, timeout=30):
-
-        self.open_menu().click_entry('Rename')
-        name_input = self.element.find_element_by_css_selector('.wc-widget-heading span')
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
-        # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
-        self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
-        self.testcase.driver.execute_script('''
-            var evt = document.createEvent("KeyboardEvent");
-            if (evt.initKeyEvent != null) {
-                evt.initKeyEvent("keydown", true, true, window, false, false, false, false, 13, 0);
-            } else {
-                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                evt.initKeyboardEvent("keydown", true, true, window, 0, 0, 0, 0, 0, 13);
-            }
-            arguments[0].dispatchEvent(evt);
-        ''', name_input)
-
-        def name_changed(driver):
-            return driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).title === "%s"' % (self.id, new_name))
-
-        WebDriverWait(self.testcase.driver, timeout).until(name_changed)
-
-    def wait_loaded(self, timeout=10):
-
-        def iwidget_loaded(driver):
-            return driver.execute_script('''
-                try {
-                    return !!Wirecloud.activeWorkspace.getIWidget(arguments[0]).internal_iwidget.loaded;
-                } catch (e) {return false;}
-            ''', self.id)
-
-        WebDriverWait(self.testcase.driver, timeout).until(iwidget_loaded)
-
-        return self
-
-    def wait_still(self, timeout=2):
-        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
-        return self
-
-    def maximize(self, timeout=10):
-
-        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-plus"), base_element=self.element)).click()
-        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
-
-    def minimize(self, timeout=10):
-
-        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-minus"), base_element=self.element)).click()
-        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
-
-    def remove(self, timeout=10):
-
-        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
-        old_iwidget_count = len(old_iwidget_ids)
-
-        self.element.find_element_by_css_selector('.icon-remove').click()
-
-        def iwidget_unloaded(driver):
-            iwidgets = self.testcase.find_iwidgets()
-            iwidget_count = len(iwidgets)
-            return iwidget_count == old_iwidget_count - 1
-
-        WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
-
-
 class WidgetWalletResourceTester(object):
 
     def __init__(self, testcase, element):
@@ -267,14 +114,14 @@ class WidgetWalletResourceTester(object):
 
     def instantiate(self):
 
-        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return "" + iwidget.id;});')
+        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.widgets.map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.element))
         self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
 
         def iwidget_added(driver):
-            new_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return "" + iwidget.id;});')
+            new_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.widgets.map(function(iwidget) {return iwidget.id;});')
             iwidget_count = len(new_iwidget_ids)
             if iwidget_count != old_iwidget_count + 1:
                 return False
@@ -287,7 +134,7 @@ class WidgetWalletResourceTester(object):
 
         new_iwidget_id = WebDriverWait(self.testcase.driver, 10).until(iwidget_added)
         element = self.testcase.wait_element_visible_by_css_selector('.wc-widget[data-id="%s"]' % new_iwidget_id)
-        return IWidgetTester(self.testcase, element)
+        return WidgetTester(self.testcase, element)
 
 
 class CatalogueEntryTester(object):
@@ -319,15 +166,17 @@ class CatalogueEntryTester(object):
 
         self.details = None
 
+    @property
+    def version_select(self):
+        return Select(self.details.find_element_by_css_selector('.versions select'))
+
     def get_version_list(self):
 
-        version_select = Select(self.details.find_element_by_css_selector('.versions select'))
-        return [option.text for option in version_select.options]
+        return [option.text for option in self.version_select.options]
 
     def switch_to(self, version):
 
-        version_select = Select(self.details.find_element_by_css_selector('.versions select'))
-        version_select.select_by_value(version)
+        self.version_select.select_by_value(version)
         catalogue_base_element = self.catalogue.get_current_catalogue_base_element()
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
 
@@ -422,8 +271,8 @@ class WalletTester(object):
 
     def search(self, keywords):
 
-        search_input = self.element.find_element_by_css_selector('.se-text-field')
-        self.testcase.fill_form_input(search_input, keywords)
+        search_input = FieldTester(self.testcase, self.element.find_element_by_css_selector('.se-text-field'))
+        search_input.set_value(keywords)
         self.testcase.driver.execute_script('''
             var evt = document.createEvent("KeyboardEvent");
             if (evt.initKeyEvent != null) {
@@ -433,7 +282,7 @@ class WalletTester(object):
                 evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
             }
             arguments[0].dispatchEvent(evt);
-        ''', search_input)
+        ''', search_input.element)
 
     def search_in_results(self, widget_name):
 
@@ -571,6 +420,10 @@ class FieldTester(WebElementTester):
         ''', self.element, value)
         return self
 
+    def submit(self):
+        self.element.submit()
+        return self
+
 
 class ChoiceFieldTester(WebElementTester):
 
@@ -637,6 +490,22 @@ class AlertModalTester(ModalTester):
         return elements if title is None else [e for e in elements if e.title == title]
 
 
+class FormTester(WebElementTester):
+
+    @property
+    def submit_button(self):
+        return ButtonTester(self.testcase, self.find_element("input[type='submit']"))
+
+    def get_field(self, name):
+        field = self.find_element("[name='%s']" % (name,))
+        if field.tag_name == 'select':
+            return ChoiceFieldTester(self.testcase, field)
+        return FieldTester(self.testcase, field)
+
+    def submit(self):
+        self.submit_button.click()
+
+
 class FormModalTester(ModalTester):
 
     def get_field(self, name):
@@ -644,6 +513,362 @@ class FormModalTester(ModalTester):
         if field.tag_name == 'select':
             return ChoiceFieldTester(self.testcase, field)
         return FieldTester(self.testcase, field)
+
+
+###############################################################################
+# WORKSPACE VIEW
+###############################################################################
+
+
+class WorkspaceMixinTester(object):
+
+    @property
+    def active_tab(self):
+        for tab in self.tabs:
+            if tab.active:
+                return tab
+        return None
+
+    @property
+    def tabs(self):
+        return [WorkspaceTabTester(self, e) for e in self.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab")]
+
+    @property
+    def widgets(self):
+        return [WidgetTester(self, e) for e in self.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
+
+    @property
+    def create_tab_button(self):
+        return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-workspace .wc-create-workspace-tab"))
+
+    def create_tab(self):
+        tab_ids = [tab.id for tab in self.tabs]
+        self.create_tab_button.click()
+
+        def tab_created(driver):
+            tabs = self.tabs
+
+            if len(tabs) == len(tab_ids) + 1:
+                for tab in tabs:
+                    if tab.id not in tab_ids:
+                        return tab
+            return None
+
+        return WebDriverWait(self.driver, timeout=5).until(tab_created)
+
+    def create_widget(self, query, new_title=None):
+        with self.resource_sidebar as sidebar:
+            resource = sidebar.search_resource('widget', query)
+            tab_widget = resource.create_component()
+
+        if new_title is not None:
+            tab_widget.rename(new_title)
+
+        return tab_widget
+
+    def find_tab(self, id=None, title=None):
+        for tab in self.tabs:
+            if (id is not None and tab.id == id) or (title is not None and tab.title == title):
+                return tab
+        return None
+
+    def find_widget(self, id=None, title=None):
+        for widget in self.widgets:
+            if (id is not None and widget.id == id) or (title is not None and widget.title == title):
+                return widget
+        return None
+
+
+class WorkspaceResourceSidebarTester(object):
+
+    def __init__(self, testcase):
+        self.testcase = testcase
+
+    def __enter__(self):
+        button = ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
+        if not button.is_active:
+            button.element.click()
+            WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
+        return self
+
+    def __exit__(self, type, value, traceback):
+        button = ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
+        if button.is_active:
+            button.element.click()
+            WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
+
+    @property
+    def element(self):
+        return self.testcase.driver.find_element_by_css_selector(".wc-workspace .wc-resource-list")
+
+    @property
+    def resources(self):
+        return [WorkspaceResourceTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".wc-resource")]
+
+    def find_resource(self, title):
+        for resource in self.resources:
+            if resource.title == title:
+                return resource
+        return None
+
+    def search_resource(self, type, query):
+        button = ButtonTester(self.testcase, self.element.find_element_by_css_selector(".wc-filter-type-%s" % (type,)))
+
+        if not button.is_active:
+            button.click()
+            time.sleep(0.2)
+
+        field = FieldTester(self.testcase, self.element.find_element_by_css_selector(".se-field-search"))
+        field.set_value(query)
+        time.sleep(0.2)
+
+        return WorkspaceResourceTester(self.testcase, self.element.find_element_by_css_selector(".wc-resource"))
+
+    def search_mashup(self, query):
+        return self.search_resource('mashup', query)
+
+
+class WorkspaceResourceTester(WebElementTester):
+
+    @property
+    def id(self):
+        return self.get_attribute('data-id')
+
+    @property
+    def title(self):
+        return self.find_element('.we-component-meta .panel-title').text
+
+    def create_component(self):
+        ids = [WidgetTester(self.testcase, e).id for e in self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
+        self.testcase.scroll_and_click(self.find_element(".wc-create-resource-component"))
+
+        def widget_created(driver):
+            widgets = [WidgetTester(self.testcase, e) for e in self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
+
+            if len(widgets) == len(ids) + 1:
+                for widget in widgets:
+                    if widget.id not in ids:
+                        return widget
+            return False
+
+        return WebDriverWait(self.testcase.driver, timeout=5).until(widget_created)
+
+    def merge(self):
+        workspace_name = self.testcase.get_current_workspace_name()
+        self.testcase.scroll_and_click(self.find_element(".wc-create-resource-component"))
+        self.testcase.assertEqual(self.testcase.get_current_workspace_name(), workspace_name)
+
+
+class WorkspaceTabTester(WebElementTester):
+
+    @property
+    def active(self):
+        return 'selected' in self.class_list
+
+    @property
+    def content(self):
+        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-workspace .wc-workspace-tab-content[data-id='%s']" % self.id))
+
+    @property
+    def id(self):
+        return self.get_attribute('data-id')
+
+    @property
+    def title(self):
+        return self.find_element("span").text
+
+    @property
+    def widgets(self):
+        return [WidgetTester(self.testcase, e) for e in self.content.find_elements(".wc-widget")]
+
+    def find_widget(self, id=None, title=None):
+        for widget in self.widgets:
+            if (id is not None and widget.id == id) or (title is not None and widget.title == title):
+                return widget
+        return None
+
+    def show_preferences(self):
+        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-tab-menu"), parent=True, base_element=self.element))
+        button.click()
+        element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
+
+        return PopupMenuTester(self.testcase, element, button)
+
+    def remove(self, timeout=10):
+        old_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab"))
+        self.show_preferences().click_entry('Remove')
+
+        if len(self.widgets) > 0:
+            self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+
+        def tab_removed(driver):
+            new_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab"))
+            return old_length == new_length + 1
+
+        WebDriverWait(self.testcase.driver, timeout).until(tab_removed)
+
+    def rename(self, new_title, timeout=10):
+        self.show_preferences().click_entry("Rename")
+        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".window_menu:not(#loading-message)"))
+        modal.get_field('title').set_value(new_title)
+        modal.accept()
+
+        def tab_renamed(driver):
+            return self.title == new_title
+
+        WebDriverWait(self.testcase.driver, timeout).until(tab_renamed)
+
+
+class WidgetTester(WebElementTester):
+
+    def __eq__(self, other):
+        return isinstance(other, WidgetTester) and other.id == self.id
+
+    def __enter__(self):
+        self.wait_loaded()
+        self.testcase.driver.switch_to.frame(self.content)
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.testcase.driver.switch_to.frame(None)
+        self.testcase.driver.switch_to.default_content()  # TODO: work around webdriver bugs
+
+    @property
+    def content(self):
+        return self.find_element(".wc-widget-content")
+
+    @property
+    def id(self):
+        return self.get_attribute('data-id')
+
+    @property
+    def loaded(self):
+        return self.testcase.driver.execute_script("""
+            try {
+                return !!Wirecloud.activeWorkspace.findWidget(arguments[0]).loaded;
+            } catch (e) {
+                return false;
+            }
+        """, self.id)
+
+    @property
+    def btn_preferences(self):
+        return ButtonTester(self.testcase, WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-menu-btn"), base_element=self.element)))
+
+    @property
+    def title_element(self):
+        return self.find_element(".panel-heading .panel-title")
+
+    @property
+    def title(self):
+        return self.title_element.text
+
+    @property
+    def remove_button(self):
+        return ButtonTester(self.testcase, self.find_element(".wc-remove"))
+
+    @property
+    def error_count(self):
+        driver = self.testcase.driver
+
+        old_frame = driver.execute_script("return window.frameElement")
+        driver.switch_to.default_content()
+        error_count = driver.execute_script('return Wirecloud.activeWorkspace.findWidget("%s").logManager.errorCount' % self.id)
+        driver.switch_to.frame(old_frame)
+
+        return error_count
+
+    @property
+    def log_entries(self):
+        driver = self.testcase.driver
+
+        old_frame = driver.execute_script("return window.frameElement")
+        driver.switch_to.default_content()
+        log_entries = driver.execute_script('''
+            var iwidget = Wirecloud.activeWorkspace.findWidget("%s");
+            return iwidget.logManager.entries.map(function (entry) { return {date: entry.date.getTime(), level: entry.level, msg: entry.msg}; });
+        ''' % self.id)
+        driver.switch_to.frame(old_frame)
+
+        return log_entries
+
+    @property
+    def layout_position(self):
+
+        return tuple(self.testcase.driver.execute_script('''
+            var iwidget = Wirecloud.activeWorkspace.view.findWidget("%s");
+            var position = iwidget.position;
+            return [position.x, position.y];
+        ''' % self.id))
+
+    def open_menu(self):
+        button = self.btn_preferences.click()
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
+
+    def show_settings(self):
+        self.open_menu().click_entry("Settings")
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
+
+    def rename(self, new_name, timeout=30):
+
+        self.open_menu().click_entry('Rename')
+        name_input = self.element.find_element_by_css_selector('.wc-widget-heading span')
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
+        # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
+        self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
+        self.testcase.driver.execute_script('''
+            var evt = document.createEvent("KeyboardEvent");
+            if (evt.initKeyEvent != null) {
+                evt.initKeyEvent("keydown", true, true, window, false, false, false, false, 13, 0);
+            } else {
+                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                evt.initKeyboardEvent("keydown", true, true, window, 0, 0, 0, 0, 0, 13);
+            }
+            arguments[0].dispatchEvent(evt);
+        ''', name_input)
+
+        def name_changed(driver):
+            return driver.execute_script('return Wirecloud.activeWorkspace.findWidget("%s").title === "%s"' % (self.id, new_name))
+
+        WebDriverWait(self.testcase.driver, timeout).until(name_changed)
+
+    def wait_still(self, timeout=2):
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
+        return self
+
+    def wait_loaded(self):
+        def widget_loaded(driver):
+            return self.loaded
+
+        WebDriverWait(self.testcase.driver, timeout=5).until(widget_loaded)
+
+    def maximize(self, timeout=10):
+
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-plus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
+
+    def minimize(self, timeout=10):
+
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-minus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
+
+    def refresh(self):
+        self.open_menu().click_entry('Refresh')
+
+    def remove(self, timeout=10):
+        old_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget"))
+        self.remove_button.click()
+
+        def widget_removed(driver):
+            new_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget"))
+            return old_length == new_length + 1
+
+        WebDriverWait(self.testcase.driver, timeout).until(widget_removed)
+
+
+###############################################################################
+# WORKSPACE WIRING VIEW
+###############################################################################
 
 
 class BaseComponentTester(WebElementTester):
@@ -803,7 +1028,7 @@ class WiringComponentDraggableTester(BaseComponentTester):
 
         def is_loaded(driver):
             return driver.execute_script('''
-                return Wirecloud.activeWorkspace.wiring.i%ss[%s].loaded;
+                return Wirecloud.activeWorkspace.%ssById["%s"].loaded;
             ''' % (self.type, self.id))
 
         WebDriverWait(self.testcase.driver, timeout=timeout).until(is_loaded)
@@ -1045,41 +1270,7 @@ class ComponentEditableViewTester(object):
         return self
 
 
-class WorkspaceTabTester(object):
-
-    def __init__(self, testcase, element):
-
-        self.testcase = testcase
-        self.element = element
-        self.id = element.get_attribute('data-id')
-
-    @property
-    def name(self):
-        span = self.element.find_element_by_css_selector('span')
-        return span.text
-
-    def open_menu(self):
-
-        tab_menu_button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-tab-menu"), parent=True, base_element=self.element))
-        tab_menu_button.click()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
-
-        return PopupMenuTester(self.testcase, popup_menu_element, tab_menu_button)
-
-    def rename(self, name):
-
-        self.open_menu().click_entry('Rename')
-        tab_name_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input')
-        self.testcase.fill_form_input(tab_name_input, name)
-        self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-        self.testcase.wait_wirecloud_ready()
-
-
 class RemoteTestCase(object):
-
-    def fill_form_input(self, form_input, value):
-        # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
-        self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
 
     def wait_element_visible_by_css_selector(self, selector, timeout=10, element=None):
         condition = WEC.visibility_of_element_located((By.CSS_SELECTOR, selector), base_element=element)
@@ -1093,42 +1284,8 @@ class RemoteTestCase(object):
         condition = WEC.visibility_of_element_located((By.XPATH, selector), base_element=element)
         return WebDriverWait(self.driver, timeout).until(condition)
 
-    def find_iwidget(self, id=None, title=None):
-        if id is not None and not isinstance(id, six.string_types):
-            id = "%s" % id
 
-        if id is not None:
-            try:
-                element = self.driver.find_element_by_css_selector('.workspace .wc-widget[data-id="%s"]' % id)
-            except NoSuchElementException:
-                return None
-
-            return IWidgetTester(self, element)
-        else:
-            for iwidget in self.find_iwidgets():
-                if title == iwidget.title:
-                    return iwidget
-        return None
-
-    def find_iwidgets(self, tab=None):
-        root_selector = '.workspace' if tab is None else '.workspace .wc-workspace-tab[data-id="%s"]' % tab
-        root_element = self.driver.find_element_by_css_selector(root_selector)
-
-        try:
-            return [IWidgetTester(self, element) for element in root_element.find_elements_by_css_selector('.wc-widget')]
-        except StaleElementReferenceException:
-            time.sleep(0.2)
-            return self.find_iwidgets(tab)
-
-    def send_basic_event(self, widget, event='hello world!!'):
-        with widget:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, event)
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-
-
-class WirecloudRemoteTestCase(RemoteTestCase):
+class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
     @classmethod
     def setUpClass(cls):
@@ -1156,7 +1313,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def setUp(self):
 
-        self.wallet = WalletTester(self)
+        self.resource_sidebar = WorkspaceResourceSidebarTester(self)
         self.marketplace_view = MarketplaceViewTester(self)
         self.myresources_view = MyResourcesViewTester(self)
         self.wiring_view = WiringViewTester(self)
@@ -1220,11 +1377,10 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         # TODO
         self.driver.add_cookie({'name': 'policy_cookie', 'value': 'on', 'path': '/'})
 
-        username_input = self.wait_element_visible_by_css_selector('#id_username')
-        self.fill_form_input(username_input, username)
-        password_input = self.driver.find_element_by_id('id_password')
-        self.fill_form_input(password_input, password)
-        password_input.submit()
+        form = FormTester(self, self.driver.find_element_by_tag_name('form'))
+        form.get_field('username').set_value(username)
+        form.get_field('password').set_value(password)
+        form.submit()
 
         self.wait_wirecloud_ready()
 
@@ -1298,12 +1454,6 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         else:
             self.assertTrue(self.get_current_workspace_name().startswith(mashup), 'Invalid workspace name after creating workspace from catalogue')
 
-    def count_iwidgets(self, tab=None):
-        if tab is None:
-            return self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().length;', tab)
-        else:
-            return self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().length;', tab)
-
     def get_current_workspace_name(self):
 
         try:
@@ -1311,43 +1461,15 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         except StaleElementReferenceException:
             return self.get_current_workspace_name()
 
-    def get_workspace_tab_by_name(self, tab_name):
+    def rename_workspace(self, workspace_title):
+        self.open_menu().click_entry("Rename")
 
-        tabs = self.driver.find_elements_by_css_selector('.se-notebook.workspace > .se-notebook-tabs-wrapper .se-notebook-tab')
-        for tab in tabs:
-            span = tab.find_element_by_css_selector('span')
-            if span.text == tab_name:
-                return WorkspaceTabTester(self, tab)
+        modal = FormModalTester(self, self.wait_element_visible_by_css_selector(".window_menu:not(#loading-message)"))
+        modal.get_field('title').set_value(workspace_title)
+        modal.accept()
 
-        return None
-
-    def get_current_workspace_tab(self):
-
-        tab = self.driver.find_element_by_css_selector('.se-notebook.workspace > .se-notebook-tabs-wrapper .se-notebook-tab.selected')
-        return WorkspaceTabTester(self, tab)
-
-    def add_widget_to_mashup(self, widget_name, new_name=None):
-
-        with self.wallet as wallet:
-            wallet.search(widget_name)
-            resource = wallet.search_in_results(widget_name)
-            iwidget = resource.instantiate()
-
-        if new_name is not None:
-            iwidget.rename(new_name)
-
-        return iwidget
-
-    def rename_workspace(self, workspace_name):
-        self.open_menu().click_entry('Rename')
-
-        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
-        self.fill_form_input(workspace_name_input, workspace_name)
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-        self.wait_wirecloud_ready()
-        time.sleep(0.5)  # work around race condition
-        self.assertEqual(self.get_current_workspace_name(), workspace_name)
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_name() == workspace_title)
+        self.assertEqual(self.get_current_workspace_name(), workspace_title)
 
     def change_current_workspace(self, workspace_name):
         self.open_menu().click_entry(workspace_name)
@@ -1356,28 +1478,30 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def remove_workspace(self):
-        workspace_to_remove = self.get_current_workspace_name()
+        old_title = self.get_current_workspace_name()
         self.open_menu().click_entry('Remove')
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+        modal = ModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-modal"))
+        modal.accept()
 
-        self.wait_wirecloud_ready()
-        self.assertNotEqual(workspace_to_remove, self.get_current_workspace_name())
+        def workspace_removed(driver):
+            return old_title != self.get_current_workspace_name()
+
+        WebDriverWait(self.driver, timeout=5).until(workspace_removed)
 
     def publish_workspace(self, info):
 
         self.open_menu().click_entry('Upload to my resources')
-
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
 
-        name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
-        self.fill_form_input(name_input, info['name'])
-        vendor_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="vendor"]')
-        self.fill_form_input(vendor_input, info['vendor'])
-        version_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="version"]')
-        self.fill_form_input(version_input, info['version'])
-        email_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="email"]')
-        self.fill_form_input(email_input, info['email'])
+        name_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]'))
+        name_input.set_value(info['name'])
+        vendor_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="vendor"]'))
+        vendor_input.set_value(info['vendor'])
+        version_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="version"]'))
+        version_input.set_value(info['version'])
+        email_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="email"]'))
+        email_input.set_value(info['email'])
 
         if info.get('readOnlyWidgets', False) is True or info.get('readOnlyConnectables', False) is True:
             tabs = self.driver.find_elements_by_css_selector('.styled_form .se-notebook-tab')
@@ -1395,28 +1519,12 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             boolean_input.click()
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-        self.wait_wirecloud_ready()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
 
         # Check that there are not windows showing errors
         # (the loading indicator has the window_menu class so always there is one window_menu)
         window_menus = self.driver.find_elements_by_css_selector('.window_menu')
         self.assertEqual(len(window_menus), 1, 'Error publishing workspace')
-
-    def count_workspace_tabs(self):
-        return len(self.driver.find_elements_by_css_selector('#workspace > .se-notebook > .se-notebook-tabs-wrapper .se-notebook-tab'))
-
-    def add_tab(self):
-
-        old_tab_count = self.count_workspace_tabs()
-
-        self.driver.find_element_by_css_selector('#workspace > .se-notebook > .se-notebook-tabs-wrapper .se-notebook-new-tab:not(.disabled)').click()
-        self.wait_wirecloud_ready()
-
-        new_tab_count = self.count_workspace_tabs()
-        self.assertEqual(new_tab_count, old_tab_count + 1)
-
-        element = self.driver.find_elements_by_css_selector('#workspace > .se-notebook > .se-notebook-tabs-wrapper .se-notebook-tab')[-1]
-        return WorkspaceTabTester(self, element)
 
     def check_wiring_badge(self, error_count):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.find_navbar_button("display-wiring-view").has_badge(error_count))
@@ -1541,8 +1649,8 @@ class MarketplaceViewTester(object):
     def search(self, keyword):
         catalogue_base_element = self.wait_catalogue_ready()
 
-        search_input = catalogue_base_element.find_element_by_css_selector('.simple_search_text')
-        self.testcase.fill_form_input(search_input, keyword)
+        search_input = FieldTester(self.testcase, catalogue_base_element.find_element_by_css_selector('.simple_search_text'))
+        search_input.set_value(keyword)
         self.testcase.driver.execute_script('''
             var evt = document.createEvent("KeyboardEvent");
             if (evt.initKeyEvent != null) {
@@ -1552,7 +1660,7 @@ class MarketplaceViewTester(object):
                 evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
             }
             arguments[0].dispatchEvent(evt);
-        ''', search_input)
+        ''', search_input.element)
 
         self.wait_catalogue_ready()
 
@@ -1577,7 +1685,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.marketplace_view = marketplace_view
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-archive"), parent=True)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-catalogue"))).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
         return self
 
@@ -1661,7 +1769,11 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
             WebDriverWait(self.testcase.driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
             self.testcase.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
-            self.testcase.wait_wirecloud_ready()
+
+            if should_disappear_from_listings:
+                WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.get_subview() == 'search')
+            else:
+                WebDriverWait(self.testcase.driver, 5).until(lambda driver: resource.version_select.first_selected_option != version)
 
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
@@ -1690,7 +1802,10 @@ class MyResourcesViewTester(MarketplaceViewTester):
                 return
             else:
                 resource.advanced_operation(action)
-                self.testcase.wait_wirecloud_ready()
+                if should_disappear_from_listings:
+                    WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.get_subview() == 'search')
+                else:
+                    WebDriverWait(self.testcase.driver, 5).until(lambda driver: resource.version_select.first_selected_option != version)
 
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
@@ -1837,11 +1952,11 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     @property
     def panel(self):
-        return self.testcase.driver.find_element_by_css_selector(".we-panel-components")
+        return self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring .we-panel-components")
 
     @property
     def search_field(self):
-        return FieldTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .se-text-field"))
+        return FieldTester(self.testcase, self.panel.find_element_by_css_selector(".se-text-field"))
 
     @property
     def alert(self):
@@ -1973,10 +2088,10 @@ class MobileWirecloudRemoteTestCase(RemoteTestCase):
         self.driver.get(url)
         self.wait_element_visible_by_css_selector('#id_username')
 
-        username_input = self.driver.find_element_by_id('id_username')
-        self.fill_form_input(username_input, username)
-        password_input = self.driver.find_element_by_id('id_password')
-        self.fill_form_input(password_input, password)
+        username_input = FieldTester(self, self.driver.find_element_by_id('id_username'))
+        username_input.set_value(username)
+        password_input = FieldTester(self, self.driver.find_element_by_id('id_password'))
+        password_input.set_value(password)
         password_input.submit()
 
         self.wait_wirecloud_ready()
@@ -1988,11 +2103,11 @@ class MobileWirecloudRemoteTestCase(RemoteTestCase):
     def _find_iwidgets(self, tab):
 
         if tab is None:
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.view.widgets.map(function(widget) {return widget.wrapperElement;});')
         else:
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.element;});', tab)
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.view.findTab(arguments[0]).widgets.map(function(widget) {return widget.wrapperElement;});', tab)
 
-        return [IWidgetTester(self, element) if element is not None else None for element in iwidget_elements]
+        return [WidgetTester(self, element) if element is not None else None for element in iwidget_elements]
 
     def find_iwidgets(self, tab=None):
         try:

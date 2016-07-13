@@ -48,7 +48,7 @@
     var findElementByTextContent = function findElementByTextContent(nodes, text) {
         var i;
         for (i = 0; i < nodes.length; i++) {
-            if (nodes[i].textContent.toLowerCase() == text.toLowerCase()) {
+            if (nodes[i].textContent.trim().toLowerCase() == text.toLowerCase()) {
                 return nodes[i];
             }
         }
@@ -154,7 +154,7 @@
                 wait_mac_wallet_ready: function wait_mac_wallet_ready() {
                     return function (autoAction, element) {
                         var interval = setInterval(function () {
-                            var widget_list = document.querySelector(".widget_wallet .widget_wallet_list:not(.disabled)");
+                            var widget_list = document.querySelector(".wc-workspace .wc-resource-results:not(.disabled)");
                             if (widget_list) {
                                 clearInterval(interval);
                                 autoAction.nextHandler();
@@ -208,18 +208,18 @@
                 };
             },
             mac_wallet_close_button: function mac_wallet_close_button() {
-                return Utils.basic_selectors.button('.widget_wallet .icon-remove');
+                return Utils.basic_selectors.button('.wc-toolbar .wc-show-component-sidebar');
             },
             mac_wallet_input: function mac_wallet_input() {
-                return Utils.basic_selectors.element('.widget_wallet .se-text-field');
+                return Utils.basic_selectors.element('.wc-workspace .wc-resource-list .se-field-search');
             },
             mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
                 return function () {
                     var resources, widget, element;
 
-                    resources = document.querySelectorAll('.widget_wallet .widget_wallet_list .resource_name');
+                    resources = document.querySelectorAll('.wc-workspace .we-component-meta .panel-heading');
                     widget = findElementByTextContent(resources, resource_title);
-                    element = widget.parentNode.getElementsByClassName("mainbutton")[0];
+                    element = widget.parentNode.querySelector(".panel-body .wc-create-resource-component");
 
                     return element;
                 };

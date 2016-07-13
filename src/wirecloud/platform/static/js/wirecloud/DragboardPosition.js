@@ -28,6 +28,7 @@
     var DragboardPosition = function DragboardPosition(x, y) {
         Object.defineProperties(this, {
             x: {
+                enumerable: true,
                 get: function () { return x; },
                 set: function (newValue) {
                     if (typeof newValue != 'number') {
@@ -37,6 +38,7 @@
                 }
             },
             y: {
+                enumerable: true,
                 get: function () { return y; },
                 set: function (newValue) {
                     if (typeof newValue != 'number') {

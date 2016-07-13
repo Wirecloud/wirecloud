@@ -94,7 +94,7 @@
 
     var onWorkspaceRemoved = function onWorkspaceRemoved(workspace) {
         // Removing reference
-        delete this.workspacesByUserAndName[workspace.owner][workspace.name];
+        delete this.workspacesByUserAndName[workspace.owner][workspace.title];
         delete this.workspaceInstances[workspace.id];
 
         // Set the first workspace as current
@@ -103,7 +103,12 @@
     };
 
     var onMergeSuccess = function onMergeSuccess(options, response) {
-        Wirecloud.changeActiveWorkspace(Wirecloud.activeWorkspace.workspaceState);
+        var workspace = {
+            id: Wirecloud.activeWorkspace.id,
+            owner: Wirecloud.activeWorkspace.owner,
+            name: Wirecloud.activeWorkspace.title
+        };
+        Wirecloud.changeActiveWorkspace(workspace, null, options);
     };
 
     var onMergeFailure = function onMergeFailure(options, response, e) {
@@ -276,11 +281,6 @@
     Wirecloud.unload = function unload() {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext('Unloading WireCloud'));
-
-        if (this.activeWorkspace != null) {
-            this.activeWorkspace.unload();
-            this.activeWorkspace = null;
-        }
     };
 
     Wirecloud.logout = function logout() {
@@ -327,10 +327,6 @@
             options.monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
         }
 
-        if (this.activeWorkspace != null) {
-            this.activeWorkspace.unload();
-        }
-
         state = {
             workspace_owner: workspace.owner,
             workspace_name: workspace.name,
@@ -371,7 +367,7 @@
                             }
 
                             Wirecloud.trigger('viewcontextchanged');
-                            preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, {workspaceState: workspace_data}, workspace_data.empty_params);
+                            preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, workspace_data, workspace_data.extra_prefs, workspace_data.empty_params);
                             preferences.addEventListener('post-commit', function () {
                                 setTimeout(function () {
                                     Wirecloud.changeActiveWorkspace(workspace, initial_tab, options);
@@ -385,8 +381,10 @@
                             return;
                         }
 
-                        this.activeWorkspace = new Workspace(workspace_data, workspace_resources);
-                        this.activeWorkspace.addEventListener('removed', onWorkspaceRemoved.bind(this));
+                        this.activeWorkspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
+                        Wirecloud.trigger('viewcontextchanged');
+
+                        this.activeWorkspace.addEventListener('remove', onWorkspaceRemoved.bind(this));
                         this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
                             var workspace, old_name;
 
@@ -400,9 +398,9 @@
                             }
                         }.bind(this));
 
-                        LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                        // The activeworkspacechanged event will be captured by WorkspaceView
                         Wirecloud.trigger('activeworkspacechanged', this.activeWorkspace);
-                        Wirecloud.trigger('viewcontextchanged');
+                        LayoutManagerFactory.getInstance()._notifyPlatformReady();
 
                         if (typeof options.onSuccess === "function") {
                             try {

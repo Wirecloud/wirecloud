@@ -19,9 +19,10 @@
  *
  */
 
-/*global IWidget, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -35,42 +36,27 @@
      * @param iWidget iWidget that is going to be represented by the new dragboard
      *                cursor
      */
-    var DragboardCursor = function DragboardCursor(iWidget) {
-        this.refIWidget = iWidget;
+    var DragboardCursor = function DragboardCursor(widget) {
+        this.refIWidget = widget;
 
-        var positiontmp = iWidget.getPosition();
-        this.position = positiontmp.clone();
+        this.id = 'cursor';
+        this.position = widget.position;
+        this.shape = widget.shape;
+        this.layout = widget.layout;
 
-        this.code = 'cursor';
-        this.layout = iWidget.layout;
-        this.width = iWidget.getWidth();
-        this.height = iWidget.getHeight();
-        this.heightInPixels = iWidget.element.offsetHeight;
-        this.widthInPixels = iWidget.element.offsetWidth;
-    };
-
-    DragboardCursor.prototype.getWidth = function getWidth() {
-        return this.width;
-    };
-
-    DragboardCursor.prototype.getHeight = function getHeight() {
-        return this.height;
-    };
-
-    DragboardCursor.prototype.paint = function paint(dragboard) {
         var dragboardCursor = document.createElement("div");
         dragboardCursor.setAttribute("class", "dragboardcursor");
 
         // Set width and height
-        dragboardCursor.style.height = this.heightInPixels + "px";
-        dragboardCursor.style.width = this.widthInPixels + "px";
+        dragboardCursor.style.height = widget.wrapperElement.offsetHeight + "px";
+        dragboardCursor.style.width = widget.wrapperElement.offsetWidth + "px";
 
         // Set position
         dragboardCursor.style.left = (this.layout.getColumnOffset(this.position.x) - 2) + "px"; // TODO -2 px for borders
         dragboardCursor.style.top = (this.layout.getRowOffset(this.position.y) - 2) + "px"; // TODO -2 px for borders
 
         // assign the created element
-        dragboard.insertBefore(dragboardCursor, this.refIWidget.element);
+        widget.tab.wrapperElement.insertBefore(dragboardCursor, widget.wrapperElement);
         this.element = dragboardCursor;
     };
 
@@ -81,8 +67,6 @@
     DragboardCursor.prototype.destroy = function destroy() {
         this.element.remove();
     };
-
-    DragboardCursor.prototype.getPosition = IWidget.prototype.getPosition;
 
     DragboardCursor.prototype.setPosition = function setPosition(position) {
         this.position = position;
@@ -95,4 +79,4 @@
 
     Wirecloud.ui.DragboardCursor = DragboardCursor;
 
-})();
+})(Wirecloud.Utils);

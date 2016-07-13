@@ -106,7 +106,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_ngsi-test-widget_1.0.1.wgt', 'Wirecloud NGSI API test widget')
 
-        with self.add_widget_to_mashup('Wirecloud NGSI API test widget'):
+        with self.create_widget('Wirecloud NGSI API test widget'):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
 
@@ -114,7 +114,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_ngsi_api_reports_failures(self):
         self.login()
 
-        widget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
+        widget = self.create_widget('Wirecloud NGSI API test widget')
 
         # Change widget settings
         widget.open_menu().click_entry('Settings')
@@ -137,7 +137,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_objectstorage-test-widget_1.0.1.wgt', 'Wirecloud Object Storage API test widget')
 
-        with self.add_widget_to_mashup('Wirecloud Object Storage API test widget'):
+        with self.create_widget('Wirecloud Object Storage API test widget'):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
 
@@ -146,7 +146,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.add_widget_to_mashup('Wirecloud Object Storage API test widget'):
+        with self.create_widget('Wirecloud Object Storage API test widget'):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
             self.driver.find_element_by_css_selector('.btn-primary').click()

@@ -180,6 +180,7 @@
 
         this.myresourcesButton = new StyledElements.Button({
             'iconClass': 'icon-archive',
+            class: "wc-show-catalogue",
             'title': utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {

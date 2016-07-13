@@ -61,7 +61,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
             myresources.delete_resource('Test')
             myresources.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
 
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
 
     def test_upload_duplicated_widget(self):
 
@@ -77,7 +77,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
-        self.add_widget_to_mashup('Test_Selenium')
+        self.create_widget('Test_Selenium')
 
     def test_upload_and_delete_widget(self):
 

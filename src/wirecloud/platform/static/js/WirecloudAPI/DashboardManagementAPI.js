@@ -35,8 +35,8 @@
     counter = 1;
 
     if ('widget' in MashupPlatform) {
-        resource_workspace = resource.workspace;
-        resource_element = resource_workspace.getIWidget(resource.id).content;
+        resource_workspace = resource.tab.workspace;
+        resource_element = resource.wrapperElement;
     } else {
         resource_workspace = resource.wiring.workspace;
     }
@@ -107,30 +107,24 @@
             throw new TypeError('missing widget_ref parameter');
         }
 
-        // default options
-        options = Wirecloud.Utils.merge({
-            title: null,
-            refposition: null,
-            permissions: null,
-            preferences: {},
-            properties: {},
-            top: "0px",
-            left: "0px",
-            width: null, //auto
-            height: null
-        }, options);
-
-        options.permissions = Wirecloud.Utils.merge({
-                close: true,
-                rename: false
-        }, options.permissions);
-
         var widget_def = Wirecloud.LocalCatalogue.getResourceId(ref);
         if (widget_def == null || widget_def.type !== 'widget') {
             throw new TypeError('invalid widget ref');
         }
-        var widget_title = options.title ? options.title : widget_def.title;
-        var layout = Wirecloud.activeWorkspace.getActiveDragboard().freeLayout;
+
+        // default options
+        options = Wirecloud.Utils.merge({
+            top: "0px",
+            left: "0px",
+        }, options);
+
+        options.permissions = Wirecloud.Utils.merge({
+            close: true,
+            rename: false
+        }, options.permissions);
+
+        var tab = Wirecloud.activeWorkspace.view.activeTab;
+        var layout = tab.dragboard.freeLayout;
 
         if (options.refposition != null) {
             var current_position = Wirecloud.Utils.getRelativePosition(resource_element, resource.tab.wrapperElement);
@@ -138,23 +132,18 @@
             options.top = (current_position.y + options.refposition.bottom - layout.dragboardTopMargin) + "px";
         }
 
-        var widgetinfo = {
+        options = Wirecloud.Utils.merge(options, {
             id: resource.id + '/' + counter++,
-            title: widget_title,
-            volatile: true,
-            permissions: options.permissions,
-            properties: options.properties,
-            preferences: options.preferences,
-            top: options.top,
-            left: options.left,
-            width: options.width,
-            height: options.height
-        };
-        var widget = new platform.IWidget(widget_def, layout, widgetinfo);
-        Wirecloud.activeWorkspace.getActiveDragboard().addIWidget(widget);
+            layout: 1,
+            volatile: true
+        });
+
+        var widget = tab.createWidget(widget_def, options, {
+            commit: false
+        });
         resource.addEventListener('unload', widget.remove.bind(widget));
 
-        return new Widget(widget.internal_iwidget);
+        return new Widget(widget.model);
     };
 
     var addOperator = function addOperator(ref, options) {
@@ -176,14 +165,14 @@
 
         // Filter operator options
         options = {
+            id: resource.id + '/' + counter++,
             volatile: true,
             permissions: options.permissions,
             properties: options.properties,
             preferences: options.preferences
         };
-        var operator = resource_workspace.wiring._instantiate_operator(resource.id + '/' + counter++, operator_def, options);
+        var operator = resource_workspace.wiring.createOperator(operator_def, options);
         resource.addEventListener('unload', operator.destroy.bind(operator));
-        operator.load();
         return (new Operator(operator));
     };
 

@@ -21,20 +21,17 @@
 
 /*global gettext, interpolate, Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
-    /**
-     *
-     */
-    var LogManager = function LogManager(iWidget) {
+    var WidgetLogManager = function WidgetLogManager(widget) {
         Wirecloud.LogManager.call(this, Wirecloud.GlobalLogManager);
-        this.iWidget = iWidget;
+        this.widget = widget;
     };
-    LogManager.prototype = new Wirecloud.LogManager();
+    WidgetLogManager.prototype = new Wirecloud.LogManager();
 
-    LogManager.prototype.buildExtraInfo = function buildExtraInfo() {
+    WidgetLogManager.prototype.buildExtraInfo = function buildExtraInfo() {
         var extraInfo = document.createElement('div'),
             extraInfoIcon = document.createElement('div'),
             extraInfoText = document.createElement('span');
@@ -42,30 +39,17 @@
         extraInfo.appendChild(extraInfoIcon);
         extraInfo.appendChild(extraInfoText);
         extraInfoIcon.className = "iwidget_info";
-        extraInfoText.innerHTML = this.iWidget.id;
-        extraInfoText.setAttribute('title', this.iWidget.title + "\n " + this.iWidget.widget.getInfoString());
+        extraInfoText.innerHTML = this.widget.id;
+        extraInfoText.setAttribute('title', this.widget.title + "\n " + this.widget.meta.getInfoString());
         extraInfo.style.cursor = "pointer";
 
         return extraInfo;
     };
 
-    LogManager.prototype.buildTitle = function buildTitle() {
-        var title;
-
-        if (this.iWidget) {
-            title = gettext('%(iwidget_name)s\'s logs');
-            title = interpolate(title, {iwidget_name: this.iWidget.title}, true);
-            return title;
-        } else {
-            return this.title;
-        }
+    WidgetLogManager.prototype.buildTitle = function buildTitle() {
+        return utils.gettext("Logs");
     };
 
-    LogManager.prototype.close = function close() {
-        this.title = this.buildTitle();
-        this.iWidget = null;
-    };
+    Wirecloud.WidgetLogManager = WidgetLogManager;
 
-    Wirecloud.Widget.LogManager = LogManager;
-
-})();
+})(Wirecloud.Utils);

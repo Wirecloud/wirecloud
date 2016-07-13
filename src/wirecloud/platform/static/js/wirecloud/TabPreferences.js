@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,42 +19,43 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (ns, utils) {
 
     "use strict";
 
     var TabPreferences = function TabPreferences(definitions, tab, values) {
         Wirecloud.Preferences.call(this, definitions, values);
-        this._tab = tab;
-        this._workspace = this._tab.workspace;
 
-        this._workspace.preferences.addEventListener('pre-commit', this._handleParentChanges);
+        Object.defineProperties(this, {
+            tab: {
+                value: tab
+            }
+        });
+
+        this.tab.workspace.preferences.addEventListener('pre-commit', this._handleParentChanges);
     };
     TabPreferences.prototype = new Wirecloud.Preferences();
 
     TabPreferences.prototype.buildTitle = function buildTitle() {
-        var msg = gettext("Tab preferences (%(tabName)s)");
-        return interpolate(msg, {tabName: this._tab.tabInfo.name}, true);
+        return utils.gettext("Settings");
     };
 
     TabPreferences.prototype.getParentValue = function getParentValue(name) {
-        return this._workspace.preferences.get(name);
+        return this.tab.workspace.preferences.get(name);
     };
 
     TabPreferences.prototype._build_save_url = function _build_save_url(modifiedValues) {
-        return Wirecloud.URLs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workspaceState.id, tab_id: this._tab.tabInfo.id});
+        return Wirecloud.URLs.TAB_PREFERENCES.evaluate({workspace_id: this.tab.workspace.id, tab_id: this.tab.id});
     };
 
     TabPreferences.prototype.destroy = function destroy() {
-        this._workspace.preferences.removeEventListener('pre-commit', this._handleParentChanges);
-
+        this.tab.workspace.preferences.removeEventListener('pre-commit', this._handleParentChanges);
         Wirecloud.Preferences.prototype.destroy.call(this);
-        this._workspace = null;
-        this._tab = null;
     };
 
     Wirecloud.TabPreferences = TabPreferences;
 
-})();
+})(Wirecloud, Wirecloud.Utils);

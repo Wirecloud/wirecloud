@@ -39,23 +39,23 @@
         this.acceptButton.removeClassName(['btn-success', 'btn-danger']);
 
         version = this.version_selector.getValue();
-        if (this.component.meta.version.compareTo(version) < 0) {
+        if (this.model.meta.version.compareTo(version) < 0) {
             this.acceptButton.setLabel(utils.gettext('Upgrade'));
             this.acceptButton.addClassName('btn-success');
             this.changelog.addClassName('upgrade');
             to_version = version;
-            from_version = this.component.meta.version;
+            from_version = this.model.meta.version;
         } else {
             this.acceptButton.setLabel(utils.gettext('Downgrade'));
             this.acceptButton.addClassName('btn-danger');
             this.changelog.addClassName('downgrade');
-            to_version = this.component.meta.version;
+            to_version = this.model.meta.version;
             from_version = version;
         }
 
         var resource_info = {
-            'vendor': this.component.meta.vendor,
-            'name': this.component.meta.name,
+            'vendor': this.model.meta.vendor,
+            'name': this.model.meta.name,
             'version': to_version
         };
         var url = Wirecloud.LocalCatalogue.RESOURCE_CHANGELOG_ENTRY.evaluate(resource_info);
@@ -84,21 +84,20 @@
         });
     };
 
-    var UpgradeWindowMenu = function UpgradeWindowMenu(component) {
+    var UpgradeWindowMenu = function UpgradeWindowMenu(model) {
+        var versions;
 
-        var title, versions;
-
-        title = utils.gettext('Upgrading %(component)s');
-        title = utils.interpolate(title, {component: component.title});
-
-        this.component = component;
-
-        Wirecloud.ui.WindowMenu.call(this, title, 'wc-upgrade-component-modal');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext("Versions available"), 'wc-upgrade-component-modal');
+        this.model = model;
 
         // Get all available versions
-        versions = Wirecloud.LocalCatalogue.resourceVersions[this.component.meta.group_id].map(function (component) {return component.version});
+        versions = Wirecloud.LocalCatalogue.resourceVersions[this.model.meta.group_id].map(function (resource) {
+            return resource.version;
+        });
         // Remove current version
-        versions = versions.filter(function (version) { return component.meta.version.compareTo(version) !== 0});
+        versions = versions.filter(function (version) {
+            return model.meta.version.compareTo(version) !== 0;
+        });
         // Sort versions
         versions = versions.sort(function (version1, version2) {
             return -version1.compareTo(version2);
@@ -111,7 +110,7 @@
         this.changelog = new StyledElements.Container({'extraClass': 'markdown-body loading', 'tagname': 'article'});
 
         builder.parse(Wirecloud.currentTheme.templates.upgrade_window_menu, {
-            currentversion: this.component.meta.version,
+            currentversion: this.model.meta.version,
             versionselect: this.version_selector,
             changelog: this.changelog
         }).appendTo(this.windowContent);
@@ -119,43 +118,24 @@
         // Accept button
         this.acceptButton = new StyledElements.Button({'class': 'btn-accept'});
         this.acceptButton.insertInto(this.windowBottom);
-        this.acceptButton.addEventListener("click", function () {
-            this.acceptButton.disable();
+        this.acceptButton.addEventListener("click", function (button) {
             var new_version = this.version_selector.getValue();
-            var old_version = this.component.meta.version;
-            var new_component_id = [this.component.meta.vendor, this.component.meta.name, new_version].join('/');
-            var new_component = Wirecloud.LocalCatalogue.getResourceId(new_component_id);
+            var old_version = this.model.meta.version;
+            var new_resource_id = [this.model.meta.vendor, this.model.meta.name, new_version].join('/');
 
-            var _onsuccess_listener = function onsuccess_listener() {
-                component.removeEventListener('upgraded', _onsuccess_listener);
-                component.removeEventListener('upgradeerror', _onfailure_listener);
-
-                var msg;
-                if (new_version.compareTo(old_version) > 0) {
-                    msg = utils.gettext("The %(type)s was upgraded to v%(version)s successfully.");
-                } else {
-                    msg = utils.gettext("The %(type)s was downgraded to v%(version)s successfully.");
-                }
-                msg = utils.interpolate(msg, {type: component.meta.type, version: new_version});
-                component.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
-
+            button.disable();
+            model.upgrade(Wirecloud.LocalCatalogue.getResourceId(new_resource_id)).then(function (model) {
+                button.enable();
                 this._closeListener();
-            }.bind(this);
-
-            var _onfailure_listener = function onsuccess_listener() {
-                component.removeEventListener('upgraded', _onsuccess_listener);
-                component.removeEventListener('upgradeerror', _onfailure_listener);
-                this.acceptButton.enable();
-            }.bind(this);
-            component.addEventListener('upgraded', _onsuccess_listener);
-            component.addEventListener('upgradeerror', _onfailure_listener);
-            component.meta = new_component;
+            }.bind(this), function (reason) {
+                button.enable();
+            });
         }.bind(this));
 
         // Cancel button
         this.cancelButton = new StyledElements.Button({
             text: utils.gettext('Cancel'),
-            'class': 'btn-primary btn-cancel'
+            'class': 'btn-default btn-cancel'
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);

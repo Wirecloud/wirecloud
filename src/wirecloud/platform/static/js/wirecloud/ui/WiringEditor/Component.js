@@ -85,17 +85,9 @@
             });
             this.get().setAttribute('data-id', this.id);
 
-            if (this.type == 'widget') {
-                wiringComponent.addEventListener('title_changed', component_onrename.bind(this));
-            }
+            this._on_change_model = on_change_model.bind(this);
 
-            wiringComponent.addEventListener('upgraded', function (component) {
-                this.setTitle(component.title);
-                this.setSubtitle("v" + component.meta.version);
-
-                update_enable_status.call(this);
-                update_component_label.call(this);
-            }.bind(this));
+            wiringComponent.addEventListener('change', this._on_change_model);
             update_enable_status.call(this);
             update_component_label.call(this);
         },
@@ -174,9 +166,21 @@
         this.enabled = !(this.used || this._component.volatile || this._component.missing || !this._component.hasEndpoints());
     };
 
-    var component_onrename = function component_onrename(title) {
-        this.setTitle(title);
-        this.title_tooltip.options.content = title;
+    var on_change_model = function on_change_model(model, changes) {
+
+        if (changes.indexOf('title') !== -1) {
+            this.setTitle(model.title);
+            this.title_tooltip.options.content = model.title;
+        }
+
+        if (changes.indexOf('meta') !== -1) {
+            this.setTitle(model.title);
+            this.title_tooltip.options.content = model.title;
+            this.setSubtitle("v" + model.meta.version);
+
+            update_enable_status.call(this);
+            update_component_label.call(this);
+        }
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

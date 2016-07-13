@@ -26,17 +26,17 @@
     "use strict";
 
     var WorkspacePreferencesDef = function WorkspacePreferencesDef(definitions, args) {
-        var extra_prefs, empty_params, i, param, workspace = args[1];
+        var empty_params, i, param, workspace = args[1], extra_prefs = args[2];
 
-        extra_prefs = Wirecloud.PreferenceManager.processDefinitions(workspace.workspaceState.extra_prefs);
-        if (Array.isArray(args[2]) && args[2].length > 0) {
-            empty_params = args[2];
+        extra_prefs = Wirecloud.PreferenceManager.processDefinitions(extra_prefs);
+        if (Array.isArray(args[3]) && args[3].length > 0) {
+            empty_params = args[3];
             definitions = {};
             for (i = 0; i < empty_params.length; i += 1) {
                 param = empty_params[i];
                 definitions[param] = extra_prefs[param];
             }
-        } else if (workspace.workspaceState != null) {
+        } else {
             definitions = Wirecloud.Utils.merge(definitions, extra_prefs);
         }
         Wirecloud.PreferencesDef.call(this, definitions);

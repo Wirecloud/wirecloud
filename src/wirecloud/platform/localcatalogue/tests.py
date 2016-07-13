@@ -528,12 +528,10 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
     def test_public_resources(self):
 
         self.login()
-
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
 
         self.login(username='normuser')
-
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
 
     def test_resource_visibility(self):
 
@@ -584,25 +582,25 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         # Add a Test widget to the initial workspace and cache it
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
         self.change_current_workspace('Workspace')
 
         # Create a new workspace with a test widget
         self.create_workspace(name='Test')
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
 
         # Delete Test widget
         with self.myresources_view as myresources:
             myresources.delete_resource('Test')
 
         # Check current workspace has only a missing widget
-        self.assertEqual(self.count_iwidgets(), 1)
-        self.assertEqual(self.find_iwidgets()[0].error_count, 1)
+        self.assertEqual(len(self.widgets), 1)
+        self.assertEqual(self.widgets[0].error_count, 1)
 
         # Check initial workspace has only a missing widget
         self.change_current_workspace('Workspace')
-        self.assertEqual(self.count_iwidgets(), 1)
-        self.assertEqual(self.find_iwidgets()[0].error_count, 1)
+        self.assertEqual(len(self.widgets), 1)
+        self.assertEqual(self.widgets[0].error_count, 1)
 
         # Check normuser also has no access to the Test widget
         self.login(username='normuser')
@@ -627,27 +625,27 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces')
 
         # WireCloud has cached current workspace
-        initial_workspace_widgets = self.count_iwidgets()
+        initial_workspace_widgets = len(self.widgets)
 
         # Switch to another workspace
         self.change_current_workspace('Public Workspace')
-        current_workspace_widgets = self.count_iwidgets()
+        current_workspace_widgets = len(self.widgets)
 
         # Uninstall Test widget
         with self.myresources_view as myresources:
             myresources.uninstall_resource('Test')
 
         # Check current workspace has no been affected
-        self.assertEqual(self.count_iwidgets(), current_workspace_widgets)
+        self.assertEqual(len(self.widgets), current_workspace_widgets)
 
         # Check WireCloud can load the initial workspace
         self.change_current_workspace('Workspace')
-        self.assertEqual(self.count_iwidgets(), initial_workspace_widgets)
+        self.assertEqual(len(self.widgets), initial_workspace_widgets)
 
         # Check admin still has access to the Test widget
         self.login()
 
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
 
     def test_resource_uninstall_last_usage(self):
 
@@ -663,25 +661,25 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='normuser')
 
         # Add a Test widget to the initial workspace and cache it
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
         self.change_current_workspace('Workspace')
 
         # Create a new workspace with a test widget
         self.create_workspace(name='Test')
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
 
         # Uninstall Test widget
         with self.myresources_view as myresources:
             myresources.uninstall_resource('Test')
 
         # Check current workspace has only a missing widget
-        self.assertEqual(self.count_iwidgets(), 1)
-        self.assertEqual(self.find_iwidgets()[0].error_count, 1)
+        self.assertEqual(len(self.widgets), 1)
+        self.assertEqual(self.widgets[0].error_count, 1)
 
         # Check initial workspace has only a missing widget
         self.change_current_workspace('Workspace')
-        self.assertEqual(self.count_iwidgets(), 1)
-        self.assertEqual(self.find_iwidgets()[0].error_count, 1)
+        self.assertEqual(len(self.widgets), 1)
+        self.assertEqual(self.widgets[0].error_count, 1)
 
     def test_resources_are_always_deletable_by_superusers(self):
 
@@ -731,14 +729,14 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
-        self.add_widget_to_mashup('Test')
+        self.create_widget('Test')
 
         # Uninstall all Test widget versions
         with self.myresources_view as myresources:
             myresources.uninstall_resource('Test')
 
         # The workspace should contain two missig widgets
-        iwidgets = self.find_iwidgets()
+        iwidgets = self.widgets
         self.assertEqual(len(iwidgets), 2)
         # One Test v1.0
         self.assertEqual(iwidgets[0].error_count, 1)
@@ -750,18 +748,18 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
 
-        initial_widgets = self.find_iwidgets()
+        initial_widgets = self.widgets
 
         # This is the only widget using version 2.0 and should automatically be
         # unloaded after uninstalling version 2.0 of the Test widget
-        added_widget = self.add_widget_to_mashup('Test')
+        added_widget = self.create_widget('Test')
 
         # Uninstall Test widget
         with self.myresources_view as myresources:
             myresources.uninstall_resource('Test', version="2.0")
 
         # Check current workspace has only a missing widget
-        self.assertEqual(self.count_iwidgets(), len(initial_widgets) + 1)
+        self.assertEqual(len(self.widgets), len(initial_widgets) + 1)
         self.assertEqual(added_widget.error_count, 1)
         for widget in initial_widgets:
             self.assertEqual(widget.error_count, 0)

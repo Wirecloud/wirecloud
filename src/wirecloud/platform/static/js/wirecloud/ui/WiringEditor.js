@@ -46,7 +46,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         constructor: function WiringEditor(id, options) {
 
             options = utils.updateObject({}, options);
-            options.extraClass = "wiring-view";
+            options.extraClass = "wiring-view wc-workspace-wiring";
 
             this.superClass(id, options);
 
@@ -266,12 +266,18 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.componentManager =  new ns.WiringEditor.ComponentShowcase();
         this.componentManager.addEventListener('create', function (showcase, group, button) {
             button.disable();
-            this.workspace.wiring.createComponent(group.meta, {
-                onSuccess: function (wiringComponent) {
+
+            if (group.meta.type === 'operator') {
+                this.workspace.wiring.createOperator(group.meta).then(function (operator) {
                     button.enable();
-                    showcase.addComponent(wiringComponent);
-                }
-            });
+                    showcase.addComponent(operator);
+                });
+            } else {
+                this.workspace.view.activeTab.createWidget(group.meta).then(function (widgetView) {
+                    button.enable();
+                    showcase.addComponent(widgetView.model);
+                });
+            }
         }.bind(this));
         this.componentManager.addEventListener('add', function (showcase, context) {
             context.layout = this.layout;
@@ -417,7 +423,7 @@ Wirecloud.ui = Wirecloud.ui || {};
     var tearDownView = function tearDownView() {
         /*jshint validthis:true */
 
-        this.workspace.wiring.load(this.toJSON()).save();
+        this.workspace.wiring.load(this.toJSON());
         readyView.call(this);
 
         Wirecloud.UserInterfaceManager.rootKeydownHandler = null;
@@ -459,10 +465,10 @@ Wirecloud.ui = Wirecloud.ui || {};
         var wiringEngine, visualStatus;
 
         wiringEngine = this.workspace.wiring;
-        visualStatus = wiringEngine.status.visualdescription;
+        visualStatus = wiringEngine.visualdescription;
 
         // Loading the widgets used in this workspace...
-        loadComponents.call(this, wiringEngine.widgets, visualStatus.components.widget);
+        loadComponents.call(this, this.workspace.widgets, visualStatus.components.widget);
         // ...completed.
 
         // Loading the operators used in this workspace...
@@ -470,7 +476,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         // ...completed.
 
         // Loading the connections established in the workspace...
-        loadConnections.call(this, wiringEngine.connections, visualStatus);
+        loadConnections.call(this, wiringEngine.connections, visualStatus.connections);
         // ...completed.
 
         this.behaviourEngine.loadBehaviours(visualStatus.behaviours);
@@ -480,65 +486,30 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var loadConnections = function loadConnections(connections, vInfo) {
         /*jshint validthis:true */
+        connections.forEach(function (connection) {
+            var i, data;
 
-        var list1 = [], list2 = [];
-
-        connections.forEach(function (c, i) {
-            var source, target, errorCount = 0;
-
-            if (c.volatile) {
+            if (connection.volatile) {
                 return;
             }
 
-            try {
-                source = findEndpoint.call(this, 'source', c.source.toJSON(), c.source);
-            } catch (e) {
-                this.errorMessages.push(e);
-                errorCount++;
-            }
+            data = {
+                source: findEndpoint.call(this, 'source', connection.source.toJSON(), connection.source),
+                target: findEndpoint.call(this, 'target', connection.target.toJSON(), connection.target),
+                meta: connection,
+                options: {}
+            };
 
-            try {
-                target = findEndpoint.call(this, 'target', c.target.toJSON(), c.target);
-            } catch (e) {
-                this.errorMessages.push(e);
-                errorCount++;
-            }
-
-            if (!errorCount) {
-                list1.push({
-                    source: source,
-                    target: target,
-                    meta: c,
-                    options: {}
-                });
-            }
-        }, this);
-
-        vInfo.connections.forEach(function (v, i) {
-            var source, target, found;
-
-            try {
-                v = utils.updateObject(ns.WiringEditor.Connection.VISUAL_INFO, v);
-
-                found = list1.some(function (c) {
-                    if (c.source.id == v.sourcename && c.target.id == v.targetname) {
-                        c.options.sourceHandle = v.sourcehandle;
-                        c.options.targetHandle = v.targethandle;
-
-                        return true;
-                    }
-                });
-
-                if (!found) {
-                    // The connection does not have business info.
+            for (i = vInfo.length - 1; i >= 0; i--) {
+                if (connection.source.id == vInfo[i].sourcename && connection.target.id == vInfo[i].targetname) {
+                    data.options.sourceHandle = vInfo[i].sourcehandle;
+                    data.options.targetHandle = vInfo[i].targethandle;
+                    vInfo.splice(i, 1);
+                    break;
                 }
-            } catch (e) {
-                this.errorMessages.push(e);
             }
-        }, this);
 
-        list1.concat(list2).forEach(function (c) {
-            this.connectionEngine.connect(c.meta, c.source, c.target, c.options);
+            this.connectionEngine.connect(data.meta, data.source, data.target, data.options);
         }, this);
 
         return this;
@@ -546,16 +517,13 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var loadComponents = function loadComponents(components, visualInfo) {
         /*jshint validthis:true */
-        var id, component;
-
-        for (id in components) {
-            component = components[id];
+        components.forEach(function (component) {
             this.componentManager.addComponent(component);
 
             if (component.id in visualInfo) {
                 this.createComponent(component, visualInfo[component.id]);
             }
-        }
+        }, this);
 
         return this;
     };
@@ -579,24 +547,10 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         if (!component) {
             component = this.componentManager.findComponent(bInfo.type, bInfo.id);
-
-            if (!component) {
-                throw new Error("A missing component could not recover.");
-            }
-
             component = this.createComponent(component._component);
         }
 
-        endpoint = component.getEndpoint(type, bInfo.endpoint);
-        if (endpoint == null) {
-            if (wiringEndpoint != null) {
-                return component.appendEndpoint(type, wiringEndpoint).getEndpoint(type, bInfo.endpoint);
-            } else {
-                throw new Error("Missing endpoint from view info.");
-            }
-        } else {
-            return endpoint;
-        }
+        return component.getEndpoint(type, bInfo.endpoint);
     };
 
     var findEndpointById = function findEndpointById(type, id) {
