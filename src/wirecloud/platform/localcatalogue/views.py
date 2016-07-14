@@ -74,8 +74,9 @@ class ResourceCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
+            public = request.POST.get('public', 'false').strip().lower() == 'true'
             user_list = [user.strip() for user in request.POST.get('user_list', 'false').split(',')]
-            group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
+            group_list = [group.strip() for group in request.POST.get('group_list', 'false').split(',')]
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if 'file' not in request.FILES:
                 return build_error_response(request, 400, _('Missing component file in the request'))
@@ -95,6 +96,7 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
             force_create = request.GET.get('force_create', 'false').strip().lower() == 'true'
+            public = request.GET.get('public', 'false').strip().lower() == 'true'
             user_list = [user.strip() for user in request.GET.get('user_list', 'false').split(',')]
             group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
@@ -106,6 +108,7 @@ class ResourceCollection(Resource):
 
             install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
             force_create = data.get('force_create', False)
+            public = request.GET.get('public', 'false').strip().lower() == 'true'
             user_list = [user.strip() for user in request.GET.get('user_list', 'false').split(',')]
             group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
             templateURL = data.get('url')
@@ -151,7 +154,7 @@ class ResourceCollection(Resource):
 
                 return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
-        if user_list[0] == '*' and not request.user.is_superuser:
+        if public and not request.user.is_superuser:
             return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
 
         try:
@@ -163,7 +166,7 @@ class ResourceCollection(Resource):
             elif not added:
                 status_code = 200
 
-            if user_list[0] == '*':
+            if public:
                 install_resource_to_all_users(executor_user=request.user, file_contents=file_contents)
             else:
                 users = User.objects.filter(username__in = user_list)
@@ -210,7 +213,7 @@ class ResourceCollection(Resource):
                     resource_file = BytesIO(file_contents.read(embedded_resource['src']))
 
                     extra_resource_contents = WgtFile(resource_file)
-                    if user_list[0] == '*':
+                    if public:
                         extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
                     else:
                         extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)

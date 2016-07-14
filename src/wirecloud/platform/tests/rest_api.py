@@ -3404,7 +3404,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     def test_resource_collection_post_public(self):
 
-        url = reverse('wirecloud.resource_collection') + '?user_list=*'
+        url = reverse('wirecloud.resource_collection') + '?public=true'
 
         # Authenticate
         self.client.login(username='admin', password='admin')
