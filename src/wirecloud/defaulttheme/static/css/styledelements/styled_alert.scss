@@ -128,28 +128,17 @@
 .se-alert-body {
     text-align: justify;
     font-size: $font-size-base;
-
-    blockquote {
-        font-size: inherit;
-
-        &:first-child {
-            margin-top: ($line-height-base / 2);
-        }
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
 }
 
 // ============================================================================
 // STYLED-ALERT - ALIGNMENT
 // ============================================================================
 
-.alert.se-alert-static-top {
+.se-alert-static-top {
     position: absolute;
     top: 0;
     right: 0;
     left: 0;
     margin: 10px auto;
+    width: 500px;
 }

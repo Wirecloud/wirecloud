@@ -149,7 +149,6 @@ BASE_CSS = (
     'css/base/slide.scss',
     'css/base/code.scss',
     'css/base/z-depth.scss',
-    'css/workspace/ioperator.css',
 )
 
 
@@ -165,8 +164,9 @@ WORKSPACE_CSS = (
     'css/workspace/wallet.scss',
     'css/workspace/dragboard.scss',
     'css/workspace/dragboard_cursor.scss',
+    'css/workspace/operator.scss',
+    'css/workspace/tab.scss',
     'css/workspace/widget.scss',
-    'css/workspace/workspace_tab.scss',
     'css/workspace/modals/share.scss',
     'css/workspace/modals/upload.scss',
     'css/modals/upgrade_downgrade_component.scss',
