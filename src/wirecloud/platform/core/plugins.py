@@ -168,6 +168,7 @@ WORKSPACE_CSS = (
     'css/workspace/widget.scss',
     'css/workspace/workspace_tab.scss',
     'css/workspace/share_window_menu.scss',
+    'css/workspace/modals/upload.scss',
     'css/modals/upgrade_downgrade_component.scss',
     'css/modals/embed_code.scss',
 )

@@ -1397,10 +1397,11 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         self.open_menu().click_entry('Upload to my resources')
 
-        form = FormModalTester(self.testcase, self.wait_element_visible_by_css_selector('.wc-upload-mac-modal'))
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-upload-workspace-modal'))
         form.get_field('name').set_value(info['name'])
         form.get_field('vendor').set_value(info['vendor'])
         form.get_field('version').set_value(info['version'])
+
         if 'email' in info:
             form.get_field('email').set_value(info['email'])
 

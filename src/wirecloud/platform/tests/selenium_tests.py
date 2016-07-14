@@ -31,7 +31,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils import expected_conditions as WEC
-from wirecloud.commons.utils.remote import FormModalTester, PopupMenuTester, FieldTester, ButtonTester
+from wirecloud.commons.utils.remote import ButtonTester, FieldTester, FormModalTester, FormTester, PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
@@ -640,11 +640,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         else:
             sign_in_button.click()
 
-        username_input = FieldTester(self, self.wait_element_visible_by_css_selector('#id_username'))
-        username_input.set_value('user_with_workspaces')
-        password_input = FieldTester(self, self.driver.find_element_by_id('id_password'))
-        password_input.set_value('admin')
-        password_input.element.submit()
+        form = FormTester(self, self.wait_element_visible_by_id('wc-login-form'))
+        form.get_field('username').set_value('user_with_workspaces')
+        form.get_field('password').set_value('admin')
+        form.submit()
 
         self.wait_wirecloud_ready()
         self.assertEqual(self.get_current_workspace_name(), 'Public Workspace')

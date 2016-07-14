@@ -72,7 +72,7 @@
 
         // Disable preference and property parametrization for now
         //this._addVariableParametrization(workspace, fields);
-        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Upload workspace to my resources'), 'publish_workspace', {autoHide: false});
+        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Upload workspace to my resources'), 'wc-upload-workspace-modal', {autoHide: false});
         this.workspace = workspace;
 
         //fill a warning message
