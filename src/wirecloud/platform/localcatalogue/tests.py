@@ -729,19 +729,22 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
-        self.create_widget('Test')
+        widgetV2 = self.create_widget('Test')
 
         # Uninstall all Test widget versions
         with self.myresources_view as myresources:
             myresources.uninstall_resource('Test')
 
-        # The workspace should contain two missig widgets
-        iwidgets = self.widgets
-        self.assertEqual(len(iwidgets), 2)
-        # One Test v1.0
-        self.assertEqual(iwidgets[0].error_count, 1)
-        # And a Test v2.0
-        self.assertEqual(iwidgets[1].error_count, 1)
+        # The workspace should contain three missig widgets
+        self.assertEqual(len(self.widgets), 3)
+        # A Test v2.0 widget just created in this test
+        self.assertEqual(widgetV2.error_count, 1)
+
+        # And two Test v1.0 widget
+        # one in the first tab and another in the second one
+        self.assertEqual(self.find_widget(title="Test 1").error_count, 1)
+        self.find_tab(title="Tab 2").click()
+        self.assertEqual(self.find_widget(title="Test 2").error_count, 1)
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
     def test_resource_uninstall_version(self):

@@ -31,7 +31,7 @@
             <p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a href="https://www.mozilla.org/firefox">Firefox</a> or <a href="www.google.com/chrome">Google Chrome</a> as these are the browsers currently supported by WireCloud.{% endblocktrans %}</p>
         </div>
 
-        <form style="text-align: left; width: 400px" method="post">
+        <form style="text-align: left; width: 400px" id="wc-login-form" method="post">
         <div class="panel panel-default">
 
             <div class="panel-heading">
@@ -42,10 +42,10 @@
 
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ next }}" />
-                <input type="text" class="se-text-field" style="margin: 3px 0; width: 100%;" name="username" id="id_username" autocapitalize="off" autofocus="autofocus" placeholder="{% trans "Username" %}"/>
+                <input type="text" class="se-text-field" style="margin: 3px 0; width: 100%;" name="username" autocapitalize="off" autofocus="autofocus" placeholder="{% trans "Username" %}"/>
                 <div style="display: table-row;">
-                    <div style="display: table-cell; width: 100%; padding: 3px 3px 3px 0px;"><input type="password" class="se-password-field" style="width: 100%; margin: 0;" name="password" id="id_password" placeholder="{% trans "Password" %}"/></div>
-                    <div style="display: table-cell; padding: 3px 0px 3px 3px;"><input class="se-btn btn-primary" style="margin: 0;" type="submit" id="submit" value="{% trans 'Log in' %}" /></div>
+                    <div style="display: table-cell; width: 100%; padding: 3px 3px 3px 0px;"><input type="password" class="se-password-field" style="width: 100%; margin: 0;" name="password" placeholder="{% trans "Password" %}"/></div>
+                    <div style="display: table-cell; padding: 3px 0px 3px 3px;"><input class="se-btn btn-primary" style="margin: 0;" type="submit" value="{% trans 'Log in' %}" /></div>
                 </div>
             </div>
         </div>

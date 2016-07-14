@@ -32,11 +32,13 @@ from django.test.client import RequestFactory
 from django.test.utils import override_settings
 from django.template import TemplateDoesNotExist
 from mock import Mock, patch
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.commons.authentication import logout
 from wirecloud.commons.middleware import get_api_user
 from wirecloud.commons.utils.http import get_absolute_reverse_url
-from wirecloud.commons.utils.remote import PopupMenuTester
+from wirecloud.commons.utils.remote import FormTester, PopupMenuTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selenium_test_case, WirecloudSeleniumTestCase
 from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.platform.models import Workspace
@@ -399,7 +401,7 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
         sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
 
         if sign_in_button.text != 'Sign in':
-            # Oiltheme
+            # fiwarelabtheme
             sign_in_button.click()
             popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
             popup_menu = PopupMenuTester(self, popup_menu_element)
@@ -407,11 +409,12 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
         else:
             sign_in_button.click()
 
-        username_input = self.wait_element_visible_by_css_selector('#id_username')
-        self.fill_form_input(username_input, 'user_with_workspaces')
-        password_input = self.driver.find_element_by_id('id_password')
-        self.fill_form_input(password_input, 'admin')
-        password_input.submit()
+        form = FormTester(self, self.wait_element_visible_by_id('wc-login-form'))
+        form.get_field('username').set_value('user_with_workspaces')
+        form.get_field('password').set_value('admin')
+        form.submit()
+
+        WebDriverWait(self.driver, timeout=5).until(EC.staleness_of(form.element))
 
     @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
     def test_root_view_anonymous_allowed(self):

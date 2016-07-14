@@ -587,14 +587,14 @@ class WorkspaceResourceSidebarTester(object):
     def __enter__(self):
         button = ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
         if not button.is_active:
-            button.element.click()
+            button.click()
             WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
         return self
 
     def __exit__(self, type, value, traceback):
         button = ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
         if button.is_active:
-            button.element.click()
+            button.click()
             WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
 
     @property
@@ -1377,7 +1377,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         # TODO
         self.driver.add_cookie({'name': 'policy_cookie', 'value': 'on', 'path': '/'})
 
-        form = FormTester(self, self.driver.find_element_by_tag_name('form'))
+        form = FormTester(self, self.wait_element_visible_by_id('wc-login-form'))
         form.get_field('username').set_value(username)
         form.get_field('password').set_value(password)
         form.submit()
@@ -1492,16 +1492,13 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
     def publish_workspace(self, info):
 
         self.open_menu().click_entry('Upload to my resources')
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
 
-        name_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]'))
-        name_input.set_value(info['name'])
-        vendor_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="vendor"]'))
-        vendor_input.set_value(info['vendor'])
-        version_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="version"]'))
-        version_input.set_value(info['version'])
-        email_input = FieldTester(self, self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="email"]'))
-        email_input.set_value(info['email'])
+        form = FormModalTester(self.testcase, self.wait_element_visible_by_css_selector('.wc-upload-mac-modal'))
+        form.get_field('name').set_value(info['name'])
+        form.get_field('vendor').set_value(info['vendor'])
+        form.get_field('version').set_value(info['version'])
+        if 'email' in info:
+            form.get_field('email').set_value(info['email'])
 
         if info.get('readOnlyWidgets', False) is True or info.get('readOnlyConnectables', False) is True:
             tabs = self.driver.find_elements_by_css_selector('.styled_form .se-notebook-tab')
@@ -1510,15 +1507,13 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
                 if span.text == 'Advanced':
                     tab.click()
 
-        if info.get('readOnlyWidgets', False) is True:
-            boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="readOnlyWidgets"]')
-            boolean_input.click()
+            if info.get('readOnlyWidgets', False) is True:
+                form.get_field("readOnlyWidgets").click()
 
-        if info.get('readOnlyConnectables', False) is True:
-            boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="readOnlyConnectables"]')
-            boolean_input.click()
+            if info.get('readOnlyConnectables', False) is True:
+                form.get_field("readOnlyConnectables").click()
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        form.accept()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
 
         # Check that there are not windows showing errors
@@ -2086,13 +2081,11 @@ class MobileWirecloudRemoteTestCase(RemoteTestCase):
         url += "?" + urlencode({'next': next_url})
 
         self.driver.get(url)
-        self.wait_element_visible_by_css_selector('#id_username')
 
-        username_input = FieldTester(self, self.driver.find_element_by_id('id_username'))
-        username_input.set_value(username)
-        password_input = FieldTester(self, self.driver.find_element_by_id('id_password'))
-        password_input.set_value(password)
-        password_input.submit()
+        form = FormTester(self, self.wait_element_visible_by_id('wc-login-form'))
+        form.get_field('username').set_value(username)
+        form.get_field('password').set_value(password)
+        form.submit()
 
         self.wait_wirecloud_ready()
 
