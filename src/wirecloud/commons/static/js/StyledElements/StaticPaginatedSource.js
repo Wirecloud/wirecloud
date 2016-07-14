@@ -270,6 +270,37 @@
         }
     };
 
+    StaticPaginatedSource.prototype.removeElement = function removeElement(element, idAttr) {
+        var priv = privates.get(this);
+
+        // Look for the target element
+        for (var pos = 0; pos < this.elements.length; pos++) {
+            if (priv.elements[pos][idAttr] === element.idAttr) {
+                priv.elements.slice(pos, 1);
+                if (this.options.keywords) {
+                    filterElements.call(this, this.options.keywords);
+                }
+                sortElements.call(this, this.options.order);
+                break;
+            }
+        }
+    };
+
+    StaticPaginatedSource.prototype.updateElement = function updateElement(element, idAttr) {
+        var priv = privates.get(this);
+
+        for (var i = 0; i < priv.elements.length; i++) {
+            if (priv.elements[i][idAttr] === element[idAttr]) {
+                priv.elements[i] = element;
+                break;
+            }
+        }
+        if (this.options.keywords) {
+            filterElements.call(this, this.options.keywords);
+        }
+        sortElements.call(this, this.options.order);
+    };
+
     var privates = new WeakMap();
 
     StyledElements.StaticPaginatedSource = StaticPaginatedSource;
