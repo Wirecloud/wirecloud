@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals gettext, StyledElements, Wirecloud */
 
 (function () {
 
@@ -49,7 +49,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         if (options.gui_template == null) {
-            options.gui_template = 'wirecloud_catalogue_search_interface';
+            options.gui_template = 'wirecloud/catalogue/search_interface';
         }
         this.source = new StyledElements.PaginatedSource({
             'pageSize': 30,
@@ -168,7 +168,7 @@
         if ('resource_template' in options) {
             resource_template = options.resource_template;
         } else {
-            resource_template = 'catalogue_resource_template';
+            resource_template = 'wirecloud/catalogue/resource';
         }
 
         this.resource_painter = new options.resource_painter(this.catalogue,

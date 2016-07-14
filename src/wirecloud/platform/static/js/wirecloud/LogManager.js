@@ -116,7 +116,7 @@
     };
 
     LogManager.prototype.formatException = function formatException(exception) {
-        return builder.parse(Wirecloud.currentTheme.templates.exception_log_details, {
+        return builder.parse(Wirecloud.currentTheme.templates['wirecloud/logs/details'], {
             message: exception.toString(),
             stacktrace: exception.stack
         });

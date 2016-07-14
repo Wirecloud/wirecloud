@@ -119,7 +119,7 @@
 
         this.dragboard = new ns.WorkspaceTabViewDragboard(this);
 
-        this.initialMessage = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/workspace/tab_initial_message'], {
+        this.initialMessage = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/workspace/empty_tab_message'], {
             button: this.workspace.buildAddWidgetButton.bind(this.workspace),
             tutorials:  Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts'])
         }).children[1];

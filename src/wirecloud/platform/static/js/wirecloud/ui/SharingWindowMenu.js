@@ -48,7 +48,7 @@
         ];
 
         this.visibilityOptions = new se.ButtonsGroup('visibility');
-        template = Wirecloud.currentTheme.templates['visibility_option'];
+        template = Wirecloud.currentTheme.templates['wirecloud/workspace/visibility_option'];
 
         for (i = 0; i < options.length; i++) {
             appendOption.call(this, options[i], builder, template);
@@ -70,7 +70,7 @@
         this.userGroup.appendTo(this.windowContent);
 
         this.sharingUsers = [];
-        template = Wirecloud.currentTheme.templates['sharing_user'];
+        template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];
 
         for (i = 0; i < workspace.model.users.length; i++) {
             appendUser.call(this, workspace.model.users[i], builder, template);
@@ -201,7 +201,7 @@
         var context = menuItem.context;
 
         var builder = new se.GUIBuilder();
-        var template = Wirecloud.currentTheme.templates['sharing_user'];
+        var template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];
 
         appendUser.call(this, context, builder, template);
     };

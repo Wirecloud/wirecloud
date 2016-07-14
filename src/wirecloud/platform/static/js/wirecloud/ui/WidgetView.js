@@ -48,7 +48,7 @@
         ]);
 
         options = utils.merge({
-            template: Wirecloud.currentTheme.templates.iwidget
+            template: Wirecloud.currentTheme.templates['wirecloud/workspace/widget']
         }, options);
 
         privates.set(this, {

@@ -66,7 +66,7 @@
         this.childWindow = null;
         this._closeListener = this._closeListener.bind(this);
 
-        ui_fragment = builder.parse(Wirecloud.currentTheme.templates['window_menu'], {
+        ui_fragment = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/base'], {
             'title': function (options) {
                 this.titleElement = document.createElement('h3');
                 return this.titleElement;

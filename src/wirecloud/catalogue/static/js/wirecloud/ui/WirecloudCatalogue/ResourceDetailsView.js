@@ -114,8 +114,8 @@
             };
         }.bind(this);
 
-        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates.catalogue_main_resource_details_template, this);
-        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates.catalogue_resource_details_template, this, extra_context);
+        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['wirecloud/catalogue/main_resource_details'], this);
+        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['wirecloud/catalogue/resource_details'], this, extra_context);
     };
     ResourceDetailsView.prototype = new StyledElements.Alternative();
 

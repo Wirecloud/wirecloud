@@ -56,7 +56,7 @@
         this.descriptionElement = document.createElement('div');
         this.descriptionElement.className = "text-muted";
 
-        this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.component_group, {
+        this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/wiring/component_group'], {
             title: this.titleElement,
             image: this.imageElement,
             versionselect: version,

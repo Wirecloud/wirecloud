@@ -93,7 +93,7 @@
             resourceButtonTooltip: buttontitle,
             resourceButtonListener: buttonlistener,
             scope: 'widget',
-            template: 'wallet'
+            template: 'wirecloud/wallet/base'
         });
         Wirecloud.activeWorkspace.notebook.contentArea.appendChild(this.wallet.wrapperElement);
         Wirecloud.UserInterfaceManager._registerPopup(this);

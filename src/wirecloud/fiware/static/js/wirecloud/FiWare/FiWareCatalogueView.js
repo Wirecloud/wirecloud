@@ -115,8 +115,8 @@
         search_view_options = {
             catalogue: this,
             resource_painter: Wirecloud.FiWare.ui.OfferingPainter,
-            resource_template: 'fiware_resource',
-            gui_template: 'fiware_marketplace_search_interface',
+            resource_template: 'wirecloud/fiware/marketplace/resource',
+            gui_template: 'wirecloud/fiware/marketplace/search_interface',
             extra_context: {
                 'store_select': this.storeSelect
             }

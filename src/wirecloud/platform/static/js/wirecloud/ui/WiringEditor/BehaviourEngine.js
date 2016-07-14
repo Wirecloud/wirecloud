@@ -64,7 +64,7 @@
             this.btnOrder.addEventListener('click', btnorder_onclick.bind(this));
             this.btnOrder.disable();
 
-            this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.behaviour_sidebar, {
+            this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/wiring/behaviour_sidebar'], {
                 enablebutton: this.btnEnable,
                 createbutton: this.btnCreate,
                 orderbutton: this.btnOrder,

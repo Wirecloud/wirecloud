@@ -36,7 +36,7 @@
         this.theme.setValue(Wirecloud.currentTheme.name);
         this.code = new StyledElements.TextArea();
 
-        var contents = builder.parse(Wirecloud.currentTheme.templates.embed_code_dialog, {
+        var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/embed_code'], {
             'themeselect': this.theme,
             'code': this.code
         });

@@ -85,7 +85,7 @@
 
     var _load_resource_painter = function _load_resource_painter() {
         if (this.resource_painter == null) {
-            this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates.wallet_widget, null, {
+            this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates['wirecloud/wallet/component'], null, {
                 'mainbutton': function (options, context, resource) {
                     var tooltip = this.resourceButtonTooltip;
                     if (typeof tooltip === 'function') {
@@ -137,7 +137,7 @@
         options = Wirecloud.Utils.merge({
             'extra_template_context': null,
             'scope': '',
-            'template': 'macsearch',
+            'template': 'wirecloud/macsearch',
             resource_painter: null
         }, options);
 

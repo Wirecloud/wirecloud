@@ -67,7 +67,7 @@ IWidget.prototype.paint = function () {
         return;
     }
 
-    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget_smartphone'], this);
+    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['wirecloud/workspace/widget_smartphone'], this);
 
     this.element = contents.element;
     this.content = this.element.getElementsByTagName('iframe')[0];

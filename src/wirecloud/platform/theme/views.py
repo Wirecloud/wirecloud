@@ -41,10 +41,10 @@ def get_templates(view):
 
     if view not in _wirecloud_templates:
         plugins = get_plugins()
-        templates = {}
+        templates = []
 
         for plugin in plugins:
-            templates.update(plugin.get_templates(view))
+            templates.extend(plugin.get_templates(view))
 
         _wirecloud_templates[view] = templates
 
@@ -69,12 +69,12 @@ class ThemeEntry(Resource):
             "templates": {}
         }
 
-        template_descriptions = get_templates('classic')
-        for template_id in template_descriptions:
+        for template_id in get_templates('classic'):
+            template_file = template_id + '.html'
             try:
-                template = get_template("%s:%s" % (name, template_descriptions[template_id]))
+                template = get_template("%s:%s" % (name, template_file))
             except TemplateDoesNotExist:
-                template = get_template(template_descriptions[template_id])
+                template = get_template(template_file)
             desc["templates"][template_id] = template.render(context)
 
         return HttpResponse(json.dumps(desc, cls=LazyEncoder, sort_keys=True), 'application/json')

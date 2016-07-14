@@ -109,7 +109,7 @@
 
         this.changelog = new StyledElements.Container({'extraClass': 'markdown-body loading', 'tagname': 'article'});
 
-        builder.parse(Wirecloud.currentTheme.templates.upgrade_window_menu, {
+        builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/upgrade_downgrade_component'], {
             currentversion: this.model.meta.version,
             versionselect: this.version_selector,
             changelog: this.changelog

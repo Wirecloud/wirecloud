@@ -562,29 +562,29 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_templates(self, view):
         if view == 'classic':
-            return {
-                "behaviour_sidebar": "wirecloud/wiring/behaviour_sidebar.html",
-                "component_group": "wirecloud/wiring/component_group.html",
-                "component_sidebar": "wirecloud/wiring/component_sidebar.html",
-                "embed_code_dialog": "wirecloud/modals/embed_code.html",
-                "exception_log_details": "wirecloud/ui/exception_log_details.html",
-                "iwidget": "wirecloud/workspace/widget.html",
-                "iwidget_smartphone": "wirecloud/ui/iwidget_smartphone.html",
-                "window_menu": "wirecloud/modals/base.html",
-                "wirecloud_catalogue_search_interface": "wirecloud/catalogue/search_interface.html",
-                "catalogue_resource_template": "wirecloud/catalogue/resource.html",
-                "catalogue_main_resource_details_template": "wirecloud/catalogue/main_resource_details.html",
-                "catalogue_resource_details_template": "wirecloud/catalogue/resource_details.html",
-                "macsearch": "wirecloud/macsearch.html",
-                "sharing_user": "wirecloud/workspace/sharing_user.html",
-                "visibility_option": "wirecloud/workspace/visibility_option.html",
-                "wallet": "wirecloud/workspace/wallet/wallet.html",
-                "wallet_widget": "wirecloud/workspace/wallet/widget.html",
-                "wirecloud_catalogue_upload_dialog": "wirecloud/catalogue/modals/upload.html",
-                "wirecloud/workspace/tab_initial_message": "wirecloud/workspace/tab_initial_message.html",
-                "wiring_footer": "wirecloud/wiring/footer.html",
-                "upgrade_window_menu": "wirecloud/modals/upgrade_downgrade_component.html",
-            }
+            return [
+                "wirecloud/component_sidebar",
+                "wirecloud/catalogue/main_resource_details",
+                "wirecloud/catalogue/modals/upload",
+                "wirecloud/catalogue/resource",
+                "wirecloud/catalogue/resource_details",
+                "wirecloud/catalogue/search_interface",
+                "wirecloud/logs/details",
+                "wirecloud/modals/base",
+                "wirecloud/modals/embed_code",
+                "wirecloud/macsearch",
+                "wirecloud/wallet/base",
+                "wirecloud/wallet/component",
+                "wirecloud/wiring/behaviour_sidebar",
+                "wirecloud/wiring/component_group",
+                "wirecloud/wiring/footer",
+                "wirecloud/workspace/empty_tab_message",
+                "wirecloud/workspace/sharing_user",
+                "wirecloud/workspace/visibility_option",
+                "wirecloud/workspace/widget",
+                "wirecloud/workspace/widget_smartphone",
+                "wirecloud/modals/upgrade_downgrade_component",
+            ]
         else:
             return {}
 

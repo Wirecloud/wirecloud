@@ -221,19 +221,19 @@ class FiWarePlugin(WirecloudPlugin):
 
     def get_templates(self, view):
         if view == 'classic':
-            return {
-                "fiware_marketplace_search_interface": "wirecloud/fiware/marketplace/search_interface.html",
-                "fiware_catalogue_resource_details_template": "wirecloud/fiware/marketplace/resource_details.html",
-                "fiware_resource": "wirecloud/fiware/marketplace/resource.html",
-                "fiware_main_details_template": "wirecloud/fiware/marketplace/main_resource_details.html",
-                "legal_template": "wirecloud/fiware/marketplace/legal/legal_template.html",
-                "legal_clause_template": "wirecloud/fiware/marketplace/legal/legal_clause_template.html",
-                "service_level_template": "wirecloud/fiware/marketplace/sla/service_level_template.html",
-                "sla_expresion_template": "wirecloud/fiware/marketplace/sla/sla_expresion_template.html",
-                "sla_variable_template": "wirecloud/fiware/marketplace/sla/sla_variable_template.html",
-                "pricing_template": "wirecloud/fiware/marketplace/pricing/pricing_template.html",
-                "price_component_template": "wirecloud/fiware/marketplace/pricing/price_component_template.html",
-            }
+            return [
+                "wirecloud/fiware/marketplace/search_interface",
+                "wirecloud/fiware/marketplace/resource_details",
+                "wirecloud/fiware/marketplace/resource",
+                "wirecloud/fiware/marketplace/main_resource_details",
+                "wirecloud/fiware/marketplace/legal/legal_template",
+                "wirecloud/fiware/marketplace/legal/legal_clause_template",
+                "wirecloud/fiware/marketplace/sla/service_level_template",
+                "wirecloud/fiware/marketplace/sla/sla_expresion_template",
+                "wirecloud/fiware/marketplace/sla/sla_variable_template",
+                "wirecloud/fiware/marketplace/pricing/pricing_template",
+                "wirecloud/fiware/marketplace/pricing/price_component_template",
+            ]
         else:
             return {}
 

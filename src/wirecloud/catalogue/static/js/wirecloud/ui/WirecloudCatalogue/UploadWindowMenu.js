@@ -113,7 +113,7 @@
         Wirecloud.ui.WindowMenu.call(this, gettext("Upload mashable application components"), 'wc-upload-mac-modal');
 
         var builder = new StyledElements.GUIBuilder();
-        var contents = builder.parse(Wirecloud.currentTheme.templates.wirecloud_catalogue_upload_dialog, {
+        var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/catalogue/modals/upload'], {
             'uploadfilebutton': function () {
                 var button = new StyledElements.FileButton({text: gettext('Select files from your computer')});
                 button.addEventListener('fileselect', function (button, files) {

@@ -350,7 +350,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         };
 
         Wirecloud.addEventListener('loaded', function () {
-            southContainer.appendChild((new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.wiring_footer, {
+            southContainer.appendChild((new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/wiring/footer'], {
                 title: this.legend.title,
                 connections: this.legend.connections,
                 operators: this.legend.operators,
