@@ -97,7 +97,7 @@
                     })();
             }.bind(this.widget));
             item.addIconClass("fa fa-book");
-            item.setDisabled(!this.widget.model.meta.doc.length);
+            item.setDisabled(this.widget.model.meta.doc === '');
             items.push(item);
 
             if (this.widget.layout === this.widget.tab.dragboard.fulldragboardLayout) {

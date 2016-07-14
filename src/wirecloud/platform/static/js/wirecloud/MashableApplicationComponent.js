@@ -28,7 +28,7 @@
     ns.MashableApplicationComponent = utils.defineClass({
 
         constructor: function MashableApplicationComponent(desc) {
-            var vendor, name, version, title, description, changelog, i, inputs, outputs, preference;
+            var vendor, name, version, i, inputs, outputs, preference;
 
             // Vendor
             if (!('vendor' in desc) || desc.vendor.trim() === '') {
@@ -48,6 +48,11 @@
             }
             version = new Wirecloud.Version(desc.version.trim());
 
+            // Type
+            if (typeof desc.type !== 'string') {
+                throw new TypeError(utils.gettext('missing type'));
+            }
+
             // Basic info
             Object.defineProperties(this, {
                 missing: {value: !!desc.missing},
@@ -55,50 +60,26 @@
                 name: {value: name},
                 version: {value: version},
                 uri: {value: vendor + '/' + name + '/' + version.text},
-                group_id: {value: vendor + '/' + name}
-            });
-
-            // Type
-            if (typeof desc.type !== 'string') {
-                throw new TypeError(utils.gettext('missing type'));
-            }
-            Object.defineProperty(this, 'type', {value: desc.type});
-
-            // Image
-            Object.defineProperty(this, 'image', {value: desc.image});
-
-            // Doc
-            Object.defineProperty(this, 'doc', {value: desc.doc});
-
-            // Change log url
-            if (!('changelog' in desc) || desc.changelog.trim() === '') {
-                changelog = '';
-            } else {
-                changelog = desc.changelog;
-            }
-            Object.defineProperty(this, 'changelog', {value: changelog});
-
-            if (!('title' in desc) || desc.title.trim() === '') {
-                title = name;
-            } else {
-                title = desc.title;
-            }
-            Object.defineProperty(this, 'title', {value: title});
-
-            description = desc.description;
-            if (description == null || description.trim() === '') {
-                description = '';
-            }
-            Object.defineProperty(this, 'description', {value: description});
-
-            // Base URL
-            Object.defineProperty(this, 'base_url', {
-                value: location.origin + Wirecloud.URLs.MAC_BASE_URL.evaluate({
-                    vendor: this.vendor,
-                    name: this.name,
-                    version: this.version.text,
-                    file_path: ''
-                })
+                group_id: {value: vendor + '/' + name},
+                type: {value: desc.type},
+                image: {value: desc.image},
+                doc: {
+                    value: desc.doc == null || desc.doc.trim() === '' ? '' : desc.doc
+                },
+                changelog: {
+                    value: desc.changelog == null || desc.changelog.trim() === '' ? '' : desc.changelog
+                },
+                title: {
+                    value: desc.title == null || desc.title.trim() === '' ? name : desc.title
+                },
+                base_url: {
+                    value: location.origin + Wirecloud.URLs.MAC_BASE_URL.evaluate({
+                        vendor: vendor,
+                        name: name,
+                        version: version.text,
+                        file_path: ''
+                    })
+                }
             });
 
             // Preferences
