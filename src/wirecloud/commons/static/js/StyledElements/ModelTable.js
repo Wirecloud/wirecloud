@@ -201,8 +201,10 @@
         defaultOptions = {
             'initialSortColumn': -1,
             'pageSize': 5,
-            'emptyMessage': utils.gettext('No data available')
+            'emptyMessage': utils.gettext('No data available'),
+            'allowMultipleSelect': false
         };
+
         options = utils.merge(defaultOptions, options);
 
         if (options.class != null) {
@@ -222,6 +224,7 @@
         privates.set(this, priv);
 
         priv.selection = [];
+        priv.allowMultipleSelect = options.allowMultipleSelect;
         var source;
         if (options.source != null) {
             source = options.source;
@@ -521,7 +524,7 @@
         var selected, data, lastSelectedIndex, lower, upper, j;
         var id = priv.extractIdFunc(row);
 
-        if (event.ctrlKey && event.shiftKey) {
+        if (priv.allowMultipleSelect && event.ctrlKey && event.shiftKey) {
             // Control + shift behaviour
             data = this.source.getCurrentPage();
             lastSelectedIndex = data.indexOf(priv.lastSelected);
@@ -543,7 +546,7 @@
                 event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
             }
 
-        } else if (event.shiftKey) {
+        } else if (priv.allowMultipleSelect && event.shiftKey) {
             // Shift behaviour
             data = this.source.getCurrentPage();
             lastSelectedIndex = data.indexOf(priv.lastSelected);
@@ -563,7 +566,7 @@
                 event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
             }
 
-        } else if (event.ctrlKey) {
+        } else if (priv.allowMultipleSelect && event.ctrlKey) {
             // control behaviour
             priv.lastSelected = row;
             selected = this.selection.slice();

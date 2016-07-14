@@ -349,7 +349,7 @@
                 ];
 
                 // Create a new table
-                table = new StyledElements.ModelTable(columns, {id: 'id'});
+                table = new StyledElements.ModelTable(columns, {id: 'id', allowMultipleSelect: true});
 
                 // Create and push the data
                 var data = [
