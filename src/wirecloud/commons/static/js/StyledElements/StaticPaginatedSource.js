@@ -67,28 +67,30 @@
 
     var filterElements = function filterElements(keywords) {
         var filteredElements, i, element;
+        var priv = privates.get(this);
 
         if (!keywords) {
-            this.filteredElements = this.elements;
+            priv.filteredElements = priv.elements;
             return;
         }
 
         var pattern = createFilterPattern(keywords);
         filteredElements = [];
-        for (i = 0; i < this.elements.length; i += 1) {
-            element = this.elements[i];
+        for (i = 0; i < priv.elements.length; i += 1) {
+            element = priv.elements[i];
             if (elementPassFilter.call(this, element, pattern)) {
                 filteredElements.push(element);
             }
         }
-        this.filteredElements = filteredElements;
+        priv.filteredElements = filteredElements;
     };
 
     var sortElements = function sortElements(order) {
         var sort_id, inverse, column, sortFunc, parseDate;
+        var priv = privates.get(this);
 
         if (order == null) {
-            this.sortedElements = this.filteredElements;
+            priv.sortedElements = priv.filteredElements;
             return;
         }
 
@@ -98,7 +100,7 @@
             inverse = true;
             sort_id = sort_id.substr(1);
         }
-        column = this.sort_info[sort_id];
+        column = priv.sort_info[sort_id];
         sortFunc = column.sortFunc;
 
         if (sortFunc == null) {
@@ -165,26 +167,30 @@
                 return -this(value1, value2);
             }.bind(sortFunc);
         }
-        this.sortedElements = this.filteredElements.slice(0).sort(sortFunc);
+        priv.sortedElements = priv.filteredElements.slice(0).sort(sortFunc);
     };
 
     var requestFunc = function requestFunc(index, options, onSuccess, onError) {
         var elements, page = index;
+        var priv = privates.get(this);
 
-        if (index > this.totalPages) {
-            index = this.totalPages;
+        if (index > priv.totalPages) {
+            index = priv.totalPages;
         }
         index -= 1;
+
+        filterElements.call(this, this.options.keywords);
+        sortElements.call(this, this.options.order);
 
         if (options.pageSize > 0) {
             var start = index * options.pageSize;
             var end = start + options.pageSize;
-            elements = this.sortedElements.slice(start, end);
+            elements = priv.sortedElements.slice(start, end);
         } else {
-            elements = this.sortedElements;
+            elements = priv.sortedElements;
         }
 
-        onSuccess(elements, {current_page: page, total_count: this.sortedElements.length});
+        onSuccess(elements, {current_page: page, total_count: priv.sortedElements.length});
     };
 
     var StaticPaginatedSource = function StaticPaginatedSource(options) {
@@ -195,17 +201,21 @@
 
         StyledElements.PaginatedSource.call(this, options);
 
-        this.sort_info = options.sort_info;
-        if (typeof this.sort_info !== 'object') {
-            this.sort_info = {};
+        // Initialize private variables
+        var priv = {};
+        privates.set(this, priv);
+
+        priv.sort_info = options.sort_info;
+        if (typeof priv.sort_info !== 'object') {
+            priv.sort_info = {};
         }
 
         if (Array.isArray(options.initialElements)) {
             this.changeElements(options.initialElements);
         } else {
-            this.elements = [];
-            this.filteredElements = this.elements;
-            this.sortedElements = this.elements;
+            priv.elements = [];
+            priv.filteredElements = priv.elements;
+            priv.sortedElements = priv.elements;
         }
     };
     StaticPaginatedSource.prototype = new StyledElements.PaginatedSource();
@@ -221,41 +231,47 @@
         if ('order' in newOptions) {
             sortElements.call(this, newOptions.order);
         } else if (force_sort) {
-            sortElements.call(this, this.pOptions.order);
+            sortElements.call(this, this.options.order);
         }
         StyledElements.PaginatedSource.prototype.changeOptions.call(this, newOptions);
     };
 
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {
+        var priv = privates.get(this);
+
         if (Array.isArray(newElements)) {
-            this.elements = newElements;
+            priv.elements = newElements;
         } else {
-            this.elements = [];
+            priv.elements = [];
         }
-        filterElements.call(this, this.pOptions.keywords);
-        sortElements.call(this, this.pOptions.order);
+        filterElements.call(this, this.options.keywords);
+        sortElements.call(this, this.options.order);
 
         this.refresh();
     };
 
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
-        this.elements.push(newElement);
+        var priv = privates.get(this);
 
-        if (this.pOptions.keywords) {
-            var pattern = createFilterPattern(this.pOptions.keywords);
+        priv.elements.push(newElement);
+
+        if (this.options.keywords) {
+            var pattern = createFilterPattern(this.options.keywords);
             if (elementPassFilter.call(this, newElement, pattern)) {
-                this.filteredElements.push(newElement);
-                sortElements.call(this, this.pOptions.order);
+                priv.filteredElements.push(newElement);
+                sortElements.call(this, this.options.order);
 
                 this.refresh();
             }
         } else {
-            /* In this case we don't need modify this.filteredElements as it is the same array than this.elements */
-            sortElements.call(this, this.pOptions.order);
+            /* In this case we don't need modify priv.filteredElements as it is the same array as priv.elements */
+            sortElements.call(this, this.options.order);
 
             this.refresh();
         }
     };
+
+    var privates = new WeakMap();
 
     StyledElements.StaticPaginatedSource = StaticPaginatedSource;
 })();

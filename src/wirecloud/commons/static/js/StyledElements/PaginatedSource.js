@@ -29,22 +29,25 @@
     var PaginatedSource, onSuccessCallback, onErrorCallback;
 
     onSuccessCallback = function onSuccessCallback(elements, options) {
-        if (typeof this.pOptions.processFunc === 'function') {
-            this.pOptions.processFunc(elements, options);
-        }
-        this.currentPage = parseInt(options.current_page, 10);
-        this.currentElements = elements;
+        var priv = privates.get(this);
 
-        if (this.totalCount !== options.total_count) {
-            this.totalCount = options.total_count;
-            this._calculatePages();
+        if (typeof priv.options.processFunc === 'function') {
+            priv.options.processFunc(elements, options);
+        }
+        priv.currentPage = parseInt(options.current_page, 10);
+        priv.currentElements = elements;
+
+        if (priv.totalCount !== options.total_count) {
+            priv.totalCount = options.total_count;
+            calculatePages.call(this);
             this.events.paginationChanged.dispatch(this);
         }
         this.events.requestEnd.dispatch(this);
     };
 
     onErrorCallback = function onErrorCallback(error) {
-        this.currentElements = [];
+        var priv = privates.get(this);
+        priv.currentElements = [];
         if (error == null) {
             error = {
                 'message': 'unknown cause'
@@ -71,11 +74,38 @@
 
         StyledElements.ObjectWithEvents.call(this, ['optionsChanged', 'paginationChanged', 'requestStart', 'requestEnd']);
 
-        this.pOptions = StyledElements.Utils.merge(defaultOptions, options);
-        this.currentPage = 1;
-        this.currentElements = [];
-        this.totalPages = 1;
+        // Initialize private variables
+        var priv = {};
+        privates.set(this, priv);
+
+        Object.defineProperties(this, {
+            currentPage: {
+                get: function () {
+                    return priv.currentPage;
+                }
+            },
+            options: {
+                get: function () {
+                    return priv.options;
+                }
+            },
+            totalPages: {
+                get: function () {
+                    return priv.totalPages;
+                }
+            },
+            currentElements: {
+                get: function () {
+                    return priv.currentElements;
+                }
+            }
+        });
+        priv.options = StyledElements.Utils.merge(defaultOptions, options);
+        priv.currentPage = 1;
+        priv.currentElements = [];
+        priv.totalPages = 1;
     };
+
     PaginatedSource.prototype = new StyledElements.ObjectWithEvents();
 
     PaginatedSource.prototype.getCurrentPage = function getCurrentPage() {
@@ -84,6 +114,7 @@
 
     PaginatedSource.prototype.changeOptions = function changeOptions(options) {
         var new_page_size, old_offset, key, changed = false;
+        var priv = privates.get(this);
 
         if (typeof options !== 'object') {
             return;
@@ -92,22 +123,22 @@
         for (key in options) {
             if (key === 'pageSize') {
                 new_page_size = parseInt(options.pageSize, 10);
-                if (!isNaN(new_page_size) && new_page_size !== this.pOptions.pageSize) {
+                if (!isNaN(new_page_size) && new_page_size !== priv.options.pageSize) {
                     changed = true;
-                    old_offset = (this.currentPage - 1) * this.pOptions.pageSize;
-                    this.currentPage = Math.floor(old_offset / new_page_size) + 1;
-                    this.pOptions.pageSize = new_page_size;
-                    this._calculatePages();
+                    old_offset = (priv.currentPage - 1) * priv.options.pageSize;
+                    priv.currentPage = Math.floor(old_offset / new_page_size) + 1;
+                    priv.options.pageSize = new_page_size;
+                    calculatePages.call(this);
                 }
             } else {
                 changed = true;
-                this.pOptions[key] = options[key];
-                this.currentPage = 1;
+                priv.options[key] = options[key];
+                priv.currentPage = 1;
             }
         }
 
         if (changed) {
-            this.events.optionsChanged.dispatch(this, this.pOptions);
+            this.events.optionsChanged.dispatch(this, priv.options);
             this.refresh();
         }
     };
@@ -117,43 +148,51 @@
     };
 
     PaginatedSource.prototype.goToPrevious = function goToPrevious() {
-        this.changePage(this.currentPage - 1);
+        var priv = privates.get(this);
+        this.changePage(priv.currentPage - 1);
     };
 
     PaginatedSource.prototype.goToNext = function goToNext() {
-        this.changePage(this.currentPage + 1);
+        var priv = privates.get(this);
+        this.changePage(priv.currentPage + 1);
     };
 
     PaginatedSource.prototype.goToLast = function goToLast() {
-        this.changePage(this.totalPages);
+        var priv = privates.get(this);
+        this.changePage(priv.totalPages);
     };
 
-    PaginatedSource.prototype._calculatePages = function _calculatePages() {
-        if (this.pOptions.pageSize === 0) {
-            this.totalPages = 1;
+    var calculatePages = function calculatePages() {
+        var priv = privates.get(this);
+        if (priv.options.pageSize === 0) {
+            priv.totalPages = 1;
         } else {
-            this.totalPages = Math.ceil(this.totalCount / this.pOptions.pageSize);
-            if (this.totalPages <= 0) {
-                this.totalPages = 1;
+            priv.totalPages = Math.ceil(priv.totalCount / priv.options.pageSize);
+            if (priv.totalPages <= 0) {
+                priv.totalPages = 1;
             }
         }
     };
 
     PaginatedSource.prototype.refresh = function refresh() {
+        var priv = privates.get(this);
         this.events.requestStart.dispatch(this);
-        this.pOptions.requestFunc(this.currentPage, this.pOptions, onSuccessCallback.bind(this), onErrorCallback.bind(this));
+        priv.options.requestFunc(priv.currentPage, priv.options, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 
     PaginatedSource.prototype.changePage = function changePage(idx) {
+        var priv = privates.get(this);
         if (idx < 1) {
             idx = 1;
-        } else if (idx > this.totalPages) {
-            idx = this.totalPages;
+        } else if (idx > priv.totalPages) {
+            idx = priv.totalPages;
         }
 
         this.events.requestStart.dispatch(this);
-        this.pOptions.requestFunc(idx, this.pOptions, onSuccessCallback.bind(this), onErrorCallback.bind(this));
+        priv.options.requestFunc(idx, priv.options, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
+
+    var privates = new WeakMap();
 
     StyledElements.PaginatedSource = PaginatedSource;
 })();
