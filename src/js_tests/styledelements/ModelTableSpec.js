@@ -415,7 +415,7 @@
                     // Check if css are applied properly
                     expected = [true, false, false];
                     observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                    expect(observed).toEqual(observed);
+                    expect(observed).toEqual(expected);
                 });
 
                 describe("should allow click selections with control key pressed", function () {
@@ -428,7 +428,7 @@
                         // Check if css are applied properly
                         expected = [true, false, false];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
 
                     it("should allow multiple selection", function () {
@@ -444,7 +444,7 @@
                         // Check if css are applied properly
                         expected = [true, false, true];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
 
                     it("should allow diselect selected rows", function () {
@@ -459,7 +459,7 @@
                         // Check if css are applied properly
                         expected = [false, false, false];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
                 });
 
@@ -473,7 +473,7 @@
                         // Check if css are applied properly
                         expected = [true, false, false];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
 
                     it("should allow range selection", function () {
@@ -489,7 +489,7 @@
                         // Check if css are applied properly
                         expected = [true, true, true];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
 
                     it("should overwrite previous selection", function () {
@@ -510,7 +510,7 @@
                         // Check if css are applied properly
                         expected = [false, true, true];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
                 });
 
@@ -525,7 +525,7 @@
                         // Check if css are applied properly
                         expected = [true, false, false];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
 
                     it("should allow range selection", function () {
@@ -542,7 +542,7 @@
                         // Check if css are applied properly
                         expected = [true, true, true];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
 
                     it("should not overwrite previous selection", function () {
@@ -558,12 +558,13 @@
                         cell = rows[2].querySelector(".se-model-table-cell");
                         event = new Event("click");
                         event.shiftKey = true;
+                        event.ctrlKey = true;
                         cell.dispatchEvent(event);
 
                         // Check if css are applied properly
                         expected = [true, true, true];
                         observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                        expect(observed).toEqual(observed);
+                        expect(observed).toEqual(expected);
                     });
                 });
 
@@ -580,14 +581,14 @@
 
                     expected = [true, true, true];
                     observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                    expect(observed).toEqual(observed);
+                    expect(observed).toEqual(expected);
 
                     table.wrapperElement.click();
 
                     // Check if css are applied properly
                     expected = [false, false, false];
                     observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                    expect(observed).toEqual(observed);
+                    expect(observed).toEqual(expected);
 
                 });
             });
