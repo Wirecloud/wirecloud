@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -41,7 +42,7 @@
     };
 
     LogManager.prototype.buildTitle = function buildTitle() {
-        return gettext('Wiring\'s logs');
+        return utils.gettext('Wiring\'s logs');
     };
 
     LogManager.prototype.close = function close() {
@@ -49,4 +50,4 @@
 
     Wirecloud.wiring.LogManager = LogManager;
 
-})();
+})(Wirecloud.Utils);

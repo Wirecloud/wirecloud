@@ -26,9 +26,9 @@
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * @name Wirecloud.Workspace
@@ -235,9 +235,9 @@
         this.wiring.addEventListener('removeoperator', on_removeoperator.bind(this));
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PUBLIC MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     utils.inherit(ns.Workspace, se.ObjectWithEvents, /** @lends Wirecloud.Workspace.prototype */{
 
@@ -338,24 +338,29 @@
         },
 
         /**
-         * @param {String} id
-         * @param {Boolean} [isMashup=false]
+         * @param {Object} options
          */
-        merge: function merge(id, isMashup) {
+        merge: function merge(options) {
+            if (options == null || typeof options != "object") {
+                throw new TypeError("options must be an object");
+            }
+
+            if (!("mashup" in options) && !("workspace" in options)) {
+                throw new TypeError('One of the following options must be provided: workspace or mashup');
+            } else if ("mashup" in options && "workspace" in options) {
+                throw new TypeError('workspace and mashup options cannot be used at the same time');
+            }
+
             return new Promise(function (resolve, reject) {
                 var url = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({
                     to_ws_id: this.id
                 });
 
-                var content = {
-                    [isMashup ? 'mashup' : 'workspace']: id
-                };
-
                 Wirecloud.io.makeRequest(url, {
                     method: 'POST',
                     requestHeaders: {'Accept': 'application/json'},
                     contentType: 'application/json',
-                    postBody: JSON.stringify(content),
+                    postBody: JSON.stringify(options),
                     onComplete: function (response) {
                         if (response.status === 204) {
                             resolve(this);
@@ -496,9 +501,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var _private = new WeakMap();
 
@@ -595,9 +600,9 @@
         return Wirecloud.PolicyManager.evaluate('workspace', permission);
     };
 
-    // ==================================================================================
+    // =========================================================================
     // EVENT HANDLERS
-    // ==================================================================================
+    // =========================================================================
 
     var on_changetab = function on_changetab(tab, changes) {
         this.trigger('changetab', tab, changes);

@@ -19,7 +19,8 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
+
 
 (function () {
 
@@ -73,7 +74,7 @@
         this.msgLayer.classList.add("msgLayer");
         document.body.appendChild(this.msgLayer);
 
-        for (i = 0; i < this.instructions.length; i ++) {
+        for (i = 0; i < this.instructions.length; i++) {
             var Constructor = mapping[this.instructions[i].type];
             this.steps[i] = new Constructor(this, this.instructions[i]);
 
@@ -203,7 +204,7 @@
      */
     Tutorial.prototype.findElementByTextContent = function findElementByTextContent(nodes, text) {
         var i;
-        for (i = 0; i < nodes.length; i ++) {
+        for (i = 0; i < nodes.length; i++) {
             if (nodes[i].textContent.toLowerCase() == text.toLowerCase()) {
                 return nodes[i];
             }
@@ -218,7 +219,7 @@
         var stepActivePos, i;
 
         stepActivePos = this.steps.indexOf(this.stepActive);
-        for (i = stepActivePos; i < this.steps.length; i ++) {
+        for (i = stepActivePos; i < this.steps.length; i++) {
             this.steps[i].destroy();
         }
         document.body.removeChild(this.controlLayer);

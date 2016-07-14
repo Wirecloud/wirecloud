@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -34,11 +35,11 @@
     var MissingDependenciesWindowMenu = function MissingDependenciesWindowMenu(next, details) {
         var list, i, item;
 
-        Wirecloud.ui.WindowMenu.call(this, gettext('Missing dependencies'), 'wc-missing-dependencies-modal');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Missing dependencies'), 'wc-missing-dependencies-modal');
 
         this.msg1Element = document.createElement('p');
         this.windowContent.appendChild(this.msg1Element);
-        this.msg1Element.textContent = gettext('The following dependencies are missing:');
+        this.msg1Element.textContent = utils.gettext('The following dependencies are missing:');
 
         list = document.createElement('ul');
         for (i = 0; i < details.missingDependencies.length; i++) {
@@ -50,12 +51,12 @@
 
         this.msg2Element = document.createElement('p');
         this.windowContent.appendChild(this.msg2Element);
-        this.msg2Element.textContent = gettext('You will be able to continue after installing all the required dependencies.');
+        this.msg2Element.textContent = utils.gettext('You will be able to continue after installing all the required dependencies.');
 
         // New Workspace button
         this.continueButton = new StyledElements.Button({
             class: 'btn-accept',
-            text: gettext('Continue'),
+            text: utils.gettext('Continue'),
         });
         this.continueButton.addEventListener("click", onContinue.bind(this, next));
         this.continueButton.insertInto(this.windowBottom);
@@ -64,7 +65,7 @@
         // Cancel button
         this.cancelButton = new StyledElements.Button({
             class: 'btn-cancel btn-primary',
-            text: gettext('Cancel')
+            text: utils.gettext('Cancel')
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);
@@ -82,4 +83,5 @@
     };
 
     Wirecloud.ui.MissingDependenciesWindowMenu = MissingDependenciesWindowMenu;
-})();
+
+})(Wirecloud.Utils);

@@ -49,7 +49,7 @@
             this.codeurl += "?entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
 
             // Properties
-            this.properties = {}
+            this.properties = {};
             this.propertyList = [];
             for (i = 0; i < data.properties.length; i++) {
                 property = new Wirecloud.PersistentVariableDef(data.properties[i].name, data.properties[i].type, data.properties[i]);
@@ -79,7 +79,7 @@
 
             getInfoString: function getInfoString() {
                 var transObj = {vendor: this.vendor, name: this.name, version: this.version};
-                var msg = gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
+                var msg = utils.gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
                 return utils.interpolate(msg, transObj, true);
             },
 

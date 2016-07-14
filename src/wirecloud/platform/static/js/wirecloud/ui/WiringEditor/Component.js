@@ -19,16 +19,16 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class Component.
@@ -47,7 +47,7 @@
 
             this.btnPrefs = new se.PopupButton({
                 extraClass: "we-prefs-btn",
-                title: gettext("Preferences"),
+                title: utils.gettext("Preferences"),
                 iconClass: "icon-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ComponentPrefs(this));
@@ -132,9 +132,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var update_component_label = function update_component_label() {
         /*jshint validthis:true */

@@ -19,9 +19,10 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -61,7 +62,7 @@
     var installed = function installed() {
         var i, resource;
 
-        if (this.wirecloudresources.length == 0) {
+        if (this.wirecloudresources.length === 0) {
             return false;
         }
 
@@ -177,8 +178,8 @@
 
         for (i = 0; i < this.wirecloudresources.length; i++) {
             if (options.monitor) {
-                msg = gettext('Installing "%(resource_name)s" from the offering');
-                subtask = options.monitor.nextSubtask(Wirecloud.Utils.interpolate(msg, {resource_name: this.wirecloudresources[i].name}, true));
+                msg = utils.gettext('Installing "%(resource_name)s" from the offering');
+                subtask = options.monitor.nextSubtask(utils.interpolate(msg, {resource_name: this.wirecloudresources[i].name}, true));
             }
 
             if (typeof options.onResourceSuccess === 'function') {
@@ -197,11 +198,11 @@
             });
         }
 
-        if (count == 0) {
+        if (count === 0) {
             options.onComplete(options);
         }
     };
 
     Wirecloud.FiWare.Offering = Offering;
 
-})();
+})(Wirecloud.Utils);

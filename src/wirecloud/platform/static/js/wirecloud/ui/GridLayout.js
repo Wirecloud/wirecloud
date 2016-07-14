@@ -21,6 +21,7 @@
 
 /* globals Wirecloud */
 
+
 (function (utils) {
 
     "use strict";
@@ -631,7 +632,9 @@
         return affectedWidgets;
     };
 
-    //Returns if any widget's position has been modified
+    /**
+     * @returns Returns true if the position of other widgets has been modified
+     */
     GridLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
         var affectedWidgets;
 

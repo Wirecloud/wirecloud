@@ -21,14 +21,10 @@
 
 /* globals Wirecloud */
 
-/////////////////////////////////////
-// FreeLayout
-/////////////////////////////////////
 
 (function (utils) {
 
     "use strict";
-
 
     /**
      * @class Represents a dragboard layout to be used to place iwidgets into the dragboard.

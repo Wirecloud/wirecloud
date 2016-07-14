@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
+/* globals LayoutManagerFactory, StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -29,18 +30,18 @@
     };
 
     var onInstallClick = function onInstallClick(resource, catalogue, offering_entry, button) {
-        var layoutManager, local_catalogue_view, url;
+        var layoutManager, local_catalogue_view;
 
         button.disable();
 
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
         layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
-        layoutManager.logSubTask(gettext('Uploading resource'));
+        layoutManager._startComplexTask(utils.gettext("Importing resource into local repository"), 3);
+        layoutManager.logSubTask(utils.gettext('Uploading resource'));
 
         resource.install({
             onSuccess: function () {
-                LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
+                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource installed successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
 
                 offering_entry.update_buttons();
@@ -60,18 +61,18 @@
     };
 
     var onUninstallClick = function onUninstallClick(resource, catalogue, offering_entry, button) {
-        var layoutManager, local_catalogue_view, url;
+        var layoutManager, local_catalogue_view;
 
         button.disable();
 
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
         layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(gettext("Uninstalling resource from local repository"), 3);
-        layoutManager.logSubTask(gettext('Uninstalling resource'));
+        layoutManager._startComplexTask(utils.gettext("Uninstalling resource from local repository"), 3);
+        layoutManager.logSubTask(utils.gettext('Uninstalling resource'));
 
         local_catalogue_view.catalogue.uninstallResource(resource.wirecloud, {
             onSuccess: function () {
-                LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
+                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource uninstalled successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
 
                 offering_entry.update_buttons();
@@ -96,7 +97,7 @@
         offering_entry.resources = new StyledElements.ModelTable([
                 {
                     "field": ["resource", "name"],
-                    "label": Wirecloud.Utils.gettext('Name'),
+                    "label": utils.gettext('Name'),
                     "contentBuilder": function (entry) {
                         var fragment = new StyledElements.Fragment();
 
@@ -107,7 +108,7 @@
                         if ('type' in entry.resource && !('install' in entry.resource)) {
                             var error_label = document.createElement('span');
                             error_label.className = 'label label-danger';
-                            error_label.textContent = Wirecloud.Utils.gettext('missing WireCloud metadata');
+                            error_label.textContent = utils.gettext('missing WireCloud metadata');
                             title.appendChild(error_label);
                         } else if ('type' in entry.resource) {
                             var label = document.createElement('span');
@@ -133,7 +134,7 @@
                     }
                 },
                 {
-                    "label": Wirecloud.Utils.gettext('Actions'),
+                    "label": utils.gettext('Actions'),
                     "width": "css",
                     "class": "wc-fiware-offering-resources-buttons-column",
                     "sortable": false,
@@ -143,11 +144,11 @@
                         if (entry.install_button != null) {
                             entry.install_button.clearClassName().clearEventListeners('click');
                             if (Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
-                                entry.install_button.addClassName('btn-danger').setLabel(gettext('Uninstall'));
+                                entry.install_button.addClassName('btn-danger').setLabel(utils.gettext('Uninstall'));
                                 entry.install_button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, offering_entry));
                                 entry.details_button.enable();
                             } else {
-                                entry.install_button.addClassName('btn-primary').setLabel(gettext('Install'));
+                                entry.install_button.addClassName('btn-primary').setLabel(utils.gettext('Install'));
                                 entry.install_button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, offering_entry));
                                 entry.details_button.disable();
                             }
@@ -178,7 +179,7 @@
 
                     button = new StyledElements.Button({text: ''});
                     button.insertInto(btn_group);
-                    details_button = new StyledElements.Button({text: gettext('Details')});
+                    details_button = new StyledElements.Button({text: utils.gettext('Details')});
                     details_button.addEventListener('click', function () {
                         var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                         myresources_view.createUserCommand('showDetails', this, {version: this.version})();
@@ -188,7 +189,7 @@
                     resource_entry.details_button = details_button;
 
                 } else {
-                    button = new StyledElements.Button({'class': 'btn-info', text: gettext('Download')});
+                    button = new StyledElements.Button({'class': 'btn-info', text: utils.gettext('Download')});
                     button.insertInto(btn_group);
                 }
             }
@@ -198,4 +199,4 @@
 
     Wirecloud.FiWare.ui.OfferingResourcePainter = OfferingResourcePainter;
 
-})();
+})(Wirecloud.Utils);

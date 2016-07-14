@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/*global Form, StyledElements */
+/* globals StyledElements */
+
 
 (function () {
 
@@ -498,7 +499,7 @@
             }
         };
 
-        entry.form = new Form(fields, {
+        entry.form = new StyledElements.Form(fields, {
             useHtmlForm: false,
             acceptButton: false,
             cancelButton: false,
@@ -589,7 +590,7 @@
      *
      */
     var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc, factory) {
-        this.form = new Form(fieldDesc.fields, {
+        this.form = new StyledElements.Form(fieldDesc.fields, {
             factory: factory,
             useHtmlForm: false,
             acceptButton: false,

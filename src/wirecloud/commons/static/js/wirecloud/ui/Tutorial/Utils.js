@@ -19,7 +19,8 @@
  *
  */
 
-/* global LayoutManagerFactory, Wirecloud */
+/* globals LayoutManagerFactory, Wirecloud */
+
 
 (function () {
 
@@ -133,7 +134,7 @@
                 };
             },
             switch_view: function switch_view(view) {
-                return function(autoAction) {
+                return function (autoAction) {
                     LayoutManagerFactory.getInstance().changeCurrentView(view);
                     autoAction.nextHandler();
                 };

@@ -18,7 +18,9 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals CSSPrimitiveValue, StyledElements*/
+
+/* globals CSSPrimitiveValue, StyledElements */
+
 
 (function () {
 

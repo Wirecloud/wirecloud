@@ -21,6 +21,7 @@
 
 /* globals NGSI, Wirecloud */
 
+
 (function (NGSI, utils) {
 
     "use strict";

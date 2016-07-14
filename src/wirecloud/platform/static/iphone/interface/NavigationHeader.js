@@ -19,7 +19,8 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
+
 
 StyledElements.NavigationHeader = function (options) {
 

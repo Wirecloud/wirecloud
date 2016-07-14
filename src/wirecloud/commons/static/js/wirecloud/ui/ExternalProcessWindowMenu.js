@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -88,7 +89,7 @@
 
         // Start button
         this.start_button = new StyledElements.Button({
-            text: gettext('Start'),
+            text: utils.gettext('Start'),
             'class': 'btn-primary'
         });
         this.start_button.insertInto(this.windowBottom);
@@ -101,7 +102,7 @@
 
         // Cancel button
         this.cancel_button = new StyledElements.Button({
-            text: gettext('Cancel'),
+            text: utils.gettext('Cancel'),
             'class': 'btn-danger'
         });
         this.cancel_button.insertInto(this.windowBottom);

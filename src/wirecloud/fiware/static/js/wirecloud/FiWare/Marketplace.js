@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,9 +18,11 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*global gettext, Wirecloud */
 
-(function () {
+/* globals Wirecloud */
+
+
+(function (utils) {
 
     "use strict";
 
@@ -90,7 +92,7 @@
         }
 
         if (options.monitor) {
-            subtask = options.monitor.nextSubtask(gettext('Retrieving offering info'));
+            subtask = options.monitor.nextSubtask(utils.gettext('Retrieving offering info'));
         }
 
         url = Wirecloud.URLs.FIWARE_OFFERING_ENTRY.evaluate({market_user: this.market_user, market_name: this.market_name, store: store, offering_id: offering_name});
@@ -105,7 +107,7 @@
                 }
             }.bind(this),
             onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving offering info: %(errorMsg)s."), response);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error retrieving offering info: %(errorMsg)s."), response);
                 Wirecloud.Utils.callCallback(options.onFailure, msg);
             },
             onComplete: function (response) {
@@ -159,4 +161,5 @@
     };
 
     Wirecloud.FiWare.Marketplace = Marketplace;
-})();
+
+})(Wirecloud.Utils);

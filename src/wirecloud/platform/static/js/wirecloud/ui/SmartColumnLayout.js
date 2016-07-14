@@ -21,6 +21,7 @@
 
 /* globals Wirecloud */
 
+
 (function () {
 
     "use strict";
@@ -132,7 +133,7 @@
             modified = modified || this._moveSpaceUp("base", widget);
         }
         if (modified) {
-            //save these changes in the server side
+            // save these changes in the server side
             this.dragboard.update(keys);
         }
     };
@@ -274,7 +275,7 @@
         }
     };
 
-    //Returns if any widget's position has been modified
+    // Returns if any widget's position has been modified
     SmartColumnLayout.prototype._insertAt = function (widget, x, y, buffer) {
 
         var affectedWidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, widget, x, y, buffer);
@@ -283,7 +284,9 @@
         return affectedWidgets;
     };
 
-    //Returns if any widget's position has been modified
+    /**
+     * @returns Returns true if any widget's position has been modified
+     */
     SmartColumnLayout.prototype._removeFromMatrix = function (buffer, widget) {
         this._clearSpace(buffer, widget);
 

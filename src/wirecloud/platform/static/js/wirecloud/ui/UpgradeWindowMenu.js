@@ -19,7 +19,8 @@
  *
  */
 
-/* global StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
+
 
 (function (se, utils) {
 
@@ -120,7 +121,6 @@
         this.acceptButton.insertInto(this.windowBottom);
         this.acceptButton.addEventListener("click", function (button) {
             var new_version = this.version_selector.getValue();
-            var old_version = this.model.meta.version;
             var new_resource_id = [this.model.meta.vendor, this.model.meta.name, new_version].join('/');
 
             button.disable();

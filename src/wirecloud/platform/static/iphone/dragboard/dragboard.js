@@ -19,7 +19,8 @@
  *
  */
 
-/*global OpManagerFactory, IWidget, updateLayout, Wirecloud */
+/* globals OpManagerFactory, IWidget, updateLayout, Wirecloud */
+
 
 (function () {
 

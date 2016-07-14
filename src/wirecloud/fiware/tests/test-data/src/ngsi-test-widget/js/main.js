@@ -1,5 +1,6 @@
-/*jshint globalstrict:true */
-/*global MashupPlatform*/
+/* jshint globalstrict:true */
+/* globals MashupPlatform */
+
 
 (function () {
 

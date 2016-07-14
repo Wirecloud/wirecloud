@@ -19,7 +19,8 @@
  *
  */
 
-/* global LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+
 
 (function (ns, se, utils) {
 
@@ -36,7 +37,6 @@
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new Wirecloud.ui.WorkspaceViewMenuItems(this));
 
-        this.wallet = new Wirecloud.ui.MACWallet();
         this.walletButton = this.buildAddWidgetButton();
 
         this.wiringButton = new StyledElements.Button({
@@ -71,20 +71,19 @@
 
         // Init wiring error badge
         Wirecloud.addEventListener('activeworkspacechanged', function (Wirecloud, workspace) {
-            this.layout.slideOut();
+            var layoutManager;
 
-            var layoutManager, params, preferenceValues, iwidgets;
+            this.layout.slideOut();
 
             layoutManager = LayoutManagerFactory.getInstance();
             layoutManager.logStep('');
-            layoutManager.logSubTask(gettext('Processing workspace data'));
+            layoutManager.logSubTask(utils.gettext('Processing workspace data'));
 
             try {
                 this.loadWorkspace(workspace);
             } catch (error) {
                 // Error during initialization
-                // Loading in failsafe mode
-                _failsafeInit.call(this, transport, error);
+                // TODO: Init failsafe mode
                 return;
             }
 
@@ -96,7 +95,7 @@
             workspace.wiring.logManager.addEventListener('newentry', this._updateWiringErrors);
             this._updateWiringErrors();
 
-            Wirecloud.GlobalLogManager.log(gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
+            Wirecloud.GlobalLogManager.log(utils.gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
         }.bind(this));
 
         Object.defineProperties(this, {
@@ -250,18 +249,18 @@
         }
 
         if (Wirecloud.Utils.isFullscreenSupported()) {
-            this.fullscreenButton = new StyledElements.Button({'iconClass': 'icon-resize-full', title: gettext('Full screen')});
+            this.fullscreenButton = new StyledElements.Button({'iconClass': 'icon-resize-full', title: utils.gettext('Full screen')});
             this.notebook.addButton(this.fullscreenButton);
             Wirecloud.Utils.onFullscreenChange(this.notebook, function () {
                 this.fullscreenButton.removeIconClassName('icon-resize-full');
                 this.fullscreenButton.removeIconClassName('icon-resize-small');
                 if (this.notebook.fullscreen) {
                     this.fullscreenButton.addIconClassName('icon-resize-small');
-                    this.fullscreenButton.setTitle(gettext('Exit full screen'));
+                    this.fullscreenButton.setTitle(utils.gettext('Exit full screen'));
                     this.notebook.addClassName('fullscreen');
                 } else {
                     this.fullscreenButton.addIconClassName('icon-resize-full');
-                    this.fullscreenButton.setTitle(gettext('Full screen'));
+                    this.fullscreenButton.setTitle(utils.gettext('Full screen'));
                     this.notebook.removeClassName('fullscreen');
                 }
             }.bind(this));
@@ -281,14 +280,14 @@
             this.notebook.addButton(this.seeOnWirecloudButton);
             this.seeOnWirecloudButton.addEventListener('click', function () {
                 var url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.model.owner), name: encodeURIComponent(this.model.title)});
-                window.open(url, '_blank')
+                window.open(url, '_blank');
             }.bind(this));
         } else {
             this.poweredByWirecloudButton = new StyledElements.Button({
                 'class': 'powered-by-wirecloud'
             });
             this.notebook.addButton(this.poweredByWirecloudButton);
-            this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank')});
+            this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank');});
         }
 
         this.model.addEventListener('createoperator', function (workspace_model, operator) {
@@ -458,17 +457,9 @@
 
     WorkspaceView.prototype.publish = function publish(data) {
         return this.model.publish(data);
-/*
-                                    Wirecloud.LocalCatalogue._includeResource(JSON.parse(response.responseText));
-        layoutManager.viewsByName.myresources.viewsByName.search.mark_outdated();
-
-
-                             */
-
-
     };
 
-    WorkspaceView.prototype.drawAttention = function drawAttention(widgetId) {
+    WorkspaceView.prototype.drawAttention = function drawAttention(id) {
         var widget = this.findWidget(id);
 
         if (widget !== null) {
@@ -496,9 +487,9 @@
         tab.tabElement.classList.remove("highlight");
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var get_widgets = function get_widgets() {
         return Array.prototype.concat.apply([], this.notebook.tabs.map(function (tab) {
@@ -506,9 +497,9 @@
         }));
     };
 
-    // ==================================================================================
+    // =========================================================================
     // EVENT HANDLERS
-    // ==================================================================================
+    // =========================================================================
 
     var on_click_createtab = function on_click_createtab(button) {
         button.disable();

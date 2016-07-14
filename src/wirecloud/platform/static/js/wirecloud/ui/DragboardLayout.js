@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud */
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -102,9 +103,9 @@
         return new Wirecloud.ui.MultiValuedSize(sizeInPixels, sizeInLU);
     };
 
-    /////////////////////////////////////
-    // Layout Units (LU) conversion.
-    /////////////////////////////////////
+    // =========================================================================
+    // LAYOUT UNITS (LU) CONVERSION.
+    // =========================================================================
 
     /**
      * Converters
@@ -130,13 +131,13 @@
 
     DragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(pixels) {
         var msg = "method \"%(method)s\" must be implemented.";
-        msg = interpolate(msg, {method: "adaptColumnOffset"}, true);
+        msg = utils.interpolate(msg, {method: "adaptColumnOffset"}, true);
         throw new Error(msg);
     };
 
     DragboardLayout.prototype.adaptRowOffset = function adaptRowOffset(pixels) {
         var msg = "method \"%(method)s\" must be implemented.";
-        msg = interpolate(msg, {method: "adaptRowOffset"}, true);
+        msg = utils.interpolate(msg, {method: "adaptRowOffset"}, true);
         throw new Error(msg);
     };
 
@@ -226,7 +227,7 @@
 
     DragboardLayout.prototype.addWidget = function addWidget(widget, affectsDragboard) {
         if (widget.layout != null) {
-            var msg = gettext("the widget could not be associated with this layout as it already has an associated layout.");
+            var msg = utils.gettext("the widget could not be associated with this layout as it already has an associated layout.");
             throw new Error(msg);
         }
         widget.layout = this;
@@ -280,6 +281,11 @@
         }
     };
 
+    /**
+     * Removes the indicated widget from this layout
+     *
+     * @returns true if any of the other widgets of this layout has been moved
+     */
     DragboardLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
         delete this.widgets[widget.id];
 
@@ -289,6 +295,8 @@
 
         widget.layout = null;
         widget.removeEventListener('remove', this._on_remove_widget_bound);
+
+        return false;
     };
 
     /**
@@ -306,9 +314,9 @@
         }
     };
 
-    /////////////////////////////////////
+    // =========================================================================
     // Drag & drop support
-    /////////////////////////////////////
+    // =========================================================================
 
     /**
      * Initializes a temporal iWidget move.
@@ -367,9 +375,9 @@
     DragboardLayout.prototype.disableCursor = function disableCursor() {
     };
 
-    /////////////////////////////////////
-    // Css unit conversions
-    /////////////////////////////////////
+    // =========================================================================
+    // CSS UNIT CONVERSIONS
+    // =========================================================================
 
     /**
      * Measure the given test elmenet in the specified css units.
@@ -430,4 +438,4 @@
 
     Wirecloud.ui.DragboardLayout = DragboardLayout;
 
-})();
+})(Wirecloud.Utils);

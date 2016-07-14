@@ -19,7 +19,8 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
+
 
 (function (utils) {
 
@@ -114,7 +115,7 @@
                     var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
 
                     var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
-                    typeahead.bind(dialog.form.fieldInterfaces['username'].inputElement);
+                    typeahead.bind(dialog.form.fieldInterfaces.username.inputElement);
 
                     dialog.executeOperation = function (data) {
                         Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {

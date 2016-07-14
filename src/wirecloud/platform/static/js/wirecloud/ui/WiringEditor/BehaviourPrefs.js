@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,16 +19,16 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class BehaviourPrefs.
@@ -49,7 +49,7 @@
             _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
                 var item;
 
-                item = new se.MenuItem(gettext(title), onclick);
+                item = new se.MenuItem(utils.gettext(title), onclick);
                 item.addIconClass('icon-' + iconClass);
 
                 if (isEnabled != null) {

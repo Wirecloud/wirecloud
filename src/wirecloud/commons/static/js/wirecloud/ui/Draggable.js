@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
+
 
 (function () {
 
@@ -27,10 +28,6 @@
 
     var _canBeDragged = function () {
         return true;
-    };
-
-    var _cancel = function () {
-        return false;
     };
 
     /**

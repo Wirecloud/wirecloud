@@ -19,16 +19,16 @@
  *
  */
 
-/* global StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     ns.ComponentShowcase = function ComponentShowcase() {
 
@@ -65,18 +65,19 @@
 
         var resource_painter = {
             paint: function paint(group) {
-                var group = new ns.ComponentGroup(group);
+                var id;
 
+                group = new ns.ComponentGroup(group);
                 group.addEventListener('btncreate.click', createcomponent_onclick.bind(this));
 
                 if (this.components.operator[group.id] != null) {
-                    for (var id in this.components.operator[group.id]) {
+                    for (id in this.components.operator[group.id]) {
                         group.addComponent(this.components.operator[group.id][id]);
                     }
                 }
 
                 if (this.components.widget[group.id] != null) {
-                    for (var id in this.components.widget[group.id]) {
+                    for (id in this.components.widget[group.id]) {
                         group.addComponent(this.components.widget[group.id][id]);
                     }
                 }

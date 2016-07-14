@@ -21,6 +21,7 @@
 
 /* globals StyledElements, LayoutManagerFactory, Wirecloud */
 
+
 (function (utils) {
 
     "use strict";
@@ -86,11 +87,7 @@
 
         p = Promise.resolve();
         for (market_key in old_views) {
-            p = p.then(function () {
-                return new Promise(function (alt, resolve) {
-                    this.alternatives.removeAlternative(alt, {onComplete: resolve});
-                }.bind(this, old_views[market_key]));
-            }.bind(this));
+            p = p.then(remove_market.bind(this, old_views[market_key]));
         }
 
         p = p.then(function () {
@@ -379,6 +376,12 @@
                 }
             }.bind(this)
         });
+    };
+
+    var remove_market = function remove_market(market_view) {
+        return new Promise(function (alt, resolve) {
+            this.alternatives.removeAlternative(alt, {onComplete: resolve});
+        }.bind(this, market_view));
     };
 
     Wirecloud.ui.MarketplaceView = MarketplaceView;

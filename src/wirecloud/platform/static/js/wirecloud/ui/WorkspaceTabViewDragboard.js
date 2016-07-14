@@ -26,9 +26,9 @@
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     var WorkspaceTabViewDragboard = function WorkspaceTabViewDragboard(tab) {
 
@@ -56,9 +56,9 @@
         }
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PUBLIC MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Gets the width of the usable dragboard area.
@@ -165,7 +165,6 @@
     };
 
     WorkspaceTabViewDragboard.prototype.paint = function paint() {
-        var oldLength, i;
 
         if (this.painted) {
             return;
@@ -218,9 +217,9 @@
         }.bind(this));
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var refresh_zindex = function refresh_zindex() {
         var i;
@@ -248,6 +247,7 @@
             } else {
                 return new Wirecloud.ui.ColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
             }
+            break;
         case 'gridlayout':
             return new Wirecloud.ui.GridLayout(this, layoutInfo.columns, layoutInfo.rows, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
         }

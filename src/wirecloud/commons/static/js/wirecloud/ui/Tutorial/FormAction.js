@@ -1,5 +1,5 @@
 /*
- *     Copyright 2013-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2013-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,16 +19,17 @@
  *
  */
 
-/*global gettext, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
     /*************************************************************************
      * Constructor TODO
      *************************************************************************/
-/*     {'type': 'formAction', 'mainMsg': "Complete the form ", 'form': windowForm, 'actionElements': [newName, newUrl], 'actionMsgs': ["chose a new name for the Catalogue.", "Complete the url. for example: 'https://wirecloud.conwet.fi.upm.es'"], 'endElement': acceptButton, 'asynchronous': true},*/
+    /*     {'type': 'formAction', 'mainMsg': "Complete the form ", 'form': windowForm, 'actionElements': [newName, newUrl], 'actionMsgs': ["chose a new name for the Catalogue.", "Complete the url. for example: 'https://wirecloud.conwet.fi.upm.es'"], 'endElement': acceptButton, 'asynchronous': true},*/
     var FormAction = function FormAction(tutorial, options) {
 
         this.options = options;
@@ -59,7 +60,7 @@
         }
 
         if (this.mainMsg) {
-            this.mainStep = new Wirecloud.ui.Tutorial.SimpleDescription(tutorial, {'type': 'simpleDescription', 'title': gettext(this.mainTitle), 'msg': gettext(this.mainMsg), 'elem': null});
+            this.mainStep = new Wirecloud.ui.Tutorial.SimpleDescription(tutorial, {'type': 'simpleDescription', 'title': utils.gettext(this.mainTitle), 'msg': utils.gettext(this.mainMsg), 'elem': null});
             this.mainStep.setLast();
         }
     };
@@ -87,11 +88,11 @@
 
     var _activate = function _activate(form) {
         var pos, i, tempElem;
-        
+
         this.element = form;
 
         if (this.mainStep) {
-            //main description
+            // main description
             this.mainStep.wrapperElement.classList.add("activeStep");
 
             // Positions
@@ -113,7 +114,7 @@
                     break;
             }
         }
-        //main action for next step
+        // main action for next step
         this.endAction = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.endElementMsg, 'elem': form.acceptButton, 'pos': this.endElementPos});
         this.endAction.setNext();
         this.endAction.activate();
@@ -132,17 +133,17 @@
             if (!this.actionElementsValidators[index](this.actionElements[index]()) && !this.subSteps[index].wrapperElement.classList.contains('invalid')) {
                 this.subSteps[index].wrapperElement.classList.add('invalid');
                 this.form.acceptButton.disable();
-                this.invalidcounter ++;
+                this.invalidcounter++;
             } else if (this.actionElementsValidators[index](this.actionElements[index]()) && this.subSteps[index].wrapperElement.classList.contains('invalid')) {
                 this.subSteps[index].wrapperElement.classList.remove('invalid');
-                this.invalidcounter --;
+                this.invalidcounter--;
                 if (this.invalidcounter === 0) {
                     this.form.acceptButton.enable();
                 }
             }
         };
 
-        for (i = 0; i < this.actionElements.length; i ++) {
+        for (i = 0; i < this.actionElements.length; i++) {
             this.subSteps[i] = new Wirecloud.ui.Tutorial.PopUp(this.actionElements[i](), {
                 highlight: false,
                 msg: this.actionMsgs[i],
@@ -165,7 +166,7 @@
             // Activate first step
             activateSubFormAction.call(this, 0);
         }
-        for (i = 0; i < this.disableElems.length; i ++) {
+        for (i = 0; i < this.disableElems.length; i++) {
             this.disableLayer[i] = this.disable(this.disableElems[i]());
         }
         form.cancelButton.disable();
@@ -207,7 +208,7 @@
     FormAction.prototype.destroy = function destroy() {
         var i;
 
-        for (i = 0; i < this.disableLayer.length; i ++) {
+        for (i = 0; i < this.disableLayer.length; i++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
         for (i = 0; i < this.subSteps.length; i++) {
@@ -228,4 +229,5 @@
      * Make Anchor public
      *************************************************************************/
     Wirecloud.ui.Tutorial.FormAction = FormAction;
-})();
+
+})(Wirecloud.Utils);

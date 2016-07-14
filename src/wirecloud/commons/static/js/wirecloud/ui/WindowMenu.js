@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/*global CSSPrimitiveValue, Wirecloud*/
+/* globals StyledElements, Wirecloud */
+
 
 (function () {
 
@@ -33,7 +34,6 @@
     var makeDraggable = function makeDraggable(handler) {
         this.draggable = new Wirecloud.ui.Draggable(handler, {window_menu: this},
             function onStart(draggable, context) {
-                var position;
                 context.y = context.window_menu.htmlElement.style.top === "" ? 0 : parseInt(context.window_menu.htmlElement.style.top, 10);
                 context.x = context.window_menu.htmlElement.style.left === "" ? 0 : parseInt(context.window_menu.htmlElement.style.left, 10);
             },

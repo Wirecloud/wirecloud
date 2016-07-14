@@ -18,18 +18,19 @@
  *     under the License.
  */
 
-/* global gettext, LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals LayoutManagerFactory, StyledElements, Wirecloud */
 
 
 Wirecloud.ui = Wirecloud.ui || {};
+
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class WiringEditor.
@@ -172,7 +173,7 @@ Wirecloud.ui = Wirecloud.ui || {};
              * @override
              */
             getTitle: function getTitle() {
-                return utils.interpolate(gettext("%(workspace_title)s - Wiring"), {
+                return utils.interpolate(utils.gettext("%(workspace_title)s - Wiring"), {
                     workspace_title: LayoutManagerFactory.getInstance().viewsByName.workspace.getTitle()
                 });
             },
@@ -223,9 +224,9 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var bindEndpoint = function bindEndpoint(endpoint) {
         /*jshint validthis:true */
@@ -369,8 +370,8 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var createInitialMessage = function createInitialMessage() {
         var alert = new se.Alert({
-            title: gettext("Hello, welcome to the Wiring Editor view!"),
-            message: gettext("In this view you can connect all the components of your dashboard in a visual way."),
+            title: utils.gettext("Hello, welcome to the Wiring Editor view!"),
+            message: utils.gettext("In this view you can connect all the components of your dashboard in a visual way."),
             state: 'info',
             alignment: 'static-top'
         });
@@ -385,7 +386,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         /*jshint validthis:true */
 
         this.btnFindComponents = new se.ToggleButton({
-            title: gettext("Find components"),
+            title: utils.gettext("Find components"),
             extraClass: "btn-find-components",
             iconClass: "icon-archive",
             stackedIconClass: "icon-plus-sign"
@@ -398,7 +399,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         }.bind(this));
 
         this.btnListBehaviours = new se.ToggleButton({
-            title: gettext("List behaviours"),
+            title: utils.gettext("List behaviours"),
             extraClass: "btn-list-behaviours",
             iconClass: "icon-sitemap"
         });
@@ -541,7 +542,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var findEndpoint = function findEndpoint(type, bInfo, wiringEndpoint) {
         /*jshint validthis:true */
-        var component, endpoint;
+        var component;
 
         component = this.behaviourEngine.components[bInfo.type][bInfo.id];
 
@@ -551,24 +552,6 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         return component.getEndpoint(type, bInfo.endpoint);
-    };
-
-    var findEndpointById = function findEndpointById(type, id) {
-        /*jshint validthis:true */
-
-        var kwargs = id.split("/");
-
-        if (kwargs.length != 3) {
-            throw utils.createError('EndpointError', "A %(type)s-endpoint is malformed.", {
-                type: type
-            });
-        }
-
-        return findEndpoint.call(this, type, {
-            type: kwargs[0],
-            id: parseInt(kwargs[1]),
-            endpoint: kwargs[2]
-        });
     };
 
     var clearComponentSelection = function clearComponentSelection() {

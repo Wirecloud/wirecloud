@@ -1,1 +1,4 @@
+/* globals Wirecloud */
+
+
 Wirecloud.FiWare = {};

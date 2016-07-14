@@ -19,7 +19,8 @@
  *
  */
 
-/* globals CatalogueSearchView, LayoutManagerFactory, Wirecloud, StyledElements*/
+/* globals CatalogueSearchView, LayoutManagerFactory, Wirecloud, StyledElements */
+
 
 (function (utils) {
 

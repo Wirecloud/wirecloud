@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -43,25 +44,25 @@
 
     var updateButton = function updateButton() {
         if (this.source === 'default') {
-            this.buttonElement.setLabel(gettext('Parametrize'));
+            this.buttonElement.setLabel(utils.gettext('Parametrize'));
         } else {
-            this.buttonElement.setLabel(gettext('Modify'));
+            this.buttonElement.setLabel(utils.gettext('Modify'));
         }
 
         if (this.status !== 'normal') {
             this.readOnlyIcon.classList.add('readOnly');
-            this.readOnlyIcon.title = gettext("This value won't be editable by the user");
+            this.readOnlyIcon.title = utils.gettext("This value won't be editable by the user");
         } else {
             this.readOnlyIcon.classList.remove('readOnly');
-            this.readOnlyIcon.title = gettext("This value will be editable by the user");
+            this.readOnlyIcon.title = utils.gettext("This value will be editable by the user");
         }
 
         if (this.status !== 'hidden') {
             this.visibilityIcon.classList.add('visible');
-            this.visibilityIcon.title = gettext("This value will be visible to the user");
+            this.visibilityIcon.title = utils.gettext("This value will be visible to the user");
         } else {
             this.visibilityIcon.classList.remove('visible');
-            this.visibilityIcon.title = gettext("This value won't be visible to the user");
+            this.visibilityIcon.title = utils.gettext("This value won't be visible to the user");
         }
     };
 
@@ -151,4 +152,4 @@
 
     Wirecloud.ui.ParametrizableValueInputInterface = ParametrizableValueInputInterface;
 
-})();
+})(Wirecloud.Utils);

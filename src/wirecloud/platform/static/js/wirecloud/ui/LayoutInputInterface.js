@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -30,43 +31,43 @@
             {
                 "name":          "smart",
                 "defaultValue":  true,
-                "label":         gettext("Smart"),
+                "label":         utils.gettext("Smart"),
                 "type":          "boolean",
-                "description":   gettext("Widgets will tend to be placed on the topmost position available if this option is enabled. (default: enabled)")
+                "description":   utils.gettext("Widgets will tend to be placed on the topmost position available if this option is enabled. (default: enabled)")
             },
             {
                 "name":          "columns",
                 "min":           1,
                 "max":           200,
                 "defaultValue":  20,
-                "label":         gettext("Columns"),
+                "label":         utils.gettext("Columns"),
                 "type":          "number",
-                "description":   gettext("Grid columns. (default: 20 columns)")
+                "description":   utils.gettext("Grid columns. (default: 20 columns)")
             },
             {
                 "name":          "cellheight",
                 "min":           7,
                 "max":           1024,
                 "defaultValue":  13,
-                "label":         gettext("Row Height (in pixels)"),
+                "label":         utils.gettext("Row Height (in pixels)"),
                 "type":          "number",
-                "description":   gettext("Row/cell height. Must be specified in pixel units. (default: 13px)")
+                "description":   utils.gettext("Row/cell height. Must be specified in pixel units. (default: 13px)")
             },
             {
                 "name":          "horizontalmargin",
                 "min":           0,
                 "defaultValue":  4,
-                "label":         gettext("Horizontal Margin between widgets (in pixels)"),
+                "label":         utils.gettext("Horizontal Margin between widgets (in pixels)"),
                 "type":          "number",
-                "description":   gettext("Horizontal Margin between widgets. Must be specified in pixel units. (default: 4px)")
+                "description":   utils.gettext("Horizontal Margin between widgets. Must be specified in pixel units. (default: 4px)")
             },
             {
                 "name":          "verticalmargin",
                 "min":           0,
                 "defaultValue":  3,
-                "label":         gettext("Vertical Margin between widgets (in pixels)"),
+                "label":         utils.gettext("Vertical Margin between widgets (in pixels)"),
                 "type":          "number",
-                "description":   gettext("Vertical Margin between widgets. Must be specified in pixel units. (default: 3px)")
+                "description":   utils.gettext("Vertical Margin between widgets. Must be specified in pixel units. (default: 3px)")
             }
         ],
         'gridlayout': [
@@ -75,40 +76,40 @@
                 "min":           1,
                 "max":           200,
                 "defaultValue":  20,
-                "label":         gettext("Columns"),
+                "label":         utils.gettext("Columns"),
                 "type":          "number",
-                "description":   gettext("Grid columns. (default: 20 columns)")
+                "description":   utils.gettext("Grid columns. (default: 20 columns)")
             },
             {
                 "name":          "rows",
                 "min":           1,
                 "max":           200,
                 "defaultValue":  12,
-                "label":         gettext("Rows"),
+                "label":         utils.gettext("Rows"),
                 "type":          "number",
-                "description":   gettext("Grid rows. (default: 12 rows)")
+                "description":   utils.gettext("Grid rows. (default: 12 rows)")
             },
             {
                 "name":          "horizontalmargin",
                 "min":           0,
                 "defaultValue":  4,
-                "label":         gettext("Horizontal Margin between widgets (in pixels)"),
+                "label":         utils.gettext("Horizontal Margin between widgets (in pixels)"),
                 "type":          "number",
-                "description":   gettext("Horizontal Margin between widgets. Must be specified in pixel units. (default: 4px)")
+                "description":   utils.gettext("Horizontal Margin between widgets. Must be specified in pixel units. (default: 4px)")
             },
             {
                 "name":          "verticalmargin",
                 "min":           0,
                 "defaultValue":  3,
-                "label":         gettext("Vertical Margin between widgets (in pixels)"),
+                "label":         utils.gettext("Vertical Margin between widgets (in pixels)"),
                 "type":          "number",
-                "description":   gettext("Vertical Margin between widgets. Must be specified in pixel units. (default: 3px)")
+                "description":   utils.gettext("Vertical Margin between widgets. Must be specified in pixel units. (default: 3px)")
             }
         ]
     };
 
     var updateLayoutSummary = function updateLayoutSummary() {
-        var summary = '', context = Wirecloud.Utils.clone(this.layout);
+        var summary = '', context = utils.clone(this.layout);
 
         switch (this.layout.type) {
         case 'columnlayout':
@@ -123,7 +124,7 @@
             summary = '%(columns)s columns x %(rows)s rows';
             break;
         }
-        summary = Wirecloud.Utils.interpolate(summary, context);
+        summary = utils.interpolate(summary, context);
         this.summary_addon.setLabel(summary);
     };
 
@@ -139,12 +140,12 @@
         this.selectElement = new StyledElements.Select({
             name: options.name + '-type',
             initialEntries: [
-                {"value": "columnlayout", "label": gettext("Columns")},
-                {"value": "gridlayout", "label": gettext("Grid")}
+                {"value": "columnlayout", "label": utils.gettext("Columns")},
+                {"value": "gridlayout", "label": utils.gettext("Grid")}
             ]
         });
         this.selectElement.addEventListener('change', function (select) {
-            this.layout = Wirecloud.Utils.clone(this.layout);
+            this.layout = utils.clone(this.layout);
             this.layout.type = select.getValue();
 
             var fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
@@ -165,12 +166,12 @@
         this.buttonElement = new StyledElements.Button({iconClass: 'icon-cogs'});
         this.buttonElement.addEventListener('click', function () {
             var fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
-            var dialog = new Wirecloud.ui.FormWindowMenu(fields, gettext('Layout configuration'), 'wc-layout-settings-modal');
+            var dialog = new Wirecloud.ui.FormWindowMenu(fields, utils.gettext('Layout configuration'), 'wc-layout-settings-modal');
 
             // Form data is sent to server
             dialog.executeOperation = function (data) {
-                this.layout = Wirecloud.Utils.clone(this.layout);
-                Wirecloud.Utils.merge(this.layout, data);
+                this.layout = utils.clone(this.layout);
+                utils.merge(this.layout, data);
                 updateLayoutSummary.call(this);
             }.bind(this);
 
@@ -223,4 +224,4 @@
 
     Wirecloud.ui.LayoutInputInterface = LayoutInputInterface;
 
-})();
+})(Wirecloud.Utils);

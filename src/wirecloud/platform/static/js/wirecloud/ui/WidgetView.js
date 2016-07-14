@@ -26,9 +26,9 @@
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * @name Wirecloud.UI.WidgetView
@@ -260,9 +260,9 @@
         model.addEventListener('remove', on_remove.bind(this));
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PUBLIC MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     utils.inherit(ns.WidgetView, se.StyledElement, {
 
@@ -281,7 +281,7 @@
             privates.get(this).minimized = newStatus;
 
             if (this.minimized) {
-                this.minimizebutton.setTitle(gettext("Maximize"));
+                this.minimizebutton.setTitle(utils.gettext("Maximize"));
                 this.minimizebutton.replaceClassName("fa-minus", "fa-plus");
                 this.wrapperElement.classList.add('wc-minimized-widget');
                 this.wrapperElement.style.height = "";
@@ -290,7 +290,7 @@
                     width: privates.get(this).shape.width
                 };
             } else {
-                this.minimizebutton.setTitle(gettext("Minimize"));
+                this.minimizebutton.setTitle(utils.gettext("Minimize"));
                 this.minimizebutton.replaceClassName("fa-plus", "fa-minus");
                 this.wrapperElement.classList.remove('wc-minimized-widget');
                 this.wrapperElement.style.height = this.layout.getHeightInPixels(privates.get(this).shape.height) + 'px';
@@ -401,24 +401,25 @@
         },
 
         moveToLayout: function moveToLayout(newLayout) {
+            var affectedWidgetsRemoving, affectedWidgetsAdding,
+                minimizeOnFinish, p, previousWidth, previousHeight,
+                dragboardChange, oldLayout, oldPositionPixels;
+
             if (this.layout === newLayout) {
                 return;
             }
 
-            var affectedWidgetsRemoving = false;
-            var affectedWidgetsAdding = false;      //is there any other widget's postion affected
-
-            var minimizeOnFinish = false;
+            minimizeOnFinish = false;
             if (this.minimized) {
                 minimizeOnFinish = true;
                 this.toggleMinimizeStatus();
             }
 
-            var previousWidth = this.wrapperElement.offsetWidth;
-            var previousHeight = this.wrapperElement.offsetHeight;
+            previousWidth = this.wrapperElement.offsetWidth;
+            previousHeight = this.wrapperElement.offsetHeight;
 
-            var dragboardChange = this.layout.dragboard !== newLayout.dragboard;
-            var oldLayout = this.layout;
+            dragboardChange = this.layout.dragboard !== newLayout.dragboard;
+            oldLayout = this.layout;
 
             affectedWidgetsRemoving = oldLayout.removeWidget(this, dragboardChange);
 
@@ -436,7 +437,7 @@
             } else if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setPosition(this.previousPosition);
             } else {
-                var oldPositionPixels = {
+                oldPositionPixels = {
                     x: oldLayout.getColumnOffset(this.position.x) - oldLayout.dragboardLeftMargin,
                     y: oldLayout.getRowOffset(this.position.y) - oldLayout.dragboardTopMargin
                 };
@@ -453,9 +454,9 @@
                 this.toggleMinimizeStatus();
             }
 
-            //if the widget hasn't been taken to another tab and
-            //the movement affects the rest of widgets
-            this.update();
+            // if the widget hasn't been taken to another tab and
+            // the movement affects the rest of widgets
+            p = this.update();
             if (dragboardChange && (affectedWidgetsRemoving || affectedWidgetsAdding)) {
                 if (affectedWidgetsRemoving) {
                     p.then(function () {
@@ -464,7 +465,7 @@
                 }
                 if (affectedWidgetsAdding) {
                     p.then(function () {
-                        return newLayout.dragboard.update()
+                        return newLayout.dragboard.update();
                     });
                 }
             }
@@ -551,9 +552,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var privates = new WeakMap();
 
@@ -599,16 +600,16 @@
         });
     };
 
-    // ==================================================================================
+    // =========================================================================
     // EVENT HANDLERS
-    // ==================================================================================
+    // =========================================================================
 
     var on_add_log = function on_add_log() {
         var label, errorCount = this.model.logManager.getErrorCount();
         this.errorbutton.setDisabled(errorCount === 0);
 
-        label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
-        label = interpolate(label, {errorCount: errorCount}, true);
+        label = utils.ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
+        label = utils.interpolate(label, {errorCount: errorCount}, true);
         this.errorbutton.setTitle(label);
     };
 

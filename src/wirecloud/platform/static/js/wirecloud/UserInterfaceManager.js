@@ -19,7 +19,7 @@
  *
  */
 
-/* global Wirecloud */
+/* globals LayoutManagerFactory, Wirecloud */
 
 (function (utils) {
 
@@ -64,7 +64,7 @@
 
         // General keydown handler
         document.addEventListener('keydown', function (event) {
-            var modifiers, key, consumed, popup;
+            var modifiers, key, consumed;
 
             modifiers = {
                 altKey: event.altKey,
@@ -119,7 +119,7 @@
     UserInterfaceManager._registerRootWindowMenu = function _registerRootWindowMenu(window_menu) {
 
         if (!(window_menu instanceof Wirecloud.ui.WindowMenu)) {
-            throw TypeError('window_menu must be a WindowMenu instance');
+            throw new TypeError('window_menu must be a WindowMenu instance');
         }
 
         if (this.currentWindowMenu != null) {

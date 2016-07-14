@@ -19,16 +19,16 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class ComponentDraggablePrefs.
@@ -84,16 +84,16 @@
                         var dialog = new Wirecloud.ui.UpgradeWindowMenu(this._component);
                         dialog.show();
                     }.bind(this.component), canUpgrade),
-                    this._createMenuItem(gettext("Logs"), "tags", function () {
+                    this._createMenuItem(utils.gettext("Logs"), "tags", function () {
                         this.showLogs();
                     }.bind(this.component)),
-                    this._createMenuItem(gettext("Settings"), "gear", function () {
+                    this._createMenuItem(utils.gettext("Settings"), "gear", function () {
                         this.showSettings();
                     }.bind(this.component), canShowSettings)
                 ];
 
                 if (this.component.removeCascadeAllowed) {
-                    list = list.concat(this._createMenuItem(gettext("Delete cascade"), "trash", function () {
+                    list = list.concat(this._createMenuItem(utils.gettext("Delete cascade"), "trash", function () {
                         this.trigger("optremovecascade");
                     }.bind(this.component), canDeleteCascade));
                 }
@@ -105,9 +105,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var canRename = function canRename() {
         return this.type == 'widget' && this._component.isAllowed('rename');
@@ -135,17 +135,17 @@
 
     var getItemCollapse = function getItemCollapse() {
         if (this.collapsed) {
-            return {title: gettext("Expand"), icon: "collapse-top"};
+            return {title: utils.gettext("Expand"), icon: "collapse-top"};
         } else {
-            return {title: gettext("Collapse"), icon: "collapse"};
+            return {title: utils.gettext("Collapse"), icon: "collapse"};
         }
     };
 
     var getItemOrderEndpoints = function getItemOrderEndpoints() {
         if (this.orderingEndpoints) {
-            return {title: gettext("Stop ordering"), icon: "sort"};
+            return {title: utils.gettext("Stop ordering"), icon: "sort"};
         } else {
-            return {title: gettext("Order endpoints"), icon: "sort"};
+            return {title: utils.gettext("Order endpoints"), icon: "sort"};
         }
     };
 

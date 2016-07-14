@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/*global NodeList, Wirecloud*/
+/* globals NodeList, Wirecloud */
+
 
 (function () {
 
@@ -137,7 +138,7 @@
         this.next_element.removeEventListener(this.event, this.nextHandler, this.options.eventCapture);
         this.next_element = null;
 
-        for (i = 0; i < this.disableLayer.length; i ++) {
+        for (i = 0; i < this.disableLayer.length; i++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
         this.disableLayer = [];
@@ -174,7 +175,7 @@
         this.restart_handlers = [];
         this.disableLayer = [];
         if (options.eventCapture != null) {
-            options.eventCapture = !! options.eventCapture;
+            options.eventCapture = !!options.eventCapture;
         } else {
             options.eventCapture = true;
         }
@@ -231,7 +232,7 @@
         }
 
         var disableElems = build_disable_elements_list(this.disableElems);
-        for (i = 0; i < disableElems.length; i ++) {
+        for (i = 0; i < disableElems.length; i++) {
             this.disableLayer[i] = this.disable(disableElems[i]);
         }
 
@@ -307,7 +308,7 @@
             this.next_element = null;
         }
 
-        for (i = 0; i < this.disableLayer.length; i ++) {
+        for (i = 0; i < this.disableLayer.length; i++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
         this.disableLayer = null;

@@ -19,7 +19,7 @@
  *
  */
 
-/*globals Wirecloud */
+/* globals Wirecloud */
 
 
 (function (utils) {

@@ -1,4 +1,5 @@
-/*global StyledElements*/
+/* globals StyledElements */
+
 
 (function () {
 

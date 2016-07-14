@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
+
 
 (function (utils) {
 
@@ -52,15 +53,12 @@
 
         for (workspace_name in user_workspaces) {
             workspace = user_workspaces[workspace_name];
-            let item = new StyledElements.MenuItem(
+
+            items.push(new StyledElements.MenuItem(
                 workspace_name,
                 this.handler,
                 workspace
-            );
-
-            item.addClassName("wc-show-workspace");
-
-            items.push(item);
+            ));
         }
 
         return items;

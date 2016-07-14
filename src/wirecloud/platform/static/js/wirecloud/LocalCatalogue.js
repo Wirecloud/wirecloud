@@ -21,6 +21,7 @@
 
 /* globals LayoutManagerFactory, Wirecloud */
 
+
 (function (utils) {
 
     "use strict";
@@ -30,7 +31,7 @@
      *************************************************************************/
 
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result) {
-        var layoutManager, result, i, iwidget, resource_full_id, resource, index, operator;
+        var layoutManager, i, resource_full_id, index;
 
         if (result.affectedVersions == null) {
             result.affectedVersions = [resource.version];
@@ -256,7 +257,7 @@
                 market_endpoint: options.market_info
             }),
             onSuccess: function (response) {
-                var i, id, response_data, resource_data;
+                var response_data;
 
                 response_data = JSON.parse(response.responseText);
                 process_upload_response.call(this, [response_data.resource_details].concat(response_data.extra_resources));

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,10 @@
  *
  */
 
-(function () {
+/* globals StyledElements, Wirecloud */
+
+
+(function (utils) {
 
     "use strict";
 
@@ -35,13 +38,13 @@
             scope: this.search_scope,
             search_criteria: keywords,
             onSuccess: function (components, search_info) {
-                var i, msg;
+                var msg;
 
                 _load_resource_painter.call(this);
                 this._list.clear();
                 if (search_info.total_count !== 0) {
                     if ('corrected_query' in search_info) {
-                        msg = gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
+                        msg = utils.gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
                         this._list.appendChild(this.paintInfo(msg, {
                             corrected_query: search_info.corrected_query
                         }));
@@ -57,20 +60,20 @@
                         }
                     }, this);
                 } else {
-                    if (keywords != "") {
-                        msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
-                        msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(keywords.trim())}, true);
-                    } else if (this.search_scope != '') {
-                        msg = gettext("<p>Currently, you do not have access to any %(scope)s component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
-                        msg = interpolate(msg, {scope: this.search_scope}, true);
+                    if (keywords !== "") {
+                        msg = utils.gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
+                        msg = utils.interpolate(msg, {keywords: utils.escapeHTML(keywords.trim())}, true);
+                    } else if (this.search_scope !== '') {
+                        msg = utils.gettext("<p>Currently, you do not have access to any %(scope)s component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
+                        msg = utils.interpolate(msg, {scope: this.search_scope}, true);
                     } else {
-                        msg = gettext("<p>Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
+                        msg = utils.gettext("<p>Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
                     }
                     this._list.appendChild(this.paintError(new StyledElements.Fragment(msg)));
                 }
             }.bind(this),
             onFailure: function () {
-                var msg = Wirecloud.Utils.gettext("Connection error: No resource retrieved");
+                var msg = utils.gettext("Connection error: No resource retrieved");
 
                 _load_resource_painter.call(this);
                 this._list.clear();
@@ -134,7 +137,7 @@
 
     var MACSearch = function MACSearch(options) {
 
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             'extra_template_context': null,
             'scope': '',
             'template': 'wirecloud/macsearch',
@@ -151,9 +154,9 @@
         var input;
 
         var template = Wirecloud.currentTheme.templates[options.template];
-        this.wrapperElement = builder.parse(template, Wirecloud.Utils.merge({
+        this.wrapperElement = builder.parse(template, utils.merge({
             searchinput: function () {
-                input = new StyledElements.TextField({class: "se-field-search", 'placeholder': gettext('Keywords...')});
+                input = new StyledElements.TextField({class: "se-field-search", 'placeholder': utils.gettext('Keywords...')});
                 input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
                 input.addEventListener('change', _onSearchInput.bind(this));
                 return input;
@@ -207,4 +210,4 @@
 
     Wirecloud.ui.MACSearch = MACSearch;
 
-})();
+})(Wirecloud.Utils);

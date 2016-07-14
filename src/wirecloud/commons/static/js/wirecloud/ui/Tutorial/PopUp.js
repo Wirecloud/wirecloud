@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
+
 
 (function () {
 
@@ -99,19 +100,19 @@
         default:
         case 'downRight':
             this.wrapperElement.style.top = (pos.top + pos.height + 13) + 'px';
-            this.wrapperElement.style.left = (pos.left + (pos.width/4)*3) + 'px';
+            this.wrapperElement.style.left = (pos.left + (pos.width / 4) * 3) + 'px';
             break;
         case 'downLeft':
             this.wrapperElement.style.top = (pos.top + pos.height + 13) + 'px';
-            this.wrapperElement.style.left = (pos.left - wrapperPos.width + (pos.width/4)*1) + 'px';
+            this.wrapperElement.style.left = (pos.left - wrapperPos.width + (pos.width / 4) * 1) + 'px';
             break;
         case 'topRight':
             this.wrapperElement.style.top = (pos.top - wrapperPos.height - 13) + 'px';
-            this.wrapperElement.style.left = (pos.left + (pos.width/4)*3) + 'px';
+            this.wrapperElement.style.left = (pos.left + (pos.width / 4) * 3) + 'px';
             break;
         case 'topLeft':
             this.wrapperElement.style.top = (pos.top - wrapperPos.height - 13) + 'px';
-            this.wrapperElement.style.left = (pos.left - wrapperPos.width + (pos.width/4)*1) + 'px';
+            this.wrapperElement.style.left = (pos.left - wrapperPos.width + (pos.width / 4) * 1) + 'px';
             break;
         }
     };

@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -33,7 +33,7 @@
             component: {value: entity},
             name: {value: endpoint},
             label: {value: endpoint},
-            description: {value: gettext("No description provided")},
+            description: {value: utils.gettext("No description provided")},
             friendcode: {value: 'ghost_null'},
             missing: {value: true}
         });
@@ -61,7 +61,7 @@
             component: {value: entity},
             name: {value: endpoint},
             label: {value: endpoint},
-            description: {value: gettext("No description provided")},
+            description: {value: utils.gettext("No description provided")},
             friendcode: {value: 'ghost_null'},
             missing: {value: true}
         });

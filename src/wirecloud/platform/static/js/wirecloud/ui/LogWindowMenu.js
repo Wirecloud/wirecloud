@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals moment, StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -60,7 +61,7 @@
         entry_element.appendChild(titleElement);
 
         if (entry.details != null) {
-            expander = new StyledElements.Expander({title: gettext('Details')});
+            expander = new StyledElements.Expander({title: utils.gettext('Details')});
             expander.insertInto(entry_element);
             if (typeof entry.details === 'string') {
                 expander.appendChild(new StyledElements.Fragment(entry.details));
@@ -94,7 +95,7 @@
 
         // Accept button
         this.button = new StyledElements.Button({
-            text: gettext('Close'),
+            text: utils.gettext('Close'),
             'class': 'btn-primary btn-accept'
         });
         this.button.insertInto(this.windowBottom);
@@ -126,4 +127,4 @@
 
     Wirecloud.ui.LogWindowMenu = LogWindowMenu;
 
-})();
+})(Wirecloud.Utils);

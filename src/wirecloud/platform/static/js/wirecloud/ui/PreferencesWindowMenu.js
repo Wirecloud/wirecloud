@@ -19,7 +19,8 @@
  *
  */
 
-/* global StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
+
 
 (function (utils) {
 
@@ -32,7 +33,6 @@
             var tooltip = new StyledElements.Tooltip({content: preference.description, placement: ['right', 'bottom', 'top', 'left']});
             tooltip.bind(label);
         }
-        //label.setAttribute("for", preference.name);
         return label;
     };
 
@@ -146,8 +146,8 @@
                 changes.inherit = newInheritanceSetting;
             }
 
-            //if the value of the combo has changed or we don't want to use the inherited value
-            //take the value of the combo.
+            // if the value of the combo has changed or we don't want to use the inherited value
+            // take the value of the combo.
             if (newInheritanceSetting === false || valueChange) {
                 changes.value = newValue;
             }

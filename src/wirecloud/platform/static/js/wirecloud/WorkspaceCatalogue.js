@@ -19,7 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
 
 (function (utils) {
 
@@ -99,8 +99,8 @@
     };
 
     var createMissing = function createMissing(type, vendor, name, version) {
-        var klass = type === 'widget' ? Wirecloud.WidgetMeta : Wirecloud.wiring.OperatorMeta;
-        return new klass({
+        var Klass = type === 'widget' ? Wirecloud.WidgetMeta : Wirecloud.wiring.OperatorMeta;
+        return new Klass({
             vendor: vendor,
             name: name,
             version: version,

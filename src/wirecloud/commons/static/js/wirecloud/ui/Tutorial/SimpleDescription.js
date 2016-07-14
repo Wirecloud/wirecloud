@@ -1,5 +1,5 @@
 /*
- *     Copyright 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2013-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -79,7 +80,7 @@
         this.last = false;
         this.pos = options.pos;
         this.title = options.title;
-        this.nextButtonText = gettext('Next');
+        this.nextButtonText = utils.gettext('Next');
         if (options.nextButtonText) {
             this.nextButtonText = options.nextButtonText;
         }
@@ -90,7 +91,7 @@
 
         this.nextButton = new StyledElements.Button({
             'class': 'nextButton btn-primary',
-            'text': gettext(this.nextButtonText),
+            'text': utils.gettext(this.nextButtonText),
         });
 
         this.nextButton.insertInto(this.windowBottom);
@@ -98,7 +99,7 @@
         // Cancel button
         this.cancelButton = new StyledElements.Button({
             'class': 'cancelButton',
-            'text': gettext("Cancel"),
+            'text': utils.gettext("Cancel"),
         });
         this.cancelButton.insertInto(this.windowBottom);
         this.cancelButton.addEventListener('click', this._closeListener);
@@ -141,9 +142,9 @@
         this.last = true;
         this.nextButton.remove();
         if (buttonLabel == null) {
-            buttonLabel = gettext('Close');
+            buttonLabel = utils.gettext('Close');
         }
-        this.cancelButton.setLabel(gettext(buttonLabel));
+        this.cancelButton.setLabel(utils.gettext(buttonLabel));
         if (optionalHandler != null) {
             this.cancelButton.removeEventListener('click', this._closeListener);
             this.cancelButton.addEventListener('click', optionalHandler.bind(this));
@@ -197,7 +198,7 @@
         this.nextButton.focus();
     };
 
-     /**
+    /**
      * activate this step
      */
     SimpleDescription.prototype.activate = function activate() {
@@ -213,4 +214,4 @@
      *************************************************************************/
     Wirecloud.ui.Tutorial.SimpleDescription = SimpleDescription;
 
-})();
+})(Wirecloud.Utils);

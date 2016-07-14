@@ -19,7 +19,7 @@
  *
  */
 
-/*globals Wirecloud */
+/* globals Wirecloud */
 
 
 (function () {
@@ -54,8 +54,6 @@
     };
 
     WidgetViewDraggable.prototype.ondragstart = function ondragstart(draggable, context) {
-        var key;
-
         context.layout = context.widget.layout;
         context.layout.dragboard.raiseToTop(context.widget);
         context.layout.initializeMove(context.widget, draggable);
@@ -80,7 +78,7 @@
     };
 
     WidgetViewDraggable.prototype.ondrag = function ondrag(event, draggable, context, xDelta, yDelta) {
-        var x, y, clientX, clientY, element = null;
+        var x, y, clientX, clientY;
 
         context.widget.wrapperElement.style.left = (context.x + xDelta) + 'px';
         context.widget.wrapperElement.style.top = (context.y + yDelta) + 'px';
@@ -115,7 +113,7 @@
     };
 
     WidgetViewDraggable.prototype.ondragend = function ondragend(draggable, context) {
-        var destDragboard, workspace, destLayout;
+        var destDragboard, destLayout;
 
         context.widget.wrapperElement.classList.remove('dragging');
         context.widget.tab.wrapperElement.classList.remove('dragging');
@@ -156,8 +154,10 @@
 
     var on_mouseleave_tab = function on_mouseleave_tab(event) {
         var tab = this.widget.tab.workspace.findTab(event.target.getAttribute('data-id'));
-        this.tab.tabElement.classList.remove("selected");
-        this.tab = null;
+        if (tab === this.tab) {
+            this.tab.tabElement.classList.remove("selected");
+            this.tab = null;
+        }
     };
 
     Wirecloud.ui.WidgetViewDraggable = WidgetViewDraggable;

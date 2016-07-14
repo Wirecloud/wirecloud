@@ -21,6 +21,7 @@
 
 /* globals CatalogueSearchView, LayoutManagerFactory, Wirecloud, StyledElements */
 
+
 (function (utils) {
 
     "use strict";

@@ -19,16 +19,16 @@
  *
  */
 
-/* global StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class ComponentDraggable.
@@ -554,9 +554,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var events = ['change', 'dragstart', 'drag', 'dragend', 'endpointadded', 'endpointremoved', 'optremove', 'optremovecascade', 'optshare', 'remove', 'orderstart', 'orderend'];
 
@@ -761,9 +761,6 @@
         this.trigger('endpointremoved', endpoint);
     };
 
-    var component_onrename = function component_onrename(title) {
-    };
-
     var on_change_model = function on_change_model(model, changes) {
         /* jshint validthis: true */
         if (changes.indexOf('title') !== -1) {
@@ -787,6 +784,10 @@
         }
     };
 
+    var appendMissingConnection = function appendMissingConnection(type, name, connection) {
+        this.endpoints[type].endpoints[name].appendConnection(connection, true);
+    };
+
     var appendMissingEndpoints = function appendMissingEndpoints(componentUpdated, type, namespace) {
         /* jshint validthis: true */
         var name;
@@ -794,9 +795,7 @@
         for (name in componentUpdated[namespace]) {
             if (name in this._missingEndpoints[type]) {
                 this.appendEndpoint(type, componentUpdated[namespace][name]);
-                this._missingEndpoints[type][name].forEachConnection(function (connection) {
-                    this.endpoints[type].endpoints[name].appendConnection(connection, true);
-                }.bind(this));
+                this._missingEndpoints[type][name].forEachConnection(appendMissingConnection.bind(this, type, name));
             }
         }
     };

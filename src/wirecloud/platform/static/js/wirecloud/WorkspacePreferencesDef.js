@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,14 +19,14 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
 
 (function () {
 
     "use strict";
 
     var WorkspacePreferencesDef = function WorkspacePreferencesDef(definitions, args) {
-        var empty_params, i, param, workspace = args[1], extra_prefs = args[2];
+        var empty_params, i, param, extra_prefs = args[2];
 
         extra_prefs = Wirecloud.PreferenceManager.processDefinitions(extra_prefs);
         if (Array.isArray(args[3]) && args[3].length > 0) {

@@ -21,6 +21,7 @@
 
 /* globals MashupPlatform */
 
+
 (function (Wirecloud, utils) {
 
     "use strict";

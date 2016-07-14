@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,16 +19,16 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class ComponentPrefs.
@@ -64,17 +64,17 @@
              */
             build: function build() {
                 return [
-                    this._createMenuItem(gettext("Rename"), "pencil", function () {
+                    this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
                         showRenameModal.call(this);
                     }.bind(this), canRename),
                     this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
                         var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.component._component);
                         dialog.show();
                     }.bind(this), canUpgrade),
-                    this._createMenuItem(gettext("Logs"), "tags", function () {
+                    this._createMenuItem(utils.gettext("Logs"), "tags", function () {
                         this.component.showLogs();
                     }.bind(this)),
-                    this._createMenuItem(gettext("Settings"), "gear", function () {
+                    this._createMenuItem(utils.gettext("Settings"), "gear", function () {
                         this.component.showSettings();
                     }.bind(this), canShowSettings)
                 ];
@@ -84,9 +84,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var canRename = function canRename() {
         return !this.component._component.volatile && this.component.type == 'widget';

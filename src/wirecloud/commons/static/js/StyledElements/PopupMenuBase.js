@@ -19,7 +19,8 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
+
 
 (function (se, utils) {
 
@@ -476,9 +477,9 @@
         return !this.hidden && (this._enabledItems.length > 0);
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
 
     var property_activeItem_get = function property_activeItem_get() {

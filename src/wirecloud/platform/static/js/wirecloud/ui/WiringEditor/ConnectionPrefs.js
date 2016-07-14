@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,16 +19,16 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class ConnectionPrefs.
@@ -84,7 +84,7 @@
                     this._createMenuItem(getCustomizeTitle.call(this.connection), "magic", function () {
                         this.editable = !this.editable;
                     }.bind(this.connection), canCustomize),
-                    this._createMenuItem(gettext("Restore defaults"), "undo", function () {
+                    this._createMenuItem(utils.gettext("Restore defaults"), "undo", function () {
                         this.restoreDefaults();
                     }.bind(this.connection), canRestore)
                 ];
@@ -94,9 +94,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var canCustomize = function canCustomize() {
         /*jshint validthis:true */
@@ -110,7 +110,7 @@
 
     var getCustomizeTitle = function getCustomizeTitle() {
         /*jshint validthis:true */
-        return this.editable ? gettext("Stop customizing") : gettext("Customize");
+        return this.editable ? utils.gettext("Stop customizing") : utils.gettext("Customize");
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -19,7 +19,8 @@
  *
  */
 
-/*global LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals LayoutManagerFactory, moment, StyledElements, Wirecloud */
+
 
 (function (se, utils) {
 

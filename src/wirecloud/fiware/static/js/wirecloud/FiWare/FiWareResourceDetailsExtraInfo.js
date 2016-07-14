@@ -19,42 +19,16 @@
  *
  */
 
-/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global alert, document, gettext, interpolate, LayoutManagerFactory */
+/* globals Wirecloud */
+
 "use strict";
-
-var PartsPainter = function(part_structure_element, dom_element){
-    this.part_template_element = part_structure_element;
-    this.part_template = new Wirecloud.Utils.Template(this.part_template_element);
-    this.dom_element = dom_element;
-
-    this.paint = function(resource){
-        var resource_html,parts,i,parts_element,resource_element;
-		
-        this.dom_element.innerHTML = '';
-        parts=resource.getParts();
-	
-        for(i = 0 ; i<parts.length ; i += 1 ){
-            parts_element=parts[i];
-
-            resource_html = {
-                "name":parts_element.name,
-                "uri":parts_element.uri
-            };
-            resource_element = document.createElement('div');
-            resource_element.className="part_resource";
-            resource_element.innerHTML = this.part_template.evaluate(resource_html);
-            this.dom_element.appendChild(resource_element)
-        }
-    };
-};
 
 var LegalPainter = function(legal_structure_element, dom_element){
     this.legal_template_element = legal_structure_element;
     this.legal_template = new Wirecloud.Utils.Template(this.legal_template_element);
     this.dom_element = dom_element;
 
-    this.paint = function(resource){
+    this.paint = function paint(resource) {
         var resource_html,legal,i,legal_element,resource_element, clause_painter;
 		
         this.dom_element.innerHTML = '';
@@ -79,37 +53,37 @@ var LegalPainter = function(legal_structure_element, dom_element){
         } else {
             resource_element = document.createElement('div'); 
             resource_element.className="legal_resource";
-            resource_element.innerHTML ='<div><h3>Legal Conditions</h3><div class="tab_info">No legal conditions has been defined</div></div>'
+            resource_element.innerHTML ='<div><h3>Legal Conditions</h3><div class="tab_info">No legal conditions has been defined</div></div>';
             this.dom_element.appendChild(resource_element);
         }              
 
-    }
+    };
 };
 
-var ClausePainter = function(clause_structure_element, dom_element){
+var ClausePainter = function ClausePainter(clause_structure_element, dom_element) {
     this.clause_template_element = clause_structure_element;
     this.clause_template = new Wirecloud.Utils.Template(this.clause_template_element);
     this.dom_element = dom_element;
 
-    this.paint = function(resource){
-        var resource_html,clauses,i,clause_element,resource_element;
+    this.paint = function paint(resource) {
+        var resource_html, i, clause_element, resource_element;
 
         this.dom_element.innerHTML = '';
 		
-        for(i=0; i<resource.length; i += 1){
+        for (i = 0; i < resource.length; i += 1){
             clause_element = resource[i];
 
-            resource_html={
-                "name":clause_element.name,
-                "text":clause_element.text
-            }
+            resource_html = {
+                "name": clause_element.name,
+                "text": clause_element.text
+            };
             resource_element = document.createElement('div');
             resource_element.className="clause_resource";
             resource_element.innerHTML = this.clause_template.evaluate(resource_html);
 
-            this.dom_element.appendChild(resource_element)
+            this.dom_element.appendChild(resource_element);
         }
-    }
+    };
 };
 
 var SlaPainter = function(sla_structure_element, dom_element){
@@ -117,7 +91,7 @@ var SlaPainter = function(sla_structure_element, dom_element){
     this.sla_template = new Wirecloud.Utils.Template(this.sla_template_element);
     this.dom_element = dom_element;
 
-    this.paint = function(resource){
+    this.paint = function paint(resource) {
         var resource_html,sla,i,sla_element,resource_element, expresion_painter;
 		
         this.dom_element.innerHTML = '';
@@ -139,16 +113,16 @@ var SlaPainter = function(sla_structure_element, dom_element){
                 expresion_painter = new ExpresionPainter(Wirecloud.currentTheme.templates['wirecloud/fiware/marketplace/sla/sla_expresion_template'], resource_element.getElementsByClassName('expresions_list')[0]);
                 expresion_painter.paint(sla_element.slaExpresions);
 
-                this.dom_element.appendChild(resource_element)
+                this.dom_element.appendChild(resource_element);
             }
         } else {
             resource_element = document.createElement('div'); 
             resource_element.className="sla_resource";
-            resource_element.innerHTML ='<div><h3>Service level agreement</h3><div class="tab_info">No service level agreement has been defined</div></div>'
+            resource_element.innerHTML ='<div><h3>Service level agreement</h3><div class="tab_info">No service level agreement has been defined</div></div>';
             this.dom_element.appendChild(resource_element);
         }  
 
-    }
+    };
 };
 
 var ExpresionPainter = function(expresion_structure_element, dom_element){
@@ -156,7 +130,7 @@ var ExpresionPainter = function(expresion_structure_element, dom_element){
     this.expresion_template = new Wirecloud.Utils.Template(this.expresion_template_element);
     this.dom_element = dom_element;
 
-    this.paint = function(resource){
+    this.paint = function paint(resource) {
         var resource_html,slaExpresion,i,slaExpresion_element,resource_element, variable_painter;
 		
         this.dom_element.innerHTML = '';
@@ -184,11 +158,11 @@ var ExpresionPainter = function(expresion_structure_element, dom_element){
             }
             variable_painter.paint(slaExpresion_element.variables);
 
-            this.dom_element.appendChild(resource_element)
+            this.dom_element.appendChild(resource_element);
 	
         }   
 
-    }
+    };
 };
 
 var VariablePainter = function(variable_structure_element, dom_element){
@@ -196,7 +170,7 @@ var VariablePainter = function(variable_structure_element, dom_element){
     this.variable_template = new Wirecloud.Utils.Template(this.variable_template_element);
     this.dom_element = dom_element;
 
-    this.paint = function(resource){
+    this.paint = function paint(resource) {
         var resource_html,i,variable_element,resource_element;
 
         this.dom_element.innerHTML = '';
@@ -204,19 +178,19 @@ var VariablePainter = function(variable_structure_element, dom_element){
         for(i=0; i<resource.length; i += 1){
             variable_element = resource[i];
 
-            resource_html={
-	        "title":variable_element.label,
-	        "type":variable_element.type,
-	        "value":variable_element.value,
-	        "unit":variable_element.unit,
-            }
+            resource_html = {
+                "title": variable_element.label,
+                "type": variable_element.type,
+                "value": variable_element.value,
+                "unit": variable_element.unit,
+            };
             resource_element = document.createElement('div');
             resource_element.className="slaVariable_resource";
             resource_element.innerHTML = this.variable_template.evaluate(resource_html);
 
-            this.dom_element.appendChild(resource_element)
+            this.dom_element.appendChild(resource_element);
         }
-    }
+    };
 };
 
 var PricingPainter = function(pricing_structure_element, dom_element){
@@ -224,7 +198,7 @@ var PricingPainter = function(pricing_structure_element, dom_element){
     this.pricing_template = new Wirecloud.Utils.Template(this.pricing_template_element);
     this.dom_element = dom_element;
 
-    this.paint = function(resource){
+    this.paint = function paint(resource) {
         var resource_html,i,pricing,pricing_element,resource_element,
         pricing_component_painter,tax_painter;
 
@@ -235,10 +209,10 @@ var PricingPainter = function(pricing_structure_element, dom_element){
             for(i=0; i<pricing.length; i += 1){
                 pricing_element = pricing[i];
 
-            resource_html={
-                "title":pricing_element.label,
+            resource_html = {
+                "title": pricing_element.label,
                 "description": pricing_element.description
-	    }
+	        };
             resource_element = document.createElement('div');
             resource_element.className="pricing_resource";
             resource_element.innerHTML = this.pricing_template.evaluate(resource_html);
@@ -253,15 +227,15 @@ var PricingPainter = function(pricing_structure_element, dom_element){
                 tax_painter.paint(pricing_element.taxes);
             }
 
-            this.dom_element.appendChild(resource_element)
+            this.dom_element.appendChild(resource_element);
 	    }
         }else{
             resource_element = document.createElement('div'); 
             resource_element.className="pricing_resource";
-            resource_element.innerHTML ='<div><h3>Price plan</h3><div class="tab_info">No price plan has been defined, the widget is for free</div></div>'
+            resource_element.innerHTML ='<div><h3>Price plan</h3><div class="tab_info">No price plan has been defined, the widget is for free</div></div>';
             this.dom_element.appendChild(resource_element);
         }
-    }
+    };
 };
 
 var PriceElementPainter = function(price_structure_element, dom_element){
@@ -269,7 +243,7 @@ var PriceElementPainter = function(price_structure_element, dom_element){
     this.price_template = new Wirecloud.Utils.Template(this.price_template_element);
     this.dom_element = dom_element;
 
-    this.paint = function(resource){
+    this.paint = function paint(resource) {
         var resource_html,i,price_element,resource_element;
 
         this.dom_element.innerHTML = '';
@@ -277,18 +251,18 @@ var PriceElementPainter = function(price_structure_element, dom_element){
         for(i=0; i<resource.length; i += 1){
             price_element = resource[i];
 
-            resource_html={
-                "title":price_element.title,
-                "description":price_element.description,
-                "currency":price_element.currency,
-                "value":price_element.value,
-                "unit":price_element.unit,
-            }
+            resource_html = {
+                "title": price_element.title,
+                "description": price_element.description,
+                "currency": price_element.currency,
+                "value": price_element.value,
+                "unit": price_element.unit,
+            };
             resource_element = document.createElement('div');
             resource_element.className="price_element_resource";
             resource_element.innerHTML = this.price_template.evaluate(resource_html);
 
-            this.dom_element.appendChild(resource_element)
+            this.dom_element.appendChild(resource_element);
         }
-    }
+    };
 };

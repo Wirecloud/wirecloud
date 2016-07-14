@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
 
 (function (utils) {
 
@@ -33,7 +33,7 @@
             groups = version.match(VERSION_RE);
             if (groups == null) {
                 msg = utils.gettext("%(version)s is not a valid version");
-                throw new TypeError(utils.interpolate(msg, {version:version}));
+                throw new TypeError(utils.interpolate(msg, {version: version}));
             }
             this.array = groups[1].split('.').map(function (x) { return parseInt(x, 10); });
             this.pre_version = groups[2] != null ? groups[2] : null;
@@ -57,7 +57,7 @@
         if (!(version instanceof Version)) {
             // Try to parse version
             try {
-                version = Version(version);
+                version = new Version(version);
             } catch (e) {
                 throw new TypeError(utils.gettext("invalid version parameter"));
             }

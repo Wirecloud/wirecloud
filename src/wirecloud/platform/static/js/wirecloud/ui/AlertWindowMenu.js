@@ -19,7 +19,8 @@
  *
  */
 
-/* globals StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
+
 
 (function (utils) {
 

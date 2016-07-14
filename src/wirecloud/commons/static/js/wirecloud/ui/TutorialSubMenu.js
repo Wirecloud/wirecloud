@@ -19,16 +19,17 @@
  *
  */
 
-/* globals Wirecloud */
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
     var TutorialSubMenu = function TutorialSubMenu() {
         var i, tutorial;
 
-        StyledElements.SubMenuItem.call(this, gettext('Tutorials'));
+        StyledElements.SubMenuItem.call(this, utils.gettext('Tutorials'));
 
         this.menuItem.addIconClass('fa fa-map-o');
 
@@ -41,4 +42,4 @@
 
     Wirecloud.ui.TutorialSubMenu = TutorialSubMenu;
 
-})();
+})(Wirecloud.Utils);

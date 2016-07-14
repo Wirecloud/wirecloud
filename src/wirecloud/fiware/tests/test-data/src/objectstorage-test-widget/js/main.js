@@ -1,5 +1,6 @@
-/*jshint globalstrict:true */
-/*global KeystoneAPI, MashupPlatform, ObjectStorageAPI, StyledElements*/
+/* jshint globalstrict:true */
+/* globals KeystoneAPI, MashupPlatform, ObjectStorageAPI, StyledElements */
+
 
 (function () {
 

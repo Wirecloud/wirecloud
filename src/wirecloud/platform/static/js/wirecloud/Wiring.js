@@ -28,9 +28,9 @@
 
     ns.wiring = {}; // TODO: move to another file
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * @name Wirecloud.Wiring
@@ -50,7 +50,7 @@
             'removeoperator'
         ]);
 
-        _private.set(this, {
+        privates.set(this, {
             operatorId: 1,
             operators: [],
             connections: [],
@@ -67,7 +67,7 @@
              */
             connections: {
                 get: function () {
-                    return _private.get(this).connections.slice(0);
+                    return privates.get(this).connections.slice(0);
                 }
             },
             /**
@@ -81,7 +81,7 @@
              */
             operators: {
                 get: function () {
-                    return _private.get(this).operators.slice(0);
+                    return privates.get(this).operators.slice(0);
                 }
             },
             /**
@@ -103,7 +103,7 @@
         this.workspace.widgets.forEach(function (widget) {
             on_createwidget.call(this, this.workspace, widget);
         }, this);
-        this.workspace.addEventListener('createwidget', _private.get(this).on_createwidget);
+        this.workspace.addEventListener('createwidget', privates.get(this).on_createwidget);
 
         unmarshall.call(this, data);
     };
@@ -129,16 +129,14 @@
         return new_status;
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PUBLIC MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     utils.inherit(ns.Wiring, se.ObjectWithEvents, /** @lends Wirecloud.Wiring.prototype */{
 
         _notifyOperatorInstall: function _notifyOperatorInstall(resource) {
-            var id, current_operator, operator;
-
-            _private.get(this).operators.forEach(function (operator) {
+            privates.get(this).operators.forEach(function (operator) {
                 if (operator.missing && operator.meta.uri === resource.uri) {
                     operator.upgrade(resource);
                 }
@@ -161,9 +159,9 @@
             var connection = new Wirecloud.wiring.Connection(this, source, target, options);
 
             if (options.commit) {
-                connection.addEventListener('remove', _private.get(this).on_removeconnection);
+                connection.addEventListener('remove', privates.get(this).on_removeconnection);
                 connection.establish();
-                _private.get(this).connections.push(connection);
+                privates.get(this).connections.push(connection);
             }
 
             return connection;
@@ -176,8 +174,8 @@
          * @returns {Promise}
          */
         createOperator: function createOperator(resource, data) {
-            var data = utils.merge({
-                id: (_private.get(this).operatorId).toString(),
+            data = utils.merge({
+                id: (privates.get(this).operatorId).toString(),
                 volatile: false
             }, data);
 
@@ -200,25 +198,25 @@
         },
 
         load: function load(status) {
-            var connection, i, id, old_operators, operator;
+            var connection, i, id, operator;
 
-            _private.get(this).connections.forEach(function (connection) {
+            privates.get(this).connections.forEach(function (connection) {
                 connection.detach();
             });
 
-            for (i = _private.get(this).operators.length - 1; i >= 0; i--) {
-                operator = _private.get(this).operators[i];
+            for (i = privates.get(this).operators.length - 1; i >= 0; i--) {
+                operator = privates.get(this).operators[i];
                 if (!operator.volatile && !(operator.id in status.operators)) {
                     operator.remove();
                 }
             }
 
-            for (i = _private.get(this).connections.length - 1; i >= 0; i--) {
-                connection = _private.get(this).connections[i];
+            for (i = privates.get(this).connections.length - 1; i >= 0; i--) {
+                connection = privates.get(this).connections[i];
 
                 if (!connection.volatile) {
-                    connection.removeEventListener('remove', _private.get(this).on_removeconnection);
-                    _private.get(this).connections.splice(i, 1);
+                    connection.removeEventListener('remove', privates.get(this).on_removeconnection);
+                    privates.get(this).connections.splice(i, 1);
                 }
             }
 
@@ -232,21 +230,21 @@
                 }
             }
 
-            _private.get(this).operatorId = 1;
+            privates.get(this).operatorId = 1;
 
-            _private.get(this).operators.forEach(function (operator) {
+            privates.get(this).operators.forEach(function (operator) {
 
-                if (Number(operator.id) >= _private.get(this).operatorId) {
-                    _private.get(this).operatorId = Number(operator.id) + 1;
+                if (Number(operator.id) >= privates.get(this).operatorId) {
+                    privates.get(this).operatorId = Number(operator.id) + 1;
                 }
             }, this);
 
             status.connections.forEach(function (connection) {
-                connection.addEventListener('remove', _private.get(this).on_removeconnection);
-                _private.get(this).connections.push(connection);
+                connection.addEventListener('remove', privates.get(this).on_removeconnection);
+                privates.get(this).connections.push(connection);
             }, this);
 
-            _private.get(this).connections.forEach(function (connection) {
+            privates.get(this).connections.forEach(function (connection) {
                 connection.establish();
             });
 
@@ -288,7 +286,7 @@
         toJSON: function toJSON() {
             var operators = {};
 
-            _private.get(this).operators.forEach(function (operator) {
+            privates.get(this).operators.forEach(function (operator) {
                 if (!operator.volatile) {
                     operators[operator.id] = operator;
                 }
@@ -296,7 +294,7 @@
 
             return {
                 version: '2.0',
-                connections: _private.get(this).connections.filter(function (connection) {
+                connections: privates.get(this).connections.filter(function (connection) {
                     return !connection.volatile;
                 }),
                 operators: operators,
@@ -306,16 +304,16 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var unmarshall = function unmarshall(status) {
-        var connection_info, errorCount, i, id, operator_info,
-            operator_visual_info, meta, source, target;
+        var connection_info, i, id, operator_info, meta, source, target, priv;
 
+        priv = privates.get(this);
         status = ns.Wiring.normalize(status);
 
         // Convert operator into instances
@@ -340,8 +338,8 @@
                     readonly: connection_info.readonly
                 });
                 status.connections[i].establish();
-                status.connections[i].addEventListener('remove', _private.get(this).on_removeconnection);
-                _private.get(this).connections.push(status.connections[i]);
+                status.connections[i].addEventListener('remove', priv.on_removeconnection);
+                priv.connections.push(status.connections[i]);
             }
         }
 
@@ -420,7 +418,7 @@
 
     var reconnect = function reconnect(component) {
         this.logManager.newCycle();
-        _private.get(this).connections.forEach(function (connection) {
+        privates.get(this).connections.forEach(function (connection) {
             if (connection.source.component.is(component)) {
                 connection.updateEndpoint(getEndpointOrCreateMissing(component, 'outputs', connection.source.name));
             } else if (connection.target.component.is(component)) {
@@ -454,7 +452,7 @@
         /*jshint validthis:true */
         var operators = {};
 
-        _private.get(this).operators.forEach(function (operator) {
+        privates.get(this).operators.forEach(function (operator) {
             operators[operator.id] = operator;
         });
 
@@ -462,14 +460,16 @@
     };
 
     var removeComponent = function removeComponent(component) {
-        var connection, i;
+        var connection, i, priv;
 
-        for (i = _private.get(this).connections.length - 1; i >= 0; i--) {
-            connection = _private.get(this).connections[i];
+        priv = privates.get(this);
+
+        for (i = priv.connections.length - 1; i >= 0; i--) {
+            connection = priv.connections[i];
 
             if (connection.source.component === component || connection.target.component === component) {
                 connection.detach();
-                _private.get(this).connections.splice(i, 1);
+                priv.connections.splice(i, 1);
             }
         }
 
@@ -483,7 +483,7 @@
     };
 
     var removeComponentInfo = function removeComponentInfo(component, status) {
-        var connection, i;
+        var i;
 
         for (i = status.connections.length - 1; i >= 0; i--) {
             if (connection_hasComponent(status.connections[i], component)) {
@@ -496,28 +496,33 @@
 
     var append_operator = function append_operator(operator) {
         /*jshint validthis:true */
-        _private.get(this).operators.push(operator);
+        var priv = privates.get(this);
 
-        operator.addEventListener('change', _private.get(this).on_changecomponent);
-        operator.addEventListener('remove', _private.get(this).on_removeoperator);
+        priv.operators.push(operator);
+
+        operator.addEventListener('change', priv.on_changecomponent);
+        operator.addEventListener('remove', priv.on_removeoperator);
         this.trigger('createoperator', operator.load());
 
         return operator;
     };
 
     var create_operator = function create_operator(resource, data) {
-        var operator = new Wirecloud.wiring.Operator(this, resource, data);
+        var operator, priv;
 
-        if (Number(operator.id) >= _private.get(this).operatorId) {
-            _private.get(this).operatorId = Number(operator.id) + 1;
+        priv = privates.get(this);
+        operator = new Wirecloud.wiring.Operator(this, resource, data);
+
+        if (Number(operator.id) >= priv.operatorId) {
+            priv.operatorId = Number(operator.id) + 1;
         }
 
         return operator;
     };
 
-    // ==================================================================================
+    // =========================================================================
     // EVENT HANDLERS
-    // ==================================================================================
+    // =========================================================================
 
     var on_changecomponent = function on_changecomponent(component, changes) {
 
@@ -528,31 +533,39 @@
     };
 
     var on_createwidget = function on_createwidget(workspace, widget) {
-        widget.addEventListener('change', _private.get(this).on_changecomponent);
-        widget.addEventListener('remove', _private.get(this).on_removewidget);
+        var priv = privates.get(this);
+
+        widget.addEventListener('change', priv.on_changecomponent);
+        widget.addEventListener('remove', priv.on_removewidget);
     };
 
     var on_removeconnection = function on_removeconnection(connection) {
-        connection.removeEventListener('remove', _private.get(this).on_removeconnection);
-        _private.get(this).connections.splice(_private.get(this).connections.indexOf(connection), 1);
+        var priv = privates.get(this);
+
+        connection.removeEventListener('remove', priv.on_removeconnection);
+        priv.connections.splice(priv.connections.indexOf(connection), 1);
     };
 
     var on_removeoperator = function on_removeoperator(operator) {
         /*jshint validthis:true */
-        _private.get(this).operators.splice(_private.get(this).operators.indexOf(operator), 1);
+        var priv = privates.get(this);
+
+        priv.operators.splice(priv.operators.indexOf(operator), 1);
 
         removeComponent.call(this, operator);
 
-        operator.removeEventListener('change', _private.get(this).on_changecomponent);
-        operator.removeEventListener('remove', _private.get(this).on_removeoperator);
+        operator.removeEventListener('change', priv.on_changecomponent);
+        operator.removeEventListener('remove', priv.on_removeoperator);
         this.trigger('removeoperator', operator);
     };
 
     var on_removewidget = function on_removewidget(widget) {
         /*jshint validthis:true */
+        var priv = privates.get(this);
+
         removeComponent.call(this, widget);
-        widget.removeEventListener('change', _private.get(this).on_changecomponent);
-        widget.removeEventListener('remove', _private.get(this).on_removewidget);
+        widget.removeEventListener('change', priv.on_changecomponent);
+        widget.removeEventListener('remove', priv.on_removewidget);
     };
 
 })(Wirecloud, StyledElements, StyledElements.Utils);

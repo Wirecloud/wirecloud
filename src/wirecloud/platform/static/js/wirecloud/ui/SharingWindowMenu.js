@@ -19,16 +19,16 @@
  *
  */
 
-/* global StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     ns.SharingWindowMenu = function SharingWindowMenu(workspace) {
         var builder, i, options, subtitle1, subtitle2, template;
@@ -93,9 +93,9 @@
 
     ns.SharingWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var on_visibility_option_change = function on_visibility_option_change() {
         this.inputSearch.setDisabled(this.visibilityOptions.value === 'public');

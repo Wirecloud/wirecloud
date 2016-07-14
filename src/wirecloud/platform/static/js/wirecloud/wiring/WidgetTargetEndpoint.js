@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -52,7 +53,7 @@
             Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
             Object.defineProperty(this, 'keywords', {value: meta.friendcode.trim().split(/\s+/)});
             Object.defineProperty(this, 'label', {value: meta.label});
-            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : gettext("No description provided.")});
+            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : utils.gettext("No description provided.")});
             Object.defineProperty(this, 'id', {value: 'widget/' + iwidget.id + '/' + this.meta.name});
         }
 
@@ -77,8 +78,8 @@
         var result, actionlabel = this.meta.actionlabel;
 
         if (!actionlabel || actionlabel === '') {
-            actionlabel = gettext('Use in %(endpointName)s');
-            actionlabel = interpolate(actionlabel, {endpointName: this.meta.label}, true);
+            actionlabel = utils.gettext('Use in %(endpointName)s');
+            actionlabel = utils.interpolate(actionlabel, {endpointName: this.meta.label}, true);
         }
 
         result = this.toJSON();
@@ -94,9 +95,9 @@
         if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
             if (this.iwidget.loaded) {
                 if (this.callback == null) {
-                    msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
-                    msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
-                    details = gettext('Widget has not registered a callback for this input endpoint');
+                    msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                    msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
+                    details = utils.gettext('Widget has not registered a callback for this input endpoint');
                     this.iwidget.logManager.log(msg, {details: details});
                     return;
                 }
@@ -106,8 +107,8 @@
                     if (error instanceof Wirecloud.wiring.EndpointTypeError || error instanceof Wirecloud.wiring.EndpointValueError) {
                         throw error;
                     } else {
-                        msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
-                        msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
+                        msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                        msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
                         details = this.iwidget.logManager.formatException(error);
                         this.iwidget.logManager.log(msg, {details: details});
                     }
@@ -121,4 +122,4 @@
 
     Wirecloud.wiring.WidgetTargetEndpoint = WidgetTargetEndpoint;
 
-})();
+})(Wirecloud.Utils);

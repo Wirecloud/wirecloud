@@ -19,7 +19,8 @@
  *
  */
 
-/*global LayoutManagerFactory, Wirecloud*/
+/* globals LayoutManagerFactory, Wirecloud */
+
 
 (function () {
 

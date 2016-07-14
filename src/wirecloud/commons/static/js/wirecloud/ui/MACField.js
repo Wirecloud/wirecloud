@@ -19,9 +19,10 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -75,7 +76,6 @@
 
         this.inputElement = document.createElement("input");
         this.inputElement.setAttribute("type", "hidden");
-        this.resource_details = null;
 
         if (options.name) {
             this.inputElement.setAttribute("name", options.name);
@@ -85,7 +85,7 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
-        var close_button = new StyledElements.Button({iconClass: 'icon-remove', title: gettext('Clear current selection')});
+        var close_button = new StyledElements.Button({iconClass: 'icon-remove', title: utils.gettext('Clear current selection')});
         close_button.appendTo(this.wrapperElement);
         close_button.disable().addEventListener('click', function () {
             this.setValue('');
@@ -96,7 +96,7 @@
         this.wrapperElement.appendChild(this.name_preview);
         this.wrapperElement.appendChild(this.inputElement);
 
-        var button = new StyledElements.Button({iconClass: 'icon-search', title: gettext('Search')});
+        var button = new StyledElements.Button({iconClass: 'icon-search', title: utils.gettext('Search')});
         button.appendTo(this.wrapperElement);
 
         /* Public fields */
@@ -128,11 +128,9 @@
         if (typeof new_value !== 'string') {
             mac_id = new_value.uri;
             mac_title = new_value.title;
-            this.resource_details;
         } else {
             mac_id = new_value;
             mac_title = new_value;
-            this.resource_details = null;
         }
 
         this.inputElement.value = mac_id;
@@ -162,4 +160,4 @@
 
     Wirecloud.ui.MACInputInterface = MACInputInterface;
 
-})();
+})(Wirecloud.Utils);

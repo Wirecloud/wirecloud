@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global console, gettext, interpolate, Wirecloud*/
+/* globals console, StyledElements, Wirecloud*/
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -69,7 +70,7 @@
     };
 
     LogManager.prototype.log = function log(msg, options) {
-        var date, index, entry, expander;
+        var date, entry;
 
         if (typeof options === 'number') {
             // Backwards compatibility
@@ -123,13 +124,13 @@
     };
 
     LogManager.prototype.parseErrorResponse = function parseErrorResponse(response) {
-        var msg;
+        var errorDesc, msg;
 
         try {
             var errorInfo = JSON.parse(response.responseText);
             msg = errorInfo.description;
         } catch (error) {
-            msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
+            msg = utils.gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
             if (response.status !== 0 && response.statusText !== '') {
                 errorDesc = response.statusText;
             } else {
@@ -138,14 +139,14 @@
                     errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
                 }
             }
-            msg = interpolate(msg, {errorCode: response.status, errorDesc: errorDesc}, true);
+            msg = utils.interpolate(msg, {errorCode: response.status, errorDesc: errorDesc}, true);
         }
 
         return msg;
     };
 
     LogManager.prototype.formatError = function formatError(format, transport, e) {
-        var msg, errorDesc;
+        var msg;
 
         if (e) {
             var context;
@@ -157,17 +158,17 @@
                 context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e.message};
             } else {
                 // Other browsers
-                var text = gettext("unknown");
+                var text = utils.gettext("unknown");
                 context = {errorFile: text, errorLine: text, errorDesc: e.message};
             }
 
-            msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+            msg = utils.interpolate(utils.gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
                       context,
                       true);
         } else {
             msg = this.parseErrorResponse(transport);
         }
-        msg = interpolate(format, {errorMsg: msg}, true);
+        msg = utils.interpolate(format, {errorMsg: msg}, true);
 
         return msg;
     };
@@ -214,4 +215,4 @@
     Wirecloud.LogManager = LogManager;
     Wirecloud.GlobalLogManager = new LogManager();
 
-})();
+})(Wirecloud.Utils);

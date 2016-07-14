@@ -19,7 +19,8 @@
  *
  */
 
-/*global CSSPrimitiveValue, StyledElements*/
+/* globals CSSPrimitiveValue, StyledElements */
+
 
 (function () {
 

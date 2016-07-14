@@ -19,7 +19,8 @@
  *
  */
 
-/*global Wirecloud*/
+/* globals Wirecloud */
+
 
 (function () {
 
@@ -74,7 +75,7 @@
      * new value to the output connectables.
      */
     SourceEndpoint.prototype.propagate = function propagate(value, options) {
-        var i, connectionDetails, errorDetails, targetEndpoint, connection;
+        var i, errorDetails, targetEndpoint, connection;
 
         options = Wirecloud.Utils.merge({
             initial: false

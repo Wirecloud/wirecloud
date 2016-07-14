@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global CatalogueView, gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
+/* globals CatalogueView, LayoutManagerFactory, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -49,7 +50,7 @@
                 callback(raw_data);
             },
             onFailure: function onFailure(transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving market list from the server: %(errorMsg)s."), transport);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error retrieving market list from the server: %(errorMsg)s."), transport);
 
                 if (typeof onFailureCallback === 'function') {
                     onFailureCallback(msg);
@@ -82,7 +83,7 @@
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: options.onSuccess,
             onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting marketplace: %(errorMsg)s."), transport);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error deleting marketplace: %(errorMsg)s."), transport);
                 if (typeof options.onFailure === 'function') {
                     options.onFailure(msg);
                 }
@@ -93,8 +94,8 @@
 
     MarketManager.addMarket = function addMarket(market_info, callback) {
 
-        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding marketplace"), 1);
-        LayoutManagerFactory.getInstance().logSubTask(gettext('Adding marketplace'));
+        LayoutManagerFactory.getInstance()._startComplexTask(utils.gettext("Adding marketplace"), 1);
+        LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Adding marketplace'));
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'POST',
@@ -103,12 +104,12 @@
             postBody: JSON.stringify(market_info),
 
             onSuccess: function (transport) {
-                LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace added successfully'));
+                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Marketplace added successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
                 callback();
             },
             onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding marketplace: %(errorMsg)s."), transport);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding marketplace: %(errorMsg)s."), transport);
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
             },
             onComplete: function () {
@@ -145,4 +146,5 @@
     };
 
     Wirecloud.MarketManager = MarketManager;
-})();
+
+})(Wirecloud.Utils);

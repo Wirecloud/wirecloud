@@ -19,7 +19,8 @@
  *
  */
 
-/*global interpolate, Wirecloud*/
+/* globals Wirecloud */
+
 
 Wirecloud.location = {
     'domain': document.location.protocol + '//' + document.location.host,
@@ -27,7 +28,7 @@ Wirecloud.location = {
     'host': document.location.host
 };
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -153,7 +154,7 @@ Wirecloud.location = {
 
         for (key in this.options) {
             if (HANDLER_RE.test(key) && this.options[key] != null && typeof this.options[key] !== 'function') {
-                throw new TypeError(interpolate('Invalid %(callback)s callback', {callback: key}, true));
+                throw new TypeError(utils.interpolate('Invalid %(callback)s callback', {callback: key}, true));
             }
         }
         this.method = this.options.method.toUpperCase();
@@ -244,4 +245,4 @@ Wirecloud.location = {
 
     Wirecloud.io = io;
 
-})();
+})(Wirecloud.Utils);

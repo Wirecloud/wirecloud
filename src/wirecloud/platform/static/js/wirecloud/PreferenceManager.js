@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -37,11 +38,11 @@
         var platformPreferences = [
             {
                 "name": "language",
-                "label": gettext('Language'),
+                "label": utils.gettext('Language'),
                 "type": "select",
                 "initialEntries": [
-                    {value: 'default', label: gettext('Default setting')},
-                    {value: 'browser', label: gettext('Detect browser language')}
+                    {value: 'default', label: utils.gettext('Default setting')},
+                    {value: 'browser', label: utils.gettext('Detect browser language')}
                 ]
             }
         ];
@@ -91,4 +92,4 @@
 
     Wirecloud.PreferenceManager = new PreferenceManager();
 
-})();
+})(Wirecloud.Utils);

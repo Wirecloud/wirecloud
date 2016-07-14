@@ -19,7 +19,8 @@
  *
  */
 
-/*globals StyledElements*/
+/* globals StyledElements */
+
 
 (function () {
 

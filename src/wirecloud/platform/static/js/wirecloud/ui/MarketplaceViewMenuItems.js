@@ -21,6 +21,7 @@
 
 /* globals StyledElements, Wirecloud, LayoutManagerFactory*/
 
+
 (function (se, utils) {
 
     "use strict";
@@ -118,7 +119,7 @@
             items.push(item);
 
             item = new StyledElements.MenuItem(utils.gettext('Delete marketplace'), function () {
-                //First ask if the user really wants to remove the marketplace
+                // First ask if the user really wants to remove the marketplace
                 var msg = utils.gettext('Do you really want to remove the marketplace "%(marketName)s"?');
                 msg = utils.interpolate(msg, {'marketName': this.market.alternatives.getCurrentAlternative().getLabel()});
                 var dialog = new Wirecloud.ui.AlertWindowMenu();

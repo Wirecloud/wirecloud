@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -37,7 +38,7 @@
         this.macsearch = new Wirecloud.ui.MACSearch({
             scope: options.scope,
             resourceButtonIconClass: 'icon-ok',
-            resourceButtonTooltip: gettext('Select'),
+            resourceButtonTooltip: utils.gettext('Select'),
             resourceButtonListener: function (resource) {
                 this._closeListener();
                 this.events.select.dispatch(resource);
@@ -47,8 +48,8 @@
 
         // Accept button
         this.button = new StyledElements.Button({
-            text: gettext('Close'),
-            'class': 'btn-primary'
+            text: utils.gettext('Close'),
+            class: 'btn-primary'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
@@ -64,4 +65,4 @@
 
     Wirecloud.ui.MACSelectionWindowMenu = MACSelectionWindowMenu;
 
-})();
+})(Wirecloud.Utils);

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,16 +19,16 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class Connection.
@@ -55,7 +55,7 @@
             }, options);
 
             Object.defineProperties(this, {
-                id : {
+                id: {
                     get: function get() {return this.source.id + "//" + this.target.id;}
                 },
                 logManager: {value: new ns.ConnectionLogManager(this, wiring)},
@@ -197,7 +197,7 @@
 
             showLogs: function showLogs() {
                 var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
-                    modal.show();
+                modal.show();
 
                 return this;
             },
@@ -214,8 +214,8 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
 })(Wirecloud.wiring, StyledElements, StyledElements.Utils);

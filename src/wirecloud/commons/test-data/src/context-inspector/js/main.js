@@ -1,4 +1,5 @@
-/*global MashupPlatform, StyledElements */
+/* globals MashupPlatform, StyledElements */
+
 
 (function () {
 

@@ -19,7 +19,8 @@
  *
  */
 
-/* global Wirecloud */
+/* globals Wirecloud */
+
 
 (function (utils) {
 
@@ -71,11 +72,11 @@
         ];
 
         // Disable preference and property parametrization for now
-        //this._addVariableParametrization(workspace, fields);
+        // this._addVariableParametrization(workspace, fields);
         Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Upload workspace to my resources'), 'wc-upload-workspace-modal', {autoHide: false});
         this.workspace = workspace;
 
-        //fill a warning message
+        // fill a warning message
         var warning = document.createElement('div');
         warning.className = 'alert';
         warning.innerHTML = utils.gettext("<strong>Warning!</strong> Configured and stored data in your workspace (properties and preferences except passwords) will be shared by default!");
@@ -84,7 +85,7 @@
     PublishWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     PublishWorkspaceWindowMenu.prototype._addVariableParametrization = function _addVariableParametrization(workspace, fields) {
-        var key, tab_field;
+        var tab_field;
 
         this.workspace = workspace;
         this.workspace.tabs.forEach(function (tab) {

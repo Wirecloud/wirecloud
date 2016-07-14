@@ -19,9 +19,10 @@
  *
  */
 
-/* globals gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -38,10 +39,10 @@
     var CatalogueSearchView = function CatalogueSearchView(id, options) {
         var context, extra_context, resource_template;
 
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             // Default options
-            emptyTitle: gettext("Empty Marketplace!"),
-            emptyMessage: gettext("This marketplace is empty, that is, it does not provide any resource at this time.")
+            emptyTitle: utils.gettext("Empty Marketplace!"),
+            emptyMessage: utils.gettext("This marketplace is empty, that is, it does not provide any resource at this time.")
         }, options);
 
         options['class'] = 'search_interface loading';
@@ -63,7 +64,7 @@
                 this.resource_list.clear();
 
                 if ('corrected_query' in search_info) {
-                    msg = gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
+                    msg = utils.gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
 
                     this.resource_list.appendChild(this.resource_painter.paintInfo(msg, {
                         corrected_query: search_info.corrected_query
@@ -89,21 +90,21 @@
             var msg;
 
             if (error != null) {
-                this.resource_painter.setError(gettext('Connection error: No resource retrieved.'));
+                this.resource_painter.setError(utils.gettext('Connection error: No resource retrieved.'));
             }
 
             if (pagination.totalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {
                 this.resource_list.appendChild(this.emptyBox);
             } else if (pagination.totalCount === 0) {
-                msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
-                msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(pagination.pOptions.keywords.trim())}, true);
+                msg = utils.gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
+                msg = interpolate(msg, {keywords: utils.escapeHTML(pagination.pOptions.keywords.trim())}, true);
                 this.resource_painter.setError(new StyledElements.Fragment(msg));
             }
 
             this.enable();
         }.bind(this));
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
-        this.simple_search_input = new StyledElements.TextField({'class': 'simple_search_text', 'placeholder': gettext('Keywords...')});
+        this.simple_search_input = new StyledElements.TextField({'class': 'simple_search_text', 'placeholder': utils.gettext('Keywords...')});
         this.simple_search_input.inputElement.addEventListener('keypress', this._onSearchInputKeyPress.bind(this));
         this.simple_search_input.addEventListener('change', onSearchInput.bind(this));
 
@@ -112,13 +113,13 @@
         } else {
             extra_context = {};
         }
-        context = Wirecloud.Utils.merge(extra_context, {
+        context = utils.merge(extra_context, {
             'resourcelist': this.resource_list,
             'pagination': function () {
                 return new StyledElements.PaginationInterface(this.source);
             }.bind(this),
             'reset_button': function () {
-                var button = new StyledElements.Button({text: gettext('Refresh')});
+                var button = new StyledElements.Button({text: utils.gettext('Refresh')});
                 button.addEventListener('click', function () {
                     this.source.changeOptions({'correct_query': true, 'keywords': '', scope: 'all'});
                 }.bind(this));
@@ -129,9 +130,9 @@
                 var select = new StyledElements.Select({
                     'initialValue': '-creation_date',
                     'initialEntries': [
-                        {'label': gettext('Creation date'), 'value': '-creation_date'},
-                        {'label': gettext('Title'), 'value': 'name'},
-                        {'label': gettext('Vendor'), 'value': 'vendor'}
+                        {'label': utils.gettext('Creation date'), 'value': '-creation_date'},
+                        {'label': utils.gettext('Title'), 'value': 'name'},
+                        {'label': utils.gettext('Vendor'), 'value': 'vendor'}
                     ]
                 });
                 select.addEventListener('change', function (select) {
@@ -143,10 +144,10 @@
                 var select = new StyledElements.Select({
                     'initialValue': 'all',
                     'initialEntries': [
-                        {'label': gettext('All'), 'value': 'all'},
-                        {'label': gettext('Widgets'), 'value': 'widget'},
-                        {'label': gettext('Mashups'), 'value': 'mashup'},
-                        {'label': gettext('Operators'), 'value': 'operator'}
+                        {'label': utils.gettext('All'), 'value': 'all'},
+                        {'label': utils.gettext('Widgets'), 'value': 'widget'},
+                        {'label': utils.gettext('Mashups'), 'value': 'mashup'},
+                        {'label': utils.gettext('Operators'), 'value': 'operator'}
                     ]
                 });
                 select.addEventListener('change', function (select) {
@@ -216,7 +217,7 @@
             'onFailure': onError
         };
         if (typeof this.catalogue.getCurrentSearchContext === 'function') {
-            options = Wirecloud.Utils.merge(options, this.catalogue.getCurrentSearchContext());
+            options = utils.merge(options, this.catalogue.getCurrentSearchContext());
         }
 
         this._last_search = Date.now();
@@ -234,9 +235,9 @@
         filters_applied = options.keywords !== '' || options.scope !== 'all';
 
         if (filters_applied) {
-            this.view_allbutton.setLabel(gettext('Clear filters'));
+            this.view_allbutton.setLabel(utils.gettext('Clear filters'));
         } else {
-            this.view_allbutton.setLabel(gettext('Refresh'));
+            this.view_allbutton.setLabel(utils.gettext('Refresh'));
         }
     };
 
@@ -265,4 +266,5 @@
     };
 
     window.CatalogueSearchView = CatalogueSearchView;
-})();
+
+})(Wirecloud.Utils);

@@ -19,16 +19,16 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class BehaviourEngine.
@@ -43,21 +43,21 @@
             var note;
 
             this.btnEnable = new se.Button({
-                title: gettext("Enable"),
+                title: utils.gettext("Enable"),
                 extraClass: "btn-enable",
                 iconClass: "icon-lock"
             });
             this.btnEnable.addEventListener('click', btnenable_onclick.bind(this));
 
             this.btnCreate = new se.Button({
-                title: gettext("Create behaviour"),
+                title: utils.gettext("Create behaviour"),
                 extraClass: "btn-create",
                 iconClass: "icon-plus"
             });
             this.btnCreate.addEventListener('click', btncreate_onclick.bind(this));
 
             this.btnOrder = new se.ToggleButton({
-                title: gettext("Order behaviours"),
+                title: utils.gettext("Order behaviours"),
                 extraClass: "btn-order",
                 iconClass: "icon-sort"
             });
@@ -81,8 +81,8 @@
 
             this.disabledAlert = new se.Alert({
                 state: 'info',
-                title: gettext("New feature"),
-                message: gettext("Enable the behaviours to enjoy with a new way to handle connections.")
+                title: utils.gettext("New feature"),
+                message: utils.gettext("Enable the behaviours to enjoy with a new way to handle connections.")
             });
 
             note = this.disabledAlert.addNote(utils.gettext("<a>Click here</a> for a quick guide/tutorial on how to use this new feature."));
@@ -115,14 +115,14 @@
 
                 if (enabled) {
                     this.btnEnable
-                        .setTitle(gettext("Disable"))
+                        .setTitle(utils.gettext("Disable"))
                         .replaceIconClass('icon-lock', 'icon-unlock');
                     this.btnCreate.show();
                     this.body.removeChild(this.disabledAlert);
                     this.btnCreate.get().parentElement.classList.remove('hidden');
                 } else {
                     this.btnEnable
-                        .setTitle(gettext("Enable"))
+                        .setTitle(utils.gettext("Enable"))
                         .replaceIconClass('icon-unlock', 'icon-lock');
                     this.btnCreate.hide();
                     this.body.appendChild(this.disabledAlert);
@@ -667,9 +667,9 @@
 
     });
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     var events = ['activate', 'change', 'enable'];
 
@@ -678,7 +678,8 @@
     var behaviour_list_component = function behaviour_list_component(options) {
         /* jshint validthis:true */
 
-        return this.body = new se.Container({class: options.class});
+        this.body = new se.Container({class: options.class});
+        return this.body;
     };
 
     var _removeConnection = function _removeConnection(index, connection) {
@@ -739,10 +740,10 @@
         /*jshint validthis:true */
 
         var dialog = new Wirecloud.ui.FormWindowMenu([
-                {name: 'title', label: gettext("Title"), type: 'text'},
-                {name: 'description', label: gettext("Description"), type: 'longtext'}
+                {name: 'title', label: utils.gettext("Title"), type: 'text'},
+                {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
             ],
-            gettext("New behaviour"),
+            utils.gettext("New behaviour"),
             'we-new-behaviour-modal'
         );
 

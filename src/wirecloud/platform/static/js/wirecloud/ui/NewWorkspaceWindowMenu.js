@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, Wirecloud*/
+/* globals LayoutManagerFactory, Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -42,24 +43,24 @@
     var NewWorkspaceWindowMenu = function NewWorkspaceWindowMenu() {
         var fields = {
             'name': {
-                label: gettext('Name'),
+                label: utils.gettext('Name'),
                 type: 'text'
             },
             'mashup': {
-                label: gettext('Template'),
+                label: utils.gettext('Template'),
                 type: 'mac',
                 scope: 'mashup',
-                dialog_title: gettext('Select a mashup template'),
+                dialog_title: utils.gettext('Select a mashup template'),
                 required: false,
                 parent_dialog: this
             }
         };
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Create Workspace'), 'wc-new-workspace-modal');
+        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Create Workspace'), 'wc-new-workspace-modal');
     };
     NewWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
-        var monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Creating new workspace"), 1);
+        var monitor = LayoutManagerFactory.getInstance()._startComplexTask(utils.gettext("Creating new workspace"), 1);
         Wirecloud.createWorkspace({
             name: data.name,
             options: monitor,
@@ -81,4 +82,5 @@
     };
 
     Wirecloud.ui.NewWorkspaceWindowMenu = NewWorkspaceWindowMenu;
-})();
+
+})(Wirecloud.Utils);

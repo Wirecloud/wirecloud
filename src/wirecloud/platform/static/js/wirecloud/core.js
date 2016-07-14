@@ -19,8 +19,9 @@
  *
  */
 
-/* globals gettext, LayoutManagerFactory, StyledElements, Wirecloud, Workspace */
-/*jshint -W002 */
+/* jshint -W002 */
+/* globals gettext, LayoutManagerFactory, moment, StyledElements, Wirecloud */
+
 
 (function () {
 

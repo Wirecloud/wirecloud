@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -44,7 +45,7 @@
     };
 
     _onSearchFailure = function _onSearchFailure(reponse) {
-        Wirecloud.Utils.callCallback(this.onFailure);
+        utils.callCallback(this.onFailure);
     };
 
     deleteSuccessCallback = function deleteSuccessCallback(response) {
@@ -57,7 +58,7 @@
     };
 
     deleteErrorCallback = function deleteErrorCallback(response, e) {
-        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), response, e);
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error deleting resource: %(errorMsg)s."), response, e);
 
         if (typeof this.onFailure === 'function') {
             this.onFailure(msg);
@@ -77,11 +78,11 @@
         }
 
         Object.defineProperties(this, {
-            'RESOURCE_CHANGELOG_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog')},
-            'RESOURCE_USERGUIDE_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/userguide')},
+            'RESOURCE_CHANGELOG_ENTRY': {value: new utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog')},
+            'RESOURCE_USERGUIDE_ENTRY': {value: new utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/userguide')},
             'RESOURCE_COLLECTION': {value: options.url + 'catalogue/resources'},
-            'RESOURCE_UNVERSIONED_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s')},
-            'RESOURCE_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')},
+            'RESOURCE_UNVERSIONED_ENTRY': {value: new utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s')},
+            'RESOURCE_ENTRY': {value: new utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')},
         });
     };
 
@@ -196,7 +197,7 @@
         }
 
         if (options.monitor) {
-            task = options.monitor.nextSubtask(gettext('Uploading packaged resource'));
+            task = options.monitor.nextSubtask(utils.gettext('Uploading packaged resource'));
             onUploadProgress = function (event) {
                 task.updateTaskProgress(Math.round(event.loaded * 100 / event.total));
             };
@@ -218,7 +219,7 @@
                 }
             }.bind(this),
             onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error uploading packaged resource: %(errorMsg)s."), response);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error uploading packaged resource: %(errorMsg)s."), response);
 
                 if (typeof options.onFailure === 'function') {
                     try {
@@ -252,7 +253,7 @@
                 }
             }.bind(this),
             onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding resource from URL: %(errorMsg)s."), transport);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding resource from URL: %(errorMsg)s."), transport);
 
                 if (typeof options.onFailure === 'function') {
                     options.onFailure(msg);
@@ -269,7 +270,7 @@
     WirecloudCatalogue.prototype.deleteResource = function deleteResource(resource, options) {
         var url;
 
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             'allversions': false
         }, options);
 
@@ -297,4 +298,5 @@
     };
 
     Wirecloud.WirecloudCatalogue = WirecloudCatalogue;
-})();
+
+})(Wirecloud.Utils);

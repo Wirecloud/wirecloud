@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,10 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+
+(function (utils) {
 
     "use strict";
 
@@ -38,8 +39,8 @@
      */
     Endpoint.prototype.fullDisconnect = function fullDisconnect() {
         var funcName = 'fullDisconnect';
-        var msg = gettext("Unimplemented function: %(funcName)s");
-        msg = interpolate(msg, {funcName: funcName}, true);
+        var msg = utils.gettext("Unimplemented function: %(funcName)s");
+        msg = utils.interpolate(msg, {funcName: funcName}, true);
         Wirecloud.GlobalLogManager.log(msg);
         return;
     };
@@ -54,4 +55,4 @@
 
     Wirecloud.wiring.Endpoint = Endpoint;
 
-})();
+})(Wirecloud.Utils);

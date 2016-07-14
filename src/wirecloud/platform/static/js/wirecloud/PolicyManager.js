@@ -19,14 +19,17 @@
  *
  */
 
+/* globals Wirecloud */
+
+
 (function () {
+
+    "use strict";
 
     var PolicyManager = {}, policy = {};
 
     Object.defineProperty(PolicyManager, 'evaluate', {
         value: function evaluate(context, action) {
-            var context;
-
             // TODO: throw exceptions if policy info for a given context/action is not found.
 
             if (context in policy) {

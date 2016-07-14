@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,16 +19,16 @@
  *
  */
 
-/* global Wirecloud */
+/* globals Wirecloud */
 
 
 (function (ns) {
 
     "use strict";
 
-    // ==================================================================================
+    // =========================================================================
     // CLASS DEFINITION
-    // ==================================================================================
+    // =========================================================================
 
     /**
      * Create a new instance of class KeywordSuggestion.
@@ -39,9 +39,9 @@
         this.endpoints = {source: {}, target: {}};
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PUBLIC MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
     ns.KeywordSuggestion.prototype = {
 
@@ -131,11 +131,11 @@
 
     };
 
-    // ==================================================================================
+    // =========================================================================
     // PRIVATE MEMBERS
-    // ==================================================================================
+    // =========================================================================
 
-    function findEndpoint(component, type, keyword, callback) {
+    var findEndpoint = function findEndpoint(component, type, keyword, callback) {
 
         if (!(keyword in this.endpoints[type])) {
             return this;
@@ -149,13 +149,13 @@
         }, this);
 
         return this;
-    }
+    };
 
-    function getOppositeType(endpoint) {
+    var getOppositeType = function getOppositeType(endpoint) {
         return endpoint.type === 'source' ? 'target' : 'source';
-    }
+    };
 
-    function removeKeyword(keyword, endpoint) {
+    var removeKeyword = function removeKeyword(keyword, endpoint) {
         var list = this.endpoints[endpoint.type][keyword];
 
         list.splice(list.indexOf(endpoint), 1);
@@ -165,9 +165,9 @@
         }
 
         return this;
-    }
+    };
 
-    function updateKeyword(keyword, endpoint) {
+    var updateKeyword = function updateKeyword(keyword, endpoint) {
 
         if (!(keyword in this.endpoints[endpoint.type])) {
             this.endpoints[endpoint.type][keyword] = [];
@@ -176,6 +176,6 @@
         this.endpoints[endpoint.type][keyword].push(endpoint);
 
         return this;
-    }
+    };
 
 })(Wirecloud.wiring);

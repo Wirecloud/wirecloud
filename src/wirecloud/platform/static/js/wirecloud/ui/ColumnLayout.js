@@ -21,6 +21,7 @@
 
 /* globals Wirecloud */
 
+
 (function (utils) {
 
     "use strict";
@@ -315,6 +316,9 @@
         this._reserveSpace(buffer, widget);
     };
 
+    /**
+     * @returns Returns true if the widget position has been modified
+     */
     ColumnLayout.prototype._moveSpaceUp = function (buffer, widget) {
         var position, edgeY, offsetY, affectedIWidgets, finalPosition, curWidget,
             x, y, columnsize, key, matrix;
@@ -356,7 +360,6 @@
                 this._moveSpaceUp(buffer, affectedIWidgets[key]);
             }
 
-            //return true if the widget position has been modified
             return true;
         }
         return false;
@@ -493,6 +496,9 @@
         }
     };
 
+    /**
+     * @returns returns if any widget's position has been modified
+     */
     ColumnLayout.prototype._insertAt = function _insertAt(widget, x, y, buffer) {
         var newPosition = new Wirecloud.DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
 
@@ -528,7 +534,6 @@
 
         this._reserveSpace(buffer, widget);
 
-        //returns if any widget's position has been modified
         return affectedWidgets;
     };
 
@@ -640,7 +645,6 @@
         return affectedWidgets;
     };
 
-    //Returns if any widget's position has been modified
     ColumnLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
         var affectedWidgets;
 
