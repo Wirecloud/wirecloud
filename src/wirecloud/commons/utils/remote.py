@@ -106,37 +106,6 @@ class PopupMenuTester(object):
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
 
 
-class WidgetWalletResourceTester(object):
-
-    def __init__(self, testcase, element):
-        self.testcase = testcase
-        self.element = element
-
-    def instantiate(self):
-
-        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.widgets.map(function(iwidget) {return iwidget.id;});')
-        old_iwidget_count = len(old_iwidget_ids)
-
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.element))
-        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
-
-        def iwidget_added(driver):
-            new_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.widgets.map(function(iwidget) {return iwidget.id;});')
-            iwidget_count = len(new_iwidget_ids)
-            if iwidget_count != old_iwidget_count + 1:
-                return False
-
-            for new_iwidget_id in new_iwidget_ids:
-                if new_iwidget_id not in old_iwidget_ids:
-                    return new_iwidget_id
-
-            return False
-
-        new_iwidget_id = WebDriverWait(self.testcase.driver, 10).until(iwidget_added)
-        element = self.testcase.wait_element_visible_by_css_selector('.wc-widget[data-id="%s"]' % new_iwidget_id)
-        return WidgetTester(self.testcase, element)
-
-
 class CatalogueEntryTester(object):
 
     def __init__(self, testcase, element, catalogue, name):
@@ -200,21 +169,6 @@ class CatalogueEntryTester(object):
         raise NoSuchElementException
 
 
-class MashupWalletResourceTester(object):
-
-    def __init__(self, testcase, element, wallet):
-        self.testcase = testcase
-        self.element = element
-        self.wallet = wallet
-
-    def merge(self):
-        workspace_name = self.testcase.get_current_workspace_name()
-        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
-        self.testcase.wait_wirecloud_ready()
-        WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.wallet.element))
-        self.testcase.assertEqual(self.testcase.get_current_workspace_name(), workspace_name)
-
-
 class SelectableMACTester(object):
 
     def __init__(self, testcase, element):
@@ -226,40 +180,30 @@ class SelectableMACTester(object):
         WebDriverWait(self.testcase.driver, 10).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '.window_menu.mac_selection_dialog')))
 
 
-class WalletTester(object):
+class MACFieldTester(object):
 
-    def __init__(self, testcase):
+    def __init__(self, testcase, field_element):
 
         self.testcase = testcase
         self.element = None
+        self.field_element = field_element
 
     def __enter__(self):
-
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-plus"), parent=True)).click()
-        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-search"), parent=True, base_element=self.field_element)).click()
+        self.element = self.testcase.wait_element_visible_by_css_selector('.window_menu.mac_selection_dialog')
         return self
 
     def __exit__(self, type, value, traceback):
-
         try:
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".widget_wallet .icon-remove"), parent=True, base_element=self.element)).click()
+            # Calling any method forces a staleness check
+            self.element.is_enabled()
         except StaleElementReferenceException:
-            pass
+            self.element = None
 
-        WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
-        self.element = None
-
-    def switch_scope(self, scope):
-
-        self.wait_ready()
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.element))
-
-        for pill in self.element.find_elements_by_css_selector('.se-pills > .se-pill'):
-            if pill.text == scope:
-                pill.click()
-                return
-
-        raise Exception('Invalid scope')
+        if self.element is not None:
+            self.element.find_element_by_css_selector('.window_bottom .se-btn').click()
+            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
+            self.element = None
 
     def wait_ready(self, timeout=10):
 
@@ -283,46 +227,6 @@ class WalletTester(object):
             }
             arguments[0].dispatchEvent(evt);
         ''', search_input.element)
-
-    def search_in_results(self, widget_name):
-
-        self.wait_ready()
-
-        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
-        for resource in resources:
-            resource_name = resource.find_element_by_css_selector('.resource_name')
-            if resource_name.text == widget_name:
-                if self.element.find_element_by_css_selector('.se-pills > .se-pill.active').text == 'Widgets':
-                    return WidgetWalletResourceTester(self.testcase, resource)
-                else:
-                    return MashupWalletResourceTester(self.testcase, resource, self)
-
-        return None
-
-
-class MACFieldTester(WalletTester):
-
-    def __init__(self, testcase, field_element):
-
-        super(MACFieldTester, self).__init__(testcase)
-        self.field_element = field_element
-
-    def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-search"), parent=True, base_element=self.field_element)).click()
-        self.element = self.testcase.wait_element_visible_by_css_selector('.window_menu.mac_selection_dialog')
-        return self
-
-    def __exit__(self, type, value, traceback):
-        try:
-            # Calling any method forces a staleness check
-            self.element.is_enabled()
-        except StaleElementReferenceException:
-            self.element = None
-
-        if self.element is not None:
-            self.element.find_element_by_css_selector('.window_bottom .se-btn').click()
-            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
-            self.element = None
 
     def search_in_results(self, widget_name):
 
