@@ -21,6 +21,7 @@
 
 /* globals LayoutManagerFactory, Wirecloud */
 
+
 (function (utils) {
 
     "use strict";

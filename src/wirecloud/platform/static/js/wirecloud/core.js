@@ -23,7 +23,7 @@
 /* globals gettext, LayoutManagerFactory, moment, StyledElements, Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -100,7 +100,7 @@
 
         // Set the first workspace as current
         var username = Wirecloud.contextManager.get('username');
-        Wirecloud.changeActiveWorkspace(Wirecloud.Utils.values(this.workspacesByUserAndName[username])[0]);
+        Wirecloud.changeActiveWorkspace(utils.values(this.workspacesByUserAndName[username])[0]);
     };
 
     var onMergeSuccess = function onMergeSuccess(options, response) {
@@ -138,7 +138,7 @@
         this.workspaceInstances = {};
         this.workspacesByUserAndName = {};
 
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             'monitor': null
         }, options);
 
@@ -320,7 +320,7 @@
     Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
         var workspace_full_name, msg, state, steps = this.activeWorkspace != null ? 2 : 1;
 
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             replaceNavigationState: false
         }, options);
 
@@ -344,7 +344,7 @@
             Wirecloud.HistoryManager.pushState(state);
         }
 
-        msg = Wirecloud.Utils.interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace_full_name}, true);
+        msg = utils.interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace_full_name}, true);
         LayoutManagerFactory.getInstance().logSubTask(msg, 1);
         new Wirecloud.WorkspaceCatalogue(workspace.id, {
             onSuccess: function (workspace_resources) {
@@ -417,7 +417,7 @@
     Wirecloud.createWorkspace = function createWorkspace(options) {
         var body;
 
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             allow_renaming: true,
             dry_run: false
         }, options);
@@ -472,4 +472,4 @@
         });
     };
 
-})();
+})(Wirecloud.Utils);

@@ -21,6 +21,7 @@
 
 /* globals gettext, ngettext, StyledElements, Wirecloud */
 
+
 Wirecloud.Utils = StyledElements.Utils;
 
 Wirecloud.Utils.gettext = gettext;

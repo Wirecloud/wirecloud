@@ -22,7 +22,7 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -33,7 +33,7 @@
         openstack_tokens[url].token = token;
 
         for (var i = 0; i < openstack_tokens[url].resolveListeners.length; i++) {
-            Wirecloud.Utils.callCallback(openstack_tokens[url].resolveListeners[i], token);
+            utils.callCallback(openstack_tokens[url].resolveListeners[i], token);
         }
         openstack_tokens[url].resolveListeners = null;
         openstack_tokens[url].rejectListeners = null;
@@ -41,7 +41,7 @@
 
     var on_get_token_reject = function on_get_token_reject(url, response) {
         for (var i = 0; i < openstack_tokens[url].rejectListeners.length; i++) {
-            Wirecloud.Utils.callCallback(openstack_tokens[url].rejectListeners[i]);
+            utils.callCallback(openstack_tokens[url].rejectListeners[i]);
         }
         openstack_tokens[url].resolveListeners = null;
         openstack_tokens[url].rejectListeners = null;
@@ -92,4 +92,4 @@
         get_openstack_token_from_idm_token: get_openstack_token_from_idm_token
     };
 
-})();
+})(Wirecloud.Utils);

@@ -22,7 +22,7 @@
 /* globals LayoutManagerFactory, Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -42,7 +42,7 @@
         var header, key, default_data = {
             view: "workspace"
         };
-        data = Wirecloud.Utils.merge(default_data, data);
+        data = utils.merge(default_data, data);
 
         header = LayoutManagerFactory.getInstance().header;
         if (header != null && header.currentView != null) {
@@ -165,9 +165,9 @@
     };
 
     HistoryManager.getCurrentState = function getCurrentState() {
-        return Wirecloud.Utils.clone(currentState);
+        return utils.clone(currentState);
     };
 
     Wirecloud.HistoryManager = HistoryManager;
 
-})();
+})(Wirecloud.Utils);

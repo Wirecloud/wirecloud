@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -30,7 +30,7 @@
      * @private
      */
     var onSuccessSavePreferences = function onSuccessSavePreferences(options) {
-        Wirecloud.Utils.callCallback(options.onSuccess, this.preferences);
+        utils.callCallback(options.onSuccess, this.preferences);
         this.preferences.events['post-commit'].dispatch(this.preferences, this.modifiedValues);
     };
 
@@ -38,7 +38,7 @@
      * @private
      */
     var onErrorSavePreferences = function onErrorSavePreferences(options) {
-        Wirecloud.Utils.callCallback(options.onFailure, this.preferences);
+        utils.callCallback(options.onFailure, this.preferences);
     };
 
     /**
@@ -160,4 +160,4 @@
 
     Wirecloud.Preferences = Preferences;
 
-})();
+})(Wirecloud.Utils);

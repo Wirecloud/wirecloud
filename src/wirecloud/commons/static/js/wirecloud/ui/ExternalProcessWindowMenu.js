@@ -141,4 +141,4 @@
     };
     Wirecloud.ui.ExternalProcessWindowMenu = ExternalProcessWindowMenu;
 
-})();
+})(Wirecloud.Utils);

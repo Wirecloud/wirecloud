@@ -22,7 +22,7 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -32,7 +32,7 @@
             throw new TypeError('invalid context_description parameter');
         }
 
-        context_description = Wirecloud.Utils.clone(context_description, true);
+        context_description = utils.clone(context_description, true);
         Object.defineProperty(this, 'instance', {value: contextInstance});
 
         var context = {};
@@ -112,7 +112,7 @@
                     }
                 }
 
-                if (!Wirecloud.Utils.isEmpty(updated_values)) {
+                if (!utils.isEmpty(updated_values)) {
                     for (i = 0; i < handlers.length; i += 1) {
                         try {
                             handlers[i](updated_values);
@@ -125,4 +125,4 @@
 
     Wirecloud.ContextManager = ContextManager;
 
-})();
+})(Wirecloud.Utils);

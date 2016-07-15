@@ -193,7 +193,7 @@
     LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
         var url;
 
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             'allversions': false
         }, options);
 

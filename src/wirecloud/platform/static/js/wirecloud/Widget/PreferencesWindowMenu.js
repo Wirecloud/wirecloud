@@ -21,6 +21,7 @@
 
 /* globals StyledElements, Wirecloud */
 
+
 (function () {
 
     "use strict";

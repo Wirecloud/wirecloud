@@ -37,7 +37,7 @@ Wirecloud.location = {
     var setRequestHeaders = function setRequestHeaders() {
         var headers, name;
 
-        headers = Wirecloud.Utils.merge({
+        headers = utils.merge({
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
         }, this.options.requestHeaders);
@@ -62,12 +62,12 @@ Wirecloud.location = {
 
         var response = new Response(this);
 
-        Wirecloud.Utils.callCallback(this.options.onAbort);
+        utils.callCallback(this.options.onAbort);
         if (this.options.onComplete) {
             try {
                 this.options.onComplete(response);
             } catch (e) {
-                Wirecloud.Utils.callCallback(this.options.onException, response, e);
+                utils.callCallback(this.options.onException, response, e);
             }
         }
     };
@@ -86,14 +86,14 @@ Wirecloud.location = {
                     this.options.onFailure(response);
                 }
             } catch (e) {
-                Wirecloud.Utils.callCallback(this.options.onException, response, e);
+                utils.callCallback(this.options.onException, response, e);
             }
 
             if (this.options.onComplete) {
                 try {
                     this.options.onComplete(response);
                 } catch (e) {
-                    Wirecloud.Utils.callCallback(this.options.onException, response, e);
+                    utils.callCallback(this.options.onException, response, e);
                 }
             }
         }
@@ -143,7 +143,7 @@ Wirecloud.location = {
     var Request = function Request(url, options) {
         var key;
 
-        this.options = Wirecloud.Utils.merge({
+        this.options = utils.merge({
             method:       'POST',
             asynchronous: true,
             responseType: null,

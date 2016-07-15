@@ -21,6 +21,7 @@
 
 /* globals Wirecloud */
 
+
 (function (utils) {
 
     "use strict";

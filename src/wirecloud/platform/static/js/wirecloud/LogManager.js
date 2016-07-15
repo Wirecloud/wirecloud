@@ -76,7 +76,7 @@
             // Backwards compatibility
             options = {level: options};
         }
-        options = Wirecloud.Utils.merge({
+        options = utils.merge({
             level: Wirecloud.constants.LOGGING.ERROR_MSG,
             console: true,
         }, options);
