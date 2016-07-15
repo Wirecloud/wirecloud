@@ -193,6 +193,16 @@
         onSuccess(elements, {current_page: page, total_count: priv.sortedElements.length});
     };
 
+    /**
+     * Creates a new instance of class StaticPaginatedSource.
+     *
+     * @constructor
+     * @extends {StyledElements.PaginatedSource}
+     * @name StyledElements.StaticPaginatedSource
+     * @since 0.5
+     * @param {Object} options
+     *      The options to be used
+     */
     var StaticPaginatedSource = function StaticPaginatedSource(options) {
         if (typeof options !== 'object') {
             options = {};
@@ -220,6 +230,14 @@
     };
     StaticPaginatedSource.prototype = new StyledElements.PaginatedSource();
 
+    /**
+     * Updates the options used by this StaticPaginatedSource
+     * @since 0.5
+     * @kind function
+     * @name StyledElements.StaticPaginatedSource#changeOptions
+     * @param {Object} newOptions
+     *      The new options to be used.
+     */
     StaticPaginatedSource.prototype.changeOptions = function changeOptions(newOptions) {
         var force_sort = false;
 
@@ -236,6 +254,16 @@
         StyledElements.PaginatedSource.prototype.changeOptions.call(this, newOptions);
     };
 
+    /**
+     * Updates the elements of the StaticPaginatedSource
+     * @since 0.5
+     *
+     * @kind function
+     * @name StyledElements.StaticPaginatedSource#changeElements
+     *
+     * @param {Array.<Object>} newElements
+     *      The new elements to be used.
+     */
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {
         var priv = privates.get(this);
 
@@ -250,6 +278,16 @@
         this.refresh();
     };
 
+    /**
+     * Adds an element to the StaticPaginatedSource
+     * @since 0.5
+     *
+     * @kind function
+     * @name StyledElements.StaticPaginatedSource#addElement
+     *
+     * @param {Object} newElement
+     *      The element to be added.
+     */
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
         var priv = privates.get(this);
 
