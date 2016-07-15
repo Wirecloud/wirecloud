@@ -56,13 +56,24 @@
         this.events.requestEnd.dispatch(this, error);
     };
 
-    /**
+    /*
      *
      * Events supported by this component:
      *      - optionsChanged:
      *      - paginationChanged:
      *      - requestStart:
      *      - requestEnd:
+     */
+
+    /**
+     * Create a new instance of class PaginatedSource.
+     *
+     * @constructor
+     * @extends {StyledElements.ObjectWithEvents}
+     * @name StyledElements.PaginatedSource
+     * @since 0.5
+     * @param {Object} options
+     *      The options to be used
      */
     PaginatedSource = function PaginatedSource(options) {
         var defaultOptions = {
@@ -78,21 +89,46 @@
         privates.set(this, priv);
 
         Object.defineProperties(this, {
+            /** @lends StyledElements.PaginatedSource.prototype */
+
+            /**
+             * The current page.
+             *
+             * @name StyledElements.PaginatedSource#currentPage
+             */
             currentPage: {
                 get: function () {
                     return priv.currentPage;
                 }
             },
+
+            /**
+             * PaginatedSource options.
+             *
+             * @name StyledElements.PaginatedSource#options
+             */
             options: {
                 get: function () {
                     return priv.options;
                 }
             },
+
+            /**
+             * Current number of pages.
+             *
+             * @name StyledElements.PaginatedSource#totalPages
+             */
             totalPages: {
                 get: function () {
                     return priv.totalPages;
                 }
             },
+
+            /**
+             * The elements being currently displayed
+             *
+             * @name StyledElements.PaginatedSource#currentElements
+             */
             currentElements: {
                 get: function () {
                     return priv.currentElements;
@@ -107,10 +143,26 @@
 
     PaginatedSource.prototype = new StyledElements.ObjectWithEvents();
 
+    /**
+     * Gets the elements of the current page
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#getCurrentPage
+     * @returns {Array.<Object>} currentElements
+     *      The current elements.
+     */
     PaginatedSource.prototype.getCurrentPage = function getCurrentPage() {
         return this.currentElements;
     };
 
+    /**
+     * Update the options of the PaginatedSource
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#changeOptions
+     * @param {Object} newOptions
+     *      The new options to be used.
+     */
     PaginatedSource.prototype.changeOptions = function changeOptions(options) {
         var new_page_size, old_offset, key, changed = false;
         var priv = privates.get(this);
@@ -142,20 +194,44 @@
         }
     };
 
+    /**
+     * Change to the first page
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#goToFirst
+     */
     PaginatedSource.prototype.goToFirst = function goToFirst() {
         this.changePage(0);
     };
 
+    /**
+     * Change to the previous page
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#goToPrevious
+     */
     PaginatedSource.prototype.goToPrevious = function goToPrevious() {
         var priv = privates.get(this);
         this.changePage(priv.currentPage - 1);
     };
 
+    /**
+     * Change to the next page
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#goToNext
+     */
     PaginatedSource.prototype.goToNext = function goToNext() {
         var priv = privates.get(this);
         this.changePage(priv.currentPage + 1);
     };
 
+    /**
+     * Change to the last page
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#goToLast
+     */
     PaginatedSource.prototype.goToLast = function goToLast() {
         var priv = privates.get(this);
         this.changePage(priv.totalPages);
@@ -173,12 +249,26 @@
         }
     };
 
+    /**
+     * Refresh the current view
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#refresh
+     */
     PaginatedSource.prototype.refresh = function refresh() {
         var priv = privates.get(this);
         this.events.requestStart.dispatch(this);
         priv.options.requestFunc(priv.currentPage, priv.options, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 
+    /**
+     * Changes to the chosen page
+     * @since 0.6
+     * @kind function
+     * @name StyledElements.PaginatedSource#changePage
+     * @param {Integer} index
+     *      The number of the target page.
+     */
     PaginatedSource.prototype.changePage = function changePage(idx) {
         var priv = privates.get(this);
         if (idx < 1) {
