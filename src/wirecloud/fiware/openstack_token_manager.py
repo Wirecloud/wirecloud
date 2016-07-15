@@ -92,20 +92,21 @@ class OpenstackTokenManager(object):
         super(OpenstackTokenManager, self).__init__()
         self.url = url
 
-    def get_token(self, user):
+    def get_token(self, user, tenantid=None):
         oauth_info = user.social_auth.get(provider='fiware')
         if oauth_info.access_token is None:
             raise ValidationError("User doesn't have an access token")
 
         opentok = oauth_info.extra_data.get('openstack_token')
-        if opentok is None:
-            opentok = self.get_openstack_token(user.username, oauth_info.access_token)
-            oauth_info.extra_data['openstack_token'] = opentok
+        tenantid = "__default__" if tenantid is None else tenantid
+        if opentok is None or opentok.get(tenantid):
+            opentok = self.get_openstack_token(user.username, oauth_info.access_token, tenantid)
+            oauth_info.extra_data['openstack_token'][tenantid] = opentok
             oauth_info.save()
 
         return opentok
 
-    def get_openstack_token(self, username, idmtoken):
+    def get_openstack_token(self, username, idmtoken, tenantid):
         # We love FIWARE process to get the token <3
 
         # Fist we get an initial token
@@ -123,7 +124,7 @@ class OpenstackTokenManager(object):
                 # Ask for permissions for every project
                 response = getProjectPermissions("{}/keystone/v3/projects/{}".format(self.url, projectid), generalToken)
                 responseJson = response.json()
-                if responseJson.get("project").get("is_cloud_project"):
+                if responseJson.get("project").get("is_cloud_project") and (tenantid is "__default__" or responseJson.get("project").get("id") == tenantid):
 
                     # And if the project was cloud, we finally ask for the token
                     projectTokenR = get_openstack_project_token("{}/keystone/v3/auth/tokens".format(self.url), projectid, idmtoken)
