@@ -599,15 +599,17 @@ class WorkspaceTabTester(WebElementTester):
         return PopupMenuTester(self.testcase, element, button)
 
     def remove(self, timeout=10):
-        old_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab"))
+        old_tab_count = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab"))
+        empty = len(self.widgets) == 0
+
         self.show_preferences().click_entry('Remove')
 
-        if len(self.widgets) > 0:
+        if not empty:
             self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
         def tab_removed(driver):
             new_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab"))
-            return old_length == new_length + 1
+            return new_length == old_tab_count - 1
 
         WebDriverWait(self.testcase.driver, timeout).until(tab_removed)
 
@@ -1344,10 +1346,10 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
             for parameter_name, parameter_value in six.iteritems(parameters):
                 form.get_field(parameter_name).set_value(parameter_value)
 
-            # TODO Currently browsers only use the ETag/If-None-Match headers when using https
+            # Browsers only use the ETag/If-None-Match headers when the serve uses http 1.1+
             # Last-Modified/If-Modified-Since headers have a resolution of 1 second
-            time.sleep(1)
-            # END TODO
+            # Django uses by default http 1.0
+            time.sleep(1.5)
 
             form.accept()
 
