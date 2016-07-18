@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 import base64
+from io import BytesIO
 from copy import deepcopy
 from Crypto.Cipher import AES
 import json
@@ -35,10 +36,14 @@ import six
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.db import save_alternative
+from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.html import clean_html
+from wirecloud.commons.utils.template.parsers import TemplateParser
+from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.iwidget.utils import parse_value_from_text
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
@@ -266,7 +271,7 @@ class VariableValueCacheManager():
 
     def _process_entry(self, entry):
 
-        if entry['secure'] == True:
+        if entry['secure'] is True:
             value = decrypt_value(entry['value'])
             return parse_value_from_text(entry, value)
         else:
@@ -558,3 +563,27 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
     data_ret['properties'] = {property['name']: cache_manager.get_variable_data(iwidget, property['name']) for property in iwidget_info['properties']}
 
     return data_ret
+
+
+def create_workspace(owner, f):
+
+    from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
+
+    wgt = f if isinstance(f, WgtFile) else WgtFile(f)
+    template = TemplateParser(wgt.get_template())
+
+    resource_info = template.get_resource_processed_info(process_urls=False)
+    if resource_info["type"] != 'mashup':
+        raise Exception
+
+    for embedded_resource in resource_info['embedded']:
+        if embedded_resource['src'].startswith('https://'):
+            resource_file = download_http_content(embedded_resource['src'])
+        else:
+            resource_file = BytesIO(wgt.read(embedded_resource['src']))
+
+        extra_resource_contents = WgtFile(resource_file)
+        install_resource_to_user(owner, file_contents=extra_resource_contents)
+
+    workspace, _ = buildWorkspaceFromTemplate(template, owner)
+    return workspace
