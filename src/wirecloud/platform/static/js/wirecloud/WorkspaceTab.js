@@ -123,22 +123,20 @@
 
         /**
          * @param {Wirecloud.WidgetMeta} resource
-         * @param {Object} [data]
-         * @param {String} [data.title]
          * @param {Object} [options]
+         * @param {String} [options.title]
          * @param {Boolean} [options.commit]
+         * @returns {Promise} A promise that returns a {Widget} instance if
+         * resolved, or an Error if rejected.
          */
-        createWidget: function createWidget(resource, data, options) {
-            data = utils.merge({
-                title: resource.title
-            }, data);
-
+        createWidget: function createWidget(resource, options) {
             options = utils.merge({
-                commit: true
+                commit: true,
+                title: resource.title
             }, options);
 
             if (!options.commit) {
-                return create_widget.call(this, resource, data);
+                return create_widget.call(this, resource, options);
             }
 
             return new Promise(function (resolve, reject) {
@@ -153,7 +151,7 @@
                     }));
                 }
 
-                var content = utils.merge(data, {
+                var content = utils.merge(options, {
                     widget: resource.id
                 });
 

@@ -82,17 +82,6 @@
                 var transObj = {vendor: this.vendor, name: this.name, version: this.version};
                 var msg = utils.gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
                 return utils.interpolate(msg, transObj, true);
-            },
-
-            /**
-             * Create a new instance of this WidgetMeta.
-             *
-             * @param {?Object} [options] options used for creating the instance
-             * @returns {Wirecloud.WidgetMeta} The instance on which this method is called.
-             */
-            instantiate: function instantiate(options) {
-                Wirecloud.activeWorkspace.addInstance(this, options);
-                return this;
             }
 
         }

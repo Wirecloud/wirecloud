@@ -135,13 +135,12 @@
 
         options = Wirecloud.Utils.merge(options, {
             id: resource.id + '/' + counter++,
+            commit: false
             layout: 1,
             volatile: true
         });
 
-        var widget = tab.createWidget(widget_def, options, {
-            commit: false
-        });
+        var widget = tab.createWidget(widget_def, options);
         resource.addEventListener('unload', widget.remove.bind(widget));
 
         return new Widget(widget.model);

@@ -144,46 +144,44 @@
          * @param {Wirecloud.WidgetMeta} resource
          * @param {Object} [options]
          *
-         * @returns {Promise}
+         * @returns {Promise} A promise that returns a {Widget} instance if
+         * resolved, or an Error if rejected.
          */
-        createWidget: function createWidget(resource, data, options) {
+        createWidget: function createWidget(resource, options) {
             var layout, position;
 
-            data = utils.merge({
+            options = utils.merge({
+                commit: true,
                 height: resource.default_height,
                 layout: this.model.preferences.get('initiallayout') === "Free" ? 1 : 0,
                 width: resource.default_width
-            }, data);
-
-            options = utils.merge({
-                commit: true
             }, options);
 
-            layout = data.layout === 1 ? this.dragboard.freeLayout : this.dragboard.baseLayout;
+            layout = options.layout === 1 ? this.dragboard.freeLayout : this.dragboard.baseLayout;
 
-            data.left = data.left != null ? layout.adaptColumnOffset(data.left).inLU : undefined;
-            data.top = data.top != null ? layout.adaptRowOffset(data.top).inLU : undefined;
-            data.height = clean_number(layout.adaptHeight(data.height).inLU, 0, layout.rows);
-            data.width = clean_number(layout.adaptWidth(data.width).inLU, 0, layout.columns);
+            options.left = options.left != null ? layout.adaptColumnOffset(options.left).inLU : undefined;
+            options.top = options.top != null ? layout.adaptRowOffset(options.top).inLU : undefined;
+            options.height = clean_number(layout.adaptHeight(options.height).inLU, 0, layout.rows);
+            options.width = clean_number(layout.adaptWidth(options.width).inLU, 0, layout.columns);
 
-            if (data.left == null || data.top == null) {
+            if (options.left == null || options.top == null) {
                 if ("_searchFreeSpace" in layout) {
-                    position = layout._searchFreeSpace(data.width, data.height);
-                    data.left = position.x;
-                    data.top = position.y;
+                    position = layout._searchFreeSpace(options.width, options.height);
+                    options.left = position.x;
+                    options.top = position.y;
                 } else {
-                    data.left = "0";
-                    data.top = "0";
+                    options.left = "0";
+                    options.top = "0";
                 }
             }
 
             if (!options.commit) {
-                return this.findWidget(this.model.createWidget(resource, data, options).id);
+                return this.findWidget(this.model.createWidget(resource, options).id);
             }
 
             return new Promise(function (resolve, reject) {
 
-                this.model.createWidget(resource, data).then(function (model) {
+                this.model.createWidget(resource, options).then(function (model) {
                     resolve(this.findWidget(model.id));
                 }.bind(this), function (reason) {
                     reject(reason);

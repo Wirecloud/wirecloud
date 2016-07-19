@@ -232,7 +232,7 @@
             button.addEventListener('click', function () {
                 LayoutManagerFactory.getInstance().changeCurrentView('workspace');
                 var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
-                Wirecloud.activeWorkspace.addInstance(local_widget);
+                Wirecloud.activeWorkspace.view.activeTab.createWidget(local_widget);
             });
             fragment.appendChild(button);
         }

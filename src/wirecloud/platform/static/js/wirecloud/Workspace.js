@@ -533,9 +533,9 @@
         if (Array.isArray(data.iwidgets) && data.iwidgets.length) {
             data.iwidgets.forEach(function (data) {
                 var resource = this.resources.findResource('widget', data.widget, true);
-                tab.createWidget(resource, data, {
+                tab.createWidget(resource, utils.merge(data, {
                     commit: false
-                });
+                }));
             }, this);
         }
 

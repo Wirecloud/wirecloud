@@ -59,22 +59,7 @@
             Object.freeze(this);
         },
 
-        inherit: Wirecloud.MashableApplicationComponent,
-
-        members: {
-
-            /**
-             * Creates a new instance of this Operator
-             *
-             * @param {Number} operatorId id for the operator
-             * @param {Wiring} wiringEngine wiring engine that is going to manage the new operator instance
-             * @param {PlainObject} [businessInfo] business info for the instance
-             * @returns {Wirecloud.wiring.Operator} a new operator instance
-             */
-            instantiate: function instantiate(operatorId, wiringEngine, businessInfo) {
-                return new Wirecloud.Operator(operatorId, this, wiringEngine, businessInfo);
-            }
-        }
+        inherit: Wirecloud.MashableApplicationComponent
 
     });
 
