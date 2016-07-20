@@ -43,6 +43,7 @@
         'Event': window.parent.StyledElements.Event,
         'Fragment': window.parent.StyledElements.Fragment,
         'Form': window.parent.StyledElements.Form,
+        'GUIBuilder': window.parent.StyledElements.GUIBuilder,
         'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
         'InputElement': window.parent.StyledElements.InputElement,
         'List': window.parent.StyledElements.List,
