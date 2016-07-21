@@ -135,7 +135,7 @@
 
         options = Wirecloud.Utils.merge(options, {
             id: resource.id + '/' + counter++,
-            commit: false
+            commit: false,
             layout: 1,
             volatile: true
         });
