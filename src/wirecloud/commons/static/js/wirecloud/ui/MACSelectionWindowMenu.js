@@ -63,6 +63,14 @@
         this.macsearch.focus();
     };
 
+    /**
+     * @override
+     */
+    MACSelectionWindowMenu.prototype.show = function show(parentWindow) {
+        this.macsearch.refresh();
+        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
+    };
+
     Wirecloud.ui.MACSelectionWindowMenu = MACSelectionWindowMenu;
 
 })(Wirecloud.Utils);

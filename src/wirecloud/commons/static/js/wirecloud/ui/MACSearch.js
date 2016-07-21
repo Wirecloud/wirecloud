@@ -176,7 +176,6 @@
         });
 
         this.input = input;
-        _search.call(this, '');
     };
     MACSearch.prototype = new StyledElements.StyledElement();
 
