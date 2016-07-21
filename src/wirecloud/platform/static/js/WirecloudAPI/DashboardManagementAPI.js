@@ -96,10 +96,35 @@
     // Workspace facade
     var Workspace = function Workspace(workspace) {
         Object.defineProperties(this, {
+            'id': {value: workspace.id},
             'owner': {value: workspace.owner},
             'name': {value: workspace.name},
             'url': {value: workspace.url}
         });
+    };
+
+    /**
+     * Opens this workspace
+     */
+    Workspace.prototype.open = function open() {
+        openWorkspace(this);
+    };
+
+    /**
+     * Deletes/Removes this workspace
+     */
+    Workspace.prototype.remove = function remove() {
+        // We call this method remove because delete is a reserved word
+        return removeWorkspace(this);
+    };
+
+    var openWorkspace = function openWorkspace(workspace) {
+        Wirecloud.changeActiveWorkspace(workspace);
+    };
+
+    var removeWorkspace = function removeWorkspace(workspace) {
+        var instance = Wirecloud.Workspace(workspace);
+        instance.remove();
     };
 
     var addWidget = function addWidget(ref, options) {
@@ -215,7 +240,9 @@
     Object.defineProperties(MashupPlatform.mashup, {
         addWidget: {value: addWidget},
         addOperator: {value: addOperator},
-        createWorkspace: {value: createWorkspace}
+        createWorkspace: {value: createWorkspace},
+        openWorkspace: {value: openWorkspace},
+        removeWorkspace: {value: removeWorkspace},
     });
 
 })();

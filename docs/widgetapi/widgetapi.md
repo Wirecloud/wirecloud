@@ -1,6 +1,6 @@
 FIWARE Application Mashup - Widget API Specification
 ====================================================
-Date: 30th September 2015
+Date: 26th August 2016
 
 This version:
 
@@ -345,11 +345,13 @@ The mashup module contains one attribute:
 
 - [`context`](#mashupplatformmashupcontext-attribute)
 
-and a the following methods:
+and the following methods:
 
 - [`addWidget`](#mashupplatformmashupaddwidget-method)
 - [`addOperator`](#mashupplatformmashupaddoperator-method)
 - [`createWorkspace`](#mashupplatformmashupcreateworkspace-method)
+- [`openWorkspace`](#mashupplatformmashupopenworkspace-method)
+- [`removeWorkspace`](#mashupplatformmashupremoveworkspace-method)
 
 
 #### `MashupPlatform.mashup.context` attribute
@@ -518,6 +520,73 @@ MashupPlatform.mashup.createWorkspace({
     onSuccess: function (workspace) {
         alert(workspace.owner + "/" + workspace.name + " created successfully");
     }
+});
+```
+
+
+#### `MashupPlatform.mashup.openWorkspace` method
+> new in WireCloud 1.0.0 / Widget API v3
+
+This method allows widgets and operators to switch current workspace. This method is asynchronous.
+
+This method is only available when making use of the `DashboardManagement`
+feature.
+
+```javascript
+MashupPlatform.mashup.openWorkspace(workspace)
+```
+
+- `workspace` (*required, object*):
+- `options` (*object*): object with the options to use for opening the
+  workspace.
+
+Supported options:
+
+- `onSuccess` (*function*): callback to invoke if the workspace is created
+  successfully.
+- `onFailure` (*function*): callback to invoke if some error is raised while
+  creating the workspace.
+
+**Example usage:**
+
+```javascript
+MashupPlatform.mashup.openWorkspace({
+    owner: 'wirecloud',
+    name: 'home'
+});
+```
+
+
+#### `MashupPlatform.mashup.removeWorkspace` method
+> new in WireCloud 1.0.0 / Widget API v3
+
+This method allows widgets and operators to delete a workspace. This method is
+asynchronous.
+
+This method is only available when making use of the `DashboardManagement`
+feature.
+
+```javascript
+MashupPlatform.mashup.removeWorkspace(workspace)
+```
+
+- `workspace` (*required, object*):
+- `options` (*object*): object with the options to use for opening the
+  workspace.
+
+Supported options:
+
+- `onSuccess` (*function*): callback to invoke if the workspace is removed
+  successfully.
+- `onFailure` (*function*): callback to invoke if some error is raised while
+  removing the workspace.
+
+**Example usage:**
+
+```javascript
+MashupPlatform.mashup.removeWorkspace({
+    owner: 'user',
+    name: 'workspace'
 });
 ```
 
@@ -1166,6 +1235,86 @@ Widget.remove()
 var widget = MashupPlatform.mashup.addWidget(...);
 ....
 widget.remove();
+```
+
+### Workspace instances
+> new in WireCloud 1.0.0 / Widget API v3
+
+Workspace instances (obtained using the `MashupPlatform.mashup.createWorkspace`
+method) provides the following attributes:
+
+- [`name`](#workspacename-attribute)
+- [`owner`](#workspaceowner-attribute)
+
+and the following methods:
+
+- [`open`](#workspaceopen-method)
+- [`remove`](#workspaceremove-method)
+
+
+#### `Workspace.name` attribute
+
+A string with the name of the workspace.
+
+```javascript
+Workspace.name
+```
+
+
+#### `Workspace.owner` attribute
+
+A string with the username of the workspace's owner.
+
+```javascript
+Workspace.owner
+```
+
+
+#### `Workspace.open` method
+> new in WireCloud 1.0.0 / Widget API v3
+
+This method opens the workspace, closing the current one.
+
+```javascript
+Workspace.open()
+```
+
+**Example usage:**
+
+```javascript
+MashupPlatform.mashup.createWorkspace({
+    ...,
+    onSuccess: function (workspace) {
+        workspace.open();
+    }
+);
+```
+
+
+#### `Workspace.remove` method
+> new in WireCloud 1.0.0 / Widget API v3
+
+This method removes the workspace.
+
+```javascript
+Workspace.remove()
+```
+
+**Example usage:**
+
+```javascript
+var myWorkspace;
+
+MashupPlatform.mashup.createWorkspace({
+    ...,
+    onSuccess: function (workspace) {
+        myWorkspace = workspace;
+    }
+);
+
+...
+
+myWorkspace.remove();
 ```
 
 
