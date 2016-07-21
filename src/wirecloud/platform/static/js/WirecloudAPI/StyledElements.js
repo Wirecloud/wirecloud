@@ -111,7 +111,7 @@
         proxy_method(this, menu, 'append');
 
         this.show = function show(refPosition) {
-            var position = iwidget.content.getBoundingClientRect();
+            var position = iwidget.model.wrapperElement.getBoundingClientRect();
 
             refPosition = {
                 top: refPosition.top + position.top + platform.document.body.scrollTop,
@@ -170,7 +170,7 @@
         });
 
         this.show = function show(refPosition) {
-            var position = iwidget.content.getBoundingClientRect();
+            var position = iwidget.model.wrapperElement.getBoundingClientRect();
 
             if ('getBoundingClientRect' in refPosition) {
                 refPosition = refPosition.getBoundingClientRect();
@@ -284,7 +284,7 @@
         this.options = tooltip.options;
 
         this.show = function show(refPosition) {
-            var position = iwidget.content.getBoundingClientRect();
+            var position = iwidget.model.wrapperElement.getBoundingClientRect();
 
             if ('getBoundingClientRect' in refPosition) {
                 refPosition = refPosition.getBoundingClientRect();
