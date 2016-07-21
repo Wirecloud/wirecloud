@@ -64,7 +64,7 @@ msgid ""
 msgstr ""
 "Estas seguro de que quieres continuar?\n"
 "\n"
-"Escribe ‘yes’ para continuar o ‘no’ para cancelar:"
+"Escribe ‘yes’ para continuar o ‘no’ para cancelar: "
 
 #: management/commands/resetsearchindexes.py:90
 msgid "Reset search indexes cancelled."
