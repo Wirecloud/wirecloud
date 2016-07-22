@@ -19,11 +19,13 @@
 
 from __future__ import unicode_literals
 
+import datetime
 import logging
 
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from whoosh import fields
+from whoosh.query import Or, Term
 
 from wirecloud.commons.searchers import BaseSearcher, get_search_engine
 from wirecloud.platform.models import Workspace
@@ -35,13 +37,16 @@ logger = logging.getLogger(__name__)
 
 class WorkspaceSchema(fields.SchemaClass):
 
-    pk = fields.ID(stored=True, unique=True)
+    id = fields.ID(stored=True, unique=True)
+    owner = fields.TEXT(stored=True, spelling=True)
     name = fields.TEXT(stored=True, spelling=True)
-    description = fields.NGRAM(minsize=1, phrase=True)
-    longdescription = fields.NGRAM(minsize=1, phrase=True)
-    public = fields.BOOLEAN
+    description = fields.NGRAM(stored=True, minsize=1, phrase=True)
+    lastmodified = fields.DATETIME(stored=True)
+    longdescription = fields.NGRAM(stored=True, minsize=1, phrase=True)
+    public = fields.BOOLEAN(stored=True)
     users = fields.KEYWORD(commas=True)
     groups = fields.KEYWORD(commas=True)
+    shared = fields.BOOLEAN(stored=True)
 
 
 class WorkspaceSearcher(BaseSearcher):
@@ -49,17 +54,24 @@ class WorkspaceSearcher(BaseSearcher):
     indexname = 'workspace'
     model = Workspace
     schema_class = WorkspaceSchema
-    default_search_fields = ('name', 'description', 'longdescription')
+    default_search_fields = ('owner', 'name', 'description', 'longdescription')
+
+    def restrict_query(self, request):
+        return Or([Term('public', 't'), Term('users', request.user.username)] +
+            [Term('groups', group.name) for group in request.user.groups.all()])
 
     def build_compatible_fields(self, workspace):
         return {
-            'pk': '%s' % workspace.pk,
-            'name': '%s' % workspace,
+            'id': '%s' % workspace.pk,
+            'owner': '%s' % workspace.creator,
+            'name': '%s' % workspace.name,
             'description': workspace.description,
+            'lastmodified': datetime.datetime.utcfromtimestamp(workspace.last_modified / 1e3),
             'longdescription': workspace.longdescription,
             'public': workspace.public,
             'users': ', '.join(workspace.users.all().values_list('username', flat=True)),
             'groups': ', '.join(workspace.groups.all().values_list('name', flat=True)),
+            'shared': workspace.is_shared(),
         }
 
 
