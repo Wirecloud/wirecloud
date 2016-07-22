@@ -463,12 +463,16 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathCount(template, '/mashup/structure/tab', 1)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'minimized', 'true')
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'fulldragboard', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'minimized', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'fulldragboard', 'true')
+
+        # Hash widgets by id se we don't depend on the order (serialization
+        # order depends on the database backend)
+        widgets = {widget.get('id'): widget for widget in template.xpath('/mashup/structure/tab[1]/resource')}
+        self.assertXPathAttr(widgets["1"], '.', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(widgets["1"], 'rendering', 'minimized', 'true')
+        self.assertXPathAttr(widgets["1"], 'rendering', 'fulldragboard', 'false', optional=True)
+        self.assertXPathAttr(widgets["2"], '.', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(widgets["2"], 'rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(widgets["2"], 'rendering', 'fulldragboard', 'true')
 
         self.check_workspace_xml_wiring(template)
 
@@ -887,8 +891,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             }
         }
         template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
-        self.assertEqual(template['tabs'][0]['resources'][0]['properties'], {'prop': {'readonly': True, 'value': 'new_value'}})
-        self.assertEqual(template['tabs'][0]['resources'][1]['properties'], {'prop': {'readonly': False, 'value': 'test_data'}, 'prop2': {'readonly': True, 'value': None}})
+        # Hash widgets by id se we don't depend on the order (serialization
+        # order depends on the database backend)
+        widgets = {widget['id']: widget for widget in template['tabs'][0]['resources']}
+        self.assertEqual(widgets["1"]['properties'], {'prop': {'readonly': True, 'value': 'new_value'}})
+        self.assertEqual(widgets["2"]['properties'], {'prop': {'readonly': False, 'value': 'test_data'}, 'prop2': {'readonly': True, 'value': None}})
 
 
 class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
