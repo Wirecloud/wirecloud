@@ -2769,8 +2769,8 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 400)
 
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertIn('Wirecloud_nonavailable-operator_1.0.wgt', response_data['description'])
-        self.assertEqual(response_data['details'], "")
+        self.assertIn('Wirecloud_invalid-operator_1.0.wgt', response_data['description'])
+        self.assertEqual(response_data['details'], "Unable to process the component description file")
 
     def test_resource_collection_post_using_invalid_resource_url(self):
 
