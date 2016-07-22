@@ -105,7 +105,7 @@ class RDFTemplateParser(object):
                     self._info['type'] = 'mashup'
                     break
                 else:
-                    raise TemplateParseException('RDF document does not describe a widget, operator or mashup resource')
+                    raise TemplateParseException('RDF document does not describe a widget, operator or mashup component')
 
         self._parse_basic_info()
 
@@ -670,14 +670,14 @@ class RDFTemplateParser(object):
             })
 
         self._info['embedded'] = []
-        for resource in self._graph.objects(self._rootURI, WIRE_M['hasEmbeddedResource']):
-            vendor = self._get_field(USDL, 'hasProvider', resource, id_=True, required=True)
+        for component in self._graph.objects(self._rootURI, WIRE_M['hasEmbeddedResource']):
+            vendor = self._get_field(USDL, 'hasProvider', component, id_=True, required=True)
 
             self._info['embedded'].append({
                 'vendor': self._get_field(FOAF, 'name', vendor),
-                'name': self._get_field(RDFS, 'label', resource),
-                'version': self._get_field(USDL, 'versionInfo', resource),
-                'src': text_type(resource)
+                'name': self._get_field(RDFS, 'label', component),
+                'version': self._get_field(USDL, 'versionInfo', component),
+                'src': text_type(component)
             })
 
         ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: possible_int(self._get_field(WIRE, 'index', raw_tab, required=False)))
@@ -693,18 +693,18 @@ class RDFTemplateParser(object):
             for preference in self._graph.objects(tab, WIRE_M['hasTabPreference']):
                 tab_info['preferences'][self._get_field(DCTERMS, 'title', preference)] = self._get_field(WIRE, 'value', preference)
 
-            for resource in self._graph.objects(tab, WIRE_M['hasiWidget']):
-                position = self._get_field(WIRE_M, 'hasPosition', resource, id_=True, required=False)
-                rendering = self._get_field(WIRE_M, 'hasiWidgetRendering', resource, id_=True, required=False)
-                vendor = self._get_field(USDL, 'hasProvider', resource, id_=True, required=True)
+            for widget in self._graph.objects(tab, WIRE_M['hasiWidget']):
+                position = self._get_field(WIRE_M, 'hasPosition', widget, id_=True, required=False)
+                rendering = self._get_field(WIRE_M, 'hasiWidgetRendering', widget, id_=True, required=False)
+                vendor = self._get_field(USDL, 'hasProvider', widget, id_=True, required=True)
 
-                resource_info = {
-                    'id': self._get_field(WIRE_M, 'iWidgetId', resource),
+                widget_info = {
+                    'id': self._get_field(WIRE_M, 'iWidgetId', widget),
                     'vendor': self._get_field(FOAF, 'name', vendor),
-                    'name': self._get_field(RDFS, 'label', resource),
-                    'version': self._get_field(USDL, 'versionInfo', resource),
-                    'title': self._get_field(DCTERMS, 'title', resource),
-                    'readonly': self._get_field(WIRE_M, 'readonly', resource, required=False).lower() == 'true',
+                    'name': self._get_field(RDFS, 'label', widget),
+                    'version': self._get_field(USDL, 'versionInfo', widget),
+                    'title': self._get_field(DCTERMS, 'title', widget),
+                    'readonly': self._get_field(WIRE_M, 'readonly', widget, required=False).lower() == 'true',
                     'properties': {},
                     'preferences': {},
                     'position': {
@@ -721,28 +721,25 @@ class RDFTemplateParser(object):
                     },
                 }
 
-                for prop in self._graph.objects(resource, WIRE_M['hasiWidgetProperty']):
-                    resource_info['properties'][self._get_field(DCTERMS, 'title', prop)] = {
+                for prop in self._graph.objects(widget, WIRE_M['hasiWidgetProperty']):
+                    widget_info['properties'][self._get_field(DCTERMS, 'title', prop)] = {
                         'readonly': self._get_field(WIRE_M, 'readonly', prop, required=False).lower() == 'true',
                         'value': self._get_field(WIRE, 'value', prop, default=None, required=False),
                     }
 
-                for pref in self._graph.objects(resource, WIRE_M['hasiWidgetPreference']):
-                    resource_info['preferences'][self._get_field(DCTERMS, 'title', pref)] = {
+                for pref in self._graph.objects(widget, WIRE_M['hasiWidgetPreference']):
+                    widget_info['preferences'][self._get_field(DCTERMS, 'title', pref)] = {
                         'readonly': self._get_field(WIRE_M, 'readonly', pref, required=False).lower() == 'true',
                         'hidden': self._get_field(WIRE_M, 'hidden', pref, required=False).lower() == 'true',
                         'value': self._get_field(WIRE, 'value', pref, default=None, required=False),
                     }
 
-                tab_info['resources'].append(resource_info)
+                tab_info['resources'].append(widget_info)
 
             tabs.append(tab_info)
 
         self._info['tabs'] = tabs
         self._parse_wiring_info(wiring_property='hasMashupWiring')
-
-    def get_contents(self):
-        return self._graph.serialize(format='pretty-xml')
 
     def get_resource_type(self):
         return self._info['type']

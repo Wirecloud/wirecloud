@@ -220,11 +220,11 @@ class JSONTemplateParser(object):
         elif self._info['type'] == 'mashup':
 
             self._check_array_fields(('params', 'embedded'))
-            for resource in self._info['embedded']:
-                if isinstance(resource, dict):
-                    self._check_string_fields(('vendor', 'name', 'version', 'src'), place=resource, required=True)
+            for component in self._info['embedded']:
+                if isinstance(component, dict):
+                    self._check_string_fields(('vendor', 'name', 'version', 'src'), place=component, required=True)
                 else:
-                    raise TemplateParseException('embedded resource info must be an object')
+                    raise TemplateParseException('embedded component info must be an object')
 
             if 'wiring' not in self._info:
                 self._info['wiring'] = get_wiring_skeleton()

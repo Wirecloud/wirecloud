@@ -140,7 +140,7 @@ class ApplicationMashupTemplateParser(object):
         except Exception as e:
             raise TemplateParseException('%s' % e)
 
-        self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
+        self._component_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
         self._parse_basic_info()
 
     def _xpath(self, query, element):
@@ -177,7 +177,7 @@ class ApplicationMashupTemplateParser(object):
         self._parse_translation_catalogue()
         self._parsed = True
         self._doc = None
-        self._resource_description = None
+        self._component_description = None
 
     def _get_field(self, xpath, element, required=True):
 
@@ -196,24 +196,24 @@ class ApplicationMashupTemplateParser(object):
         self._info['name'] = self._doc.get('name', '').strip()
         self._info['version'] = self._doc.get('version', '').strip()
 
-        self._info['title'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)
+        self._info['title'] = self._get_field(DISPLAY_NAME_XPATH, self._component_description, required=False)
         self._add_translation_index(self._info['title'], type='resource', field='title')
 
-        self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description, required=False)
+        self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._component_description, required=False)
         self._add_translation_index(self._info['description'], type='resource', field='description')
-        self._info['longdescription'] = self._get_field(LONG_DESCRIPTION_XPATH, self._resource_description, required=False)
+        self._info['longdescription'] = self._get_field(LONG_DESCRIPTION_XPATH, self._component_description, required=False)
 
-        self._info['authors'] = parse_contacts_info(self._get_field(AUTHORS_XPATH, self._resource_description, required=False))
-        self._info['contributors'] = parse_contacts_info(self._get_field(CONTRIBUTORS_XPATH, self._resource_description, required=False))
-        self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description, required=False)
-        self._info['image'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
-        self._info['smartphoneimage'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
-        self._info['homepage'] = self._get_field(HOMEPAGE_XPATH, self._resource_description, required=False)
-        self._info['doc'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
-        self._info['license'] = self._get_field(LICENCE_XPATH, self._resource_description, required=False)
-        self._info['licenseurl'] = self._get_field(LICENCE_URL_XPATH, self._resource_description, required=False)
-        self._info['issuetracker'] = self._get_field(ISSUETRACKER_XPATH, self._resource_description, required=False)
-        self._info['changelog'] = self._get_field(CHANGELOG_XPATH, self._resource_description, required=False)
+        self._info['authors'] = parse_contacts_info(self._get_field(AUTHORS_XPATH, self._component_description, required=False))
+        self._info['contributors'] = parse_contacts_info(self._get_field(CONTRIBUTORS_XPATH, self._component_description, required=False))
+        self._info['email'] = self._get_field(MAIL_XPATH, self._component_description, required=False)
+        self._info['image'] = self._get_field(IMAGE_URI_XPATH, self._component_description, required=False)
+        self._info['smartphoneimage'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._component_description, required=False)
+        self._info['homepage'] = self._get_field(HOMEPAGE_XPATH, self._component_description, required=False)
+        self._info['doc'] = self._get_field(DOC_URI_XPATH, self._component_description, required=False)
+        self._info['license'] = self._get_field(LICENCE_XPATH, self._component_description, required=False)
+        self._info['licenseurl'] = self._get_field(LICENCE_URL_XPATH, self._component_description, required=False)
+        self._info['issuetracker'] = self._get_field(ISSUETRACKER_XPATH, self._component_description, required=False)
+        self._info['changelog'] = self._get_field(CHANGELOG_XPATH, self._component_description, required=False)
         self._parse_requirements()
 
     def _parse_requirements(self):
@@ -412,8 +412,8 @@ class ApplicationMashupTemplateParser(object):
 
     def _parse_widget_info(self):
 
-        self._parse_resource_preferences()
-        self._parse_resource_persistentvariables()
+        self._parse_component_preferences()
+        self._parse_component_persistentvariables()
         self._parse_wiring_info()
 
         xhtml_element = self._xpath(CODE_XPATH, self._doc)[0]
@@ -440,15 +440,15 @@ class ApplicationMashupTemplateParser(object):
 
     def _parse_operator_info(self):
 
-        self._parse_resource_preferences()
-        self._parse_resource_persistentvariables()
+        self._parse_component_preferences()
+        self._parse_component_persistentvariables()
         self._parse_wiring_info()
 
         self._info['js_files'] = []
         for script in self._xpath(SCRIPT_XPATH, self._doc):
             self._info['js_files'].append(script.get('src'))
 
-    def _parse_resource_preferences(self):
+    def _parse_component_preferences(self):
 
         self._info['preferences'] = []
         for preference in self._xpath(PREFERENCES_XPATH, self._doc):
@@ -477,7 +477,7 @@ class ApplicationMashupTemplateParser(object):
 
             self._info['preferences'].append(preference_info)
 
-    def _parse_resource_persistentvariables(self):
+    def _parse_component_persistentvariables(self):
 
         self._info['properties'] = []
         for prop in self._xpath(PROPERTY_XPATH, self._doc):
@@ -515,12 +515,12 @@ class ApplicationMashupTemplateParser(object):
             })
 
         self._info['embedded'] = []
-        for resource in self._xpath(EMBEDDEDRESOURCE_XPATH, self._doc):
+        for component in self._xpath(EMBEDDEDRESOURCE_XPATH, self._doc):
             self._info['embedded'].append({
-                'vendor': resource.get('vendor'),
-                'name': resource.get('name'),
-                'version': resource.get('version'),
-                'src': resource.get('src')
+                'vendor': component.get('vendor'),
+                'name': component.get('name'),
+                'version': component.get('version'),
+                'src': component.get('src')
             })
 
         tabs = []
@@ -531,17 +531,17 @@ class ApplicationMashupTemplateParser(object):
                 'resources': [],
             }
 
-            for resource in self._xpath(RESOURCE_XPATH, tab):
-                position = self.get_xpath(POSITION_XPATH, resource)
-                rendering = self.get_xpath(RENDERING_XPATH, resource)
+            for widget in self._xpath(RESOURCE_XPATH, tab):
+                position = self.get_xpath(POSITION_XPATH, widget)
+                rendering = self.get_xpath(RENDERING_XPATH, widget)
 
-                resource_info = {
-                    'id': resource.get('id'),
-                    'name': resource.get('name'),
-                    'vendor': resource.get('vendor'),
-                    'version': resource.get('version'),
-                    'title': resource.get('title'),
-                    'readonly': resource.get('readonly', '').lower() == 'true',
+                widget_info = {
+                    'id': widget.get('id'),
+                    'name': widget.get('name'),
+                    'vendor': widget.get('vendor'),
+                    'version': widget.get('version'),
+                    'title': widget.get('title'),
+                    'readonly': widget.get('readonly', '').lower() == 'true',
                     'properties': {},
                     'preferences': {},
                     'position': {
@@ -558,20 +558,20 @@ class ApplicationMashupTemplateParser(object):
                     },
                 }
 
-                for prop in self._xpath(PROPERTIES_XPATH, resource):
-                    resource_info['properties'][prop.get('name')] = {
+                for prop in self._xpath(PROPERTIES_XPATH, widget):
+                    widget_info['properties'][prop.get('name')] = {
                         'readonly': prop.get('readonly', 'false').lower() == 'true',
                         'value': prop.get('value'),
                     }
 
-                for pref in self._xpath(PREFERENCE_VALUE_XPATH, resource):
-                    resource_info['preferences'][pref.get('name')] = {
+                for pref in self._xpath(PREFERENCE_VALUE_XPATH, widget):
+                    widget_info['preferences'][pref.get('name')] = {
                         'readonly': pref.get('readonly', 'false').lower() == 'true',
                         'hidden': pref.get('hidden', 'false').lower() == 'true',
                         'value': pref.get('value'),
                     }
 
-                tab_info['resources'].append(resource_info)
+                tab_info['resources'].append(widget_info)
 
             tabs.append(tab_info)
 
@@ -622,9 +622,6 @@ class ApplicationMashupTemplateParser(object):
             raise TemplateParseException(msg % {'indexes': ', '.join(extra_translations)})
 
         self._info['translation_index_usage'] = self._translation_indexes
-
-    def get_contents(self):
-        return etree.tostring(self._doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
 
     def get_resource_type(self):
         return self._info['type']

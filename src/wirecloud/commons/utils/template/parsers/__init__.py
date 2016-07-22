@@ -77,9 +77,6 @@ class TemplateParser(object):
     def set_base(self, base):
         self.base = base
 
-    def get_contents(self):
-        return self._parser.get_contents()
-
     def get_resource_type(self):
         return self._parser.get_resource_type()
 
