@@ -2731,7 +2731,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('name', response_data)
         self.assertIn('version', response_data)
 
-    def test_resource_collection_post_install_embedded_resources(self):
+    def test_resource_collection_post_install_embedded_components(self):
 
         url = reverse('wirecloud.resource_collection') + '?install_embedded_resources=true'
 
@@ -2755,6 +2755,22 @@ class ResourceManagementAPI(WirecloudTestCase):
 
         self.assertIn('extra_resources', response_data)
         self.assertEqual(len(response_data['extra_resources']), 2)
+
+    def test_resource_collection_post_install_invalid_embedded_component(self):
+
+        url = reverse('wirecloud.resource_collection') + '?install_embedded_resources=true'
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_TestMashupInvalidEmbeddedComponent_1.0.zip'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertIn('Wirecloud_nonavailable-operator_1.0.wgt', response_data['description'])
+        self.assertEqual(response_data['details'], "")
 
     def test_resource_collection_post_using_invalid_resource_url(self):
 
