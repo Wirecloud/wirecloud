@@ -75,13 +75,13 @@ class RDFTemplateParser(object):
                 root_element_qname = etree.QName(doc)
 
                 if root_element_qname.namespace is None:
-                    raise TemplateParseException("XML document does not contain a valid rdf namespace")
+                    raise ValueError("XML document does not contain a valid rdf namespace")
 
                 if root_element_qname.namespace != RDF_NS:
-                    raise TemplateParseException("Invalid namespace: " + root_element_qname.namespace)
+                    raise ValueError("Invalid namespace: " + root_element_qname.namespace)
 
                 if root_element_qname.localname != 'RDF':
-                    raise TemplateParseException("Invalid root element: " + root_element_qname.localname)
+                    raise ValueError("Invalid root element: " + root_element_qname.localname)
 
                 self._graph = rdflib.Graph()
                 self._graph.parse(data=template, format='xml')

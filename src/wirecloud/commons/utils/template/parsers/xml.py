@@ -26,7 +26,7 @@ import os
 from django.utils.translation import ugettext as _
 from six import text_type
 
-from wirecloud.commons.utils.template.base import parse_contacts_info, TemplateParseException
+from wirecloud.commons.utils.template.base import ObsoleteFormatError, parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
 from wirecloud.platform.wiring.utils import get_behaviour_skeleton, get_wiring_skeleton, parse_wiring_old_version
 
@@ -37,6 +37,7 @@ XMLSCHEMA_FILE.close()
 XMLSCHEMA = etree.XMLSchema(XMLSCHEMA_DOC)
 
 WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/macdescription/1'
+OLD_TEMPLATE_NAMESPACES = ('http://wirecloud.conwet.fi.upm.es/ns/template#', 'http://morfeo-project.org/2007/Template')
 
 RESOURCE_DESCRIPTION_XPATH = 't:details'
 DISPLAY_NAME_XPATH = 't:title'
@@ -100,7 +101,7 @@ MSG_XPATH = 't:msg'
 class ApplicationMashupTemplateParser(object):
 
     _doc = None
-    _resource_description = None
+    _component_description = None
     _parsed = False
 
     def __init__(self, template):
@@ -120,8 +121,12 @@ class ApplicationMashupTemplateParser(object):
         root_element_qname = etree.QName(self._doc)
         xmlns = root_element_qname.namespace
 
-        if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
-            raise TemplateParseException("Invalid namespace: " + xmlns)
+        if xmlns is None:
+            raise ValueError("Missing document namespace")
+        elif xmlns in OLD_TEMPLATE_NAMESPACES:
+            raise ObsoleteFormatError()
+        elif xmlns != WIRECLOUD_TEMPLATE_NS:
+            raise ValueError("Invalid namespace: " + xmlns)
 
         if root_element_qname.localname not in ('widget', 'operator', 'mashup'):
             raise TemplateParseException("Invalid root element: " + root_element_qname.localname)

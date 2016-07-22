@@ -22,7 +22,7 @@ from six.moves.urllib.parse import urljoin
 
 import six
 
-from wirecloud.commons.utils.template.base import TemplateParseException
+from wirecloud.commons.utils.template.base import ObsoleteFormatError, TemplateFormatError, TemplateParseException
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
 from wirecloud.commons.utils.template.parsers.xml import ApplicationMashupTemplateParser
 from wirecloud.commons.utils.template.parsers.rdf import RDFTemplateParser
@@ -55,12 +55,22 @@ class TemplateParser(object):
         for parser in self.parsers:
             try:
                 self._parser = parser(template)
+                # We have found a valid parser for this document, stop
+                # searching
                 break
+            except TemplateParseException:
+                # A TemplateParseException means that the document uses the
+                # format associated with the parser (except when the
+                # ObsoleteFormatError is raised), but that something is not
+                # correct
+                raise
             except:
+                # Any other exception means that the document cannot be read
+                # by the current parser, try the next one
                 pass
 
         if self._parser is None:
-            raise TemplateParseException('No valid parser found')
+            raise TemplateFormatError('No valid parser found')
 
         self._parser._init()
 

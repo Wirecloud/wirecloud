@@ -25,7 +25,7 @@ import os
 import rdflib
 from unittest import TestCase
 
-from wirecloud.commons.utils.template.parsers import TemplateParser, TemplateParseException
+from wirecloud.commons.utils.template.parsers import ObsoleteFormatError, TemplateFormatError, TemplateParser, TemplateParseException
 from wirecloud.commons.utils.template.parsers.xml import WIRECLOUD_TEMPLATE_NS
 from wirecloud.commons.utils.template.writers.json import write_json_description
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
@@ -1472,6 +1472,15 @@ class TemplateUtilsTestCase(TestCase):
             element_to_remove.getparent().remove(element_to_remove)
 
         self.assertRaises(TemplateParseException, TemplateParser, etree.tostring(document, method='xml', xml_declaration=True, encoding="UTF-8"))
+
+    def test_invalid_description_format(self):
+
+        self.assertRaises(TemplateFormatError, TemplateParser, b'invalid description format')
+
+    def test_deprecated_description_format(self):
+
+        json_description = read_template('old_description_format.xml')
+        self.assertRaises(ObsoleteFormatError, TemplateParser, json_description)
 
     def test_json_parser_writer_basic_operator(self):
 

@@ -42,13 +42,13 @@ class JSONTemplateParser(object):
         elif isinstance(template, dict):
             self._info = template
         else:
-            raise TemplateParseException('Invalid input data')
+            raise ValueError('Invalid input data')
 
         if 'type' not in self._info:
-            raise TemplateParseException(_('Missing resource type.'))
+            raise ValueError(_('Missing component type.'))
 
         if self._info['type'] not in ('widget', 'operator', 'mashup'):
-            raise TemplateParseException(_('Invalid resource type: %s') % self._info['type'])
+            raise ValueError(_('Invalid component type: %s') % self._info['type'])
 
     def _check_array_fields(self, fields, place=None, required=False):
 

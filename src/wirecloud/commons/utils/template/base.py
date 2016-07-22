@@ -45,6 +45,16 @@ class TemplateParseException(Exception):
         return text_type(self.msg)
 
 
+class TemplateFormatError(TemplateParseException):
+    pass
+
+
+class ObsoleteFormatError(TemplateFormatError):
+
+    def __init__(self):
+        super(ObsoleteFormatError, self).__init__('Component description uses a no longer supported format')
+
+
 @python_2_unicode_compatible
 class UnsupportedFeature(Exception):
 
