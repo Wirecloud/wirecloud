@@ -409,9 +409,7 @@
 
                 // Move the widget
                 position.x -= widthDiff;
-                if (persist) {
-                    widget.setPosition(position);
-                }
+                widget.setPosition(position);
 
                 // Reserve the new space
                 this._reserveSpace2(this.matrix, widget,
@@ -447,9 +445,7 @@
 
                 // Move the widget
                 position.x += widthDiff;
-                if (persist) {
-                    widget.setPosition(position);
-                }
+                widget.setPosition(position);
 
                 step2X = position.x;
             } else {
