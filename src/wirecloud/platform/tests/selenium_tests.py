@@ -184,11 +184,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         modal = iwidget.show_settings()
 
         # Check dialog shows correct values
-        self.assertEqual(modal.get_field('list').value, "1")
-        self.assertEqual(modal.get_field('text').value, "test")
-        self.assertTrue(modal.get_field('boolean').is_selected)
-        self.assertEqual(modal.get_field('number').value, "0")
-        self.assertEqual(modal.get_field('password').value, "password")
+        self._check_modified_widget_preferences(modal)
+
+        modal.accept()
+
+        self.reload()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.active_tab is not None)
+
+        iwidget = self.find_widget(title="Test 1")
+
+        # Open widget settings again
+        modal = iwidget.show_settings()
+
+        # Check dialog shows correct values
+        self._check_modified_widget_preferences(modal)
 
         # Change widget settings
         modal.get_field('text').set_value("")
@@ -280,6 +289,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_general_exceptions_button'))
             self.assertEqual(api_test_iwidget.error_count, 3)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 5)
+
+    def _check_modified_widget_preferences(self, modal):
+        self.assertEqual(modal.get_field('list').value, "1")
+        self.assertEqual(modal.get_field('text').value, "test")
+        self.assertTrue(modal.get_field('boolean').is_selected)
+        self.assertEqual(modal.get_field('number').value, "0")
+        self.assertEqual(modal.get_field('password').value, "password")
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_widget_navigation_to_doc(self):

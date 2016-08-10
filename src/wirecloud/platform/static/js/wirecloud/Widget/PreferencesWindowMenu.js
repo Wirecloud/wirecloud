@@ -50,7 +50,7 @@
         Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
                 workspace_id: this.widgetModel.tab.workspace.id,
                 tab_id: this.widgetModel.tab.id,
-                widgetModel_id: this.widgetModel.id
+                iwidget_id: this.widgetModel.id
             }), {
                 method: 'POST',
                 contentType: 'application/json',
