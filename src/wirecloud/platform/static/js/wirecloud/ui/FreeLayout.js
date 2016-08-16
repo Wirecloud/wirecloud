@@ -147,11 +147,8 @@
             var position = iWidget.position;
             position.x -= widthDiff;
 
-            if (persist) {
-                iWidget.setPosition(position);
-            } else {
-                iWidget.repaint();
-            }
+            iWidget.setPosition(position);
+            iWidget.repaint();
         }
 
         if (persist) {
