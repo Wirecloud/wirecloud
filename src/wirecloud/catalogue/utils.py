@@ -35,7 +35,7 @@ from wirecloud.commons.utils.downloader import download_http_content, download_l
 from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.http import get_absolute_reverse_url, force_trailing_slash
 from wirecloud.commons.utils.timezone import now
-from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
+from wirecloud.commons.utils.template import ObsoleteFormatError, TemplateParser, TemplateFormatError, TemplateParseException
 from wirecloud.commons.utils.version import Version
 from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
 
@@ -147,8 +147,17 @@ def check_packaged_resource(wgt_file, resource_info=None):
 
     if resource_info is None:
         template_contents = wgt_file.get_template()
-        template = TemplateParser(template_contents)
-        resource_info = template.get_resource_info()
+        try:
+            template = TemplateParser(template_contents)
+            resource_info = template.get_resource_info()
+        except ObsoleteFormatError as e:
+            msg = _('Unable to process component description file: %s')
+            raise InvalidContents(msg % e)
+        except TemplateFormatError as e:
+            raise InvalidContents(_('Unable to process component description file'))
+        except TemplateParseException as e:
+            msg = _('Unable to process component description file: %s')
+            raise InvalidContents(msg % e)
 
     if resource_info['type'] == 'widget':
         code_url = resource_info['contents']['src']

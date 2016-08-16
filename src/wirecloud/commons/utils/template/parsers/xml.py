@@ -129,7 +129,7 @@ class ApplicationMashupTemplateParser(object):
             raise ValueError("Invalid namespace: " + xmlns)
 
         if root_element_qname.localname not in ('widget', 'operator', 'mashup'):
-            raise TemplateParseException("Invalid root element: " + root_element_qname.localname)
+            raise TemplateParseException("Invalid root element (%s)" % root_element_qname.localname)
 
         self._info['type'] = root_element_qname.localname
 

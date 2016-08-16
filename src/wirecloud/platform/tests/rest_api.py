@@ -2756,7 +2756,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('extra_resources', response_data)
         self.assertEqual(len(response_data['extra_resources']), 2)
 
-    def test_resource_collection_post_install_invalid_embedded_component(self):
+    def check_mashup_upload(self, mashup):
 
         url = reverse('wirecloud.resource_collection') + '?install_embedded_resources=true'
 
@@ -2764,13 +2764,29 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.client.login(username='admin', password='admin')
 
         # Make the request
-        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_TestMashupInvalidEmbeddedComponent_1.0.zip'), 'rb') as f:
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_%s_1.0.zip' % mashup), 'rb') as f:
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
 
-        response_data = json.loads(response.content.decode('utf-8'))
+        return json.loads(response.content.decode('utf-8'))
+
+    def test_resource_collection_post_install_invalid_embedded_component(self):
+
+        response_data = self.check_mashup_upload('TestMashupInvalidEmbeddedComponent')
         self.assertIn('Wirecloud_invalid-operator_1.0.wgt', response_data['description'])
-        self.assertEqual(response_data['details'], "Unable to process the component description file")
+        self.assertRegexpMatches(response_data['details'], "^Unable to process component description file: .+")
+
+    def test_resource_collection_post_install_invalid_embedded_component_format(self):
+
+        response_data = self.check_mashup_upload('TestMashupInvalidEmbeddedComponentFormat')
+        self.assertIn('Wirecloud_invalid-operator_1.0.wgt', response_data['description'])
+        self.assertEqual(response_data['details'], "Unable to process component description file")
+
+    def test_resource_collection_post_install_obsolete_embedded_component(self):
+
+        response_data = self.check_mashup_upload('TestMashupObsoleteEmbeddedComponent')
+        self.assertIn('Wirecloud_obsolete-widget_1.0.wgt', response_data['description'])
+        self.assertRegexpMatches(response_data['details'], "Component description uses a no longer supported format$")
 
     def test_resource_collection_post_using_invalid_resource_url(self):
 
