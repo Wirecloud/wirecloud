@@ -32,7 +32,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.remote import ButtonTester, FieldTester, FormModalTester, FormTester, PopupMenuTester
-from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
+from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -942,7 +942,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_move_widget_and_restore_touch(self):
 
-        import selenium.webdriver.remote.webdriver as Remote
         if self.driver.capabilities['browserName'] != 'chrome':  # pragma: no cover
             raise unittest.SkipTest('Touch events are supported only by chrome/chromium')
 
@@ -999,7 +998,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             layout.initializeMove(widget);
             layout.moveTemporally(3, 0);
             layout.acceptMove();
-        ''' % widget2.id);
+        ''' % widget2.id)
 
         self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
         self.assertEqual(widget2.layout_position, (3, 0))
@@ -1038,7 +1037,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             layout.initializeMove(widget);
             layout.moveTemporally(0, 3);
             layout.acceptMove();
-        ''' % widget2.id);
+        ''' % widget2.id)
 
         self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
         self.assertEqual(widget2.layout_position, (0, 0))
@@ -1086,7 +1085,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             layout.initializeMove(widget);
             layout.moveTemporally(6, 25);
             layout.acceptMove();
-        ''' % iwidgets[0].id);
+        ''' % iwidgets[0].id)
 
         self.assertEqual(iwidgets[0].layout_position, (6, 24))
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
@@ -1098,7 +1097,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             layout.initializeMove(widget);
             layout.moveTemporally(0, 0);
             layout.acceptMove();
-        ''' % iwidgets[1].id);
+        ''' % iwidgets[1].id)
 
         self.assertEqual(iwidgets[0].layout_position, (6, 0))
         self.assertEqual(iwidgets[1].layout_position, (0, 0))
@@ -1226,14 +1225,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertNotEqual(new_size_from_context1[0], old_size_from_context1[0])
         self.assertEqual(new_size_from_context1[1], old_size_from_context1[1])
         self.assertNotEqual(new_size_in_pixels_from_context1[0], old_size_in_pixels_from_context1[0])
-        #self.assertEqual(new_size_in_pixels_from_context1[1], old_size_in_pixels_from_context1[1])
+        # self.assertEqual(new_size_in_pixels_from_context1[1], old_size_in_pixels_from_context1[1])
 
         # Check new widget 2 sizes
         new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1].wait_still())
         self.assertNotEqual(new_size_from_context2[0], old_size_from_context2[0])
         self.assertEqual(new_size_from_context2[1], old_size_from_context2[1])
         self.assertNotEqual(new_size_in_pixels_from_context2[0], old_size_in_pixels_from_context2[0])
-        #self.assertEqual(new_size_in_pixels_from_context2[1], old_size_in_pixels_from_context2[1])
+        # self.assertEqual(new_size_in_pixels_from_context2[1], old_size_in_pixels_from_context2[1])
     test_basic_layout_parameter_change_several_widgets.tags = ('wirecloud-selenium', 'wirecloud-dragboard', 'wirecloud-basics-selenium')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
@@ -1415,53 +1414,3 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # And this connection should be restored
         with widget:
             WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world 2!!')
-
-
-@wirecloud_selenium_test_case
-class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
-
-    fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-mobile')
-
-    def check_basic_workspace(self, frame_id=None):
-
-        iwidget_icons = self.driver.find_elements_by_css_selector('.iwidget_item')
-
-        # Send event from Test 2 as it is the one connected to the test operator
-        iwidget_icons[1].click()
-        source_iwidget = self.widgets[1]
-
-        with source_iwidget:
-            check_default_settings_values(self)
-
-        self.send_basic_event(source_iwidget)
-
-        self.driver.find_element_by_css_selector('.dragboard .toolbar .back_button > .menu_text').click()
-        time.sleep(0.2)
-
-        iwidget_icons[0].click()
-        target_iwidget = self.widgets[0]
-
-        with target_iwidget:
-
-            try:
-                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
-            except:
-                pass
-
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, 'hello world!!')
-
-    def test_basic_widget_functionalities(self):
-
-        self.login(username='user_with_workspaces')
-        self.wait_element_visible_by_css_selector('.iwidget_item')
-
-        self.check_basic_workspace()
-
-    def test_public_workspaces(self):
-
-        self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
-        self.wait_element_visible_by_css_selector('.iwidget_item')
-
-        self.check_basic_workspace()

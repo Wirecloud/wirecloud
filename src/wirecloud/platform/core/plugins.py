@@ -474,7 +474,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/KeywordSuggestion.js',
         )
 
-        if view in ('classic', 'embedded'):
+        if view in ('classic', 'embedded', 'smartphone'):
             scripts = common + (
                 'js/interfaceLayout/LayoutManager.js',
                 'js/wirecloud/ui/WorkspaceListItems.js',
@@ -532,19 +532,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
             return scripts
 
-        elif view == 'smartphone':
-            return common + (
-                'iphone/interface/LayoutManager.js',
-                'iphone/common/utils.js',
-                'iphone/common/MobileScrollManager.js',
-                'iphone/opManager/OpManager.js',
-                'iphone/dragboard/iGadget.js',
-                'iphone/dragboard/dragboard.js',
-                'iphone/interface/NavigationHeader.js',
-                'iphone/interface/MobileDragboard.js',
-                'iphone/opManager/Workspace.js',
-                'iphone/opManager/Tab.js',
-            )
         else:
             return common
 
@@ -581,7 +568,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wirecloud/workspace/sharing_user",
                 "wirecloud/workspace/visibility_option",
                 "wirecloud/workspace/widget",
-                "wirecloud/workspace/widget_smartphone",
                 "wirecloud/modals/upgrade_downgrade_component",
             ]
         else:
@@ -635,12 +621,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_platform_css(self, view):
         common = BASE_CSS + STYLED_ELEMENTS_CSS
 
-        if view == 'classic':
+        if view in ('classic', 'smartphone'):
             return common + PLATFORM_CORE_CSS + WORKSPACE_CSS + CLASSIC_CORE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
         elif view == 'embedded':
             return common + PLATFORM_CORE_CSS + WORKSPACE_CSS
-        elif view == 'smartphone':
-            return common + ('css/iphone.css',)
         else:
             return common
 

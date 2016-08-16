@@ -23,8 +23,6 @@ import shutil
 import sys
 import time
 
-from django.core.urlresolvers import reverse
-from django.utils.http import urlencode
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -1949,69 +1947,3 @@ class WiringViewTester(BaseWiringViewTester):
             actions.click(component.element)
         actions.key_up(key).perform()
         return self
-
-
-class MobileWirecloudRemoteTestCase(RemoteTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-
-        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
-        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
-
-        # Load webdriver
-        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
-        module = import_module(module_name)
-        webdriver_args = getattr(cls, '_webdriver_args', None)
-        if webdriver_args is None:
-            webdriver_args = {}
-        cls.driver = getattr(module, klass_name)(**webdriver_args)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        # Remove chrome/chromium temporal directories
-        if 'chrome' in cls.driver.capabilities:
-            shutil.rmtree(cls.driver.capabilities['chrome']['userDataDir'], ignore_errors=True)
-
-        cls.driver.quit()
-
-    def login(self, username='admin', password='admin', next=None):
-
-        url = self.live_server_url
-        url += reverse('login')
-        if next is not None:
-            next_url = next
-        else:
-            next_url = self.live_server_url
-        next_url += "?mode=smartphone"
-        url += "?" + urlencode({'next': next_url})
-
-        self.driver.get(url)
-
-        form = FormTester(self, self.wait_element_visible_by_id('wc-login-form'))
-        form.get_field('username').set_value(username)
-        form.get_field('password').set_value(password)
-        form.submit()
-
-        self.wait_wirecloud_ready()
-
-    def wait_wirecloud_ready(self):
-
-        self.wait_element_visible_by_css_selector('.wirecloud_tab')
-
-    def _find_iwidgets(self, tab):
-
-        if tab is None:
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.view.widgets.map(function(widget) {return widget.wrapperElement;});')
-        else:
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.view.findTab(arguments[0]).widgets.map(function(widget) {return widget.wrapperElement;});', tab)
-
-        return [WidgetTester(self, element) if element is not None else None for element in iwidget_elements]
-
-    def find_iwidgets(self, tab=None):
-        try:
-            return self._find_iwidgets(tab)
-        except StaleElementReferenceException:
-            time.sleep(0.2)
-            return self.find_iwidgets(tab)

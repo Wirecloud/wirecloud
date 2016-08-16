@@ -26,7 +26,6 @@ import requests
 import shutil
 import stat
 import sys
-import time
 from tempfile import mkdtemp
 from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import urlparse
@@ -46,7 +45,7 @@ from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.searchers import get_available_search_engines
 from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import REASON_PHRASES
-from wirecloud.commons.utils.remote import MobileWirecloudRemoteTestCase, WirecloudRemoteTestCase, FieldTester
+from wirecloud.commons.utils.remote import WirecloudRemoteTestCase, FieldTester
 from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
@@ -619,94 +618,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
             field = FieldTester(self, self.driver.find_element_by_css_selector("#send input"))
             field.set_value(event)
             self.driver.find_element_by_css_selector("#send button").click()
-
-
-class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteTestCase):
-
-    fixtures = ('selenium_test_data',)
-    __test__ = False
-
-    base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
-
-    @classmethod
-    def setUpClass(cls):
-
-        from django.conf import settings
-
-        MobileWirecloudRemoteTestCase.setUpClass.__func__(cls)
-
-        cls.old_LANGUAGES = settings.LANGUAGES
-        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'),)
-        settings.LANGUAGE_CODE = 'en'
-        settings.DEFAULT_LANGUAGE = 'en'
-
-        # Mock network requests
-        cls.network = FakeNetwork(getattr(cls, 'servers', {
-            'http': {
-                'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
-                'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
-                'example.com': DynamicWebServer(),
-            },
-        }))
-        cls.network.mock_requests()
-
-        prepare_temporal_resource_directories(cls)
-
-        LiveServerTestCase.setUpClass.__func__(cls)
-
-        cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()
-
-    @classmethod
-    def tearDownClass(cls):
-
-        from django.conf import settings
-
-        MobileWirecloudRemoteTestCase.tearDownClass.__func__(cls)
-
-        # Unmock network requests
-        cls.network.unmock_requests()
-
-        # Remove temporal directory
-        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
-
-        # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        showcase.wgt_deployer = cls.old_deployer
-
-        # Restore old index dir
-        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
-
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
-
-        super(MobileWirecloudSeleniumTestCase, cls).tearDownClass()
-
-    def setUp(self):
-
-        from django.core.cache import cache
-
-        restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
-        restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
-        cache.clear()
-        try:
-            self.network._servers['http']['example.com'].clear()
-        except:
-            pass
-
-        super(MobileWirecloudSeleniumTestCase, self).setUp()
-
-    def tearDown(self):
-
-        from django.conf import settings
-
-        for searcher in get_available_search_engines():
-            searcher.clear_cache()
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
-
-        LiveServerTestCase.tearDown(self)
 
 
 DEFAULT_BROWSER_CONF = {
