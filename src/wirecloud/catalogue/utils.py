@@ -51,30 +51,21 @@ def extract_resource_media_from_package(template, package, base_path):
     if resource_info['image'] != '':
         if not resource_info['image'].startswith(('http://', 'https://', '//', '/')):
             image_path = os.path.normpath(resource_info['image'])
-            try:
-                package.extract_file(resource_info['image'], os.path.join(base_path, image_path), True)
-            except KeyError:
-                overrides['image'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
+            package.extract_file(resource_info['image'], os.path.join(base_path, image_path), True)
         elif resource_info['image'].startswith(('//', '/')):
             overrides['image'] = template.get_absolute_url(resource_info['image'])
 
     if resource_info['smartphoneimage'] != '':
         if not resource_info['smartphoneimage'].startswith(('http://', 'https://', '//', '/')):
             image_path = os.path.normpath(resource_info['smartphoneimage'])
-            try:
-                package.extract_file(resource_info['smartphoneimage'], os.path.join(base_path, image_path), True)
-            except KeyError:
-                overrides['smartphoneimage'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
+            package.extract_file(resource_info['smartphoneimage'], os.path.join(base_path, image_path), True)
         elif resource_info['smartphoneimage'].startswith(('//', '/')):
             overrides['smartphoneimage'] = template.get_absolute_url(resource_info['smartphoneimage'])
 
     if resource_info['doc'] != '':
         if not resource_info['doc'].startswith(('http://', 'https://', '//', '/')):
             doc_path = os.path.normpath(os.path.dirname(resource_info['doc']))
-            try:
-                package.extract_dir(doc_path, os.path.join(base_path, doc_path))
-            except KeyError:
-                overrides['doc'] = ''
+            package.extract_dir(doc_path, os.path.join(base_path, doc_path))
         elif resource_info['doc'].startswith(('//', '/')):
             overrides['doc'] = template.get_absolute_url(resource_info['doc'])
 
@@ -126,6 +117,19 @@ def check_invalid_doc_content(wgt_file, resource_info, key):
                 check_invalid_doc_entry(wgt_file, filename)
 
 
+def check_invalid_image(wgt_file, resource_info, key):
+
+    image_url = resource_info[key]
+    if image_url != '' and not image_url.startswith(('http://', 'https://')):
+
+        image_path = url2pathname(image_url)
+
+        try:
+            wgt_file.read(image_path)
+        except:
+            raise InvalidContents('missing image file: %s' % image_path)
+
+
 def check_invalid_embedded_resources(wgt_file, resource_info):
 
     if resource_info['type'] != 'mashup':
@@ -175,6 +179,8 @@ def check_packaged_resource(wgt_file, resource_info=None):
                 msg = _('%(file_name)s was not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
                 raise InvalidContents(msg % {'file_name': code_url, 'charset': resource_info['contents']['charset']})
 
+    check_invalid_image(wgt_file, resource_info, 'image')
+    check_invalid_image(wgt_file, resource_info, 'smartphoneimage')
     check_invalid_doc_content(wgt_file, resource_info, 'longdescription')
     check_invalid_doc_content(wgt_file, resource_info, 'doc')
     check_invalid_doc_content(wgt_file, resource_info, 'changelog')
