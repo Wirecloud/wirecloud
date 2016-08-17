@@ -140,8 +140,8 @@ def check_invalid_embedded_resources(wgt_file, resource_info):
         if embedded_resource['src'] not in files:
             raise InvalidContents('Missing embedded file: %s' % embedded_resource['src'])
 
-        embedded_wgt = WgtFile(BytesIO(wgt_file.read(embedded_resource['src'])))
         try:
+            embedded_wgt = WgtFile(BytesIO(wgt_file.read(embedded_resource['src'])))
             check_packaged_resource(embedded_wgt)
         except Exception as e:
             raise InvalidContents('Invalid embedded file: %s' % embedded_resource['src'], details=e)

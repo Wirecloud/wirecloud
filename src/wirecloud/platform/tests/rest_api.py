@@ -2788,6 +2788,12 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('Wirecloud_obsolete-widget_1.0.wgt', response_data['description'])
         self.assertRegexpMatches(response_data['details'], "Component description uses a no longer supported format$")
 
+    def test_resource_collection_post_install_invalid_wgt_embedded_component(self):
+
+        response_data = self.check_mashup_upload('TestMashupInvalidWGTEmbeddedComponent')
+        self.assertIn('Wirecloud_invalid-operator_1.0.wgt', response_data['description'])
+        self.assertEqual(response_data['details'], "File is not a zip file")
+
     def test_resource_collection_post_using_invalid_resource_url(self):
 
         url = reverse('wirecloud.resource_collection')
