@@ -225,6 +225,8 @@ class CatalogueUtilsTestCase(TestCase):
         template = Mock()
         template.get_resource_info.return_value = {
             'type': 'widget',
+            'image': '',
+            'smartphoneimage': '',
             'doc': 'doc/index.md',
             'longdescription': 'DESCRIPTION.md',
             'changelog': 'CHANGELOG.md',

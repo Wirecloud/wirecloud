@@ -15,7 +15,7 @@
         <dcterms:description>This template defines an empty workspace</dcterms:description>
         <dcterms:creator rdf:resource="http://creatoruri/"/>
         <usdl-core:versionInfo>1</usdl-core:versionInfo>
-        <wire:hasImageUri rdf:resource="images/mashup.png"/>
+        <wire:hasImageUri rdf:resource="images/catalogue.png"/>
 
         <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 

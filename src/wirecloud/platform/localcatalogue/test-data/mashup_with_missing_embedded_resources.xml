@@ -2,7 +2,7 @@
 <mashup xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud Test Suite" name="Test Mashup" version="1">
     <details>
         <email>a@b.com</email>
-        <image>images/mashup.png</image>
+        <image>images/catalogue.png</image>
         <description>Mashup for testing</description>
         <authors>test</authors>
     </details>

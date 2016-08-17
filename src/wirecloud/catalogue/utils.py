@@ -126,7 +126,7 @@ def check_invalid_image(wgt_file, resource_info, key):
 
         try:
             wgt_file.read(image_path)
-        except:
+        except KeyError:
             raise InvalidContents('missing image file: %s' % image_path)
 
 
