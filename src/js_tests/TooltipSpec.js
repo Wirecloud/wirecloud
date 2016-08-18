@@ -68,7 +68,8 @@
             // A second call to hide should cancel current animation and hide the tooltip
             var ref_element = new StyledElements.Button();
             var tooltip = new StyledElements.Tooltip();
-            expect(tooltip.show(ref_element).hide().hide().element).toBe(null);
+            expect(tooltip.show(ref_element).hide().hide()).toBe(tooltip);
+            expect(tooltip.element).toBe(null);
             expect(tooltip.visible).toBe(false);
 
         });
@@ -76,8 +77,22 @@
         it("should do nothing when the hide method is used and the tooltip is already hidden", function () {
 
             var tooltip = new StyledElements.Tooltip();
-            expect(tooltip.hide().element).toBe(null);
+            expect(tooltip.hide()).toBe(tooltip);
+            expect(tooltip.element).toBe(null);
             expect(tooltip.visible).toBe(false);
+
+        });
+
+        describe('destroy() [deprecated]', function () {
+
+            it("should hide the tooltip", function () {
+
+                var tooltip = new StyledElements.Tooltip();
+                spyOn(tooltip, 'hide');
+                expect(tooltip.destroy()).toBe(undefined);
+                expect(tooltip.hide).toHaveBeenCalled();
+
+            });
 
         });
 

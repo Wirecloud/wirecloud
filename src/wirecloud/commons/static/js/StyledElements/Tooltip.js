@@ -148,6 +148,10 @@
     };
     Tooltip.prototype = new StyledElements.StyledElement();
 
+    Tooltip.prototype.destroy = function destroy() {
+        this.hide();
+    };
+
     Tooltip.prototype.bind = function bind(element) {
         element.addEventListener('focus', this.show.bind(this, element), false);
         element.addEventListener('blur', this.hide.bind(this), false);
