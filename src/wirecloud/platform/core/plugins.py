@@ -480,7 +480,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/WorkspaceListItems.js',
                 'js/wirecloud/ui/WorkspaceViewMenuItems.js',
                 'js/wirecloud/ui/MACSearch.js',
-                'js/wirecloud/ui/MACWallet.js',
                 'js/wirecloud/ui/ComponentSidebar.js',
                 'js/wirecloud/ui/WorkspaceView.js',
                 'js/wirecloud/ui/WorkspaceTabView.js',
