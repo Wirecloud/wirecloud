@@ -1877,7 +1877,8 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
         ActionChains(self.testcase.driver).click_and_hold(component.element).perform()
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.body))
-        ActionChains(self.testcase.driver).move_to_element_with_offset(self.body, x, y).release().perform()
+        # move_to_element_with_offset sometimes fails with a MoveTargetOutOfBoundsException exception
+        ActionChains(self.testcase.driver).move_to_element(self.body).move_by_offset(x, y).release().perform()
         return self.find_draggable_component(component.type, id=component.id)
 
     def find_component(self, type, group_id, id=None, title=None):
