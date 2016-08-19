@@ -56,6 +56,9 @@
 
             // Basic info
             Object.defineProperties(this, {
+                description: {
+                    value: desc.description ? desc.description : utils.gettext("No description provided")
+                },
                 missing: {value: !!desc.missing},
                 vendor: {value: vendor},
                 name: {value: name},
