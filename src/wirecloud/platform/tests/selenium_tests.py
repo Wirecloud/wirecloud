@@ -730,6 +730,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
+        # TODO wiring editor breaks if the platform is not fully loaded
+        self.wait_wirecloud_ready()
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'wiring')
         self.driver.forward()
