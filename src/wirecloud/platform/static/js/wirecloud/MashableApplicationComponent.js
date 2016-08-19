@@ -64,11 +64,14 @@
                 group_id: {value: vendor + '/' + name},
                 type: {value: desc.type},
                 image: {value: desc.image},
+                description: {
+                    value: desc.description != null ? desc.description.trim() : ''
+                },
                 doc: {
-                    value: desc.doc == null || desc.doc.trim() === '' ? '' : desc.doc
+                    value: desc.doc != null ? desc.doc.trim() : ''
                 },
                 changelog: {
-                    value: desc.changelog == null || desc.changelog.trim() === '' ? '' : desc.changelog
+                    value: desc.changelog != null ? desc.changelog.trim() : ''
                 },
                 title: {
                     value: desc.title == null || desc.title.trim() === '' ? name : desc.title

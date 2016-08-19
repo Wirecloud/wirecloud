@@ -101,7 +101,7 @@
 
         this.titleElement.textContent = this.meta.title;
         this.tooltip.options.content = this.meta.title;
-        this.descriptionElement.textContent = this.meta.description;
+        this.descriptionElement.textContent = this.meta.description ? this.meta.description : utils.gettext("No description provided");
         setImage.call(this, this.meta.image);
     };
 
