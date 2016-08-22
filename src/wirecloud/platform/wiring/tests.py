@@ -1639,14 +1639,12 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             target = widget1.find_endpoint('target', "inputendpoint")
             source.create_connection(target, must_expand=(operator, widget1))
 
-    @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_test-mashup-multiendpoint_1.0.wgt', shared=True)
     def test_components_with_endpoints_collapsed_cannot_order_endpoints(self):
-        self.login()
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/test-mashup-multiendpoint')
 
         with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                operator = sidebar.add_component('operator', "Wirecloud/TestOperatorMultiendpoint")
-
+            operator = wiring.find_draggable_component('operator', title="TestOp. Multiendpoint")
             operator.collapse_endpoints()
 
             menu_dropdown = operator.show_preferences()
@@ -1729,14 +1727,12 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_connections(extra_class='missing')), 2)
 
-    @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_test-mashup-multiendpoint_1.0.wgt', shared=True)
     def test_ordering_operator_endpoints(self):
-        self.login()
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/test-mashup-multiendpoint')
 
         with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                operator = sidebar.add_component('operator', "Wirecloud/TestOperatorMultiendpoint")
-                operator_id = operator.id
+            operator = wiring.find_draggable_component('operator', title="TestOp. Multiendpoint")
 
             targets_count = len(operator.find_endpoints('target'))
             sources_count = len(operator.find_endpoints('target'))
@@ -1749,19 +1745,17 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(sources_count, len(operator.find_endpoints('source')))
 
         with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', id=operator_id)
+            operator = wiring.find_draggable_component('operator', id=operator.id)
             self.assertEqual(targets_count, len(operator.find_endpoints('target')))
             self.assertEqual(sources_count, len(operator.find_endpoints('source')))
 
-    @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_test-mashup-multiendpoint_1.0.wgt', shared=True)
     def test_ordering_widget_endpoints(self):
-        self.login()
-        iwidget = self.create_widget("Test_Multiendpoint")
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/test-mashup-multiendpoint')
 
         with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                operator = sidebar.add_component('operator', "Wirecloud/TestOperator")
-                widget = sidebar.add_component('widget', "Wirecloud/Test_Multiendpoint", id=iwidget.id, x=450)
+            operator = wiring.find_draggable_component('operator', title="TestOperator")
+            widget = wiring.find_draggable_component('widget', title="Test_Multiendpoint")
 
             source = widget.find_endpoint('source', "output1")
             target = operator.find_endpoint('target', 'input')
@@ -1778,7 +1772,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(sources_count, len(widget.find_endpoints('source')))
 
         with self.wiring_view as wiring:
-            widget = wiring.find_draggable_component('widget', id=iwidget.id)
+            widget = wiring.find_draggable_component('widget', id=widget.id)
             self.assertEqual(targets_count, len(widget.find_endpoints('target')))
             self.assertEqual(sources_count, len(widget.find_endpoints('source')))
 

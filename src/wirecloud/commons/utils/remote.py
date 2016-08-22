@@ -1045,7 +1045,9 @@ class WiringEndpointTester(WebElementTester):
 
     def create_connection(self, endpoint, must_suggest=(), must_expand=()):
         ActionChains(self.testcase.driver).click_and_hold(self.element).perform()
-        self.testcase.assertTrue(self.is_active)
+        # Wait until the browser reacts
+        time.sleep(0.2)
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.is_active)
         for endpoint in must_suggest:
             self.testcase.assertTrue(endpoint.is_active)
         for component in must_expand:
