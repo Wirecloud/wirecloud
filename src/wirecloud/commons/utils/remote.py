@@ -1067,7 +1067,9 @@ class WiringEndpointTester(WebElementTester):
 
     def mouse_over(self, must_suggest=()):
         ActionChains(self.testcase.driver).move_to_element(self.element).perform()
-        self.testcase.assertTrue(self.is_active)
+        # Wait until the browser reacts
+        time.sleep(0.2)
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.is_active)
         for endpoint in must_suggest:
             self.testcase.assertTrue(endpoint.is_active)
         return self
@@ -1878,9 +1880,19 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", component.element)
 
         ActionChains(self.testcase.driver).click_and_hold(component.element).perform()
-        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.body))
-        # move_to_element_with_offset sometimes fails with a MoveTargetOutOfBoundsException exception
-        ActionChains(self.testcase.driver).move_to_element(self.body).move_by_offset(x, y).release().perform()
+        try:
+            WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.body))
+            # move_to_element_with_offset sometimes fails with a MoveTargetOutOfBoundsException exception
+            body_size = self.body.size
+            ActionChains(self.testcase.driver).move_to_element(self.body).perform()
+            ActionChains(self.testcase.driver) \
+                .move_by_offset(-body_size['width'] / 2, -body_size['height'] / 2) \
+                .perform()
+
+            ActionChains(self.testcase.driver).move_by_offset(x, y).perform()
+        finally:
+            ActionChains(self.testcase.driver).release().perform()
+
         return self.find_draggable_component(component.type, id=component.id)
 
     def find_component(self, type, group_id, id=None, title=None):
