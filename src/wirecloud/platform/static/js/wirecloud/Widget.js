@@ -491,34 +491,37 @@
             title = clean_title.call(this, title);
 
             return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                    workspace_id: this.tab.workspace.id,
-                    tab_id: this.tab.id,
-                    iwidget_id: this.id
-                });
+                var content, url;
 
                 if (this.volatile) {
                     _rename.call(this, title);
+                    resolve(this);
+                } else {
+                    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                        workspace_id: this.tab.workspace.id,
+                        tab_id: this.tab.id,
+                        iwidget_id: this.id
+                    });
+
+                    content = {
+                        title: title
+                    };
+
+                    Wirecloud.io.makeRequest(url, {
+                        method: 'POST',
+                        requestHeaders: {'Accept': 'application/json'},
+                        contentType: 'application/json',
+                        postBody: JSON.stringify(content),
+                        onComplete: function (response) {
+                            if (response.status === 204) {
+                                _rename.call(this, title);
+                                resolve(this);
+                            } else {
+                                reject(/* TODO */);
+                            }
+                        }.bind(this)
+                    });
                 }
-
-                var content = {
-                    title: title
-                };
-
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(content),
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            _rename.call(this, title);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
             }.bind(this));
         },
 
