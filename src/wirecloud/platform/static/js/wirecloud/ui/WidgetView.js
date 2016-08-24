@@ -418,7 +418,7 @@
             previousWidth = this.wrapperElement.offsetWidth;
             previousHeight = this.wrapperElement.offsetHeight;
 
-            dragboardChange = this.layout.dragboard !== newLayout.dragboard;
+            dragboardChange = this.layout.dragboard !== newLayout.dragboard || privates.get(this).tab !== newLayout.dragboard.tab;
             oldLayout = this.layout;
 
             affectedWidgetsRemoving = oldLayout.removeWidget(this, dragboardChange);
