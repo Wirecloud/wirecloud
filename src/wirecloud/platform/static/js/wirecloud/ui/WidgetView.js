@@ -320,7 +320,7 @@
             }
         },
 
-        setShape: function setShape(shape, resizeLeftSide) {
+        setShape: function setShape(shape, resizeLeftSide, persist) {
             var oldWidth = this.shape.width;
             var oldHeight = this.shape.height;
 
@@ -334,7 +334,7 @@
             notify_shape.call(this);
 
             // Notify resize event
-            this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.shape.width, this.shape.height, resizeLeftSide);
+            this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.shape.width, this.shape.height, resizeLeftSide, persist);
         },
 
         load: function load() {

@@ -290,6 +290,26 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(api_test_iwidget.error_count, 3)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 5)
 
+    def test_resize_widgets(self):
+        self.login(username='user_with_workspaces')
+
+        widget1 = self.widgets[1]
+        old_size = widget1.size
+        old_position = widget1.position
+
+        widget1.resize(bottom_left=2)
+        new_size = widget1.size
+        new_position = widget1.position
+        self.assertNotEqual(new_size, old_size)
+        self.assertNotEqual(new_position, old_position)
+
+        self.reload()
+        self.wait_wirecloud_ready()
+
+        widget1 = self.widgets[1]
+        self.assertEqual(new_size, widget1.size)
+        self.assertEqual(new_position, widget1.position)
+
     def _check_modified_widget_preferences(self, modal):
         self.assertEqual(modal.get_field('list').value, "1")
         self.assertEqual(modal.get_field('text').value, "test")
