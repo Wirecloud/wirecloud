@@ -454,29 +454,31 @@
          */
         remove: function remove() {
             return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                    workspace_id: this.tab.workspace.id,
-                    tab_id: this.tab.id,
-                    iwidget_id: this.id
-                });
+                var url;
 
                 if (this.volatile) {
                     _remove.call(this);
                     resolve(this);
-                }
+                } else {
+                    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                        workspace_id: this.tab.workspace.id,
+                        tab_id: this.tab.id,
+                        iwidget_id: this.id
+                    });
 
-                Wirecloud.io.makeRequest(url, {
-                    method: 'DELETE',
-                    requestHeaders: {'Accept': 'application/json'},
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            _remove.call(this);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
+                    Wirecloud.io.makeRequest(url, {
+                        method: 'DELETE',
+                        requestHeaders: {'Accept': 'application/json'},
+                        onComplete: function (response) {
+                            if (response.status === 204) {
+                                _remove.call(this);
+                                resolve(this);
+                            } else {
+                                reject(/* TODO */);
+                            }
+                        }.bind(this)
+                    });
+                }
             }.bind(this));
         },
 
