@@ -454,29 +454,31 @@
          */
         remove: function remove() {
             return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                    workspace_id: this.tab.workspace.id,
-                    tab_id: this.tab.id,
-                    iwidget_id: this.id
-                });
+                var url;
 
                 if (this.volatile) {
                     _remove.call(this);
                     resolve(this);
-                }
+                } else {
+                    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                        workspace_id: this.tab.workspace.id,
+                        tab_id: this.tab.id,
+                        iwidget_id: this.id
+                    });
 
-                Wirecloud.io.makeRequest(url, {
-                    method: 'DELETE',
-                    requestHeaders: {'Accept': 'application/json'},
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            _remove.call(this);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
+                    Wirecloud.io.makeRequest(url, {
+                        method: 'DELETE',
+                        requestHeaders: {'Accept': 'application/json'},
+                        onComplete: function (response) {
+                            if (response.status === 204) {
+                                _remove.call(this);
+                                resolve(this);
+                            } else {
+                                reject(/* TODO */);
+                            }
+                        }.bind(this)
+                    });
+                }
             }.bind(this));
         },
 
@@ -489,34 +491,37 @@
             title = clean_title.call(this, title);
 
             return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                    workspace_id: this.tab.workspace.id,
-                    tab_id: this.tab.id,
-                    iwidget_id: this.id
-                });
+                var content, url;
 
                 if (this.volatile) {
                     _rename.call(this, title);
+                    resolve(this);
+                } else {
+                    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                        workspace_id: this.tab.workspace.id,
+                        tab_id: this.tab.id,
+                        iwidget_id: this.id
+                    });
+
+                    content = {
+                        title: title
+                    };
+
+                    Wirecloud.io.makeRequest(url, {
+                        method: 'POST',
+                        requestHeaders: {'Accept': 'application/json'},
+                        contentType: 'application/json',
+                        postBody: JSON.stringify(content),
+                        onComplete: function (response) {
+                            if (response.status === 204) {
+                                _rename.call(this, title);
+                                resolve(this);
+                            } else {
+                                reject(/* TODO */);
+                            }
+                        }.bind(this)
+                    });
                 }
-
-                var content = {
-                    title: title
-                };
-
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(content),
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            _rename.call(this, title);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
             }.bind(this));
         },
 
@@ -560,56 +565,56 @@
             }
 
             return new Promise(function (resolve, reject) {
-                var url, content;
+                var content, url;
 
                 if (this.meta.uri === resource.uri) {
                     // From/to missing
                     change_meta.call(this, resource);
                     resolve(this);
-                }
+                } else {
+                    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                        workspace_id: this.tab.workspace.id,
+                        tab_id: this.tab.id,
+                        iwidget_id: this.id
+                    });
 
-                url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                    workspace_id: this.tab.workspace.id,
-                    tab_id: this.tab.id,
-                    iwidget_id: this.id
-                });
+                    content = {
+                        widget: resource.id
+                    };
 
-                content = {
-                    widget: resource.id
-                };
+                    Wirecloud.io.makeRequest(url, {
+                        method: 'POST',
+                        requestHeaders: {'Accept': 'application/json'},
+                        contentType: 'application/json',
+                        postBody: JSON.stringify(content),
+                        onComplete: function (response) {
+                            var message;
 
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(content),
-                    onComplete: function (response) {
-                        var message;
+                            if (response.status === 204) {
+                                var cmp = resource.version.compareTo(_private.get(this).resource.version);
 
-                        if (response.status === 204) {
-                            var cmp = resource.version.compareTo(_private.get(this).resource.version);
+                                if (cmp > 0) { // upgrade
+                                    message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
+                                        type: this.meta.type,
+                                        version: resource.version.text
+                                    });
+                                    this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                                } else if (cmp < 0) { // downgrade
+                                    message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
+                                        type: this.meta.type,
+                                        version: resource.version.text
+                                    });
+                                    this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                                }
 
-                            if (cmp > 0) { // upgrade
-                                message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
-                                    type: this.meta.type,
-                                    version: resource.version.text
-                                });
-                                this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
-                            } else if (cmp < 0) { // downgrade
-                                message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
-                                    type: this.meta.type,
-                                    version: resource.version.text
-                                });
-                                this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                                change_meta.call(this, resource);
+                                resolve(this);
+                            } else {
+                                reject(/* TODO */);
                             }
-
-                            change_meta.call(this, resource);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
+                        }.bind(this)
+                    });
+                }
             }.bind(this));
         }
 

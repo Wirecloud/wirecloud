@@ -117,7 +117,7 @@
         data.widget.wrapperElement.classList.remove('dragging');
         data.widget.setPosition({z: data.oldZIndex});
         if (data.innitialWidth !== data.widget.shape.width || data.innitialHeight !== data.widget.shape.height) {
-            widget.setShape({width: widget.shape.width, height: widget.shape.height}, data.resizeLeftSide);
+            widget.setShape({width: widget.shape.width, height: widget.shape.height}, data.resizeLeftSide, true);
         }
         handleElement.classList.remove("inUse");
 

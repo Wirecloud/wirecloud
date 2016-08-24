@@ -638,6 +638,18 @@ class WidgetTester(WebElementTester):
         self.testcase.driver.switch_to.default_content()  # TODO: work around webdriver bugs
 
     @property
+    def bottom_handle(self):
+        return WebElementTester(self.testcase, self.find_element(".wc-bottom-resize-handle"))
+
+    @property
+    def bottom_left_handle(self):
+        return WebElementTester(self.testcase, self.find_element(".wc-bottom-left-resize-handle"))
+
+    @property
+    def bottom_right_handle(self):
+        return WebElementTester(self.testcase, self.find_element(".wc-bottom-right-resize-handle"))
+
+    @property
     def content(self):
         return self.find_element(".wc-widget-content")
 
@@ -670,6 +682,20 @@ class WidgetTester(WebElementTester):
     @property
     def remove_button(self):
         return ButtonTester(self.testcase, self.find_element(".wc-remove"))
+
+    @property
+    def size(self):
+        return {
+            'width': "%ipx" % self.element.size['width'],
+            'height': "%ipx" % self.element.size['height']
+        }
+
+    @property
+    def position(self):
+        return {
+            'x': self.element.value_of_css_property('left'),
+            'y': self.element.value_of_css_property('top')
+        }
 
     @property
     def error_count(self):
@@ -735,6 +761,19 @@ class WidgetTester(WebElementTester):
             return driver.execute_script('return Wirecloud.activeWorkspace.findWidget("%s").title === "%s"' % (self.id, new_name))
 
         WebDriverWait(self.testcase.driver, timeout).until(name_changed)
+
+    def resize(self, bottom=None, bottom_left=None, bottom_right=None):
+        if bottom is not None:
+            handle = self.bottom_handle
+            ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(0, bottom).release().perform()
+
+        if bottom_left is not None:
+            handle = self.bottom_left_handle
+            ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(-bottom_left, 0).release().perform()
+
+        if bottom_right is not None:
+            handle = self.bottom_right_handle
+            ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(bottom_right, 0).release().perform()
 
     def wait_still(self, timeout=2):
         WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))

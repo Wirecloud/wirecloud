@@ -300,27 +300,27 @@
                     // From/to missing
                     change_meta.call(this, resource);
                     resolve(this);
-                }
+                } else {
+                    switch (resource.version.compareTo(_private.get(this).resource.version)) {
+                    case 1: // upgrade
+                        message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
+                            type: this.meta.type,
+                            version: resource.version.text
+                        });
+                        this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                        break;
+                    case -1: // downgrade
+                        message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
+                            type: this.meta.type,
+                            version: resource.version.text
+                        });
+                        this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                        break;
+                    }
 
-                switch (resource.version.compareTo(_private.get(this).resource.version)) {
-                case 1: // upgrade
-                    message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
-                        type: this.meta.type,
-                        version: resource.version.text
-                    });
-                    this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
-                    break;
-                case -1: // downgrade
-                    message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
-                        type: this.meta.type,
-                        version: resource.version.text
-                    });
-                    this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
-                    break;
+                    change_meta.call(this, resource);
+                    resolve(this);
                 }
-
-                change_meta.call(this, resource);
-                resolve(this);
             }.bind(this));
         }
 
