@@ -297,7 +297,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         old_size = widget1.size
         old_position = widget1.position
 
-        widget1.resize(bottom_left=2)
+        widget1.resize('bottom_left', -30, 30)
         new_size = widget1.size
         new_position = widget1.position
         self.assertNotEqual(new_size, old_size)

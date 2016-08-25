@@ -762,18 +762,11 @@ class WidgetTester(WebElementTester):
 
         WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 
-    def resize(self, bottom=None, bottom_left=None, bottom_right=None):
-        if bottom is not None:
-            handle = self.bottom_handle
-            ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(0, bottom).release().perform()
-
-        if bottom_left is not None:
-            handle = self.bottom_left_handle
-            ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(-bottom_left, 0).release().perform()
-
-        if bottom_right is not None:
-            handle = self.bottom_right_handle
-            ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(bottom_right, 0).release().perform()
+    def resize(self, handle_name, x=0, y=0, timeout=5):
+        handle = getattr(self, handle_name + '_handle')
+        ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(x, y).perform()
+        ActionChains(self.testcase.driver).release().perform()
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
 
     def wait_still(self, timeout=2):
         WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
