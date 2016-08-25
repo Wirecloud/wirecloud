@@ -313,7 +313,7 @@
 
         this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
-        if (this.source.pOptions.pageSize !== 0) {
+        if (this.source.options.pageSize !== 0) {
             priv.paginationInterface = new StyledElements.PaginationInterface(this.source);
             priv.statusBar.appendChild(priv.paginationInterface);
         }
