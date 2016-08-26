@@ -68,21 +68,21 @@
 
     register_operator_proxy = function register_operator_proxy(id, proxy) {
 
-        var ioperator;
+        var operator;
 
         if (!(id in proxiesByOperator)) {
-            ioperator = Wirecloud.activeWorkspace.wiring.ioperators[id];
+            operator = Wirecloud.activeWorkspace.wiring.operators[id];
             proxiesByOperator[id] = [];
-            ioperator.addEventListener('unload', unload_operator);
+            operator.addEventListener('unload', unload_operator);
         }
 
         proxiesByOperator[id].push(proxy);
     };
 
-    unload_operator = function unload_operator(ioperator) {
+    unload_operator = function unload_operator(operator) {
         var i, proxies;
 
-        proxies = proxiesByOperator[ioperator.id];
+        proxies = proxiesByOperator[operator.id];
         for (i = 0; i < proxies.length; i += 1) {
             try {
                 proxies[i].close();
@@ -90,8 +90,8 @@
         }
         proxies.length = 0;
 
-        ioperator.removeEventListener('unload', unload_operator);
-        delete proxiesByOperator[ioperator.id];
+        operator.removeEventListener('unload', unload_operator);
+        delete proxiesByOperator[operator.id];
     };
 
     make_request = function make_request(url, options) {
