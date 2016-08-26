@@ -20,7 +20,7 @@
  */
 
 /* jshint jasmine:true */
-/* globals StyledElements */
+/* globals FocusEvent, StyledElements */
 
 
 (function () {
@@ -197,36 +197,61 @@
 
         });
 
-        it("should support the focus method", function (done) {
+        it("should trigger focus events", function (done) {
 
             var element = new StyledElements.Select();
-            // Focus event is not triggered if the select is not attached to the DOM
-            element.appendTo(dom);
             element.addEventListener('focus', function (select) {
                 expect(select).toBe(element);
-                expect(element.hasClassName('focus')).toBe(true);
+                expect(element.hasClassName('focus')).toBeTruthy();
                 done();
             });
-            setTimeout(function () {
-                expect(element.focus()).toBe(element);
-            }, 0);
+            element.inputElement.dispatchEvent(new FocusEvent("focus"));
 
         });
 
         it("should trigger blur events", function (done) {
 
             var element = new StyledElements.Select();
-            var element2 = new StyledElements.Select();
-            // Blur event is not triggered if the select is not attached to the DOM
-            element.appendTo(dom);
-            element2.appendTo(dom);
             element.addEventListener('blur', function (select) {
                 expect(select).toBe(element);
-                expect(element.hasClassName('focus')).toBe(false);
+                expect(element.hasClassName('focus')).toBeFalsy();
                 done();
             });
-            element.focus();
-            element2.focus();
+            element.inputElement.dispatchEvent(new FocusEvent("focus"));
+            element.inputElement.dispatchEvent(new FocusEvent("blur"));
+
+        });
+
+        describe("blur()", function () {
+            var element;
+
+            beforeEach(function () {
+                // Provide a default instance of Select for testing
+                element = new StyledElements.Select();
+            });
+
+            it("should trigger blur events", function () {
+                spyOn(element.inputElement, 'blur');
+                expect(element.blur()).toBe(element);
+                expect(element.inputElement.blur.calls.count()).toBe(1);
+            });
+
+        });
+
+        describe("focus()", function () {
+            var element;
+
+            beforeEach(function () {
+                // Provide a default instance of Select for testing
+                element = new StyledElements.Select();
+            });
+
+            it("should trigger a focus event", function () {
+                spyOn(element.inputElement, 'focus');
+                expect(element.focus()).toBe(element);
+                expect(element.inputElement.focus.calls.count()).toBe(1);
+            });
+
         });
 
     });
