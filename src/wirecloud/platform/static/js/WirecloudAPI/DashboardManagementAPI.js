@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,14 +19,14 @@
  *
  */
 
-/* globals MashupPlatform */
+/* globals MashupPlatform, WeakMap */
 
 
 (function () {
 
     "use strict";
 
-    var platform, Wirecloud, resource, InputEndpoint, OutputEndpoint, resource_workspace, resource_element, counter;
+    var platform, Wirecloud, resource, InputEndpoint, OutputEndpoint, resource_workspace, resource_element, counter, privates;
 
     platform = window.parent;
     Wirecloud = platform.Wirecloud;
@@ -34,6 +34,7 @@
     InputEndpoint = MashupPlatform.priv.InputEndpoint;
     OutputEndpoint = MashupPlatform.priv.OutputEndpoint;
     counter = 1;
+    privates = new WeakMap();
 
     if ('widget' in MashupPlatform) {
         resource_workspace = resource.tab.workspace;
@@ -59,13 +60,19 @@
 
         Object.defineProperties(this, {
             'inputs': {value: inputs},
-            'outputs': {value: outputs},
-            'remove': {
-                value: function close() {
-                    real_widget.remove();
-                }
-            }
+            'outputs': {value: outputs}
         });
+
+        privates.set(this, real_widget);
+    };
+
+    Widget.prototype.addEventListener = function addEventListener() {
+        var real_widget = privates.get(this);
+        real_widget.addEventListener.apply(real_widget, arguments);
+    };
+
+    Widget.prototype.remove = function remove() {
+        privates.get(this).remove();
     };
 
     // Operator facade
@@ -84,13 +91,19 @@
 
         Object.defineProperties(this, {
             'inputs': {value: inputs},
-            'outputs': {value: outputs},
-            'remove': {
-                value: function close() {
-                    real_operator.remove();
-                }
-            }
+            'outputs': {value: outputs}
         });
+
+        privates.set(this, real_operator);
+    };
+
+    Operator.prototype.addEventListener = function addEventListener() {
+        var real_operator = privates.get(this);
+        real_operator.addEventListener.apply(real_operator, arguments);
+    };
+
+    Operator.prototype.remove = function remove() {
+        privates.get(this).remove();
     };
 
     // Workspace facade

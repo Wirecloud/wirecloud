@@ -1198,9 +1198,11 @@ provides the following attributes:
 - [`inputs`](#widgetinputs-attribute)
 - [`outputs`](#widgetoutputs-attribute)
 
-And the following method:
+And the following methods:
 
+- [`addEventListener`](#widgetaddeventlistener-method)
 - [`remove`](#widgetremove-method)
+
 
 #### `Widget.inputs` attribute
 
@@ -1211,6 +1213,7 @@ endpoints.
 Widget.inputs
 ```
 
+
 #### `Widget.outputs` attribute
 
 A dict with the input endpoints of the widget using as key the name of the output
@@ -1219,6 +1222,28 @@ endpoints.
 ```javascript
 Widget.outputs
 ```
+
+
+#### `Widget.addEventListener` method
+
+This method registers the specified listener on the `Widget` it's called on.
+
+```javascript
+Widget.addEventListener(name, handler)
+```
+
+- `name` (*required, string*): name of the event to listen for.
+- `listener` (*required, function*): function that will be called when an event,
+  of the indicated type, is raised by the widget.
+
+**Example usage:**
+
+```javascript
+var widget = MashupPlatform.mashup.addWidget(...);
+....
+widget.addEventListener("close", onWidgetClose);
+```
+
 
 #### `Widget.remove` method
 
@@ -1236,6 +1261,7 @@ var widget = MashupPlatform.mashup.addWidget(...);
 ....
 widget.remove();
 ```
+
 
 ### Workspace instances
 > new in WireCloud 1.0.0 / Widget API v3
@@ -1327,8 +1353,9 @@ method) provides the following attributes:
 - [`inputs`](#operatorinputs-attribute)
 - [`outputs`](#operatoroutputs-attribute)
 
-And the following method:
+And the following methods:
 
+- [`addEventListener`](#operatoraddeventlistener-method)
 - [`remove`](#operatorremove-method)
 
 
@@ -1349,6 +1376,27 @@ endpoints.
 
 ```javascript
 Operator.outputs
+```
+
+
+#### `Operator.addEventListener` method
+
+This method registers the specified listener on the `Operator` it's called on.
+
+```javascript
+Operator.addEventListener(name, handler)
+```
+
+- `name` (*required, string*): name of the event to listen for.
+- `listener` (*required, function*): function that will be called when an event,
+  of the indicated type, is raised by the operator.
+
+**Example usage:**
+
+```javascript
+var operator = MashupPlatform.mashup.addOperator(...);
+....
+operator.addEventListener("close", onOperatorClose);
 ```
 
 
