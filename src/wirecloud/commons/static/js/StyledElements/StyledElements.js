@@ -46,6 +46,15 @@
 
             Object.defineProperties(this, {
 
+                /**
+                 * `true` if this element is enabled (the user can interact
+                 * with this element).
+                 *
+                 * @memberof StyledElements.StyledElement#
+                 * @since 0.6.0
+                 *
+                 * @type {Boolean}
+                 */
                 enabled: {
                     get: function get() {
                         return !this.hasClassName('disabled');
@@ -59,6 +68,14 @@
                     }
                 },
 
+                /**
+                 * `true` if this element is hidden.
+                 *
+                 * @memberof StyledElements.StyledElement#
+                 * @since 0.6.0
+                 *
+                 * @type {Boolean}
+                 */
                 hidden: {
                     get: function get() {
                         return this.hasClassName('hidden');

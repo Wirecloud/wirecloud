@@ -185,6 +185,7 @@
 
             /**
              * @deprecated since version 0.6.0
+             * @see {@link StyledElements.Container#enabled}
              */
             isDisabled: function isDisabled() {
                 return this.disabledLayer != null;

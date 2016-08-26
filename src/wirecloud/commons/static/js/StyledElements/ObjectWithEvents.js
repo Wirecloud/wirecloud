@@ -33,7 +33,10 @@
     se.ObjectWithEvents = utils.defineClass({
 
         /**
-         * Create a new instance of class ObjectWithEvents
+         * Creates a new instance of class ObjectWithEvents
+         *
+         * @since 0.5
+         *
          * @mixin
          *
          * @name StyledElements.ObjectWithEvents
@@ -50,11 +53,13 @@
         members: /** @lends StyledElements.ObjectWithEvents.prototype */ {
 
             /**
-             * Execute all event handlers attached for the existing event.
+             * Executes all event handlers attached for the existing event.
+             *
              * @since 0.6
              *
              * @param {String} name
              *      A string containing a existing event.
+             *
              * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called.
              */
@@ -74,13 +79,15 @@
             },
 
             /**
-             * Attach an event handler for a given event.
+             * Attaches an event handler to a given event.
+             *
              * @since 0.5
              *
              * @param {String} name
              *      Event name
              * @param {Function} handler
              *      An event handler to execute when the event is triggered
+             *
              * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called
              */
@@ -98,11 +105,13 @@
             },
 
             /**
-             * Remove all event handlers for a given event
+             * Removes all event handlers for a given event.
+             *
              * @since 0.5
              *
              * @param {String} name
              *      event name
+             *
              * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called
              */
@@ -137,13 +146,15 @@
             },
 
             /**
-             * Remove an event handler from an event
+             * Removes an event handler from a given event.
+             *
              * @since 0.5
              *
              * @param {String} name
              *      Event name
              * @param {Function} handler
              *      A previously attached event
+             *
              * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called
              */
@@ -163,5 +174,45 @@
         }
 
     });
+
+    /**
+     * Attaches an event handler for a given event. This method is an alias of
+     * {@link StyledElements.ObjectWithEvents#addEventListener}.
+     *
+     * @since 0.7
+     *
+     * @memberof StyledElements.ObjectWithEvents
+     * @name StyledElements.ObjectWithEvents#on
+     * @method
+     *
+     * @param {String} name
+     *      Event name
+     * @param {Function} handler
+     *      An event handler to execute when the event is triggered
+     *
+     * @returns {StyledElements.ObjectWithEvents}
+     *      The instance on which the member is called
+     */
+    se.ObjectWithEvents.prototype.on = se.ObjectWithEvents.prototype.addEventListener;
+
+    /**
+     * Removes an event handler from a given event. This method is an alias of
+     * {@link StyledElements.ObjectWithEvents#removeEventListener}.
+     *
+     * @since 0.7
+     *
+     * @memberof StyledElements.ObjectWithEvents
+     * @name StyledElements.ObjectWithEvents#off
+     * @method
+     *
+     * @param {String} name
+     *      Event name
+     * @param {Function} handler
+     *      A previously attached event
+     *
+     * @returns {StyledElements.ObjectWithEvents}
+     *      The instance on which the member is called
+     */
+    se.ObjectWithEvents.prototype.off = se.ObjectWithEvents.prototype.removeEventListener;
 
 })(StyledElements, StyledElements.Utils);

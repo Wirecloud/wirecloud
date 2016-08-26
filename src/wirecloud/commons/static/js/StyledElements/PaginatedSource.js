@@ -66,7 +66,7 @@
      *      - requestStart:
      *      - requestEnd:
      *
-     * @constructor
+     * @interface
      * @extends {StyledElements.ObjectWithEvents}
      * @name StyledElements.PaginatedSource
      * @since 0.5
