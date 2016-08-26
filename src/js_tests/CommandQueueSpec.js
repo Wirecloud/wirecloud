@@ -22,6 +22,7 @@
 /* jshint jasmine:true */
 /* globals Promise, StyledElements */
 
+
 (function () {
 
     "use strict";

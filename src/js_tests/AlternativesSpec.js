@@ -22,6 +22,7 @@
 /* jshint jasmine:true */
 /* globals StyledElements, TransitionEvent */
 
+
 (function () {
 
     "use strict";
@@ -48,13 +49,6 @@
 
         endTransition = function endTransition(element) {
             element.dispatchEvent(new TransitionEvent("transitionend"));
-            /*
-            element.addEventListener.calls.allArgs().forEach(function (args) {
-                try {
-                    args[1]({});
-                } catch (e) {
-                }
-            });*/
         };
 
         describe("new Alternatives([options])", function () {

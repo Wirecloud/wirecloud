@@ -21,7 +21,7 @@
 
 /* jshint jasmine:true */
 /* globals StyledElements */
-/* jshint -W053 */
+
 
 (function () {
 
@@ -146,28 +146,40 @@
                 isEmpty = StyledElements.Utils.isEmpty;
             });
 
-            it("returns true if value is null or undefined", function () {
+            it("returns true if value is null", function () {
                 expect(isEmpty(null)).toBeTruthy();
-                expect(isEmpty()).toBeTruthy();
             });
 
-            it("returns true if value is boolean", function () {
-                expect(isEmpty(new Boolean(true))).toBeTruthy();
-                expect(isEmpty(new Boolean(false))).toBeTruthy();
+            it("returns true if value is undefined", function () {
+                expect(isEmpty(undefined)).toBeTruthy();
             });
 
-            it("returns true if value is number", function () {
-                expect(isEmpty(new Number(-1))).toBeTruthy();
-                expect(isEmpty(new Number(0))).toBeTruthy();
-                expect(isEmpty(new Number(1))).toBeTruthy();
+            it("returns true if value is a boolean true", function () {
+                expect(isEmpty(true)).toBeTruthy();
+            });
+
+            it("returns true if value is a boolean false", function () {
+                expect(isEmpty(false)).toBeTruthy();
+            });
+
+            it("returns true for negative numbers", function () {
+                expect(isEmpty(-1)).toBeTruthy();
+            });
+
+            it("returns true for number 0", function () {
+                expect(isEmpty(0)).toBeTruthy();
+            });
+
+            it("returns true for positive numbers", function () {
+                expect(isEmpty(1)).toBeTruthy();
             });
 
             it("returns true if value is string and string.length is 0", function () {
-                expect(isEmpty(new String(""))).toBeTruthy();
+                expect(isEmpty("")).toBeTruthy();
             });
 
             it("returns false if value is string and string.length is greater than 0", function () {
-                expect(isEmpty(new String("hello world"))).toBeFalsy();
+                expect(isEmpty("hello world")).toBeFalsy();
             });
 
             it("returns true if value is array and array.length is 0", function () {

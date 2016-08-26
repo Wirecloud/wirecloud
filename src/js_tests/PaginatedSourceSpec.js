@@ -19,8 +19,9 @@
  *
  */
 
- /* jshint jasmine:true */
+/* jshint jasmine:true */
 /* globals StyledElements */
+
 
 (function () {
 
