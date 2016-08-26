@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,7 +32,7 @@
         if (typeof field === "string") {
             fieldPath = [field];
         } else {
-            fieldPath = field.slice();
+            fieldPath = field.slice(0);
         }
 
         currentNode = item;
@@ -70,7 +70,7 @@
         var priv = privates.get(this);
 
         if (!keywords) {
-            priv.filteredElements = priv.elements;
+            priv.filteredElements = priv.elements.slice(0);
             return;
         }
 
@@ -100,7 +100,10 @@
             inverse = true;
             sort_id = sort_id.substr(1);
         }
-        column = priv.sort_info[sort_id];
+        column = priv.sort_info[sort_id] || {};
+        if (!('field' in column)) {
+            column.field = sort_id;
+        }
         sortFunc = column.sortFunc;
 
         if (sortFunc == null) {
@@ -148,8 +151,8 @@
                     return value1 - value2;
                 }.bind({field: column.field});
                 break;
-            // case "text":
             default:
+            case "text":
                 sortFunc = function (value1, value2) {
                     value1 = getFieldValue(value1, this.field);
                     value1 = value1 != null ? value1.toString() : '';
@@ -193,13 +196,17 @@
         onSuccess(elements, {current_page: page, total_count: priv.sortedElements.length});
     };
 
+    var onLengthGet = function onLengthGet() {
+        return privates.get(this).elements.length;
+    };
+
     /**
      * Creates a new instance of class StaticPaginatedSource.
      *
+     * @since 0.5
      * @constructor
      * @extends {StyledElements.PaginatedSource}
      * @name StyledElements.StaticPaginatedSource
-     * @since 0.5
      * @param {Object} options
      *      The options to be used
      */
@@ -220,21 +227,23 @@
             priv.sort_info = {};
         }
 
-        if (Array.isArray(options.initialElements)) {
-            this.changeElements(options.initialElements);
-        } else {
-            priv.elements = [];
-            priv.filteredElements = priv.elements;
-            priv.sortedElements = priv.elements;
-        }
+        // Properties
+        Object.defineProperties(this, {
+            length: {
+                get: onLengthGet
+            }
+        });
+
+        // Initialize source status
+        this.changeElements(options.initialElements);
     };
     StaticPaginatedSource.prototype = new StyledElements.PaginatedSource();
 
     /**
      * Updates the options used by this StaticPaginatedSource
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.StaticPaginatedSource#changeOptions
+     *
      * @param {Object} newOptions
      *      The new options to be used.
      */
@@ -251,18 +260,30 @@
         } else if (force_sort) {
             sortElements.call(this, this.options.order);
         }
-        StyledElements.PaginatedSource.prototype.changeOptions.call(this, newOptions);
+        return StyledElements.PaginatedSource.prototype.changeOptions.call(this, newOptions);
     };
 
     /**
      * Updates the elements of the StaticPaginatedSource
-     * @since 0.5
      *
-     * @kind function
-     * @name StyledElements.StaticPaginatedSource#changeElements
+     * @since 0.8
+     *
+     * @returns {Array}
+     *      Elements currently managed by this StaticPaginatedSource
+     */
+    StaticPaginatedSource.prototype.getElements = function getElements() {
+        return privates.get(this).elements.slice(0);
+    };
+
+    /**
+     * Updates the elements of the StaticPaginatedSource
+     *
+     * @since 0.5
      *
      * @param {Array.<Object>} newElements
      *      The new elements to be used.
+     * @returns {StaticPaginatedSource}
+     *      The instance on which the member is called.
      */
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {
         var priv = privates.get(this);
@@ -276,17 +297,20 @@
         sortElements.call(this, this.options.order);
 
         this.refresh();
+
+        return this;
     };
 
     /**
      * Adds an element to the StaticPaginatedSource
-     * @since 0.5
      *
-     * @kind function
-     * @name StyledElements.StaticPaginatedSource#addElement
+     * @since 0.5
      *
      * @param {Object} newElement
      *      The element to be added.
+     *
+     * @returns {StaticPaginatedSource}
+     *      The instance on which the member is called.
      */
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
         var priv = privates.get(this);
@@ -307,6 +331,8 @@
 
             this.refresh();
         }
+
+        return this;
     };
 
     var privates = new WeakMap();

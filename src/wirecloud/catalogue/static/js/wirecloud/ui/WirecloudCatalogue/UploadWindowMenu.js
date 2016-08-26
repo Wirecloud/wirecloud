@@ -39,8 +39,8 @@
         var monitor, entries, count, failures, onComplete, onUploadFailure;
 
         monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged components"), 1);
-        entries = this.fileTable.source.elements;
-        count = entries.length;
+        entries = this.fileTable.source.getElements();
+        count = this.fileTable.source.length;
         failures = [];
 
         onComplete = function () {
@@ -92,7 +92,7 @@
     };
 
     updateEmptyStatus = function updateEmptyStatus() {
-        var empty = this.fileTable.source.elements.length === 0;
+        var empty = this.fileTable.source.length === 0;
         this.acceptButton.setDisabled(empty);
         if (empty) {
             this.htmlElement.classList.add('wc-upload-mac-modal-empty');
@@ -253,12 +253,13 @@
     };
 
     UploadWindowMenu.prototype.removeFile = function removeFile(file) {
-        for (var i = 0; i < this.fileTable.source.elements.length; i++) {
-            var entry = this.fileTable.source.elements[i];
+        var entries = this.fileTable.source.getElements();
+        for (var i = 0; i < entries.length; i++) {
+            var entry = entries[i];
             if (entry.file === file) {
-                this.fileTable.source.elements.splice(i, 1);
+                entries.splice(i, 1);
+                this.fileTable.source.changeElements(entries);
                 updateEmptyStatus.call(this);
-                this.fileTable.source.refresh();
                 break;
             }
         }

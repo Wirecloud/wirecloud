@@ -142,10 +142,10 @@
     PaginatedSource.prototype = new StyledElements.ObjectWithEvents();
 
     /**
-     * Gets the elements of the current page
+     * Gets the elements of the current pageSize
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#getCurrentPage
+     *
      * @returns {Array.<Object>} currentElements
      *      The current elements.
      */
@@ -155,9 +155,9 @@
 
     /**
      * Updates the options used by this PaginatedSource
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#changeOptions
+     *
      * @param {Object} newOptions
      *      The new options to be used.
      */
@@ -190,45 +190,43 @@
             this.events.optionsChanged.dispatch(this, priv.options);
             this.refresh();
         }
+
+        return this;
     };
 
     /**
      * Changes to the first page
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#goToFirst
      */
     PaginatedSource.prototype.goToFirst = function goToFirst() {
-        this.changePage(0);
+        return this.changePage(0);
     };
 
     /**
      * Changes to the previous page
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#goToPrevious
      */
     PaginatedSource.prototype.goToPrevious = function goToPrevious() {
         var priv = privates.get(this);
-        this.changePage(priv.currentPage - 1);
+        return this.changePage(priv.currentPage - 1);
     };
 
     /**
      * Changes to the next page
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#goToNext
      */
     PaginatedSource.prototype.goToNext = function goToNext() {
         var priv = privates.get(this);
-        this.changePage(priv.currentPage + 1);
+        return this.changePage(priv.currentPage + 1);
     };
 
     /**
      * Changes to the last page
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#goToLast
      */
     PaginatedSource.prototype.goToLast = function goToLast() {
         var priv = privates.get(this);
@@ -249,9 +247,8 @@
 
     /**
      * Refreshes the current page
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#refresh
      */
     PaginatedSource.prototype.refresh = function refresh() {
         var priv = privates.get(this);
@@ -261,9 +258,9 @@
 
     /**
      * Changes to the chosen page
+     *
      * @since 0.5
-     * @kind function
-     * @name StyledElements.PaginatedSource#changePage
+     *
      * @param {Integer} index
      *      The number of the target page.
      */
