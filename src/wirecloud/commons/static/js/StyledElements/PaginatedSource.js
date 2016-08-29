@@ -112,6 +112,17 @@
             },
 
             /**
+             * Current estimation of the available items.
+             *
+             * @name StyledElements.PaginatedSource#totalCount
+             */
+            totalCount: {
+                get: function () {
+                    return priv.totalCount;
+                }
+            },
+
+            /**
              * Current number of pages.
              *
              * @name StyledElements.PaginatedSource#totalPages

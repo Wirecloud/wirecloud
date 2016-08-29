@@ -93,11 +93,11 @@
                 this.resource_painter.setError(utils.gettext('Connection error: No resource retrieved.'));
             }
 
-            if (pagination.totalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {
+            if (pagination.totalCount === 0 && pagination.options.keywords.trim() === "" && pagination.options.scope === 'all') {
                 this.resource_list.appendChild(this.emptyBox);
             } else if (pagination.totalCount === 0) {
                 msg = utils.gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
-                msg = interpolate(msg, {keywords: utils.escapeHTML(pagination.pOptions.keywords.trim())}, true);
+                msg = interpolate(msg, {keywords: utils.escapeHTML(pagination.options.keywords.trim())}, true);
                 this.resource_painter.setError(new StyledElements.Fragment(msg));
             }
 

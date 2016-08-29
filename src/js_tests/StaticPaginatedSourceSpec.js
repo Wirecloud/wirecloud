@@ -61,6 +61,7 @@
 
                 expect(element.getCurrentPage()).toEqual(entries);
                 expect(element.length).toBe(entries.length);
+                expect(element.totalCount).toBe(entries.length);
             });
 
         });
@@ -128,6 +129,7 @@
                 expect(element.getCurrentPage()).toEqual([entry3, entry1, entry2]);
                 expect(element.getElements()).toEqual(new_entries);
                 expect(element.length).toBe(new_entries.length);
+                expect(element.totalCount).toBe(3);
             });
 
         });
@@ -147,6 +149,7 @@
                 element.changeOptions({keywords: 'keyword'});
                 expect(element.getCurrentPage().length).toBe(2);
                 expect(element.length).toBe(4);
+                expect(element.totalCount).toBe(2);
             });
 
             it("should allow to change the order option", function () {
@@ -186,6 +189,7 @@
                 element.changeOptions({order: [['id', 'vendor']]});
                 expect(element.getCurrentPage()).toEqual([entry3, entry1, entry2]);
                 expect(element.length).toBe(3);
+                expect(element.totalCount).toBe(3);
             });
 
         });
