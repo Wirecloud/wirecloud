@@ -763,6 +763,7 @@ class WidgetTester(WebElementTester):
         WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 
     def resize(self, handle_name, x=0, y=0, timeout=5):
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
         handle = getattr(self, handle_name + '_handle')
         ActionChains(self.testcase.driver).click_and_hold(handle.element).move_by_offset(x, y).perform()
         ActionChains(self.testcase.driver).release().perform()

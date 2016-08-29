@@ -303,6 +303,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertNotEqual(new_size, old_size)
         self.assertNotEqual(new_position, old_position)
 
+        # Django uses http 1.0 by default
+        # If-Modified-Since has a 1 second resolution
+        time.sleep(1)
+
         self.reload()
         self.wait_wirecloud_ready()
 
