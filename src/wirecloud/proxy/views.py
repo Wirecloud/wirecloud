@@ -148,6 +148,10 @@ class Proxy():
         if cookie_header_content != '':
             request_data['headers']['Cookie'] = cookie_header_content
 
+        # Workaround some problems with empty bodies
+        if str(request_data['headers'].get('content-length', '0')).strip() == '0':
+            request_data['data'] = None
+
         # Open the request
         try:
             res = requests.request(request_data['method'], request_data['url'], headers=request_data['headers'], data=request_data['data'], stream=True, verify=getattr(settings, 'WIRECLOUD_HTTPS_VERIFY', True))
