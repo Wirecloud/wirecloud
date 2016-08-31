@@ -48,14 +48,26 @@
 
             this.wrapperElement = document.createElement(options.tagname);
             this.wrapperElement.className = 'se-container';
-            this.children = [];
-            this.useFullHeight = options.useFullHeight;
 
             if (options.id) {
                 this.wrapperElement.setAttribute('id', options.id);
             }
 
             this.addClassName(options['class']);
+
+            var priv = {
+                children: []
+            };
+
+            privates.set(this, priv);
+
+            Object.defineProperties(this, {
+                'children': {
+                    get: function () {
+                        return priv.children.slice(0);
+                    }
+                }
+            });
         },
 
         inherit: se.StyledElement,
@@ -63,27 +75,9 @@
         members: /** @lends StyledElements.Container.prototype */ {
 
             /**
-             * Check if an element is a descendant of the wrapperElement.
-             * @since 0.6
-             *
-             * @param {StyledElements.StyledElement|HTMLElement} childElement
-             *      An element that may be contained.
-             * @returns {Boolean}
-             *      If the given element is a descendant of the wrapperElement, even so
-             *      it is a direct child or nested more deeply.
-             */
-            has: function has(childElement) {
-
-                if (childElement instanceof se.StyledElement && this.children.indexOf(childElement) !== -1) {
-                    return true;
-                }
-
-                return childElement.parentElement == this.get();
-            },
-
-            /**
-             * Insert the `newElement` either to the end of this Container
+             * Inserts the `newElement` either to the end of this Container
              * or after the `refElement` given.
+             *
              * @since 0.5
              *
              * @param {(StyledElements.StyledElement|Node|String)} newElement
@@ -101,8 +95,9 @@
             },
 
             /**
-             * Inserts the `newElement` to the beginning of this Container
+             * Inserts the `newElement` to the beginning of this `Container`
              * or before the `refElement` given.
+             *
              * @since 0.7
              *
              * @param {(StyledElements.StyledElement|Node|String)} newElement
@@ -120,7 +115,8 @@
             },
 
             /**
-             * Removes the `childElement` from this Container.
+             * Removes the `childElement` from this `Container`.
+             *
              * @since 0.5
              *
              * @param {(StyledElements.StyledElement|Node)} childElement
@@ -133,53 +129,72 @@
                 utils.removeChild(this, childElement);
 
                 if (childElement instanceof se.StyledElement) {
-                    this.children.splice(this.children.indexOf(childElement), 1);
+                    var priv = privates.get(this);
+                    priv.children.splice(priv.children.indexOf(childElement), 1);
                 }
 
                 return this;
             },
 
+            /**
+             * Removes the `childElement` from this `Container`.
+             *
+             * @since 0.5
+             *
+             * @param {(StyledElements.StyledElement|Node)} childElement
+             *     An element to remove from this Container.
+             *
+             * @returns {StyledElements.Container}
+             *      The instance on which the member is called.
+             */
             repaint: function repaint(temporal) {
                 temporal = temporal !== undefined ? temporal : false;
 
-                if (this.useFullHeight) {
-                    if (this.wrapperElement.classList.contains('hidden')) {
-                        this.wrapperElement.style.height = "";
-                        return;
-                    }
-
-                    var height = this._getUsableHeight();
-                    if (height == null) {
-                        return; // nothing to do
-                    }
-
-                    this.wrapperElement.style.height = (height + "px");
-                }
-
-                for (var i = 0; i < this.children.length; i++) {
-                    this.children[i].repaint(temporal);
+                var priv = privates.get(this);
+                for (var i = 0; i < priv.children.length; i++) {
+                    priv.children[i].repaint(temporal);
                 }
             },
 
+            /**
+             * Removes all children from this `Container`.
+             *
+             * @since 0.5
+             *
+             * @returns {StyledElements.Container}
+             *      The instance on which the member is called.
+             */
             clear: function clear() {
-                this.children = [];
+                var priv = privates.get(this);
+
+                priv.children = [];
                 this.wrapperElement.innerHTML = "";
                 this.wrapperElement.scrollTop = 0;
                 this.wrapperElement.scrollLeft = 0;
-                if (this.disabledLayer != null) {
-                    this.wrapperElement.appendChild(this.disabledLayer);
+                if (priv.disabledLayer != null) {
+                    this.wrapperElement.appendChild(priv.disabledLayer);
                 }
 
                 return this;
             },
 
-            text: function (text) {
+            /**
+             * Gets the combined text content of this `Container`.
+             *
+             * @param {String} [newText] The text to set as the content of this
+             * `Container`
+             *
+             * @returns {StyledElements.Container|String}
+             *      The combined text content of this `Container` if the
+             *      `newText` parameter is not used. Otherways, the instance on
+             *      which the member is called.
+             */
+            text: function text(text) {
                 if (text == null) {
                     return this.get().textContent;
+                } else {
+                    return this.clear().appendChild("" + text);
                 }
-
-                this.children = [];
-                this.wrapperElement.textContent = "" + text;
             },
 
             /**
@@ -187,23 +202,28 @@
              * @see {@link StyledElements.Container#enabled}
              */
             isDisabled: function isDisabled() {
-                return this.disabledLayer != null;
+                return !this.enabled;
             },
 
             _onenabled: function _onenabled(enabled) {
+                var icon, priv;
+
+                priv = privates.get(this);
+
                 if (enabled) {
-                    this.disabledLayer.parentNode.removeChild(this.disabledLayer);
-                    this.disabledLayer = null;
-                    this.disable_icon = null;
+                    if (priv.disabledLayer != null) {
+                        priv.disabledLayer.remove();
+                    }
+                    priv.disabledLayer = null;
                 } else {
-                    this.disabledLayer = document.createElement('div');
-                    this.disabledLayer.className = 'se-container-disable-layer';
+                    priv.disabledLayer = document.createElement('div');
+                    priv.disabledLayer.className = 'se-container-disable-layer';
 
-                    this.disabled_icon = document.createElement('i');
-                    this.disabled_icon.className = 'disable-icon fa fa-spin fa-spinner';
-                    this.disabledLayer.appendChild(this.disabled_icon);
+                    icon = document.createElement('i');
+                    icon.className = 'disable-icon fa fa-spin fa-spinner';
+                    priv.disabledLayer.appendChild(icon);
 
-                    this.wrapperElement.appendChild(this.disabledLayer);
+                    this.wrapperElement.appendChild(priv.disabledLayer);
                 }
             }
         }
@@ -213,6 +233,8 @@
     // =========================================================================
     // PRIVATE MEMBERS
     // =========================================================================
+
+    var privates = new WeakMap();
 
     var defaults = {
         class: "",
@@ -224,31 +246,33 @@
     var addChild = function addChild(newElement) {
         /* jshint validthis: true */
 
+        var priv = privates.get(this);
         if (newElement instanceof se.StyledElement) {
-            var index = this.children.indexOf(newElement);
+            var index = priv.children.indexOf(newElement);
 
             if (index === -1) {
-                this.children.push(newElement);
+                priv.children.push(newElement);
             }
         }
     };
 
     var orderbyIndex = function orderbyIndex() {
         /* jshint validthis: true */
-        var children = [];
+        var children = [], priv;
 
+        priv = privates.get(this);
         Array.prototype.forEach.call(this.get().childNodes, function (childNode) {
             var i, elementFound = false;
 
-            for (i = 0; i < this.children.length && !elementFound; i++) {
-                if (this.children[i].get() === childNode) {
-                    children.push(this.children.splice(i, 1)[0]);
+            for (i = 0; i < priv.children.length && !elementFound; i++) {
+                if (priv.children[i].get() === childNode) {
+                    children.push(priv.children.splice(i, 1)[0]);
                     elementFound = true;
                 }
             }
-        }.bind(this));
+        });
 
-        this.children = children;
+        priv.children = children;
     };
 
 })(StyledElements, StyledElements.Utils);

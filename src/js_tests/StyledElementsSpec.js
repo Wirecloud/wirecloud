@@ -63,56 +63,6 @@
 
         });
 
-        it("should allow to add elements to containers using the appendChild method", function () {
-
-            var container = new StyledElements.Container();
-            var element = new StyledElements.Button();
-            expect(container.appendChild(element).children).toEqual([element]);
-
-        });
-
-        it("should allow to add string nodes to containers using the appendChild method", function () {
-
-            var container = new StyledElements.Container();
-            expect(container.appendChild("hello ").appendChild("world!!").children).toEqual([]);
-            expect(container.wrapperElement.textContent, "hello world!!");
-
-        });
-
-        it("should allow to add elements to containers using the appendChild method (duplicated)", function () {
-
-            var container = new StyledElements.Container();
-            var element = new StyledElements.Button();
-            container.appendChild(element);
-            expect(container.appendChild(element).children).toEqual([element]);
-
-        });
-
-        it("should allow to add elements to containers using the prependChild method", function () {
-
-            var container = new StyledElements.Container();
-            var element = new StyledElements.Button();
-            expect(container.prependChild(element).children).toEqual([element]);
-
-        });
-
-        it("should allow to add string nodes to containers using the prependChild method", function () {
-
-            var container = new StyledElements.Container();
-            expect(container.prependChild("world!!").prependChild("hello ").children).toEqual([]);
-            expect(container.wrapperElement.textContent, "hello world!!");
-
-        });
-
-        it("should allow to add elements to containers using the prependChild method (duplicated)", function () {
-
-            var container = new StyledElements.Container();
-            var element = new StyledElements.Button();
-            container.appendChild(element);
-            expect(container.prependChild(element).children).toEqual([element]);
-
-        });
-
         describe("addClassName(classList)", function () {
 
             it("should do nothing when passing an empty string", function () {
