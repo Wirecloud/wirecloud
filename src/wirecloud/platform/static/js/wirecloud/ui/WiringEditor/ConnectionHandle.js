@@ -50,7 +50,7 @@
             this.wrapperElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'g');
             this.wrapperElement.setAttribute('class', "we-connection-handle");
             this.addClassName(endpoint.type + "-handle");
-            this.addClassName(options.extraClass);
+            this.addClassName(options['class']);
 
             this.lineElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'path');
             this.lineElement.setAttribute('class', "we-connection-handle-line");
@@ -194,7 +194,7 @@
 
     var defaults = {
         events: [],
-        extraClass: "",
+        class: "",
         radius: "6px",
         position: null
     };

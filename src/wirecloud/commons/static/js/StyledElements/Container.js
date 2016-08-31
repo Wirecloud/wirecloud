@@ -56,7 +56,6 @@
             }
 
             this.addClassName(options['class']);
-            this.addClassName(options.extraClass);
         },
 
         inherit: se.StyledElement,
@@ -216,9 +215,8 @@
     // =========================================================================
 
     var defaults = {
-        'class': "",
+        class: "",
         id: "",
-        extraClass: "",
         tagname: 'div',
         useFullHeight: false
     };

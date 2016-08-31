@@ -44,21 +44,21 @@
 
             this.btnEnable = new se.Button({
                 title: utils.gettext("Enable"),
-                extraClass: "btn-enable",
+                class: "btn-enable",
                 iconClass: "icon-lock"
             });
             this.btnEnable.addEventListener('click', btnenable_onclick.bind(this));
 
             this.btnCreate = new se.Button({
                 title: utils.gettext("Create behaviour"),
-                extraClass: "btn-create",
+                class: "btn-create",
                 iconClass: "icon-plus"
             });
             this.btnCreate.addEventListener('click', btncreate_onclick.bind(this));
 
             this.btnOrder = new se.ToggleButton({
                 title: utils.gettext("Order behaviours"),
-                extraClass: "btn-order",
+                class: "btn-order",
                 iconClass: "icon-sort"
             });
             this.btnOrder.addEventListener('click', btnorder_onclick.bind(this));

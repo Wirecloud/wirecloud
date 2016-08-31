@@ -117,7 +117,6 @@
         this.tooltip = null;
 
         this.addClassName(options['class']);
-        this.addClassName(options.extraClass);
 
         if (options.id.trim() !== "") {
             this.wrapperElement.setAttribute('id', options.id);
@@ -365,8 +364,7 @@
 
     var defaults = {
         id: "",
-        'class': "",
-        extraClass: "",
+        class: "",
         iconClass: "",
         stackedIconClass: "",
         state: '',
@@ -374,9 +372,9 @@
         usedInForm: false,
         text: "",
         depth: null,
-        'title': '',
-        'stackedIconPlacement': 'bottom-right',
-        'tabindex': 0
+        title: '',
+        stackedIconPlacement: 'bottom-right',
+        tabindex: 0
     };
 
     var events = ['blur', 'click', 'dblclick', 'focus', 'mouseenter', 'mouseleave'];

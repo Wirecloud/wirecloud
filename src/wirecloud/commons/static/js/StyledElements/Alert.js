@@ -55,15 +55,15 @@
                 this.addClassName('se-alert-' + options.alignment);
             }
 
-            this.addClassName(options.extraClass);
+            this.addClassName(options['class']);
 
             this.heading = new se.Container({
-                extraClass: "se-alert-heading"
+                class: "se-alert-heading"
             });
             this.heading.appendChild(options.title).insertInto(this.wrapperElement);
 
             this.body = new se.Container({
-                extraClass: "se-alert-body"
+                class: "se-alert-body"
             });
             this.body.appendChild(options.message).insertInto(this.wrapperElement);
         },
@@ -104,7 +104,7 @@
     var defaults = {
         state: 'warning',
         alignment: "",
-        extraClass: "",
+        class: "",
         title: "",
         message: ""
     };

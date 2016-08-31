@@ -47,7 +47,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         constructor: function WiringEditor(id, options) {
 
             options = utils.updateObject({}, options);
-            options.extraClass = "wiring-view wc-workspace-wiring";
+            options['class'] = "wiring-view wc-workspace-wiring";
 
             this.superClass(id, options);
 
@@ -387,7 +387,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.btnFindComponents = new se.ToggleButton({
             title: utils.gettext("Find components"),
-            extraClass: "btn-find-components",
+            class: "btn-find-components",
             iconClass: "icon-archive",
             stackedIconClass: "icon-plus-sign"
         });
@@ -400,7 +400,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.btnListBehaviours = new se.ToggleButton({
             title: utils.gettext("List behaviours"),
-            extraClass: "btn-list-behaviours",
+            class: "btn-list-behaviours",
             iconClass: "icon-sitemap"
         });
         this.btnListBehaviours.addEventListener('click', function (button) {

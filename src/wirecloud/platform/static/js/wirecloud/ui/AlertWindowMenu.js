@@ -45,7 +45,7 @@
         this.acceptButton = new StyledElements.Button({
             text: options.acceptLabel,
             state: 'danger',
-            extraClass: "btn-accept"
+            class: "btn-accept"
         });
         this._acceptListener = this._acceptListener.bind(this);
         this.acceptButton.addEventListener("click", this._acceptListener);
@@ -55,7 +55,7 @@
         this.cancelButton = new StyledElements.Button({
             text: options.cancelLabel,
             state: 'primary',
-            extraClass: "btn-cancel"
+            class: "btn-cancel"
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);

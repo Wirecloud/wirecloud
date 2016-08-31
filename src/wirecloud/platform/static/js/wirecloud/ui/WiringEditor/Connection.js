@@ -54,14 +54,14 @@
             this.pathElement.setAttribute('class', "connection-path");
             this.wrapperElement.appendChild(this.pathElement);
 
-            this.options = new se.Container({extraClass: "connection-options btn-group btn-group-circle btn-group-xs"});
+            this.options = new se.Container({class: "connection-options btn-group btn-group-circle btn-group-xs"});
             this.options.hide();
 
             this.btnLogs = new se.Button({
                 title: utils.gettext("Logs"),
                 state: 'default',
                 depth: 1,
-                extraClass: "btn-show-logs",
+                class: "btn-show-logs",
                 iconClass: "icon-bell-alt"
             });
             this.btnLogs.addEventListener('click', btnerrors_onclick.bind(this));
@@ -71,7 +71,7 @@
                 title: utils.gettext("Remove"),
                 state: 'danger',
                 depth: 1,
-                extraClass: "btn-remove",
+                class: "btn-remove",
                 iconClass: "icon-remove"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
@@ -81,7 +81,7 @@
                 title: utils.gettext("Preferences"),
                 state: 'default',
                 depth: 1,
-                extraClass: "we-prefs-btn",
+                class: "we-prefs-btn",
                 iconClass: "icon-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));

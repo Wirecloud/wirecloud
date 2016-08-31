@@ -46,7 +46,7 @@
             this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
 
             this.btnPrefs = new se.PopupButton({
-                extraClass: "we-prefs-btn",
+                class: "we-prefs-btn",
                 title: utils.gettext("Preferences"),
                 iconClass: "icon-reorder"
             });
@@ -54,7 +54,7 @@
 
             this.superClass({
                 state: null,
-                extraClass: "we-component component-" + wiringComponent.meta.type,
+                class: "we-component component-" + wiringComponent.meta.type,
                 title: wiringComponent.title,
                 subtitle: "v" + wiringComponent.meta.version,
                 selectable: true,

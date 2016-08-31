@@ -108,7 +108,7 @@
         this.version_selector.addEventListener('change', request_version.bind(this));
         this.version_selector.addEntries(versions);
 
-        this.changelog = new StyledElements.Container({'extraClass': 'markdown-body loading', 'tagname': 'article'});
+        this.changelog = new StyledElements.Container({class: 'markdown-body loading', tagname: 'article'});
 
         builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/upgrade_downgrade_component'], {
             currentversion: this.model.meta.version,

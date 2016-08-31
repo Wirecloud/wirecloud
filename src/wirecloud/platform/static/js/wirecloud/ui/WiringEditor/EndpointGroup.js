@@ -45,7 +45,7 @@
     ns.EndpointGroup = utils.defineClass({
 
         constructor: function EndpointGroup(type, component, EndpointClass) {
-            this.superClass({extraClass: "endpoints"});
+            this.superClass({class: "endpoints"});
             this.addClassName(type + "-endpoints");
 
             this.endpoints = {};

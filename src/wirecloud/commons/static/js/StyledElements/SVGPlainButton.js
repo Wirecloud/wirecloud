@@ -52,9 +52,7 @@
                 this.iconClass(options.iconClass);
             }
 
-            if (options.extraClass) {
-                this.addClassName(options.extraClass);
-            }
+            this.addClassName(options['class']);
 
             if (options.title) {
                 this.title(options.title);
@@ -125,7 +123,7 @@
     var defaults = {
         title: "",
         events: [],
-        extraClass: "",
+        class: "",
         iconClass: "",
         menuItems: null
     };

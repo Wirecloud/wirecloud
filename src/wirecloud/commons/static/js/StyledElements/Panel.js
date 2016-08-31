@@ -53,9 +53,9 @@
                 this.addClassName('panel-selectable');
             }
 
-            this.addClassName(options.extraClass);
+            this.addClassName(options['class']);
 
-            this.heading = new se.Container({extraClass: "panel-heading"});
+            this.heading = new se.Container({class: "panel-heading"});
             this.heading.insertInto(this.wrapperElement);
 
             if (options.title) {
@@ -63,7 +63,7 @@
             }
 
             if (options.buttons.length) {
-                this.buttons = new se.Container({extraClass: "panel-options"});
+                this.buttons = new se.Container({class: "panel-options"});
                 options.buttons.forEach(function (button) {
                     this.buttons.appendChild(button);
                 }, this);
@@ -75,7 +75,7 @@
             }
 
             if (!options.noBody) {
-                this.body = new se.Container({extraClass: "panel-body"});
+                this.body = new se.Container({class: "panel-body"});
                 this.body.insertInto(this.wrapperElement);
             }
 
@@ -134,7 +134,7 @@
             setTitle: function setTitle(title) {
 
                 if (this.heading.title == null) {
-                    this.heading.title = new se.Container({extraClass: "panel-title"});
+                    this.heading.title = new se.Container({class: "panel-title"});
                     this.heading.appendChild(this.heading.title);
                 }
 
@@ -146,7 +146,7 @@
             setSubtitle: function setSubtitle(subtitle) {
 
                 if (this.heading.subtitle == null) {
-                    this.heading.subtitle = new se.Container({extraClass: "panel-subtitle"});
+                    this.heading.subtitle = new se.Container({class: "panel-subtitle"});
                     this.heading.appendChild(this.heading.subtitle);
                 }
 
@@ -164,12 +164,12 @@
     // =========================================================================
 
     var defaults = {
+        class: "",
         events: [],
         title: "",
         subtitle: "",
         state: 'default',
         selectable: false,
-        extraClass: "",
         noBody: false,
         buttons: []
     };

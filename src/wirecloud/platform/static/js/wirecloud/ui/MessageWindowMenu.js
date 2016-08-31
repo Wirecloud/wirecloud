@@ -42,7 +42,7 @@
         this.button = new se.Button({
             text: utils.gettext('Accept'),
             state: 'primary',
-            extraClass: 'btn-accept btn-cancel'
+            class: 'btn-accept btn-cancel'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);

@@ -66,7 +66,7 @@
         this.inputSearchTypeahead.bind(this.inputSearch);
         this.inputSearchTypeahead.addEventListener('select', menuitem_onselect.bind(this));
 
-        this.userGroup = new se.Container({extraClass: "wc-dashboard-share-list"});
+        this.userGroup = new se.Container({class: "wc-dashboard-share-list"});
         this.userGroup.appendTo(this.windowContent);
 
         this.sharingUsers = [];
@@ -175,7 +175,7 @@
                 return span;
             },
             btndelete: function () {
-                var button = new se.Button({extraClass: "btn-remove-user", plain: true, iconClass: "icon-remove", title: utils.gettext("Remove")});
+                var button = new se.Button({class: "btn-remove-user", plain: true, iconClass: "icon-remove", title: utils.gettext("Remove")});
 
                 this.sharingUsers[data.username] = data;
 

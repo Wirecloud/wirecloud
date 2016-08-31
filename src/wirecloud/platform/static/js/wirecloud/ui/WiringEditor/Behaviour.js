@@ -57,21 +57,21 @@
 
             this.btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
-                extraClass: "we-prefs-btn",
+                class: "we-prefs-btn",
                 iconClass: "icon-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
 
             this.btnRemove = new se.Button({
                 title: utils.gettext("Remove"),
-                extraClass: "btn-remove",
+                class: "btn-remove",
                 iconClass: "icon-remove-sign"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
 
             this.superClass({
                 events: events,
-                extraClass: "behaviour",
+                class: "behaviour",
                 title: options.title,
                 selectable: true,
                 buttons: [this.btnPrefs, this.btnRemove]
