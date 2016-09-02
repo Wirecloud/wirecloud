@@ -73,6 +73,9 @@
 
                 expect(element.addElement({})).toBe(element);
                 expect(element.length).toBe(1);
+
+                expect(element.addElement({})).toBe(element);
+                expect(element.length).toBe(2);
             });
 
             it("should work when using the keywords option for filtered elements", function () {
@@ -89,9 +92,83 @@
                 expect(element.length).toBe(1);
             });
 
+            it("should update existing elements", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+
+                expect(element.addElement({id: "2"})).toBe(element);
+                expect(element.length).toBe(1);
+
+                expect(element.addElement({id: "2", type: "test"})).toBe(element);
+                expect(element.length).toBe(1);
+                expect(element.getElements()).toEqual([{id: "2", type: "test"}]);
+            });
+
+            it("should throw an error if the element does not have ID", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.addElement({});}).toThrow(new Error("The element must have a valid ID"));
+            });
+
+            it("should throw an error if ID is null", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.addElement({id: null});}).toThrow(new Error("The element must have a valid ID"));
+            });
+        });
+
+        describe("removeElement(element)", function () {
+            it("should remove the element", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+
+                expect(element.addElement({id: "1", doesntMatter: "true"})).toBe(element);
+                expect(element.length).toBe(1);
+
+                expect(element.addElement({id: "2"})).toBe(element);
+                expect(element.length).toBe(2);
+
+                expect(element.removeElement({id: "1"})).toBe(element);
+                expect(element.length).toBe(1);
+                expect(element.getElements()).toEqual([{id: "2"}]);
+            });
+
+            it("should throw an error if the element does not exist", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+
+                expect(function () {element.removeElement({id: "1"});}).toThrow(new Error("Element does not exist"));
+            });
+
+            it("should throw an error if options.idAttr is not set", function () {
+                var element = new se.StaticPaginatedSource();
+                expect(function () {element.removeElement({id: "1"});}).toThrow(new Error("options.idAttr is not set"));
+            });
+
+            it("should throw an error if the element does not have ID", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.removeElement({});}).toThrow(new Error("The element must have a valid ID"));
+            });
         });
 
         describe("changeElement(newElements)", function () {
+
+            var basicChangeElementTest = function basicChangeElementTest(element) {
+                var entries = [];
+                for (var i; i < 40; i++) {
+                    entries.push({id: i});
+                }
+
+                expect(element.changeElements(entries)).toBe(element);
+                expect(element.getCurrentPage()).toEqual(entries);
+                expect(element.getElements()).toEqual(entries);
+                expect(element.length).toBe(entries.length);
+            };
+
+            it("should work when idAttr is set", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                basicChangeElementTest(element);
+            });
+
+            it("should work when idAttr is not set", function () {
+                var element = new se.StaticPaginatedSource();
+                basicChangeElementTest(element);
+            });
 
             it("should discard previous elements", function () {
                 var entries = [];
@@ -130,6 +207,27 @@
                 expect(element.getElements()).toEqual(new_entries);
                 expect(element.length).toBe(new_entries.length);
                 expect(element.totalCount).toBe(3);
+            });
+
+            it("should not allow repeated elements", function () {
+                var entries = [];
+                for (var i; i < 10; i++) {
+                    entries.push({id: i});
+                }
+
+                var element = new se.StaticPaginatedSource({initialElements: entries, idAttr: "id"});
+
+                var new_entries = [{id: 1}, {id: 1}];
+                expect(function () {element.changeElements(new_entries);}).toThrow(new Error("All elements must have an unique ID"));
+                expect(element.getCurrentPage()).toEqual(entries);
+                expect(element.getElements()).toEqual(entries);
+                expect(element.length).toBe(entries.length);
+            });
+
+            it("should throw an error if any element does not have an ID", function () {
+                var entries = [{id: "valido"}, {}];
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.changeElements(entries);}).toThrow(new Error("All elements must have a valid ID"));
             });
 
         });
