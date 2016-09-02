@@ -73,6 +73,9 @@
 
                 expect(element.addElement({})).toBe(element);
                 expect(element.length).toBe(1);
+
+                expect(element.addElement({})).toBe(element);
+                expect(element.length).toBe(2);
             });
 
             it("should work when using the keywords option for filtered elements", function () {
@@ -89,6 +92,43 @@
                 expect(element.length).toBe(1);
             });
 
+            it("should update an existing element", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+
+                expect(element.addElement({id: "2"})).toBe(element);
+                expect(element.length).toBe(1);
+
+                expect(element.addElement({id: "2", type: "test"})).toBe(element);
+                expect(element.length).toBe(1);
+                expect(element.getElements()).toEqual([{id: "2", type: "test"}]);
+            });
+        });
+
+        describe("removeElement(element)", function () {
+            it("should remove the element", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+
+                expect(element.addElement({id: "1", doesntMatter: "true"})).toBe(element);
+                expect(element.length).toBe(1);
+
+                expect(element.addElement({id: "2"})).toBe(element);
+                expect(element.length).toBe(2);
+
+                expect(element.removeElement({id: "1"})).toBe(element);
+                expect(element.length).toBe(1);
+                expect(element.getElements()).toEqual([{id: "2"}]);
+            });
+
+            it("should throw an error if the element does not exist", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+
+                expect(function () {element.removeElement({});}).toThrow(new Error("Element does not exist"));
+            });
+
+            it("should throw an error if options.idAttr is not set", function () {
+                var element = new se.StaticPaginatedSource();
+                expect(function () {element.removeElement({});}).toThrow(new Error("options.idAttr is not set"));
+            });
         });
 
         describe("changeElement(newElements)", function () {
@@ -99,7 +139,7 @@
                     entries.push({id: i});
                 }
 
-                var element = new se.StaticPaginatedSource({initialElements: entries});
+                var element = new se.StaticPaginatedSource({initialElements: entries, idAttr: "id"});
 
                 var new_entries = [{id: 41}];
                 expect(element.changeElements(new_entries)).toBe(element);
@@ -130,6 +170,21 @@
                 expect(element.getElements()).toEqual(new_entries);
                 expect(element.length).toBe(new_entries.length);
                 expect(element.totalCount).toBe(3);
+            });
+
+            it("should not allow repeated elements", function () {
+                var entries = [];
+                for (var i; i < 10; i++) {
+                    entries.push({id: i});
+                }
+
+                var element = new se.StaticPaginatedSource({initialElements: entries, idAttr: "id"});
+
+                var new_entries = [{id: 1}, {id: 1}];
+                expect(function () {element.changeElements(new_entries);}).toThrow(new Error("All elements must have an unique ID"));
+                expect(element.getCurrentPage()).toEqual(entries);
+                expect(element.getElements()).toEqual(entries);
+                expect(element.length).toBe(entries.length);
             });
 
         });
