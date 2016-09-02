@@ -92,7 +92,7 @@
                 expect(element.length).toBe(1);
             });
 
-            it("should update an existing element", function () {
+            it("should update existing elements", function () {
                 var element = new se.StaticPaginatedSource({idAttr: "id"});
 
                 expect(element.addElement({id: "2"})).toBe(element);
@@ -143,13 +143,41 @@
 
         describe("changeElement(newElements)", function () {
 
+            it("should work when idAttr is set", function () {
+                var entries = [];
+                for (var i; i < 40; i++) {
+                    entries.push({id: i});
+                }
+
+                var element = new se.StaticPaginatedSource({idTtr: "id"});
+
+                expect(element.changeElements(entries)).toBe(element);
+                expect(element.getCurrentPage()).toEqual(entries);
+                expect(element.getElements()).toEqual(entries);
+                expect(element.length).toBe(entries.length);
+            });
+
+            it("should work when idAttr is not set", function () {
+                var entries = [];
+                for (var i; i < 40; i++) {
+                    entries.push({id: i});
+                }
+
+                var element = new se.StaticPaginatedSource();
+
+                expect(element.changeElements(entries)).toBe(element);
+                expect(element.getCurrentPage()).toEqual(entries);
+                expect(element.getElements()).toEqual(entries);
+                expect(element.length).toBe(entries.length);
+            });
+
             it("should discard previous elements", function () {
                 var entries = [];
                 for (var i; i < 40; i++) {
                     entries.push({id: i});
                 }
 
-                var element = new se.StaticPaginatedSource({initialElements: entries, idAttr: "id"});
+                var element = new se.StaticPaginatedSource({initialElements: entries});
 
                 var new_entries = [{id: 41}];
                 expect(element.changeElements(new_entries)).toBe(element);
