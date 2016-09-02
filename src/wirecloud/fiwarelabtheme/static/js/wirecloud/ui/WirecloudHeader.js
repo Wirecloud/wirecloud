@@ -136,7 +136,12 @@
         user_menu.append(new StyledElements.Separator());
         if (username === 'anonymous') {
             item = new StyledElements.MenuItem(utils.gettext('Sign in'), function () {
-                window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+                var login_url = Wirecloud.URLs.LOGIN_VIEW;
+                var next_url = window.location.pathname + window.location.search + window.location.hash;
+                if (next_url != '/') {
+                    login_url += '?next=' + encodeURIComponent(next_url);
+                }
+                window.location = login_url;
             });
             item.addIconClass('fa fa-sign-in');
             user_menu.append(item);

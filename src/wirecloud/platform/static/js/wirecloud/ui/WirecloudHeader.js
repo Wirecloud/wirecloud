@@ -78,7 +78,12 @@
                 text: utils.gettext('Sign in')
             });
             login_button.addEventListener('click', function () {
-                window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+                var login_url = Wirecloud.URLs.LOGIN_VIEW;
+                var next_url = window.location.pathname + window.location.search + window.location.hash;
+                if (next_url != '/') {
+                    login_url += '?next=' + encodeURIComponent(next_url);
+                }
+                window.location = login_url;
             });
             login_button.insertInto(wrapper);
         } else {
