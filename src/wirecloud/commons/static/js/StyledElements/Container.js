@@ -75,6 +75,29 @@
         members: /** @lends StyledElements.Container.prototype */ {
 
             /**
+             * Checks if the given element is a direct descendant of this
+             * `Container`.
+             *
+             * @since 0.6
+             *
+             * @param {StyledElements.StyledElement|HTMLElement} childElement
+             *      An element that may be contained.
+             *
+             * @returns {Boolean}
+             *      If the given element is a child of this `Container`.
+             */
+            has: function has(childElement) {
+
+                var priv = privates.get(this);
+
+                if (childElement instanceof se.StyledElement && priv.children.indexOf(childElement) !== -1) {
+                    return true;
+                }
+
+                return childElement.parentElement == this.get();
+            },
+
+            /**
              * Inserts the `newElement` either to the end of this Container
              * or after the `refElement` given.
              *
