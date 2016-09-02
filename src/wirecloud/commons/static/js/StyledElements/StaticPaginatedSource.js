@@ -306,14 +306,16 @@
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {
         var priv = privates.get(this);
         if (Array.isArray(newElements)) {
-            var bol = newElements.every(function (elem, i) {
-                if (this.options.idAttr && getFieldValue(elem, this.options.idAttr) === undefined) {
-                    throw new Error("All elements must have a valid ID");
+            if (this.options.idAttr) {
+                var bol = newElements.every(function (elem, i) {
+                    if (getFieldValue(elem, this.options.idAttr) == null) {
+                        throw new Error("All elements must have a valid ID");
+                    }
+                    return searchElement(newElements.slice(0, i), elem, this.options.idAttr) <= -1;
+                }.bind(this));
+                if (!bol) {
+                    throw new Error("All elements must have an unique ID");
                 }
-                return searchElement(newElements.slice(0, i), elem, this.options.idAttr) <= -1;
-            }.bind(this));
-            if (!bol) {
-                throw new Error("All elements must have an unique ID");
             }
             priv.elements = newElements;
 
@@ -343,7 +345,7 @@
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
         var priv = privates.get(this);
 
-        if (this.options.idAttr && getFieldValue(newElement, this.options.idAttr) === undefined) {
+        if (this.options.idAttr && getFieldValue(newElement, this.options.idAttr) == null) {
             throw new Error("The element must have a valid ID");
         }
 
@@ -396,7 +398,7 @@
         if (!this.options.idAttr) {
             throw new Error("options.idAttr is not set");
         } else {
-            if (getFieldValue(element, this.options.idAttr) === undefined) {
+            if (getFieldValue(element, this.options.idAttr) == null) {
                 throw new Error("The element must have a valid ID");
             }
         }
