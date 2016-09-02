@@ -372,6 +372,37 @@
         return this;
     };
 
+    /**
+     * Remove an element from the StaticPaginatedSource.
+     * @since 1.0.0a1
+     *
+     * @kind function
+     * @name StyledElements.StaticPaginatedSource#removeElement
+     *
+     * @param {Object} element
+     *      The element to be removed. Can contain only its ID
+     *
+     * @returns {StaticPaginatedSource}
+     *      The instance on which the member is called.
+     */
+    StaticPaginatedSource.prototype.removeElement = function removeElement(element) {
+        var priv = privates.get(this);
+        if (!this.options.idAttr) {
+            throw new Error("options.idAttr is not set");
+        }
+
+        // Look for the target element
+        var pos = searchElement(priv.elements, element, this.options.idAttr);
+        if (pos >= 0) {
+            priv.elements.splice(pos, 1);
+            filterElements.call(this, this.options.keywords);
+            sortElements.call(this, this.options.order);
+            return this;
+        } else {
+            throw new Error("Element does not exist");
+        }
+    };
+
     var privates = new WeakMap();
 
     StyledElements.StaticPaginatedSource = StaticPaginatedSource;
