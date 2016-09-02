@@ -102,6 +102,11 @@
                 expect(element.length).toBe(1);
                 expect(element.getElements()).toEqual([{id: "2", type: "test"}]);
             });
+
+            it("should throw an error if the element does not have ID", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.addElement({});}).toThrow(new Error("The element must have a valid ID"));
+            });
         });
 
         describe("removeElement(element)", function () {
@@ -122,12 +127,17 @@
             it("should throw an error if the element does not exist", function () {
                 var element = new se.StaticPaginatedSource({idAttr: "id"});
 
-                expect(function () {element.removeElement({});}).toThrow(new Error("Element does not exist"));
+                expect(function () {element.removeElement({id: "1"});}).toThrow(new Error("Element does not exist"));
             });
 
             it("should throw an error if options.idAttr is not set", function () {
                 var element = new se.StaticPaginatedSource();
-                expect(function () {element.removeElement({});}).toThrow(new Error("options.idAttr is not set"));
+                expect(function () {element.removeElement({id: "1"});}).toThrow(new Error("options.idAttr is not set"));
+            });
+
+            it("should throw an error if the element does not have ID", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.removeElement({});}).toThrow(new Error("The element must have a valid ID"));
             });
         });
 
@@ -185,6 +195,12 @@
                 expect(element.getCurrentPage()).toEqual(entries);
                 expect(element.getElements()).toEqual(entries);
                 expect(element.length).toBe(entries.length);
+            });
+
+            it("should throw an error if any element does not have an ID", function () {
+                var entries = [{id: "valido"}, {}];
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.changeElements(entries);}).toThrow(new Error("All elements must have a valid ID"));
             });
 
         });
