@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,80 +22,141 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (se, utils) {
 
     "use strict";
+
+    var privates = new WeakMap();
 
     var clickCallback = function clickCallback(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        if (this._related_input) {
-            this._related_input.focus();
+        var priv = privates.get(this);
+        if (this.enabled && priv.related_input) {
+            priv.related_input.focus();
         }
     };
 
+    /**
+     * Create a new instance of class `Addon`.
+     *
+     * Available options:
+     * - `text`: content to be displayed inside the Addon
+     * - `title`: content to be displayed on the tooltip associated with this
+     *   Addon
+     * - `class`: extra css classes to apply to this Addon.
+     *
+     * @constructor
+     * @extends StyledElements.StyledElement
+     * @name StyledElements.Addon
+     * @since 0.5
+     * @param {Object.<String, *>} options [description]
+     */
     var Addon = function Addon(options) {
         var defaultOptions = {
             'text': null,
             'title': '',
             'class': ''
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
-        StyledElements.StyledElement.call(this, []);
+        se.StyledElement.call(this, []);
 
         this.wrapperElement = document.createElement("span");
-        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "add-on");
+        this.wrapperElement.className = "se-add-on";
+        this.addClassName(options['class']);
 
-        if (options.title) {
-            this.setTitle(options.title);
-        }
+        privates.set(this, {
+            related_input: null
+        });
 
-        if (options.text) {
-            this.setLabel(options.text);
-        }
+        /* Init addon state */
+        this.setTitle(options.title);
+        this.setLabel(options.text);
 
         /* Event handlers */
         this._clickCallback = clickCallback.bind(this);
 
-        this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+        this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
     };
-    Addon.prototype = new StyledElements.Container();
+    Addon.prototype = new se.StyledElement();
+    Addon.prototype.Tooltip = StyledElements.Tooltip;
 
-    Addon.prototype.setDisabled = function setDisabled(disabled) {
-        if (disabled) {
-            this.addClassName('disabled');
-        } else {
-            this.removeClassName('disabled');
-        }
-        this.enabled = !disabled;
-    };
-
+    /**
+     * Sets the content to be displayed inside the addon.
+     *
+     * @since 0.5
+     *
+     * @param {String} label
+     *     Text to be used as the content of the addon.
+     *
+     * @returns {StyledElements.Addon}
+     *     The instance on which the member is called.
+     */
     Addon.prototype.setLabel = function setLabel(label) {
-        this.clear();
         this.wrapperElement.textContent = label;
+        return this;
     };
 
+    /**
+     * Sets the content to be displayed inside the tooltip associated with the
+     * addon.
+     *
+     * @since 0.5
+     *
+     * @param {String} title
+     *     Text to be used on the tooltip associated with this addon.
+     *
+     * @returns {StyledElements.Addon}
+     *     The instance on which the member is called.
+     */
     Addon.prototype.setTitle = function setTitle(title) {
-        this.wrapperElement.setAttribute('title', title);
+        var priv = privates.get(this);
+        if (title == null || title === "") {
+            if (priv.tooltip != null) {
+                priv.tooltip.destroy();
+                priv.tooltip = null;
+            }
+        } else {
+            if (priv.tooltip == null) {
+                priv.tooltip = new this.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
+                priv.tooltip.bind(this.wrapperElement);
+            }
+            priv.tooltip.options.content = title;
+        }
+
+        return this;
     };
 
+    /**
+     * Sets the content to be displayed inside the tooltip associated with the
+     * addon.
+     *
+     * @since 0.5
+     *
+     * @param {String} title
+     *     Text to be used on the tooltip associated with this addon.
+     *
+     * @returns {StyledElements.Addon}
+     *     The instance on which the member is called.
+     */
     Addon.prototype.assignInput = function assignInput(input) {
-        this._related_input = input;
+        privates.get(this).related_input = input;
+        return this;
     };
 
     Addon.prototype.destroy = function destroy() {
 
-        this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+        this.wrapperElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._clickCallback, true);
 
-        delete this.wrapperElement;
         delete this._clickCallback;
 
-        StyledElements.StyledElement.prototype.destroy.call(this);
+        se.StyledElement.prototype.destroy.call(this);
     };
 
-    StyledElements.Addon = Addon;
-})();
+    se.Addon = Addon;
+
+})(StyledElements, StyledElements.Utils);

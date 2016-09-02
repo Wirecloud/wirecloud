@@ -1,7 +1,7 @@
 @import 'variables';
 @import 'compass/utilities/color/contrast';
 
-.add-on, .box {
+.se-add-on, .box {
     display: inline-block;
     width: auto;
     min-width: 16px;
@@ -22,7 +22,7 @@
     }
 }
 
-.add-on {
+.se-add-on {
     color: contrast-color($addon-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     background-color: $addon-bg;
 }
@@ -34,40 +34,40 @@
 
 /* Deprecated */
 
-.input-prepend > .se-hl-west-container > .add-on:first-child {
+.input-prepend > .se-hl-west-container > .se-add-on:first-child {
     border-radius: $border-radius-base 0 0 $border-radius-base;
 }
 
-.input-prepend > .se-hl-west-container > .add-on:last-child {
+.input-prepend > .se-hl-west-container > .se-add-on:last-child {
     margin: 0 -1px 0 0;
 }
 
-.input-append > .se-hl-east-container > .add-on:first-child {
+.input-append > .se-hl-east-container > .se-add-on:first-child {
     margin: 0 0 0 -1px;
 }
 
-.input-append > .se-hl-east-container > .add-on:last-child {
+.input-append > .se-hl-east-container > .se-add-on:last-child {
     border-radius: 0 $border-radius-base $border-radius-base 0;
 }
 
 /* End dreprecation */
 
-.btn-group .add-on:not(:first-child), .btn-group .box:not(:first-child),
-.pagination .add-on:not(:first-child), .pagination .box:not(:first-child) {
+.btn-group .se-add-on:not(:first-child), .btn-group .box:not(:first-child),
+.pagination .se-add-on:not(:first-child), .pagination .box:not(:first-child) {
     margin-left: -1px;
 }
 
-.btn-group-lg .add-on, .btn-group-lg .box {
+.btn-group-lg .se-add-on, .btn-group-lg .box {
     height:  $input-height-large;
     padding: $padding-vertical-large $padding-horizontal-large;
 }
 
-.btn-group-sm .add-on, .btn-group-sm .box {
+.btn-group-sm .se-add-on, .btn-group-sm .box {
     height:  $input-height-small;
     padding: $padding-vertical-small $padding-horizontal-small;
 }
 
-.btn-group-xs .add-on, .btn-group-xs .box {
+.btn-group-xs .se-add-on, .btn-group-xs .box {
     height:  $input-height-xs;
     padding: $padding-vertical-xs $padding-horizontal-xs;
 }

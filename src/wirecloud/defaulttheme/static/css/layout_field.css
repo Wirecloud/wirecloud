@@ -2,7 +2,7 @@
     width: 100px;
 }
 
-.se-layout-field > .se-hl-center-container > .add-on {
+.se-layout-field > .se-hl-center-container > .se-add-on {
     display: block;
     width:   auto;
 }
@@ -11,7 +11,7 @@
     box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
-.se-layout-field.focus > .se-hl-center-container > .add-on {
+.se-layout-field.focus > .se-hl-center-container > .se-add-on {
     border-color: rgba(82, 168, 236, 0.8);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }

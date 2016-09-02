@@ -92,7 +92,7 @@
         }.bind(this));
 
         this.name_preview = document.createElement('div');
-        this.name_preview.className = 'add-on';
+        this.name_preview.className = 'se-add-on';
         this.wrapperElement.appendChild(this.name_preview);
         this.wrapperElement.appendChild(this.inputElement);
 
