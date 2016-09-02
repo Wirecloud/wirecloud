@@ -107,6 +107,11 @@
                 var element = new se.StaticPaginatedSource({idAttr: "id"});
                 expect(function () {element.addElement({});}).toThrow(new Error("The element must have a valid ID"));
             });
+
+            it("should throw an error if ID is null", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                expect(function () {element.addElement({id: null});}).toThrow(new Error("The element must have a valid ID"));
+            });
         });
 
         describe("removeElement(element)", function () {
@@ -143,32 +148,26 @@
 
         describe("changeElement(newElements)", function () {
 
-            it("should work when idAttr is set", function () {
+            var basicChangeElementTest = function basicChangeElementTest(element) {
                 var entries = [];
                 for (var i; i < 40; i++) {
                     entries.push({id: i});
                 }
 
-                var element = new se.StaticPaginatedSource({idTtr: "id"});
-
                 expect(element.changeElements(entries)).toBe(element);
                 expect(element.getCurrentPage()).toEqual(entries);
                 expect(element.getElements()).toEqual(entries);
                 expect(element.length).toBe(entries.length);
+            };
+
+            it("should work when idAttr is set", function () {
+                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                basicChangeElementTest(element);
             });
 
             it("should work when idAttr is not set", function () {
-                var entries = [];
-                for (var i; i < 40; i++) {
-                    entries.push({id: i});
-                }
-
                 var element = new se.StaticPaginatedSource();
-
-                expect(element.changeElements(entries)).toBe(element);
-                expect(element.getCurrentPage()).toEqual(entries);
-                expect(element.getElements()).toEqual(entries);
-                expect(element.length).toBe(entries.length);
+                basicChangeElementTest(element);
             });
 
             it("should discard previous elements", function () {

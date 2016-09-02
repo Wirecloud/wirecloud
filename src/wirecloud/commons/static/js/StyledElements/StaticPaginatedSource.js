@@ -36,12 +36,12 @@
         }
 
         currentNode = item;
-        while (currentNode !== null && fieldPath.length > 0) {
+        while (currentNode != null && fieldPath.length > 0) {
             currentField = fieldPath.splice(0, 1)[0];
             currentNode = currentNode[currentField];
         }
-        if (currentNode === null || fieldPath.length > 0) {
-            return "";
+        if (fieldPath.length > 0) {
+            return undefined;
         }
 
         return currentNode;
