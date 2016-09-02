@@ -275,6 +275,24 @@
         return privates.get(this).elements.slice(0);
     };
 
+    // Search the position of the element
+    var searchElement = function searchElement (list, el, idAttr) {
+        if (!idAttr) {
+            return -2;
+        }
+        var pos = -1;
+        list.every(function (elem, i) {
+            if (getFieldValue(elem, idAttr) === getFieldValue(el, idAttr)) {
+                pos = i;
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        return pos;
+    };
+
     /**
      * Updates the elements of the StaticPaginatedSource
      *
@@ -289,10 +307,18 @@
         var priv = privates.get(this);
 
         if (Array.isArray(newElements)) {
+            var bol = newElements.every(function (elem, i) {
+                return searchElement(newElements.slice(0, i), elem, this.options.idAttr) <= -1;
+            }.bind(this));
+            if (!bol) {
+                throw new Error("All elements must have an unique ID");
+            }
             priv.elements = newElements;
+
         } else {
             priv.elements = [];
         }
+
         filterElements.call(this, this.options.keywords);
         sortElements.call(this, this.options.order);
 
@@ -302,12 +328,12 @@
     };
 
     /**
-     * Adds an element to the StaticPaginatedSource
+     * Adds or updates an element to the StaticPaginatedSource
      *
      * @since 0.5
      *
      * @param {Object} newElement
-     *      The element to be added.
+     *      The element to be added / updated.
      *
      * @returns {StaticPaginatedSource}
      *      The instance on which the member is called.
@@ -315,22 +341,33 @@
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
         var priv = privates.get(this);
 
-        priv.elements.push(newElement);
+        // If the element already exists, remove it and add it again (updates it and sets it last)
+        var pos = searchElement(priv.elements, newElement, this.options.idAttr);
+        if (pos >= 0) {
+            priv.elements.splice(pos, 1);
+        }
 
+        // Add the element to the source
+        priv.elements.push(newElement);
+        // Remove it from the filtered elements
+        pos = searchElement(priv.filteredElements, newElement, this.options.idAttr);
+        if (pos >= 0) {
+            priv.filteredElements.splice(pos, 1);
+        }
+
+        // Filter the new element if there are any filters set.
         if (this.options.keywords) {
             var pattern = createFilterPattern(this.options.keywords);
             if (elementPassFilter.call(this, newElement, pattern)) {
                 priv.filteredElements.push(newElement);
-                sortElements.call(this, this.options.order);
-
-                this.refresh();
             }
         } else {
-            /* In this case we don't need modify priv.filteredElements as it is the same array as priv.elements */
-            sortElements.call(this, this.options.order);
-
-            this.refresh();
+            // IF there are no filters adds it.
+            priv.filteredElements.push(newElement);
         }
+
+        sortElements.call(this, this.options.order);
+        this.refresh();
 
         return this;
     };

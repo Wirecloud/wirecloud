@@ -234,7 +234,7 @@
                 }
                 sort_info[sort_id] = column;
             }
-            source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info});
+            source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info, idAttr: options.id});
         }
 
         priv.layout = new StyledElements.VerticalLayout({'class': className});
