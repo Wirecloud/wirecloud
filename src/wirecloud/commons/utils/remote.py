@@ -264,7 +264,7 @@ class WebElementTester(object):
     def find_element(self, css_selector):
         try:
             element = self.element.find_element_by_css_selector(css_selector)
-        except:
+        except NoSuchElementException:
             return None
 
         return element
