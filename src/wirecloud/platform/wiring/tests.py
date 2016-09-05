@@ -1567,41 +1567,39 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             cls.tearDownClass()
             raise unittest.SkipTest('EndpointManagementTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
-    def test_endpoints_suggested_when_mouse_is_over(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_test-mashup-recommendations_1.0.wgt', shared=True)
+    def test_endpoints_are_recommended_when_mouse_is_over(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/test-mashup-recommendations')
 
         with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                widgets = sidebar.find_components('widget', 'Wirecloud/Test')
-                widget1 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[0].id)
-                widget2 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[1].id, x=450)
-                widget3 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[2].id, x=450, y=200)
+            widget1 = wiring.find_draggable_component('widget', id=self.widgets[0].id)
+            widget2 = wiring.find_draggable_component('widget', id=self.widgets[1].id)
+            widget3 = wiring.find_draggable_component('widget', id=self.widgets[2].id)
 
             target1 = widget1.find_endpoint('target', 'inputendpoint')
             source2 = widget2.find_endpoint('source', 'outputendpoint')
             target3 = widget3.find_endpoint('target', 'inputendpoint')
             source3 = widget3.find_endpoint('source', 'outputendpoint')
 
-            source2.mouse_over(must_suggest=(target1, target3))
-            target1.mouse_over(must_suggest=(source2, source3))
+            source2.mouse_over(must_recommend=(target1, target3))
+            target1.mouse_over(must_recommend=(source2, source3))
 
-    def test_endpoints_suggested_while_connection_is_creating(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_test-mashup-recommendations_1.0.wgt', shared=True)
+    def test_endpoints_are_recommended_when_creating_connections(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/test-mashup-recommendations')
 
         with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                widgets = sidebar.find_components('widget', 'Wirecloud/Test')
-                widget1 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[0].id)
-                widget2 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[1].id, x=450)
-                widget3 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[2].id, x=450, y=200)
+            widget1 = wiring.find_draggable_component('widget', id=self.widgets[0].id)
+            widget2 = wiring.find_draggable_component('widget', id=self.widgets[1].id)
+            widget3 = wiring.find_draggable_component('widget', id=self.widgets[2].id)
 
             target1 = widget1.find_endpoint('target', 'inputendpoint')
             source2 = widget2.find_endpoint('source', 'outputendpoint')
             target3 = widget3.find_endpoint('target', 'inputendpoint')
             source3 = widget3.find_endpoint('source', 'outputendpoint')
 
-            source2.create_connection(target3, must_suggest=(target1, target3))
-            target1.create_connection(source3, must_suggest=(source2, source3))
+            source2.create_connection(target3, must_recommend=(target1, target3))
+            target1.create_connection(source3, must_recommend=(source2, source3))
 
     def test_endpoints_can_be_collapsed_and_expanded(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')

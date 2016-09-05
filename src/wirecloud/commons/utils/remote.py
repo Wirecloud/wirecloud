@@ -1076,12 +1076,12 @@ class WiringEndpointTester(WebElementTester):
         self.testcase.assertEqual(self.index, new_index)
         return self
 
-    def create_connection(self, endpoint, must_suggest=(), must_expand=()):
+    def create_connection(self, endpoint, must_recommend=(), must_expand=()):
         ActionChains(self.testcase.driver).click_and_hold(self.element).perform()
         # Wait until the browser reacts
         time.sleep(0.2)
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.is_active)
-        for endpoint in must_suggest:
+        for endpoint in must_recommend:
             self.testcase.assertTrue(endpoint.is_active)
         for component in must_expand:
             self.testcase.assertFalse(component.has_class('collapsed'))
@@ -1098,12 +1098,12 @@ class WiringEndpointTester(WebElementTester):
     def find_connections(self):
         return [WiringConnectionTester(self.testcase, e) for e in self.testcase.driver.find_elements_by_css_selector(".connection[data-%sid='%s']" % (self.type, self.id))]
 
-    def mouse_over(self, must_suggest=()):
+    def mouse_over(self, must_recommend=()):
         ActionChains(self.testcase.driver).move_to_element(self.element).perform()
         # Wait until the browser reacts
         time.sleep(0.2)
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.is_active)
-        for endpoint in must_suggest:
+        for endpoint in must_recommend:
             self.testcase.assertTrue(endpoint.is_active)
         return self
 
