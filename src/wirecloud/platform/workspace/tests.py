@@ -75,7 +75,6 @@ class WorkspaceTestCase(WirecloudTestCase):
 
         user_workspace = UserWorkspace.objects.filter(user=self.user, workspace=workspace)
         self.assertEqual(user_workspace.count(), 1)
-        self.assertEqual(user_workspace[0].active, True)
 
         workspace_tabs = Tab.objects.filter(workspace=workspace)
         self.assertEqual(workspace_tabs.count(), 1)

@@ -175,7 +175,7 @@ class BasicViewsAPI(WirecloudTestCase):
     def test_workspace_view_shared_with_org(self):
 
         # Add access permissions for the org organization
-        workspace = Workspace.objects.get(name="Workspace")
+        workspace = Workspace.objects.get(creator__username="user_with_workspaces", name="Workspace")
         workspace.groups.add(Group.objects.get(name="org"))
         url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Workspace'})
 
@@ -189,7 +189,7 @@ class BasicViewsAPI(WirecloudTestCase):
     def test_workspace_view_shared_with_user(self):
 
         # Add access permissions for the normuser user
-        workspace = Workspace.objects.get(name="Workspace")
+        workspace = Workspace.objects.get(creator__username="user_with_workspaces", name="Workspace")
         workspace.userworkspace_set.create(user=User.objects.get(username="normuser"))
         url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Workspace'})
 

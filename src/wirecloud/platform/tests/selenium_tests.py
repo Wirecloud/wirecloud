@@ -324,23 +324,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_widget_navigation_to_doc(self):
 
-        self.login(username='user_with_workspaces')
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
         iwidget = self.widgets[0]
 
         iwidget.open_menu().click_entry("User's Manual")
 
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
-        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
         self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v1.0')
+        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
         self.assertEqual(current_tab, 'Documentation')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login')
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url.startswith(self.live_server_url + '/login'))
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
