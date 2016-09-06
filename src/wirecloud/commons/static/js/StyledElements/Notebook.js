@@ -31,20 +31,24 @@
     };
 
     /**
-     * El componente Styled Notebook crea dos paneles separados por un separador y
-     * que permite redimensionar los dos paneles a la vez con el objetivo de que
-     * siguan ocupando el mismo espacio en conjunto.
+     * Creates a new instance of Notebook. This component is composed of
+     * {@link StyledElements.Tab}s.
      *
-     * @param options opciones soportadas:
-     *                - focusOnSetVisible: hace que se ponga el foco en las
-     *                  pestañas al hacerlas visibles (<code>true</code> por
-     *                  defecto).
+     * Supported events:
+     * - change: this event is dispatched when the notebook changes the visibleTab
+     *   tab.
+     * - tabDeletion: evento lanzado cuando se elimina algún tab del notebook.
+     * - tabInsertion: evento lanzado cuando se crea e inserta un nuevo tab en
+     *  el notebook.
      *
-     * Eventos que soporta este componente:
-     *      - change: evento lanzado cuando se cambia la pestaña.
-     *      - tabDeletion: evento lanzado cuando se elimina algún tab del notebook.
-     *      - tabInsertion: evento lanzado cuando se crea e inserta un nuevo tab en
-     *        el notebook.
+     * @constructor
+     * @extends StyledElements.StyledElement
+     * @name StyledElements.Notebook
+     * @since 0.5
+     * @param {Object.<String, *>} options
+     * - focusOnSetVisible (Boolean): focus the selected tab when they are
+     *  displayed (`true` by default).
+     *
      */
     var Notebook = function Notebook(options) {
         var tabWrapper;
@@ -220,9 +224,6 @@
     Notebook.prototype.Button = StyledElements.Button;
     Notebook.prototype.Tab = StyledElements.Tab;
 
-    /**
-     * @private
-     */
     var isTabVisible = function isTabVisible(tabIndex, full) {
         var tabElement, tabAreaStart, tabAreaEnd, tabOffsetRight;
 
@@ -239,9 +240,6 @@
         }
     };
 
-    /**
-     * @private
-     */
     var isLastTabVisible = function isLastTabVisible() {
         var lastTab = this.tabs.length - 1;
 
@@ -254,9 +252,6 @@
         return this.tabs.length < 2 || !isTabVisible.call(this, lastTab - 1);
     };
 
-    /**
-     * @private
-     */
     var enableDisableButtons = function enableDisableButtons() {
         if (this.tabs.length === 0) {
             this.moveLeftButton.disable();
@@ -286,9 +281,6 @@
         }
     };
 
-    /**
-     * @private
-     */
     var getFirstVisibleTab = function getFirstVisibleTab() {
         var i;
         for (i = 0; i < this.tabs.length; i += 1) {
@@ -300,7 +292,9 @@
     };
 
     /**
-     * Shift the tab area to display the previous tab.
+     * Shifts the tab area to display the previous tab.
+     *
+     * @name StyledElements.Notebook#shiftLeftTabs
      *
      * @returns {StyledElements.Notebook}
      *      The instance on which the member is called.
@@ -312,7 +306,9 @@
     };
 
     /**
-     * Shift the tab area to display the next tab.
+     * Shifts the tab area to display the next tab.
+     *
+     * @name StyledElements.Notebook#shiftRightTabs
      *
      * @returns {StyledElements.Notebook}
      *      The instance on which the member is called.
@@ -330,20 +326,17 @@
     };
 
     /**
-     * Crea un Tab y lo asocia con este notebook.
+     * Creates a new tab inside this notebook.
      *
-     * @param options opciones de la pestaña:
-     *                - containerOptions: indica las opciones particulares del
-     *                  contenedor que se creará para el contenido del Tab. Para
-     *                  ver las opciones disponibles ver el constructor de
-     *                  <code>Container</code>. Valor por defecto: {}.
-     *                - closable: indica si se le permitirá al usuario cerrar
-     *                  la pestaña mediante el botón cerrar (botón que sólo aparece
-     *                  si la pestaña es "closable"). Valor por defecto: true.
-     *                - name: indica el texto inicial que se mostrará dentro de la
-     *                  pestaña. Valor por defecto: "".
-     *                - title: indica el "title" inicial que tendrá el Tab (ver el
-     *                  método Tab.setTitle).
+     * @name StyledElements.Notebook#createTab
+     * @since 0.5
+     *
+     * @param {Object} options
+     *     Options to use for creating the tab. See {@link StyledElements.Tab}
+     *     for a list of options
+     *
+     * @returns {StyledElements.Tab}
+     *     The created tab.
      */
     Notebook.prototype.createTab = function createTab(options) {
         var defaultOptions = {
@@ -401,24 +394,34 @@
     };
 
     /**
-     * Devuelve la instancia de la pestaña indicada mediante su identificador.
+     * Returns the tab associated with the given ids.
      *
-     * @param id identificador de la pestaña que se quiere recuperar.
-     * @returns {Tab}
+     * @since 0.5
+     * @name StyledElements.Notebook#getTab
+     *
+     * @param {Object} id
+     *     id of the tab
+     *
+     * @returns {StyledElements.Tab}
      */
     Notebook.prototype.getTab = function getTab(id) {
         return this.tabsById[id];
     };
 
     /**
-     * Search a tab given the label. This method returns the first tab that maches.
+     * Searches a tab given the label. This method returns the first tab that maches.
      *
-     * @param id identificador de la pestaña que se quiere recuperar.
-     * @returns {Tab}
+     * @since 0.5
+     * @name StyledElements.Notebook#getTabByLabel
+     *
+     * @param {String} label
+     *     label to search for
+     *
+     * @returns {StyledElements.Tab}
      */
     Notebook.prototype.getTabByLabel = function getTabByLabel(label) {
         for (var i = 0; i < this.tabs.length; i++) {
-            if (this.tabs[i].nameText === label) {
+            if (this.tabs[i].name === label) {
                 return this.tabs[i];
             }
         }
@@ -426,8 +429,11 @@
     };
 
     /**
-     * Returns current tab.
+     * Returns current visible tab.
      *
+     * @name StyledElements.Notebook#getVisibleTab
+     * @deprecated since version 0.5
+     * @see {@link StyledElements.Tab#visibleTab}
      * @returns {StyledElements.Tab}
      */
     Notebook.prototype.getVisibleTab = function getVisibleTab() {
@@ -435,11 +441,13 @@
     };
 
     /**
-     * Devuelve la pesataña que está actualmente en la posición indicada.
+     * Returns the tab associated with the given index.
      *
-     * @param index indice de la pestaña de la que se quiere conocer el
-     * identificador de pestaña.
-     * @returns {Tab}
+     * @since 0.5
+     * @name StyledElements.Notebook#getTabByIndex
+     * @param {Number} index index of the tab to recover.
+     *
+     * @returns {StyledElements.Tab}
      */
     Notebook.prototype.getTabByIndex = function getTabByIndex(index) {
         return this.tabs[index];
@@ -650,17 +658,10 @@
     };
 
     /**
-     * Deshabilita/habilita este notebook. Cuando un notebook está deshabilitado
-     * los usuarios no pueden realizar ninguna operación de ningún componente
-     * incluido dentro de este.
+     * @override
      */
-    Notebook.prototype.setDisabled = function setDisabled(disabled) {
-        if (this.isDisabled() == disabled) {
-            // Nothing to do
-            return;
-        }
-
-        if (disabled) {
+    Notebook.prototype._onenabled = function _onenabled(enabled) {
+        if (!enabled) {
             this.disabledLayer = document.createElement('div');
             this.disabledLayer.classList.add('se-container-disable-layer');
             this.wrapperElement.appendChild(this.disabledLayer);
@@ -668,17 +669,16 @@
             this.disabledLayer.remove();
             this.disabledLayer = null;
         }
-        this.enabled = !disabled;
     };
 
-    Notebook.prototype.enable = function enable() {
-        this.setDisabled(false);
-    };
-
-    Notebook.prototype.disable = function disable() {
-        this.setDisabled(true);
-    };
-
+    /**
+     * Clears this notebook by removing all the tabs.
+     *
+     * @name StyledElements.Notebook#clear
+     *
+     * @returns {StyledElements.Notebook}
+     *      The instance on which the member is called.
+     */
     Notebook.prototype.clear = function clear() {
         this.tabs = [];
         this.tabsById = [];
@@ -693,6 +693,13 @@
         return this;
     };
 
+    /**
+     *
+     * @name StyledElements.Notebook#addButton
+     *
+     * @returns {StyledElements.Notebook}
+     *      The instance on which the member is called.
+     */
     Notebook.prototype.addButton = function addButton(button, position) {
         if (!(button instanceof StyledElements.Button) && !(button instanceof StyledElements.Select)) {
             throw new TypeError();
@@ -708,11 +715,15 @@
             this.tabWrapper.east.appendChild(button);
             break;
         }
+
+        return this;
     };
 
     /**
      * Requests fullscreen mode. You must call this method from a user event
      * handler, otherwise the browser will denie this request.
+     *
+     * @name StyledElements.Notebook#requestFullscreen
      *
      * @returns {StyledElements.Notebook}
      *      The instance on which the member is called.
@@ -734,6 +745,8 @@
 
     /**
      * Exists from fullscreen mode
+     *
+     * @name StyledElements.Notebook#exitFullscreen
      *
      * @returns {StyledElements.Notebook}
      *      The instance on which the member is called.

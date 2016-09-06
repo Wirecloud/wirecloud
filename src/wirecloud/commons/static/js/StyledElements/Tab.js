@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements */
+/* globals WeakMap, StyledElements */
 
 
 (function (se, utils) {
@@ -27,15 +27,34 @@
     "use strict";
 
     /**
-     * Este compontente representa a un tab de un notebook.
+     * Creates a new instance of Tab. This component is meant to be used inside a
+     * {@link StyledElements.Notebook} component, use
+     * {@link StyledElements.Notebook#createTab} for creating new tabs.
+     *
+     * Supported events:
+     * - close: event raised after removing the tab from its notebook.
+     * - hide: event raised after the tab is hidden.
+     * - show: event raised after the tab is displayed.
+     *
+     * @constructor
+     * @extends StyledElements.Container
+     * @name StyledElements.Tab
+     * @since 0.5
+     *
+     * @param {Object.<String, *>} options
+     *    Available options:
+     *
+     *    - `closable` (Boolean): `true` for allowing users to close this tab by
+     *    providing a close button.
+     *    - `containerOptions` (Object): options to be used for creating the
+     *    associated container.
+     *    - `name` (String): label to use for this tab.
+     *
      */
     var Tab = function Tab(id, notebook, options) {
-        if (arguments.length === 0) {
-            return;
-        }
 
-        if (!(notebook instanceof StyledElements.Notebook)) {
-            throw new Error("Invalid notebook argument");
+        if (!(notebook instanceof se.Notebook)) {
+            throw new TypeError("Invalid notebook argument");
         }
 
         var defaultOptions = {
@@ -43,30 +62,55 @@
             'containerOptions': {},
             'name': ''
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
-        // Work around common typo
-        if (options.closeable) {
-            options.closable = options.closeable;
-        }
+        options = utils.merge(defaultOptions, options);
         options.useFullHeight = true;
 
         Object.defineProperties(this, {
-            'notebook': {value: notebook},
-            'tabId': {value: id}
+            /**
+             * Name/label associated with this tab
+             *
+             * @memberof StyledElements.Tab#
+             * @since 0.8.0
+             *
+             * @type {String}
+             */
+            name: {
+                get: on_name_get
+            },
+            notebook: {
+                value: notebook
+            },
+            tabElement: {
+                get: on_tabelement_get
+            },
+            /**
+             * id used for identify this tab
+             *
+             * @memberof StyledElements.Tab#
+             * @since 0.5.0
+             *
+             * @type {String}
+             */
+            tabId: {
+                value: id
+            }
         });
 
-        this.tabElement = document.createElement("li");
-        this.tabElement.className = "se-notebook-tab";
-        this.name = document.createElement('span');
-        this.tabElement.appendChild(this.name);
+        var priv = {
+            nameElement: document.createElement('span'),
+            tabElement: document.createElement("li")
+        };
+        privates.set(this, priv);
+        priv.tabElement.className = "se-notebook-tab";
+        priv.tabElement.appendChild(priv.nameElement);
 
         /* call to the parent constructor */
-        StyledElements.Container.call(this, options.containerOptions, ['show', 'hide', 'close']);
+        se.Container.call(this, options.containerOptions, ['show', 'hide', 'close']);
 
         this.wrapperElement.classList.add("se-notebook-tab-content");
         this.wrapperElement.classList.add("hidden");
 
-        this.tabElement.addEventListener("click",
+        priv.tabElement.addEventListener("click",
                                     function () {
                                         this.notebook.goToTab(this.tabId);
                                     }.bind(this),
@@ -76,11 +120,11 @@
         /* Process options */
         if (options.closable) {
             var closeButton = new this.Button({
-                iconClass: "icon-remove",
+                iconClass: "fa fa-remove",
                 plain: true,
-                'class': "close_button"
+                class: "close_button"
             });
-            closeButton.insertInto(this.tabElement);
+            closeButton.insertInto(priv.tabElement);
 
             closeButton.addEventListener("click",
                                          this.close.bind(this),
@@ -90,32 +134,56 @@
         Tab.prototype.rename.call(this, options.name);
         this.setTitle(options.title);
     };
-    Tab.prototype = new StyledElements.Container({extending: true});
+    utils.inherit(Tab, se.Container);
 
-    Tab.prototype.Tooltip = StyledElements.Tooltip;
-    Tab.prototype.Button = StyledElements.Button;
+    Tab.prototype.Tooltip = se.Tooltip;
+    Tab.prototype.Button = se.Button;
 
     /**
-     * Elimina este Tab del notebook al que está asociado.
+     * Removes this `Tab` from the associated `Notebook`.
+     *
+     * @since 0.5
+     * @name StyledElements.Tab#close
+     *
+     * @returns {StyledElements.Tab}
+     *      The instance on which the member is called.
      */
     Tab.prototype.close = function close() {
         this.notebook.removeTab(this.tabId);
+
+        return this.trigger("close");
     };
 
     /**
-     * Establece el texto que se mostrará dentro de la pestaña que se mostrará en
-     * <code>notebook</code> y que representará al contenido de este
-     * <code>Tab</code>.
+     * Sets the name of this `Tab`.
+     *
+     * @since 0.5
+     * @name StyledElements.Tab#rename
+     *
+     * @param {String} name text to use as name of this `Tab`.
+     *
+     * @returns {StyledElements.Tab}
+     *      The instance on which the member is called.
      */
     Tab.prototype.rename = function rename(newName) {
-        this.nameText = newName;
-        this.name.textContent = this.nameText;
+        privates.get(this).nameElement.textContent = newName;
+
+        return this;
     };
 
     /**
-     * Establece el texto que se mostrará, mediante un dialogo popup, cuando el
-     * puntero del ratón este encima de la pestaña simulando al atributo "title" de
-     * los elementos HTML.
+     * Sets the content to be displayed on the tab's tooltip. Pass `null`,
+     * an empty string or directly don't use the `title` parameter for not
+     * using a tooltip.
+     *
+     * @since 0.5
+     * @name StyledElements.Tab#setTitle
+     *
+     * @param {String} [title]
+     *      Contents to display in the associated tooltip.
+     *
+     * @returns {StyledElements.Tab}
+     *      The instance on which the member is called.
      */
     Tab.prototype.setTitle = function setTitle(title) {
 
@@ -127,64 +195,82 @@
         } else {
             if (this.tooltip == null) {
                 this.tooltip = new this.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
-                this.tooltip.bind(this.tabElement);
+                this.tooltip.bind(privates.get(this).tabElement);
             }
             this.tooltip.options.content = title;
         }
+
+        return this;
     };
 
     /**
-     * Establece el icono de este Tab. En caso de no pasar un icono del notebook al
-     * que está asociado.
+     * @name StyledElements.Tab#setVisible
+     * @deprecated since version 0.5
+     * @see {@link StyledElements.Tab#show}, {@link StyledElements.Tab#hide} and
+     *      {@link StyledElements.Tab#hidden}
      */
-    Tab.prototype.setIcon = function setIcon(iconURL) {
-        if (iconURL == null) {
-            if (this.tabIcon != null) {
-                this.tabIcon.remove();
-                this.tabIcon = null;
-            }
-            return;
-        }
-
-        if (this.tabIcon == null) {
-            this.tabIcon = document.createElement('img');
-            this.tabElement.insertBefore(this.tabIcon, this.tabElement.firstChild);
-        }
-        this.tabIcon.src = iconURL;
-    };
-
     Tab.prototype.setVisible = function setVisible(newStatus) {
         return newStatus ? this.show() : this.hide();
     };
 
+    /**
+     * @override
+     * @name StyledElements.Tab#hide
+     */
     Tab.prototype.hide = function hide() {
         se.Container.prototype.hide.call(this);
-        this.tabElement.classList.remove("selected");
+        privates.get(this).tabElement.classList.remove("selected");
         return this;
     };
 
-    Tab.prototype.remove = function remove() {
-        this.notebook.removeTab(this.tabId);
-    };
-
+    /**
+     * @override
+     * @name StyledElements.Tab#show
+     */
     Tab.prototype.show = function show() {
         se.Container.prototype.show.call(this);
-        this.tabElement.classList.add("selected");
+        privates.get(this).tabElement.classList.add("selected");
         this.repaint(false);
         return this;
     };
 
+    /**
+     * Returns the id of this Tab.
+     *
+     * @name StyledElements.Tab#getId
+     * @deprecated since version 0.5
+     * @see {@link StyledElements.Tab#tabId}
+     *
+     * @returns {String}
+     *      id of the tab
+     */
     Tab.prototype.getId = function getId() {
         return this.tabId;
     };
 
     /**
      * TODO change this.
+     *
+     * @private
      */
     Tab.prototype.getTabElement = function getTabElement() {
-        return this.tabElement;
+        return privates.get(this).tabElement;
     };
 
-    StyledElements.Tab = Tab;
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
+
+    var on_name_get = function on_name_get() {
+        return privates.get(this).tabElement.textContent;
+    };
+
+    var on_tabelement_get = function on_tabelement_get() {
+        return privates.get(this).tabElement;
+    };
+
+    se.Tab = Tab;
 
 })(StyledElements, StyledElements.Utils);

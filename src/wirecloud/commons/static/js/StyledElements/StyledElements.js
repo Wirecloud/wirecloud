@@ -505,6 +505,7 @@
              * period of time, by more calls to this method. In that case, the
              * sequence should end with a call to this method using `false`
              * for the temporal parameter. `false` by default.
+             *
              * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
@@ -512,7 +513,10 @@
 
             /**
              * @deprecated since version 0.6
-             * @see {StyledElements.StyledElement#enable} | {StyledElements.StyledElement#disable}
+             * @see
+             *     {@link StyledElements.StyledElement#enable},
+             *     {@link StyledElements.StyledElement#disable} and
+             *     {@link StyledElements.StyledElement#enabled}
              */
             setDisabled: function setDisabled(disable) {
                 if (disable) {

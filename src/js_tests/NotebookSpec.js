@@ -27,7 +27,7 @@
 
     "use strict";
 
-    describe("Styled Notebook", function () {
+    describe("Notebook", function () {
         var dom = null;
 
         beforeEach(function () {
@@ -53,7 +53,7 @@
 
             expect(element.visibleTab).toBe(tab);
             expect(element.tabs).toEqual([tab]);
-            expect(element.tabArea.wrapperElement.children[0]).toBe(tab.tabElement);
+            expect(element.tabArea.wrapperElement.children[0]).toBe(tab.getTabElement());
             expect(element.tabArea.wrapperElement.children[1]).toBe(btnCreate.wrapperElement);
         });
 
@@ -91,8 +91,8 @@
 
                 expect(element.visibleTab).toBe(tab1);
                 expect(element.tabs).toEqual([tab1, tab2]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
             });
 
             it("should support create new tabs using the initiallyVisible option", function () {
@@ -105,8 +105,8 @@
                 expect(element.visibleTab).toBe(tab2);
 
                 expect(element.tabs).toEqual([tab1, tab2]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
             });
 
         });
@@ -138,7 +138,7 @@
 
             it("does nothing if the passed tab is the visible tab", function () {
                 element.goToTab(tab1);
-                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.tabElement);
+                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.getTabElement());
             });
 
         });
@@ -158,34 +158,34 @@
                 expect(element.removeTab(null)).toBe(element);
 
                 expect(element.tabs).toEqual([tab1, tab2, tab3]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
-                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
+                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.getTabElement());
             });
 
             it("does nothing if tab is not found", function () {
                 expect(element.removeTab("mytab4")).toBe(element);
 
                 expect(element.tabs).toEqual([tab1, tab2, tab3]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
-                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
+                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.getTabElement());
             });
 
             it("should allow removing tabs by id", function () {
                 expect(element.removeTab(tab2.getId())).toBe(element);
 
                 expect(element.tabs).toEqual([tab1, tab3]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.getTabElement());
             });
 
             it("should allow removing tabs using Tab instances", function () {
                 expect(element.removeTab(tab2)).toBe(element);
 
                 expect(element.tabs).toEqual([tab1, tab3]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.getTabElement());
             });
 
             it("should raise an exception if the passed tab is not owned by the notebook", function () {
@@ -193,9 +193,9 @@
                 var other_tab = other_notebook.createTab();
                 expect(function () {element.removeTab(other_tab);}).toThrow(jasmine.any(TypeError));
                 expect(element.tabs).toEqual([tab1, tab2, tab3]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
-                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
+                expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.getTabElement());
             });
 
             it("should allow removing the active tab", function () {
@@ -205,8 +205,8 @@
 
                 expect(element.visibleTab).toBe(tab2);
                 expect(element.tabs).toEqual([tab2, tab3]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab2.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab2.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.getTabElement());
             });
 
             it("should allow removing the active tab when the active tab is the right most tab", function () {
@@ -217,8 +217,8 @@
 
                 expect(element.visibleTab).toBe(tab2);
                 expect(element.tabs).toEqual([tab1, tab2]);
-                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
             });
 
             it("should allow removing the latest tab", function () {

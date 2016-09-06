@@ -38,14 +38,15 @@
      */
     var Alternative = function Alternative(id, options) {
 
-        if (!arguments.length) {
-            return;
-        }
-
         this.superClass(options, ['hide', 'show']);
 
         this.addClassName('hidden');
-        this.altId = id;
+
+        Object.defineProperties(this, {
+            altId: {
+                value: id
+            }
+        });
     };
 
     utils.inherit(Alternative, se.Container);

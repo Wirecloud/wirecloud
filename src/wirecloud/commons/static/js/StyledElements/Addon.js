@@ -61,7 +61,7 @@
         };
         options = utils.merge(defaultOptions, options);
 
-        se.StyledElement.call(this, []);
+        se.Container.call(this, []);
 
         this.wrapperElement = document.createElement("span");
         this.wrapperElement.className = "se-add-on";
@@ -81,8 +81,9 @@
         this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
     };
-    Addon.prototype = new se.StyledElement();
-    Addon.prototype.Tooltip = StyledElements.Tooltip;
+    utils.inherit(Addon, se.Container);
+
+    Addon.prototype.Tooltip = se.Tooltip;
 
     /**
      * Sets the content to be displayed inside the addon.

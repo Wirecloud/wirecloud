@@ -43,7 +43,7 @@
                     details = new StyledElements.Notebook();
                     details.addEventListener('change', function (notebook, oldTab, newTab) {
                         var new_status = Wirecloud.HistoryManager.getCurrentState();
-                        new_status.tab = newTab.nameText;
+                        new_status.tab = newTab.name;
                         Wirecloud.HistoryManager.pushState(new_status);
                     });
 

@@ -369,7 +369,7 @@
 
     var on_removetab = function on_removetab(model) {
         /*jshint validthis:true */
-        se.Tab.prototype.remove.call(this);
+        se.Tab.prototype.close.call(this);
     };
 
     var on_removewidget = function on_removewidget(widget) {

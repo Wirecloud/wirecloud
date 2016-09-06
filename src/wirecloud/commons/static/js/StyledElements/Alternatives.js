@@ -166,7 +166,7 @@
         }, options);
 
         if (alternative instanceof StyledElements.Alternative) {
-            id = alternative.getId();
+            id = alternative.altId;
             if (this.alternatives[id] !== alternative) {
                 throw new TypeError('alternative is not owner by this alternatives element');
             }
@@ -232,7 +232,7 @@
         }, options);
 
         if (alternative instanceof StyledElements.Alternative) {
-            if (this.alternatives[alternative.getId()] !== alternative) {
+            if (this.alternatives[alternative.altId] !== alternative) {
                 throw new TypeError('Invalid alternative');
             }
             command.inAlternative = alternative;
@@ -264,7 +264,7 @@
             outAlternative.addClassName('slide');
             inAlternative.addClassName([
                 'slide',
-                inAlternative.getId() < outAlternative.getId() ? 'left' : 'right'
+                inAlternative.altId < outAlternative.altId ? 'left' : 'right'
             ]).show();
             p = p.then(Promise.all([
                 utils.waitTransition(inAlternative.get()),
@@ -275,7 +275,7 @@
             });
             // Trigger slide effects
             setTimeout(function () {
-                outAlternative.addClassName(inAlternative.getId() < outAlternative.getId() ? 'right' : 'left');
+                outAlternative.addClassName(inAlternative.altId < outAlternative.altId ? 'right' : 'left');
                 inAlternative.removeClassName('left right');
             }, 10);
             break;

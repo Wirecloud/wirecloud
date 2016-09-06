@@ -27,7 +27,7 @@
 
     "use strict";
 
-    describe("Styled Alternatives", function () {
+    describe("Alternatives", function () {
         var endTransition, mockEvents, dom = null;
 
         beforeEach(function () {

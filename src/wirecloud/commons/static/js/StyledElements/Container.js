@@ -33,7 +33,7 @@
     se.Container = utils.defineClass({
 
         /**
-         * Create a new instance of class Container.
+         * Creates a new instance of class Container.
          *
          * @constructor
          * @extends StyledElements.StyledElement

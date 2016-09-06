@@ -78,11 +78,9 @@
             parent_class.apply(this, arguments);
         };
 
-        if (options !== undefined) {
-            new_class.prototype = new parent_class(options);
-        } else {
-            new_class.prototype = new parent_class();
-        }
+        new_class.prototype = Object.create(parent_class.prototype);
+        new_class.prototype.constructor = parent_class;
+
         for (var key in extra) {
             new_class.prototype[key] = extra[key];
         }
