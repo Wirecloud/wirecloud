@@ -266,10 +266,12 @@
                 'slide',
                 inAlternative.altId < outAlternative.altId ? 'left' : 'right'
             ]).show();
-            p = p.then(Promise.all([
-                utils.waitTransition(inAlternative.get()),
-                utils.waitTransition(outAlternative.get())
-            ])).then(function () {
+            p = p.then(function () {
+                return Promise.all([
+                    utils.waitTransition(inAlternative.get()),
+                    utils.waitTransition(outAlternative.get())
+                ]);
+            }).then(function () {
                 inAlternative.removeClassName('slide');
                 outAlternative.removeClassName('slide left right').hide();
             });
@@ -282,10 +284,12 @@
         case StyledElements.Alternatives.CROSS_DISSOLVE:
             inAlternative.addClassName('fade').show();
             outAlternative.addClassName('fade in');
-            p = p.then(Promise.all([
-                utils.waitTransition(inAlternative.get()),
-                utils.waitTransition(outAlternative.get())
-            ])).then(function () {
+            p = p.then(function () {
+                return Promise.all([
+                    utils.waitTransition(inAlternative.get()),
+                    utils.waitTransition(outAlternative.get())
+                ]);
+            }).then(function () {
                 inAlternative.removeClassName('fade in');
                 outAlternative.removeClassName('fade').hide();
             });

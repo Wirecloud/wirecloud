@@ -219,8 +219,15 @@ var LayoutManagerFactory = function () {
                 };
             }
 
+            var main_alts = [this.viewsByName.wiring, this.viewsByName.workspace];
+            newView = this.viewsByName[newView];
+            if (main_alts.indexOf(this.alternatives.visibleAlt) !== -1 && main_alts.indexOf(newView) !== -1) {
+                options.effect = StyledElements.Alternatives.HORIZONTAL_SLIDE;
+            } else {
+                options.effect = StyledElements.Alternatives.CROSS_DISSOLVE;
+            }
             Wirecloud.UserInterfaceManager.rootKeydownHandler = null;
-            this.alternatives.showAlternative(this.viewsByName[newView], options);
+            this.alternatives.showAlternative(newView, options);
         };
 
         /*

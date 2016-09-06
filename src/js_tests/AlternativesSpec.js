@@ -353,8 +353,10 @@
                 element.showAlternative(alt2, {effect: StyledElements.Alternatives.HORIZONTAL_SLIDE, onComplete: listener});
 
                 // Continue with the animation effect
-                endTransition(alt1.get());
-                endTransition(alt2.get());
+                setTimeout(function () {
+                    endTransition(alt1.get());
+                    endTransition(alt2.get());
+                }, 15);
             });
 
             it("should allow to use the effect option (horizontal slide, left-to-right)", function (done) {
@@ -379,8 +381,10 @@
                 element.showAlternative(alt1, {effect: StyledElements.Alternatives.HORIZONTAL_SLIDE, onComplete: listener});
 
                 // Continue with the animation effect
-                endTransition(alt1.get());
-                endTransition(alt2.get());
+                setTimeout(function () {
+                    endTransition(alt1.get());
+                    endTransition(alt2.get());
+                }, 15);
             });
 
             it("should allow to use the effect option (cross dissolve)", function (done) {
@@ -403,8 +407,10 @@
                 element.showAlternative(alt2, {effect: StyledElements.Alternatives.CROSS_DISSOLVE, onComplete: listener});
 
                 // Continue with the animation effect
-                endTransition(alt1.get());
-                endTransition(alt2.get());
+                setTimeout(function () {
+                    endTransition(alt1.get());
+                    endTransition(alt2.get());
+                }, 15);
             });
 
             it("should allow to use the effect option (none)", function (done) {
