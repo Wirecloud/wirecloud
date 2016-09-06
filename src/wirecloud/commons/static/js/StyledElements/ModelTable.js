@@ -202,7 +202,7 @@
             'initialSortColumn': -1,
             'pageSize': 5,
             'emptyMessage': utils.gettext('No data available'),
-            'allowMultipleSelect': false
+            'selectionType': "ignore"
         };
 
         options = utils.merge(defaultOptions, options);
@@ -224,7 +224,7 @@
         privates.set(this, priv);
 
         priv.selection = [];
-        priv.allowMultipleSelect = options.allowMultipleSelect;
+        priv.selectionType = options.selectionType;
         var source;
         if (options.source != null) {
             source = options.source;
@@ -262,18 +262,23 @@
                     return priv.selection;
                 },
                 set: function (value) {
+                    // Check if selection is ignored
+                    if (!isSelectionEnabled(priv.selectionType)) {
+                        throw new Error("Selection is disabled");
+                    }
                     if (!Array.isArray(value)) {
                         throw new TypeError();
                     }
-
-                    // Unhighlihgt previous selection
-                    if (priv.selection != null) {
-                        priv.selection.forEach(function (id) {
-                            if (id in priv.current_elements) {
-                                priv.current_elements[id].row.classList.remove('highlight');
-                            }
-                        }, this);
+                    if (priv.selectionType === "single" && value.length > 1) {
+                        throw new Error("Selection is set to \"single\" but tried to select " + value.length + " rows.");
                     }
+                    // Unhighlihgt previous selection
+                    priv.selection.forEach(function (id) {
+                        if (id in priv.current_elements) {
+                            priv.current_elements[id].row.classList.remove('highlight');
+                        }
+                    }, this);
+
                     priv.selection = value;
 
                     // Highlight the new selection
@@ -296,6 +301,11 @@
 
         // Deselect rows if clicked no row is clicked
         this.wrapperElement.addEventListener("click", function (evt) {
+            var priv = privates.get(this);
+            if (!isSelectionEnabled(priv.selectionType)) {
+                return;
+            }
+
             // Only deselect if no modifier key is pressed
             if (!evt.shiftKey && !evt.ctrlKey) {
                 this.select([]);
@@ -514,17 +524,27 @@
         evt.stopPropagation();
 
         changeSelection.call(this.table, this.item, evt, this.index);
+
         this.table.events.click.dispatch(this.item, evt);
+    };
+
+    var isSelectionEnabled = function isSelectionEnabled(selectionSettings) {
+        return selectionSettings === "single" || selectionSettings === "multiple";
     };
 
     // Row selection
     var changeSelection = function changeSelection(row, event, index) {
         var priv = privates.get(this);
 
+        // Check if selection is ignored
+        if (!isSelectionEnabled(priv.selectionType)) {
+            return;
+        }
+
         var selected, data, lastSelectedIndex, lower, upper, j;
         var id = priv.extractIdFunc(row);
 
-        if (priv.allowMultipleSelect && event.ctrlKey && event.shiftKey) {
+        if (priv.selectionType === "multiple" && event.ctrlKey && event.shiftKey) {
             // Control + shift behaviour
             data = this.source.getCurrentPage();
             lastSelectedIndex = data.indexOf(priv.lastSelected);
@@ -546,7 +566,7 @@
                 event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
             }
 
-        } else if (priv.allowMultipleSelect && event.shiftKey) {
+        } else if (priv.selectionType === "multiple" && event.shiftKey) {
             // Shift behaviour
             data = this.source.getCurrentPage();
             lastSelectedIndex = data.indexOf(priv.lastSelected);
@@ -566,7 +586,7 @@
                 event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
             }
 
-        } else if (priv.allowMultipleSelect && event.ctrlKey) {
+        } else if (priv.selectionType === "multiple" && event.ctrlKey) {
             // control behaviour
             priv.lastSelected = row;
             selected = this.selection.slice();

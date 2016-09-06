@@ -349,7 +349,7 @@
                 ];
 
                 // Create a new table
-                table = new StyledElements.ModelTable(columns, {id: 'id', allowMultipleSelect: true});
+                table = new StyledElements.ModelTable(columns, {id: 'id', selectionType: "multiple"});
 
                 // Create and push the data
                 var data = [
@@ -361,7 +361,26 @@
                 rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
             });
 
-            it("should allow simple selections", function () {
+            it("should throw an error if selection is disabled", function () {
+                var columns = [
+                    {field: "id", type: "number"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {id: 'id', selectionType: "ignore"});
+
+                // Create and push the data
+                var data = [
+                    {id: 0}
+                ];
+                table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+
+                expect(function () {table.select(0);}).toThrow(new Error("Selection is disabled"));
+
+            });
+
+            it("should allow single selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.selection).toEqual([1]);
 
@@ -370,6 +389,25 @@
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
 
                 expect(observed).toEqual(expected);
+            });
+
+            it("should throw an error if selection is simple and tries to select more than one row", function () {
+                var columns = [
+                    {field: "id", type: "number"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {id: 'id', selectionType: "single"});
+
+                // Create and push the data
+                var data = [
+                    {id: 0},
+                    {id: 1}
+                ];
+                table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+
+                expect(function () {table.select([0, 1]);}).toThrow(new Error("Selection is set to \"single\" but tried to select 2 rows."));
             });
 
             it("should allow multiple selections", function () {
@@ -419,6 +457,7 @@
                 });
 
                 describe("should allow click selections with control key pressed", function () {
+
                     it("should allow first selection", function () {
                         cell = rows[0].querySelector(".se-model-table-cell");
                         event = new Event("click");
