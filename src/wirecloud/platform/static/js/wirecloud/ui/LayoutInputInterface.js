@@ -114,18 +114,18 @@
         switch (this.layout.type) {
         case 'columnlayout':
             if (context.smart) {
-                context.smart = ' smart';
+                context.smart = utils.gettext(' smart');
             } else {
                 context.smart = '';
             }
-            summary = '%(columns)s%(smart)s columns';
+            summary = utils.gettext('%(columns)s%(smart)s columns');
             break;
         case 'gridlayout':
-            summary = '%(columns)s columns x %(rows)s rows';
+            summary = utils.gettext('%(columns)s columns x %(rows)s rows');
             break;
         }
         summary = utils.interpolate(summary, context);
-        this.summary_addon.setLabel(summary);
+        this.summary_addon.setLabel(summary).setTitle(summary);
     };
 
     /**
