@@ -24,7 +24,6 @@ import inspect
 import logging
 import json
 
-from django.conf.urls import patterns
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import get_ns_resolver, get_resolver, get_script_prefix, NoReverseMatch
 from django.utils.encoding import force_text
@@ -184,7 +183,7 @@ def clear_cache():
 def get_plugin_urls():
     plugins = get_plugins()
 
-    urls = patterns('',)
+    urls = ()
 
     for plugin in plugins:
         urls += plugin.get_urls()
@@ -433,7 +432,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_a
 class WirecloudPlugin(object):
 
     features = {}
-    urls = patterns('',)
+    urls = ()
 
     def get_market_classes(self):
         return {}

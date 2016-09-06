@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.views.generic.base import TemplateView
 
 from wirecloud.fiware.marketAdaptor import views
 
 
-urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
+urlpatterns = (
     url(r'^marketplace/(?P<market_user>[\w -]+)/(?P<market_name>[\w -]+)/resources/?$',
         views.AllStoresServiceCollection(permitted_methods=('GET',)),
         name='wirecloud.fiware.market_resource_collection'),

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -26,7 +26,6 @@ from django.utils.translation import ugettext as _
 from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.platform.plugins import WirecloudPlugin
 from wirecloud.oauth2provider.models import Token
-from wirecloud.oauth2provider.urls import urlpatterns
 
 
 def auth_oauth2_token(auth_type, token):
@@ -45,7 +44,7 @@ class OAuth2ProviderPlugin(WirecloudPlugin):
     }
 
     def get_urls(self):
-        return urlpatterns
+        return ()
 
     def get_api_auth_backends(self):
 

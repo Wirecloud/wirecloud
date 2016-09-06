@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.views.generic import TemplateView
 
 from wirecloud.commons.views import ResourceSearch, SwitchUserService
@@ -34,9 +34,9 @@ from wirecloud.platform.widget import views as widget_views
 from wirecloud.platform.workspace import views as workspace_views
 
 
-urlpatterns = patterns('wirecloud.platform.views',
+urlpatterns = (
 
-    url(r'^$', 'render_root_page', name='wirecloud.root'),
+    url(r'^$', views.render_root_page, name='wirecloud.root'),
 
     url(r'^api/features$',
         views.feature_collection,
@@ -192,7 +192,8 @@ urlpatterns = patterns('wirecloud.platform.views',
         TemplateView.as_view(template_name='wirecloud/oauth2/default_redirect_uri.html'),
         name='oauth.default_redirect_uri'),
 
-) + get_plugin_urls() + patterns('wirecloud.platform.views',
+) + get_plugin_urls() + (
 
-    url(r'^(?P<owner>[^/]+)/(?P<name>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
+    url(r'^(?P<owner>[^/]+)/(?P<name>[^/]+)/?$', views.render_workspace_view, name='wirecloud.workspace_view'),
+
 )

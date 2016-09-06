@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = (
 
     # Catalogue
-    (r'^catalogue', include('wirecloud.catalogue.urls')),
+    url(r'^catalogue', include('wirecloud.catalogue.urls')),
 
     # Login/logout
     url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),
@@ -17,10 +17,10 @@ urlpatterns = patterns('',
     url(r'^admin/logout/?$', 'wirecloud.commons.authentication.logout'),
 
     # Admin interface
-    (r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
 
-urlpatterns += staticfiles_urlpatterns()
+urlpatterns += tuple(staticfiles_urlpatterns())
 
 handler400 = "wirecloud.commons.views.bad_request"
 handler403 = "wirecloud.commons.views.permission_denied"

@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page
 
@@ -169,13 +169,13 @@ class FiWarePlugin(WirecloudPlugin):
             return common
 
     def get_urls(self):
-        urls = patterns('',
+        urls = (
             url(r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
         )
 
         if IDM_SUPPORT_ENABLED:
             from wirecloud.fiware.views import oauth_discovery
-            urls += patterns('',
+            urls += (
                 url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60, key_prefix='well-known-oauth-%s' % get_version_hash())(oauth_discovery), name='oauth.discovery'),
             )
 

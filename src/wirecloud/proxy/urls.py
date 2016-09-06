@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from wirecloud.proxy.views import proxy_request
 
 
-urlpatterns = patterns('wirecloud.proxy.views',
+urlpatterns = (
     url(r'^/(?P<protocol>[^/]+)/(?P<domain>[^/]+)(?P<path>|/.*)$',
         proxy_request,
         name="wirecloud|proxy"
