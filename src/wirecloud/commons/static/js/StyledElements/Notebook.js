@@ -421,7 +421,7 @@
      */
     Notebook.prototype.getTabByLabel = function getTabByLabel(label) {
         for (var i = 0; i < this.tabs.length; i++) {
-            if (this.tabs[i].name === label) {
+            if (this.tabs[i].label === label) {
                 return this.tabs[i];
             }
         }

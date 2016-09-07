@@ -68,6 +68,18 @@
                 expect(tab.getTabElement().querySelectorAll('.se-btn').length).toBe(0);
             });
 
+            it("should support the label option", function () {
+                var notebook = new StyledElements.Notebook();
+                var tab = new StyledElements.Tab("1", notebook, {label: "My Tab"});
+                expect(tab.tabElement.textContent).toBe("My Tab");
+            });
+
+            it("should support the name option [deprecated]", function () {
+                var notebook = new StyledElements.Notebook();
+                var tab = new StyledElements.Tab("1", notebook, {name: "My Tab"});
+                expect(tab.tabElement.textContent).toBe("My Tab");
+            });
+
         });
 
         describe("close()", function () {
@@ -89,6 +101,7 @@
                 var newlabel = "New tab label";
                 expect(tab.setLabel(newlabel)).toBe(tab);
                 expect(tab.label).toBe(newlabel);
+                expect(tab.tabElement.textContent).toBe(newlabel);
             });
 
         });

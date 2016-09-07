@@ -43,27 +43,27 @@
                     details = new StyledElements.Notebook();
                     details.addEventListener('change', function (notebook, oldTab, newTab) {
                         var new_status = Wirecloud.HistoryManager.getCurrentState();
-                        new_status.tab = newTab.name;
+                        new_status.tab = newTab.label;
                         Wirecloud.HistoryManager.pushState(new_status);
                     });
 
-                    main_description = details.createTab({'name': utils.gettext('Main Info'), 'closable': false});
+                    main_description = details.createTab({label: utils.gettext('Main Info'), closable: false});
                     main_description.appendChild(this.main_details_painter.paint(resource));
 
-                    legal_description = details.createTab({'name': utils.gettext('Legal'), 'closable': false});
+                    legal_description = details.createTab({label: utils.gettext('Legal'), closable: false});
                     painter = new LegalPainter(Wirecloud.currentTheme.templates['wirecloud/fiware/marketplace/legal/legal_template'], legal_description.wrapperElement);
                     painter.paint(resource);
 
-                    pricing_description = details.createTab({'name': utils.gettext('Pricing'), 'closable': false});
+                    pricing_description = details.createTab({label: utils.gettext('Pricing'), closable: false});
                     painter = new PricingPainter(Wirecloud.currentTheme.templates['wirecloud/fiware/marketplace/pricing/pricing_template'], pricing_description.wrapperElement);
                     painter.paint(resource);
 
-                    sla_description = details.createTab({'name': utils.gettext('Service level agreement'), 'closable': false});
+                    sla_description = details.createTab({label: utils.gettext('Service level agreement'), closable: false});
                     painter = new SlaPainter(Wirecloud.currentTheme.templates['wirecloud/fiware/marketplace/sla/service_level_template'], sla_description.wrapperElement);
                     painter.paint(resource);
 
                     if (Array.isArray(resource.resources)) {
-                        offering_resource_description = details.createTab({'name': utils.gettext('Resources'), 'closable': false});
+                        offering_resource_description = details.createTab({label: utils.gettext('Resources'), closable: false});
                         painter = new Wirecloud.FiWare.ui.OfferingResourcePainter();
                         painter.paint(resource, offering_resource_description, this.mainview, offering_entry);
                     }

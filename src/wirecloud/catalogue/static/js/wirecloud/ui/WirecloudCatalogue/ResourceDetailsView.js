@@ -64,11 +64,11 @@
                         this.mainview.createUserCommand('showDetails', resource)();
                     }.bind(this));
 
-                    var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
+                    var main_description = details.createTab({label: gettext('Main Info'), closable: false});
                     main_description.appendChild(this.main_details_painter.paint(resource));
 
                     if (resource.doc) {
-                        var documentation = details.createTab({'name': gettext('Documentation'), 'containerOptions': {'class': 'documentation loading'}, 'closable': false});
+                        var documentation = details.createTab({label: gettext('Documentation'), containerOptions: {class: 'documentation loading'}, closable: false});
                         documentation.addEventListener('show', function (tab) {
                             tab.disable();
                             var doc_url = resource.catalogue.RESOURCE_USERGUIDE_ENTRY.evaluate(resource);
@@ -89,7 +89,7 @@
                     }
 
                     if (resource.changelog) {
-                        var changelog = details.createTab({'name': gettext('Change Log'), 'containerOptions': {'class': 'changelog loading'}, 'closable': false});
+                        var changelog = details.createTab({label: gettext('Change Log'), containerOptions: {class: 'changelog loading'}, closable: false});
                         changelog.addEventListener('show', function (tab) {
                             tab.disable();
                             Wirecloud.io.makeRequest(this.mainview.catalogue.RESOURCE_CHANGELOG_ENTRY.evaluate(resource), {
@@ -126,7 +126,7 @@
             data.resource = this.currentEntry.uri;
 
             if (this.currentNotebook) {
-                data.tab = this.currentNotebook.getVisibleTab().name;
+                data.tab = this.currentNotebook.getVisibleTab().label;
             }
         }
     };

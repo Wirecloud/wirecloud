@@ -60,7 +60,7 @@
         var defaultOptions = {
             'closable': true,
             'containerOptions': {},
-            'name': ''
+            'label': ''
         };
         options = utils.merge(defaultOptions, options);
         options.useFullHeight = true;
@@ -74,8 +74,8 @@
              *
              * @type {String}
              */
-            name: {
-                get: on_name_get
+            label: {
+                get: on_label_get
             },
             notebook: {
                 value: notebook
@@ -97,12 +97,12 @@
         });
 
         var priv = {
-            nameElement: document.createElement('span'),
+            labelElement: document.createElement('span'),
             tabElement: document.createElement("li")
         };
         privates.set(this, priv);
         priv.tabElement.className = "se-notebook-tab";
-        priv.tabElement.appendChild(priv.nameElement);
+        priv.tabElement.appendChild(priv.labelElement);
 
         /* call to the parent constructor */
         se.Container.call(this, options.containerOptions, ['show', 'hide', 'close']);
@@ -131,7 +131,11 @@
                                          false);
         }
 
-        Tab.prototype.rename.call(this, options.name);
+        // Support deprecated options.name
+        if (options.name != null) {
+            options.label = options.name;
+        }
+        Tab.prototype.setLabel.call(this, options.label);
         this.setTitle(options.title);
     };
     utils.inherit(Tab, se.Container);
@@ -155,18 +159,19 @@
     };
 
     /**
-     * Sets the name of this `Tab`.
+     * Sets the label of this `Tab`.
      *
-     * @since 0.5
-     * @name StyledElements.Tab#rename
+     * @since 0.8
+     * @name StyledElements.Tab#setLabel
      *
-     * @param {String} name text to use as name of this `Tab`.
+     * @param {String} newLabel
+     *     text to use as label of this `Tab`.
      *
      * @returns {StyledElements.Tab}
-     *      The instance on which the member is called.
+     *     The instance on which the member is called.
      */
-    Tab.prototype.rename = function rename(newName) {
-        privates.get(this).nameElement.textContent = newName;
+    Tab.prototype.setLabel = function setLabel(newLabel) {
+        privates.get(this).labelElement.textContent = newLabel;
 
         return this;
     };
@@ -257,13 +262,28 @@
         return privates.get(this).tabElement;
     };
 
+    /**
+     * Sets the label of this `Tab`.
+     *
+     * @name StyledElements.Tab#rename
+     * @since 0.5
+     * @deprecated since version 0.8
+     * @see {@link StyledElements.Tab#setLabel}
+     *
+     * @param {String} name text to use as name of this `Tab`.
+     *
+     * @returns {StyledElements.Tab}
+     *      The instance on which the member is called.
+     */
+    Tab.prototype.rename = Tab.prototype.setLabel;
+
     // =========================================================================
     // PRIVATE MEMBERS
     // =========================================================================
 
     var privates = new WeakMap();
 
-    var on_name_get = function on_name_get() {
+    var on_label_get = function on_label_get() {
         return privates.get(this).tabElement.textContent;
     };
 

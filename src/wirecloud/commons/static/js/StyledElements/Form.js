@@ -224,7 +224,10 @@
 
         for (i = 0; i < fields.length; i += 1) {
             field = fields[i];
-            tab = notebook.createTab({name: field.shortTitle, closable: false});
+            tab = notebook.createTab({
+                label: field.shortTitle,
+                closable: false
+            });
             tab.addEventListener('show', this.repaint.bind(this));
             if (field.nested === true) {
                 tmp_field = {
