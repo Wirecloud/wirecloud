@@ -121,6 +121,8 @@
             }
         });
 
+        this.on_workspace_change_bound = on_workspace_change.bind(this);
+
         Wirecloud.addEventListener('loaded', function () {
             this.showcase =  new Wirecloud.ui.ComponentSidebar();
             this.layout.appendChild(this.showcase);
@@ -190,8 +192,13 @@
     WorkspaceView.prototype.loadWorkspace = function loadWorkspace(workspace) {
         var loadingTab;
 
-        this.layout.content.clear();
         this.walletButton.active = false;
+
+        /* Unload previous workspace */
+        this.layout.content.clear();
+        if (this.model != null) {
+            this.model.removeEventListener('change', this.on_workspace_change_bound);
+        }
 
         this.notebook = new StyledElements.Notebook({
             'class': 'se-notebook-bottom'
@@ -204,6 +211,7 @@
 
         this.model = workspace;
         this.model.view = this;
+        this.model.addEventListener('change', this.on_workspace_change_bound);
 
         this.model.operators.forEach(function (operator) {
             this.layout.content.appendChild(operator.wrapperElement);
@@ -408,24 +416,7 @@
     };
 
     WorkspaceView.prototype.rename = function rename(name) {
-        return new Promise(function (resolve, reject) {
-            this.model.rename(name).then(function () {
-                var state, layoutManager = LayoutManagerFactory.getInstance();
-
-                state = {
-                    workspace_owner: this.model.owner,
-                    workspace_name: this.model.name,
-                    view: "workspace",
-                    tab: Wirecloud.HistoryManager.getCurrentState().tab
-                };
-                Wirecloud.HistoryManager.replaceState(state);
-
-                layoutManager.header.refresh();
-                resolve();
-            }.bind(this), function (reason) {
-                reject(reason);
-            });
-        }.bind(this));
+        return this.model.rename(name);
     };
 
     WorkspaceView.prototype.remove = function remove() {
@@ -491,6 +482,20 @@
     // =========================================================================
     // EVENT HANDLERS
     // =========================================================================
+
+    var on_workspace_change = function on_workspace_change(workspace) {
+        var state, layoutManager = LayoutManagerFactory.getInstance();
+
+        state = {
+            workspace_owner: this.model.owner,
+            workspace_name: this.model.name,
+            view: "workspace",
+            tab: Wirecloud.HistoryManager.getCurrentState().tab
+        };
+        Wirecloud.HistoryManager.replaceState(state);
+
+        layoutManager.header.refresh();
+    };
 
     var on_click_createtab = function on_click_createtab(button) {
         button.disable();
