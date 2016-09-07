@@ -636,14 +636,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
 
-        widget_wallet_button = ButtonTester(self, self.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
-        self.assertTrue(widget_wallet_button.is_disabled)
-        wiring_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-puzzle-piece').find_element_by_xpath('..')
-        self.assertIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
-        myresources_button = ButtonTester(self, self.driver.find_element_by_css_selector(".wc-show-catalogue"))
-        self.assertFalse(myresources_button.is_disabled)
-        marketplace_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-shopping-cart').find_element_by_xpath('..')
-        self.assertNotIn('disabled', re.split('\s+', marketplace_button.get_attribute('class')))
+        self.assertTrue(self.find_navbar_button("wc-show-component-sidebar").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-wiring").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-show-myresources").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-show-marketplace").is_disabled)
 
         # Check public workspaces cannot be renamed/removed by non owners
         self.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Remove')).close()
@@ -665,10 +661,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.get(url)
         self.wait_wirecloud_ready()
 
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .wc-show-component-sidebar')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .icon-puzzle-piece')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .wc-show-catalogue')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .icon-shopping-cart')
+        self.assertIsNone(self.find_navbar_button("wc-show-component-sidebar"))
+        self.assertIsNone(self.find_navbar_button("wc-show-wiring"))
+        self.assertIsNone(self.find_navbar_button("wc-show-myresources"))
+        self.assertIsNone(self.find_navbar_button("wc-show-marketplace"))
 
         self.check_public_workspace()
 
@@ -887,18 +883,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Pending Events'))
 
-        widget_wallet_button = ButtonTester(self, self.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
-        self.assertTrue(widget_wallet_button.is_disabled)
-        wiring_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-puzzle-piece').find_element_by_xpath('..')
-        self.assertIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
+        # "Pending Events" workspace cannot be edited anymore
+        self.assertTrue(self.find_navbar_button("wc-show-component-sidebar").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-wiring").is_disabled)
 
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Workspace'))
 
-        widget_wallet_button = ButtonTester(self, self.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
-        self.assertFalse(widget_wallet_button.is_disabled)
-        wiring_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-puzzle-piece').find_element_by_xpath('..')
-        self.assertNotIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
+        # "Workspace" workspace should be editable
+        self.assertFalse(self.find_navbar_button("wc-show-component-sidebar").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-show-wiring").is_disabled)
 
     def assertElementHasFocus(self, element):
         # Workaround webkit problem with xhtml and retreiving element with focus
@@ -1374,7 +1368,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
 
-        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
+        self.assertIsNone(self.find_navbar_button("wc-show-wiring").badge)
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_widget(self):

@@ -110,12 +110,12 @@
                 'asynchronous': true
             },
 
-            {'type': 'userAction', 'msg': utils.gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button('icon-puzzle-piece'), 'pos': 'downLeft'},
+            {'type': 'userAction', 'msg': utils.gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button('wc-show-wiring'), 'pos': 'downLeft'},
 
             // WiringEditor
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>This is the <em>Wiring Editor</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>")},
-            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('wc-show-catalogue'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-catalogue'), 'action': BA.sleep(250)},
+            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('wc-show-myresources'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-myresources'), 'action': BA.sleep(250)},
             {'type': 'userAction', 'msg': utils.gettext("Click <em>Widgets</em>"), 'elem': BS.button('.wiring-sidebar .btn-list-widget-group'), 'pos': 'downLeft'},
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>In this sidebar you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets as well as a combination of these behaviours.</p>"), 'elem': get_menubar},
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
@@ -139,8 +139,8 @@
                 'elemToApplyNextStepEvent': BS.wiringView.behaviour_engine(),
 
             },
-            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to close the sidebar"), 'elem': BS.toolbar_button('wc-show-catalogue'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-catalogue'), 'action': BA.sleep(250)},
+            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to close the sidebar"), 'elem': BS.toolbar_button('wc-show-myresources'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-myresources'), 'action': BA.sleep(250)},
             {
                 'type': 'userAction',
                 'msg': utils.gettext("Drag &amp; drop a new connection from <em>Search Box</em>'s <em>keyword</em> endpoint ..."),

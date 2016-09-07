@@ -934,7 +934,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
+        self.assertIsNone(self.find_navbar_button("wc-show-wiring").badge)
 
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_connections()), 0)
@@ -1249,7 +1249,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
         # WireCloud should ignore the extra widget described in the wiring
         # status
-        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
+        self.assertIsNone(self.find_navbar_button("wc-show-wiring").badge)
 
         with self.wiring_view as wiring:
             # Check the Wiring Editor only display the valid widgets
@@ -1391,7 +1391,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
             myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
 
         # Check the operator leaves ghost mode
-        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
+        self.assertIsNone(self.find_navbar_button("wc-show-wiring").badge)
 
         event = 'hello world!!'
 

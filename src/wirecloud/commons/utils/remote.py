@@ -1264,7 +1264,10 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         self.driver.delete_all_cookies()
 
     def find_navbar_button(self, classname):
-        return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .btn-%s" % classname))
+        try:
+            return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .%s" % classname))
+        except NoSuchElementException:
+            return None
 
     def scroll_and_click(self, element):
 
@@ -1464,7 +1467,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         self.assertEqual(len(window_menus), 1, 'Error publishing workspace')
 
     def check_wiring_badge(self, error_count):
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.find_navbar_button("display-wiring-view").has_badge(error_count))
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.find_navbar_button("wc-show-wiring").has_badge(error_count))
 
 
 class MarketplaceViewTester(object):
@@ -1475,7 +1478,7 @@ class MarketplaceViewTester(object):
         self.myresources = MyResourcesViewTester(testcase, self)
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-shopping-cart"), parent=True)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-marketplace"))).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
         WebDriverWait(self.testcase.driver, 10).until(marketplace_loaded)
         return self
@@ -1622,7 +1625,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.marketplace_view = marketplace_view
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-catalogue"))).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-myresources"))).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
         return self
 
@@ -1635,7 +1638,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-shopping-cart"), parent=True)).click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-marketplace"), parent=True)).click()
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
 
@@ -1966,7 +1969,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .btn-display-wiring-view"))).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-wiring"))).click()
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
         return self

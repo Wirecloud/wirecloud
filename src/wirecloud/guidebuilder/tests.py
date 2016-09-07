@@ -442,7 +442,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Get more components
         btn = self.driver.find_element_by_css_selector(
-            '.wc-toolbar .icon-shopping-cart')
+            '.wc-toolbar .wc-show-marketplace')
         ActionChains(self.driver).move_to_element(btn).perform()
         time.sleep(0.2)
         imgp = take_capture(self.driver, "get_more_components")
@@ -540,11 +540,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp, get_by_contains(self.driver, '.wc-widget', 'Linear Graph'))
 
         # Wiring button
-        dialog = self.driver.find_element_by_css_selector(
-            '.wirecloud_app_bar')
-        btn = dialog.find_element_by_css_selector(
-            '.wc-toolbar .icon-puzzle-piece')
-        ActionChains(self.driver).move_to_element(btn).perform()
+        btn = self.find_navbar_button("wc-show-wiring")
+        ActionChains(self.driver).move_to_element(btn.element).perform()
         time.sleep(0.4) # Wait tooltip
         imgp = take_capture(self.driver, 'wiring_button')
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
@@ -1104,7 +1101,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # My Resources button
         btn = self.driver.find_element_by_css_selector(
-            '.wc-toolbar .wc-show-catalogue')
+            '.wc-toolbar .wc-show-myresources')
         ActionChains(self.driver).move_to_element(btn).perform()
         time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, "my_resources_button")

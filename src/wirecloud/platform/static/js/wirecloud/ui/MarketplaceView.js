@@ -176,9 +176,9 @@
         });
 
         this.myresourcesButton = new StyledElements.Button({
-            'iconClass': 'icon-archive',
-            class: "wc-show-catalogue",
-            'title': utils.gettext('My Resources')
+            iconClass: 'fa fa-archive',
+            class: "wc-show-myresources",
+            title: utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('myresources', {history: "push"});

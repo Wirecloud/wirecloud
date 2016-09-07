@@ -203,7 +203,7 @@
         // Step 1 to Step 2 transition
 
         {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>Once identified the desired behaviours, we're going to create them in the Wiring Editor view.</p>")},
-        {type: 'userAction', msg: utils.gettext("Click <em>Wiring</em>"), elem: BS.toolbar_button('btn-display-wiring-view'), pos: 'downRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Wiring</em>"), elem: BS.toolbar_button('wc-show-wiring'), pos: 'downRight'},
 
         {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>As you can see, we already have all the connections and components needed for implementing all the identified behaviours. The first step for converting this wiring configuration into a behaviour oriented configuration is enabling the behaviour engine.</p>")},
         {type: 'userAction', msg: utils.gettext("Click <em>List Behaviours</em>"), elem: BS.wiringView.show_behaviours_button(), pos: 'downRight'},

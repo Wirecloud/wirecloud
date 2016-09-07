@@ -40,7 +40,7 @@
         this.walletButton = this.buildAddWidgetButton();
 
         this.wiringButton = new StyledElements.Button({
-            class: "btn-display-wiring-view",
+            class: "wc-show-wiring",
             iconClass: 'fa fa-puzzle-piece',
             title: utils.gettext('Wiring')
         });
@@ -50,7 +50,7 @@
 
         this.myresourcesButton = new StyledElements.Button({
             iconClass: 'fa fa-archive',
-            class: "wc-show-catalogue",
+            class: "wc-show-myresources",
             title: utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {
