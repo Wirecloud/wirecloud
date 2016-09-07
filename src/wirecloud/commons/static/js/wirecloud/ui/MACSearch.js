@@ -88,7 +88,7 @@
 
     var _load_resource_painter = function _load_resource_painter() {
         if (this.resource_painter == null) {
-            this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates['wirecloud/wallet/component'], null, {
+            this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates['wirecloud/macsearch/component'], null, {
                 'mainbutton': function (options, context, resource) {
                     var tooltip = this.resourceButtonTooltip;
                     if (typeof tooltip === 'function') {
@@ -140,7 +140,7 @@
         options = utils.merge({
             'extra_template_context': null,
             'scope': '',
-            'template': 'wirecloud/macsearch',
+            'template': 'wirecloud/macsearch/base',
             resource_painter: null
         }, options);
 
@@ -148,7 +148,7 @@
 
         this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
         this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;
-        this._list = new StyledElements.Container({'class': 'widget_wallet_list wc-resource-results loading'});
+        this._list = new StyledElements.Container({class: 'wc-macsearch-list wc-resource-results loading'});
         this.resource_painter = options.resource_painter;
 
         var input;

@@ -153,7 +153,7 @@ BASE_CSS = (
 
 
 CLASSIC_CORE_CSS = (
-    'css/mac_search.css',
+    'css/mac_search.scss',
     'css/layout_field.css',
     'css/mac_field.scss',
     'css/mac_selection_dialog.css',
@@ -161,7 +161,6 @@ CLASSIC_CORE_CSS = (
 
 
 WORKSPACE_CSS = (
-    'css/workspace/wallet.scss',
     'css/workspace/dragboard.scss',
     'css/workspace/dragboard_cursor.scss',
     'css/workspace/operator.scss',
@@ -558,9 +557,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wirecloud/logs/details",
                 "wirecloud/modals/base",
                 "wirecloud/modals/embed_code",
-                "wirecloud/macsearch",
-                "wirecloud/wallet/base",
-                "wirecloud/wallet/component",
+                "wirecloud/macsearch/base",
+                "wirecloud/macsearch/component",
                 "wirecloud/wiring/behaviour_sidebar",
                 "wirecloud/wiring/component_group",
                 "wirecloud/wiring/footer",

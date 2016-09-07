@@ -207,7 +207,7 @@ class MACFieldTester(object):
 
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'in' in self.element.get_attribute('class'))
 
-        list_element = self.element.find_element_by_css_selector('.widget_wallet_list')
+        list_element = self.element.find_element_by_css_selector('.wc-macsearch-list')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in list_element.get_attribute('class'))
         time.sleep(0.1)
 
@@ -230,7 +230,7 @@ class MACFieldTester(object):
 
         self.wait_ready()
 
-        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
+        resources = self.element.find_elements_by_css_selector('.wc-macsearch-list > .resource')
         for resource in resources:
             resource_name = resource.find_element_by_css_selector('.resource_name')
             if resource_name.text == widget_name:
@@ -1900,11 +1900,11 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     @property
     def alert(self):
-        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .widget_wallet_list > .alert"))
+        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .wc-macsearch-list > .alert"))
 
     @property
     def result_container(self):
-        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .widget_wallet_list"))
+        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .wc-macsearch-list"))
 
     def add_component(self, type, group_id, id=None, title=None, x=0, y=0):
         component_group = self.find_component_group(type, group_id)
