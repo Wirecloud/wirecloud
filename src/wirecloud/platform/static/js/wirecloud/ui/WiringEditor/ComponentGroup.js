@@ -47,7 +47,7 @@
         var button = new se.Button({
             class: 'btn-create wc-create-resource-component',
             title: utils.gettext("New component"),
-            iconClass: 'icon-plus'
+            iconClass: 'fa fa-plus'
         });
         button.addEventListener('click', function () {
             this.trigger('btncreate.click', button);

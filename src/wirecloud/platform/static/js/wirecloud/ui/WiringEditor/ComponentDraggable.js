@@ -50,14 +50,14 @@
             this.btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 class: "we-prefs-btn",
-                iconClass: "icon-reorder"
+                iconClass: "fa fa-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ComponentDraggablePrefs(this));
 
             this.btnRemove = new se.Button({
                 title: utils.gettext("Remove"),
                 class: "btn-remove",
-                iconClass: "icon-remove-sign"
+                iconClass: "fa fa-remove-circle"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
 
@@ -279,9 +279,8 @@
 
                 this.btnRemove
                     .replaceClassName('btn-remove', 'btn-add')
-                    .removeIconClassName('icon-trash')
-                    .removeIconClassName('icon-remove-sign')
-                    .addIconClassName('icon-plus-sign')
+                    .removeIconClassName(['fa-trash', 'fa-remove-circle'])
+                    .addIconClassName('fa-plus-circle')
                     .setTitle(utils.gettext("Add"));
 
                 return this;
@@ -291,9 +290,8 @@
 
                 this.btnRemove
                     .replaceClassName('btn-add', 'btn-remove')
-                    .removeIconClassName('icon-plus-sign')
-                    .removeIconClassName('icon-trash')
-                    .addIconClassName('icon-remove-sign')
+                    .removeIconClassName(['fa-plus-circle', 'fa-trash'])
+                    .addIconClassName('fa-remove-circle')
                     .setTitle(utils.gettext("Remove"));
 
                 return this;
@@ -303,9 +301,8 @@
 
                 this.btnRemove
                     .replaceClassName('btn-add', 'btn-remove')
-                    .removeIconClassName('icon-plus-sign')
-                    .removeIconClassName('icon-remove-sign')
-                    .addIconClassName('icon-trash')
+                    .removeIconClassName(['fa-plus-circle', 'fa-remove-circle'])
+                    .addIconClassName('fa-trash')
                     .setTitle(utils.gettext("Remove"));
 
                 return this;

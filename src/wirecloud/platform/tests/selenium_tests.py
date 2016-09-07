@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 from six import text_type
 from six.moves.urllib.parse import urljoin
 import time
@@ -614,9 +613,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         })
         self.create_workspace(mashup='Published Workspace')
         iwidget = self.widgets[0]
-        close_button = iwidget.element.find_element_by_css_selector('.icon-remove')
-        self.assertTrue('disabled' in close_button.get_attribute('class'))
-        close_button.click()
+        close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.fa-remove'))
+        self.assertTrue(close_button.is_disabled)
+        # bypass the internal call to element_be_clickable as the button is usually hidden
+        close_button.element.click()
 
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_connections(extra_class="readonly")), 3)
@@ -636,10 +636,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
 
-        self.assertTrue(self.find_navbar_button("wc-show-component-sidebar").is_disabled)
-        self.assertTrue(self.find_navbar_button("wc-show-wiring").is_disabled)
-        self.assertFalse(self.find_navbar_button("wc-show-myresources").is_disabled)
-        self.assertFalse(self.find_navbar_button("wc-show-marketplace").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-wiring-button").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-show-myresources-button").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-show-marketplace-button").is_disabled)
 
         # Check public workspaces cannot be renamed/removed by non owners
         self.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Remove')).close()
@@ -661,10 +661,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.get(url)
         self.wait_wirecloud_ready()
 
-        self.assertIsNone(self.find_navbar_button("wc-show-component-sidebar"))
-        self.assertIsNone(self.find_navbar_button("wc-show-wiring"))
-        self.assertIsNone(self.find_navbar_button("wc-show-myresources"))
-        self.assertIsNone(self.find_navbar_button("wc-show-marketplace"))
+        self.assertIsNone(self.find_navbar_button("wc-show-component-sidebar-button"))
+        self.assertIsNone(self.find_navbar_button("wc-show-wiring-button"))
+        self.assertIsNone(self.find_navbar_button("wc-show-myresources-button"))
+        self.assertIsNone(self.find_navbar_button("wc-show-marketplace-button"))
 
         self.check_public_workspace()
 
@@ -752,7 +752,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
-        # TODO wiring editor breaks if the platform is not fully loaded
+
+        # Wiring editor breaks if the platform is not fully loaded
         self.wait_wirecloud_ready()
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'wiring')
@@ -884,15 +885,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Pending Events'))
 
         # "Pending Events" workspace cannot be edited anymore
-        self.assertTrue(self.find_navbar_button("wc-show-component-sidebar").is_disabled)
-        self.assertTrue(self.find_navbar_button("wc-show-wiring").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-wiring-button").is_disabled)
 
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Workspace'))
 
         # "Workspace" workspace should be editable
-        self.assertFalse(self.find_navbar_button("wc-show-component-sidebar").is_disabled)
-        self.assertFalse(self.find_navbar_button("wc-show-wiring").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-show-wiring-button").is_disabled)
 
     def assertElementHasFocus(self, element):
         # Workaround webkit problem with xhtml and retreiving element with focus
@@ -922,7 +923,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-component-sidebar")))
+        WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-component-sidebar-button")))
         with self.resource_sidebar as sidebar:
 
             # Add the youtube browser widget
@@ -1180,14 +1181,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Change columns to 10
         self.open_menu().click_entry('Settings')
-        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal')
+        workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal'))
 
-        workspace_preferences_dialog.find_element_by_css_selector('.icon-cogs').click()
+        workspace_preferences_dialog.find_element('.fa-cogs').click()
         layout_form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-layout-settings-modal"))
         layout_form.get_field("columns").set_value('10')
         layout_form.accept()
 
-        workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
+        workspace_preferences_dialog.accept()
 
         # Check new sizes
         with widget:
@@ -1232,14 +1233,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Change columns to 10
         self.open_menu().click_entry('Settings')
-        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal')
+        workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal'))
 
-        workspace_preferences_dialog.find_element_by_css_selector('.icon-cogs').click()
+        workspace_preferences_dialog.find_element('.fa-cogs').click()
         layout_form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-layout-settings-modal"))
         layout_form.get_field("columns").set_value('10')
         layout_form.accept()
 
-        workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
+        workspace_preferences_dialog.accept()
 
         # Check new widget 1 sizes
         new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0].wait_still())
@@ -1368,7 +1369,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
 
-        self.assertIsNone(self.find_navbar_button("wc-show-wiring").badge)
+        self.assertIsNone(self.find_navbar_button("wc-show-wiring-button").badge)
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_widget(self):

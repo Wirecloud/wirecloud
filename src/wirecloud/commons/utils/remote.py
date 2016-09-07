@@ -125,7 +125,7 @@ class CatalogueEntryTester(object):
 
     def __exit__(self, type, value, traceback):
 
-        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True))
+        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button"), parent=True))
 
         if self.catalogue.get_subview() == 'details':
             button.click()
@@ -187,7 +187,7 @@ class MACFieldTester(object):
         self.field_element = field_element
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-search"), parent=True, base_element=self.field_element)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-search"), parent=True, base_element=self.field_element)).click()
         self.element = self.testcase.wait_element_visible_by_css_selector('.window_menu.mac_selection_dialog')
         return self
 
@@ -487,14 +487,14 @@ class WorkspaceResourceSidebarTester(object):
         self.testcase = testcase
 
     def __enter__(self):
-        button = ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
+        button = self.testcase.find_navbar_button("wc-show-component-sidebar-button")
         if not button.is_active:
             button.click()
             WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
         return self
 
     def __exit__(self, type, value, traceback):
-        button = ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-show-component-sidebar"))
+        button = self.testcase.find_navbar_button("wc-show-component-sidebar-button")
         if button.is_active:
             button.click()
             WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
@@ -669,7 +669,7 @@ class WidgetTester(WebElementTester):
 
     @property
     def btn_preferences(self):
-        return ButtonTester(self.testcase, WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-menu-btn"), base_element=self.element)))
+        return ButtonTester(self.testcase, WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-menu-button"), base_element=self.element)))
 
     @property
     def title_element(self):
@@ -1336,7 +1336,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
             return ""
 
     def open_menu(self):
-        button = WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-reorder"), parent=True))
+        button = WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-menu-button")))
         button.click()
         popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
 
@@ -1467,7 +1467,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         self.assertEqual(len(window_menus), 1, 'Error publishing workspace')
 
     def check_wiring_badge(self, error_count):
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.find_navbar_button("wc-show-wiring").has_badge(error_count))
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.find_navbar_button("wc-show-wiring-button").has_badge(error_count))
 
 
 class MarketplaceViewTester(object):
@@ -1478,13 +1478,13 @@ class MarketplaceViewTester(object):
         self.myresources = MyResourcesViewTester(testcase, self)
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-marketplace"))).click()
+        self.testcase.find_navbar_button("wc-show-marketplace-button").click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
         WebDriverWait(self.testcase.driver, 10).until(marketplace_loaded)
         return self
 
     def __exit__(self, type, value, traceback):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button"), parent=True)).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
 
     def get_current_catalogue_base_element(self):
@@ -1505,7 +1505,7 @@ class MarketplaceViewTester(object):
         return catalogue_element
 
     def open_menu(self):
-        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-reorder"), parent=True))
+        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .fa-reorder"), parent=True))
         button.click()
         popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
@@ -1625,7 +1625,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.marketplace_view = marketplace_view
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-myresources"))).click()
+        self.testcase.find_navbar_button("wc-show-myresources-button").click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
         return self
 
@@ -1634,11 +1634,11 @@ class MyResourcesViewTester(MarketplaceViewTester):
             return False
 
         if self.marketplace_view is None:
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button"))).click()
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-marketplace"), parent=True)).click()
+            self.testcase.find_navbar_button("wc-show-marketplace-button").click()
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
 
@@ -1664,7 +1664,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         self.wait_catalogue_ready()
 
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-cloud-upload"), parent=True)).click()
+        self.testcase.find_navbar_button('wc-upload-mac-button').click()
 
         dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wc-upload-mac-modal')))
         dialog.find_element_by_css_selector('input[type="file"]').send_keys(wgt_path)
@@ -1766,15 +1766,15 @@ class BaseWiringViewTester(object):
 
     @property
     def btn_back(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .btn-back"))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .wc-back-button"))
 
     @property
     def btn_behaviours(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-toolbar .btn-list-behaviours"))
+        return self.testcase.find_navbar_button("we-show-behaviour-sidebar-button")
 
     @property
     def btn_components(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-toolbar .btn-find-components"))
+        return self.testcase.find_navbar_button("we-show-component-sidebar-button")
 
     def find_connection(self, source_id, target_id):
         for connection in self.find_connections():
@@ -1839,7 +1839,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     @property
     def disabled(self):
-        return self.btn_enable.has_icon("icon-lock")
+        return self.btn_enable.has_icon("fa-lock")
 
     @property
     def panel(self):
@@ -1969,7 +1969,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-wiring"))).click()
+        self.testcase.find_navbar_button("wc-show-wiring-button").click()
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
         return self

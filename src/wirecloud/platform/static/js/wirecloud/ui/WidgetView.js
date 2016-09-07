@@ -106,9 +106,9 @@
         this.wrapperElement = (new se.GUIBuilder()).parse(options.template, {
             'closebutton': function (options, tcomponents, view) {
                 var button = new se.Button({
-                    'plain': true,
-                    'class': 'wc-remove icon-remove',
-                    'title': utils.gettext("Remove")
+                    plain: true,
+                    class: 'wc-remove fa fa-remove',
+                    title: utils.gettext("Remove")
                 });
 
                 button.setDisabled(!view.model.isAllowed('close'));
@@ -119,8 +119,8 @@
             },
             'errorbutton': function (options, tcomponents, view) {
                 var button = new StyledElements.Button({
-                    'plain': true,
-                    'class': 'errorbutton icon-warning-sign'
+                    plain: true,
+                    class: 'errorbutton fa fa-warning'
                 });
 
                 button.addEventListener('click', function (button) {
@@ -133,7 +133,7 @@
             },
             'menubutton': function (options, tcomponents, view) {
                 var button = new StyledElements.PopupButton({
-                    class: 'wc-menu-btn icon-cogs',
+                    class: 'wc-menu-button fa fa-cogs',
                     plain: true,
                     title: utils.gettext("Preferences")
                 });

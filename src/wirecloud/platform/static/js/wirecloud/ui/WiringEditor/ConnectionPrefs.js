@@ -67,7 +67,7 @@
                 var item;
 
                 item = new se.MenuItem(title, onclick);
-                item.addIconClass('icon-' + iconClass);
+                item.addIconClass('fa fa-' + iconClass);
 
                 if (isEnabled != null) {
                     item.enabled = isEnabled.call(this.connection);

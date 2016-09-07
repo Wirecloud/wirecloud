@@ -62,7 +62,7 @@
                 state: 'default',
                 depth: 1,
                 class: "btn-show-logs",
-                iconClass: "icon-bell-alt"
+                iconClass: "fa fa-bell-alt"
             });
             this.btnLogs.addEventListener('click', btnerrors_onclick.bind(this));
             this.btnLogs.appendTo(this.options);
@@ -72,7 +72,7 @@
                 state: 'danger',
                 depth: 1,
                 class: "btn-remove",
-                iconClass: "icon-remove"
+                iconClass: "fa fa-remove"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
             this.btnRemove.appendTo(this.options);
@@ -82,7 +82,7 @@
                 state: 'default',
                 depth: 1,
                 class: "we-prefs-btn",
-                iconClass: "icon-reorder"
+                iconClass: "fa fa-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));
             this.btnPrefs.appendTo(this.options);
@@ -258,9 +258,8 @@
 
                 this.btnRemove
                     .replaceClassName("btn-remove", "btn-add")
-                    .removeIconClassName('icon-trash')
-                    .removeIconClassName('icon-remove')
-                    .addIconClassName('icon-plus')
+                    .removeIconClassName(['fa-trash', 'fa-remove'])
+                    .addIconClassName('fa-plus')
                     .setTitle(utils.gettext("Add"));
                 this.btnRemove.state = 'info';
 
@@ -271,9 +270,8 @@
 
                 this.btnRemove
                     .replaceClassName('btn-add', 'btn-remove')
-                    .removeIconClassName('icon-plus')
-                    .removeIconClassName('icon-trash')
-                    .addIconClassName('icon-remove')
+                    .removeIconClassName(['fa-plus', 'fa-trash'])
+                    .addIconClassName('fa-remove')
                     .setTitle(utils.gettext("Remove"));
                 this.btnRemove.state = 'danger';
 
@@ -284,9 +282,8 @@
 
                 this.btnRemove
                     .replaceClassName('btn-add', 'btn-remove')
-                    .removeIconClassName('icon-plus')
-                    .removeIconClassName('icon-remove')
-                    .addIconClassName('icon-trash')
+                    .removeIconClassName(['fa-plus', 'fa-remove'])
+                    .addIconClassName('fa-trash')
                     .setTitle(utils.gettext("Remove"));
                 this.btnRemove.state = 'danger';
 

@@ -50,8 +50,9 @@
         this.viewsByName.search.init();
 
         this.uploadButton = new StyledElements.Button({
-            'iconClass': 'icon-cloud-upload',
-            'title': utils.gettext('Upload')
+            class: "wc-upload-mac-button",
+            iconClass: 'fa fa-cloud-upload',
+            title: utils.gettext('Upload')
         });
         var upload_dialog = new Wirecloud.ui.WirecloudCatalogue.UploadWindowMenu({catalogue: this.catalogue, mainview: this});
         this.uploadButton.addEventListener('click', function () {
@@ -59,9 +60,9 @@
         });
 
         this.marketButton = new StyledElements.Button({
-            'iconClass': 'icon-shopping-cart',
-            class: "wc-show-marketplace",
-            'title': utils.gettext('Get more components')
+            iconClass: 'fa fa-shopping-cart',
+            class: "wc-show-marketplace-button",
+            title: utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');

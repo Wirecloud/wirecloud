@@ -56,8 +56,8 @@
         this.toggleButton = null;
         if (options.expandButton) {
             this.toggleButton = new StyledElements.ToggleButton({
-                'class': 'icon-expand',
-                'plain': true
+                class: 'icon-expand',
+                plain: true
             });
             this.toggleButton.insertInto(header);
         }

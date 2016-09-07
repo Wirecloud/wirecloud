@@ -55,9 +55,9 @@
         // Close button
         if (options.closable) {
             this.cancelButton = new StyledElements.Button({
-                'class': 'pop-up-close',
-                'iconClass': 'icon-remove',
-                'plain': true
+                class: 'pop-up-close',
+                iconClass: 'fa fa-remove',
+                plain: true
             });
 
             this.cancelButton.addEventListener('click', function () {
@@ -78,14 +78,14 @@
 
         // Warning
         this.warningIco = document.createElement("span");
-        this.warningIco.className = 'warningIco icon-warning-sign';
+        this.warningIco.className = 'warningIco fa fa-warning';
         this.wrapperElement.appendChild(this.warningIco);
 
         this.wrapperElement.appendChild(this.textElement);
 
         // Arrow
         this.arrow = document.createElement('span');
-        this.arrow.className = "pop-up-arrow icon-external-link-sign";
+        this.arrow.className = "pop-up-arrow fa fa-external-link-square";
         this.wrapperElement.appendChild(this.arrow);
 
         this.arrow.classList.add(options.position);

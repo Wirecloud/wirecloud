@@ -146,7 +146,7 @@
                 "class": "wc-upload-mac-button-column",
                 "sortable": false,
                 "contentBuilder": function (entry) {
-                    var button = new StyledElements.Button({iconClass: "icon-remove", plain: true, title: gettext("Remove this file")});
+                    var button = new StyledElements.Button({iconClass: "fa fa-remove", plain: true, title: gettext("Remove this file")});
                     button.addEventListener("click", this.removeFile.bind(this, entry.file));
                     return button;
                 }.bind(this)

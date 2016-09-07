@@ -387,9 +387,9 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.btnFindComponents = new se.ToggleButton({
             title: utils.gettext("Find components"),
-            class: "btn-find-components",
-            iconClass: "icon-archive",
-            stackedIconClass: "icon-plus-sign"
+            class: "we-show-component-sidebar-button",
+            iconClass: "fa fa-archive",
+            stackedIconClass: "fa fa-plus-circle"
         });
         this.btnFindComponents.addEventListener('click', function (button) {
             if (button.active) {
@@ -400,8 +400,8 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.btnListBehaviours = new se.ToggleButton({
             title: utils.gettext("List behaviours"),
-            class: "btn-list-behaviours",
-            iconClass: "icon-sitemap"
+            class: "we-show-behaviour-sidebar-button",
+            iconClass: "fa fa-sitemap"
         });
         this.btnListBehaviours.addEventListener('click', function (button) {
             showSelectedPanel.call(this, button, 0);

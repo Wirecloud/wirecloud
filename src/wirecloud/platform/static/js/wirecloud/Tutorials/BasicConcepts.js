@@ -44,7 +44,7 @@
 
     var widget_menu = function widget_menu(index) {
         var iwidget = Wirecloud.activeWorkspace.getIWidgets()[index];
-        return iwidget.element.getElementsByClassName('icon-cogs')[0];
+        return iwidget.element.getElementsByClassName('wc-menu-button')[0];
     };
 
     var enter_keypress = function (e) {
@@ -78,8 +78,8 @@
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/input-box/1.0')},
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/youtube-browser/3.0')},
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
-            {'type': 'userAction', 'msg': utils.gettext("Click the <em>Add widget</em> button"), 'elem': BS.toolbar_button('wc-show-component-sidebar'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-component-sidebar'), 'action': BA.sleep(500)},
+            {'type': 'userAction', 'msg': utils.gettext("Click the <em>Add widget</em> button"), 'elem': BS.toolbar_button('wc-show-component-sidebar-button'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-component-sidebar-button'), 'action': BA.sleep(500)},
             {'type': 'autoAction', 'msg': utils.gettext('By typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('browser', {send: true})},
             {'type': 'autoAction', 'elem': BS.mac_wallet_input(), 'action': BA.editorView.wait_mac_wallet_ready()},
             {'type': 'userAction', 'msg': utils.gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton("YouTube Browser"), 'pos': 'downRight'},
@@ -87,7 +87,7 @@
             {'type': 'autoAction', 'msg': utils.gettext('Typing <em>input box</em>...'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('input box', {send: true})},
             {'type': 'autoAction', 'elem': BS.mac_wallet_input(), 'action': BA.editorView.wait_mac_wallet_ready()},
             {'type': 'userAction', 'msg': utils.gettext("Click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton("Input Box"), 'pos': 'downRight'},
-            {'type': 'userAction', 'msg': utils.gettext("Close the widget wallet"), 'elem': BS.mac_wallet_close_button(), 'pos': 'downRight'},
+            {'type': 'userAction', 'msg': utils.gettext("Close the component sidebar"), 'elem': BS.toolbar_button('wc-show-component-sidebar-button'), 'pos': 'downRight'},
 
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>One of the main features of WireCloud is that you can edit your workspaces' layout not only by adding and removing widgets, but also moving, resizing, renaming, etc.</p>"), 'elem': null},
             {'type': 'userAction', 'msg': utils.gettext("Drag &amp; drop to resize the widget"), 'elem': BS.element(".rightResizeHandle"), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown'},
@@ -110,12 +110,12 @@
                 'asynchronous': true
             },
 
-            {'type': 'userAction', 'msg': utils.gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button('wc-show-wiring'), 'pos': 'downLeft'},
+            {'type': 'userAction', 'msg': utils.gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button('wc-show-wiring-button'), 'pos': 'downLeft'},
 
             // WiringEditor
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>This is the <em>Wiring Editor</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>")},
-            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('wc-show-myresources'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-myresources'), 'action': BA.sleep(250)},
+            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('wc-show-myresources-button'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-myresources-button'), 'action': BA.sleep(250)},
             {'type': 'userAction', 'msg': utils.gettext("Click <em>Widgets</em>"), 'elem': BS.button('.wiring-sidebar .btn-list-widget-group'), 'pos': 'downLeft'},
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>In this sidebar you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets as well as a combination of these behaviours.</p>"), 'elem': get_menubar},
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
@@ -139,8 +139,8 @@
                 'elemToApplyNextStepEvent': BS.wiringView.behaviour_engine(),
 
             },
-            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to close the sidebar"), 'elem': BS.toolbar_button('wc-show-myresources'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-myresources'), 'action': BA.sleep(250)},
+            {'type': 'userAction', 'msg': utils.gettext("Click <em>Find components</em> to close the sidebar"), 'elem': BS.toolbar_button('wc-show-myresources-button'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-myresources-button'), 'action': BA.sleep(250)},
             {
                 'type': 'userAction',
                 'msg': utils.gettext("Drag &amp; drop a new connection from <em>Search Box</em>'s <em>keyword</em> endpoint ..."),

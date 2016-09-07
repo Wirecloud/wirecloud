@@ -37,14 +37,14 @@
     margin: 0;
 }
 
-.window_menu > .window_top > .icon-remove {
+.window_menu > .window_top > .fa-remove {
     float: right;
     font-size: 20px;
     opacity: 0.2;
     line-height: 40px;
 }
 
-.window_menu > .window_top >.icon-remove:hover, .window_menu > .window_top > .icon-remove:focus {
+.window_menu > .window_top > .fa-remove:hover, .window_menu > .window_top > .fa-remove:focus {
     opacity: 0.4;
 }
 

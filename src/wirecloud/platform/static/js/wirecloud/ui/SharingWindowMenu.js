@@ -43,8 +43,8 @@
         this.windowContent.appendChild(subtitle1);
 
         options = [
-            {name: 'public', iconClass: "icon-globe", title: utils.gettext("Public"), description: utils.gettext("Anyone on the Internet can find and access this dashboard.")},
-            {name: 'private', iconClass: "icon-lock", title: utils.gettext("Private"), description: utils.gettext("Shared with specific people and organizations.")}
+            {name: 'public', iconClass: "fa fa-globe", title: utils.gettext("Public"), description: utils.gettext("Anyone on the Internet can find and access this dashboard.")},
+            {name: 'private', iconClass: "fa fa-lock", title: utils.gettext("Private"), description: utils.gettext("Shared with specific people and organizations.")}
         ];
 
         this.visibilityOptions = new se.ButtonsGroup('visibility');
@@ -159,7 +159,7 @@
             fullname: data.fullname + (data.username === Wirecloud.contextManager.get('username') ? " " + utils.gettext("(You)") : ""),
             icon: function () {
                 var icon = document.createElement('i');
-                icon.className = data.organization ? "icon-building" : "icon-user";
+                icon.className = data.organization ? "fa fa-building fa-stack-1x" : "fa fa-user fa-stack-1x";
                 return icon;
             },
             username: data.username,
@@ -175,7 +175,7 @@
                 return span;
             },
             btndelete: function () {
-                var button = new se.Button({class: "btn-remove-user", plain: true, iconClass: "icon-remove", title: utils.gettext("Remove")});
+                var button = new se.Button({class: "btn-remove-user", plain: true, iconClass: "fa fa-remove", title: utils.gettext("Remove")});
 
                 this.sharingUsers[data.username] = data;
 

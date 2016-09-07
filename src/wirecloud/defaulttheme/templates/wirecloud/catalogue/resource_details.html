@@ -1,7 +1,5 @@
 {% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
-<s:horizontallayout>
-
-    <s:options>{"class": "resource_details full"}</s:options>
+<s:horizontallayout class="resource_details full">
 
     <s:westcontainer>
         <div class="panel panel-default"><div class="panel-body">
@@ -16,22 +14,19 @@
             </div>
             <dl class="summary">
                 <dt>{% trans 'Vendor' %}</dt>
-                <dd><t:vendor/></dd>
+                <dd class="text-muted"><t:vendor/></dd>
                 <dt>{% trans 'Version' %}</dt>
-                <dd><t:version/></dd>
+                <dd class="text-muted"><t:version/></dd>
                 <dt>{% trans 'License' %}</dt>
-                <dd><t:license/></dd>
+                <dd class="text-muted"><t:license/></dd>
                 <dt>{% trans 'Last Updated' %}</dt>
-                <dd><t:lastupdate/></dd>
+                <dd class="text-muted"><t:lastupdate/></dd>
             </dl>
         </div></div>
     </s:westcontainer>
 
-    <s:centercontainer>
-
-        <s:options>{"class": "description_column"}</s:options>
+    <s:centercontainer class="description_column">
         <t:details/>
-
     </s:centercontainer>
 
 </s:horizontallayout>

@@ -117,9 +117,9 @@
                 var button;
 
                 button = new se.Button({
-                    'plain': true,
-                    'class': 'icon-home',
-                    'title': utils.gettext('Home page')
+                    plain: true,
+                    class: 'fa fa-home',
+                    title: utils.gettext('Home page')
                 });
                 if (resource.homepage != null && resource.homepage !== '') {
                     button.addEventListener('click', function () {
@@ -135,9 +135,9 @@
                 var button;
 
                 button = new se.Button({
-                    'plain': true,
-                    'class': 'icon-exclamation-sign',
-                    'title': utils.gettext('Issue tracker')
+                    plain: true,
+                    class: 'fa fa-bug',
+                    title: utils.gettext('Issue tracker')
                 });
                 if (resource.issuetracker != null && resource.issuetracker !== '') {
                     button.addEventListener('click', function () {
@@ -154,9 +154,9 @@
                 var button;
 
                 button = new se.Button({
-                    'plain': true,
-                    'class': 'icon-legal',
-                    'title': utils.gettext('License details')
+                    plain: true,
+                    class: 'fa fa-legal',
+                    title: utils.gettext('License details')
                 });
 
                 if (resource.licenseurl != null && resource.licenseurl !== '') {
@@ -330,11 +330,14 @@
         }
     };
 
-    ResourcePainter.prototype.get_people_list = function get_people_list(people) {
+    ResourcePainter.prototype.get_people_list = function get_people_list(people, options) {
         var i, fragment, dd;
 
         if (people.length === 0) {
             dd = document.createElement('dd');
+            if (options.class) {
+                dd.className = options.class;
+            }
             dd.textContent = utils.gettext('N/A');
             return dd;
         }
@@ -342,6 +345,9 @@
 
         for (i = 0; i < people.length; i++) {
             dd = document.createElement('dd');
+            if (options.class) {
+                dd.className = options.class;
+            }
             dd.textContent = people[i].name;
             fragment.appendChild(dd);
         }

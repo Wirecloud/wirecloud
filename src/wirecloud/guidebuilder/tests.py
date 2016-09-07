@@ -266,7 +266,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready()
 
         menu_widg = self.driver.find_element_by_css_selector(
-            '.wirecloud_header_nav .icon-reorder')
+            '.wirecloud_header_nav .fa-reorder')
 
         # Empty workspace screenshot
         imgp = take_capture(self.driver, 'empty_workspace')
@@ -360,9 +360,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             dialog.cancel()
 
             # Where are my resources
-            btn = self.driver.find_element_by_css_selector(
-                '.wc-toolbar .icon-archive')
-            ActionChains(self.driver).move_to_element(btn).perform()
+            btn = self.find_navbar_button('wc-show-myresources-button')
+            ActionChains(self.driver).move_to_element(btn.element).perform()
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "my_resources_button")
             add_pointer(imgp, get_position(btn, 0.8, 0.5))
@@ -372,10 +371,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             # Resources
             imgp = take_capture(self.driver, "my_resources")
 
-            btn = self.driver.find_element_by_css_selector(
-                '.wc-toolbar .icon-cloud-upload')
+            btn = self.find_navbar_button('wc-mac-upload-button')
             # Where are upload button
-            ActionChains(self.driver).move_to_element(btn).perform()
+            ActionChains(self.driver).move_to_element(btn.element).perform()
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "upload_button")
             add_pointer(imgp, get_position(btn, 0.5, 0.5))
@@ -427,7 +425,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             get_by_text(dialog, 'button', 'Cancel').click()
             self.driver.find_element_by_css_selector(
-                '.wirecloud_header_nav .btn-large .icon-caret-left').click()
+                '.wirecloud_header_nav .wc-back-button').click()
     test_browsing_marketplace.tags = ('wirecloud-guide', 'ui-marketplace')
 
     @uses_extra_resources(list_resources)
@@ -441,9 +439,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.create_workspace('History Info')
 
         # Get more components
-        btn = self.driver.find_element_by_css_selector(
-            '.wc-toolbar .wc-show-marketplace')
-        ActionChains(self.driver).move_to_element(btn).perform()
+        btn = self.find_navbar_button('wc-show-marketplace-button')
+        ActionChains(self.driver).move_to_element(btn.element).perform()
         time.sleep(0.2)
         imgp = take_capture(self.driver, "get_more_components")
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
@@ -451,8 +448,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
 
         # Open widget wallet
-        add_widget_button = self.driver.find_element_by_css_selector('.wc-toolbar .wc-show-component-sidebar')
-        ActionChains(self.driver).move_to_element(add_widget_button).perform()
+        add_widget_button = self.find_navbar_button('wc-show-component-sidebar-button')
+        ActionChains(self.driver).move_to_element(add_widget_button.element).perform()
         time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, "add_widget_button")
         add_pointer(imgp, get_position(add_widget_button, 0.8, 0.5))
@@ -488,7 +485,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Widget menu button
         widg_menu = map_viewer_widget.element.find_element_by_css_selector('.wc-widget-heading')
         setts_btn = widg_menu.find_element_by_css_selector(
-            '.wc-widget-buttons .icon-cogs')
+            '.wc-widget-buttons .fa-cogs')
         ActionChains(self.driver).move_to_element(setts_btn).perform()
         time.sleep(0.3)  # Wait menu button hover effect
         imgp = take_capture(self.driver, "widget_menu_button")
@@ -540,7 +537,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp, get_by_contains(self.driver, '.wc-widget', 'Linear Graph'))
 
         # Wiring button
-        btn = self.find_navbar_button("wc-show-wiring")
+        btn = self.find_navbar_button("wc-show-wiring-button")
         ActionChains(self.driver).move_to_element(btn.element).perform()
         time.sleep(0.4) # Wait tooltip
         imgp = take_capture(self.driver, 'wiring_button')
@@ -562,9 +559,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 imgp, self.driver.find_element_by_css_selector(".wiring-view .se-alert-static-top"), 40)
 
             # Click in Find Components
-            dialog = self.driver.find_element_by_css_selector('.wirecloud_app_bar')
-            btn = dialog.find_element_by_css_selector('.wc-toolbar .icon-archive')
-            ActionChains(self.driver).move_to_element(btn).perform()
+            btn = self.find_navbar_button('we-show-component-sidebar-button')
+            ActionChains(self.driver).move_to_element(btn.element).perform()
             time.sleep(0.3)
             imgp = take_capture(self.driver, 'find_components_button')
             add_pointer(imgp, get_position(btn, 0.8, 0.5))
@@ -1100,9 +1096,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.login()
 
         # My Resources button
-        btn = self.driver.find_element_by_css_selector(
-            '.wc-toolbar .wc-show-myresources')
-        ActionChains(self.driver).move_to_element(btn).perform()
+        btn = self.find_navbar_button('wc-show-myresources-button')
+        ActionChains(self.driver).move_to_element(btn.element).perform()
         time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, "my_resources_button")
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
@@ -1111,8 +1106,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
 
             # Upload button
-            btn = self.driver.find_element_by_css_selector('.wc-toolbar .icon-cloud-upload')
-            ActionChains(self.driver).move_to_element(btn).perform()
+            btn = self.find_navbar_button('wc-mac-upload-button')
+            ActionChains(self.driver).move_to_element(btn.element).perform()
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "upload_button")
             add_pointer(imgp, get_position(btn, 0.5, 0.5))
@@ -1128,7 +1123,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Back button
             catalogue_base_element = myresources.wait_catalogue_ready()
-            btn = self.driver.find_element_by_css_selector('.wirecloud_header_nav .btn-back')
+            btn = self.driver.find_element_by_css_selector('.wirecloud_header_nav .wc-back-button')
             ActionChains(self.driver).move_to_element(btn).perform()
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "back_button")

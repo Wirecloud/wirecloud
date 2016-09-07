@@ -14,7 +14,7 @@
     base_url += 'static/';
 
     var workspaceButton = function workspaceButton() {
-        return document.getElementsByClassName("icon-menu")[0];
+        return document.getElementsByClassName("wc-menu-button")[0];
     };
 
     var workspaceName = function workspaceName() {

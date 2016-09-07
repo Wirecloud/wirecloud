@@ -177,7 +177,7 @@
 
         this.myresourcesButton = new StyledElements.Button({
             iconClass: 'fa fa-archive',
-            class: "wc-show-myresources",
+            class: "wc-show-myresources-button",
             title: utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {

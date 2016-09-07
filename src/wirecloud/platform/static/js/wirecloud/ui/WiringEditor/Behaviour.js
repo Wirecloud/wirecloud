@@ -58,14 +58,14 @@
             this.btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 class: "we-prefs-btn",
-                iconClass: "icon-reorder"
+                iconClass: "fa fa-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
 
             this.btnRemove = new se.Button({
                 title: utils.gettext("Remove"),
                 class: "btn-remove",
-                iconClass: "icon-remove-sign"
+                iconClass: "fa fa-remove-circle"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
 

@@ -37,7 +37,7 @@
 
         this.macsearch = new Wirecloud.ui.MACSearch({
             scope: options.scope,
-            resourceButtonIconClass: 'icon-ok',
+            resourceButtonIconClass: 'fa fa-check',
             resourceButtonTooltip: utils.gettext('Select'),
             resourceButtonListener: function (resource) {
                 this._closeListener();

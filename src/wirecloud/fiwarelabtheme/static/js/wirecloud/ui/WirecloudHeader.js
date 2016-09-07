@@ -32,14 +32,14 @@
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
         this.oil_header = this.wrapperElement.querySelector('.fiware-header nav.collapse');
 
-        this.backButton = new StyledElements.Button({'class': 'btn-large btn-back', 'iconClass': 'icon-caret-left'});
+        this.backButton = new StyledElements.Button({class: 'btn-large wc-back-button', iconClass: 'fa fa-caret-left'});
         this.backButton.addEventListener('click', function () {
             this.currentView.goUp();
         }.bind(this));
         this.backButton.disable();
         this.backButton.insertInto(this.breadcrum.parentNode, this.breadcrum);
 
-        this.menuButton = new StyledElements.PopupButton({'class': 'btn-large', 'iconClass': 'icon-reorder'});
+        this.menuButton = new StyledElements.PopupButton({'class': 'btn-large', 'iconClass': 'fa fa-reorder'});
         this.menuButton.disable();
         this.menuButton.insertInto(this.breadcrum.parentNode);
 

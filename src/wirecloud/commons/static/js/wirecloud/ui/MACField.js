@@ -85,7 +85,7 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
-        var close_button = new StyledElements.Button({iconClass: 'icon-remove', title: utils.gettext('Clear current selection')});
+        var close_button = new StyledElements.Button({iconClass: 'fa fa-remove', title: utils.gettext('Clear current selection')});
         close_button.appendTo(this.wrapperElement);
         close_button.disable().addEventListener('click', function () {
             this.setValue('');
@@ -96,7 +96,7 @@
         this.wrapperElement.appendChild(this.name_preview);
         this.wrapperElement.appendChild(this.inputElement);
 
-        var button = new StyledElements.Button({iconClass: 'icon-search', title: utils.gettext('Search')});
+        var button = new StyledElements.Button({iconClass: 'fa fa-search', title: utils.gettext('Search')});
         button.appendTo(this.wrapperElement);
 
         /* Public fields */

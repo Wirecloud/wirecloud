@@ -45,21 +45,21 @@
             this.btnEnable = new se.Button({
                 title: utils.gettext("Enable"),
                 class: "btn-enable",
-                iconClass: "icon-lock"
+                iconClass: "fa fa-lock"
             });
             this.btnEnable.addEventListener('click', btnenable_onclick.bind(this));
 
             this.btnCreate = new se.Button({
                 title: utils.gettext("Create behaviour"),
                 class: "btn-create",
-                iconClass: "icon-plus"
+                iconClass: "fa fa-plus"
             });
             this.btnCreate.addEventListener('click', btncreate_onclick.bind(this));
 
             this.btnOrder = new se.ToggleButton({
                 title: utils.gettext("Order behaviours"),
                 class: "btn-order",
-                iconClass: "icon-sort"
+                iconClass: "fa fa-sort"
             });
             this.btnOrder.addEventListener('click', btnorder_onclick.bind(this));
             this.btnOrder.disable();
@@ -116,14 +116,14 @@
                 if (enabled) {
                     this.btnEnable
                         .setTitle(utils.gettext("Disable"))
-                        .replaceIconClass('icon-lock', 'icon-unlock');
+                        .replaceIconClass('fa-lock', 'fa-unlock');
                     this.btnCreate.show();
                     this.body.removeChild(this.disabledAlert);
                     this.btnCreate.get().parentElement.classList.remove('hidden');
                 } else {
                     this.btnEnable
                         .setTitle(utils.gettext("Enable"))
-                        .replaceIconClass('icon-unlock', 'icon-lock');
+                        .replaceIconClass('fa-unlock', 'fa-lock');
                     this.btnCreate.hide();
                     this.body.appendChild(this.disabledAlert);
                     this.btnCreate.get().parentElement.classList.add('hidden');

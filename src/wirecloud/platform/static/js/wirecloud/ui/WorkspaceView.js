@@ -40,7 +40,7 @@
         this.walletButton = this.buildAddWidgetButton();
 
         this.wiringButton = new StyledElements.Button({
-            class: "wc-show-wiring",
+            class: "wc-show-wiring-button",
             iconClass: 'fa fa-puzzle-piece',
             title: utils.gettext('Wiring')
         });
@@ -50,7 +50,7 @@
 
         this.myresourcesButton = new StyledElements.Button({
             iconClass: 'fa fa-archive',
-            class: "wc-show-myresources",
+            class: "wc-show-myresources-button",
             title: utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {
@@ -59,7 +59,7 @@
 
         this.marketButton = new StyledElements.Button({
             iconClass: 'fa fa-shopping-cart',
-            class: "wc-show-marketplace",
+            class: "wc-show-marketplace-button",
             title: utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
@@ -263,14 +263,13 @@
             });
             this.notebook.addButton(this.fullscreenButton);
             Wirecloud.Utils.onFullscreenChange(this.notebook, function () {
-                this.fullscreenButton.removeIconClassName('icon-resize-full');
-                this.fullscreenButton.removeIconClassName('icon-resize-small');
+                this.fullscreenButton.removeIconClassName(['fa-expand', 'fa-compress']);
                 if (this.notebook.fullscreen) {
-                    this.fullscreenButton.addIconClassName('icon-resize-small');
+                    this.fullscreenButton.addIconClassName('fa-compress');
                     this.fullscreenButton.setTitle(utils.gettext('Exit full screen'));
                     this.notebook.addClassName('fullscreen');
                 } else {
-                    this.fullscreenButton.addIconClassName('icon-resize-full');
+                    this.fullscreenButton.addIconClassName('fa-expand');
                     this.fullscreenButton.setTitle(utils.gettext('Full screen'));
                     this.notebook.removeClassName('fullscreen');
                 }
@@ -312,9 +311,9 @@
     WorkspaceView.prototype.buildAddWidgetButton = function buildAddWidgetButton() {
         var button = new se.ToggleButton({
             title: utils.gettext("Search component"),
-            class: "btn-primary wc-show-component-sidebar",
-            iconClass: "icon-archive",
-            stackedIconClass: "icon-plus-sign"
+            class: "btn-primary wc-show-component-sidebar-button",
+            iconClass: "fa fa-archive",
+            stackedIconClass: "fa fa-plus-circle"
         });
         button.addEventListener('click', function (button) {
             if (button.active) {

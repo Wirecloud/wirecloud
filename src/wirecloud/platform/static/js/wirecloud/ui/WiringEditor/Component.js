@@ -48,7 +48,7 @@
             this.btnPrefs = new se.PopupButton({
                 class: "we-prefs-btn",
                 title: utils.gettext("Preferences"),
-                iconClass: "icon-reorder"
+                iconClass: "fa fa-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ComponentPrefs(this));
 

@@ -50,7 +50,7 @@
                 var item;
 
                 item = new se.MenuItem(title, onclick);
-                item.addIconClass('icon-' + iconClass);
+                item.addIconClass('fa fa-' + iconClass);
 
                 if (isEnabled != null) {
                     item.enabled = isEnabled.call(this.component);
@@ -135,9 +135,9 @@
 
     var getItemCollapse = function getItemCollapse() {
         if (this.collapsed) {
-            return {title: utils.gettext("Expand"), icon: "collapse-top"};
+            return {title: utils.gettext("Expand"), icon: "caret-square-o-down"};
         } else {
-            return {title: utils.gettext("Collapse"), icon: "collapse"};
+            return {title: utils.gettext("Collapse"), icon: "caret-square-o-up"};
         }
     };
 

@@ -131,10 +131,10 @@
     var events = ['click'];
 
     var fontawesomeIcons = {
-        "icon-plus-sign": "\uf055",
-        "icon-remove-sign": "\uf057",
-        "icon-reorder": "\uf0c9",
-        "icon-trash": "\uf014"
+        "fa-plus-circle": "\uf055",
+        "fa-remove-circle": "\uf057",
+        "fa-reorder": "\uf0c9",
+        "fa-trash": "\uf014"
     };
 
     var appendTitle = function appendTitle(title) {

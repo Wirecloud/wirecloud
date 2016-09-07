@@ -167,7 +167,7 @@
             wiringView: {
                 open_component_sidebar: function open_component_sidebar(type) {
                     return function (autoAction, element) {
-                        var sidebar_button = Utils.basic_selectors.toolbar_button('icon-archive')();
+                        var sidebar_button = Utils.basic_selectors.toolbar_button('wc-show-component-sidebar-button')();
                         if (!sidebar_button.classList.contains('active')) {
                             sidebar_button.click();
                         }
@@ -182,7 +182,7 @@
         },
         basic_selectors: {
             back_button: function back_button() {
-                return Utils.basic_selectors.button("#wirecloud_header .icon-caret-left");
+                return Utils.basic_selectors.button("#wirecloud_header .wc-back-button");
             },
             button: function button(selector) {
                 return function () {
@@ -207,9 +207,6 @@
                     var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
                     return currentWindowMenu.form.fieldInterfaces[fieldName].inputElement.inputElement;
                 };
-            },
-            mac_wallet_close_button: function mac_wallet_close_button() {
-                return Utils.basic_selectors.button('.wc-toolbar .wc-show-component-sidebar');
             },
             mac_wallet_input: function mac_wallet_input() {
                 return Utils.basic_selectors.element('.wc-workspace .wc-resource-list .se-field-search');
@@ -267,13 +264,13 @@
             },
             wiringView: {
                 create_behaviour_button: function create_behaviour_button() {
-                    return Utils.basic_selectors.button(".panel-behaviours .panel-options .btn-create");
+                    return Utils.basic_selectors.button(".we-panel-behaviours .panel-options .btn-create");
                 },
                 enable_behaviours_button: function enable_behaviours_button() {
-                    return Utils.basic_selectors.button(".panel-behaviours .panel-options .btn-enable");
+                    return Utils.basic_selectors.button(".we-panel-behaviours .panel-options .btn-enable");
                 },
                 show_behaviours_button: function show_behaviours_button() {
-                    return Utils.basic_selectors.button(".wc-toolbar .btn-list-behaviours");
+                    return Utils.basic_selectors.button(".wc-toolbar .wc-show-behaviour-sidebar-button");
                 },
                 behaviour_engine: function behaviour_engine() {
                     return function () {
