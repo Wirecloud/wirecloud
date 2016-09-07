@@ -104,7 +104,7 @@
              * @memberOf Wirecloud.Workspace#
              * @type {String}
              */
-            title: {
+            name: {
                 get: function () {
                     return this.contextManager.get('name');
                 }
@@ -240,7 +240,7 @@
                 });
 
                 var content = {
-                    name: create_tabtitle.call(this) // TODO: name -> title
+                    name: create_tabtitle.call(this)
                 };
 
                 Wirecloud.io.makeRequest(url, {
@@ -418,12 +418,12 @@
         },
 
         /**
-         * @param {String} title
+         * @param {String} name
          */
-        rename: function rename(title) {
+        rename: function rename(name) {
 
-            if (typeof title !== 'string' || !title.trim().length) {
-                throw new TypeError(utils.gettext("The argument `title` is not valid."));
+            if (typeof name !== 'string' || !name.trim().length) {
+                throw new TypeError(utils.gettext("The argument `name` is not valid."));
             }
 
             return new Promise(function (resolve, reject) {
@@ -432,7 +432,7 @@
                 });
 
                 var content = {
-                    name: title // TODO: title: title
+                    name: name
                 };
 
                 Wirecloud.io.makeRequest(url, {
@@ -443,9 +443,9 @@
                     onComplete: function (response) {
                         if (response.status === 204) {
                             this.contextManager.modify({
-                                name: title
+                                name: name
                             });
-                            this.trigger('change', ['title']);
+                            this.trigger('change', ['name']);
                             resolve(this);
                         } else {
                             reject(/* TODO */);
@@ -541,7 +541,7 @@
 
     var get_url = function get_url() {
         return document.location.protocol + '//' + document.location.host + Wirecloud.URLs.WORKSPACE_VIEW.evaluate({
-            name: encodeURIComponent(this.title),
+            name: encodeURIComponent(this.name),
             owner: encodeURIComponent(this.owner)
         });
     };

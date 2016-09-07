@@ -40,27 +40,27 @@
         this.walletButton = this.buildAddWidgetButton();
 
         this.wiringButton = new StyledElements.Button({
-            'class': "btn-display-wiring-view",
-            'iconClass': 'icon-puzzle-piece',
-            'title': utils.gettext('Wiring')
+            class: "btn-display-wiring-view",
+            iconClass: 'fa fa-puzzle-piece',
+            title: utils.gettext('Wiring')
         });
         this.wiringButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('wiring');
         });
 
         this.myresourcesButton = new StyledElements.Button({
-            'iconClass': 'icon-archive',
+            iconClass: 'fa fa-archive',
             class: "wc-show-catalogue",
-            'title': utils.gettext('My Resources')
+            title: utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('myresources');
         });
 
         this.marketButton = new StyledElements.Button({
-            'iconClass': 'icon-shopping-cart',
+            iconClass: 'fa fa-shopping-cart',
             class: "wc-show-marketplace",
-            'title': utils.gettext('Get more components')
+            title: utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
@@ -109,9 +109,9 @@
                     return this.notebook.tabs;
                 }
             },
-            title: {
+            name: {
                 get: function () {
-                    return this.model.title;
+                    return this.model.name;
                 }
             },
             widgets: {
@@ -220,7 +220,7 @@
                 workspace: this
             });
 
-            if (status.tab != null && status.tab === model.title) {
+            if (status.tab != null && status.tab === model.name) {
                 statusTab = tab;
             }
 
@@ -249,7 +249,10 @@
         }
 
         if (Wirecloud.Utils.isFullscreenSupported()) {
-            this.fullscreenButton = new StyledElements.Button({'iconClass': 'icon-resize-full', title: utils.gettext('Full screen')});
+            this.fullscreenButton = new StyledElements.Button({
+                iconClass: 'fa fa-expand',
+                title: utils.gettext('Full screen')
+            });
             this.notebook.addButton(this.fullscreenButton);
             Wirecloud.Utils.onFullscreenChange(this.notebook, function () {
                 this.fullscreenButton.removeIconClassName('icon-resize-full');
@@ -279,7 +282,7 @@
             });
             this.notebook.addButton(this.seeOnWirecloudButton);
             this.seeOnWirecloudButton.addEventListener('click', function () {
-                var url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.model.owner), name: encodeURIComponent(this.model.title)});
+                var url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.model.owner), name: encodeURIComponent(this.model.name)});
                 window.open(url, '_blank');
             }.bind(this));
         } else {
@@ -396,7 +399,7 @@
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
             Wirecloud.changeActiveWorkspace(nextWorkspace, newState.tab, {replaceNavigationState: 'leave'});
         } else if (newState.tab != null) {
-            target_tab = findTabByTitle.call(this, newState.tab);
+            target_tab = this.notebook.getTabByLabel(newState.tab);
             this.notebook.goToTab(target_tab);
             document.title = newState.workspace_owner + '/' + newState.workspace_name;
         } else {
@@ -404,26 +407,14 @@
         }
     };
 
-    var findTabByTitle = function findTabByTitle(title) {
-        var i;
-
-        for (i = this.notebook.tabs.length - 1; i >= 0; i--) {
-            if (this.notebook.tabs[i].title === title) {
-                return this.notebook.tabs[i];
-            }
-        }
-
-        return null;
-    };
-
-    WorkspaceView.prototype.rename = function rename(title) {
+    WorkspaceView.prototype.rename = function rename(name) {
         return new Promise(function (resolve, reject) {
-            this.model.rename(title).then(function () {
+            this.model.rename(name).then(function () {
                 var state, layoutManager = LayoutManagerFactory.getInstance();
 
                 state = {
                     workspace_owner: this.model.owner,
-                    workspace_name: this.model.title,
+                    workspace_name: this.model.name,
                     view: "workspace",
                     tab: Wirecloud.HistoryManager.getCurrentState().tab
                 };
@@ -441,8 +432,8 @@
         return new Promise(function (resolve, reject) {
             var dialog = new Wirecloud.ui.AlertWindowMenu();
 
-            dialog.setMsg(utils.interpolate(utils.gettext('Do you really want to remove the "%(title)s" workspace?'), {
-                title: this.title
+            dialog.setMsg(utils.interpolate(utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
+                name: this.name
             }));
             dialog.setHandler(function () {
                 this.model.remove().then(function () {

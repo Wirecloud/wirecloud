@@ -81,14 +81,14 @@
 
         });
 
-        describe("rename([newName])", function () {
+        describe("setLabel([newLabel])", function () {
 
-            it("should discard previous name", function () {
+            it("should discard previous label", function () {
                 var notebook = new StyledElements.Notebook();
-                var tab = notebook.createTab({text: "Tab name"});
-                var newname = "New tab name";
-                expect(tab.rename(newname)).toBe(tab);
-                expect(tab.name).toBe(newname);
+                var tab = notebook.createTab({label: "Tab label"});
+                var newlabel = "New tab label";
+                expect(tab.setLabel(newlabel)).toBe(tab);
+                expect(tab.label).toBe(newlabel);
             });
 
         });
@@ -124,6 +124,18 @@
             var tab = notebook.createTab({closable: true});
             tab.getTabElement().querySelector('.se-btn').dispatchEvent(new MouseEvent("click"));
             expect(notebook.tabs).toEqual([]);
+        });
+
+        describe("rename([newName]) [deprecated]", function () {
+
+            it("should discard previous label", function () {
+                var notebook = new StyledElements.Notebook();
+                var tab = notebook.createTab({label: "Tab name"});
+                var newlabel = "New tab name";
+                expect(tab.rename(newlabel)).toBe(tab);
+                expect(tab.label).toBe(newlabel);
+            });
+
         });
 
     });

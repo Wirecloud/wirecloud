@@ -39,7 +39,7 @@
      * @param {Wirecloud.Workspace} workspace
      * @param {Object} data
      * @param {String} data.id
-     * @param {String} data.title
+     * @param {String} datan.name
      * @param {Boolean} [data.initial]
      */
     ns.WorkspaceTab = function WorkspaceTab(workspace, data) {
@@ -50,7 +50,7 @@
 
         _private.set(this, {
             initial: data.initial,
-            title: data.title,
+            name: data.name,
             widgets: [],
             on_changetab: on_changetab.bind(this),
             on_removewidget: on_removewidget.bind(this)
@@ -74,9 +74,9 @@
             /**
              * @type {String}
              */
-            title: {
+            name: {
                 get: function () {
-                    return _private.get(this).title;
+                    return _private.get(this).name;
                 }
             },
             /**
@@ -217,9 +217,9 @@
         },
 
         /**
-         * @param {String} title
+         * @param {String} name
          */
-        rename: function rename(title) {
+        rename: function rename(name) {
             return new Promise(function (resolve, reject) {
                 var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
                     workspace_id: this.workspace.id,
@@ -227,13 +227,13 @@
                 });
 
                 try {
-                    title = clean_title.call(this, title);
+                    name = clean_name.call(this, name);
                 } catch (e) {
                     reject(e);
                 }
 
                 var content = {
-                    name: title // TODO: title: title
+                    name: name
                 };
 
                 Wirecloud.io.makeRequest(url, {
@@ -243,7 +243,7 @@
                     postBody: JSON.stringify(content),
                     onComplete: function (response) {
                         if (response.status === 204) {
-                            change_title.call(this, title);
+                            change_name.call(this, name);
                             resolve(this);
                         } else {
                             reject(/* TODO */);
@@ -295,16 +295,12 @@
 
     var change_initial = function change_initial(initial) {
         _private.get(this).initial = initial;
-        this.trigger('change', {
-            initial: true
-        });
+        this.trigger('change', ['initial']);
     };
 
-    var change_title = function change_title(title) {
-        _private.get(this).title = title;
-        this.trigger('change', {
-            title: true
-        });
+    var change_name = function change_name(name) {
+        _private.get(this).name = name;
+        this.trigger('change', ['name']);
     };
 
     var clean_data = function clean_data(data) {
@@ -313,30 +309,30 @@
         }, data);
 
         data.initial = !!data.visible;
-        data.title = data.name;
+        data.name = data.name;
 
         return data;
     };
 
-    var clean_title = function clean_title(title) {
+    var clean_name = function clean_name(name) {
         /*jshint validthis:true */
-        if (typeof title !== 'string' || !title.trim().length) {
-            throw utils.gettext("Error updating a tab: invalid title");
+        if (typeof name !== 'string' || !name.trim().length) {
+            throw utils.gettext("Error updating a tab: invalid name");
         }
 
-        title = title.trim();
+        name = name.trim();
 
         var already_taken = this.workspace.tabs.some(function (tab) {
-            return tab.id !== this.id && tab.title === title;
+            return tab.id !== this.id && tab.name === name;
         }, this);
 
         if (already_taken) {
-            throw utils.interpolate(utils.gettext("Error updating a tab: the title %(title)s is already taken in this workspace"), {
-                title: title
+            throw utils.interpolate(utils.gettext("Error updating a tab: the name %(name)s is already taken in this workspace"), {
+                name: name
             });
         }
 
-        return title;
+        return name;
     };
 
     var clean_workspace = function clean_workspace(workspace) {

@@ -95,7 +95,7 @@
 
     var onWorkspaceRemoved = function onWorkspaceRemoved(workspace) {
         // Removing reference
-        delete this.workspacesByUserAndName[workspace.owner][workspace.title];
+        delete this.workspacesByUserAndName[workspace.owner][workspace.name];
         delete this.workspaceInstances[workspace.id];
 
         // Set the first workspace as current
@@ -107,7 +107,7 @@
         var workspace = {
             id: Wirecloud.activeWorkspace.id,
             owner: Wirecloud.activeWorkspace.owner,
-            name: Wirecloud.activeWorkspace.title
+            name: Wirecloud.activeWorkspace.name
         };
         Wirecloud.changeActiveWorkspace(workspace, null, options);
     };

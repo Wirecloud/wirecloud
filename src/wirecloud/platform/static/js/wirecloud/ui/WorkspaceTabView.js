@@ -36,7 +36,7 @@
 
         se.Tab.call(this, id, notebook, {
             closable: false,
-            name: model.title
+            name: model.name
         });
 
         _private.set(this, {
@@ -66,9 +66,9 @@
              * @memberOf Wirecloud.ui.WorkspaceTabView#
              * @type {String}
              */
-            title: {
+            name: {
                 get: function () {
-                    return this.model.title;
+                    return this.model.name;
                 }
             },
             /**
@@ -107,10 +107,10 @@
         if (!this.workspace.model.restricted) {
             var button = new se.PopupButton({
                 title: utils.gettext("Preferences"),
-                'class': 'icon-tab-menu',
-                'plain': true,
-                'menuOptions': {
-                    'position': ['top-left', 'top-right']
+                class: 'icon-tab-menu',
+                plain: true,
+                menuOptions: {
+                    position: ['top-left', 'top-right']
                 }
             });
             button.popup_menu.append(new ns.WorkspaceTabViewMenuItems(this));
@@ -227,19 +227,22 @@
         },
 
         /**
-         * @param {String} title
+         * @param {String} name
          *
          * @returns {Promise}
          */
-        rename: function rename(title) {
-            this.model.rename(title).catch(function (reason) {
+        rename: function rename(name) {
+            var promise = this.model.rename(name);
+
+            promise.catch(function (reason) {
                 Wirecloud.GlobalLogManager.log(reason);
                 /*
                 var msg = Wirecloud.GlobaLogManager.formatError(gettext("Error renaming tab: %(errorMsg)s."), transport, e);
         (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                  */
             });
-            return this;
+
+            return promise;
         },
 
         repaint: function repaint() {
@@ -263,7 +266,7 @@
 
             var currentState = Wirecloud.HistoryManager.getCurrentState();
             var newState = utils.merge({}, currentState, {
-                tab: this.model.title
+                tab: this.model.name
             });
 
             if (currentState.tab != null) {
@@ -345,13 +348,13 @@
 
     var on_changetab = function on_changetab(tab, changes) {
         /*jshint validthis:true */
-        if (changes.title) {
-            se.Tab.prototype.rename.call(this, tab.title);
+        if (changes.indexOf('name') !== -1) {
+            se.Tab.prototype.rename.call(this, tab.name);
 
             if (!this.hidden) {
                 var currentState = Wirecloud.HistoryManager.getCurrentState();
                 var newState = utils.merge({}, currentState, {
-                    tab: tab.title
+                    tab: tab.name
                 });
                 Wirecloud.HistoryManager.replaceState(newState);
             }
