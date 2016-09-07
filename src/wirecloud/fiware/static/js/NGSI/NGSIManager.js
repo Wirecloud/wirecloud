@@ -71,7 +71,7 @@
         var operator;
 
         if (!(id in proxiesByOperator)) {
-            operator = Wirecloud.activeWorkspace.wiring.operators[id];
+            operator = Wirecloud.activeWorkspace.wiring.operatorsById[id];
             proxiesByOperator[id] = [];
             operator.addEventListener('unload', unload_operator);
         }
