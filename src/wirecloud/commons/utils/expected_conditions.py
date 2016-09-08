@@ -62,6 +62,7 @@ class element_be_clickable(object):
 
             while top_element.tag_name != 'html':
                 if top_element == element:
+                    element.click()
                     return element
                 elif 'popover' in top_element.get_attribute('class').split():
                     # Dismiss this popover/tooltip

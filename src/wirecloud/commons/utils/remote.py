@@ -125,10 +125,8 @@ class CatalogueEntryTester(object):
 
     def __exit__(self, type, value, traceback):
 
-        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button"), parent=True))
-
         if self.catalogue.get_subview() == 'details':
-            button.click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button")))
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.catalogue.get_subview() == 'search')
 
         self.details = None
@@ -187,7 +185,7 @@ class MACFieldTester(object):
         self.field_element = field_element
 
     def __enter__(self):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-search"), parent=True, base_element=self.field_element)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-search"), parent=True, base_element=self.field_element))
         self.element = self.testcase.wait_element_visible_by_css_selector('.window_menu.mac_selection_dialog')
         return self
 
@@ -258,7 +256,7 @@ class WebElementTester(object):
         return self.element.is_displayed()
 
     def click(self):
-        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable(self.element)).click()
+        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable(self.element))
         return self
 
     def find_element(self, css_selector):
@@ -591,7 +589,6 @@ class WorkspaceTabTester(WebElementTester):
 
     def show_preferences(self):
         button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-tab-menu"), parent=True, base_element=self.element))
-        button.click()
         element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, element, button)
@@ -669,7 +666,7 @@ class WidgetTester(WebElementTester):
 
     @property
     def btn_preferences(self):
-        return ButtonTester(self.testcase, WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-menu-button"), base_element=self.element)))
+        return ButtonTester(self.testcase, self.find_element(".wc-menu-button"))
 
     @property
     def title_element(self):
@@ -781,12 +778,12 @@ class WidgetTester(WebElementTester):
 
     def maximize(self, timeout=10):
 
-        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-plus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-plus"), base_element=self.element))
         WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
 
     def minimize(self, timeout=10):
 
-        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-minus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-minus"), base_element=self.element))
         WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
 
     def refresh(self):
@@ -1142,7 +1139,7 @@ class WiringBehaviourTester(WebElementTester):
         # scroll into view the component panel to be able to drag and dop it
         self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", self.element)
 
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable(self.heading)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable(self.heading))
         return self
 
     def change_position(self, behaviour):
@@ -1337,7 +1334,6 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
     def open_menu(self):
         button = WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-menu-button")))
-        button.click()
         popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self, popup_menu_element, button)
@@ -1484,7 +1480,7 @@ class MarketplaceViewTester(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button"), parent=True)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button")))
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
 
     def get_current_catalogue_base_element(self):
@@ -1505,8 +1501,7 @@ class MarketplaceViewTester(object):
         return catalogue_element
 
     def open_menu(self):
-        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .fa-reorder"), parent=True))
-        button.click()
+        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-menu-button")))
         popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, popup_menu_element, button)
@@ -1634,7 +1629,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
             return False
 
         if self.marketplace_view is None:
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button"))).click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button")))
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:
@@ -1668,7 +1663,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wc-upload-mac-modal')))
         dialog.find_element_by_css_selector('input[type="file"]').send_keys(wgt_path)
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.btn-primary'), base_element=dialog)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.btn-primary'), base_element=dialog))
         self.testcase.wait_wirecloud_ready()
 
         window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
