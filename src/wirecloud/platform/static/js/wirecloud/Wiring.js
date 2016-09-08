@@ -105,7 +105,7 @@
         }, this);
         this.workspace.addEventListener('createwidget', privates.get(this).on_createwidget);
 
-        unmarshall.call(this, data);
+        this.load(unmarshall.call(this, utils.clone(data)));
     };
 
     ns.Wiring.normalize = function normalize(status) {
@@ -311,9 +311,8 @@
     var privates = new WeakMap();
 
     var unmarshall = function unmarshall(status) {
-        var connection_info, i, id, operator_info, meta, source, target, priv;
+        var connection_info, i, id, operator_info, meta, source, target;
 
-        priv = privates.get(this);
         status = ns.Wiring.normalize(status);
 
         // Convert operator into instances
@@ -337,13 +336,13 @@
                 status.connections[i] = new Wirecloud.wiring.Connection(this, source, target, {
                     readonly: connection_info.readonly
                 });
-                status.connections[i].establish();
-                status.connections[i].addEventListener('remove', priv.on_removeconnection);
-                priv.connections.push(status.connections[i]);
+                status.connections.push(status.connections[i]);
             }
         }
 
         this.visualdescription = status.visualdescription;
+
+        return status;
     };
 
     var normalize_visual_component = function normalize_visual_component(component) {
