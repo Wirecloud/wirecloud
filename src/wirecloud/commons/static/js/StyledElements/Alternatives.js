@@ -341,7 +341,7 @@
             setTimeout(function () {
                 inAlternative.addClassName('in');
                 outAlternative.removeClassName('in');
-            }, 0);
+            }, 10);
             break;
         default:
         case StyledElements.Alternatives.NONE:

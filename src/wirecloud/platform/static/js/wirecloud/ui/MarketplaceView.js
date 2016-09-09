@@ -46,7 +46,10 @@
     };
 
     auto_select_initial_market = function auto_select_initial_market() {
-        if (this.viewList.length > 0) {
+        var currentState = Wirecloud.HistoryManager.getCurrentState();
+        if (currentState.market) {
+            this.changeCurrentMarket(currentState.market, {history: "ignore"});
+        } else if (this.viewList.length > 0) {
             this.changeCurrentMarket(this.viewList[0].key, {history: "replace"});
         } else {
             var msg = utils.gettext("<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my resources view instead</li></ul>");
@@ -105,6 +108,7 @@
                     }
                 }
                 utils.callCallback(options.onSuccess);
+                resolve();
             }.bind(this));
         }.bind(this));
 
@@ -154,11 +158,14 @@
         this.marketMenu = new StyledElements.PopupMenu();
         this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
 
-        this.addEventListener('show', function (view) {
-            if (view.loading === null) {
-                Wirecloud.MarketManager.getMarkets(onGetMarketsSuccess.bind(view, {}), onGetMarketsFailure.bind(view, {}), onGetMarketsComplete.bind(view, {}));
-                view.loading = true;
+        options.parentElement.addEventListener("postTransition", function (alts, outalt, inalt) {
+            if (inalt === this && this.loading === null) {
+                Wirecloud.MarketManager.getMarkets(onGetMarketsSuccess.bind(this, {}), onGetMarketsFailure.bind(this, {}), onGetMarketsComplete.bind(this, {}));
+                this.loading = true;
             }
+        }.bind(this));
+
+        this.addEventListener('show', function (view) {
 
             if (view.loading === false && !view.error) {
                 if (view.alternatives.getCurrentAlternative() === view.emptyAlternative) {
