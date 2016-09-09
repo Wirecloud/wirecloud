@@ -114,7 +114,7 @@
                 }
             });
             button.popup_menu.append(new ns.WorkspaceTabViewMenuItems(this));
-            button.insertInto(this.tabElement, this.tabElement.childNodes[0]);
+            button.insertInto(this.tabElement);
         }
 
         this.dragboard = new ns.WorkspaceTabViewDragboard(this);

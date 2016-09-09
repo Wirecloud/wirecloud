@@ -115,7 +115,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
 .se-notebook-tab {
     position: relative;
     cursor: pointer;
-    display: inline-block;
+    display: inline-flex;
     background: transparent;
     color: $brand-primary;
     box-sizing: border-box;
@@ -130,6 +130,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     font-size: $font-size-base;
     font-weight: normal;
     min-width: 1ex;
+    max-width: 100%;
     margin: 0 1px;
     white-space: nowrap;
 

@@ -85,7 +85,6 @@
         this.tabs = [];
         this.tabsById = [];
         this.visibleTab = null;
-        this.maxTabElementWidth = null;
 
         /* Process options */
         if (options.id != null) {
@@ -319,12 +318,6 @@
         return this;
     };
 
-    Notebook.prototype.insertInto = function insertInto(element, refElement) {
-        StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
-
-        this.repaint();
-    };
-
     /**
      * Creates a new tab inside this notebook.
      *
@@ -368,10 +361,6 @@
         }
 
         tab.insertInto(this.contentArea);
-        if (this.maxTabElementWidth == null) {
-            this._computeMaxTabElementWidth();
-        }
-        tabElement.style.maxWidth = this.maxTabElementWidth + 'px';
 
         if (!this.visibleTab) {
             this.visibleTab = tab;
@@ -582,63 +571,11 @@
         this.transitionsQueue.addCommand({type: 'focus', tabId: tabId});
     };
 
-    /**
-     * @private
-     */
-    Notebook.prototype._computeMaxTabElementWidth = function _computeMaxTabElementWidth() {
-        var tabAreaWidth, tabElement, computedStyle, tabAreaComputedStyle;
-
-        if (this.tabs.length === 0) {
-            this.maxTabElementWidth = null;
-            return;
-        }
-
-        tabAreaWidth = this.tabArea.wrapperElement.clientWidth;
-        tabElement = this.tabs[0].getTabElement();
-
-        computedStyle = document.defaultView.getComputedStyle(tabElement, null);
-        if (computedStyle.getPropertyCSSValue('display') == null) {
-            this.maxTabElementWidth = null;
-            return;
-        }
-
-        tabAreaComputedStyle = document.defaultView.getComputedStyle(this.tabArea.wrapperElement, null);
-        tabAreaWidth -= tabAreaComputedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        tabAreaWidth -= tabAreaComputedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        this.maxTabElementWidth = tabAreaWidth;
-    };
-
-    var repaint_tab_area = function repaint_tab_area() {
-        var i, j, tabElement, maxWidth, tabComputedStyle, childComputedStyle;
-
-        this._computeMaxTabElementWidth();
-
-        for (i = 0; i < this.tabs.length; i++) {
-            tabElement = this.tabs[i].getTabElement();
-            maxWidth = this.maxTabElementWidth;
-            tabComputedStyle = document.defaultView.getComputedStyle(tabElement, null);
-            maxWidth -= tabComputedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            maxWidth -= tabComputedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            maxWidth -= tabComputedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            maxWidth -= tabComputedStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            for (j = 1; j < tabElement.childNodes.length; j++) {
-                childComputedStyle = document.defaultView.getComputedStyle(tabElement.childNodes[j], null);
-                maxWidth -= tabElement.childNodes[j].offsetWidth;
-                maxWidth -= childComputedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-                maxWidth -= childComputedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            }
-            tabElement.style.maxWidth = this.maxTabElementWidth + 'px';
-            tabElement.firstChild.style.maxWidth = maxWidth + 'px';
-        }
-    };
-
     Notebook.prototype.repaint = function repaint(temporal) {
         var i;
         temporal = temporal != null ? temporal : false;
 
         this.tabWrapper.repaint();
-
-        repaint_tab_area.call(this);
 
         // Enable/Disable tab scrolling buttons
         enableDisableButtons.call(this);
