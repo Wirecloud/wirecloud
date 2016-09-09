@@ -1305,6 +1305,8 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         except:
             pass
 
+        self.wait_element_visible_by_css_selector('.wc-body:not(.se-on-transition)')
+
         time.sleep(0.1)  # work around some problems
 
     def login(self, username='admin', password='admin', next=None):
@@ -1622,6 +1624,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
     def __enter__(self):
         self.testcase.find_navbar_button("wc-show-myresources-button").click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
+        self.testcase.wait_element_visible_by_css_selector('.wc-body:not(.se-on-transition)')
         return self
 
     def __exit__(self, type, value, traceback):
@@ -1965,6 +1968,7 @@ class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
         self.testcase.find_navbar_button("wc-show-wiring-button").click()
+        self.testcase.wait_element_visible_by_css_selector('.wc-body:not(.se-on-transition)')
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
         return self

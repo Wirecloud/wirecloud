@@ -1385,6 +1385,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 
         if reload is True:
             self.reload()
+            self.wait_wirecloud_ready()
 
         # Reinstall the operator
         with self.myresources_view as myresources:

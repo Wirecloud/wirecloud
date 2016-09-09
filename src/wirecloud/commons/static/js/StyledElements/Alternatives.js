@@ -26,12 +26,18 @@
 
     "use strict";
 
-    var privates = new WeakMap();
-
     /**
-     * El componente Styled Alternatives permite guardar una colección de
-     * contenedores, de los cuales sólo uno estará visible en el area asociada al
-     * componente Alternatives.
+     * Creates an Alternatives component. An Alternative container allows
+     * contents to share the same placement, being only one of the configured
+     * {@link StyledElements.Alternative} able to be displayed at one time.
+     *
+     * @constructor
+     * @extends StyledElements.StyledElement
+     * @name StyledElements.Alternatives
+     * @since 0.5
+     *
+     * @param {Object.<String, *>} options
+     *    Available options:
      */
     var Alternatives = function Alternatives(options) {
         var defaultOptions = {
@@ -46,9 +52,6 @@
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = utils.prependWord(options['class'], "se-alternatives");
 
-        this.alternatives = {};
-        this.alternativeList = [];
-
         /* Process options */
         if (options.id) {
             this.wrapperElement.setAttribute("id", options.id);
@@ -58,11 +61,22 @@
             this.wrapperElement.classList.add("full");
         }
 
-        this.defaultEffect = options.defaultEffect;
+        Object.defineProperties(this, {
+            alternatives: {
+                get: on_alternatives_get
+            },
+            alternativeList: {
+                get: on_alternative_list_get
+            },
+            defaultEffect: {
+                value: options.defaultEffect,
+                writable: true
+            }
+        });
 
         /* Transitions code */
         var initFunc = function initFunc(context, command) {
-            var inAlternative, outAlternative, p, _privates = privates.get(context);
+            var inAlternative, outAlternative, p, priv = privates.get(context);
 
             p = Promise.resolve();
 
@@ -80,15 +94,15 @@
                 break;
             case "remove":
                 outAlternative = command.outAlternative;
-                if (_privates.visibleAlt === outAlternative) {
-                    if (context.alternativeList.length > 0) {
-                        inAlternative = context.alternativeList[command.index];
+                if (priv.visibleAlt === outAlternative) {
+                    if (priv.alternativeList.length > 0) {
+                        inAlternative = priv.alternativeList[command.index];
                         if (!inAlternative) {
-                            inAlternative = context.alternativeList[command.index - 1];
+                            inAlternative = priv.alternativeList[command.index - 1];
                         }
                         p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
                     } else {
-                        _privates.visibleAlt = null;
+                        priv.visibleAlt = null;
                     }
                 }
                 p = p.then(function () {
@@ -105,7 +119,9 @@
         privates.set(this, {
             nextAltId: 0,
             transitionsQueue: new StyledElements.CommandQueue(this, initFunc),
-            visibleAlt: null
+            visibleAlt: null,
+            alternatives: {},
+            alternativeList: []
         });
     };
     Alternatives.prototype = new StyledElements.StyledElement();
@@ -115,24 +131,26 @@
     Alternatives.NONE = "none";
 
     Alternatives.prototype.repaint = function repaint(temporal) {
-        var _privates = privates.get(this);
+        var priv = privates.get(this);
 
         // Resize content
-        if (_privates.visibleAlt != null) {
-            _privates.visibleAlt.repaint(!!temporal);  // Convert temporal to boolean
+        if (priv.visibleAlt != null) {
+            priv.visibleAlt.repaint(!!temporal);  // Convert temporal to boolean
         }
 
         return this;
     };
 
     Alternatives.prototype.createAlternative = function createAlternative(options) {
-        var _privates = privates.get(this);
+        var priv = privates.get(this);
+
         var defaultOptions = {
             alternative_constructor: StyledElements.Alternative,
             containerOptions: {},
             initiallyVisible: false
         };
         options = utils.update(defaultOptions, options);
+        options.containerOptions.parentElement = this;
 
         var altId = privates.get(this).nextAltId++;
 
@@ -140,14 +158,15 @@
             throw new TypeError();
         }
         var alt = new options.alternative_constructor(altId, options.containerOptions);
+        alt.parentElement = this;
 
         alt.insertInto(this.wrapperElement);
 
-        this.alternatives[altId] = alt;
-        this.alternativeList.push(alt);
+        priv.alternatives[altId] = alt;
+        priv.alternativeList.push(alt);
 
-        if (!_privates.visibleAlt) {
-            _privates.visibleAlt = alt;
+        if (!priv.visibleAlt) {
+            priv.visibleAlt = alt;
             alt.setVisible(true);
         } else if (options.initiallyVisible) {
             this.showAlternative(alt);
@@ -158,7 +177,9 @@
     };
 
     Alternatives.prototype.removeAlternative = function removeAlternative(alternative, options) {
-        var index, id;
+        var index, id, priv;
+
+        priv = privates.get(this);
 
         options = utils.update({
             effect: this.defaultEffect,
@@ -167,12 +188,12 @@
 
         if (alternative instanceof StyledElements.Alternative) {
             id = alternative.altId;
-            if (this.alternatives[id] !== alternative) {
+            if (priv.alternatives[id] !== alternative) {
                 throw new TypeError('alternative is not owner by this alternatives element');
             }
         } else {
             id = alternative;
-            alternative = this.alternatives[alternative];
+            alternative = priv.alternatives[alternative];
             if (!alternative) {
                 // Do nothing
                 utils.callCallback(options.onComplete);
@@ -180,11 +201,11 @@
             }
         }
 
-        delete this.alternatives[id];
-        index = this.alternativeList.indexOf(alternative);
-        this.alternativeList.splice(index, 1);
+        delete priv.alternatives[id];
+        index = priv.alternativeList.indexOf(alternative);
+        priv.alternativeList.splice(index, 1);
 
-        privates.get(this).transitionsQueue.addCommand({
+        priv.transitionsQueue.addCommand({
             effect: options.effect,
             index: index,
             type: "remove",
@@ -196,11 +217,11 @@
     };
 
     Alternatives.prototype.clear = function clear() {
-        var _privates = privates.get(this);
-        this.alternatives = {};
-        this.alternativeList = [];
-        _privates.nextAltId = 0;
-        _privates.visibleAlt = null;
+        var priv = privates.get(this);
+        priv.alternatives = {};
+        priv.alternativeList = [];
+        priv.nextAltId = 0;
+        priv.visibleAlt = null;
         this.wrapperElement.innerHTML = '';
 
         return this;
@@ -220,42 +241,65 @@
     /**
      * Changes current visible alternative.
      *
+     * @since 0.5
+     * @name StyledElements.Alternative#showAlternative
+     *
      * @param {Number|StyledElements.Alternative} Alternative to show. Must belong
      * to this instance of Alternatives.
+     *
+     * @returns {StyledElements.Alternatives}
+     *      The instance on which the member is called.
      */
     Alternatives.prototype.showAlternative = function showAlternative(alternative, options) {
-        var command = {};
+        var priv, command = {};
 
         options = utils.update({
             effect: this.defaultEffect,
             onComplete: null
         }, options);
 
+        priv = privates.get(this);
+
         if (alternative instanceof StyledElements.Alternative) {
-            if (this.alternatives[alternative.altId] !== alternative) {
+            if (priv.alternatives[alternative.altId] !== alternative) {
                 throw new TypeError('Invalid alternative');
             }
             command.inAlternative = alternative;
         } else {
-            if (this.alternatives[alternative] == null) {
+            if (priv.alternatives[alternative] == null) {
                 throw new TypeError('Invalid alternative');
             }
-            command.inAlternative = this.alternatives[alternative];
+            command.inAlternative = priv.alternatives[alternative];
         }
 
         command.type = "transit";
         command.onComplete = options.onComplete;
         command.effect = options.effect;
 
-        privates.get(this).transitionsQueue.addCommand(command);
+        priv.transitionsQueue.addCommand(command);
 
         return this;
+    };
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
+
+    var on_alternatives_get = function on_alternatives_get() {
+        return utils.clone(privates.get(this).alternatives);
+    };
+
+    var on_alternative_list_get = function on_alternative_list_get() {
+        return privates.get(this).alternativeList.slice(0);
     };
 
     var build_transit_promise = function build_transit_promise(effect, outAlternative, inAlternative, context) {
         var p = new Promise(function (fulfill) {
             // Throw an event notifying we are going to change the visible alternative
             context.events.preTransition.dispatch(context, outAlternative, inAlternative);
+            context.wrapperElement.classList.add('se-on-transition');
             fulfill();
         });
 
@@ -309,6 +353,7 @@
 
         return p.then(function () {
             privates.get(context).visibleAlt = inAlternative;
+            context.wrapperElement.classList.remove('se-on-transition');
             // Throw an event notifying we have changed the visible alternative
             context.events.postTransition.dispatch(context, outAlternative, inAlternative);
         });
