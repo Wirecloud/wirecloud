@@ -95,6 +95,18 @@
                 expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
             });
 
+            it("should support create new tabs passing normal tab options", function () {
+                var tab1;
+
+                expect(element.visibleTab).toBe(null);
+                tab1 = element.createTab({label: "Tab label"});
+                expect(tab1.label).toBe("Tab label");
+
+                expect(element.visibleTab).toBe(tab1);
+                expect(element.tabs).toEqual([tab1]);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
+            });
+
             it("should support create new tabs using the initiallyVisible option", function () {
                 var tab1, tab2;
 

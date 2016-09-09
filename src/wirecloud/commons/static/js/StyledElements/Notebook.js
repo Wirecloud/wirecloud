@@ -326,16 +326,21 @@
      *
      * @param {Object} options
      *     Options to use for creating the tab. See {@link StyledElements.Tab}
-     *     for a list of options
+     *     for a list of options related directly with the tab.
+     *
+     *     In addition, you can use the following options:
+     *     - `initiallyVisible` (Boolean): Display this tab just after
+     *     creating it. default `false`.
+     *     - `tab_constructor` (StyledElements.Tab): Class/constructor to user
+     *     for creating the tab instance.
      *
      * @returns {StyledElements.Tab}
      *     The created tab.
      */
     Notebook.prototype.createTab = function createTab(options) {
         var defaultOptions = {
-            'initiallyVisible': false,
-            'name': '',
-            'tab_constructor': this.Tab
+            initiallyVisible: false,
+            tab_constructor: this.Tab
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
