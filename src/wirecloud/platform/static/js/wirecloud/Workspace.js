@@ -302,14 +302,7 @@
 
             switch (permission) {
             case "remove":
-                username = Wirecloud.contextManager.get('username');
-                workspaces = Wirecloud.workspacesByUserAndName[username];
-                if (workspaces != null) {
-                    nworkspaces = Object.keys(workspaces).length;
-                } else {
-                    nworkspaces = 0;
-                }
-                return this.removable && (nworkspaces > 1);
+                return this.removable;
             case "merge_workspaces":
                 return is_allowed('add_remove_iwidgets') || is_allowed('merge_workspaces');
             case "catalogue_view_widgets":

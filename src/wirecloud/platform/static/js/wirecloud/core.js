@@ -98,9 +98,8 @@
         delete this.workspacesByUserAndName[workspace.owner][workspace.name];
         delete this.workspaceInstances[workspace.id];
 
-        // Set the first workspace as current
-        var username = Wirecloud.contextManager.get('username');
-        Wirecloud.changeActiveWorkspace(utils.values(this.workspacesByUserAndName[username])[0]);
+        // Go to the wirecloud/home dashboard
+        Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'});
     };
 
     var onMergeSuccess = function onMergeSuccess(options, response) {
@@ -326,6 +325,10 @@
 
         if (options.monitor == null) {
             options.monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
+        }
+
+        if (!('id' in workspace)) {
+            workspace = this.workspacesByUserAndName[workspace.owner][workspace.name];
         }
 
         state = {

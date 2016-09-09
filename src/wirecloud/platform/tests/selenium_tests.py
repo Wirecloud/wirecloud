@@ -57,13 +57,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="admin", next="/admin/Workspace")
 
-        # We need atleast one Workspace, so we cannot delete current workspace
-        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources'), must_be_disabled=('Remove',)).close()
+        # admin only have one workspace, but WireCloud should allow any workspace operation
+        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed')).close()
 
         self.create_workspace(name='Test')
 
-        # Now we have two workspaces so we can remove any of them
-        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove'), ()).close()
+        # Now we have two workspaces, nothing should change
+        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed'), ()).close()
         self.rename_workspace('test2')
         tab = self.find_tab(title="Tab")
 
@@ -82,8 +82,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.remove_workspace()
 
-        # Now we have only one workspace, so we cannot remove it
-        self.open_menu().check(('Rename', 'Settings', 'New workspace'), must_be_disabled=('Remove',))
+        # We should be in the wirecloud/home dashboard after removing a workspace
+        self.assertEqual(self.get_current_workspace_name(), 'home')
+
+        # Admin is not the owner of this workspace, so WireCloud should not
+        # allow him to edit it
+        # (the admin user can edit this workspace, but it show switch to the
+        # wirecloud org first)
+        self.open_menu().check(('New workspace',), must_be_disabled=('Rename', 'Settings', 'Remove'))
 
     def test_move_iwidget_between_tabs(self):
 
