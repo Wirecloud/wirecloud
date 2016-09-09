@@ -540,6 +540,11 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         prepare_temporal_resource_directories(cls)
 
+        # Browsers doesn't use content negotiation using ETags with HTTP 1.0 servers
+        # Force Django to use HTTP 1.1 when using the runserver command
+        from wsgiref import simple_server
+        simple_server.ServerHandler.http_version = "1.1"
+
         LiveServerTestCase.setUpClass.__func__(cls)
 
         cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()

@@ -224,6 +224,8 @@ class MACFieldTester(object):
             arguments[0].dispatchEvent(evt);
         ''', search_input.element)
 
+        return self
+
     def search_in_results(self, widget_name):
 
         self.wait_ready()
@@ -774,7 +776,8 @@ class WidgetTester(WebElementTester):
         def widget_loaded(driver):
             return self.loaded
 
-        WebDriverWait(self.testcase.driver, timeout=5).until(widget_loaded)
+        WebDriverWait(self.testcase.driver, timeout=10).until(widget_loaded)
+        return self
 
     def maximize(self, timeout=10):
 
@@ -1601,6 +1604,8 @@ class MarketplaceViewTester(object):
 
         self.wait_catalogue_ready()
 
+        return self
+
     def search_in_results(self, resource_name):
 
         catalogue_base_element = self.wait_catalogue_ready()
@@ -1691,8 +1696,8 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def delete_resource(self, resource_name, version=None):
 
-        self.search(resource_name)
-        with self.search_in_results(resource_name) as resource:
+        resource = self.search(resource_name).search_in_results(resource_name)
+        with resource:
 
             version_list = resource.get_version_list()
             should_disappear_from_listings = version is None or len(version_list) == 1
@@ -1703,15 +1708,19 @@ class MyResourcesViewTester(MarketplaceViewTester):
             elif len(version_list) > 1:
                 action = 'Delete all versions'
 
+            time.sleep(1); # Work around some problems dealing with the cache
             resource.advanced_operation(action)
 
-            WebDriverWait(self.testcase.driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
-            self.testcase.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
+            modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-alert-modal"))
+            modal.accept()
 
             if should_disappear_from_listings:
                 WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.get_subview() == 'search')
             else:
                 WebDriverWait(self.testcase.driver, 5).until(lambda driver: resource.version_select.first_selected_option != version)
+
+        if should_disappear_from_listings:
+            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(resource.element))
 
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
@@ -1721,10 +1730,8 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def uninstall_resource(self, resource_name, version=None, expect_error=False):
 
-        should_disappear_from_listings = False
-
-        self.search(resource_name)
-        with self.search_in_results(resource_name) as resource:
+        resource = self.search(resource_name).search_in_results(resource_name)
+        with resource:
 
             version_list = resource.get_version_list()
             should_disappear_from_listings = version is None or len(version_list) == 1
@@ -1739,11 +1746,15 @@ class MyResourcesViewTester(MarketplaceViewTester):
                 self.testcase.assertRaises(NoSuchElementException, resource.advanced_operation, action)
                 return
             else:
+                time.sleep(1); # Work around some problems dealing with the cache
                 resource.advanced_operation(action)
                 if should_disappear_from_listings:
                     WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.get_subview() == 'search')
                 else:
                     WebDriverWait(self.testcase.driver, 5).until(lambda driver: resource.version_select.first_selected_option != version)
+
+        if should_disappear_from_listings:
+            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(resource.element))
 
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:

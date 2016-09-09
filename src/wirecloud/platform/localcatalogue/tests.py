@@ -602,7 +602,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         # Check initial workspace has only a missing widget
         self.change_current_workspace('Workspace')
         self.assertEqual(len(self.widgets), 1)
-        self.assertEqual(self.widgets[0].error_count, 1)
+        self.assertEqual(self.widgets[0].wait_loaded().error_count, 1)
 
         # Check normuser also has no access to the Test widget
         self.login(username='normuser', next="/normuser/Workspace")
