@@ -213,16 +213,7 @@ class MACFieldTester(object):
 
         search_input = FieldTester(self.testcase, self.element.find_element_by_css_selector('.se-text-field'))
         search_input.set_value(keywords)
-        self.testcase.driver.execute_script('''
-            var evt = document.createEvent("KeyboardEvent");
-            if (evt.initKeyEvent != null) {
-                evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
-            } else {
-                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
-            }
-            arguments[0].dispatchEvent(evt);
-        ''', search_input.element)
+        search_input.enter()
 
         return self
 
@@ -325,6 +316,18 @@ class FieldTester(WebElementTester):
     def submit(self):
         self.element.submit()
         return self
+
+    def enter(self):
+        self.testcase.driver.execute_script('''
+            var evt = document.createEvent("KeyboardEvent");
+            if (evt.initKeyEvent != null) {
+                evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
+            } else {
+                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+            }
+            arguments[0].dispatchEvent(evt);
+        ''', self.element)
 
 
 class ChoiceFieldTester(WebElementTester):
@@ -460,7 +463,7 @@ class WorkspaceMixinTester(object):
 
     def create_widget(self, query, new_title=None):
         with self.resource_sidebar as sidebar:
-            resource = sidebar.search_resource('widget', query)
+            resource = sidebar.search_component('widget', query)
             tab_widget = resource.create_component()
 
         if new_title is not None:
@@ -481,13 +484,14 @@ class WorkspaceMixinTester(object):
         return None
 
 
-class WorkspaceResourceSidebarTester(object):
+class WorkspaceComponentSidebarTester(object):
 
     def __init__(self, testcase):
         self.testcase = testcase
 
     def __enter__(self):
         button = self.testcase.find_navbar_button("wc-show-component-sidebar-button")
+        self.element = self.testcase.driver.find_element_by_css_selector(".wc-workspace .wc-resource-list")
         if not button.is_active:
             button.click()
             WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
@@ -500,37 +504,44 @@ class WorkspaceResourceSidebarTester(object):
             WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
 
     @property
-    def element(self):
-        return self.testcase.driver.find_element_by_css_selector(".wc-workspace .wc-resource-list")
+    def component_list(self):
+        return self.element.find_element_by_css_selector('.wc-macsearch-list')
 
     @property
-    def resources(self):
-        return [WorkspaceResourceTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".wc-resource")]
+    def components(self):
+        return [WorkspaceComponentTester(self.testcase, e) for e in self.component_list.find_elements_by_css_selector(".wc-resource")]
 
-    def find_resource(self, title):
-        for resource in self.resources:
+    def search_in_results(self, title):
+        self.wait_ready()
+
+        for resource in self.components:
             if resource.title == title:
                 return resource
         return None
 
-    def search_resource(self, type, query):
+    def search(self, type, query):
         button = ButtonTester(self.testcase, self.element.find_element_by_css_selector(".wc-filter-type-%s" % (type,)))
 
         if not button.is_active:
             button.click()
-            time.sleep(0.2)
 
         field = FieldTester(self.testcase, self.element.find_element_by_css_selector(".se-field-search"))
         field.set_value(query)
-        time.sleep(0.2)
+        field.enter()
+        return self
 
-        return WorkspaceResourceTester(self.testcase, self.element.find_element_by_css_selector(".wc-resource"))
+    def search_component(self, type, title):
+        return self.search(type, title).search_in_results(title)
 
     def search_mashup(self, query):
-        return self.search_resource('mashup', query)
+        return self.search_component('mashup', query)
+
+    def wait_ready(self, timeout=10):
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in self.component_list.get_attribute('class').split())
+        time.sleep(0.1)
 
 
-class WorkspaceResourceTester(WebElementTester):
+class WorkspaceComponentTester(WebElementTester):
 
     @property
     def id(self):
@@ -1254,7 +1265,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
     def setUp(self):
 
-        self.resource_sidebar = WorkspaceResourceSidebarTester(self)
+        self.resource_sidebar = WorkspaceComponentSidebarTester(self)
         self.marketplace_view = MarketplaceViewTester(self)
         self.myresources_view = MyResourcesViewTester(self)
         self.wiring_view = WiringViewTester(self)
@@ -1591,16 +1602,7 @@ class MarketplaceViewTester(object):
 
         search_input = FieldTester(self.testcase, catalogue_base_element.find_element_by_css_selector('.simple_search_text'))
         search_input.set_value(keyword)
-        self.testcase.driver.execute_script('''
-            var evt = document.createEvent("KeyboardEvent");
-            if (evt.initKeyEvent != null) {
-                evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
-            } else {
-                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
-            }
-            arguments[0].dispatchEvent(evt);
-        ''', search_input.element)
+        search_input.enter()
 
         self.wait_catalogue_ready()
 

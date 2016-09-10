@@ -416,7 +416,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Add two widgets to the mashup
         with self.resource_sidebar as sidebar:
-            resource = sidebar.search_resource('widget', 'Test')
+            resource = sidebar.search_component('widget', 'Test')
             resource.create_component()
             resource.create_component()
 
@@ -997,7 +997,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username="admin", next="/admin/Workspace")
 
         with self.resource_sidebar as sidebar:
-            resource = sidebar.search_resource('widget', 'Context Inspector')
+            resource = sidebar.search_component('widget', 'Context Inspector')
             widget1 = resource.create_component()
             widget2 = resource.create_component()
 

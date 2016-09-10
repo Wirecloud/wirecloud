@@ -656,7 +656,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         event = "hello world!!"
 
         with self.resource_sidebar as sidebar:
-            resource = sidebar.search_resource('widget', "Test")
+            resource = sidebar.search_component('widget', "Test")
             tab_widget1 = resource.create_component()
             tab_widget2 = resource.create_component()
 

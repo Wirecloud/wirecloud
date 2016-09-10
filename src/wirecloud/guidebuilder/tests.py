@@ -457,7 +457,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Add to workspace
         with self.resource_sidebar as sidebar:
-            resource = sidebar.find_resource(title='Linear Graph')
+            resource = sidebar.search_in_results(title='Linear Graph')
 
             btn = resource.find_element(".wc-create-resource-component")
             ActionChains(self.driver).move_to_element(btn).perform()

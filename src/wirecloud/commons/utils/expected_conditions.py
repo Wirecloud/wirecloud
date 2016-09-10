@@ -198,7 +198,7 @@ class component_instantiable(object):
 
     def __call__(self, driver):
         try:
-            resource = self.sidebar.find_resource(title=self.component_name)
+            resource = self.sidebar.search_in_results(title=self.component_name)
             return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.wc-create-resource-component'), base_element=resource.element)(driver)
         except StaleElementReferenceException:
             return False
