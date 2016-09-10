@@ -424,7 +424,7 @@ Wirecloud.ui = Wirecloud.ui || {};
     var tearDownView = function tearDownView() {
         /*jshint validthis:true */
 
-        this.workspace.wiring.load(this.toJSON());
+        this.workspace.wiring.load(this.toJSON()).save();
         readyView.call(this);
 
         Wirecloud.UserInterfaceManager.rootKeydownHandler = null;

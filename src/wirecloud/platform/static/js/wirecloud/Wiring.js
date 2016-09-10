@@ -92,6 +92,9 @@
                     return get_operators_by_id.call(this);
                 }
             },
+            status: {
+                get: on_status_get
+            },
             /**
              * @type {Wirecloud.Workspace}
              */
@@ -249,16 +252,18 @@
             });
 
             this.visualdescription = status.visualdescription;
-            this.trigger('load');
-            this.update();
 
-            return this;
+            return this.trigger('load');
         },
 
         /**
          * @returns {Promise}
          */
-        update: function update() {
+        save: function save(status) {
+            if (status == null) {
+                status = this.status;
+            }
+
             return new Promise(function (resolve, reject) {
                 var url = Wirecloud.URLs.WIRING_ENTRY.evaluate({
                     workspace_id: this.workspace.id
@@ -268,7 +273,7 @@
                     method: 'PUT',
                     requestHeaders: {'Accept': 'application/json'},
                     contentType: 'application/json',
-                    postBody: JSON.stringify(this.toJSON()),
+                    postBody: JSON.stringify(this.toJSON(status)),
                     onComplete: function (response) {
                         if (response.status === 204) {
                             resolve(this);
@@ -283,22 +288,26 @@
         /**
          * @returns {Object}
          */
-        toJSON: function toJSON() {
-            var operators = {};
+        toJSON: function toJSON(status) {
+            var operators = {}, id;
 
-            privates.get(this).operators.forEach(function (operator) {
-                if (!operator.volatile) {
-                    operators[operator.id] = operator;
+            if (status == null) {
+                status = this.status;
+            }
+
+            for (id in status.operators) {
+                if (!status.operators[id].volatile) {
+                    operators[id] = status.operators[id];
                 }
-            });
+            }
 
             return {
                 version: '2.0',
-                connections: privates.get(this).connections.filter(function (connection) {
+                connections: status.connections.filter(function (connection) {
                     return !connection.volatile;
                 }),
                 operators: operators,
-                visualdescription: this.visualdescription
+                visualdescription: status.visualdescription
             };
         }
 
@@ -309,6 +318,16 @@
     // =========================================================================
 
     var privates = new WeakMap();
+
+    var on_status_get = function on_status_get() {
+        var priv = privates.get(this);
+        return {
+            veresion: '2.0',
+            connections: priv.connections.slice(0),
+            operators: utils.clone(this.operatorsById),
+            visualdescription: utils.clone(this.visualdescription, true)
+        };
+    };
 
     var unmarshall = function unmarshall(status) {
         var connection_info, i, id, operator_info, meta, source, target;
@@ -336,7 +355,9 @@
                 status.connections[i] = new Wirecloud.wiring.Connection(this, source, target, {
                     readonly: connection_info.readonly
                 });
-                status.connections.push(status.connections[i]);
+                status.connections[i] = status.connections[i];
+            } else {
+                status.connections.splice(i, 1);
             }
         }
 
