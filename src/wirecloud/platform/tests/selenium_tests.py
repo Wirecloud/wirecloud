@@ -364,7 +364,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Check iwidget 4 is not painted yet (as it is not in the initial tab)
         source_iwidget = self.find_widget(id='3')
         target_iwidget = self.find_widget(id='4')
-        self.assertTrue(source_iwidget.loaded)
+        source_iwidget.wait_loaded()
         self.assertFalse(target_iwidget.loaded)
 
         # Force loading iwidget 4 by sending it a wiring event
@@ -571,7 +571,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username="admin", next="/admin/Workspace")
 
         with self.resource_sidebar as sidebar:
-            resource = sidebar.search_mashup('Test Mashup')
+            resource = sidebar.search_component('mashup', 'Test Mashup')
             resource.merge()
 
         self.assertEqual(len(self.tabs), 3)
@@ -743,8 +743,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.marketplace_view:
             pass
 
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
-
         self.driver.back()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'marketplace')
         self.driver.back()
@@ -757,16 +755,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Workspace')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
-
-        # Wiring editor breaks if the platform is not fully loaded
         self.wait_wirecloud_ready()
+        self.assertEqual(self.get_current_workspace_name(), 'Workspace')
+
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'wiring')
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'marketplace')
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
 
     def test_browser_workspace_navigation(self):
 
@@ -884,8 +883,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.change_current_workspace('Pending Events')
         self.remove_workspace()
-
-        self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
 
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Pending Events'))

@@ -533,9 +533,6 @@ class WorkspaceComponentSidebarTester(object):
     def search_component(self, type, title):
         return self.search(type, title).search_in_results(title)
 
-    def search_mashup(self, query):
-        return self.search_component('mashup', query)
-
     def wait_ready(self, timeout=10):
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in self.component_list.get_attribute('class').split())
         time.sleep(0.1)
@@ -1441,7 +1438,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         modal.accept()
 
         def workspace_removed(driver):
-            return old_title != self.get_current_workspace_name()
+            return self.get_current_workspace_name() == 'home'
 
         WebDriverWait(self.driver, timeout=5).until(workspace_removed)
 
@@ -1821,6 +1818,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     def __enter__(self):
         self.btn_behaviours.click()
+        self.panel = self.testcase.driver.find_element_by_css_selector(".we-panel-behaviours")
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
         return self
 
@@ -1851,10 +1849,6 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
     @property
     def disabled(self):
         return self.btn_enable.has_icon("fa-lock")
-
-    @property
-    def panel(self):
-        return self.testcase.driver.find_element_by_css_selector(".we-panel-behaviours")
 
     def create_behaviour(self, title=None, description=None):
         new_length = len(self.find_behaviours()) + 1
@@ -1894,28 +1888,25 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     def __enter__(self):
         self.btn_components.click()
-        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
+        self.element = self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring .we-panel-components")
+        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
         return self
 
     def __exit__(self, type, value, traceback):
         self.btn_components.click()
-        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
-
-    @property
-    def panel(self):
-        return self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring .we-panel-components")
+        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
 
     @property
     def search_field(self):
-        return FieldTester(self.testcase, self.panel.find_element_by_css_selector(".se-text-field"))
+        return FieldTester(self.testcase, self.element.find_element_by_css_selector(".se-text-field"))
 
     @property
     def alert(self):
-        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .wc-macsearch-list > .alert"))
+        return WebElementTester(self.testcase, self.component_list.find_element_by_css_selector(".alert"))
 
     @property
-    def result_container(self):
-        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .wc-macsearch-list"))
+    def component_list(self):
+        return self.element.find_element_by_css_selector('.wc-macsearch-list')
 
     def add_component(self, type, group_id, id=None, title=None, x=0, y=0):
         component_group = self.find_component_group(type, group_id)
@@ -1959,7 +1950,8 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
             self.search_field.set_value(keywords)
 
         self.show_component_groups(type)
-        return [WiringComponentGroupTester(self.testcase, e, type) for e in self.panel.find_elements_by_css_selector(".we-component-group")]
+        self.wait_ready()
+        return [WiringComponentGroupTester(self.testcase, e, type) for e in self.component_list.find_elements_by_css_selector(".we-component-group")]
 
     def has_components(self, type=None):
         if type is None:
@@ -1970,11 +1962,13 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         return False
 
     def show_component_groups(self, type):
-        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
-        ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-list-%s-group" % (type,))).click()
-        time.sleep(0.2)
-        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: not self.result_container.is_disabled)
+        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
+        ButtonTester(self.testcase, self.element.find_element_by_css_selector(".btn-list-%s-group" % (type,))).click()
         return self
+
+    def wait_ready(self, timeout=10):
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in self.component_list.get_attribute('class').split())
+        time.sleep(0.1)
 
 
 class WiringViewTester(BaseWiringViewTester):

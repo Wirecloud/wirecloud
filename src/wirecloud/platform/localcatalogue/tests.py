@@ -740,7 +740,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         # The workspace should contain three missig widgets
         self.assertEqual(len(self.widgets), 3)
         # A Test v2.0 widget just created in this test
-        self.assertEqual(widgetV2.error_count, 1)
+        self.assertEqual(widgetV2.wait_loaded().error_count, 1)
 
         # And two Test v1.0 widget
         # one in the first tab and another in the second one
@@ -765,7 +765,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check current workspace has only a missing widget
         self.assertEqual(len(self.widgets), len(initial_widgets) + 1)
-        self.assertEqual(added_widget.error_count, 1)
+        self.assertEqual(added_widget.wait_loaded().error_count, 1)
         for widget in initial_widgets:
             self.assertEqual(widget.error_count, 0)
 
