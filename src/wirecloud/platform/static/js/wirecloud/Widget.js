@@ -74,7 +74,7 @@
             this.permissions.minimize = false;
         }
 
-        _private.set(this, {
+        privates.set(this, {
             position: {
                 x: data.left,
                 y: data.top,
@@ -113,7 +113,7 @@
              */
             loaded: {
                 get: function () {
-                    return _private.get(this).status === STATUS.RUNNING;
+                    return privates.get(this).status === STATUS.RUNNING;
                 }
             },
             /**
@@ -129,7 +129,7 @@
              */
             meta: {
                 get: function () {
-                    return _private.get(this).resource;
+                    return privates.get(this).resource;
                 }
             },
             /**
@@ -147,7 +147,7 @@
              */
             tab: {
                 get: function () {
-                    return _private.get(this).tab;
+                    return privates.get(this).tab;
                 }
             },
             /**
@@ -207,7 +207,7 @@
              */
             position: {
                 get: function () {
-                    return utils.clone(_private.get(this).position);
+                    return utils.clone(privates.get(this).position);
                 }
             },
             /**
@@ -216,7 +216,7 @@
              */
             shape: {
                 get: function () {
-                    return utils.clone(_private.get(this).shape);
+                    return utils.clone(privates.get(this).shape);
                 }
             }
         });
@@ -286,7 +286,7 @@
             }
         });
 
-        this.tab.addEventListener('preremove', _private.get(this).on_preremovetab);
+        this.tab.addEventListener('preremove', privates.get(this).on_preremovetab);
 
         this.logManager.log(utils.gettext("Widget created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
     };
@@ -309,7 +309,7 @@
                     tab: tab.id
                 };
 
-                if (_private.get(this).tab === tab) {
+                if (privates.get(this).tab === tab) {
                     resolve(this);
                 } else {
                     Wirecloud.io.makeRequest(url, {
@@ -319,7 +319,7 @@
                         postBody: JSON.stringify(content),
                         onComplete: function (response) {
                             if (response.status === 204) {
-                                _private.get(this).tab = tab;
+                                privates.get(this).tab = tab;
                                 this.trigger('change', ['tab']);
                                 resolve(this);
                             } else {
@@ -390,12 +390,12 @@
          */
         load: function load() {
 
-            if (_private.get(this).status !== STATUS.CREATED) {
+            if (privates.get(this).status !== STATUS.CREATED) {
                 return this;
             }
 
-            _private.get(this).status = STATUS.LOADING;
-            this.wrapperElement.setAttribute('src', this.meta.codeurl + "#id=" + this.id);
+            privates.get(this).status = STATUS.LOADING;
+            this.wrapperElement.contentWindow.location.replace(this.codeurl);
             this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
 
             return this;
@@ -404,19 +404,9 @@
         /**
          * @returns {Wirecloud.Widget}
          */
-        refresh: function refresh() {
-            var src = this.wrapperElement.src;
-
-            if (_private.get(this).status !== STATUS.RUNNING) {
-                return this;
-            }
-
-            this.wrapperElement.setAttribute('src', this.meta.codeurl + "#id=" + this.id);
+        reload: function reload() {
             this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
-
-            if (this.wrapperElement.src === src) {
-                this.wrapperElement.contentDocument.location.reload();
-            }
+            this.wrapperElement.contentWindow.location.reload();
 
             return this;
         },
@@ -526,13 +516,13 @@
         },
 
         setPosition: function setPosition(position) {
-            utils.update(_private.get(this).position, position);
+            utils.update(privates.get(this).position, position);
             return this;
         },
 
         setShape: function setShape(shape) {
             // TODO: is minimized
-            utils.update(_private.get(this).shape, shape);
+            utils.update(privates.get(this).shape, shape);
             return this;
         },
 
@@ -591,7 +581,7 @@
                             var message;
 
                             if (response.status === 204) {
-                                var cmp = resource.version.compareTo(_private.get(this).resource.version);
+                                var cmp = resource.version.compareTo(privates.get(this).resource.version);
 
                                 if (cmp > 0) { // upgrade
                                     message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
@@ -624,7 +614,7 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var STATUS = {
         CREATED: 0,
@@ -675,7 +665,7 @@
     };
 
     var change_meta = function change_meta(resource) {
-        _private.get(this).resource = resource;
+        privates.get(this).resource = resource;
         build_endpoints.call(this);
         build_prefs.call(this, this.preferences);
 
@@ -741,16 +731,16 @@
 
     var on_preremovetab = function on_preremovetab(tab) {
         _remove.call(this);
-        tab.removeEventListener('preremove', _private.get(this).on_preremovetab);
+        tab.removeEventListener('preremove', privates.get(this).on_preremovetab);
     };
 
     var on_load = function on_load() {
 
-        if (!this.wrapperElement.hasAttribute('src')) {
+        if (this.wrapperElement.contentWindow.location.href !== this.codeurl) {
             return;
         }
 
-        _private.get(this).status = STATUS.RUNNING;
+        privates.get(this).status = STATUS.RUNNING;
         this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
 
         if (this.missing) {
@@ -776,7 +766,7 @@
             return;
         }
 
-        _private.get(this).status = STATUS.CREATED;
+        privates.get(this).status = STATUS.CREATED;
         this.prefCallback = null;
 
         remove_context_callbacks.call(this);

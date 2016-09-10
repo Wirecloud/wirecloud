@@ -517,7 +517,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Reload map viewer widget so it updates the view using the initial zoom and initial location
         popup = map_viewer_widget.open_menu()
-        setts_btn = popup.get_entry("Refresh")
+        setts_btn = popup.get_entry("Reload")
         ActionChains(self.driver).move_to_element(setts_btn).perform()
         imgp = take_capture(self.driver, name='mapviewer_reload_entry')
         box = create_box(popup.element, 40)

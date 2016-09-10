@@ -789,8 +789,8 @@ class WidgetTester(WebElementTester):
         WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-minus"), base_element=self.element))
         WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
 
-    def refresh(self):
-        self.open_menu().click_entry('Refresh')
+    def reload(self):
+        self.open_menu().click_entry('Reload')
 
     def remove(self, timeout=10):
         old_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget"))

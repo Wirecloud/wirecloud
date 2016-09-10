@@ -61,8 +61,8 @@
             item.setDisabled(!this.widget.model.isAllowed('rename'));
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("Refresh"), function () {
-                this.refresh();
+            item = new se.MenuItem(utils.gettext("Reload"), function () {
+                this.reload();
             }.bind(this.widget));
             item.addIconClass("fa fa-refresh");
             item.setDisabled(this.widget.model.missing);

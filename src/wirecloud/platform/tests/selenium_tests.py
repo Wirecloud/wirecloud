@@ -145,7 +145,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             last_received_event_field = self.driver.find_element_by_id('wiringOut')
             self.driver.execute_script('arguments[0].textContent = "hello world!!";', last_received_event_field)
 
-        tab_widget.refresh()
+        tab_widget.reload()
         with tab_widget:
             last_received_event_field = self.wait_element_visible_by_id('wiringOut')
             self.assertEqual(last_received_event_field.text, '')

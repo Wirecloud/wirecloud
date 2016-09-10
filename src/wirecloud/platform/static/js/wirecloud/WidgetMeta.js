@@ -41,7 +41,7 @@
             this.superClass(data);
 
             if (this.missing) {
-                this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
+                this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, window.location)).href;
                 this.codecontenttype = "application/xhtml+xml";
             } else {
                 this.codeurl = data.contents.src;

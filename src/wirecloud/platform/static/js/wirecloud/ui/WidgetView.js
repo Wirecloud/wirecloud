@@ -361,8 +361,8 @@
             return this;
         },
 
-        refresh: function refresh() {
-            this.model.refresh();
+        reload: function reload() {
+            this.model.reload();
             return this;
         },
 

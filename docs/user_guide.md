@@ -252,7 +252,7 @@ You will then be presented with a dropdown menu with several options.
 
 -   **Rename** changes the widget name shown in workspace editor and
     wiring Editor views
--   **Refresh** refreshes the widget
+-   **Reload** reloads the widget
 -   **Upgrade/Downgrade** allows you to change the version of the widget
 -   **Logs** shows a dialog with the log history of the widget
 -   **Settings** shows a form for changing the settings of the current
