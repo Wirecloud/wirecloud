@@ -82,6 +82,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.add('fiware', 'http://marketplace.example.com/', 'fiware')
             widget_offering = marketplace.search_in_results('Smart City Lights application')
             self.assertIsNotNone(widget_offering)
+    test_add_fiware_marketplace.tags = tags + ('wirecloud-markets-selenium',)
 
     def test_add_public_fiware_marketplace(self):
 
@@ -91,6 +92,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.add('fiware', 'http://marketplace.example.com/', 'fiware', public=True)
             widget_offering = marketplace.search_in_results('Smart City Lights application')
             self.assertIsNotNone(widget_offering)
+    test_add_public_fiware_marketplace.tags = tags + ('wirecloud-markets-selenium',)
 
     def test_delete_fiware_marketplace(self):
 
@@ -99,6 +101,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.marketplace_view as marketplace:
             marketplace.switch_to('fiware')
             marketplace.delete()
+    test_delete_fiware_marketplace.tags = tags + ('wirecloud-markets-selenium',)
 
     def test_ngsi_available_to_widgets(self):
 
@@ -171,6 +174,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             marketplace.search('test')
             self.assertIsNotNone(marketplace.search_in_results('Smart City Lights application'))
+    test_marketplace_keyword_search.tags = tags + ('wirecloud-markets-selenium',)
 
     def test_marketplace_filter_by_store(self):
 
@@ -189,6 +193,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             # Check results from store 2 are displayed
             self.assertIsNotNone(marketplace.search_in_results('Test Operator'))
             self.assertIsNotNone(marketplace.search_in_results('Smart City Lights application'))
+    test_marketplace_filter_by_store.tags = tags + ('wirecloud-markets-selenium',)
 
     def test_marketplace_offering_buttons(self):
 
@@ -567,3 +572,4 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self, owner="wirecloud", name="home"))
+    test_marketplace_navigation.tags = tags + ('wirecloud-markets-selenium',)

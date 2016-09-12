@@ -309,7 +309,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, 'workspace_settings')
         crop_image(imgp, *create_box(dialog))
 
-    test_creating_new_workspace.tags = ('ui-new-workspace', 'wirecloud-guide')
+    test_creating_new_workspace.tags = tags + ('ui-new-workspace',)
 
     @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
@@ -426,7 +426,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             get_by_text(dialog, 'button', 'Cancel').click()
             self.driver.find_element_by_css_selector(
                 '.wirecloud_header_nav .wc-back-button').click()
-    test_browsing_marketplace.tags = ('wirecloud-guide', 'ui-marketplace')
+    test_browsing_marketplace.tags = tags + ('ui-marketplace',)
 
     @uses_extra_resources(list_resources)
     def test_building_mashup(self):
@@ -900,7 +900,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         crop_image(imgp, *create_box(dialog))
         dialog.cancel()
 
-    test_building_mashup.tags = ('wirecloud-guide', 'ui-build-mashup')
+    test_building_mashup.tags = tags + ('ui-build-mashup',)
 
     @uses_extra_workspace('admin', 'CoNWeT_History_Info_2.0.wgt')
     @uses_extra_workspace('admin', 'CoNWeT_MWD_Tutorial_2.0.wgt')
@@ -1072,7 +1072,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 panelheads = create_box(panelhead, 7)
                 crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 10)
 
-    test_behaviour_mashup.tags = ('wirecloud-guide', 'ui-behaviour')
+    test_behaviour_mashup.tags = tags + ('ui-behaviour',)
 
     def test_sanity_check(self):
 
@@ -1163,4 +1163,4 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         import ipdb; ipdb.set_trace()
         imgp = take_capture(self.driver, "example usage")
-    test_sanity_check.tags = ('wirecloud-guide', 'wirecloud-guide-sanity-check')
+    test_sanity_check.tags = tags + ('wirecloud-guide-sanity-check',)
