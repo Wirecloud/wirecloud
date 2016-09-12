@@ -23,6 +23,7 @@ import os
 
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
+from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.remote import FormModalTester
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
@@ -538,7 +539,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(self.marketplace_view.get_subview(), 'search')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self, owner="wirecloud", name="home"))
 
         # Replay navigation history
         self.driver.forward()
@@ -565,4 +566,4 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self, owner="wirecloud", name="home"))

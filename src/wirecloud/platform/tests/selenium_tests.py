@@ -785,19 +785,32 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check navigation history has been filled correctly
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')
-        self.assertEqual(self.active_tab.title, 'ExistingTab')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='ExistingWorkspace',
+            tab='ExistingTab'
+        ))
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'OtherTab'))
-        self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='ExistingWorkspace',
+            tab='OtherTab'
+        ))
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_name(self, 'Pending Events'))
-        self.assertEqual(self.active_tab.title, 'Tab 2')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='Pending Events',
+            tab='Tab 2'
+        ))
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'Tab 1'))
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='Pending Events',
+            tab='Tab 1'
+        ))
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Pending%20Events')
@@ -805,17 +818,32 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Replay navigation history
         self.driver.forward()
         self.wait_wirecloud_ready()
-        self.assertEqual(self.get_current_workspace_name(), 'Pending Events')
-        self.assertEqual(self.active_tab.title, 'Tab 1')
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='Pending Events',
+            tab='Tab 1'
+        ))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'Tab 2'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='Pending Events',
+            tab='Tab 2'
+        ))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'OtherTab'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='ExistingWorkspace',
+            tab='OtherTab'
+        ))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'ExistingTab'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
+            owner='user_with_workspaces',
+            name='ExistingWorkspace',
+            tab='ExistingTab'
+        ))
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
@@ -834,25 +862,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         initial_workspace_tab = self.active_tab
         initial_workspace_tab_name = initial_workspace_tab.title
 
-        next_tab = self.find_tab(title='Tab 2')
-        next_tab.click()
-        next_tab.rename('NewName')
+        self.find_tab(title='Tab 2').click().rename('NewName')
 
-        initial_workspace_tab.element.click()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, initial_workspace_tab_name))
+        initial_workspace_tab.click()
+        WebDriverWait(self.driver, 5).until(WEC.workspace(self, tab=initial_workspace_tab_name))
 
         self.driver.back()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, 'NewName'))
+        WebDriverWait(self.driver, 5).until(WEC.workspace(self, tab='NewName'))
 
         self.driver.back()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, initial_workspace_tab_name))
+        WebDriverWait(self.driver, 5).until(WEC.workspace(self, tab=initial_workspace_tab_name))
 
         # Navigation history should be replayable
         self.driver.forward()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, 'NewName'))
+        WebDriverWait(self.driver, 5).until(WEC.workspace(self, tab='NewName'))
 
         self.driver.forward()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, initial_workspace_tab_name))
+        WebDriverWait(self.driver, 5).until(WEC.workspace(self, tab=initial_workspace_tab_name))
 
     def test_browser_navigation_from_renamed_workspace(self):
 
@@ -865,17 +891,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check navigation history has been filled correctly
         self.driver.back()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'New Name'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self, owner='user_with_workspaces', name='New Name'))
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'Workspace'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self, owner='user_with_workspaces', name='Workspace'))
 
         # Navigation history should be replayable
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'New Name'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self, owner='user_with_workspaces', name='New Name'))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'ExistingWorkspace'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self, owner='user_with_workspaces', name='ExistingWorkspace'))
 
     def test_browser_navigation_to_deleted_workspace(self):
 
@@ -885,14 +911,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.remove_workspace()
 
         self.driver.back()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Pending Events'))
+        WebDriverWait(self.driver, 10).until(WEC.workspace(self, owner='user_with_workspaces', name='Pending Events'))
 
         # "Pending Events" workspace cannot be edited anymore
         self.assertTrue(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
         self.assertTrue(self.find_navbar_button("wc-show-wiring-button").is_disabled)
 
         self.driver.back()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Workspace'))
+        WebDriverWait(self.driver, 10).until(WEC.workspace(self, owner='user_with_workspaces', name='Workspace'))
 
         # "Workspace" workspace should be editable
         self.assertFalse(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
@@ -921,7 +947,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Basic concepts tutorial'))
+        WebDriverWait(self.driver, 5).until(WEC.workspace(self, owner="emptyuser", name='Basic concepts tutorial'))
         next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
         self.assertElementHasFocus(next_button)
         next_button.click()

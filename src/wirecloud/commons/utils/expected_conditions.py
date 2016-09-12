@@ -146,31 +146,35 @@ class visibility_of_element_located(object):
             return False
 
 
-class workspace_tab_name(object):
-    """An expectation for checking the name of a workspace tab.
-    returns True if the name matches, false otherwise."""
-    def __init__(self, testcase, expected_title):
-        self.testcase = testcase
-        self.expected_title = expected_title
-
-    def __call__(self, driver):
-        try:
-            return self.testcase.active_tab.title == self.expected_title
-        except StaleElementReferenceException:
-            return False
-
-
-class workspace_name(object):
+class workspace(object):
     """An expectation for checking the name of a workspace.
     returns True if the name matches, false otherwise."""
-    def __init__(self, testcase, expected_name):
+    def __init__(self, testcase, owner=None, name=None, tab=None):
         self.testcase = testcase
-        self.expected_name = expected_name
+        self.expected_owner = owner
+        self.expected_name = name
+        self.expected_tab = tab
 
     def __call__(self, driver):
         try:
-            return self.testcase.get_current_workspace_name() == self.expected_name
-        except StaleElementReferenceException:
+            if self.testcase.get_current_view() != 'workspace':
+                return False
+
+            if self.expected_owner is not None:
+                workspace_owner = self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text
+                if workspace_owner != self.expected_owner:
+                    return False
+
+            if self.expected_name is not None:
+                workspace_name = self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+                if workspace_name != self.expected_name:
+                    return False
+
+            if self.expected_tab is not None and self.testcase.active_tab.title != self.expected_tab:
+                return False
+
+            return True
+        except (NoSuchElementException, StaleElementReferenceException):
             return False
 
 
