@@ -67,7 +67,6 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
     if 'DEBUG' not in settings:
         settings['DEBUG'] = False
 
-    settings['TEMPLATE_DEBUG'] = settings['DEBUG']
     settings['APPEND_SLASH'] = False
 
     settings['COMPRESS_ENABLED'] = not settings['DEBUG']
@@ -94,10 +93,29 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             'wirecloud.platform',
         )
 
-    settings['TEMPLATE_LOADERS'] = (
-        'wirecloud.platform.themes.TemplateLoader',
-        'django.template.loaders.app_directories.Loader',
-    )
+    settings['TEMPLATES'] = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'OPTIONS': {
+                'context_processors': (
+                    'django.contrib.auth.context_processors.auth',
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.i18n',
+                    'django.template.context_processors.request',
+                    'django.template.context_processors.static',
+                    'django.template.context_processors.tz',
+                    'django.contrib.messages.context_processors.messages',
+                    'wirecloud.platform.context_processors.plugins',
+                    'wirecloud.platform.context_processors.active_theme',
+                ),
+                'debug': settings['DEBUG'],
+                'loaders': (
+                    'wirecloud.platform.themes.TemplateLoader',
+                    'django.template.loaders.app_directories.Loader',
+                )
+            }
+        }
+    ]
 
     settings['MIDDLEWARE_CLASSES'] = (
         'wirecloud.commons.middleware.URLMiddleware',
@@ -137,19 +155,6 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         'wirecloud.platform.themes.ActiveThemeFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
         'compressor.finders.CompressorFinder',
-    )
-
-    settings['TEMPLATE_CONTEXT_PROCESSORS'] = (
-        'django.contrib.auth.context_processors.auth',
-        'django.core.context_processors.debug',
-        'django.core.context_processors.i18n',
-        'django.core.context_processors.media',
-        'django.core.context_processors.request',
-        'django.core.context_processors.static',
-        'django.core.context_processors.tz',
-        'django.contrib.messages.context_processors.messages',
-        'wirecloud.platform.context_processors.plugins',
-        'wirecloud.platform.context_processors.active_theme',
     )
 
     settings['LOGGING'] = {
