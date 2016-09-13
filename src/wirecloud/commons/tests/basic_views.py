@@ -21,7 +21,6 @@ from __future__ import unicode_literals
 
 import json
 
-from django.conf.urls import patterns, include, url
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test.utils import override_settings
@@ -32,6 +31,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 # Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
 __test__ = False
+
 
 @override_settings(ROOT_URLCONF='wirecloud.commons.tests.basic_views_urls')
 class BasicViewTestCase(WirecloudTestCase):
