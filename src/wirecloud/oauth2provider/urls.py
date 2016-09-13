@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,16 +17,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.views.decorators.cache import cache_page
 
-from wirecloud.oauth2provider.views import oauth_discovery
+from wirecloud.oauth2provider import views
 from wirecloud.platform.core.plugins import get_version_hash
 
-urlpatterns = patterns('wirecloud.oauth2provider.views',
+urlpatterns = (
 
-    url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60, key_prefix='well-known-oauth-%s' % get_version_hash())(oauth_discovery), name='oauth.discovery'),
-    url('^oauth2/auth$', 'provide_authorization_code', name='oauth2provider.auth'),
-    url('^oauth2/token$', 'provide_authorization_token', name='oauth2provider.token'),
+    url('^.well-known/oauth$',
+        cache_page(7 * 24 * 60 * 60, key_prefix='well-known-oauth-%s' % get_version_hash())(views.oauth_discovery),
+        name='oauth.discovery'),
+    url('^oauth2/auth$',
+        views.provide_authorization_code,
+        name='oauth2provider.auth'),
+    url('^oauth2/token$',
+        views.provide_authorization_token,
+        name='oauth2provider.token'),
 
 )
