@@ -61,7 +61,7 @@
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Rename"), function () {
-                (new Wirecloud.ui.RenameWindowMenu(this, 'rename')).show();
+                (new Wirecloud.ui.RenameWindowMenu(this)).show();
             }.bind(this.workspace));
             item.addIconClass("fa fa-pencil");
             item.setDisabled(!this.workspace.model.isAllowed('rename'));

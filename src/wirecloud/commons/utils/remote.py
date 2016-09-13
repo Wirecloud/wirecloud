@@ -618,14 +618,15 @@ class WorkspaceTabTester(WebElementTester):
 
         WebDriverWait(self.testcase.driver, timeout).until(tab_removed)
 
-    def rename(self, new_title, timeout=10):
+    def rename(self, new_name, timeout=10):
         self.show_preferences().click_entry("Rename")
         modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".window_menu:not(#loading-message)"))
-        modal.get_field('title').set_value(new_title)
+        self.testcase.assertEqual(modal.get_field('name').value, self.title)
+        modal.get_field('name').set_value(new_name)
         modal.accept()
 
         def tab_renamed(driver):
-            return self.title == new_title
+            return self.title == new_name
 
         WebDriverWait(self.testcase.driver, timeout).until(tab_renamed)
 
@@ -1414,15 +1415,16 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         except StaleElementReferenceException:
             return self.get_current_workspace_name()
 
-    def rename_workspace(self, workspace_title):
+    def rename_workspace(self, workspace_name):
         self.open_menu().click_entry("Rename")
 
         modal = FormModalTester(self, self.wait_element_visible_by_css_selector(".window_menu:not(#loading-message)"))
-        modal.get_field('title').set_value(workspace_title)
+        self.assertEqual(modal.get_field('name').value, self.get_current_workspace_name())
+        modal.get_field('name').set_value(workspace_name)
         modal.accept()
 
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_name() == workspace_title)
-        self.assertEqual(self.get_current_workspace_name(), workspace_title)
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_name() == workspace_name)
+        self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def change_current_workspace(self, workspace_name):
         self.open_menu().click_entry(workspace_name)
