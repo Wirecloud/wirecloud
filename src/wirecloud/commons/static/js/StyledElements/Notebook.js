@@ -22,7 +22,7 @@
 /* globals CSSPrimitiveValue, StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -60,10 +60,10 @@
             'focusOnSetVisible': true,
             'full': true
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "se-notebook");
+        this.wrapperElement.className = utils.prependWord(options['class'], "se-notebook");
 
         tabWrapper = new StyledElements.HorizontalLayout({'class': 'se-notebook-tabs-wrapper', 'autoHeight': false});
         this.tabWrapper = tabWrapper;
@@ -104,10 +104,10 @@
             if (this.new_tab_button_tabs == null) {
                 new_tab_main_listener = onNewTab.bind(this);
 
-                this.new_tab_button_tabs = new this.Button({iconClass: 'fa fa-plus', 'class': 'se-notebook-new-tab', title: StyledElements.Utils.gettext('Add Tab')});
+                this.new_tab_button_tabs = new this.Button({iconClass: 'fa fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
                 this.new_tab_button_tabs.addEventListener('click', new_tab_main_listener);
                 this.tabArea.appendChild(this.new_tab_button_tabs);
-                this.new_tab_button_left = new this.Button({iconClass: 'fa fa-plus', 'class': 'se-notebook-new-tab', title: StyledElements.Utils.gettext('Add Tab')});
+                this.new_tab_button_left = new this.Button({iconClass: 'fa fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
                 this.new_tab_button_left.addEventListener('click', new_tab_main_listener);
                 this.addButton(this.new_tab_button_left);
             }
@@ -218,7 +218,7 @@
             }
         });
     };
-    Notebook.prototype = new StyledElements.StyledElement();
+    utils.inherit(Notebook, StyledElements.StyledElement);
 
     Notebook.prototype.Button = StyledElements.Button;
     Notebook.prototype.Tab = StyledElements.Tab;
@@ -342,7 +342,7 @@
             initiallyVisible: false,
             tab_constructor: this.Tab
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
         // Reserve an id for the new tab
         var tabId = this.tabsById.push(null);
@@ -723,4 +723,4 @@
 
     StyledElements.Notebook = Notebook;
 
-})();
+})(StyledElements.Utils);

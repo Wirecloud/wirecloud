@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -135,7 +135,7 @@
             'class': '',
             'placement': ['right', 'bottom', 'left', 'top']
         };
-        Object.defineProperty(this, 'options', {value: StyledElements.Utils.merge(defaultOptions, options)});
+        Object.defineProperty(this, 'options', {value: utils.merge(defaultOptions, options)});
 
         StyledElements.StyledElement.call(this, []);
 
@@ -146,7 +146,7 @@
             }}
         });
     };
-    Tooltip.prototype = new StyledElements.StyledElement();
+    utils.inherit(Tooltip, StyledElements.StyledElement);
 
     Tooltip.prototype.destroy = function destroy() {
         this.hide();
@@ -200,5 +200,4 @@
 
     StyledElements.Tooltip = Tooltip;
 
-})();
-
+})(StyledElements.Utils);

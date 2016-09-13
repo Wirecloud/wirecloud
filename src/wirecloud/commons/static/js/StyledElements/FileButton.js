@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -39,9 +39,9 @@
         var defaultOptions = {
             'multiple': true
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
-        StyledElements.Button.call(this, options);
+        this.superClass(options);
 
         Object.defineProperty(this, 'inputElement', {value: document.createElement("input")});
         this.inputElement.setAttribute("type", "file");
@@ -56,7 +56,7 @@
 
         this.inputElement.addEventListener('change', this._onchange, true);
     };
-    FileButton.prototype = new StyledElements.Button({extending: true});
+    utils.inherit(FileButton, StyledElements.Button);
 
     FileButton.prototype.destroy = function destroy() {
 
@@ -69,4 +69,4 @@
 
     StyledElements.FileButton = FileButton;
 
-})();
+})(StyledElements.Utils);

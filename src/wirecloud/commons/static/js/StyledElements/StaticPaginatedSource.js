@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -62,7 +62,7 @@
     };
 
     var createFilterPattern = function createFilterPattern(keywords) {
-        return new RegExp(StyledElements.Utils.escapeRegExp(keywords), 'i');
+        return new RegExp(utils.escapeRegExp(keywords), 'i');
     };
 
     var filterElements = function filterElements(keywords) {
@@ -237,7 +237,7 @@
         // Initialize source status
         this.changeElements(options.initialElements);
     };
-    StaticPaginatedSource.prototype = new StyledElements.PaginatedSource();
+    utils.inherit(StaticPaginatedSource, StyledElements.PaginatedSource);
 
     /**
      * Updates the options used by this StaticPaginatedSource
@@ -418,4 +418,5 @@
     var privates = new WeakMap();
 
     StyledElements.StaticPaginatedSource = StaticPaginatedSource;
-})();
+
+})(StyledElements.Utils);

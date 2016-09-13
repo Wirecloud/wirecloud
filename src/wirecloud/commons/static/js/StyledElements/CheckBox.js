@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -38,7 +38,7 @@
             'secondInput': null,
             'value': true
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
         // This is needed for backward compatibility
         if ('initiallyChecked' in options) {
@@ -73,8 +73,8 @@
         }
 
         /* Internal events */
-        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
         this.inputElement.addEventListener('change',
                                     function () {
                                         if (this.enabled) {
@@ -87,7 +87,7 @@
                                     true);
     };
 
-    CheckBox.prototype = new StyledElements.InputElement();
+    utils.inherit(CheckBox, StyledElements.InputElement);
 
     CheckBox.prototype.reset = function reset() {
         this.setValue(this.defaultValue);
@@ -115,4 +115,4 @@
 
     StyledElements.CheckBox = CheckBox;
 
-})();
+})(StyledElements.Utils);

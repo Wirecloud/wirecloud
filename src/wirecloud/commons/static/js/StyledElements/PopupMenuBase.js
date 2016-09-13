@@ -113,10 +113,6 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        if (options.extending) {
-            return;
-        }
-
         StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange', 'click']);
 
         this.wrapperElement = document.createElement('div');
@@ -160,7 +156,7 @@
         this._menuItem_onfocus_bound = menuItem_onfocus.bind(this);
         this._menuItem_onblur_bound = menuItem_onblur.bind(this);
     };
-    PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
+    utils.inherit(PopupMenuBase, StyledElements.ObjectWithEvents);
 
     var _append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {

@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -32,12 +32,12 @@
     var HorizontalLayout = function HorizontalLayout(options) {
         StyledElements.StyledElement.call(this, []);
 
-        this.options = StyledElements.Utils.merge({
+        this.options = utils.merge({
             'class': ''
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = StyledElements.Utils.appendWord(this.options['class'], "se-horizontal-layout");
+        this.wrapperElement.className = utils.appendWord(this.options['class'], "se-horizontal-layout");
 
         this.west = new StyledElements.Container({'class': 'se-hl-west-container'});
         this.center = new StyledElements.Container({'class': 'se-hl-center-container'});
@@ -47,7 +47,7 @@
         this.center.insertInto(this.wrapperElement);
         this.east.insertInto(this.wrapperElement);
     };
-    HorizontalLayout.prototype = new StyledElements.StyledElement();
+    utils.inherit(HorizontalLayout, StyledElements.StyledElement);
 
     HorizontalLayout.prototype.repaint = function repaint(temporal) {
         this.west.repaint(temporal);
@@ -68,4 +68,5 @@
     };
 
     StyledElements.HorizontalLayout = HorizontalLayout;
-})();
+
+})(StyledElements.Utils);

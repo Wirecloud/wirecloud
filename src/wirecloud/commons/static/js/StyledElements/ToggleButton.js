@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -30,14 +30,9 @@
         var defaultOptions = {
             'initiallyChecked': false
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
-        // Support hirerarchy
-        if (options.extending) {
-            return;
-        }
-
-        StyledElements.Button.call(this, options);
+        this.superClass(options);
 
         Object.defineProperty(this, 'active', {
             get: function get() {
@@ -51,7 +46,7 @@
         // Init status
         this.active = options.initiallyChecked;
     };
-    StyledElements.ToggleButton.prototype = new StyledElements.Button({extending: true});
+    utils.inherit(StyledElements.ToggleButton, StyledElements.Button);
 
     StyledElements.ToggleButton.prototype._clickCallback = function _clickCallback(event) {
         event.stopPropagation();
@@ -68,4 +63,4 @@
         return this;
     };
 
-})();
+})(StyledElements.Utils);

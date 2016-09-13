@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -35,7 +35,7 @@
         Object.defineProperty(this, 'name', {value: name});
         this.buttons = [];
     };
-    ButtonsGroup.prototype = new StyledElements.InputElement();
+    utils.inherit(ButtonsGroup, StyledElements.InputElement);
 
     /**
      * @private
@@ -134,4 +134,4 @@
 
     StyledElements.ButtonsGroup = ButtonsGroup;
 
-})();
+})(StyledElements.Utils);

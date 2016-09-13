@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -48,7 +48,7 @@
             'initialValue': '',
             'class': ''
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
         StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
@@ -76,27 +76,27 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
         this.inputElement.addEventListener('input', this._oninput, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
-        this.inputElement.addEventListener('keydown', StyledElements.Utils.stopInputKeydownPropagationListener, false);
+        this.inputElement.addEventListener('keydown', utils.stopInputKeydownPropagationListener, false);
     };
-    PasswordField.prototype = new StyledElements.InputElement();
+    utils.inherit(PasswordField, StyledElements.InputElement);
 
     PasswordField.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('input', this._oninput, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
-        this.inputElement.removeEventListener('keydown', StyledElements.Utils.stopInputKeydownPropagationListener, false);
+        this.inputElement.removeEventListener('keydown', utils.stopInputKeydownPropagationListener, false);
 
         StyledElements.InputElement.prototype.destroy.call(this);
     };
 
     StyledElements.PasswordField = PasswordField;
 
-})();
+})(StyledElements.Utils);

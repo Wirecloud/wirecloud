@@ -168,7 +168,7 @@
             this.cancelButton.insertInto(buttonArea);
         }
     };
-    Form.prototype = new StyledElements.StyledElement();
+    utils.inherit(Form, StyledElements.StyledElement);
 
     Form.prototype.repaint = function repaint(temporal) {
         var i;

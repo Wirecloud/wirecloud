@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -79,7 +79,7 @@
             'max': Number.POSITIVE_INFINITY,
             'inc': 1
         };
-        this.options = options = StyledElements.Utils.merge(defaultOptions, options);
+        this.options = options = utils.merge(defaultOptions, options);
         options.min = Number(options.min);
         options.max = Number(options.max);
         options.inc = Number(options.inc);
@@ -110,13 +110,13 @@
         bottomButton.addEventListener("click", update.bind(this, -options.inc));
         this.inputElement.addEventListener("focus", onfocus.bind(this), true);
         this.inputElement.addEventListener("blur", onblur.bind(this), true);
-        this.inputElement.addEventListener("keydown", StyledElements.Utils.stopInputKeydownPropagationListener, false);
+        this.inputElement.addEventListener("keydown", utils.stopInputKeydownPropagationListener, false);
 
         this.wrapperElement.appendChild(this.inputElement);
         topButton.insertInto(this.wrapperElement);
         bottomButton.insertInto(this.wrapperElement);
     };
-    NumericField.prototype = new StyledElements.InputElement();
+    utils.inherit(NumericField, StyledElements.InputElement);
 
     NumericField.prototype.getValue = function getValue() {
         return Number(this.inputElement.value);
@@ -124,4 +124,4 @@
 
     StyledElements.NumericField = NumericField;
 
-})();
+})(StyledElements.Utils);

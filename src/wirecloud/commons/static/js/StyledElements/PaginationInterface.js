@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -79,10 +79,10 @@
 
     PaginationInterface = function PaginationInterface(source, options) {
         var defaultOptions = {
-            'layout': StyledElements.Utils.gettext('<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><t:firstBtn/><t:prevBtn/><div class="box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>'),
+            'layout': utils.gettext('<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><t:firstBtn/><t:prevBtn/><div class="box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>'),
             'autoHide': false
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
         this.autoHide = options.autoHide;
 
         StyledElements.StyledElement.call(this, []);
@@ -123,7 +123,7 @@
 
         this.source.addEventListener('requestEnd', onPaginationChanged.bind(this));
     };
-    PaginationInterface.prototype = new StyledElements.StyledElement();
+    utils.inherit(PaginationInterface, StyledElements.StyledElement);
 
     PaginationInterface.prototype.changeLayout = function changeLayout(newLayout) {
         updateLayout.call(this, newLayout);
@@ -131,4 +131,4 @@
 
     StyledElements.PaginationInterface = PaginationInterface;
 
-})();
+})(StyledElements.Utils);

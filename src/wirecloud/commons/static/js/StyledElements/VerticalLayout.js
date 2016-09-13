@@ -22,19 +22,19 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
     var VerticalLayout = function VerticalLayout(options) {
         StyledElements.StyledElement.call(this, []);
 
-        this.options = StyledElements.Utils.merge({
+        this.options = utils.merge({
             'class': ''
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = StyledElements.Utils.appendWord(this.options['class'], "se-vertical-layout");
+        this.wrapperElement.className = utils.appendWord(this.options['class'], "se-vertical-layout");
 
         this.north = new StyledElements.Container({'class': 'se-vl-north-container'});
         this.center = new StyledElements.Container({'class': 'se-vl-center-container'});
@@ -44,7 +44,7 @@
         this.center.insertInto(this.wrapperElement);
         this.south.insertInto(this.wrapperElement);
     };
-    VerticalLayout.prototype = new StyledElements.StyledElement();
+    utils.inherit(VerticalLayout, StyledElements.StyledElement);
 
     VerticalLayout.prototype.repaint = function repaint(temporal) {
         this.north.repaint(temporal);
@@ -53,4 +53,5 @@
     };
 
     StyledElements.VerticalLayout = VerticalLayout;
-})();
+
+})(StyledElements.Utils);

@@ -22,7 +22,7 @@
 /* globals CSSPrimitiveValue, StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -40,7 +40,7 @@
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "styled_accordion");
     };
-    Accordion.prototype = new StyledElements.StyledElement();
+    utils.inherit(Accordion, StyledElements.StyledElement);
 
     Accordion.prototype.createContainer = function createContainer(options) {
         var expander, defaultOptions = {
@@ -128,4 +128,5 @@
     };
 
     StyledElements.Accordion = Accordion;
-})();
+
+})(StyledElements.Utils);

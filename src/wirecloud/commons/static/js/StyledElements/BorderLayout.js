@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -32,12 +32,12 @@
     var BorderLayout = function BorderLayout(options) {
         StyledElements.StyledElement.call(this, []);
 
-        options = StyledElements.Utils.merge({
+        options = utils.merge({
             'class': ''
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "se-border-layout");
+        this.wrapperElement.className = utils.appendWord(options['class'], "se-border-layout");
 
         Object.defineProperties(this, {
             north: {value: new StyledElements.Container({'class': 'se-bl-north-container'})},
@@ -53,7 +53,7 @@
         this.east.insertInto(this.wrapperElement);
         this.south.insertInto(this.wrapperElement);
     };
-    BorderLayout.prototype = new StyledElements.StyledElement();
+    utils.inherit(BorderLayout, StyledElements.StyledElement);
 
     BorderLayout.prototype.repaint = function repaint(temporal) {
         var usableArea = {
@@ -115,4 +115,5 @@
     };
 
     StyledElements.BorderLayout = BorderLayout;
-})();
+
+})(StyledElements.Utils);

@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -53,7 +53,7 @@
      *     a function for converting them into strings.
      */
     Select = function Select(options) {
-        options = StyledElements.Utils.merge({
+        options = utils.merge({
             'class': '',
             'initialEntries': [],
             'initialValue': null,
@@ -97,8 +97,8 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
         this.inputElement.addEventListener('change', this._onchange, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
@@ -109,7 +109,7 @@
             this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
         }
     };
-    Select.prototype = new StyledElements.InputElement();
+    utils.inherit(Select, StyledElements.InputElement);
 
     Select.prototype.getLabel = function getLabel() {
         return this.textDiv.textContent;
@@ -210,8 +210,8 @@
 
     Select.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('change', this._onchange, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
@@ -225,4 +225,4 @@
 
     StyledElements.Select = Select;
 
-})();
+})(StyledElements.Utils);

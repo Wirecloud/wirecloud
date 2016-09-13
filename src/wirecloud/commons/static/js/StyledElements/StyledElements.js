@@ -47,8 +47,8 @@
             Object.defineProperties(this, {
 
                 /**
-                 * `true` if this element is enabled (the user can interact
-                 * with this element).
+                 * `true` if this element is enabled. This property is
+                 * writable.
                  *
                  * @memberof StyledElements.StyledElement#
                  * @since 0.6.0
@@ -69,7 +69,8 @@
                 },
 
                 /**
-                 * `true` if this element is hidden.
+                 * `true` if this element is hidden. This property isArray
+                 * writable.
                  *
                  * @memberof StyledElements.StyledElement#
                  * @since 0.6.0

@@ -357,7 +357,7 @@
             priv.stateFunc = function () {};
         }
     };
-    ModelTable.prototype = new StyledElements.StyledElement();
+    utils.inherit(ModelTable, StyledElements.StyledElement);
 
     ModelTable.prototype.Tooltip = StyledElements.Tooltip;
 

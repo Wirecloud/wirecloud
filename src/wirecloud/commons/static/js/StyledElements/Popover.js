@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -151,7 +151,7 @@
             'html': false,
             'placement': ['right', 'bottom', 'left', 'top']
         };
-        Object.defineProperty(this, 'options', {value: StyledElements.Utils.merge(defaultOptions, options)});
+        Object.defineProperty(this, 'options', {value: utils.merge(defaultOptions, options)});
 
         StyledElements.StyledElement.call(this, []);
 
@@ -163,7 +163,7 @@
             _disableCallback: {value: disableCallback.bind(this), enumerable: false}
         });
     };
-    Popover.prototype = new StyledElements.StyledElement();
+    utils.inherit(Popover, StyledElements.StyledElement);
 
     Popover.prototype.bind = function bind(element, mode) {
         switch (mode) {
@@ -223,4 +223,4 @@
 
     StyledElements.Popover = Popover;
 
-})();
+})(StyledElements.Utils);

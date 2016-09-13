@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,11 +22,11 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
-    var StyledFileField, onchange, onclick, onfocus, onblur;
+    var FileField, onchange, onclick, onfocus, onblur;
 
     onclick = function onclick(e) {
         if (e.target === this.inputElement) {
@@ -66,11 +66,11 @@
     /**
      * Añade un campo de texto.
      */
-    StyledFileField = function StyledFileField(options) {
+    FileField = function FileField(options) {
         var defaultOptions = {
             'class': ''
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
         StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
@@ -104,7 +104,7 @@
         var button = document.createElement('div');
         button.className = 'se-btn';
         var button_span = document.createElement('span');
-        button_span.textContent = StyledElements.Utils.gettext('Select');
+        button_span.textContent = utils.gettext('Select');
         button.appendChild(button_span);
         this.layout.getEastContainer().appendChild(button);
 
@@ -114,30 +114,30 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._onclick, true);
         this.inputElement.addEventListener('change', this._onchange, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
     };
-    StyledFileField.prototype = new StyledElements.InputElement();
+    utils.inherit(FileField, StyledElements.InputElement);
 
-    StyledFileField.prototype.repaint = function repaint() {
+    FileField.prototype.repaint = function repaint() {
         this.layout.repaint();
     };
 
-    StyledFileField.prototype.insertInto = function insertInto(element, refElement) {
+    FileField.prototype.insertInto = function insertInto(element, refElement) {
         StyledElements.InputElement.prototype.insertInto.call(this, element, refElement);
         this.repaint();
     };
 
-    StyledFileField.prototype.getValue = function getValue() {
+    FileField.prototype.getValue = function getValue() {
         return this.inputElement.files[0];
     };
 
-    StyledFileField.prototype.destroy = function destroy() {
+    FileField.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._onclick, true);
         this.inputElement.removeEventListener('change', this._onchange, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
@@ -150,6 +150,6 @@
         StyledElements.InputElement.prototype.destroy.call(this);
     };
 
-    StyledElements.StyledFileField = StyledFileField;
+    StyledElements.FileField = FileField;
 
-})();
+})(StyledElements.Utils);

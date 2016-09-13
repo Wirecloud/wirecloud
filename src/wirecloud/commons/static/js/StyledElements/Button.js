@@ -96,11 +96,6 @@
     var Button = function Button(options) {
         options = utils.merge(utils.clone(defaults), options);
 
-        // Support hirerarchy
-        if (options.extending) {
-            return;
-        }
-
         this.superClass(events);
 
         if (options.usedInForm) {

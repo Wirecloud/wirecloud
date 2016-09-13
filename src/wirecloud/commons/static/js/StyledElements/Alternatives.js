@@ -124,7 +124,8 @@
             alternativeList: []
         });
     };
-    Alternatives.prototype = new StyledElements.StyledElement();
+    utils.inherit(Alternatives, StyledElements.StyledElement);
+
     Alternatives.HORIZONTAL_FLIP = "horizontalflip";
     Alternatives.HORIZONTAL_SLIDE = "horizontalslide";
     Alternatives.CROSS_DISSOLVE = "dissolve";

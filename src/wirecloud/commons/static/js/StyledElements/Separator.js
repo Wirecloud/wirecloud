@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -35,8 +35,8 @@
 
         this.wrapperElement = document.createElement("hr");
     };
-    Separator.prototype = new StyledElements.StyledElement();
+    utils.inherit(Separator, StyledElements.StyledElement);
 
     StyledElements.Separator = Separator;
 
-})();
+})(StyledElements.Utils);

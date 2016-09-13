@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -144,13 +144,13 @@
                 }
             }
         });
-        priv.options = StyledElements.Utils.merge(defaultOptions, options);
+        priv.options = utils.merge(defaultOptions, options);
         priv.currentPage = 1;
         priv.currentElements = [];
         priv.totalPages = 1;
     };
 
-    PaginatedSource.prototype = new StyledElements.ObjectWithEvents();
+    utils.inherit(PaginatedSource, StyledElements.ObjectWithEvents);
 
     /**
      * Gets the elements of the current pageSize
@@ -290,4 +290,5 @@
     var privates = new WeakMap();
 
     StyledElements.PaginatedSource = PaginatedSource;
-})();
+
+})(StyledElements.Utils);

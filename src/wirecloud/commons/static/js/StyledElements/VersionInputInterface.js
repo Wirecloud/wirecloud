@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -39,7 +39,7 @@
 
         StyledElements.TextInputInterface.call(this, fieldId, options);
     };
-    VersionInputInterface.prototype = new StyledElements.TextInputInterface();
+    utils.inherit(VersionInputInterface, StyledElements.TextInputInterface);
 
     VersionInputInterface.prototype._checkValue = function _checkValue(newValue) {
         if (newValue.match(VERSION_RE) != null) {
@@ -51,4 +51,4 @@
 
     StyledElements.VersionInputInterface = VersionInputInterface;
 
-})();
+})(StyledElements.Utils);

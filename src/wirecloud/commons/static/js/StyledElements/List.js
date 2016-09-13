@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -44,7 +44,7 @@
      * A list
      */
     var List = function List(options) {
-        options = StyledElements.Utils.merge({
+        options = utils.merge({
             'class':            '',
             'id':               null,
             'multivalued':      false,
@@ -55,7 +55,7 @@
         StyledElements.StyledElement.call(this, ['change']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "styled_list");
+        this.wrapperElement.className = utils.prependWord(options['class'], "styled_list");
 
         if (options.id != null) {
             this.wrapperElement.id = options.id;
@@ -84,7 +84,7 @@
             this.allowEmpty = options.allowEmpty;
         }
     };
-    List.prototype = new StyledElements.StyledElement();
+    utils.inherit(List, StyledElements.StyledElement);
 
     /**
      * Añade las entradas indicadas en la lista.
@@ -155,7 +155,7 @@
      * Devuelve una copia de la selección actual.
      */
     List.prototype.getSelection = function getSelection() {
-        return StyledElements.Utils.clone(this.currentSelection);
+        return utils.clone(this.currentSelection);
     };
 
     /**
@@ -260,4 +260,5 @@
     };
 
     StyledElements.List = List;
-})();
+
+})(StyledElements.Utils);

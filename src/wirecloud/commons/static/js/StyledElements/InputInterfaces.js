@@ -453,7 +453,7 @@
 
         StyledElements.InputInterface.call(this, fieldId, fieldDesc);
 
-        this.inputElement = new StyledElements.StyledFileField(fieldDesc);
+        this.inputElement = new StyledElements.FileField(fieldDesc);
     };
     FileInputInterface.prototype = new StyledElements.InputInterface();
 

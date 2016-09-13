@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -48,7 +48,7 @@
 
         this._disableCallback = disableCallback.bind(this);
     };
-    PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
+    utils.inherit(PopupMenu, StyledElements.PopupMenuBase);
 
     PopupMenu.prototype.show = function show(refPosition) {
         document.addEventListener("click", this._disableCallback, true);
@@ -74,4 +74,5 @@
     };
 
     StyledElements.PopupMenu = PopupMenu;
-})();
+
+})(StyledElements.Utils);

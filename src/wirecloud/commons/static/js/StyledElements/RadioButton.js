@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -36,7 +36,7 @@
             'group': null,
             'value': null
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
         StyledElements.InputElement.call(this, options.initiallyChecked, ['change']);
 
@@ -68,8 +68,8 @@
         }
 
         /* Internal events */
-        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
         this.inputElement.addEventListener('change',
                                     function () {
                                         if (this.enabled) {
@@ -78,7 +78,7 @@
                                     }.bind(this),
                                     true);
     };
-    RadioButton.prototype = new StyledElements.InputElement();
+    utils.inherit(RadioButton, StyledElements.InputElement);
 
     RadioButton.prototype.insertInto = function insertInto(element, refElement) {
         var checked = this.inputElement.checked; // Necesario para IE
@@ -100,4 +100,4 @@
 
     StyledElements.RadioButton = RadioButton;
 
-})();
+})(StyledElements.Utils);

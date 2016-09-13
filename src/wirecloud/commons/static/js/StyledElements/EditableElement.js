@@ -22,7 +22,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -75,11 +75,11 @@
         this.wrapperElement.addEventListener('keydown', this._onKeydown, true);
         this.wrapperElement.addEventListener('blur', this._onBlur, true);
     };
-    EditableElement.prototype = new StyledElements.StyledElement();
+    utils.inherit(EditableElement, StyledElements.StyledElement);
 
     EditableElement.prototype.disableEdition = function disableEdition() {
         if (this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+            this.wrapperElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
             this.wrapperElement.removeAttribute('contenteditable');
             this.wrapperElement.blur();
             this.wrapperElement.scrollLeft = 0;
@@ -89,7 +89,7 @@
 
     EditableElement.prototype.enableEdition = function enableEdition() {
         if (!this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+            this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
             this.wrapperElement.setAttribute('contenteditable', 'true');
             this._prev_content = this.wrapperElement.textContent;
         }
@@ -116,4 +116,4 @@
 
     StyledElements.EditableElement = EditableElement;
 
-})();
+})(StyledElements.Utils);
