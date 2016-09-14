@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('template_uri', models.CharField(max_length=200, verbose_name='templateURI', blank=True)),
                 ('popularity', models.DecimalField(default=0, verbose_name='popularity', max_digits=2, decimal_places=1)),
                 ('json_description', models.TextField(verbose_name='JSON description')),
-                ('creator', models.ForeignKey(related_name='uploaded_resources', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('creator', models.ForeignKey(on_delete=models.CASCADE, related_name='uploaded_resources', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('groups', models.ManyToManyField(related_name='local_resources', verbose_name='Groups', to='auth.Group', blank=True)),
                 ('users', models.ManyToManyField(related_name='local_resources', verbose_name='Users', to=settings.AUTH_USER_MODEL, blank=True)),
             ],

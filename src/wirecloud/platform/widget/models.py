@@ -79,7 +79,7 @@ class Widget(models.Model):
 
     resource = models.OneToOneField('catalogue.CatalogueResource')
 
-    xhtml = models.ForeignKey(XHTML)
+    xhtml = models.ForeignKey(XHTML, on_delete=models.CASCADE)
     objects = WidgetManager()
 
     @property

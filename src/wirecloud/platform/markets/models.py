@@ -27,7 +27,7 @@ from wirecloud.commons.fields import JSONField
 
 @python_2_unicode_compatible
 class Market(models.Model):
-    user = models.ForeignKey(User, verbose_name=_('User'), blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), blank=True, null=True)
     name = models.CharField(_('Name'), max_length=50)
     options = JSONField(_('Options'))
 
@@ -46,8 +46,8 @@ class Market(models.Model):
 @python_2_unicode_compatible
 class MarketUserData(models.Model):
 
-    market = models.ForeignKey(Market, verbose_name=_('Market'), blank=False, null=False)
-    user = models.ForeignKey(User, verbose_name=_('User'), blank=False, null=False)
+    market = models.ForeignKey(Market, on_delete=models.CASCADE, verbose_name=_('Market'), blank=False, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), blank=False, null=False)
     name = models.CharField(_('Name'), max_length=50)
     value = models.CharField(_('Value'), max_length=250)
 

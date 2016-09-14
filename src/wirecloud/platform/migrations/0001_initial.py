@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=50, verbose_name='Name')),
                 ('options', wirecloud.commons.fields.JSONField(default=b'{}', verbose_name='Options')),
-                ('user', models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('user', models.ForeignKey(on_delete=models.CASCADE, verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'db_table': 'wirecloud_market',
@@ -64,8 +64,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=50, verbose_name='Name')),
                 ('value', models.CharField(max_length=250, verbose_name='Value')),
-                ('market', models.ForeignKey(verbose_name='Market', to='platform.Market')),
-                ('user', models.ForeignKey(verbose_name='User', to=settings.AUTH_USER_MODEL)),
+                ('market', models.ForeignKey(on_delete=models.CASCADE, verbose_name='Market', to='platform.Market')),
+                ('user', models.ForeignKey(on_delete=models.CASCADE, verbose_name='User', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'wirecloud_marketuserdata',
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=250, verbose_name='Name')),
                 ('value', models.CharField(max_length=250, verbose_name='Value')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=models.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'wirecloud_platformpreference',
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=250, verbose_name='Name')),
                 ('inherit', models.BooleanField(default=False, verbose_name='Inherit')),
                 ('value', models.CharField(max_length=250, verbose_name='Value')),
-                ('tab', models.ForeignKey(to='platform.Tab')),
+                ('tab', models.ForeignKey(on_delete=models.CASCADE, to='platform.Tab')),
             ],
             options={
                 'db_table': 'wirecloud_tabpreference',
@@ -128,7 +128,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=80, verbose_name='name')),
-                ('organization', models.ForeignKey(to='platform.Organization')),
+                ('organization', models.ForeignKey(on_delete=models.CASCADE, to='platform.Organization')),
                 ('users', models.ManyToManyField(related_name='teams', verbose_name='users', to=settings.AUTH_USER_MODEL, blank=True)),
             ],
             options={
@@ -144,7 +144,7 @@ class Migration(migrations.Migration):
                 ('active', models.BooleanField(default=False, verbose_name='Active')),
                 ('manager', models.CharField(max_length=100, verbose_name='Manager', blank=True)),
                 ('reason_ref', models.CharField(help_text='Reference to the reason why it was added. Used by Workspace Managers to sync workspaces', max_length=100, verbose_name='Reason Ref', blank=True)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=models.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'wirecloud_userworkspace',
@@ -175,7 +175,7 @@ class Migration(migrations.Migration):
                 ('longdescription', models.TextField(verbose_name='Long description', blank=True)),
                 ('forcedValues', wirecloud.commons.fields.JSONField(default=b'{}', blank=True)),
                 ('wiringStatus', wirecloud.commons.fields.JSONField(default=b'{}', blank=True)),
-                ('creator', models.ForeignKey(related_name='creator', verbose_name='Creator', to=settings.AUTH_USER_MODEL)),
+                ('creator', models.ForeignKey(on_delete=models.CASCADE, related_name='creator', verbose_name='Creator', to=settings.AUTH_USER_MODEL)),
                 ('groups', models.ManyToManyField(to='auth.Group', null=True, verbose_name='Groups', blank=True)),
                 ('users', models.ManyToManyField(to=settings.AUTH_USER_MODEL, verbose_name='Users', through='platform.UserWorkspace')),
             ],
@@ -191,7 +191,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=250, verbose_name='Name')),
                 ('inherit', models.BooleanField(default=False, verbose_name='Inherit')),
                 ('value', models.CharField(max_length=250, verbose_name='Value')),
-                ('workspace', models.ForeignKey(to='platform.Workspace')),
+                ('workspace', models.ForeignKey(on_delete=models.CASCADE, to='platform.Workspace')),
             ],
             options={
                 'db_table': 'wirecloud_workspacepreference',
@@ -222,13 +222,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='widget',
             name='xhtml',
-            field=models.ForeignKey(to='platform.XHTML'),
+            field=models.ForeignKey(on_delete=models.CASCADE, to='platform.XHTML'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='userworkspace',
             name='workspace',
-            field=models.ForeignKey(to='platform.Workspace'),
+            field=models.ForeignKey(on_delete=models.CASCADE, to='platform.Workspace'),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -238,7 +238,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='tab',
             name='workspace',
-            field=models.ForeignKey(verbose_name='Workspace', to='platform.Workspace'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Workspace', to='platform.Workspace'),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -256,13 +256,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='iwidget',
             name='tab',
-            field=models.ForeignKey(verbose_name='Tab', to='platform.Tab'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Tab', to='platform.Tab'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='iwidget',
             name='widget',
-            field=models.ForeignKey(verbose_name='Widget', to='platform.Widget', null=True),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Widget', to='platform.Widget', null=True),
             preserve_default=True,
         ),
     ]

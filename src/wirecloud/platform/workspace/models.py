@@ -39,7 +39,7 @@ def now_timestamp():
 class Workspace(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
     creation_date = models.BigIntegerField(_('Creation Date'), null=False, blank=False, default=now_timestamp)
     last_modified = models.BigIntegerField(_('Last Modification Date'), null=True, blank=True)
 
@@ -86,8 +86,8 @@ class Workspace(models.Model):
 @python_2_unicode_compatible
 class UserWorkspace(models.Model):
 
-    workspace = models.ForeignKey(Workspace)
-    user = models.ForeignKey(User)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     manager = models.CharField(_('Manager'), max_length=100, blank=True)
     reason_ref = models.CharField(_('Reason Ref'), max_length=100, help_text=_('Reference to the reason why it was added. Used by Workspace Managers to sync workspaces'), blank=True)
 
@@ -105,7 +105,7 @@ class Tab(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     visible = models.BooleanField(_('Visible'), default=False, null=False)
     position = models.IntegerField(null=True, blank=True)
-    workspace = models.ForeignKey(Workspace, verbose_name=_('Workspace'))
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, verbose_name=_('Workspace'))
 
     class Admin:
         pass

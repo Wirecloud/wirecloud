@@ -86,7 +86,7 @@ class Team(models.Model):
     some other label, to those users. A user can belong to any number of
     teams.
     """
-    organization = models.ForeignKey(Organization)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     name = models.CharField(_('name'), max_length=80)
     users = models.ManyToManyField(User, verbose_name=_('users'), blank=True, related_name="teams")
 

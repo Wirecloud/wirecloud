@@ -55,7 +55,7 @@ class CatalogueResource(models.Model):
     type = models.SmallIntegerField(_('Type'), choices=TYPE_CHOICES, null=False, blank=False)
 
     # Person who added the resource to catalogue!
-    creator = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='uploaded_resources')
     public = models.BooleanField(_('Available to all users'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), related_name='local_resources', blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('Groups'), related_name='local_resources', blank=True)

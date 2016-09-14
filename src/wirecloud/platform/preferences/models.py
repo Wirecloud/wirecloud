@@ -35,7 +35,7 @@ except:
 @python_2_unicode_compatible
 class PlatformPreference(models.Model):
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=250)
     value = models.CharField(_('Value'), max_length=250)
 
@@ -50,7 +50,7 @@ class PlatformPreference(models.Model):
 @python_2_unicode_compatible
 class WorkspacePreference(models.Model):
 
-    workspace = models.ForeignKey('platform.Workspace')
+    workspace = models.ForeignKey('platform.Workspace', on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)
@@ -66,7 +66,7 @@ class WorkspacePreference(models.Model):
 @python_2_unicode_compatible
 class TabPreference(models.Model):
 
-    tab = models.ForeignKey('platform.Tab')
+    tab = models.ForeignKey('platform.Tab', on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)

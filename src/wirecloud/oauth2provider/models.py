@@ -41,8 +41,8 @@ class Application(models.Model):
 @python_2_unicode_compatible
 class Code(models.Model):
 
-    client = models.ForeignKey(Application)
-    user = models.ForeignKey(User)
+    client = models.ForeignKey(Application, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     scope = models.CharField(_('Scope'), max_length=255, blank=True)
     code = models.CharField(_('Code'), max_length=255, blank=False)
     creation_timestamp = models.CharField(_('Creation timestamp'), max_length=40, blank=False)
@@ -60,8 +60,8 @@ class Token(models.Model):
 
     token = models.CharField(_('Token'), max_length=40, blank=False, primary_key=True)
 
-    client = models.ForeignKey(Application)
-    user = models.ForeignKey(User)
+    client = models.ForeignKey(Application, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     scope = models.CharField(_('Scope'), max_length=255, blank=True)
     token_type = models.CharField(_('Token type'), max_length=10, blank=False)

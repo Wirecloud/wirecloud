@@ -28,10 +28,10 @@ from wirecloud.platform.wiring.utils import remove_related_iwidget_connections
 @python_2_unicode_compatible
 class IWidget(models.Model):
 
-    widget = models.ForeignKey('platform.Widget', verbose_name=_('Widget'), null=True, on_delete=models.SET_NULL)
+    widget = models.ForeignKey('platform.Widget', on_delete=models.SET_NULL, verbose_name=_('Widget'), null=True)
     widget_uri = models.CharField(_('Widget URI'), max_length=250, null=False, blank=False)
     name = models.CharField(_('Name'), max_length=250)
-    tab = models.ForeignKey('platform.Tab', verbose_name=_('Tab'))
+    tab = models.ForeignKey('platform.Tab', on_delete=models.CASCADE, verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     positions = JSONField(blank=True)
     refused_version = models.CharField(_('Refused Version'), max_length=150, blank=True, null=True)
