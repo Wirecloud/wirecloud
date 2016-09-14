@@ -33,35 +33,34 @@ from wirecloud.platform.localcatalogue.utils import install_resource_to_user, in
 
 
 class Command(BaseCommand):
-    args = '<file.wgt>...'
     help = 'Adds one or more packaged mashable application components into the catalogue'
-    option_list = BaseCommand.option_list + (
-        make_option('--redeploy',
+
+    def add_arguments(self, parser):
+        parser.add_argument('files',
+            metavar='file.wgt',
+            nargs='+',
+            help='wgt files of the mashable application components to install')
+        parser.add_argument('--redeploy',
             action='store_true',
             dest='redeploy',
-            help='Replace mashable application components files with the new ones.',
-            default=False),
-        make_option('-u', '--users',
+            help='Replace mashable application components files with the new ones.')
+        parser.add_argument('-u', '--users',
             action='store',
-            type='string',
             dest='users',
             help='Comma separated list of users that will obtain access to the uploaded mashable application components',
             default=''),
-        make_option('-g', '--groups',
+        parser.add_argument('-g', '--groups',
             action='store',
-            type='string',
             dest='groups',
             help='Comma separated list of groups that will obtain access rights to the uploaded mashable application components',
             default=''),
-        make_option('-p', '--public',
+        parser.add_argument('-p', '--public',
             action='store_true',
             dest='public',
-            help='Allow any user to access the mashable application components.',
-            default=False),
-    )
+            help='Allow any user to access the mashable application components.')
 
     def _handle(self, *args, **options):
-        if len(args) < 1:
+        if len(options['files']) < 1:
             raise CommandError(_('Wrong number of arguments'))
 
         self.verbosity = int(options.get('verbosity', 1))
@@ -86,7 +85,7 @@ class Command(BaseCommand):
                 for groupname in groups_string.split(','):
                     groups.append(Group.objects.get(name=groupname))
 
-        for file_name in args:
+        for file_name in options['files']:
             try:
                 f = open(file_name, 'rb')
                 wgt_file = WgtFile(f)

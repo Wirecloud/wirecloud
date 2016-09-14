@@ -24,7 +24,7 @@ import os
 from optparse import make_option
 import six
 
-from django.core.management.base import CommandError, NoArgsCommand
+from django.core.management.base import CommandError, BaseCommand
 from django.utils.encoding import force_text
 from django.utils.translation import override, ugettext, ugettext_lazy as _
 
@@ -36,23 +36,23 @@ if six.PY2:
         return raw_input(prompt.encode('utf-8')).decode('utf-8')
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
 
     help = 'Resets WireCloud search indexes'
-    option_list = NoArgsCommand.option_list + (
-        make_option('--indexes',
-            action='store', dest='indexes', default='', type="string",
-            help="Indexes to reset. All by default"),
-        make_option('--noinput',
-            action='store_false', dest='interactive', default=True,
-            help="Do NOT prompt the user for input of any kind."),
-    )
 
     update_start_message = _('Reseting "%s" index')
     update_success_message = _('The "%s" index was updated successfully')
     nonavailable_indexes_message = _('The following indexes are not available: %s')
 
-    def _handle_noargs(self, **options):
+    def add_arguments(self, parser):
+        parser.add_argument('--indexes',
+            action='store', dest='indexes', default='',
+            help="Indexes to reset. All by default")
+        parser.add_argument('--noinput',
+            action='store_false', dest='interactive',
+            help="Do NOT prompt the user for input of any kind.")
+
+    def _handle(self, *args, **options):
 
         self.interactive = options['interactive']
         self.verbosity = int(options.get('verbosity', 1))
@@ -105,14 +105,14 @@ class Command(NoArgsCommand):
 
             self.log(self.update_success_message % indexname)
 
-    def handle_noargs(self, **options):
+    def handle(self, *args, **options):
         try:
             default_locale = locale.getdefaultlocale()[0][:2]
         except TypeError:
             default_locale = None
 
         with override(default_locale):
-            self._handle_noargs(**options)
+            self._handle(*args, **options)
 
     def log(self, msg, level=2):
         """
