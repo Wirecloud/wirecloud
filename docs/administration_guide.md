@@ -148,12 +148,37 @@ You can determine your currently installed version using
 
 ```
 $ wirecloud-admin --version
-0.9.0
+1.0.0
 
 ```
 
 > **NOTE:** It is strongly recommended to perform a full database backup before
 > starting to migrate WireCloud to a new version.
+
+## From 0.9.x to 1.0.x
+
+> *NOTE*: Support for Django 1.6 and Django 1.7 were removed in this version.
+> Please, follow the steps described in the [Upgrading to Django
+> 1.7+](#upgrading-to-django-17) section before upgrading to WireCloud 1.0.
+>
+> You can determine your currently installed version of Django by running the
+> following command:
+>
+> ```
+> $ django-admin --version
+> 1.9.9
+> ```
+
+WireClooud 1.0 added some predefined dashboards, so you have to create them by
+running the following command:
+
+```
+$ python manage.py populate
+```
+
+Also, WireCloud 1.0 provides support for real time synchronization using web
+sockets, see the section for instructions on how to enable it.
+
 
 ## From 0.8.x to 0.9.x
 
@@ -173,8 +198,9 @@ $ wirecloud-admin --version
 ### Upgrading to Django 1.7+
 
 Wirecloud 0.9.0+ adds support for Django 1.7-1.9 and next version of WireCloud
-will drop support for Django 1.6. Moreover, at the time of releasing WireCloud
-0.9.0, Django 1.6 and 1.7 were unsupported by the Django community.
+(1.0) will drop support for Django 1.6 and Django 1.7. Moreover, at the time of
+releasing WireCloud 0.9.0, Django 1.6 and 1.7 were unsupported by the Django
+community.
 
 The only thing to take into account when upgrading your WireCloud installation
 to use Django 1.7+ is that you need to migrate your db to Wirecloud 0.9.0 using

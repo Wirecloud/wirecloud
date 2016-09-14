@@ -1,6 +1,6 @@
 ## Introduction
 
-This Installation WireCloud version 0.9 (starting from FIWARE release 5.2). Any
+This Installation WireCloud version 1.0 (starting from FIWARE release 5.4). Any
 feedback on this document is highly welcomed, including bugs, typos or things
 you think should be included but are not. Please send it to the "Contact Person"
 email that appears in the [Catalogue page for this GEi][catalogue].
@@ -10,12 +10,14 @@ email that appears in the [Catalogue page for this GEi][catalogue].
 
 ## Requirements
 
-This section describes all the requirements of a basic WireCloud installation. **However, these dependencies are not meant to be installed manually in this step, as they will be installed throughout the documentation:**
+This section describes all the requirements of a basic WireCloud installation.
+**However, these dependencies are not meant to be installed manually in this
+step, as they will be installed throughout the documentation:**
 
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
-- Python 2.7 or python 3.4+. In any case, the following python packages must be installed:
+- Python 2.7 or python 3.4+. In any case, the following python packages must be
+  installed:
     - Django 1.8-1.9
-    - South 1.0+
     - lxml 2.3.0+
     - django-appconf 1.0.1+
     - django_compressor 2.0+
@@ -34,8 +36,13 @@ This section describes all the requirements of a basic WireCloud installation. *
     - Pygments
     - pillow
 
-All these dependencies are available for Linux, Mac OS and Windows, so WireCloud should work on any of these operating systems. However, it is better to use Debian Wheezy+, CentOS 7+, Ubuntu 12.04+ or Mac OS X 10.9 (only recommended for development/testing) as these operating systems are actively tested. Specifically, this installation guide was tested in the following systems:
+All these dependencies are available for Linux, Mac OS and Windows, so WireCloud
+should work on any of these operating systems. However, it is better to use
+Debian Wheezy+, CentOS 7+, Ubuntu 12.04+ or Mac OS X 10.9+ (only recommended for
+development/testing) as these operating systems are actively tested.
+Specifically, this installation guide was tested in the following systems:
 
+- Ubuntu 16.06
 - Ubuntu 14.04
 - Ubuntu 12.04
 - CentOS 7
@@ -43,7 +50,14 @@ All these dependencies are available for Linux, Mac OS and Windows, so WireCloud
 - Debian Jessie
 - Mac OS 10.9+
 
-> **NOTE**: WireCloud can make use of the Marketplace, Store and Repository GEs. If you want to exploit this support, you can choose between installing these GEs or using any of the instances publicly available, for example, on FIWARE Lab (see the "Instances" tab of the corresponding entries at [http://catalogue.fiware.org](http://catalogue.fiware.org)).
+> **NOTE**: WireCloud can make use of the
+> [Marketplace](http://catalogue.fiware.org/enablers/marketplace-wmarket),
+> the [Store](http://catalogue.fiware.org/enablers/store-wstore) and the
+> [Repository](http://catalogue.fiware.org/enablers/repository-repository-ri)
+> GEs, but take into account that those GEs has been deprecated in favor of the
+> Bussiness API Ecosystem GE.
+>
+> [http://catalogue.fiware.org](http://catalogue.fiware.org)).
 
 
 ## Installing basic dependencies
@@ -191,20 +205,23 @@ The WireCloud source code is available on the [GitHub WireCloud repository](http
 
 To get the latest development version of the code, you can choose between two options:
 
-- Go to the WireCloud repository on GitHub, switch to the `0.9.x` branch (or select a specific 0.9.x tag, e.g. `0.9.0`) and click on the *Download ZIP* button to download the repository as a zip file, or just click on this [link](https://github.com/Wirecloud/wirecloud/zipball/0.9.x). Unzip it.
+- Go to the WireCloud repository on GitHub, switch to the `1.0.x` branch (or select a specific 1.0.x tag, e.g. `1.0.0`) and click on the *Download ZIP* button to download the repository as a zip file, or just click on this [link](https://github.com/Wirecloud/wirecloud/zipball/1.0.x). Unzip it.
 - Or use a [GIT](http://git-scm.com/) client to get the latest development version via Git:
 
         $ git clone git://github.com/Wirecloud/wirecloud.git
         $ cd wirecloud
-        $ git checkout 0.9.x
+        $ git checkout 1.0.x
 
-> **NOTE**: The `0.9.x` branch provides the latests development for the `0.9`
-> version of WireCloud (that is, the version described in this guide). The
-> latest version of WireCloud is available in the `develop` branch. It's
-> recommended to check if you are reading the latest version of this guide (e.g.
-> following this [link][latest_docs]) if you are going to install the
+> **NOTE**: The `1.0.x` branch provides the latests stable version for the `1.0`
+> version of WireCloud (that is, the version described in this guide). the
+> latest development version for the `1.0.x` serie is provided by the
+> `1.0.x-dev` branch, while the latest development version of WireCloud is
+> available in the `develop` branch.
+>
+> It's recommended to check if you are reading the latest version of this guide
+> (e.g. following this [link][latest_docs]) if you are going to install the
 > latest version of WireCloud from the `develop` branch instead of using the
-> `0.9.x` branch.
+> `1.0.x` branch.
 
 Once downloaded the source code, you can install WireCloud using the `setup.py` script (this step requires root privileges):
 
@@ -406,27 +423,6 @@ is the following:
     Superuser created successfully.
 
 
-### Django 1.6
-
-If you are using Django 1.6 you have to use a different approach, you have to
-run the following command:
-
-    $ python manage.py syncdb --migrate
-
-This command creates some tables and also asks you if you want to create a
-Django superuser. This user is required to login into WireCloud and to be able
-to perform administrative tasks; please respond yes. An example of the command
-output, where `user`/`password` are `admin`/`admin`, is the following:
-
-    ...
-
-    You just installed Django's auth system, which means you don't have any superusers defined.
-    Would you like to create one now? (yes/no): yes
-    Username (leave blank to use 'wirecloud'): admin
-    E-mail address: admin@myemaildomain.com
-    Password: ***** (admin)
-    Password (again): ***** (admin)
-
 ## Extra options
 
 Here’s a list of general settings available in WireCloud and their default values. These settings are configured in the `settings.py` file. Also, take into account that most of these settings are based on settings provided by Django (see [Django documentation](https://docs.djangoproject.com/en/dev/ref/settings) for more info).
@@ -597,7 +593,7 @@ errors to an email log handler when `DEBUG` is `False`.
 
 You can see the default logging configuration by looking in
 wirecloud/commons/utils/conf.py (or view the [online
-source](https://github.com/Wirecloud/wirecloud/blob/0.9.x/src/wirecloud/commons/utils/conf.py)).
+source](https://github.com/Wirecloud/wirecloud/blob/1.0.x/src/wirecloud/commons/utils/conf.py)).
 
 [LOGGING_CONFIG]: https://docs.djangoproject.com/es/1.8/ref/settings/#logging-config
 
