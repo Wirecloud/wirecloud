@@ -1,23 +1,37 @@
+import copy
 import json
 import six
 
 from django.core.exceptions import ValidationError
 from django.db import models
 
-try:
-    from django.utils.encoding import smart_unicode as smart_text
-except ImportError:
-    from django.utils.encoding import smart_text
+from django.utils.encoding import smart_text
 
 
-class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
+class JSONField(models.TextField):
     """Simple JSON field that stores python structures as JSON strings
     on database.
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('default', '{}')
+        kwargs.setdefault('default', {})
         super(JSONField, self).__init__(*args, **kwargs)
+
+    def get_default(self):
+        """
+        Returns the default value for this field.
+        """
+        if self.has_default():
+            if callable(self.default):
+                return copy.deepcopy(self.default())
+            return copy.deepcopy(self.default)
+        if (not self.empty_strings_allowed or (self.null and
+                   not connection.features.interprets_empty_strings_as_nulls)):
+            return None
+        return ""
+
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
 
     def to_python(self, value):
         """
@@ -31,10 +45,6 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
             value = six.text_type(value, 'utf-8')
         if isinstance(value, six.string_types):
             try:
-                # with django 1.6 i have '"{}"' as default value here
-                if value[0] == value[-1] == '"':
-                    value = value[1:-1]
-
                 return json.loads(value)
             except Exception as err:
                 raise ValidationError(six.text_type(err))
