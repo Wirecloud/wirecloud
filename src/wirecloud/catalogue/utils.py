@@ -95,7 +95,7 @@ def check_invalid_doc_entry(wgt_file, doc_path):
         raise InvalidContents('file is not encoded using UTF-8: %s' % doc_path)
 
     try:
-        markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite', 'fenced_code'])
+        markdown.markdown(doc_code, output_format='xhtml5', extensions=['markdown.extensions.codehilite', 'markdown.extensions.fenced_code'])
     except:
         raise InvalidContents("file cannot be parsed as markdown: %s" % doc_path)
 
