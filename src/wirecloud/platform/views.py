@@ -28,8 +28,7 @@ from django.contrib.auth.views import redirect_to_login as django_redirect_to_lo
 from django.core import urlresolvers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.template import RequestContext, TemplateDoesNotExist
-from django.template.loader import get_template
+from django.template import TemplateDoesNotExist
 from django.utils._os import upath
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
@@ -237,8 +236,7 @@ def auto_select_workspace(request, mode=None):
             'VIEW_MODE': 'classic',
             'WIRECLOUD_VERSION_HASH': get_version_hash()
         }
-        context = RequestContext(request, context)
-        return render(request, 'wirecloud/landing_page.html', context_instance=context, content_type="application/xhtml+xml; charset=UTF-8")
+        return render(request, 'wirecloud/landing_page.html', context=context, content_type="application/xhtml+xml; charset=UTF-8")
 
 
 def render_workspace_view(request, owner, name):
@@ -301,9 +299,15 @@ def render_wirecloud(request, view_type=None):
     if theme not in get_available_themes():
         return remove_query_parameter(request, 'theme')
 
+    context = {
+        'THEME': theme,
+        'VIEW_MODE': view_type,
+        'WIRECLOUD_VERSION_HASH': get_version_hash()
+    }
+
     try:
 
-        template = get_template(theme + ':wirecloud/views/%s.html' % view_type)
+        return render(request, theme + ':wirecloud/views/%s.html' % view_type, context=context, content_type="application/xhtml+xml; charset=UTF-8")
 
     except TemplateDoesNotExist:
 
@@ -312,11 +316,3 @@ def render_wirecloud(request, view_type=None):
         else:
             view_type = get_default_view(request)
             return render_wirecloud(request, view_type)
-
-    context = {
-        'THEME': theme,
-        'VIEW_MODE': view_type,
-        'WIRECLOUD_VERSION_HASH': get_version_hash()
-    }
-    content = template.render(RequestContext(request, context))
-    return HttpResponse(content, content_type="application/xhtml+xml; charset=UTF-8")
