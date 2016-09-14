@@ -19,7 +19,7 @@
             "last_login": "2011-03-17T17:21:19Z",
             "groups": [1],
             "user_permissions": [],
-            "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
             "email": "",
             "date_joined": "2011-03-17T17:21:19Z"
         }
@@ -37,7 +37,7 @@
             "last_login": "2011-03-17T17:21:19Z",
             "groups": [1],
             "user_permissions": [],
-            "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
             "email": "",
             "date_joined": "2011-03-17T17:21:19Z"
         }
