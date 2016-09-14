@@ -17,17 +17,21 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, include, url
+from __future__ import unicode_literals
+
+from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 
 import wirecloud.platform.urls
+from wirecloud.commons import authentication as wc_auth
 
 
 def valid(request):
-    return HttpResponse()
+    return HttpResponse
 
 
 def forbidden(request):
@@ -40,19 +44,20 @@ def server_error(request):
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = (
+
     # Catalogue
-    (r'^catalogue', include('wirecloud.catalogue.urls')),
+    url(r'^catalogue', include('wirecloud.catalogue.urls')),
 
     # Proxy
     url(r'^cdp', include('wirecloud.proxy.urls')),
 
     # Login/logout
-    url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),
-    url(r'^logout/?$', 'wirecloud.commons.authentication.logout', name="logout"),
+    url(r'^login/?$', auth_views.login, name="login"),
+    url(r'^logout/?$', wc_auth.logout, name="logout"),
 
     # Admin interface
-    (r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 
     # Test views
     url('valid_path', valid, name="valid_path"),
@@ -60,7 +65,7 @@ urlpatterns = patterns('',
     url('server_error_path', server_error, name="server_error_path"),
 )
 urlpatterns += wirecloud.platform.urls.urlpatterns
-urlpatterns += staticfiles_urlpatterns()
+urlpatterns += tuple(staticfiles_urlpatterns())
 
 handler400 = "wirecloud.commons.views.bad_request"
 handler403 = "wirecloud.commons.views.permission_denied"
