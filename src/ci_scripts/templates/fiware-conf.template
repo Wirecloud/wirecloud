@@ -14,4 +14,4 @@ INSTALLED_APPS.remove('wirecloud.oauth2provider')
 INSTALLED_APPS.append('social.apps.django_app.default')
 INSTALLED_APPS = tuple(INSTALLED_APPS)
 
-THEME_ACTIVE = "wirecloud.oiltheme"
+THEME_ACTIVE = "wirecloud.fiwarelabtheme"
