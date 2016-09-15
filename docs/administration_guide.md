@@ -176,8 +176,10 @@ running the following command:
 $ python manage.py populate
 ```
 
-Also, WireCloud 1.0 provides support for real time synchronization using web
-sockets, see the section for instructions on how to enable it.
+Also, WireCloud 1.0 provides support for real-time synchronization using web
+sockets, see the [Enabling the real-time synchronization
+support](installation_guide#enabling-the-real-time-synchronization-support)
+section for instructions on how to enable it.
 
 
 ## From 0.8.x to 0.9.x

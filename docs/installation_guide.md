@@ -776,6 +776,38 @@ Create a new Application using the IdM server to use (for example: `https://acco
 [KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application
 [`FIWARE_PORTALS` setting]: #fiware_portals
 
+### Enabling the real-time synchronization support
+
+WireCloud 1.0 adds experimental support for real time synchronization through
+web sockets.
+
+The steps for enabling this support are the following:
+
+1. Install [Django channels](https://channels.readthedocs.io/en/latest/):
+  ```
+  $ pip install channels
+  ```
+2. Add `channels` and `wirecloud.live` into the `INSTALLED_APPS` setting in the
+    `settings.py` file.
+3. Configure the channels framework by configuring the `CHANNEL_LAYERS` setting.
+    For example, you can make use of the following configuration:
+
+    ```python
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "asgiref.inmemory.ChannelLayer",
+            "ROUTING": "wirecloud.live.routing.channel_routing",
+        },
+    }
+    ```
+
+Once done those steps, you will be able to use WireCloud using the runserver
+command. Take into account that is not possible to deploy WireCloud when using
+the real-time synchronization support using the standar Apache configuration.
+We are working on providing better documentation and examples on how to deploy
+WireCloud in this case for a production ready environment, in the meantime, you
+can take a look into the [Django channels
+documentation](https://channels.readthedocs.io/en/latest/deploying.html).
 
 ## Running WireCloud
 
