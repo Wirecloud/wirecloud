@@ -43,7 +43,10 @@
         this.backButton.disable();
         this.backButton.insertInto(this.breadcrum.parentNode, this.breadcrum);
 
-        this.menuButton = new StyledElements.PopupButton({class: 'btn-large wc-menu-button', iconClass: 'fa fa-reorder'});
+        this.menuButton = new StyledElements.PopupButton({
+            class: 'btn-large wc-menu-button',
+            iconClass: 'fa fa-reorder'
+        });
         this.menuButton.disable();
         this.menuButton.insertInto(this.breadcrum.parentNode);
 
