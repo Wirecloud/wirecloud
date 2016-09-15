@@ -413,7 +413,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
     for user in workspaceDAO.users.all():
         try:
-            is_organization = resource.organization is not None
+            is_organization = user.organization is not None
         except:
             is_organization = False
 
