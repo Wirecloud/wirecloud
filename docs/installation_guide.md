@@ -42,7 +42,7 @@ Debian Wheezy+, CentOS 7+, Ubuntu 12.04+ or Mac OS X 10.9+ (only recommended for
 development/testing) as these operating systems are actively tested.
 Specifically, this installation guide was tested in the following systems:
 
-- Ubuntu 16.06
+- Ubuntu 16.04
 - Ubuntu 14.04
 - Ubuntu 12.04
 - CentOS 7
@@ -75,11 +75,11 @@ This guide assumes you system's package list is up to date. Otherwise, run the f
 
 before installing software in Debian/Ubuntu:
 
-    $ apt-get install python python-pip --no-install-recommends
+    $ apt-get install python python-pip python-setuptools python-wheel --no-install-recommends
 
 It's also recommended to install the following packages:
 
-    $ apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev libcurl4-openssl-dev libjpeg-dev
+    $ apt-get install build-essential python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev libcurl4-openssl-dev libjpeg-dev
 
 
 ### CentOS & Red Hat Enterprise Linux
@@ -109,7 +109,7 @@ $ scl enable python27 bash
 After installing python 2.7 from Software Collections, you have to manually
 install pip using `easy_install`:
 
-$ easy_install pip
+    $ easy_install pip
 
 It's also recommended to install the following packages:
 
@@ -421,6 +421,13 @@ is the following:
     Password: ***** (admin)
     Password (again): ***** (admin)
     Superuser created successfully.
+
+WireCloud 1.0 added some predefined dashboards, so you have to create them by
+running the following command:
+
+```
+$ python manage.py populate
+```
 
 
 ## Extra options

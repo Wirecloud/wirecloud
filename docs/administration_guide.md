@@ -169,7 +169,7 @@ $ wirecloud-admin --version
 > 1.9.9
 > ```
 
-WireClooud 1.0 added some predefined dashboards, so you have to create them by
+WireCloud 1.0 added some predefined dashboards, so you have to create them by
 running the following command:
 
 ```
