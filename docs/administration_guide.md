@@ -96,7 +96,7 @@ clean database:
 
     $ python manage.py loaddata wirecloud.backup
 
-> **Note**: Backups created using `dumpdata` can only be restored using the same
+> **NOTE**: Backups created using `dumpdata` can only be restored using the same
 > WireCloud version used for creating the backup. If you need to use a different
 > version, restore the backup using the original version and then
 > upgrade/downgrade it.
@@ -157,7 +157,7 @@ $ wirecloud-admin --version
 
 ## From 0.9.x to 1.0.x
 
-> *NOTE*: Support for Django 1.6 and Django 1.7 were removed in this version.
+> **NOTE**: Support for Django 1.6 and Django 1.7 were removed in this version.
 > Please, follow the steps described in the [Upgrading to Django
 > 1.7+](#upgrading-to-django-17) section before upgrading to WireCloud 1.0.
 >
@@ -174,6 +174,37 @@ running the following command:
 
 ```
 $ python manage.py populate
+```
+
+WireCloud 1.0 has also changed some url definitions to remove some django
+warnings, so you should update your `urls.py` file. In particular, you have to
+change the following lines:
+
+```python
+...
+
+    # Catalogue
+    url(r'^catalogue', include('wirecloud.catalogue.urls')),
+
+    # Proxy
+    url(r'^cdp', include('wirecloud.proxy.urls')),
+
+...
+```
+
+To:
+
+```python
+...
+
+    # Catalogue
+    url(r'^catalogue/', include('wirecloud.catalogue.urls')),
+
+    # Proxy
+    url(r'^cdp/', include('wirecloud.proxy.urls')),
+
+...
+
 ```
 
 Also, WireCloud 1.0 provides support for real-time synchronization using web
@@ -246,13 +277,13 @@ these instructions if you are using the IdM integration:
 4. Fake `python-social-auth` migrations (it uses the same dabase schema than `django-social-auth`):
 
     ```
-    python manage.py migrate default --fake
+    $ python manage.py migrate default --fake
     ```
 
 5. Now you can remove django-social-auth :). E.g.:
 
     ```
-    pip uninstall django-social-auth
+    $ pip uninstall django-social-auth
     ```
 
 ### Migrate the user search index
@@ -261,7 +292,7 @@ WireCloud 0.8.2 updated the information stored in the user search index, so you
 should run the following command for updating this index:
 
 ```
-python manage.py resetsearchindexes --indexes=user
+$ python manage.py resetsearchindexes --indexes=user
 ```
 
 ## From 0.6.x to 0.7.x

@@ -830,7 +830,7 @@ parameters.
 
 ### Running WireCloud using the Django internal web server
 
-> **Note:** Be aware that this way of running WireCloud should be used for evaluation/testing purposes. Do not use it in a production environment.
+> **NOTE**: Be aware that this way of running WireCloud should be used for evaluation/testing purposes. Do not use it in a production environment.
 
 To start WireCloud, type the following command:
 
