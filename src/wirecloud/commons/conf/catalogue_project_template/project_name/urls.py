@@ -12,7 +12,7 @@ admin.autodiscover()
 urlpatterns = (
 
     # Catalogue
-    url(r'^catalogue', include('wirecloud.catalogue.urls')),
+    url(r'^catalogue/', include('wirecloud.catalogue.urls')),
 
     # Login/logout
     url(r'^login/?$', django_auth.login, name="login"),

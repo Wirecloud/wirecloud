@@ -13,10 +13,10 @@ admin.autodiscover()
 urlpatterns = (
 
     # Catalogue
-    url(r'^catalogue', include('wirecloud.catalogue.urls')),
+    url(r'^catalogue/', include('wirecloud.catalogue.urls')),
 
     # Proxy
-    url(r'^cdp', include('wirecloud.proxy.urls')),
+    url(r'^cdp/', include('wirecloud.proxy.urls')),
 
     # Login/logout
     url(r'^login/?$', django_auth.login, name="login"),

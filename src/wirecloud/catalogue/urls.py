@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -24,34 +24,35 @@ from wirecloud.catalogue import views
 urlpatterns = (
 
     # Resources
-    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$',
+    url(r'^resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$',
         views.ResourceEntry(permitted_methods=('GET', 'DELETE')),
         name='wirecloud_catalogue.resource_entry'),
-    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
+    url(r'^resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
         views.ResourceEntry(permitted_methods=('GET', 'DELETE')),
         name='wirecloud_catalogue.resource_entry'),
-    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/changelog$',
+    url(r'^resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/changelog$',
         views.ResourceChangelogEntry(permitted_methods=('GET',)),
         name='wirecloud_catalogue.resource_changelog_entry'),
-    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/userguide$',
+    url(r'^resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/userguide$',
         views.ResourceDocumentationEntry(permitted_methods=('GET',)),
         name='wirecloud_catalogue.resource_userguide_entry'),
-    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$',
+    url(r'^resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$',
         views.ResourceEntry(permitted_methods=('DELETE',)),
         name='wirecloud_catalogue.resource_versions_collection'),
-    url(r'^/resources$',
+    url(r'^resources$',
         views.ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_catalogue.resource_collection'),
-    url(r'^/resources/suggest$',
+    url(r'^resources/suggest$',
         views.ResourceSuggestion(permitted_methods=('GET',)),
         name='wirecloud_catalogue.resource_suggestion'),
 
     #version check
-    url(r'^/versions',
+    url(r'^versions',
         views.ResourceVersionCollection(permitted_methods=('POST',)),
         name='wirecloud_catalogue.resource_versions'),
 
-    url(r'^/media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.*)',
+    url(r'^media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.*)',
         views.serve_catalogue_media,
         name='wirecloud_catalogue.media'),
+
 )
