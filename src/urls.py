@@ -3,10 +3,10 @@
 
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as django_auth
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-from wirecloud.commons import authentication as wc_views
+from wirecloud.commons import authentication as wc_auth
 import wirecloud.platform.urls
 
 admin.autodiscover()
@@ -20,9 +20,9 @@ urlpatterns = (
     url(r'^cdp', include('wirecloud.proxy.urls')),
 
     # Login/logout
-    url(r'^login/?$', auth_views.login, name="login"),
-    url(r'^logout/?$', wc_views.logout, name="logout"),
-    url(r'^admin/logout/?$', wc_views.logout),
+    url(r'^login/?$', django_auth.login, name="login"),
+    url(r'^logout/?$', wc_auth.logout, name="logout"),
+    url(r'^admin/logout/?$', wc_auth.logout),
 
     # Admin interface
     url(r'^admin/', include(admin.site.urls)),

@@ -756,8 +756,12 @@ Create a new Application using the IdM server to use (for example: `https://acco
 
 4. Edit `urls.py`:
     - Replace the login endpoint:
-        - Remove: `url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),`
-        - Add: `url(r'^login/?$', 'wirecloud.fiware.views.login', name="login"),`
+        - Add the following import line at the beginning of the file:
+          `from wirecloud.fiware import views as wc_fiware`
+        - Remove:
+          `url(r'^login/?$', django_auth.login, name="login"),`
+        - Add:
+          `url(r'^login/?$', wc_fiware.login, name="login"),`
     - Add `python-social-auth` url endpoints at the end of the pattern list: `url('', include('social.apps.django_app.urls', namespace='social')),`
 
 5. [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`.

@@ -2,7 +2,10 @@
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views as django_auth
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+from wirecloud.commons import authentication as wc_auth
 
 admin.autodiscover()
 
@@ -12,9 +15,9 @@ urlpatterns = (
     url(r'^catalogue', include('wirecloud.catalogue.urls')),
 
     # Login/logout
-    url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),
-    url(r'^logout/?$', 'wirecloud.commons.authentication.logout', name="logout"),
-    url(r'^admin/logout/?$', 'wirecloud.commons.authentication.logout'),
+    url(r'^login/?$', django_auth.login, name="login"),
+    url(r'^logout/?$', wc_auth.logout, name="logout"),
+    url(r'^admin/logout/?$', wc_auth.logout),
 
     # Admin interface
     url(r'^admin/', include(admin.site.urls)),
