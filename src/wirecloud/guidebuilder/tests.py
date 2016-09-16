@@ -206,7 +206,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     def setUp(self):
         access_token = settings.GUIDEBUILDER_AUTH_ACCESS_TOKEN
-        User.objects.get(username='admin').social_auth.create(provider='fiware', uid='admin', extra_data={"access_token": access_token})
+        User.objects.get(username='admin').social_auth.create(provider='fiware', uid='admin', extra_data={"access_token": access_token, "expires_on": time.time() + 30000})
         components = ['TestOperator', 'test-mashup', 'Test', 'test-mashup-dependencies']
         for c in components:
             CatalogueResource.objects.get(short_name=c).delete()
@@ -458,6 +458,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Add to workspace
         with self.resource_sidebar as sidebar:
             resource = sidebar.search_in_results(title='Linear Graph')
+            self.driver.execute_script("return arguments[0].scrollIntoView();", resource.element)
 
             btn = resource.find_element(".wc-create-resource-component")
             ActionChains(self.driver).move_to_element(btn).perform()
@@ -477,6 +478,12 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Add a Map Viewer Widget
         map_viewer_widget = self.create_widget('Map Viewer')
+        map_viewer_widget.open_menu().get_entry('Settings').click()
+        dialog = FormModalTester(self, self.wait_element_visible('.wc-component-preferences-modal'))
+        dialog.get_field('apiKey').set_value(settings.GMAPS_KEY)
+        dialog.accept()
+        map_viewer_widget.open_menu().get_entry("Reload").click();
+
         resize_widget(self.driver, map_viewer_widget, 8, 41)
         ActionChains(self.driver).move_to_element(linear_graph_widget.element).perform()
         time.sleep(0.6) # Wait until all the effects are applied
@@ -1161,6 +1168,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         time.sleep(3)
         imgp = take_capture(self.driver, "weather_dashboard")
 
-        import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.sset_trace()
         imgp = take_capture(self.driver, "example usage")
     test_sanity_check.tags = tags + ('wirecloud-guide-sanity-check',)

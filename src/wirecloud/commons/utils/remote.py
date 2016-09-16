@@ -1921,6 +1921,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
                 .move_by_offset(-body_size['width'] / 2, -body_size['height'] / 2) \
                 .perform()
 
+            time.sleep(0.3)
             ActionChains(self.testcase.driver).move_by_offset(x, y).perform()
         finally:
             ActionChains(self.testcase.driver).release().perform()
