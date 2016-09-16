@@ -226,8 +226,15 @@ def auto_select_workspace(request, mode=None):
             'name': 'home'
         })
 
+        parameters = {}
         if mode:
-            url += '?' + urlencode({'mode': mode})
+            parameters['mode'] = mode
+
+        if 'theme' in request.GET:
+            parameters['theme'] = request.GET['theme']
+
+        if len(parameters) > 0:
+            url += '?' + urlencode(parameters)
 
         return HttpResponseRedirect(url)
     else:
