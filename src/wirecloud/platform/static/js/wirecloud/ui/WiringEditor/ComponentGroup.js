@@ -30,8 +30,10 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    ns.ComponentGroup = function ComponentGroup(resource) {
+    ns.ComponentGroup = function ComponentGroup(resource, title) {
         this.superClass(events);
+
+        title = title || utils.gettext("Create");
 
         this.titleElement = document.createElement('span');
         this.tooltip = new se.Tooltip();
@@ -46,7 +48,7 @@
 
         var button = new se.Button({
             class: 'btn-create wc-create-resource-component',
-            title: utils.gettext("New component"),
+            title: title,
             iconClass: 'fa fa-plus'
         });
         button.addEventListener('click', function () {

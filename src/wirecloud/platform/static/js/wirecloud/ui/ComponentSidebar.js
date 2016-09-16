@@ -67,7 +67,7 @@
             paint: function paint(group) {
                 var id;
 
-                group = new ns.WiringEditor.ComponentGroup(group);
+                group = new ns.WiringEditor.ComponentGroup(group, this.searchComponents.search_scope === "widget" ? utils.gettext("Add to workspace") : utils.gettext("Merge"));
                 group.addEventListener('btncreate.click', createcomponent_onclick.bind(this));
 
                 if (this.components.mashup[group.id] != null) {

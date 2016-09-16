@@ -307,7 +307,7 @@
 
     WorkspaceView.prototype.buildAddWidgetButton = function buildAddWidgetButton() {
         var button = new se.ToggleButton({
-            title: utils.gettext("Search component"),
+            title: utils.gettext("Add components"),
             class: "btn-primary wc-show-component-sidebar-button",
             iconClass: "fa fa-archive",
             stackedIconClass: "fa fa-plus-circle"

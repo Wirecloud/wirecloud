@@ -212,11 +212,11 @@ in this example in the "My Resources" view:
 
 <img src="../images/user_guide/browsing_marketplace/my_resources.png" srcset="../images/user_guide/browsing_marketplace/my_resources.png 2x" alt="List of used components"/>
 
-Go to the editor view and click on the *Search component* button:
+Go to the editor view and click on the *Add components* button:
 
-<img src="../images/user_guide/building_mashup/add_widget_button.png" srcset="../images/user_guide/building_mashup/add_widget_button.png 2x" alt="Click *Add Widget*"/>
+<img src="../images/user_guide/building_mashup/add_widget_button.png" srcset="../images/user_guide/building_mashup/add_widget_button.png 2x" alt="Click *Add conponents*"/>
 
-Look for the *Linear Graph* widget and click on the *New component*
+Look for the *Linear Graph* widget and click on the *Add to workspace*
 button:
 
 <img src="../images/user_guide/building_mashup/add_linear_graph.png" srcset="../images/user_guide/building_mashup/add_linear_graph.png 2x" alt="Click *Add to workspace*"/>
@@ -276,8 +276,8 @@ mark shadow radius to customise the visualisation.
 <img src="../images/user_guide/building_mashup/linear_graph_settings.png" srcset="../images/user_guide/building_mashup/linear_graph_settings.png 2x" alt="Click *Settings*"/>
 
 As we have configure the initial position and the initial zoom, we need to
-refresh the widget. To do so, we click again on the properties icon and then on
-the *Refresh* option:
+reload the widget. To do so, we click again on the properties icon and then on
+the *Reload* option:
 
 <img src="../images/user_guide/building_mashup/mapviewer_reload_entry.png" srcset="../images/user_guide/building_mashup/mapviewer_reload_entry.png 2x" alt="Reload option"/>
 
@@ -332,7 +332,7 @@ operators are called piping operators. So we have to add it to the
 wiring.
 
 To do so, open the components side panel and search the *NGSI source* operator,
-then click on the *New component* button:
+then click on the *Create* button:
 
 <img src="../images/user_guide/wiring/create_operator_button.png" srcset="../images/user_guide/wiring/create_operator_button.png 2x" alt="Click *Create*"/>
 
