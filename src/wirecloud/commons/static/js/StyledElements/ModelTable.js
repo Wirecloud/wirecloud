@@ -45,6 +45,8 @@
             if (column.width != null && column.width !== "css") {
                 cell.style.width = column.width;
                 cell.style.flexGrow = 0;
+            } else if (column.width === "css") {
+                cell.style.flexGrow = 0;
             }
             cell.textContent = label;
             if (column.sortable !== false) {
@@ -100,10 +102,12 @@
                 cell.className = 'se-model-table-cell';
                 priv.columnsCells[j].push(cell);
                 if (typeof column.width === 'string' && column.width !== "css") {
-
                     cell.style.width = column.width;
                     cell.style.flexGrow = 0;
+                } else if (column.width === "css") {
+                    cell.style.flexGrow = 0;
                 }
+
                 if (typeof column['class'] === 'string') {
                     cell.classList.add(column['class']);
                 }
