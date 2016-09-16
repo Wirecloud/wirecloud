@@ -42,7 +42,7 @@ list_resources = ['CoNWeT_simple-history-module2linear-graph_2.3.2.wgt',
                   'CoNWeT_ngsi-source_3.0.7.wgt',
                   'CoNWeT_ngsientity2poi_3.0.3.wgt',
                   'CoNWeT_linear-graph_3.0.0b3.wgt',
-                  'CoNWeT_map-viewer_2.5.7.wgt']
+                  'CoNWeT_map-viewer_2.5.8.wgt']
 
 RETINA_IMAGES = getattr(settings, "GUIDEBUILDER_RETINA", False)
 DENSITY_FACTOR = 2 if RETINA_IMAGES else 1
@@ -309,7 +309,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, 'workspace_settings')
         crop_image(imgp, *create_box(dialog))
 
-    test_creating_new_workspace.tags = tags + ('ui-new-workspace',)
+    test_creating_new_workspace.tags = tags + ('wirecloud-guide-creating-new-workspace',)
 
     @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
@@ -371,7 +371,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             # Resources
             imgp = take_capture(self.driver, "my_resources")
 
-            btn = self.find_navbar_button('wc-mac-upload-button')
+            btn = self.find_navbar_button('wc-upload-mac-button')
             # Where are upload button
             ActionChains(self.driver).move_to_element(btn.element).perform()
             time.sleep(0.3)  # wait tooltip animation
@@ -426,7 +426,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             get_by_text(dialog, 'button', 'Cancel').click()
             self.driver.find_element_by_css_selector(
                 '.wirecloud_header_nav .wc-back-button').click()
-    test_browsing_marketplace.tags = tags + ('ui-marketplace',)
+    test_browsing_marketplace.tags = tags + ('wirecloud-guide-browsing-marketplace',)
 
     @uses_extra_resources(list_resources)
     def test_building_mashup(self):
@@ -900,7 +900,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         crop_image(imgp, *create_box(dialog))
         dialog.cancel()
 
-    test_building_mashup.tags = tags + ('ui-build-mashup',)
+    test_building_mashup.tags = tags + ('wirecloud-guide-building-mashup',)
 
     @uses_extra_workspace('admin', 'CoNWeT_History_Info_2.0.wgt')
     @uses_extra_workspace('admin', 'CoNWeT_MWD_Tutorial_2.0.wgt')
@@ -1072,7 +1072,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 panelheads = create_box(panelhead, 7)
                 crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 10)
 
-    test_behaviour_mashup.tags = tags + ('ui-behaviour',)
+    test_behaviour_mashup.tags = tags + ('wirecloud-guide-behaviour-mashup',)
 
     def test_sanity_check(self):
 
@@ -1086,14 +1086,14 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         url = self.live_server_url
         url += reverse('login')
         self.driver.get(url)
-        self.wait_element_visible('#id_username')
+        self.wait_element_visible('#wc-login-form')
 
         time.sleep(0.3)
         imgp = take_capture(self.driver, "login")
         crop_down(imgp, self.driver.find_element_by_css_selector('body'), 80)
 
         # Log into WireCloud
-        self.login()
+        self.login(next="/?theme=wirecloud.defaulttheme")
 
         # My Resources button
         btn = self.find_navbar_button('wc-show-myresources-button')
@@ -1106,7 +1106,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
 
             # Upload button
-            btn = self.find_navbar_button('wc-mac-upload-button')
+            btn = self.find_navbar_button('wc-upload-mac-button')
             ActionChains(self.driver).move_to_element(btn.element).perform()
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "upload_button")
