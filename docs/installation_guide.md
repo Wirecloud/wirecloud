@@ -38,13 +38,14 @@ step, as they will be installed throughout the documentation:**
 
 All these dependencies are available for Linux, Mac OS and Windows, so WireCloud
 should work on any of these operating systems. However, it is better to use
-Debian Wheezy+, CentOS 7+, Ubuntu 12.04+ or Mac OS X 10.9+ (only recommended for
+Debian Wheezy+, CentOS 6+, Ubuntu 12.04+ or Mac OS X 10.9+ (only recommended for
 development/testing) as these operating systems are actively tested.
 Specifically, this installation guide was tested in the following systems:
 
 - Ubuntu 16.04
 - Ubuntu 14.04
 - Ubuntu 12.04
+- CentOS 6
 - CentOS 7
 - Debian Wheezy
 - Debian Jessie
@@ -81,6 +82,9 @@ It's also recommended to install the following packages:
 
     $ apt-get install build-essential python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev libcurl4-openssl-dev libjpeg-dev
 
+and the following pip packages:
+
+    $ pip install pyOpenSSL ndg-httpsclient pyasn1
 
 ### CentOS & Red Hat Enterprise Linux
 
@@ -137,6 +141,7 @@ http://fedoraproject.org/wiki/EPEL for instructions about how to add it). If you
 has such a repository, you will be able to install pip using the following
 command:
 
+    $ yum install epel-release
     $ yum install python-pip
 
 It's also recommended to install the following packages:
