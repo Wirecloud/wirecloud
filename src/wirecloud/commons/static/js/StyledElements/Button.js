@@ -107,7 +107,7 @@
 
         this.wrapperElement.className = "se-btn";
         this.label = null;
-        this.iconElement = null;
+        this.icon = null;
         this.badgeElement = null;
         this.tooltip = null;
 
@@ -287,17 +287,37 @@
         return this;
     };
 
-    Button.prototype.removeIconClassName = function removeIconClassName(classname) {
-        this.icon.classList.remove(classname);
+    Button.prototype.removeIconClassName = function removeIconClassName(classList) {
+        if (this.icon == null) {
+            // Nothing to do
+            return this;
+        }
+
+        if (!Array.isArray(classList)) {
+            classList = classList == null ? "" : classList.toString().trim();
+            if (classList === "") {
+                this.icon.remove();
+                this.icon = null;
+                return this;
+            }
+            classList = classList.split(/\s+/);
+        }
+
+        classList.forEach(function (classname) {
+            this.icon.classList.remove(classname);
+        }, this);
+
+        if (this.icon.className.trim() === 'se-icon') {
+            this.icon.remove();
+            this.icon = null;
+        }
 
         return this;
     };
 
-    Button.prototype.replaceIconClass = function replaceIconClass(className, newClassName) {
-        this.icon.classList.remove(className);
-        this.icon.classList.add(newClassName);
-
-        return this;
+    Button.prototype.replaceIconClassName = function replaceIconClassName(className, newClassName) {
+        this.removeIconClassName(className);
+        return this.addIconClassName(newClassName);
     };
 
     Button.prototype.setTitle = function setTitle(title) {

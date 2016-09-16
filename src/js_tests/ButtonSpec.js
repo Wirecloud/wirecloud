@@ -346,6 +346,65 @@
 
         });
 
+        describe("removeIconClassName(classList)", function () {
+
+            it("should remove the icon element when passing null", function () {
+                var element = new StyledElements.Button({iconClass: "fa fa-ok"});
+                expect(element.removeIconClassName()).toBe(element);
+                expect(element.icon).toBe(null);
+            });
+
+            it("should do nothing when the button has no icon and passing an empty class list", function () {
+                var element = new StyledElements.Button();
+                expect(element.removeIconClassName()).toBe(element);
+                expect(element.icon).toBe(null);
+            });
+
+            it("should do nothing when removing an inexistent class name", function () {
+                var element = new StyledElements.Button({iconClass: "fa fa-ok"});
+                expect(element.removeIconClassName("fa-bell")).toBe(element);
+                expect(element.icon.className).toBe("se-icon fa fa-ok");
+            });
+
+            it("should support class lists", function () {
+                var element = new StyledElements.Button({iconClass: "fa fa-ok fa-2x"});
+                expect(element.removeIconClassName(["fa-ok", "inexistent", "fa-2x"])).toBe(element);
+                expect(element.icon.className).toBe("se-icon fa");
+            });
+
+            it("should support whitespace separated class lists", function () {
+                var element = new StyledElements.Button({iconClass: "fa fa-ok fa-2x"});
+                expect(element.removeIconClassName("fa-ok inexistent fa-2x")).toBe(element);
+                expect(element.icon.className).toBe("se-icon fa");
+            });
+
+            it("should remove the icon element when removing all the CSS classes", function () {
+                var element = new StyledElements.Button({iconClass: "fa fa-ok"});
+                expect(element.removeIconClassName("fa fa-ok")).toBe(element);
+                expect(element.icon).toBe(null);
+            });
+
+        });
+
+        describe("replaceIconClassName(removeList, addList)", function () {
+
+            it("should call removeIconClassName and addIconClassName", function () {
+                var element, removeList, addList;
+
+                element = new StyledElements.Button();
+                removeList = [];
+                addList = [];
+                spyOn(element, "addIconClassName").and.callThrough();
+                spyOn(element, "removeIconClassName").and.callThrough();
+                expect(element.replaceIconClassName(removeList, addList)).toBe(element);
+                expect(element.addIconClassName.calls.count()).toEqual(1);
+                expect(element.addIconClassName.calls.argsFor(0)).toEqual([addList]);
+                expect(element.removeIconClassName.calls.count()).toEqual(1);
+                expect(element.removeIconClassName.calls.argsFor(0)).toEqual([removeList]);
+            });
+
+        });
+
         describe("setBadge([content, state, isAlert])", function () {
 
             var element;

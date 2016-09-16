@@ -116,14 +116,14 @@
                 if (enabled) {
                     this.btnEnable
                         .setTitle(utils.gettext("Disable"))
-                        .replaceIconClass('fa-lock', 'fa-unlock');
+                        .replaceIconClassName('fa-lock', 'fa-unlock');
                     this.btnCreate.show();
                     this.body.removeChild(this.disabledAlert);
                     this.btnCreate.get().parentElement.classList.remove('hidden');
                 } else {
                     this.btnEnable
                         .setTitle(utils.gettext("Enable"))
-                        .replaceIconClass('fa-unlock', 'fa-lock');
+                        .replaceIconClassName('fa-unlock', 'fa-lock');
                     this.btnCreate.hide();
                     this.body.appendChild(this.disabledAlert);
                     this.btnCreate.get().parentElement.classList.add('hidden');
