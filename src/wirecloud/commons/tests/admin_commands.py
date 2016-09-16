@@ -47,11 +47,9 @@ class BaseAdminCommandTestCase(TestCase):
 
         from wirecloud.commons.commands.convert import ConvertCommand
         from wirecloud.commons.commands.startproject import StartprojectCommand
-        from wirecloud.fiware.commands.passintegrationtests import IntegrationTestsCommand
         cls.command_utility = CommandLineUtility({
             "convert": ConvertCommand(),
             "startproject": StartprojectCommand(),
-            "passintegrationtests": IntegrationTestsCommand(),
         }, prog_name='wirecloud-admin')
         cls.test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
 
