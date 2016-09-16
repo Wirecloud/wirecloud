@@ -62,7 +62,7 @@
                 state: 'default',
                 depth: 1,
                 class: "btn-show-logs",
-                iconClass: "fa fa-bell-alt"
+                iconClass: "fa fa-bell"
             });
             this.btnLogs.addEventListener('click', btnerrors_onclick.bind(this));
             this.btnLogs.appendTo(this.options);

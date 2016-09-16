@@ -57,7 +57,7 @@
             this.btnRemove = new se.Button({
                 title: utils.gettext("Remove"),
                 class: "btn-remove",
-                iconClass: "fa fa-remove-circle"
+                iconClass: "fa fa-times-circle"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
 
@@ -279,7 +279,7 @@
 
                 this.btnRemove
                     .replaceClassName('btn-remove', 'btn-add')
-                    .removeIconClassName(['fa-trash', 'fa-remove-circle'])
+                    .removeIconClassName(['fa-trash', 'fa-times-circle'])
                     .addIconClassName('fa-plus-circle')
                     .setTitle(utils.gettext("Add"));
 
@@ -291,7 +291,7 @@
                 this.btnRemove
                     .replaceClassName('btn-add', 'btn-remove')
                     .removeIconClassName(['fa-plus-circle', 'fa-trash'])
-                    .addIconClassName('fa-remove-circle')
+                    .addIconClassName('fa-times-circle')
                     .setTitle(utils.gettext("Remove"));
 
                 return this;
@@ -301,7 +301,7 @@
 
                 this.btnRemove
                     .replaceClassName('btn-add', 'btn-remove')
-                    .removeIconClassName(['fa-plus-circle', 'fa-remove-circle'])
+                    .removeIconClassName(['fa-plus-circle', 'fa-times-circle'])
                     .addIconClassName('fa-trash')
                     .setTitle(utils.gettext("Remove"));
 

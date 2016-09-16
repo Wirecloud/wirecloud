@@ -65,7 +65,7 @@
             this.btnRemove = new se.Button({
                 title: utils.gettext("Remove"),
                 class: "btn-remove",
-                iconClass: "fa fa-remove-circle"
+                iconClass: "fa fa-times-circle"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
 
