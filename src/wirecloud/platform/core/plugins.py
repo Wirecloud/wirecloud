@@ -89,7 +89,6 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Tooltip.js',
     'js/StyledElements/Addon.js',
     'js/StyledElements/Button.js',
-    'js/StyledElements/SVGPlainButton.js',
     'js/StyledElements/FileButton.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
