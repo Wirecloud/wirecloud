@@ -11,13 +11,8 @@
     background: white;
 }
 
-.workspace {
+.wc-workspace {
     .se-offcanvas {
-        margin-bottom: ($margin-vertical-base / 2);
-
-        .se-offcanvas-content {
-            border: solid 1px $panel-default-border-color;
-            border-radius: $border-radius-base;
-        }
+        padding-bottom: ($margin-vertical-base / 2);
     }
 }
