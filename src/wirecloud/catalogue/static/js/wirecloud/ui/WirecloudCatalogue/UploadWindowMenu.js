@@ -19,9 +19,9 @@
  *
  */
 
-/* globals gettext, LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -38,18 +38,16 @@
     upload_wgt_files = function upload_wgt_files() {
         var monitor, entries, count, failures, onComplete, onUploadFailure;
 
-        monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged components"), 1);
+        monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Uploading packaged components"), 0);
         entries = this.fileTable.source.getElements();
         count = this.fileTable.source.length;
         failures = [];
 
         onComplete = function () {
             if (--count === 0) {
-                var layoutManager = LayoutManagerFactory.getInstance();
-                layoutManager._notifyPlatformReady();
                 if (failures.length > 0) {
                     var msg = document.createElement('p');
-                    msg.textContent = gettext('Error uploading the following components:');
+                    msg.textContent = utils.gettext('Error uploading the following components:');
                     var details = document.createElement('ul');
                     for (var i = 0; i < failures.length; i++) {
                         var item = document.createElement('li');
@@ -110,12 +108,12 @@
     UploadWindowMenu = function UploadWindowMenu(options) {
         this.catalogue = options.catalogue;
         this.mainview = options.mainview;
-        Wirecloud.ui.WindowMenu.call(this, gettext("Upload mashable application components"), 'wc-upload-mac-modal');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext("Upload mashable application components"), 'wc-upload-mac-modal');
 
         var builder = new StyledElements.GUIBuilder();
         var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/catalogue/modals/upload'], {
             'uploadfilebutton': function () {
-                var button = new StyledElements.FileButton({text: gettext('Select files from your computer')});
+                var button = new StyledElements.FileButton({text: utils.gettext('Select files from your computer')});
                 button.addEventListener('fileselect', function (button, files) {
                     for (var i = 0; i < files.length; i++) {
                         this.addFile(files[i]);
@@ -130,15 +128,15 @@
         this.fileTable = new StyledElements.ModelTable([
             {
                 "field": "name",
-                "label": Wirecloud.Utils.gettext("Name")
+                "label": utils.gettext("Name")
             },
             {
                 "field": "size",
                 "type": "number",
-                "label": Wirecloud.Utils.gettext("Size"),
+                "label": utils.gettext("Size"),
                 "width": "css",
                 "class": "wc-upload-mac-size-column",
-                "contentBuilder": function (file) {return Wirecloud.Utils.formatSize(file.size);}
+                "contentBuilder": function (file) {return utils.formatSize(file.size);}
             },
             {
                 "label": "",
@@ -146,7 +144,7 @@
                 "class": "wc-upload-mac-button-column",
                 "sortable": false,
                 "contentBuilder": function (entry) {
-                    var button = new StyledElements.Button({iconClass: "fa fa-remove", plain: true, title: gettext("Remove this file")});
+                    var button = new StyledElements.Button({iconClass: "fa fa-remove", plain: true, title: utils.gettext("Remove this file")});
                     button.addEventListener("click", this.removeFile.bind(this, entry.file));
                     return button;
                 }.bind(this)
@@ -154,7 +152,7 @@
         ], {
             pageSize: 0
         });
-        var addMoreButton = new StyledElements.FileButton({text: gettext('Add more files')});
+        var addMoreButton = new StyledElements.FileButton({text: utils.gettext('Add more files')});
         addMoreButton.addEventListener('fileselect', function (button, files) {
             for (var i = 0; i < files.length; i++) {
                 this.addFile(files[i]);
@@ -164,7 +162,7 @@
         this.fileTable.insertInto(this.windowContent);
 
         this.acceptButton = new StyledElements.Button({
-            text: gettext("Upload"),
+            text: utils.gettext("Upload"),
             'class': 'btn-primary btn-accept'
         });
         this.acceptButton.addEventListener("click", acceptListener.bind(this));
@@ -178,7 +176,7 @@
 
         // Cancel button
         this.cancelButton = new StyledElements.Button({
-            text: gettext("Cancel"),
+            text: utils.gettext("Cancel"),
             'class': 'btn-default btn-cancel'
         });
         this.cancelButton.addEventListener("click", this._closeListener);
@@ -197,7 +195,7 @@
             this.htmlElement.classList.remove('drag-hover');
             document.removeEventListener('drop', drop_listener, true);
             document.removeEventListener('dragleave', dragleave_listener, false);
-            document.removeEventListener('dragover', Wirecloud.Utils.preventDefaultListener, true);
+            document.removeEventListener('dragover', utils.preventDefaultListener, true);
             this.htmlElement.addEventListener('dragover', activate_listener, true);
         }.bind(this);
 
@@ -220,7 +218,7 @@
                 // Allow drop
                 this.htmlElement.classList.add('drag-hover');
                 this.htmlElement.removeEventListener('dragover', activate_listener, true);
-                document.addEventListener('dragover', Wirecloud.Utils.preventDefaultListener, true);
+                document.addEventListener('dragover', utils.preventDefaultListener, true);
                 document.addEventListener('dragleave', dragleave_listener, false);
                 document.addEventListener('drop', drop_listener, true);
             }
@@ -284,4 +282,5 @@
 
     Wirecloud.ui.WirecloudCatalogue = {};
     Wirecloud.ui.WirecloudCatalogue.UploadWindowMenu = UploadWindowMenu;
-})();
+
+})(Wirecloud.Utils);

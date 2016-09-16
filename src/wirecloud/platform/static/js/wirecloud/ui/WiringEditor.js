@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 Wirecloud.ui = Wirecloud.ui || {};
@@ -155,8 +155,8 @@ Wirecloud.ui = Wirecloud.ui || {};
              * @override
              */
             getBreadcrum: function getBreadcrum() {
-                var i, workspace_breadcrum = LayoutManagerFactory.getInstance()
-                    .viewsByName.workspace.getBreadcrum();
+                var i, workspace_breadcrum = Wirecloud.UserInterfaceManager
+                    .views.workspace.getBreadcrum();
 
                 for (i = 0; i < workspace_breadcrum.length; i += 1) {
                     delete workspace_breadcrum[i].menu;
@@ -174,7 +174,7 @@ Wirecloud.ui = Wirecloud.ui || {};
              */
             getTitle: function getTitle() {
                 return utils.interpolate(utils.gettext("%(workspace_title)s - Wiring"), {
-                    workspace_title: LayoutManagerFactory.getInstance().viewsByName.workspace.getTitle()
+                    workspace_title: Wirecloud.UserInterfaceManager.views.workspace.getTitle()
                 });
             },
 
@@ -190,7 +190,7 @@ Wirecloud.ui = Wirecloud.ui || {};
              */
             goUp: function goUp() {
 
-                LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+                Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
 
                 return this;
             },

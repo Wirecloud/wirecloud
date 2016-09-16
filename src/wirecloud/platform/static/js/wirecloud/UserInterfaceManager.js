@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, Wirecloud */
+/* globals Wirecloud */
 
 
 (function (utils) {
@@ -93,8 +93,67 @@
             }
         }, false);
 
-        // Init old Layout Manager (TODO: remove)
-        LayoutManagerFactory.getInstance();
+        // TODO refactor
+        this.mainLayout = new StyledElements.VerticalLayout();
+        this.mainLayout.north.appendChild(document.getElementById('wirecloud_header'));
+
+        this.alternatives = new StyledElements.Alternatives({class: 'wc-body'});
+        this.mainLayout.center.appendChild(this.alternatives);
+        this.mainLayout.insertInto(document.body);
+
+        /* TODO| FIXME */
+        if ('WirecloudHeader' in Wirecloud.ui) {
+            this.header = new Wirecloud.ui.WirecloudHeader(this);
+            this.alternatives.addEventListener('preTransition', function (alternatives, old_alternative, new_alternative) {
+                this.header._notifyViewChange();
+            }.bind(this));
+            this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
+                this.header._notifyViewChange(new_alternative);
+            }.bind(this));
+        }
+
+        this.views = {
+            'initial': this.alternatives.createAlternative(),
+            'workspace': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WorkspaceView}),
+            'wiring': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WiringEditor}),
+            'marketplace': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.MarketplaceView})
+        };
+
+        Wirecloud.addEventListener('contextloaded', function () {
+            this.views.myresources = this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.MyResourcesView});
+        }.bind(this));
+
+        var plain_content = document.querySelector('.plain_content');
+        if (plain_content != null) {
+            this.views.initial.appendChild(plain_content);
+        }
+
+        // Add some event listeners
+        window.addEventListener("resize", resizeUI.bind(this), true);
+        document.addEventListener('click', on_task_click.bind(this), true);
+    };
+
+    UserInterfaceManager.changeCurrentView = function changeCurrentView(newView, options) {
+
+        if (options === true) {
+            options = {};
+        } else if (options == null) {
+            options = {
+                onComplete: function (alternatives, old_alternative, new_alternative) {
+                    Wirecloud.HistoryManager.pushState(new_alternative.buildStateData());
+                }
+            };
+        }
+
+        var main_alts = [this.views.wiring, this.views.workspace];
+        newView = this.views[newView];
+        if (main_alts.indexOf(this.alternatives.visibleAlt) !== -1 && main_alts.indexOf(newView) !== -1) {
+            options.effect = StyledElements.Alternatives.HORIZONTAL_SLIDE;
+        } else {
+            options.effect = StyledElements.Alternatives.CROSS_DISSOLVE;
+        }
+        this.rootKeydownHandler = null;
+        this.alternatives.showAlternative(newView, options);
     };
 
     UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {
@@ -147,6 +206,82 @@
 
         this._unregisterPopup(popup);
         this.currentPopups.push(popup);
+    };
+
+    UserInterfaceManager.createTask = function createTask(task, subtasks) {
+        var monitor = new Wirecloud.TaskMonitorModel(task, subtasks);
+        var element = document.getElementById("loading-window");
+        element.classList.add("in");
+        element.classList.add("fade");
+
+        monitor.addEventListener('progress', updateTaskProgress);
+        monitor.addEventListener('fail', notifyPlatformReady);
+        updateTaskProgress(monitor, 0);
+        return monitor;
+    };
+
+    UserInterfaceManager.onHistoryChange = function onHistoryChange(state) {
+        this.changeCurrentView(state.view, {
+            onComplete: function (alternatives, oldView, nextView) {
+                if ('onHistoryChange' in nextView) {
+                    nextView.onHistoryChange(state);
+                }
+            }
+        });
+    };
+
+    var updateTaskProgress = function updateTaskProgress(monitor, progress) {
+        var msg;
+
+        msg = gettext("%(task)s %(percentage)s%");
+        msg = interpolate(msg, {task: monitor.title, percentage: Math.round(progress)}, true);
+        document.getElementById("loading-task-title").textContent = msg;
+
+        if (monitor.subtasks.length === 0) {
+            msg = '';
+        } else if (monitor.subtasks[monitor.currentsubtask].title != "") {
+            msg = gettext("%(subTask)s: %(percentage)s%");
+            msg = interpolate(msg, {
+                subTask: monitor.subtasks[monitor.currentsubtask].title,
+                percentage: Math.round(monitor.subtasks[monitor.currentsubtask].progress)
+            }, true);
+        } else {
+            msg = "%(percentage)s";
+            msg = interpolate(msg, {
+                percentage: Math.round(monitor.subtasks[monitor.currentsubtask].progress)
+            }, true);
+        }
+
+        document.getElementById("loading-subtask-title").textContent = msg;
+
+        if (progress === 100) {
+            notifyPlatformReady();
+        }
+    };
+
+    var resizeUI = function resizeUI() {
+        this.mainLayout.repaint();
+
+        // Recalculate menu positions
+        if (this.currentWindowMenu) {
+            this.currentWindowMenu.calculatePosition();
+        }
+    };
+
+    var notifyPlatformReady = function notifyPlatformReady() {
+        var loadingElement = document.getElementById("loading-window");
+        if (loadingElement.classList.contains("in")) {
+            loadingElement.classList.remove("in");
+        } else {
+            loadingElement.classList.remove("fade");
+        }
+    };
+
+    var on_task_click = function on_task_click(event) {
+        var loadingElement = document.getElementById("loading-window");
+        if (!(loadingElement.classList.contains("in"))) {
+            loadingElement.classList.remove("fade");
+        }
     };
 
     Wirecloud.UserInterfaceManager = UserInterfaceManager;

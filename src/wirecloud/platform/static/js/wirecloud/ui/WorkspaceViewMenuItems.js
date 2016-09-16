@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -61,7 +61,7 @@
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Rename"), function () {
-                (new Wirecloud.ui.RenameWindowMenu(this)).show();
+                (new Wirecloud.ui.RenameWindowMenu(this, utils.gettext('Rename Workspace'))).show();
             }.bind(this.workspace));
             item.addIconClass("fa fa-pencil");
             item.setDisabled(!this.workspace.model.isAllowed('rename'));
@@ -74,7 +74,7 @@
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Upload to my resources"), function () {
-                LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady({
+                Wirecloud.UserInterfaceManager.views.marketplace.waitMarketListReady({
                     onComplete: function () {
                         var dialog = new Wirecloud.ui.PublishWorkspaceWindowMenu(this);
                         dialog.show();

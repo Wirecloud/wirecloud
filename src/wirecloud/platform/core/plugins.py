@@ -475,7 +475,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view in ('classic', 'embedded', 'smartphone'):
             scripts = common + (
-                'js/interfaceLayout/LayoutManager.js',
                 'js/wirecloud/ui/WorkspaceListItems.js',
                 'js/wirecloud/ui/WorkspaceViewMenuItems.js',
                 'js/wirecloud/ui/MACSearch.js',

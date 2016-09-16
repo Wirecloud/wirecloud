@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, Wirecloud */
+/* globals Wirecloud */
 
 
 (function (utils) {
@@ -30,8 +30,8 @@
      * Private methods
      *************************************************************************/
 
-    var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result) {
-        var layoutManager, i, resource_full_id, index;
+    var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result, monitor) {
+        var i, resource_full_id, index;
 
         if (result.affectedVersions == null) {
             result.affectedVersions = [resource.version];
@@ -39,9 +39,7 @@
 
         switch (resource.type) {
         case 'widget':
-            layoutManager = LayoutManagerFactory.getInstance();
-
-            layoutManager.logSubTask(utils.gettext('Unloading affected widgets'));
+            monitor.update(100 / 3, utils.gettext('Unloading affected widgets'));
             result.affectedVersions.forEach(function (version) {
                 var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
                 if (new_meta != null) {
@@ -52,11 +50,10 @@
                     });
                 }
             });
-            layoutManager.logSubTask(utils.gettext('Purging widget info'));
+            monitor.update(200 / 3, utils.gettext('Purging widget info'));
             break;
         case 'operator':
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager.logSubTask(utils.gettext('Unloading affected operators'));
+            monitor.update(100 / 3, utils.gettext('Unloading affected operators'));
             result.affectedVersions.forEach(function (version) {
                 var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
                 if (new_meta != null) {
@@ -67,8 +64,10 @@
                     });
                 }
             });
-            layoutManager.logSubTask(utils.gettext('Purging operator info'));
+            monitor.update(200 / 3, utils.gettext('Purging operator info'));
             break;
+        case 'mashup':
+            monitor.update(200 / 3, utils.gettext('Purging mashup info'));
         }
 
         for (i = 0; i < result.affectedVersions.length; i++) {
@@ -83,14 +82,13 @@
             } catch (e) {}
         }
 
-        if (typeof next === 'function') {
-            next();
-        }
+        monitor.finish();
+        utils.callCallback(next);
     };
 
-    var uninstallSuccessCallback = function uninstallSuccessCallback(resource, next, response) {
+    var uninstallSuccessCallback = function uninstallSuccessCallback(resource, options, response) {
         var result = JSON.parse(response.responseText);
-        uninstallOrDeleteSuccessCallback.call(this, resource, next, result);
+        uninstallOrDeleteSuccessCallback.call(this, resource, options.onSuccess, result, options.request_task);
     };
 
     var uninstallErrorCallback = function uninstallErrorCallback(options, response) {
@@ -191,10 +189,10 @@
     };
 
     LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
-        var url;
+        var url, msg;
 
         options = utils.merge({
-            'allversions': false
+            allversions: false
         }, options);
 
         if (options.allversions) {
@@ -202,19 +200,28 @@
                 vendor: resource.vendor,
                 name: resource.name
             });
+            msg = utils.interpolate(utils.gettext("Uninstalling all versions of %(title)s (%(group_id)s)"), resource);
         } else {
             url = Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate({
                 vendor: resource.vendor,
                 name: resource.name,
                 version: resource.version.text
             });
+            msg = utils.interpolate(utils.gettext("Uninstalling %(title)s (%(uri)s)"), resource);
+        }
+
+        if (options.monitor == null) {
+            options.monitor = Wirecloud.UserInterfaceManager.createTask(msg, 1);
+            options.request_task = options.monitor.nextSubtask('Sending request to the server');
+        } else {
+            options.request_task = options.monitor.nextSubtask(msg);
         }
 
         // Send request to uninstall de widget
         Wirecloud.io.makeRequest(url + '?affected=true', {
             method: 'DELETE',
             requestHeaders: {'Accept': 'application/json'},
-            onSuccess: uninstallSuccessCallback.bind(this, resource, options.onSuccess),
+            onSuccess: uninstallSuccessCallback.bind(this, resource, options),
             onFailure: uninstallErrorCallback.bind(this, options),
             onComplete: options.onComplete
         });
@@ -262,21 +269,21 @@
                 response_data = JSON.parse(response.responseText);
                 process_upload_response.call(this, [response_data.resource_details].concat(response_data.extra_resources));
 
-                if (typeof options.onSuccess === 'function') {
-                    options.onSuccess();
+                if (options.monitor) {
+                    options.monitor.finish();
                 }
+                utils.callCallback(options.onSuccess);
             }.bind(this),
             onFailure: function (response) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding resource from URL: %(errorMsg)s."), response);
 
-                if (typeof options.onFailure === 'function') {
-                    options.onFailure(msg);
+                if (options.monitor) {
+                    options.monitor.fail();
                 }
+                utils.callCallback(options.onFailure, msg);
             },
             onComplete: function () {
-                if (typeof options.onComplete === 'function') {
-                    options.onComplete();
-                }
+                utils.callCallback(options.onComplete);
             }
         });
     };

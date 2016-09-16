@@ -101,6 +101,9 @@
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function (response) {
                 var offering;
+                if (subtask) {
+                    subtask.finish();
+                }
                 if (typeof options.onSuccess === 'function') {
                     offering = new Wirecloud.FiWare.Offering(JSON.parse(response.responseText), this);
                     Wirecloud.Utils.callCallback(options.onSuccess, offering);
@@ -108,6 +111,9 @@
             }.bind(this),
             onFailure: function (response) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error retrieving offering info: %(errorMsg)s."), response);
+                if (subtask) {
+                    subtask.fail(msg);
+                }
                 Wirecloud.Utils.callCallback(options.onFailure, msg);
             },
             onComplete: function (response) {

@@ -19,7 +19,7 @@
  *
  */
 
-/* globals CatalogueView, LayoutManagerFactory, Wirecloud */
+/* globals CatalogueView, Wirecloud */
 
 
 (function (utils) {
@@ -94,8 +94,8 @@
 
     MarketManager.addMarket = function addMarket(market_info, callback) {
 
-        LayoutManagerFactory.getInstance()._startComplexTask(utils.gettext("Adding marketplace"), 1);
-        LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Adding marketplace'));
+        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Adding marketplace"), 1);
+        var add_task = monitor.nextSubtask(utils.gettext('Adding marketplace'));
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'POST',
@@ -104,16 +104,13 @@
             postBody: JSON.stringify(market_info),
 
             onSuccess: function (transport) {
-                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Marketplace added successfully'));
-                LayoutManagerFactory.getInstance().logStep('');
+                add_task.finish(utils.gettext('Marketplace added successfully'));
                 callback();
             },
             onFailure: function (transport) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding marketplace: %(errorMsg)s."), transport);
+                add_task.fail(msg);
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-            },
-            onComplete: function () {
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }
         });
     };

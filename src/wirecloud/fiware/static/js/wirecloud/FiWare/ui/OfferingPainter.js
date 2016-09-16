@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, moment, StyledElements, Wirecloud */
+/* globals moment, StyledElements, Wirecloud */
 
 
 (function (se, utils) {
@@ -33,40 +33,36 @@
     };
 
     var onInstallClick = function onInstallClick(offering, catalogue_view) {
-        var layoutManager, monitor;
 
-        layoutManager = LayoutManagerFactory.getInstance();
-        monitor = layoutManager._startComplexTask(utils.gettext("Importing offering resources into local repository"), 3);
+        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing offering components into local repository"), 0);
 
         offering.install({
             monitor: monitor,
             onResourceSuccess: function () {
-                var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+                var local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
                 local_catalogue_view.viewsByName.search.mark_outdated();
             },
             onComplete: function () {
                 this.update_buttons();
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }.bind(this)
         });
     };
 
     var onUninstallClick = function onUninstallClick(offering, catalogue_view) {
-        var layoutManager, local_catalogue_view, monitor, i, count, callbacks;
+        var local_catalogue_view, monitor, i, count, callbacks;
 
-        layoutManager = LayoutManagerFactory.getInstance();
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-        monitor = layoutManager._startComplexTask(utils.gettext("Uninstalling offering resources"), 1);
+        local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
+        monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Uninstalling offering resources"), 0);
 
         count = offering.wirecloudresources.length;
         callbacks = {
+            monitor: monitor,
             onSuccess: function () {
                 local_catalogue_view.viewsByName.search.mark_outdated();
                 catalogue_view.viewsByName.search.mark_outdated();
             },
             onComplete: function () {
                 if (--count === 0) {
-                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
                     this.update_buttons();
                 }
             }.bind(this)
@@ -211,7 +207,7 @@
     OfferingEntry.prototype.update_mainbuttons = function update_mainbuttons() {
         var i, button, local_catalogue_view;
 
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+        local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
 
         for (i = 0; i < this.mainbuttons.length; i++) {
             button = this.mainbuttons[i];

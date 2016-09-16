@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 (function (se, utils) {
 
@@ -230,7 +230,7 @@
                 'text': utils.gettext('Add to workspace')
             });
             button.addEventListener('click', function () {
-                LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+                Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
                 var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
                 Wirecloud.activeWorkspace.view.activeTab.createWidget(local_widget);
             });
@@ -246,7 +246,7 @@
         }
 
         if (Wirecloud.LocalCatalogue.resourceExists(resource) && resource.isAllow('uninstall')) {
-            var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+            var local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
             button = new se.Button({
                 'class': 'btn-danger',
                 'text': utils.gettext('Uninstall')

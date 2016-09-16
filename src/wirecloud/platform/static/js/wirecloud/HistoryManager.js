@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, Wirecloud */
+/* globals Wirecloud */
 
 
 (function (utils) {
@@ -35,7 +35,7 @@
 
         currentState = event.state;
         document.title = currentState.title;
-        LayoutManagerFactory.getInstance().onHashChange(event.state);
+        Wirecloud.UserInterfaceManager.onHistoryChange(event.state);
     };
 
     var prepareData = function prepareData(data) {
@@ -44,7 +44,7 @@
         };
         data = utils.merge(default_data, data);
 
-        header = LayoutManagerFactory.getInstance().header;
+        header = Wirecloud.UserInterfaceManager.header;
         if (header != null && header.currentView != null) {
             data.title = header.currentView.getTitle();
         } else {

@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var RenameWindowMenu = function RenameWindowMenu(what) {
+    var RenameWindowMenu = function RenameWindowMenu(what, title) {
 
         var fields = {
             'name': {
@@ -36,7 +36,7 @@
             }
         };
         this.what = what;
-        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Rename Workspace'));
+        Wirecloud.ui.FormWindowMenu.call(this, fields, title);
 
     };
     RenameWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();

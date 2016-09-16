@@ -51,18 +51,19 @@
     deleteSuccessCallback = function deleteSuccessCallback(response) {
         var result;
 
+        this.request_task.update(100 / 3);
+
         if (typeof this.onSuccess === 'function') {
             result = JSON.parse(response.responseText);
-            this.onSuccess(result);
+            this.onSuccess(result, this.request_task);
         }
     };
 
     deleteErrorCallback = function deleteErrorCallback(response, e) {
         var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error deleting resource: %(errorMsg)s."), response, e);
 
-        if (typeof this.onFailure === 'function') {
-            this.onFailure(msg);
-        }
+        this.request_task.fail(msg);
+        utils.callCallback(this.onFailure, msg);
     };
 
     /*************************************************************************/
@@ -199,7 +200,10 @@
         if (options.monitor) {
             task = options.monitor.nextSubtask(utils.gettext('Uploading packaged resource'));
             onUploadProgress = function (event) {
-                task.updateTaskProgress(Math.round(event.loaded * 100 / event.total));
+                var progress = Math.round(event.loaded * 100 / event.total);
+                if (progress !== 100) {
+                    task.update(progress);
+                }
             };
         }
 
@@ -211,28 +215,15 @@
             parameters: parameters,
             onSuccess: function (transport) {
                 var response_data = JSON.parse(transport.responseText);
-
-                if (typeof options.onSuccess === 'function') {
-                    try {
-                        options.onSuccess(response_data.resource_details, response_data.extra_resources);
-                    } catch (e) {}
-                }
+                utils.callCallback(options.onSuccess, response_data.resource_details, response_data.extra_resources);
             }.bind(this),
             onFailure: function (response) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error uploading packaged resource: %(errorMsg)s."), response);
-
-                if (typeof options.onFailure === 'function') {
-                    try {
-                        options.onFailure(Wirecloud.GlobalLogManager.parseErrorResponse(response));
-                    } catch (e) {}
-                }
+                utils.callCallback(options.onFailure, Wirecloud.GlobalLogManager.parseErrorResponse(response));
             },
             onComplete: function () {
-                if (typeof options.onComplete === 'function') {
-                    try {
-                        options.onComplete();
-                    } catch (e) {}
-                }
+                task.finish();
+                utils.callCallback(options.onComplete);
             },
             onUploadProgress: onUploadProgress
         });
@@ -268,10 +259,10 @@
     };
 
     WirecloudCatalogue.prototype.deleteResource = function deleteResource(resource, options) {
-        var url;
+        var url, msg;
 
         options = utils.merge({
-            'allversions': false
+            allversions: false
         }, options);
 
         if (options.allversions) {
@@ -279,13 +270,18 @@
                 vendor: resource.vendor,
                 name: resource.name
             });
+            msg = utils.interpolate(utils.gettext("Deleting all versions of %(title)s (%(group_id)s)"), resource);
         } else {
             url = this.RESOURCE_ENTRY.evaluate({
                 vendor: resource.vendor,
                 name: resource.name,
                 version: resource.version.text
             });
+            msg = utils.interpolate(utils.gettext("Deleting %(title)s (%(uri)s)"), resource);
         }
+
+        options.monitor = Wirecloud.UserInterfaceManager.createTask(msg, 1);
+        options.request_task = options.monitor.nextSubtask('Sending request to the server');
 
         // Send request to delete de widget
         Wirecloud.io.makeRequest(url, {

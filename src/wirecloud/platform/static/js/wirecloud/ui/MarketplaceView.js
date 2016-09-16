@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements, LayoutManagerFactory, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (utils) {
@@ -188,7 +188,7 @@
             title: utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {
-            LayoutManagerFactory.getInstance().changeCurrentView('myresources', {history: "push"});
+            Wirecloud.UserInterfaceManager.changeCurrentView('myresources', {history: "push"});
         });
 
         this.number_of_alternatives = 0;
@@ -239,7 +239,7 @@
         }
 
         if (!change) {
-            LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+            Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
         }
     };
 

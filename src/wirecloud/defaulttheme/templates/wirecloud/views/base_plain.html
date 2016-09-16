@@ -36,10 +36,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             Wirecloud.init({
-                'monitor': new Wirecloud.TaskMonitorModel(),
-                'onSuccess': function () {
-                    LayoutManagerFactory.getInstance().resizeWrapper();
-                }
+                'monitor': new Wirecloud.TaskMonitorModel()
             });
         }, true);
     </script>

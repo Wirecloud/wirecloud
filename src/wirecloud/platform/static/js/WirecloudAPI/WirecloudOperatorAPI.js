@@ -32,7 +32,7 @@
 
     // Init resource entry (in this case an operator) so other API files can make
     // use of it
-    ioperator = platform.LayoutManagerFactory.getInstance().viewsByName.workspace.model.findOperator(MashupPlatform.priv.id);
+    ioperator = platform.Wirecloud.UserInterfaceManager.views.workspace.model.findOperator(MashupPlatform.priv.id);
     MashupPlatform.priv.resource = ioperator;
 
     // Operator Module

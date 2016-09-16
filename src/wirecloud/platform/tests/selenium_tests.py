@@ -1043,7 +1043,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Move widget2 moving widget1 as side effect
         self.driver.execute_script('''
-            var view = LayoutManagerFactory.getInstance().viewsByName.workspace;
+            var view = Wirecloud.UserInterfaceManager.views.workspace;
             var layout = view.activeTab.dragboard.baseLayout;
             var widget = view.activeTab.findWidget(%s);
             layout.initializeMove(widget);
@@ -1082,7 +1082,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Move widget2 again without affecting widget1
         self.driver.execute_script('''
-            var view = LayoutManagerFactory.getInstance().viewsByName.workspace;
+            var view = Wirecloud.UserInterfaceManager.views.workspace;
             var layout = view.activeTab.dragboard.baseLayout;
             var widget = view.activeTab.findWidget(%s);
             layout.initializeMove(widget);
@@ -1130,7 +1130,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
         self.driver.execute_script('''
-            var view = LayoutManagerFactory.getInstance().viewsByName.workspace;
+            var view = Wirecloud.UserInterfaceManager.views.workspace;
             var layout = view.activeTab.dragboard.baseLayout;
             var widget = view.activeTab.findWidget(%s);
             layout.initializeMove(widget);
@@ -1142,7 +1142,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
         self.driver.execute_script('''
-            var view = LayoutManagerFactory.getInstance().viewsByName.workspace;
+            var view = Wirecloud.UserInterfaceManager.views.workspace;
             var layout = view.activeTab.dragboard.baseLayout;
             var widget = view.activeTab.findWidget(%s);
             layout.initializeMove(widget);
@@ -1354,7 +1354,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             # and directly clickable without scrolling the view
             self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
             # Wait until the test finish with a success message
-            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
 
         # Two widgets are created when clicking the dashboard management button
         # one of them is connected directly, the other is connected through and

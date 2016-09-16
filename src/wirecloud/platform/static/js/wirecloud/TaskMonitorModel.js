@@ -26,38 +26,96 @@
 
     "use strict";
 
-    var SubtaskMonitorModel = function SubtaskMonitorModel(title) {
+    var TaskMonitor = function TaskMonitor(title) {
         this.title = title;
-        this.progress = 0;
+        privates.set(this, {
+            status: "pending",
+            progress: 0
+        });
 
-        StyledElements.ObjectWithEvents.call(this, ['progress']);
-    };
-    SubtaskMonitorModel.prototype = new StyledElements.ObjectWithEvents();
-
-    SubtaskMonitorModel.prototype.updateTaskProgress = function updateTaskProgress(progress) {
-        if (progress < 0) {
-            this.progress = 0;
-        } else if (progress > 100) {
-            this.progress = 100;
-        } else {
-            this.progress = progress;
-        }
-        this.events.progress.dispatch(this, this.progress);
-    };
-
-    var updateGlobalTaskProgress = function updateGlobalTaskProgress() {
-        var accumulated_progress = 0;
-
-        if (this.subtasks.length !== 0) {
-            for (var i = 0; i < this.subtasks.length; i += 1) {
-                accumulated_progress += this.subtasks[i].progress;
+        Object.defineProperties(this, {
+            status: {
+                get: on_status_get
+            },
+            progress: {
+                get: on_progress_get
             }
-            this.progress = accumulated_progress / this.subtasks.length;
-        } else {
-            this.progress = 0;
+        });
+
+        StyledElements.ObjectWithEvents.call(this, ['abort', 'fail', 'finish', 'progress']);
+    };
+    TaskMonitor.prototype = new StyledElements.ObjectWithEvents();
+
+    TaskMonitor.prototype.update = function update(progress, title) {
+        var priv = privates.get(this);
+
+        if (typeof progress !== "number") {
+            throw new TypeError("progress must be a number");
         }
 
-        this.events.progress.dispatch(this, this.progress);
+        if (priv.status === "resolved" && progress === 100) {
+            return;
+        }
+
+        if (priv.status != "pending") {
+            throw new Error("Only pending task can be updated");
+        }
+
+        if (progress < 0) {
+            priv.progress = 0;
+        } else if (progress > 100) {
+            priv.progress = 100;
+        } else {
+            priv.progress = progress;
+        }
+        if (title != null) {
+            this.title = title;
+        }
+        this.trigger("progress", priv.progress);
+        if (priv.progress === 100) {
+            priv.status = "resolved";
+            this.trigger("finish");
+        }
+    };
+
+    TaskMonitor.prototype.abort = function abort() {
+        var priv = privates.get(this);
+
+        if (priv.status === "pending") {
+            priv.status = "aborted";
+            this.trigger('fail', msg);
+        }
+    };
+
+    TaskMonitor.prototype.fail = function fail(msg) {
+        var priv = privates.get(this);
+
+        if (priv.status === "pending") {
+            priv.status = "rejected";
+            this.trigger('fail', msg);
+        }
+    };
+
+    TaskMonitor.prototype.finish = function finish() {
+        this.update(100);
+    };
+
+    TaskMonitor.prototype.then = function then(resolve, reject) {
+        if (resolve != null) {
+            this.addEventListener("finish", resolve);
+        }
+
+        if (reject != null) {
+            this.addEventListener("fail", reject);
+        }
+    };
+
+    var on_progress_get = function on_progress_get() {
+        return privates.get(this).progress;
+    };
+
+    var on_status_get = function on_status_get() {
+        return privates.get(this).status;
     };
 
     var TaskMonitorModel = function TaskMonitorModel(title, nsubtasks) {
@@ -65,8 +123,9 @@
         this.subtasks = [];
         this.nsubtasks = nsubtasks;
         this.currentsubtask = -1;
+        this.status = "pending";
 
-        StyledElements.ObjectWithEvents.call(this, ['progress']);
+        StyledElements.ObjectWithEvents.call(this, ['abort', 'fail', 'finish', 'progress']);
     };
     TaskMonitorModel.prototype = new StyledElements.ObjectWithEvents();
 
@@ -80,12 +139,50 @@
             this.nsubtasks = this.currentsubtask + 1;
         }
 
-        var subtask = new SubtaskMonitorModel(title);
+        var subtask = new TaskMonitor(title);
         this.subtasks.push(subtask);
         subtask.addEventListener('progress', updateGlobalTaskProgress.bind(this));
+        subtask.addEventListener('abort', on_task_abort.bind(this));
+        subtask.addEventListener('fail', on_task_fail.bind(this));
         updateGlobalTaskProgress.call(this);
 
         return subtask;
+    };
+
+    var privates = new WeakMap();
+
+    var updateGlobalTaskProgress = function updateGlobalTaskProgress() {
+        var accumulated_progress = 0;
+
+        if (this.subtasks.length !== 0) {
+            for (var i = 0; i < this.subtasks.length; i += 1) {
+                accumulated_progress += this.subtasks[i].progress;
+            }
+            this.progress = accumulated_progress / this.nsubtasks;
+        } else {
+            this.progress = 0;
+        }
+
+        this.events.progress.dispatch(this, this.progress);
+    };
+
+    var abort_task = function abort_task(task) {
+        task.abort();
+    };
+
+    var on_task_abort = function on_task_abort(task) {
+        if (this.status === "pending") {
+            this.status = "aborted";
+            this.subtasks.forEach(abort_task);
+        }
+    };
+
+    var on_task_fail = function on_task_fail(task, msg) {
+        if (this.status === "pending") {
+            this.status = "rejected";
+            this.subtasks.forEach(abort_task);
+            this.trigger('fail', msg);
+        }
     };
 
     Wirecloud.TaskMonitorModel = TaskMonitorModel;

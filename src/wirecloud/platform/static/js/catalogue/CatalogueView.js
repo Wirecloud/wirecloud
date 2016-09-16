@@ -19,7 +19,7 @@
  *
  */
 
-/* globals CatalogueSearchView, LayoutManagerFactory, Wirecloud, StyledElements */
+/* globals CatalogueSearchView, Wirecloud, StyledElements */
 
 
 (function (utils) {
@@ -47,7 +47,7 @@
             'mainbutton': function (options, context, resource) {
                 var button, local_catalogue_view;
 
-                local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+                local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
                 if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
                     button = new StyledElements.Button({
                         'class': 'btn-danger',
@@ -156,16 +156,13 @@
 
     CatalogueView.prototype.ui_commands.install = function install(resource, catalogue_source) {
         return function () {
-            var layoutManager;
 
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(utils.gettext("Importing resource into local repository"), 3);
-            layoutManager.logSubTask(utils.gettext('Uploading resource'));
+            var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing component into local repository"), 1);
+            var upload_monitor = monitor.nextSubtask(utils.gettext('Uploading component'));
 
             this.catalogue.addResourceFromURL(resource.description_url, {
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource installed successfully'));
-                    LayoutManagerFactory.getInstance().logStep('');
+                    upload_monitor.updateTaskProgress(100, utils.gettext('Component installed successfully'));
 
                     this.refresh_search_results();
 
@@ -173,11 +170,9 @@
                     catalogue_source.refresh_search_results();
                 }.bind(this),
                 onFailure: function (msg) {
+                    upload_monitor.updateTaskProgress(100, utils.gettext('Error installing component'));
                     (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
-                },
-                onComplete: function () {
-                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
                 }
             });
         }.bind(this);
@@ -221,23 +216,18 @@
     CatalogueView.prototype.ui_commands.delete = function (resource) {
         var success_callback, error_callback, doRequest, msg, context;
 
-        success_callback = function (response) {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+        success_callback = function () {
             this.home();
             this.refresh_search_results();
         }.bind(this);
 
         error_callback = function (msg) {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
             (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
         };
 
         doRequest = function () {
-            var layoutManager;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(utils.gettext("Deleting resource from catalogue"), 3);
-            layoutManager.logSubTask(utils.gettext('Requesting server'));
+            var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Deleting component from catalogue"), 1);
+            delete_monitor = monitor.nextSubtask(utils.gettext('Requesting server'));
 
             this.catalogue.deleteResource(resource, {
                 onSuccess: success_callback,
@@ -246,7 +236,7 @@
         };
 
         // First ask the user
-        msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
+        msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") component?');
         context = {
             vendor: resource.vendor,
             name: resource.name,

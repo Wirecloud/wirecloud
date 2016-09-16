@@ -160,7 +160,7 @@ def move_elem(driver, elem, x, y):
 def resize_widget(driver, widget, width, height):
 
     driver.execute_script('''
-        var widget = LayoutManagerFactory.getInstance().viewsByName.workspace.findWidget(arguments[0]);
+        var widget = Wirecloud.UserInterfaceManager.views.workspace.findWidget(arguments[0]);
         widget.setShape({width: arguments[1], height: arguments[2]});
     ''', widget.id, width, height)
 

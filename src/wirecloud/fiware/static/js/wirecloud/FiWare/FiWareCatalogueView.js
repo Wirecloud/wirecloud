@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements, LayoutManagerFactory, CatalogueSearchView, Wirecloud */
+/* globals StyledElements, CatalogueSearchView, Wirecloud */
 
 
 (function (utils) {
@@ -53,10 +53,8 @@
     };
 
     var onBuySuccess = function onBuySuccess(offering, offering_entry) {
-        var layoutManager, monitor;
 
-        layoutManager = LayoutManagerFactory.getInstance();
-        monitor = layoutManager._startComplexTask(utils.gettext("Importing offering resources into local repository"), 3);
+        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing offering components into local repository"), 0);
 
         this.catalogue.get_offering_info(offering.store, offering.id, {
             monitor: monitor,
@@ -64,8 +62,7 @@
                 refreshed_offering.install({
                     monitor: monitor,
                     onResourceSuccess: function (resource) {
-                        var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-                        local_catalogue_view.viewsByName.search.mark_outdated();
+                        Wirecloud.UserInterfaceManager.views.myresources.viewsByName.search.mark_outdated();
                         this.viewsByName.search.mark_outdated();
                     }.bind(this),
                     onFailure: function (msg) {
@@ -80,7 +77,6 @@
                                 offering_entry.update_buttons();
                             }
                         }
-                        layoutManager._notifyPlatformReady();
                     }.bind(this)
                 });
             }.bind(this),

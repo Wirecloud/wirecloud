@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (utils) {
@@ -30,19 +30,17 @@
     };
 
     var onInstallClick = function onInstallClick(resource, catalogue, offering_entry, button) {
-        var layoutManager, local_catalogue_view;
+        var local_catalogue_view, monitor, install_task;
 
         button.disable();
 
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-        layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(utils.gettext("Importing resource into local repository"), 3);
-        layoutManager.logSubTask(utils.gettext('Uploading resource'));
+        local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
+        monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing component into local repository"), 1);
+        install_task = monitor.nextSubtask(utils.gettext('Uploading component'));
 
         resource.install({
             onSuccess: function () {
-                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource installed successfully'));
-                LayoutManagerFactory.getInstance().logStep('');
+                install_task.finish(utils.gettext('Component installed successfully'));
 
                 offering_entry.update_buttons();
 
@@ -50,31 +48,25 @@
                 local_catalogue_view.viewsByName.search.mark_outdated();
             },
             onFailure: function (msg) {
+                install_task.fail(msg);
                 Wirecloud.GlobalLogManager.log(msg);
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
             },
             onComplete: function () {
                 button.enable();
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }
         });
     };
 
     var onUninstallClick = function onUninstallClick(resource, catalogue, offering_entry, button) {
-        var layoutManager, local_catalogue_view;
+        var local_catalogue_view, monitor;
 
         button.disable();
 
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-        layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(utils.gettext("Uninstalling resource from local repository"), 3);
-        layoutManager.logSubTask(utils.gettext('Uninstalling resource'));
+        local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
 
         local_catalogue_view.catalogue.uninstallResource(resource.wirecloud, {
             onSuccess: function () {
-                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource uninstalled successfully'));
-                LayoutManagerFactory.getInstance().logStep('');
-
                 offering_entry.update_buttons();
 
                 catalogue.viewsByName.search.mark_outdated();
@@ -86,7 +78,6 @@
             },
             onComplete: function () {
                 button.enable();
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }
         });
     };
@@ -181,7 +172,7 @@
                     button.insertInto(btn_group);
                     details_button = new StyledElements.Button({text: utils.gettext('Details')});
                     details_button.addEventListener('click', function () {
-                        var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+                        var myresources_view = Wirecloud.UserInterfaceManager.viewsByName.myresources;
                         myresources_view.createUserCommand('showDetails', this, {version: this.version})();
                     }.bind(resource));
                     details_button.insertInto(btn_group);

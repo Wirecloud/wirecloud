@@ -55,7 +55,7 @@
             items = [];
 
             item = new se.MenuItem(utils.gettext("Rename"), function () {
-                (new Wirecloud.ui.RenameWindowMenu(this)).show();
+                (new Wirecloud.ui.RenameWindowMenu(this, utils.gettext('Rename Workspace Tab'))).show();
             }.bind(this.tab));
             item.addIconClass("fa fa-pencil");
             items.push(item);

@@ -76,7 +76,15 @@ This guide assumes you system's package list is up to date. Otherwise, run the f
 
 before installing software in Debian/Ubuntu:
 
-    $ apt-get install python python-pip python-setuptools python-wheel --no-install-recommends
+    $ apt-get install python python-pip --no-install-recommends
+
+It's recommended to upgrade your pip installation:
+
+    $ pip install -U pip
+
+And make sure you have a updated version of setuptools:
+
+    $ pip install "setuptools>18.5"
 
 It's also recommended to install the following packages:
 

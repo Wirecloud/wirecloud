@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements, Wirecloud, LayoutManagerFactory*/
+/* globals StyledElements, Wirecloud */
 
 
 (function (se, utils) {
@@ -125,23 +125,23 @@
                 var dialog = new Wirecloud.ui.AlertWindowMenu();
                 dialog.setMsg(msg);
                 dialog.setHandler(function () {
-                        LayoutManagerFactory.getInstance()._startComplexTask(utils.gettext("Deleting marketplace"), 1);
-                        LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Deleting marketplace'));
+                        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Deleting marketplace"), 2);
+                        var delete_task = monitor.nextSubtask(utils.gettext('Deleting marketplace'));
 
                         Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc, {
                             onSuccess: function () {
-                                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Marketplace deleted successfully'));
-                                LayoutManagerFactory.getInstance().logStep('');
+                                delete_task.finish(utils.gettext('Marketplace deleted successfully'));
+                                var refresh_task = monitor.nextSubtask("Refreshing marketplace view");
                                 this.market.refreshViewInfo({
                                     onComplete: function () {
-                                        LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                                        refresh_task.finish();
                                     }
                                 });
                             }.bind(this),
                             onFailure: function (msg) {
+                                delete_task.fail(msg);
                                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                                 Wirecloud.GlobalLogManager.log(msg);
-                                LayoutManagerFactory.getInstance()._notifyPlatformReady();
                             }
                         });
                     }.bind(this));

@@ -140,8 +140,10 @@
                         var parts = resource.id.split('/');
                         resource.uri = resource.id;
                         resource.wirecloud = {
+                            uri: resource.id,
                             vendor: parts[0],
                             name: parts[1],
+                            title: resource.name,
                             group_id: parts[0] + '/' + parts[1],
                             version: new Wirecloud.Version(parts[2], 'catalogue')
                         };

@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -90,7 +90,7 @@
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("User's Manual"), function () {
-                var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+                var myresources_view = Wirecloud.UserInterfaceManager.views.myresources;
                 myresources_view.createUserCommand('showDetails', this.model.meta, {
                         version: this.model.meta.version,
                         tab: utils.gettext('Documentation')

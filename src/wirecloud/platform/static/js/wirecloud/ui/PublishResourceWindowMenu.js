@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (utils) {
@@ -40,7 +40,7 @@
 
     PublishResourceWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets() {
         // Take available marketplaces from the instance of marketplace view
-        var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
+        var views = Wirecloud.UserInterfaceManager.views.marketplace.viewsByName;
         var key, endpoints, secondInput, buttons = [];
 
         for (key in views) {
@@ -87,11 +87,8 @@
         });
         data.resource = this.resource.uri;
 
-        var layoutManager;
-
-        layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(utils.gettext("Publishing resource"), 3);
-        layoutManager.logSubTask(utils.gettext('Publishing resource'));
+        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Publishing resource"), 1);
+        var publish_task = monitor.nextSubtask(utils.gettext("Sending request to the server"));
 
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
@@ -99,12 +96,12 @@
             requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(data),
             onSuccess: function () {
-                layoutManager.logSubTask(utils.gettext('Resource published successfully'));
-                layoutManager.getInstance().logStep('');
+                publish_task.finish(utils.gettext('Resource published successfully'));
             },
             onFailure: function (response) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error publishing resource: %(errorMsg)s."), response, null);
                 var dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
+                publish_task.fail(msg);
 
                 // TODO
                 dialog.msgElement.textContent = msg;
@@ -119,9 +116,6 @@
                 // END TODO
 
                 dialog.show();
-            },
-            onComplete: function () {
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }
         });
     };

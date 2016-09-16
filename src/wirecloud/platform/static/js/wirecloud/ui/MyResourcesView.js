@@ -19,7 +19,7 @@
  *
  */
 
-/* globals CatalogueSearchView, LayoutManagerFactory, Wirecloud, StyledElements */
+/* globals CatalogueSearchView, Wirecloud, StyledElements */
 
 
 (function (utils) {
@@ -65,11 +65,11 @@
             title: utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
-            LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
+            Wirecloud.UserInterfaceManager.changeCurrentView('marketplace');
         });
 
         this.alternatives.addEventListener('preTransition', function (alternatives, old_alternative, new_alternative) {
-            LayoutManagerFactory.getInstance().header._notifyViewChange();
+            Wirecloud.UserInterfaceManager.header._notifyViewChange();
         });
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
             setTimeout(Wirecloud.trigger.bind(Wirecloud, 'viewcontextchanged'), 0);
@@ -128,7 +128,7 @@
 
     MyResourcesView.prototype.goUp = function goUp() {
         if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
-            LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+            Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
         }
         this.changeCurrentView('search');
     };
@@ -194,17 +194,11 @@
 
     MyResourcesView.prototype.ui_commands.install = function install(resource, catalogue_source) {
         return function () {
-            var layoutManager;
 
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(utils.gettext("Importing resource into local repository"), 3);
-            layoutManager.logSubTask(utils.gettext('Uploading resource'));
-
+            var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing component into local repository"));
             this.catalogue.addResourceFromURL(resource.description_url, {
+                monitor: task,
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource installed successfully'));
-                    LayoutManagerFactory.getInstance().logStep('');
-
                     this.refresh_search_results();
 
                     catalogue_source.home();
@@ -213,9 +207,6 @@
                 onFailure: function (msg) {
                     (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
-                },
-                onComplete: function () {
-                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
                 }
             });
         }.bind(this);
@@ -223,17 +214,8 @@
 
     MyResourcesView.prototype.ui_commands.uninstall = function uninstall(resource, catalogue_source) {
         return function () {
-            var layoutManager;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(utils.gettext("Uninstalling resource"), 3);
-            layoutManager.logSubTask(utils.gettext('Uninstalling resource'));
-
             this.catalogue.uninstallResource(resource, {
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource uninstalled successfully'));
-                    LayoutManagerFactory.getInstance().logStep('');
-
                     this.refresh_search_results();
 
                     if (catalogue_source != null) {
@@ -244,9 +226,6 @@
                 onFailure: function (msg) {
                     (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
-                },
-                onComplete: function () {
-                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
                 }
             });
         }.bind(this);
@@ -254,18 +233,9 @@
 
     MyResourcesView.prototype.ui_commands.uninstallall = function uninstallall(resource, catalogue_source) {
         return function () {
-            var layoutManager;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(utils.gettext("Uninstalling resource"), 3);
-            layoutManager.logSubTask(utils.gettext('Uninstalling resource'));
-
             this.catalogue.uninstallResource(resource, {
                 allversions: true,
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource uninstalled successfully'));
-                    LayoutManagerFactory.getInstance().logStep('');
-
                     this.refresh_search_results();
 
                     if (catalogue_source != null) {
@@ -276,9 +246,6 @@
                 onFailure: function (msg) {
                     (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
-                },
-                onComplete: function () {
-                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
                 }
             });
         }.bind(this);
@@ -286,7 +253,7 @@
 
     MyResourcesView.prototype.ui_commands.publishOtherMarket = function publishOtherMarket(resource) {
         return function () {
-            var marketplaceview = LayoutManagerFactory.getInstance().viewsByName.marketplace;
+            var marketplaceview = Wirecloud.UserInterfaceManager.views.marketplace;
             marketplaceview.waitMarketListReady({
                 include_markets: true,
                 onComplete: function () {
@@ -338,7 +305,7 @@
             this.viewsByName.details.disable();
             this.changeCurrentView('details', {
                 onComplete: function () {
-                    LayoutManagerFactory.getInstance().changeCurrentView('myresources', {
+                    Wirecloud.UserInterfaceManager.changeCurrentView('myresources', {
                         onComplete: function () {
                             viewChanged = true;
                             if (viewChanged && dataLoaded) {
@@ -365,23 +332,15 @@
         var success_callback, error_callback, doRequest, msg, context;
 
         success_callback = function (response) {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
             this.home();
             this.refresh_search_results();
         }.bind(this);
 
         error_callback = function (msg) {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
             (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
         };
 
         doRequest = function () {
-            var layoutManager;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(utils.gettext("Deleting resource from catalogue"), 3);
-            layoutManager.logSubTask(utils.gettext('Requesting server'));
-
             this.catalogue.deleteResource(resource, {
                 onSuccess: success_callback,
                 onFailure: error_callback
@@ -390,13 +349,7 @@
 
         // First ask the user
         msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
-        context = {
-            vendor: resource.vendor,
-            name: resource.name,
-            version: resource.version.text
-        };
-
-        msg = utils.interpolate(msg, context, true);
+        msg = utils.interpolate(msg, resource, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu();
             dialog.setMsg(msg);
@@ -409,23 +362,15 @@
         var success_callback, error_callback, doRequest, msg, context;
 
         success_callback = function (response) {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
             this.home();
             this.refresh_search_results();
         }.bind(this);
 
         error_callback = function (msg) {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
             (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
         };
 
         doRequest = function () {
-            var layoutManager;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(utils.gettext("Deleting all versions of the resource from catalogue"), 3);
-            layoutManager.logSubTask(utils.gettext('Requesting server'));
-
             this.catalogue.deleteResource(resource, {
                 allversions: true,
                 onSuccess: success_callback,

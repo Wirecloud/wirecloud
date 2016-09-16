@@ -566,6 +566,7 @@ class WorkspaceComponentTester(WebElementTester):
     def merge(self):
         workspace_name = self.testcase.get_current_workspace_name()
         self.testcase.scroll_and_click(self.find_element(".wc-create-resource-component"))
+        self.testcase.wait_wirecloud_ready()
         self.testcase.assertEqual(self.testcase.get_current_workspace_name(), workspace_name)
 
 
@@ -1028,7 +1029,7 @@ class WiringConnectionTester(WebElementTester):
         # not clicking on the connection buttons as they are placed in the
         # middle of the connection
         self.testcase.driver.execute_script('''
-            var connectionEngine = LayoutManagerFactory.getInstance().viewsByName.wiring.connectionEngine;
+            var connectionEngine = Wirecloud.UserInterfaceManager.views.wiring.connectionEngine;
             connectionEngine.getConnection("%s", "%s").click();
         ''' % (self.source_id, self.target_id))
         return self
@@ -1300,16 +1301,11 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         loading_window = None
 
-        def wait_loading_window(driver):
-            loading_window = driver.find_element_by_css_selector('#loading-window')
-            return loading_window.get_attribute('class').strip() in ('', 'fadding')
+        def wait_loading_window_fadding(driver):
+            return 'in' not in loading_window.get_attribute('class').strip()
 
-        def wait_loading_window_hidden(driver):
-            return loading_window.get_attribute('class').strip() in ('fadding', 'disabled')
-
-        WebDriverWait(self.driver, start_timeout).until(wait_loading_window)
-        loading_window = self.driver.find_element_by_css_selector('#loading-window')
-        WebDriverWait(self.driver, timeout).until(wait_loading_window_hidden)
+        loading_window = self.wait_element_visible_by_css_selector('#loading-window')
+        WebDriverWait(self.driver, timeout).until(wait_loading_window_fadding)
 
         loading_message = loading_window.find_element_by_id('loading-message')
         try:
@@ -1332,7 +1328,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         # TODO
         self.driver.add_cookie({'name': 'policy_cookie', 'value': 'on', 'path': '/'})
 
-        form = FormTester(self, self.wait_element_visible_by_id('wc-login-form'))
+        form = FormTester(self, self.wait_element_visible_by_css_selector('#wc-login-form'))
         form.get_field('username').set_value(username)
         form.get_field('password').set_value(password)
         form.submit()
@@ -1342,7 +1338,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
     def get_current_view(self):
 
         try:
-            return self.driver.execute_script("return LayoutManagerFactory.getInstance().header.currentView.view_name;")
+            return self.driver.execute_script("return Wirecloud.UserInterfaceManager.header.currentView.view_name;")
         except:
             return ""
 
@@ -1530,7 +1526,7 @@ class MarketplaceViewTester(object):
 
     def get_subview(self):
 
-        return self.testcase.driver.execute_script('return LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;')
+        return self.testcase.driver.execute_script('return Wirecloud.UserInterfaceManager.views.marketplace.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;')
 
     def get_current_resource(self):
 
@@ -1651,7 +1647,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def get_subview(self):
 
-        return self.testcase.driver.execute_script('return LayoutManagerFactory.getInstance().viewsByName.myresources.alternatives.getCurrentAlternative().view_name;')
+        return self.testcase.driver.execute_script('return Wirecloud.UserInterfaceManager.views.myresources.alternatives.getCurrentAlternative().view_name;')
 
     def get_current_resource(self):
 

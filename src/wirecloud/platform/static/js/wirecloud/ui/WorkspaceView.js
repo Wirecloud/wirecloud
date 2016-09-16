@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -45,7 +45,7 @@
             title: utils.gettext('Wiring')
         });
         this.wiringButton.addEventListener('click', function () {
-            LayoutManagerFactory.getInstance().changeCurrentView('wiring');
+            Wirecloud.UserInterfaceManager.changeCurrentView('wiring');
         });
 
         this.myresourcesButton = new StyledElements.Button({
@@ -54,7 +54,7 @@
             title: utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {
-            LayoutManagerFactory.getInstance().changeCurrentView('myresources');
+            Wirecloud.UserInterfaceManager.changeCurrentView('myresources');
         });
 
         this.marketButton = new StyledElements.Button({
@@ -63,21 +63,17 @@
             title: utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
-            LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
+            Wirecloud.UserInterfaceManager.changeCurrentView('marketplace');
         });
 
         this.layout = new StyledElements.OffCanvasLayout();
         this.appendChild(this.layout);
 
         // Init wiring error badge
-        Wirecloud.addEventListener('activeworkspacechanged', function (Wirecloud, workspace) {
-            var layoutManager;
-
+        Wirecloud.addEventListener('activeworkspacechanged', function (Wirecloud, workspace, global_monitor) {
             this.layout.slideOut();
 
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager.logStep('');
-            layoutManager.logSubTask(utils.gettext('Processing workspace data'));
+            var monitor = global_monitor.nextSubtask(utils.gettext('Processing workspace data'));
 
             try {
                 this.loadWorkspace(workspace);
@@ -95,6 +91,7 @@
             workspace.wiring.logManager.addEventListener('newentry', this._updateWiringErrors);
             this._updateWiringErrors();
 
+            monitor.update(100);
             Wirecloud.GlobalLogManager.log(utils.gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
         }.bind(this));
 
@@ -400,8 +397,8 @@
             alert_msg = document.createElement('div');
             alert_msg.className = 'alert alert-info';
             alert_msg.textContent = utils.gettext('The requested workspace is no longer available (it was deleted).');
-            LayoutManagerFactory.getInstance().viewsByName.workspace.clear();
-            LayoutManagerFactory.getInstance().viewsByName.workspace.appendChild(alert_msg);
+            this.clear();
+            this.appendChild(alert_msg);
             Wirecloud.trigger('viewcontextchanged');
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
             Wirecloud.changeActiveWorkspace(nextWorkspace, newState.tab, {replaceNavigationState: 'leave'});
@@ -483,7 +480,7 @@
     // =========================================================================
 
     var on_workspace_change = function on_workspace_change(workspace) {
-        var state, layoutManager = LayoutManagerFactory.getInstance();
+        var state;
 
         state = {
             workspace_owner: this.model.owner,
@@ -493,7 +490,7 @@
         };
         Wirecloud.HistoryManager.replaceState(state);
 
-        layoutManager.header.refresh();
+        Wirecloud.UserInterfaceManager.header.refresh();
     };
 
     var on_click_createtab = function on_click_createtab(button) {

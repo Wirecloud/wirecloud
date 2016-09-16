@@ -19,7 +19,7 @@
  *
  */
 
-/* globals LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (utils) {
@@ -293,8 +293,7 @@
             document.cookie = fiware_cookie_policy_cookie + "=on; expires=" + expiration_date.toGMTString() + "; path=/";
         }
 
-        LayoutManagerFactory.getInstance().mainLayout.south.appendChild(this.footer);
-        LayoutManagerFactory.getInstance().mainLayout.repaint();
+        Wirecloud.UserInterfaceManager.mainLayout.south.appendChild(this.footer);
     };
 
     WirecloudHeader.prototype.refresh = function refresh() {
