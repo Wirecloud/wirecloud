@@ -52,7 +52,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login('normuser')
         with self.marketplace_view:
-            alert = self.wait_element_visible_by_css_selector('.marketplace-error-view .alert')
+            alert = self.wait_element_visible('.marketplace-error-view .alert')
             self.assertIsNotNone(alert)
             self.assertTrue(alert.is_displayed())
 
@@ -125,7 +125,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             with myresources.search_in_results('Test') as resource:
                 resource.advanced_operation('Publish')
-                modal = ModalTester(self, self.wait_element_visible_by_css_selector('.window_menu.message'))
+                modal = ModalTester(self, self.wait_element_visible('.window_menu.message'))
                 modal.accept()
 
     def test_marketplace_navigation(self):

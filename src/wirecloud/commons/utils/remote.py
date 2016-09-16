@@ -186,7 +186,7 @@ class MACFieldTester(object):
 
     def __enter__(self):
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-search"), parent=True, base_element=self.field_element))
-        self.element = self.testcase.wait_element_visible_by_css_selector('.window_menu.mac_selection_dialog')
+        self.element = self.testcase.wait_element_visible('.window_menu.mac_selection_dialog')
         return self
 
     def __exit__(self, type, value, traceback):
@@ -600,7 +600,7 @@ class WorkspaceTabTester(WebElementTester):
 
     def show_preferences(self):
         button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-tab-menu"), parent=True, base_element=self.element))
-        element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
+        element = self.testcase.wait_element_visible('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, element, button)
 
@@ -621,7 +621,7 @@ class WorkspaceTabTester(WebElementTester):
 
     def rename(self, new_name, timeout=10):
         self.show_preferences().click_entry("Rename")
-        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".window_menu:not(#loading-message)"))
+        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".window_menu:not(#loading-message)"))
         self.testcase.assertEqual(modal.get_field('name').value, self.title)
         modal.get_field('name').set_value(new_name)
         modal.accept()
@@ -742,11 +742,11 @@ class WidgetTester(WebElementTester):
 
     def open_menu(self):
         button = self.btn_preferences.click()
-        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible(".se-popup-menu"), button)
 
     def show_settings(self):
         self.open_menu().click_entry("Settings")
-        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-component-preferences-modal"))
 
     def rename(self, new_name, timeout=30):
 
@@ -836,7 +836,7 @@ class BaseComponentTester(WebElementTester):
     def rename(self, title):
         self.show_preferences().click_entry("Rename")
 
-        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-rename-modal"))
+        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-component-rename-modal"))
         modal.get_field('title').set_value(title)
         modal.accept()
 
@@ -845,19 +845,19 @@ class BaseComponentTester(WebElementTester):
 
     def show_logs(self):
         self.show_preferences().click_entry("Logs")
-        return AlertModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-logs-modal"))
+        return AlertModalTester(self.testcase, self.testcase.wait_element_visible(".wc-component-logs-modal"))
 
     def show_preferences(self):
         button = self.btn_preferences.click()
-        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible(".se-popup-menu"), button)
 
     def show_settings(self):
         self.show_preferences().click_entry("Settings")
-        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-component-preferences-modal"))
 
     def change_version(self, version):
         self.show_preferences().click_entry("Upgrade/Downgrade")
-        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-upgrade-component-modal"))
+        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-upgrade-component-modal"))
         modal.get_field('version').set_value(version)
         modal.accept()
         return self
@@ -1041,11 +1041,11 @@ class WiringConnectionTester(WebElementTester):
 
     def show_preferences(self):
         button = self.btn_preferences.click()
-        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible(".se-popup-menu"), button)
 
     def show_logs(self):
         self.btn_logs.click()
-        return AlertModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".logwindowmenu"))
+        return AlertModalTester(self.testcase, self.testcase.wait_element_visible(".logwindowmenu"))
 
 
 class WiringEndpointTester(WebElementTester):
@@ -1175,11 +1175,11 @@ class WiringBehaviourTester(WebElementTester):
 
     def show_preferences(self):
         button = self.btn_preferences.click()
-        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible(".se-popup-menu"), button)
 
     def show_settings(self):
         self.show_preferences().click_entry("Settings")
-        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".behaviour-update-form"))
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible(".behaviour-update-form"))
 
     def update(self, title=None, description=None):
         modal = self.show_settings()
@@ -1223,12 +1223,8 @@ class ComponentEditableViewTester(object):
 
 class RemoteTestCase(object):
 
-    def wait_element_visible_by_css_selector(self, selector, timeout=10, element=None):
+    def wait_element_visible(self, selector, timeout=10, element=None):
         condition = WEC.visibility_of_element_located((By.CSS_SELECTOR, selector), base_element=element)
-        return WebDriverWait(self.driver, timeout).until(condition)
-
-    def wait_element_visible_by_id(self, selector, timeout=10, element=None):
-        condition = WEC.visibility_of_element_located((By.ID, selector), base_element=element)
         return WebDriverWait(self.driver, timeout).until(condition)
 
     def wait_element_visible_by_xpath(self, selector, timeout=10, element=None):
@@ -1304,7 +1300,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         def wait_loading_window_fadding(driver):
             return 'in' not in loading_window.get_attribute('class').strip()
 
-        loading_window = self.wait_element_visible_by_css_selector('#loading-window')
+        loading_window = self.wait_element_visible('#loading-window')
         WebDriverWait(self.driver, timeout).until(wait_loading_window_fadding)
 
         loading_message = loading_window.find_element_by_id('loading-message')
@@ -1313,7 +1309,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         except:
             pass
 
-        self.wait_element_visible_by_css_selector('.wc-body:not(.se-on-transition)')
+        self.wait_element_visible('.wc-body:not(.se-on-transition)')
 
         time.sleep(0.1)  # work around some problems
 
@@ -1328,7 +1324,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         # TODO
         self.driver.add_cookie({'name': 'policy_cookie', 'value': 'on', 'path': '/'})
 
-        form = FormTester(self, self.wait_element_visible_by_css_selector('#wc-login-form'))
+        form = FormTester(self, self.wait_element_visible('#wc-login-form'))
         form.get_field('username').set_value(username)
         form.get_field('password').set_value(password)
         form.submit()
@@ -1344,7 +1340,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
     def open_menu(self):
         button = WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-menu-button")))
-        popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
+        popup_menu_element = self.wait_element_visible('.se-popup-menu')
 
         return PopupMenuTester(self, popup_menu_element, button)
 
@@ -1355,7 +1351,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         self.open_menu().click_entry('New workspace')
 
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-new-workspace-modal'))
+        form = FormModalTester(self, self.wait_element_visible('.wc-new-workspace-modal'))
 
         if name:
             form.get_field('name').set_value(name)
@@ -1370,7 +1366,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         if expect_missing_dependencies is not None:
 
-            form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-missing-dependencies-modal'))
+            form = FormModalTester(self, self.wait_element_visible('.wc-missing-dependencies-modal'))
 
             missing_dependency_elements = form.body.find_elements_by_tag_name('li')
             missing_dependencies = [missing_dependency_element.text for missing_dependency_element in missing_dependency_elements]
@@ -1385,7 +1381,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         if parameters is not None:
 
-            form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal'))
+            form = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
 
             for parameter_name, parameter_value in six.iteritems(parameters):
                 form.get_field(parameter_name).set_value(parameter_value)
@@ -1414,7 +1410,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
     def rename_workspace(self, workspace_name):
         self.open_menu().click_entry("Rename")
 
-        modal = FormModalTester(self, self.wait_element_visible_by_css_selector(".window_menu:not(#loading-message)"))
+        modal = FormModalTester(self, self.wait_element_visible(".window_menu:not(#loading-message)"))
         self.assertEqual(modal.get_field('name').value, self.get_current_workspace_name())
         modal.get_field('name').set_value(workspace_name)
         modal.accept()
@@ -1432,7 +1428,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         old_title = self.get_current_workspace_name()
         self.open_menu().click_entry('Remove')
 
-        modal = ModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-modal"))
+        modal = ModalTester(self, self.wait_element_visible(".wc-alert-modal"))
         modal.accept()
 
         def workspace_removed(driver):
@@ -1444,7 +1440,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         self.open_menu().click_entry('Upload to my resources')
 
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-upload-workspace-modal'))
+        form = FormModalTester(self, self.wait_element_visible('.wc-upload-workspace-modal'))
         form.get_field('name').set_value(info['name'])
         form.get_field('vendor').set_value(info['vendor'])
         form.get_field('version').set_value(info['version'])
@@ -1513,7 +1509,7 @@ class MarketplaceViewTester(object):
 
     def open_menu(self):
         button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .wc-menu-button")))
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
+        popup_menu_element = self.testcase.wait_element_visible('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, popup_menu_element, button)
 
@@ -1546,7 +1542,7 @@ class MarketplaceViewTester(object):
 
         self.open_menu().click_entry("Add new marketplace")
 
-        form = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.wc-add-external-catalogue-modal'))
+        form = FormModalTester(self.testcase, self.testcase.wait_element_visible('.wc-add-external-catalogue-modal'))
         form.get_field('name').set_value(name)
         form.get_field('url').set_value(url)
         form.get_field('type').set_value(type_)
@@ -1626,7 +1622,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
     def __enter__(self):
         self.testcase.find_navbar_button("wc-show-myresources-button").click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
-        self.testcase.wait_element_visible_by_css_selector('.wc-body:not(.se-on-transition)')
+        self.testcase.wait_element_visible('.wc-body:not(.se-on-transition)')
         return self
 
     def __exit__(self, type, value, traceback):
@@ -1708,7 +1704,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
             time.sleep(1); # Work around some problems dealing with the cache
             resource.advanced_operation(action)
 
-            modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-alert-modal"))
+            modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-alert-modal"))
             modal.accept()
 
             if should_disappear_from_listings:
@@ -1973,7 +1969,7 @@ class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
         self.testcase.find_navbar_button("wc-show-wiring-button").click()
-        self.testcase.wait_element_visible_by_css_selector('.wc-body:not(.se-on-transition)')
+        self.testcase.wait_element_visible('.wc-body:not(.se-on-transition)')
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
         return self

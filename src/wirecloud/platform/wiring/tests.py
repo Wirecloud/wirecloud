@@ -1040,7 +1040,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             # Remove the selection using the backspace key
             send_basic_key_event(self.driver, 8)
 
-            modal = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-modal"))
+            modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
             self.assertIn('Test 2', modal.body.text)
             self.assertNotIn('Test 1', modal.body.text)
             self.assertNotIn('TestOperator', modal.body.text)
@@ -1491,7 +1491,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             connection.change_endpoint(target1, target2)
 
             # The button 'accept' corresponds to modify such connection in all the behaviours
-            modal = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-modal"))
+            modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
             modal.accept()
 
             self.assertIsNone(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input'))
@@ -1510,7 +1510,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             # The button 'cancel' corresponds to modify such connection only in the active behaviour
             connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/input')
             connection.change_endpoint(target1, target2)
-            modal = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-modal"))
+            modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
             modal.cancel()
 
             self.assertTrue(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input').has_class('background'))

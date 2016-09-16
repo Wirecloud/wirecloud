@@ -398,18 +398,18 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def check_login_behaviour(self):
 
-        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
+        sign_in_button = self.wait_element_visible('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
 
         if sign_in_button.text != 'Sign in':
             # fiwarelabtheme
             sign_in_button.click()
-            popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
+            popup_menu_element = self.wait_element_visible('.se-popup-menu')
             popup_menu = PopupMenuTester(self, popup_menu_element)
             popup_menu.click_entry('Sign in')
         else:
             sign_in_button.click()
 
-        form = FormTester(self, self.wait_element_visible_by_id('wc-login-form'))
+        form = FormTester(self, self.wait_element_visible('#wc-login-form'))
         form.get_field('username').set_value('user_with_workspaces')
         form.get_field('password').set_value('admin')
         form.submit()

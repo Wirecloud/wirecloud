@@ -123,7 +123,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         # Change widget settings
         widget.open_menu().click_entry('Settings')
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
+        dialog = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
         dialog.get_field("ngsi_server").set_value('http://orion.example.com:1026')
         dialog.get_field("use_user_fiware_token").click()
         dialog.accept()
@@ -132,7 +132,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with widget:
             WebDriverWait(self.driver, 2).until(lambda driver: driver.find_element_by_id('api_available').text == 'Yes')
             self.driver.find_element_by_css_selector('.btn-primary').click()
-            alert = self.wait_element_visible_by_css_selector('.alert-error p')
+            alert = self.wait_element_visible('.alert-error p')
             self.assertEqual(alert.text, 'Unexpected error code: 404')
 
     def test_objectstorage_available_to_widgets(self):
@@ -159,7 +159,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             tenant_id_step = self.driver.find_element_by_id('tenantId')
             self.assertEqual(tenant_id_step.text, 'Fail')
-            alert = self.wait_element_visible_by_css_selector('.alert-error')
+            alert = self.wait_element_visible('.alert-error')
             self.assertEqual(alert.text, 'Failure!')
 
     def test_marketplace_keyword_search(self):
@@ -294,7 +294,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
                 resource.advanced_operation('Publish')
 
-                window_menu = self.wait_element_visible_by_css_selector('.window_menu.publish_resource')
+                window_menu = self.wait_element_visible('.window_menu.publish_resource')
                 window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
                 self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
                 self.wait_wirecloud_ready()

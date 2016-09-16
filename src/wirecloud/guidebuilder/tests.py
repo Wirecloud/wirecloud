@@ -240,7 +240,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         crop_image(imgp, *box)
         setts_btn.click()
 
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
+        dialog = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
         dialog.get_field("ngsi_server").set_value('http://orion.lab.fiware.org:1026/')
         dialog.get_field("ngsi_proxy").set_value('https://ngsiproxy.lab.fiware.org')
         dialog.get_field("ngsi_entities").set_value('Node, AMMS, Regulator')
@@ -289,7 +289,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Capture writing new workspace name
         newworkspace_menu.click()
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-new-workspace-modal"))
+        dialog = FormModalTester(self, self.wait_element_visible(".wc-new-workspace-modal"))
         dialog.get_field("name").set_value('History Info')
         time.sleep(0.2)
         imgp = take_capture(self.driver, 'new_workspace_dialog')
@@ -304,7 +304,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Workspace Settings
         self.open_menu().click_entry('Settings')
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-workspace-preferences-modal"))
+        dialog = FormModalTester(self, self.wait_element_visible(".wc-workspace-preferences-modal"))
         time.sleep(0.2) # Wait hover effect
         imgp = take_capture(self.driver, 'workspace_settings')
         crop_image(imgp, *create_box(dialog))
@@ -349,7 +349,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Adding marketplace
             m_menu.click()
-            dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-add-external-catalogue-modal"))
+            dialog = FormModalTester(self, self.wait_element_visible(".wc-add-external-catalogue-modal"))
             dialog.get_field("name").set_value('FIWARE Lab')
             dialog.get_field("url").set_value('https://marketplace.lab.fiware.org')
             dialog.get_field("type").set_value('fiware')
@@ -381,7 +381,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Upload dialog
             btn.click()
-            dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upload-mac-modal"))
+            dialog = FormModalTester(self, self.wait_element_visible(".wc-upload-mac-modal"))
             time.sleep(0.2)
             imgp = take_capture(self.driver, 'upload_dialog')
             crop_image(imgp, *create_box(dialog))
@@ -505,7 +505,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Map Viewer settings
         btn.click()
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-component-preferences-modal'))
+        dialog = FormModalTester(self, self.wait_element_visible('.wc-component-preferences-modal'))
         dialog.get_field('centerPreference').set_value('Santander')
         dialog.get_field('initialZoom').set_value('14')
         dialog.get_field('zoomPreference').set_value('17')
@@ -552,7 +552,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             ActionChains(self.driver).move_by_offset(0, 50).perform()
-            self.wait_element_visible_by_css_selector('.wiring-view .se-alert-static-top')
+            self.wait_element_visible('.wiring-view .se-alert-static-top')
             time.sleep(0.2)
             imgp = take_capture(self.driver, 'empty_wiring')
             crop_down(
@@ -874,7 +874,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         m_menu.click()
 
         # Share workspace dialog
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-dashboard-share-modal"))
+        dialog = FormModalTester(self, self.wait_element_visible(".wc-dashboard-share-modal"))
         time.sleep(0.2)
         public_b = dialog.element.find_element_by_css_selector('input[value="public"]')
         public_b.click()
@@ -894,7 +894,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         m_menu.click()
 
         # Embed mashup dialog
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-embed-code-modal"))
+        dialog = FormModalTester(self, self.wait_element_visible(".wc-embed-code-modal"))
         time.sleep(0.2)
         imgp = take_capture(self.driver, 'embed_workspace_dialog')
         crop_image(imgp, *create_box(dialog))
@@ -961,7 +961,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 add_pointer(imgp, get_position(btncreate, 0.5, 0.5))
                 btncreate.click()
 
-                dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".we-new-behaviour-modal"))
+                dialog = FormModalTester(self, self.wait_element_visible(".we-new-behaviour-modal"))
                 time.sleep(0.2)
                 imgp = take_capture(self.driver, "new_behaviour_dialog")
                 crop_image(imgp, *create_box(dialog))
@@ -1086,7 +1086,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         url = self.live_server_url
         url += reverse('login')
         self.driver.get(url)
-        self.wait_element_visible_by_css_selector('#id_username')
+        self.wait_element_visible('#id_username')
 
         time.sleep(0.3)
         imgp = take_capture(self.driver, "login")
@@ -1141,7 +1141,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # New workspace dialog
         newworkspace_menu.click()
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-new-workspace-modal'))
+        form = FormModalTester(self, self.wait_element_visible('.wc-new-workspace-modal'))
 
         with MACFieldTester(self, form.element.find_element_by_css_selector('.se-mac-field')) as select_dialog:
             resource = select_dialog.search_in_results('Weather Mashup Example')
