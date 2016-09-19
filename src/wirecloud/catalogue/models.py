@@ -186,9 +186,8 @@ def add_absolute_urls(results, request=None):
         hit['smartphoneimage'] = "" if hit['image'] == '' else urljoin(base_url, hit['smartphoneimage'])
 
 
-def add_other_versions(searcher, hits, user, staff):
+def add_other_versions(searcher, results, user, staff):
 
-    results = [hit.fields() for hit in hits]
     allow_q = []
 
     if not staff:

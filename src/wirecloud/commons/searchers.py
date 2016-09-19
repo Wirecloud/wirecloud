@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from datetime import datetime
 import os
 import time
-import types
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
@@ -30,7 +29,6 @@ from whoosh.fields import BOOLEAN, DATETIME, ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, LockError, open_dir
 from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every
-from whoosh.reading import MultiReader
 from whoosh.writing import IndexWriter as WhooshIndexWriter
 import pytz
 
@@ -158,15 +156,17 @@ class BaseSearcher(IndexWriter):
     def restrict_query(self, request):
         return Every()
 
-    def search(self, querytext, request):
-        ix = self.open_index()
+    def search(self, querytext, request, pagenum=1, maxresults=30):
 
         user_q = querytext and self.parser.parse(querytext) or Every()
         restricted_q = And([user_q, self.restrict_query(request)])
         result = {}
 
+        if pagenum < 1:
+            pagenum = 1
+
         with self.searcher() as searcher:
-            hits = searcher.search(restricted_q)
+            hits = searcher.search(restricted_q, limit=(pagenum * maxresults) + 1)
 
             if querytext and hits.is_empty():
                 corrected = searcher.correct_query(user_q, querytext)
@@ -175,9 +175,9 @@ class BaseSearcher(IndexWriter):
                     querytext = corrected.string
                     result['corrected_q'] = querytext
                     restricted_q = And([corrected.query, self.restrict_query(request)])
-                    hits = searcher.search(restricted_q)
+                    hits = searcher.search(restricted_q, limit=(pagenum * maxresults))
 
-            result.update({'results': [self.result_adapter(hit) for hit in hits]})
+            self.prepare_search_response(result, hits, pagenum, maxresults)
 
         return result
 
@@ -199,7 +199,7 @@ class BaseSearcher(IndexWriter):
         end = pagenum * maxresults
 
         search_result['offset'] = start
-        search_result['results'] = hits[start:end]
+        search_result['results'] = [self.result_adapter(hit) for hit in hits[start:end]]
         search_result['pagelen'] = len(search_result['results'])
 
         return search_result
@@ -329,6 +329,8 @@ class UserSearcher(BaseSearcher):
 
 
 _available_search_engines = None
+
+
 def get_available_search_engines():
     global _available_search_engines
 

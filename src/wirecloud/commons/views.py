@@ -73,7 +73,8 @@ class ResourceSearch(Resource):
             message = _('Invalid search namespace: %s' % indexname)
             return build_error_response(request, 422, message)
 
-        result = get_search_engine(indexname).search(querytext, request)
+        pagenum = int(request.GET.get('pagenum', '1'))
+        result = get_search_engine(indexname).search(querytext, request, pagenum)
 
         return HttpResponse(json.dumps(result, sort_keys=True), status=200, content_type='application/json; charset=utf-8')
 
