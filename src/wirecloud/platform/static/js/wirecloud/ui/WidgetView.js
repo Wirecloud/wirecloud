@@ -135,7 +135,7 @@
                 var button = new StyledElements.PopupButton({
                     class: 'wc-menu-button fa fa-cogs',
                     plain: true,
-                    title: utils.gettext("Preferences")
+                    title: utils.gettext("Menu")
                 });
 
                 button.popup_menu.append(new ns.WidgetViewMenuItems(view));

@@ -105,7 +105,7 @@
         }.bind(this));
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
         this.simple_search_input = new StyledElements.TextField({'class': 'simple_search_text', 'placeholder': utils.gettext('Keywords...')});
-        this.simple_search_input.inputElement.addEventListener('keypress', this._onSearchInputKeyPress.bind(this));
+        this.simple_search_input.addEventListener('keydown', this._onSearchInputKeyPress.bind(this));
         this.simple_search_input.addEventListener('change', onSearchInput.bind(this));
 
         if ('extra_context' in options) {
@@ -251,9 +251,9 @@
         this.timeout = setTimeout(this._keywordTimeoutHandler, 700);
     };
 
-    CatalogueSearchView.prototype._onSearchInputKeyPress = function _onSearchInputKeyPress(event) {
+    CatalogueSearchView.prototype._onSearchInputKeyPress = function _onSearchInputKeyPress(input, modifiers, key) {
 
-        if (event.keyCode === 13) { // enter
+        if (key === "Enter") {
 
             // Cancel current timeout
             if (this.timeout !== null) {
