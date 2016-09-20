@@ -119,20 +119,28 @@
     /**
      * Opens this workspace
      */
-    Workspace.prototype.open = function open() {
-        openWorkspace(this);
+    Workspace.prototype.open = function open(options) {
+        openWorkspace(this, options);
     };
 
     /**
      * Deletes/Removes this workspace
      */
-    Workspace.prototype.remove = function remove() {
+    Workspace.prototype.remove = function remove(options) {
         // We call this method remove because delete is a reserved word
-        return removeWorkspace(this);
+        return removeWorkspace(this, options);
     };
 
-    var openWorkspace = function openWorkspace(workspace) {
-        Wirecloud.changeActiveWorkspace(workspace);
+    var openWorkspace = function openWorkspace(workspace, options) {
+        if (options == null) {
+            options = {};
+        } else {
+            options = {
+                onSuccess: options.onSuccess,
+                onFailure: options.onFailure
+            }
+        }
+        Wirecloud.changeActiveWorkspace(workspace, null, options);
     };
 
     var removeWorkspace = function removeWorkspace(workspace, options) {

@@ -533,19 +533,19 @@ This method is only available when making use of the `DashboardManagement`
 feature.
 
 ```javascript
-MashupPlatform.mashup.openWorkspace(workspace)
+MashupPlatform.mashup.openWorkspace(workspace, options)
 ```
 
-- `workspace` (*required, object*):
+- `workspace` (*required, object*): Object composed of the following attributes:
+    - `owner` (*required, string*): Username of the workspace's owner.
+    - `name` (*required, string*): Name of the workspace.
 - `options` (*object*): object with the options to use for opening the
   workspace.
 
 Supported options:
 
-- `onSuccess` (*function*): callback to invoke if the workspace is created
-  successfully.
 - `onFailure` (*function*): callback to invoke if some error is raised while
-  creating the workspace.
+  opening the workspace.
 
 **Example usage:**
 
@@ -567,11 +567,13 @@ This method is only available when making use of the `DashboardManagement`
 feature.
 
 ```javascript
-MashupPlatform.mashup.removeWorkspace(workspace)
+MashupPlatform.mashup.removeWorkspace(workspace, options)
 ```
 
-- `workspace` (*required, object*):
-- `options` (*object*): object with the options to use for opening the
+- `workspace` (*required, object*): Object composed of the following attributes:
+    - `owner` (*required, string*): Username of the workspace's owner.
+    - `name` (*required, string*): Name of the workspace.
+- `options` (*object*): object with the options to use for removing the
   workspace.
 
 Supported options:
@@ -1302,8 +1304,16 @@ Workspace.owner
 This method opens the workspace, closing the current one.
 
 ```javascript
-Workspace.open()
+Workspace.open(options)
 ```
+
+- `options` (*object*): object with the options to use for opening the
+  workspace.
+
+Supported options:
+
+- `onFailure` (*function*): callback to invoke if some error is raised while
+  opening the workspace.
 
 **Example usage:**
 
@@ -1323,8 +1333,19 @@ MashupPlatform.mashup.createWorkspace({
 This method removes the workspace.
 
 ```javascript
-Workspace.remove()
+Workspace.remove(options)
 ```
+
+- `options` (*object*): object with the options to use for removing the
+  workspace.
+
+Supported options:
+
+- `onSuccess` (*function*): callback to invoke if the workspace is removed
+  successfully.
+- `onFailure` (*function*): callback to invoke if some error is raised while
+  removing the workspace.
+
 
 **Example usage:**
 
