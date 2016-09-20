@@ -127,7 +127,7 @@
         },
 
         clear: function clear() {
-            this.searchComponents._list.clear();
+            this.searchComponents.clear();
             this.components = {mashup: {}, widget: {}};
             return this;
         },

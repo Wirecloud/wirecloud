@@ -94,6 +94,10 @@
         });
     };
 
+    MACSearch.prototype.clear = function clear() {
+        privates.get(this).list.clear();
+    };
+
     MACSearch.prototype.repaint = function repaint() {
         privates.get(this).list.repaint();
     };

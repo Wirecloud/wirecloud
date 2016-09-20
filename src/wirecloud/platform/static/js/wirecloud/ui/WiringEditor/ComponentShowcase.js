@@ -129,7 +129,7 @@
         },
 
         clear: function clear() {
-            this.searchComponents._list.clear();
+            this.searchComponents.clear();
             this.components = {operator: {}, widget: {}};
             return this;
         },
