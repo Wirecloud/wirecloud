@@ -62,13 +62,13 @@
      * web page for being able to detect this event.
      */
     var ExternalProcessWindowMenu = function ExternalProcessWindowMenu(title, url, msg, options) {
-        Wirecloud.ui.WindowMenu.call(this, title);
 
         if (options != null) {
             this.options = options;
         } else {
             this.options = {};
         }
+        Wirecloud.ui.WindowMenu.call(this, title, this.options.class);
         this.url = url;
 
         this.msgElement = document.createElement('div');
@@ -89,8 +89,8 @@
 
         // Start button
         this.start_button = new StyledElements.Button({
-            text: utils.gettext('Start'),
-            'class': 'btn-primary'
+            class: 'btn-primary btn-accept',
+            text: utils.gettext('Start')
         });
         this.start_button.insertInto(this.windowBottom);
         this.start_button.addEventListener("click", function () {
@@ -102,8 +102,8 @@
 
         // Cancel button
         this.cancel_button = new StyledElements.Button({
-            text: utils.gettext('Cancel'),
-            'class': 'btn-danger'
+            class: 'btn-danger btn-cancel',
+            text: utils.gettext('Cancel')
         });
         this.cancel_button.insertInto(this.windowBottom);
         this.cancel_button.addEventListener("click", this._closeListener);

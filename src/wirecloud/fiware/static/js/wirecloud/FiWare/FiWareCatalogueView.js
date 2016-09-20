@@ -54,7 +54,7 @@
 
     var onBuySuccess = function onBuySuccess(offering, offering_entry) {
 
-        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing offering components into local repository"), 0);
+        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing offering components into local repository"), 2);
 
         this.catalogue.get_offering_info(offering.store, offering.id, {
             monitor: monitor,
@@ -353,6 +353,7 @@
                         data.url,
                         utils.gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to WireCloud.'),
                         {
+                            class: 'wc-buy-modal',
                             onSuccess: onBuySuccess.bind(this, offering, offering_entry)
                         }
                     );

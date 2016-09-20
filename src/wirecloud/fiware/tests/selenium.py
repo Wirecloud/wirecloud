@@ -21,6 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from wirecloud.commons.utils import expected_conditions as WEC
@@ -305,8 +306,9 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
     def _buy_offering(self):
         bought_response_text = read_response_file('responses', 'store2', 'service2_bought.json')
         self.network._servers['http']['store2.example.com'].add_response('GET', '/mystore/api/offering/offerings/service2.rdf', {'content': bought_response_text})
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Start']").click()
-        WebDriverWait(self.driver, 10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
+        dialog = FormModalTester(self, self.wait_element_visible(".wc-buy-modal"))
+        dialog.accept()
+        WebDriverWait(self.driver, 10).until(EC.staleness_of(dialog.element))
         self.wait_wirecloud_ready()
 
     def check_store_buy_offering(self, from_details):
