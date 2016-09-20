@@ -28,61 +28,104 @@
 
     var builder = new StyledElements.GUIBuilder();
 
-    var _search = function _search(keywords) {
-        if (this._request != null) {
-            this._request.abort();
+    var MACSearch = function MACSearch(options) {
+
+        options = utils.merge({
+            'extra_template_context': null,
+            'scope': '',
+            'template': 'wirecloud/macsearch/base',
+            resource_painter: null
+        }, options);
+
+        StyledElements.StyledElement.call(this, ['search']);
+
+        this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
+        this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;
+
+
+        var priv = {
+            request: null,
+            list: new StyledElements.Container({class: 'wc-macsearch-list wc-resource-results loading'})
+        };
+        privates.set(this, priv);
+        this.resource_painter = options.resource_painter;
+
+        var input;
+
+        var template = Wirecloud.currentTheme.templates[options.template];
+        this.wrapperElement = builder.parse(template, utils.merge({
+            searchinput: function () {
+                input = new StyledElements.TextField({class: "se-field-search", 'placeholder': utils.gettext('Keywords...')});
+                input.addEventListener('keydown', _onSearchInputKeyPress.bind(this));
+                input.addEventListener('change', _onSearchInput.bind(this));
+                return input;
+            }.bind(this),
+            list: priv.list
+        }, options.extra_template_context)).elements[1];
+        if (this.wrapperElement instanceof StyledElements.StyledElement) {
+            this.wrapperElement = this.wrapperElement.get();
         }
-        this._list.disable();
+
+        Object.defineProperties(this, {
+            'inputField': {value: input},
+            'search_scope': {value: options.scope, writable: true},
+            'resourceButtonIconClass': {value: options.resourceButtonIconClass},
+            'resourceButtonListener': {value: options.resourceButtonListener},
+            'resourceButtonTooltip': {value: options.resourceButtonTooltip}
+        });
+
+        this.input = input;
+    };
+    utils.inherit(MACSearch, StyledElements.StyledElement);
+
+    MACSearch.prototype.paintInfo = function paintInfo(message, context) {
+        if (context != null) {
+            message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);
+        }
+
+        return builder.parse(this.info_template, {
+            'message': message
+        });
+    };
+
+    MACSearch.prototype.paintError = function paintError(message) {
+        return builder.parse(this.error_template, {
+            'message': message
+        });
+    };
+
+    MACSearch.prototype.repaint = function repaint() {
+        privates.get(this).list.repaint();
+    };
+
+    MACSearch.prototype.refresh = function refresh() {
+        _keywordTimeoutHandler.call(this, this.input);
+    };
+
+    MACSearch.prototype.focus = function focus() {
+        this.inputField.focus();
+    };
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
+
+    var _search = function _search(keywords) {
+        var priv = privates.get(this);
+
+        if (priv.request != null) {
+            priv.request.abort();
+        }
+        priv.list.disable();
         this.trigger('search');
-        this._request = Wirecloud.LocalCatalogue.search({
+        priv.request = Wirecloud.LocalCatalogue.search({
             scope: this.search_scope,
             search_criteria: keywords,
-            onSuccess: function (components, search_info) {
-                var msg;
-
-                _load_resource_painter.call(this);
-                this._list.clear();
-                if (search_info.total_count !== 0) {
-                    if ('corrected_query' in search_info) {
-                        msg = utils.gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
-                        this._list.appendChild(this.paintInfo(msg, {
-                            corrected_query: search_info.corrected_query
-                        }));
-                    }
-
-                    components.forEach(function (component) {
-                        try {
-                            component.version = new Wirecloud.Version(component.version);
-                            component.others = component.others.map(function (version) {return new Wirecloud.Version(version);});
-                            this._list.appendChild(this.resource_painter.paint(component));
-                        } catch (e) {
-                            //
-                        }
-                    }, this);
-                } else {
-                    if (keywords !== "") {
-                        msg = utils.gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
-                        msg = utils.interpolate(msg, {keywords: utils.escapeHTML(keywords.trim())}, true);
-                    } else if (this.search_scope !== '') {
-                        msg = utils.gettext("<p>Currently, you do not have access to any %(scope)s component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
-                        msg = utils.interpolate(msg, {scope: this.search_scope}, true);
-                    } else {
-                        msg = utils.gettext("<p>Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
-                    }
-                    this._list.appendChild(this.paintError(new StyledElements.Fragment(msg)));
-                }
-            }.bind(this),
-            onFailure: function () {
-                var msg = utils.gettext("Connection error: No resource retrieved");
-
-                _load_resource_painter.call(this);
-                this._list.clear();
-                this._list.appendChild(this.paintError(msg));
-            }.bind(this),
-            onComplete: function () {
-                this._request = null;
-                this._list.enable();
-            }.bind(this)
+            onSuccess: on_search_success.bind(this, keywords),
+            onFailure: on_search_failure.bind(this),
+            onComplete: on_search_complete.bind(this)
         });
     };
 
@@ -107,27 +150,30 @@
     };
 
     var _keywordTimeoutHandler = function _keywordTimeoutHandler(input) {
-        this._search_timeout = null;
-        _search.call(this, input.getValue());
+        privates.get(this).search_timeout = null;
+        _search.call(this, input.value);
     };
 
     var _onSearchInput = function _onSearchInput(input) {
 
+        var priv = privates.get(this);
+
         // Cancel current timeout
-        if (this._search_timeout !== null) {
-            clearTimeout(this._search_timeout);
+        if (priv.search_timeout !== null) {
+            clearTimeout(priv.search_timeout);
         }
 
-        this._search_timeout = setTimeout(_keywordTimeoutHandler.bind(this, input), 700);
+        priv.search_timeout = setTimeout(_keywordTimeoutHandler.bind(this, input), 700);
     };
 
-    var _onSearchInputKeyPress = function _onSearchInputKeyPress(input, event) {
+    var _onSearchInputKeyPress = function _onSearchInputKeyPress(input, modifiers, key) {
+        if (key === "Enter") {
 
-        if (event.keyCode === 13) { // enter
+            var priv = privates.get(this);
 
             // Cancel current timeout
-            if (this._search_timeout !== null) {
-                clearTimeout(this._search_timeout);
+            if (priv.search_timeout !== null) {
+                clearTimeout(priv.search_timeout);
             }
 
             // Inmediate search
@@ -135,76 +181,53 @@
         }
     };
 
-    var MACSearch = function MACSearch(options) {
+    var on_search_success = function on_search_success(keywords, components, search_info) {
+        var msg, priv = privates.get(this);
 
-        options = utils.merge({
-            'extra_template_context': null,
-            'scope': '',
-            'template': 'wirecloud/macsearch/base',
-            resource_painter: null
-        }, options);
+        _load_resource_painter.call(this);
+        priv.list.clear();
+        if (search_info.total_count !== 0) {
+            if ('corrected_query' in search_info) {
+                msg = utils.gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
+                priv.list.appendChild(this.paintInfo(msg, {
+                    corrected_query: search_info.corrected_query
+                }));
+            }
 
-        StyledElements.StyledElement.call(this, ['search']);
-
-        this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
-        this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;
-        this._list = new StyledElements.Container({class: 'wc-macsearch-list wc-resource-results loading'});
-        this.resource_painter = options.resource_painter;
-
-        var input;
-
-        var template = Wirecloud.currentTheme.templates[options.template];
-        this.wrapperElement = builder.parse(template, utils.merge({
-            searchinput: function () {
-                input = new StyledElements.TextField({class: "se-field-search", 'placeholder': utils.gettext('Keywords...')});
-                input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
-                input.addEventListener('change', _onSearchInput.bind(this));
-                return input;
-            }.bind(this),
-            list: this._list
-        }, options.extra_template_context)).elements[1];
-        if (this.wrapperElement instanceof StyledElements.StyledElement) {
-            this.wrapperElement = this.wrapperElement.get();
+            components.forEach(function (component) {
+                try {
+                    component.version = new Wirecloud.Version(component.version);
+                    component.others = component.others.map(function (version) {return new Wirecloud.Version(version);});
+                    priv.list.appendChild(this.resource_painter.paint(component));
+                } catch (e) {
+                    //
+                }
+            }, this);
+        } else {
+            if (keywords !== "") {
+                msg = utils.gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
+                msg = utils.interpolate(msg, {keywords: utils.escapeHTML(keywords.trim())}, true);
+            } else if (this.search_scope !== '') {
+                msg = utils.gettext("<p>Currently, you do not have access to any %(scope)s component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
+                msg = utils.interpolate(msg, {scope: this.search_scope}, true);
+            } else {
+                msg = utils.gettext("<p>Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
+            }
+            priv.list.appendChild(this.paintError(new StyledElements.Fragment(msg)));
         }
-
-        Object.defineProperties(this, {
-            'inputField': {value: input},
-            'search_scope': {value: options.scope, writable: true},
-            'resourceButtonIconClass': {value: options.resourceButtonIconClass},
-            'resourceButtonListener': {value: options.resourceButtonListener},
-            'resourceButtonTooltip': {value: options.resourceButtonTooltip}
-        });
-
-        this.input = input;
-    };
-    MACSearch.prototype = new StyledElements.StyledElement();
-
-    MACSearch.prototype.paintInfo = function paintInfo(message, context) {
-        if (context != null) {
-            message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);
-        }
-
-        return builder.parse(this.info_template, {
-            'message': message
-        });
     };
 
-    MACSearch.prototype.paintError = function paintError(message) {
-        return builder.parse(this.error_template, {
-            'message': message
-        });
+    var on_search_failure = function () {
+        var msg = utils.gettext("Connection error: No resource retrieved");
+
+        _load_resource_painter.call(this);
+        privates.get(this).list.clear().appendChild(this.paintError(msg));
     };
 
-    MACSearch.prototype.repaint = function repaint() {
-        this._list.repaint();
-    };
-
-    MACSearch.prototype.refresh = function refresh() {
-        _keywordTimeoutHandler.call(this, this.input);
-    };
-
-    MACSearch.prototype.focus = function focus() {
-        this.inputField.focus();
+    var on_search_complete = function on_search_complete() {
+        var priv = privates.get(this);
+        priv.request = null;
+        priv.list.enable();
     };
 
     Wirecloud.ui.MACSearch = MACSearch;
