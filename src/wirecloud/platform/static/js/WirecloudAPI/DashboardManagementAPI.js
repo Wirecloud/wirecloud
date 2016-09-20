@@ -135,9 +135,19 @@
         Wirecloud.changeActiveWorkspace(workspace);
     };
 
-    var removeWorkspace = function removeWorkspace(workspace) {
-        var instance = Wirecloud.Workspace(workspace);
-        instance.remove();
+    var removeWorkspace = function removeWorkspace(workspace, options) {
+        if (options == null) {
+            options = {};
+        }
+        var dialog = new Wirecloud.ui.AlertWindowMenu();
+
+        dialog.setMsg(Wirecloud.Utils.interpolate(Wirecloud.Utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
+            name: workspace.owner + '/' + workspace.name
+        }));
+        dialog.setHandler(function () {
+            Wirecloud.removeWorkspace(workspace).then(options.onSuccess, options.onFailure);
+        }.bind(this));
+        dialog.show();
     };
 
     var addWidget = function addWidget(ref, options) {

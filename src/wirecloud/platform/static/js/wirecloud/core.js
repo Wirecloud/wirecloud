@@ -93,14 +93,7 @@
         }
     };
 
-    var onWorkspaceRemoved = function onWorkspaceRemoved(workspace) {
-        // Removing reference
-        delete this.workspacesByUserAndName[workspace.owner][workspace.name];
-        delete this.workspaceInstances[workspace.id];
 
-        // Go to the wirecloud/home dashboard
-        Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'});
-    };
 
     var onMergeSuccess = function onMergeSuccess(options, response) {
         var workspace = {
@@ -389,9 +382,9 @@
                         }
 
                         this.activeWorkspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
+                        this.workspaceInstances[this.activeWorkspace.id] = this.activeWorkspace;
                         Wirecloud.trigger('viewcontextchanged');
 
-                        this.activeWorkspace.addEventListener('remove', onWorkspaceRemoved.bind(this));
                         this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
                             var workspace, old_name;
 
@@ -448,6 +441,37 @@
             onSuccess: onCreateWorkspaceSuccess.bind(this, options),
             onFailure: onCreateWorkspaceFailure.bind(this, options)
         });
+    };
+
+    Wirecloud.removeWorkspace = function removeWorkspace(workspace) {
+        if (workspace.id == null) {
+            if (workspace.owner == null || workspace.name == null) {
+                throw TypeError("missing id or owner/name parameters");
+            }
+            workspace = this.workspacesByUserAndName[workspace.owner][workspace.name];
+        }
+
+        return new Promise(function (resolve, reject) {
+            var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
+                workspace_id: workspace.id
+            });
+
+            Wirecloud.io.makeRequest(url, {
+                method: 'DELETE',
+                requestHeaders: {'Accept': 'application/json'},
+                onComplete: function (response) {
+                    if (response.status === 204) {
+                        // Removing reference
+                        delete this.workspacesByUserAndName[workspace.owner][workspace.name];
+                        delete this.workspaceInstances[workspace.id];
+
+                        resolve(this);
+                    } else {
+                        reject(/* TODO */);
+                    }
+                }.bind(this)
+            });
+        }.bind(this));
     };
 
     Wirecloud.mergeWorkspace = function mergeWorkspace(resource, options) {
