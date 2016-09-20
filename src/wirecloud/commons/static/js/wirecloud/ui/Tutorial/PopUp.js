@@ -163,7 +163,7 @@
     };
 
     WidgetElement.prototype.getBoundingClientRect = function getBoundingClientRect() {
-        var widget_box = this.widget.content.getBoundingClientRect();
+        var widget_box = this.widget.wrapperElement.getBoundingClientRect();
         var element_box = this.element.getBoundingClientRect();
 
         return {

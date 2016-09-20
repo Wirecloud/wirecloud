@@ -91,9 +91,10 @@
             },
             input: function input(text, options) {
                 options = Wirecloud.Utils.merge({
-                    'timeout': 4000,
-                    'step': 200,
-                    'send': false
+                    timeout: 4000,
+                    step: 200,
+                    send: false,
+                    padding: 1300
                 }, options);
 
                 return function (autoAction, element) {
@@ -127,10 +128,17 @@
                         timeout += options.step;
                     }
 
-                    timeout += 1300;
+                    timeout += options.padding;
                     setTimeout(function () {
                         autoAction.nextHandler();
                     }, timeout);
+                };
+            },
+            scrollIntoView: function scrollIntoView(selector) {
+                return function (autoAction) {
+                    var element = selector();
+                    element.scrollIntoView();
+                    autoAction.nextHandler();
                 };
             },
             switch_view: function switch_view(view) {
@@ -151,6 +159,17 @@
                     }
                 };
             },
+            wait_transitions: function wait_transitions() {
+                return function (autoAction, element) {
+                    var interval = setInterval(function () {
+                        var element = document.querySelector(".se-on-transition");
+                        if (element == null) {
+                            clearInterval(interval);
+                            autoAction.nextHandler();
+                        }
+                    }, 200);
+                }
+            },
             editorView: {
                 wait_mac_wallet_ready: function wait_mac_wallet_ready() {
                     return function (autoAction, element) {
@@ -160,9 +179,10 @@
                                 clearInterval(interval);
                                 autoAction.nextHandler();
                             }
-                        }, 1000);
+                        }, 200);
                     };
                 },
+
             },
             wiringView: {
                 open_component_sidebar: function open_component_sidebar(type) {
@@ -177,7 +197,18 @@
                         }
                         autoAction.nextHandler();
                     };
-                }
+                },
+                wait_sidebar_ready: function wait_sidebar_ready() {
+                    return function (autoAction, element) {
+                        var interval = setInterval(function () {
+                            var widget_list = document.querySelector(".we-panel-components .wc-resource-results:not(.disabled)");
+                            if (widget_list) {
+                                clearInterval(interval);
+                                autoAction.nextHandler();
+                            }
+                        }, 200);
+                    };
+                },
             }
         },
         basic_selectors: {
@@ -211,15 +242,19 @@
             mac_wallet_input: function mac_wallet_input() {
                 return Utils.basic_selectors.element('.wc-workspace .wc-resource-list .se-field-search');
             },
-            mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
+            mac_wallet_resource: function mac_wallet_resource(resource_title) {
                 return function () {
-                    var resources, widget, element;
+                    var resources, widget;
 
                     resources = document.querySelectorAll('.wc-workspace .we-component-meta .panel-heading');
                     widget = findElementByTextContent(resources, resource_title);
-                    element = widget.parentNode.querySelector(".panel-body .wc-create-resource-component");
-
-                    return element;
+                    return widget.parentNode;
+                };
+            },
+            mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
+                return function () {
+                    var widget = Utils.basic_selectors.mac_wallet_resource(resource_title)();
+                    return widget.querySelector(".panel-body .wc-create-resource-component");
                 };
             },
             menu_item: function menu_item(title) {
@@ -243,7 +278,7 @@
                     return function () {
                         var i, widgetList;
 
-                        widgetList = document.querySelectorAll('.workspace .iwidget');
+                        widgetList = document.querySelectorAll('.wc-workspace .wc-widget');
 
                         for (i = 0; i < widgetList.length; i++) {
                             if (widgetList[i].querySelector('.wc-widget-heading span').textContent === title) {
@@ -256,8 +291,8 @@
                 },
                 widget_element: function widget_element(index, selector) {
                     return function () {
-                        var widget = Wirecloud.activeWorkspace.getIWidgets()[index];
-                        var element = widget.content.contentDocument.querySelector(selector);
+                        var widget = Wirecloud.activeWorkspace.widgets[index];
+                        var element = widget.wrapperElement.contentDocument.querySelector(selector);
                         return new Wirecloud.ui.Tutorial.WidgetElement(widget, element);
                     };
                 }
@@ -279,21 +314,21 @@
                 },
                 component_by_id: function component_by_id(type, id_) {
                     return function () {
-                        var components, i, id;
+                        var query, id;
 
                         // TODO
                         id = "" + id_;
                         if (type === 'widget') {
-                            id = "" + Wirecloud.activeWorkspace.getIWidgets()[id_].id;
+                            id = "" + Wirecloud.activeWorkspace.widgets[id_].id;
                         }
-                        components = document.querySelectorAll('.wiring-diagram .component-' + type);
-
-                        for (i = 0; i < components.length; i++) {
-                            if (components[i].getAttribute('data-id') === id) {
-                                return components[i];
+                        query = Wirecloud.Utils.interpolate(
+                            '.wiring-diagram .component-%(type)s[data-id="%(id)s"]',
+                            {
+                                type: type,
+                                id: id
                             }
-                        }
-                        return null;
+                        );
+                        return document.querySelector(query);
                     };
                 },
                 connection_engine: function connection_engine() {
@@ -319,23 +354,18 @@
                 },
                 show_behaviour_prefs_button: function show_behaviour_prefs_button(behaviourId) {
                     return function () {
-                        var behaviour = document.querySelectorAll(".panel-behaviours .behaviour")[behaviourId];
+                        var behaviour = document.querySelectorAll(".we-panel-behaviours .behaviour")[behaviourId];
 
                         return behaviour.querySelector(".we-prefs-btn");
                     };
                 },
+                sidebar_input: function sidebar_input() {
+                    return Utils.basic_selectors.element('.wc-workspace-wiring .we-panel-components .se-field-search');
+                },
                 sidebarcomponentgroup_by_id: function sidecomponentgroup(id) {
                     return function () {
-                        var i, componentgroups, componentgroup;
-
-                        componentgroups = document.querySelectorAll('.panel-components .component-group');
-
-                        for (i = 0; i < componentgroups.length; i++) {
-                            componentgroup = componentgroups[i];
-                            if (componentgroup.getAttribute('data-id') === id) {
-                                return componentgroup;
-                            }
-                        }
+                        var query = Wirecloud.Utils.interpolate('.wc-workspace-wiring .we-panel-components .we-component-group[data-id="%(id)s"]', {id: id});
+                        return document.querySelector(query);
                     };
                 },
                 sidebarcomponent_by_id: function sidebarcomponent_by_id(component_meta_id, component_id) {
@@ -344,7 +374,7 @@
 
                         componentgroup = Utils.basic_selectors.wiringView.sidebarcomponentgroup_by_id(component_meta_id)();
                         if (componentgroup != null) {
-                            components = componentgroup.querySelectorAll('.component');
+                            components = componentgroup.querySelectorAll('.we-component');
                             return components[component_id]; // TODO use real id
                         }
                         return null;

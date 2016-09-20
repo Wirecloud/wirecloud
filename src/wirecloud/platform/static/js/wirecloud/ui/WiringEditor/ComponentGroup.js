@@ -66,7 +66,6 @@
             vendor: resource.vendor,
             description: this.descriptionElement
         }).children[1];
-        this.wrapperElement.classList.add("wc-resource");
 
         this.components = {};
 
