@@ -115,14 +115,14 @@
                     }
                     if (options.send) {
                         setTimeout(function () {
-                            var evt = document.createEvent("KeyboardEvent");
-                            if (evt.initKeyEvent != null) {
-                                evt.initKeyEvent("keypress", true, true, window, false, false, false, false, 13, 0);
-                            } else {
-                                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
-                            }
-                            element.dispatchEvent(evt);
+                            element.dispatchEvent(new KeyboardEvent("keydown", {
+                                altKey: false,
+                                ctrlKey: false,
+                                key: "Enter",
+                                keyCode: 13,
+                                metaKey: false,
+                                shiftKey: false
+                            }));
                         }, timeout);
                         timeout += options.step;
                     }
