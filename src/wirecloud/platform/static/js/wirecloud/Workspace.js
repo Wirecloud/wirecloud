@@ -51,7 +51,8 @@
             'remove',
             'removeoperator',
             'removetab',
-            'removewidget'
+            'removewidget',
+            'unload'
         ]);
 
         priv = {
@@ -447,6 +448,8 @@
             }
             this.wiring.removeEventListener('createoperator', on_createoperator.bind(this));
             this.wiring.removeEventListener('removeoperator', on_removeoperator.bind(this));
+
+            this.trigger('unload');
 
             Wirecloud.GlobalLogManager.log(utils.gettext('Workspace unloaded successfully'), Wirecloud.constants.LOGGING.INFO_MSG);
             Wirecloud.GlobalLogManager.newCycle();

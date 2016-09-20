@@ -381,6 +381,10 @@
                             return;
                         }
 
+                        if (this.activeWorkspace) {
+                            this.activeWorkspace.unload();
+                            this.activeWorkspace = null;
+                        }
                         this.activeWorkspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
                         this.workspaceInstances[this.activeWorkspace.id] = this.activeWorkspace;
                         Wirecloud.trigger('viewcontextchanged');

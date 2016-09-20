@@ -120,6 +120,7 @@
 
         this.on_workspace_change_bound = on_workspace_change.bind(this);
         this.on_workspace_remove_bound = on_workspace_remove.bind(this);
+        this.on_workspace_unload_bound = on_workspace_unload.bind(this);
 
         Wirecloud.addEventListener('loaded', function () {
             this.showcase =  new Wirecloud.ui.ComponentSidebar();
@@ -192,13 +193,6 @@
 
         this.walletButton.active = false;
 
-        /* Unload previous workspace */
-        this.layout.content.clear();
-        if (this.model != null) {
-            this.model.removeEventListener('remove', this.on_workspace_remove_bound);
-            this.model.removeEventListener('change', this.on_workspace_change_bound);
-        }
-
         this.notebook = new StyledElements.Notebook({
             'class': 'se-notebook-bottom'
         });
@@ -210,6 +204,7 @@
 
         this.model = workspace;
         this.model.view = this;
+        this.model.addEventListener('unload', this.on_workspace_unload_bound);
         this.model.addEventListener('change', this.on_workspace_change_bound);
         this.model.addEventListener('remove', this.on_workspace_remove_bound);
 
@@ -340,7 +335,16 @@
         var entries, current_state;
 
         current_state = Wirecloud.HistoryManager.getCurrentState();
-        if ('workspace_owner' in current_state) {
+
+        if (Wirecloud.activeWorkspace != null) {
+            entries = [
+                {
+                    'label': Wirecloud.activeWorkspace.owner
+                }, {
+                    'label': Wirecloud.activeWorkspace.name,
+                }
+            ];
+        } else if ('workspace_owner' in current_state) {
             entries = [
                 {
                     'label': current_state.workspace_owner
@@ -359,7 +363,9 @@
 
     WorkspaceView.prototype.getTitle = function getTitle() {
         var current_state = Wirecloud.HistoryManager.getCurrentState();
-        if ('workspace_owner' in current_state) {
+        if (Wirecloud.activeWorkspace != null) {
+            return Wirecloud.activeWorkspace.owner + '/' + Wirecloud.activeWorkspace.name;
+        } else if ('workspace_owner' in current_state) {
             return current_state.workspace_owner + '/' + current_state.workspace_name;
         } else {
             return utils.gettext('loading...');
@@ -499,6 +505,14 @@
     var on_workspace_remove = function on_workspace_remove(workspace) {
         // Go to the wirecloud/home dashboard
         Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'});
+    };
+
+    var on_workspace_unload = function on_workspace_unload(workspace) {
+        if (this.model === workspace) {
+            this.layout.content.clear();
+        }
+        workspace.removeEventListener('remove', this.on_workspace_remove_bound);
+        workspace.removeEventListener('change', this.on_workspace_change_bound);
     };
 
     var on_click_createtab = function on_click_createtab(button) {
