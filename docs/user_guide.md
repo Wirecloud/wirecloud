@@ -126,7 +126,7 @@ screenshots:
 
 <img src="../images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png" srcset="../images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png 2x" alt="*Add new marketplace* dialog"/>
 
-WireCloud offers a built-in local catalogue called "My Resources", which
+WireCloud offers a built-in local catalogue called *My Resources*, which
 allows you to search among the widgets, operators and mashups currently
 available for the user. The following figure shows a screenshot of the
 *My Resources* for a user in a given instance of WireCloud.
@@ -208,7 +208,7 @@ You can also download them using the following URLs:
 -   [CoNWeT_linear-graph_3.0.0b3.wgt](attachments/CoNWeT_linear-graph_3.0.0b3.wgt)
 
 Once installed, you should be able to see all the widgets/operators used
-in this example in the "My Resources" view:
+in this example in the *My Resources* view:
 
 <img src="../images/user_guide/browsing_marketplace/my_resources.png" srcset="../images/user_guide/browsing_marketplace/my_resources.png 2x" alt="List of used components"/>
 

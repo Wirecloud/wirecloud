@@ -509,7 +509,7 @@ class WorkspaceComponentSidebarTester(object):
 
     @property
     def components(self):
-        return [WorkspaceComponentTester(self.testcase, e) for e in self.component_list.find_elements_by_css_selector(".wc-component-group")]
+        return [WorkspaceComponentTester(self.testcase, e) for e in self.component_list.find_elements_by_css_selector(".we-component-group")]
 
     def search_in_results(self, title):
         self.wait_ready()

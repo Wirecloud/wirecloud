@@ -1224,7 +1224,7 @@ To quickly check if the application is running, follow these steps:
 
     <img src="../images/installation_guide/back_button.png" srcset="../images/installation_guide/back_button.png 2x" alt="Click *Back*">
 
-9. Click on the "New workspace" option:
+9. Click on the *New workspace* option:
 
     <img src="../images/installation_guide/new_workspace_entry.png" srcset="../images/installation_guide/new_workspace_entry.png 2x" alt="Click *New workspace*">
 
@@ -1239,7 +1239,7 @@ To quickly check if the application is running, follow these steps:
 12. Select the pin tool in the *Web Map Service* widget clicking the appropriated button as shown in the image.
 13. And click the desired location. The *Weather Widget Example* should update the forecast info:
 
-    <img src="../images/installation_guide/usage_example.png" srcset="../images/installation_guide/usage_example.png 2x" alt="Usage example">
+    <img src="../images/installation_guide/example_usage.png" srcset="../images/installation_guide/example_usage.png 2x" alt="Example usage">
 
 By performing this sequence of steps, you will check that the WireCloud Mashup
 platform is running and correctly deployed, and its database has been properly

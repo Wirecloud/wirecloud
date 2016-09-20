@@ -37,6 +37,7 @@ from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
+import mock
 from six import text_type
 
 from wirecloud.platform.localcatalogue.utils import fix_dev_version, install_resource
@@ -107,10 +108,17 @@ class RealWebServer(object):
 
     def request(self, method, url, *args, **kwargs):
         response = self._request_method(method, url, *args, **kwargs)
+
+        if 'Content-Encoding' in response.headers:
+            # We have decode the body
+            del response.headers['Content-Encoding']
+            response.headers['Content-Length'] = len(response.content)
+
         return {
             'status_code': response.status_code,
             'headers': response.headers,
-            'content': response.content
+            'content': response.content,
+            'cookies': response.cookies
         }
 
 
@@ -133,6 +141,9 @@ class DynamicWebServer(object):
         self.responses = {}
 
     def request(self, method, url, *args, **kwargs):
+
+        if 'data' not in kwargs or kwargs['data'] is None:
+            kwargs['data'] = BytesIO(b'')
 
         parsed_url = urlparse(url)
         if parsed_url.path not in self.responses or method not in self.responses[parsed_url.path]:
@@ -234,9 +245,6 @@ class FakeNetwork(object):
     def __call__(self, method, url, *args, **kwargs):
         parsed_url = urlparse(url)
 
-        if 'data' not in kwargs or kwargs['data'] is None:
-            kwargs['data'] = BytesIO(b'')
-
         if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
             raise URLError('not valid')
 
@@ -256,20 +264,20 @@ class FakeNetwork(object):
         if 'headers' in res_info:
             res.headers.update(res_info['headers'])
 
-            if 'Set-Cookie' in res_info['headers']:
+            if 'Set-Cookie' in res_info['headers'] and 'cookies' not in res_info:
                 cookies = SimpleCookie()
                 for entry in res_info['headers']['Set-Cookie'].split(','):
                     cookies.load(str(entry))
                 res.cookies.update(cookies)
+
+        if 'cookies' in res_info:
+            res.cookies.update(res_info['cookies'])
 
         res.raw = StreamContent(res_info.get('content', ''))
 
         return res
 
     def mock_requests(self):
-
-        if self.old_requests_request is not None:
-            return
 
         def request_mock(method, url, *args, **kwargs):
             res_info = self(method.upper(), url, *args, **kwargs)
@@ -283,20 +291,11 @@ class FakeNetwork(object):
             res_info = self('POST', url, *args, **kwargs)
             return self._prepare_response(res_info, url)
 
-        self.old_requests_request = requests.request
-        requests.request = request_mock
-        self.old_requests_get = requests.get
-        requests.get = get_mock
-        self.old_requests_post = requests.post
-        requests.post = post_mock
+        self.patcher = mock.patch.multiple('requests', get=get_mock, post=post_mock, request=request_mock)
+        self.patcher.start()
 
     def unmock_requests(self):
-        requests.request = self.old_requests_request
-        requests.get = self.old_requests_get
-        requests.post = self.old_requests_post
-        self.old_requests_request = None
-        self.old_requests_get = None
-        self.old_requests_post = None
+        self.patcher.stop()
 
 
 def prepare_temporal_resource_directories(cls):

@@ -233,6 +233,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         popup = source.show_preferences()
         setts_btn = popup.get_entry("Settings")
         ActionChains(self.driver).move_to_element(setts_btn).perform()
+        time.sleep(0.3)  # wait entry to be highlighted
         imgp = take_capture(self.driver, prepath="wiring", name='ngsisource_settings')
         box = create_box(popup.element, 40)
         box = (box[0] - 120 * DENSITY_FACTOR, box[1], box[2], box[3])
@@ -336,6 +337,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             popup_menu = marketplace.open_menu()
             m_menu = popup_menu.get_entry('FIWARE Lab')
             ActionChains(self.driver).move_to_element(m_menu).perform()
+            time.sleep(0.3)  # wait entry to be highlighted
             imgp = take_capture(self.driver, "marketplace_dropdown")
             add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
             crop_down(imgp, popup_menu.element, 80)
@@ -343,6 +345,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             # Add marketplace
             m_menu = popup_menu.get_entry('Add new marketplace')
             ActionChains(self.driver).move_to_element(m_menu).perform()
+            time.sleep(0.3)  # wait entry to be highlighted
             imgp = take_capture(self.driver, 'add_new_marketplace_entry')
             add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
             crop_down(imgp, popup_menu.element, 80)
@@ -637,6 +640,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 # Add map iwidget
                 mapsercvcomp = sidebar.add_component("widget", "CoNWeT/map-viewer", id=map_viewer_widget.id, x=500, y=10)
                 mapservc = mapsercvcomp.element
+                component_group = sidebar.find_component_group("widget", "CoNWeT/map-viewer")
+                self.driver.execute_script("return arguments[0].scrollIntoView();", component_group.element)
+                time.sleep(0.5)
                 imgp = take_capture(self.driver, 'wiring_after_adding_mapviewer')
                 add_pointer(imgp, get_position(mapservc, 0.5, 0.15), False)
                 crop_down(imgp, mapservc, 10)
@@ -1169,5 +1175,5 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, "weather_dashboard")
 
         import ipdb; ipdb.sset_trace()
-        imgp = take_capture(self.driver, "example usage")
+        imgp = take_capture(self.driver, "example_usage")
     test_sanity_check.tags = tags + ('wirecloud-guide-sanity-check',)
