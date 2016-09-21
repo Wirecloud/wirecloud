@@ -1,14 +1,14 @@
 # Spanish/Spain translation of WireCloud.
-# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
-# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 0.8\n"
+"Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-31 13:04+0200\n"
-"PO-Revision-Date: 2016-03-31 13:06+0200\n"
+"POT-Creation-Date: 2016-09-21 01:43+0200\n"
+"PO-Revision-Date: 2016-09-21 01:45+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.9\n"
 
-#: static/js/NGSI/NGSIManager.js:105
+#: static/js/NGSI/NGSIManager.js:106
 msgid "Error connecting to the WireCloud's proxy"
 msgstr "Error conectando con el proxy de WireCloud"
 
-#: static/js/NGSI/NGSIManager.js:110
+#: static/js/NGSI/NGSIManager.js:111
 msgid ""
 "You aren't allowed to use the WireCloud's proxy. Have you signed off from "
 "WireCloud?"
@@ -30,34 +30,32 @@ msgstr ""
 "No tienes permisos para usar el proxy de WireCloud. ¿Has cerrado la sesión "
 "con WireCloud?"
 
-#: static/js/NGSI/NGSIManager.js:118
+#: static/js/NGSI/NGSIManager.js:119
 msgid "Unexpected response from WireCloud's proxy"
 msgstr "Respuesta inesperada del proxy de WireCloud"
 
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:40
+#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:41
 msgid "All stores"
 msgstr "Todas las tiendas"
 
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:58
-#: static/js/wirecloud/FiWare/StoreView.js:32
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:38
-msgid "Importing offering resources into local repository"
-msgstr "Importando los recursos de la oferta al repositorio local"
+#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:57
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:37
+msgid "Importing offering components into local repository"
+msgstr "Importando los componentes de la oferta al repositorio local"
 
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:265
+#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:251
 msgid "loading..."
 msgstr "cargando..."
 
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:285
+#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:271
 msgid "list not available"
 msgstr "lista no disponible"
 
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:366
-#: static/js/wirecloud/FiWare/StoreView.js:188
+#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:352
 msgid "Buying %(offering)s"
 msgstr "Comprando %(offering)s"
 
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:368
+#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:354
 msgid ""
 "The buying process will continue in a separate window. This window will be "
 "controled by the store where the offering is hosted. After finishing the "
@@ -67,123 +65,97 @@ msgstr ""
 "bajo el control de la tienda de la oferta. Después de que termine el proceso "
 "de compra, el control volverá a WireCloud."
 
-#: static/js/wirecloud/FiWare/Marketplace.js:93
+#: static/js/wirecloud/FiWare/Marketplace.js:95
 msgid "Retrieving offering info"
 msgstr "Obteniendo información de la oferta"
 
-#: static/js/wirecloud/FiWare/Marketplace.js:108
+#: static/js/wirecloud/FiWare/Marketplace.js:113
 msgid "Error retrieving offering info: %(errorMsg)s."
 msgstr "Error obtenido la información de la oferta: %(errorMsg)s."
 
-#: static/js/wirecloud/FiWare/Offering.js:180
+#: static/js/wirecloud/FiWare/Offering.js:183
 msgid "Installing \"%(resource_name)s\" from the offering"
 msgstr "Instalando \"%(resource_name)s\" desde la oferta"
 
-#: static/js/wirecloud/FiWare/Store.js:96
-msgid "Error deleting resource: %(errorMsg)s."
-msgstr "Error eliminando el recurso: %(errorMsg)s."
-
-#: static/js/wirecloud/FiWare/StoreView.js:190
-msgid ""
-"The buying process will continue in a separate window. This window will be "
-"controled by the store where the offering is hosted. After finishing the "
-"buying process, the control will return to Wirecloud."
-msgstr ""
-"El proceso de compra continuará en una ventana separada. Esta ventana estará "
-"bajo el control de la tienda de la oferta. Después de que termine el proceso "
-"de compra, el control volverá a Wirecloud."
-
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:49
+#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:50
 msgid "Main Info"
 msgstr "General"
 
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:52
+#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:53
 msgid "Legal"
 msgstr "Legal"
 
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:56
+#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:57
 msgid "Pricing"
 msgstr "Precios"
 
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:60
+#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:61
 msgid "Service level agreement"
 msgstr "Acuerdo de nivel de servicio"
 
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:65
+#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:66
 msgid "Resources"
 msgstr "Recursos"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:58
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:55
 msgid "Uninstalling offering resources"
 msgstr "Desinstalando los recursos de la oferta"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:154
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:151
 msgid "N/A"
 msgstr "N/A"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:222
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:219
 msgid "Free"
 msgstr "Gratis"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:226
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:223
 msgid "Purchase"
 msgstr "Comprar"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:234
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:150
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:231
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:142
 msgid "Install"
 msgstr "Instalar"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:237
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:146
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:234
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:138
 msgid "Uninstall"
 msgstr "Desinstalar"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:241
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:181
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:238
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:173
 msgid "Details"
 msgstr "Detalles"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:318
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:315
 msgid "No image available"
 msgstr "Imagen no disponible"
 
 #: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:38
-msgid "Importing resource into local repository"
-msgstr "Importando el recurso al repositorio local"
+msgid "Importing component into local repository"
+msgstr "Importando el componente al repositorio local"
 
 #: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:39
-msgid "Uploading resource"
-msgstr "Subiendo el recurso"
+msgid "Uploading component"
+msgstr "Subiendo el componente"
 
 #: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:43
-msgid "Resource installed successfully"
-msgstr "Recurso instalado correctamente"
+msgid "Component installed successfully"
+msgstr "Componente instalado correctamente"
 
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:69
-msgid "Uninstalling resource from local repository"
-msgstr "Desinstalando el recurso del repositorio local"
-
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:70
-msgid "Uninstalling resource"
-msgstr "Desinstalando el recurso"
-
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:74
-msgid "Resource uninstalled successfully"
-msgstr "Recurso desinstalado correctamente"
-
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:99
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:91
 msgid "Name"
 msgstr "Nombre"
 
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:110
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:102
 msgid "missing WireCloud metadata"
 msgstr "faltan los metadatos de WireCloud"
 
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:136
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:128
 msgid "Actions"
 msgstr "Acciones"
 
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:191
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:183
 msgid "Download"
 msgstr "Descargar"

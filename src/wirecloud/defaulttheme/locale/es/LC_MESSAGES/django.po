@@ -1,14 +1,14 @@
 # Spanish/Spain translation of WireCloud.
-# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
-# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 0.8\n"
+"Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-26 18:53+0200\n"
-"PO-Revision-Date: 2016-04-26 18:59+0200\n"
+"POT-Creation-Date: 2016-09-21 01:37+0200\n"
+"PO-Revision-Date: 2016-09-21 01:42+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.9\n"
 
 #: __init__.py:23
 msgid "Basic"
@@ -151,6 +151,22 @@ msgstr "Tamaño"
 msgid "Advanced operations"
 msgstr "Operaciones avanzadas"
 
+#: templates/wirecloud/catalogue/modals/upload.html:6
+msgid ""
+"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
+"upload it to the catalogue by means of this dialog."
+msgstr ""
+"¿Tienes un widget, un operador o un mashap empaquetado en un fichero wgt? "
+"Entonces puedes subirlo al catalogo haciendo uso de esta ventana."
+
+#: templates/wirecloud/catalogue/modals/upload.html:8
+msgid "Drag files here"
+msgstr "Arrastra los ficheros aquí"
+
+#: templates/wirecloud/catalogue/modals/upload.html:9
+msgid "- or -"
+msgstr "- ó -"
+
 #: templates/wirecloud/catalogue/order_by_template.html:3
 msgid "Popularity"
 msgstr "Popularidad"
@@ -164,19 +180,19 @@ msgid "Short name"
 msgstr "Nombre"
 
 #: templates/wirecloud/catalogue/order_by_template.html:6
-#: templates/wirecloud/catalogue/resource_details.html:18
+#: templates/wirecloud/catalogue/resource_details.html:16
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: templates/wirecloud/catalogue/resource_details.html:20
+#: templates/wirecloud/catalogue/resource_details.html:18
 msgid "Version"
 msgstr "Versión"
 
-#: templates/wirecloud/catalogue/resource_details.html:22
+#: templates/wirecloud/catalogue/resource_details.html:20
 msgid "License"
 msgstr "Licencia"
 
-#: templates/wirecloud/catalogue/resource_details.html:24
+#: templates/wirecloud/catalogue/resource_details.html:22
 msgid "Last Updated"
 msgstr "Última actualización"
 
@@ -188,21 +204,9 @@ msgstr "Términos:"
 msgid "Type:"
 msgstr "Tipo:"
 
-#: templates/wirecloud/catalogue/upload_dialog.html:6
-msgid ""
-"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
-"upload it to the catalogue by means of this dialog."
-msgstr ""
-"¿Tienes un widget, un operador o un mashap empaquetado en un fichero wgt? "
-"Entonces puedes subirlo al catalogo haciendo uso de esta ventana."
-
-#: templates/wirecloud/catalogue/upload_dialog.html:8
-msgid "Drag files here"
-msgstr "Arrastra los ficheros aquí"
-
-#: templates/wirecloud/catalogue/upload_dialog.html:9
-msgid "- or -"
-msgstr "- ó -"
+#: templates/wirecloud/component_sidebar.html:8
+msgid "Components"
+msgstr "Componentes"
 
 #: templates/wirecloud/landing_page.html:3
 msgid "WireCloud · Build application mashups"
@@ -289,19 +293,27 @@ msgstr "Soporte para Linked-USDL"
 msgid "Full integration with FIWARE's:"
 msgstr "Integración con FIWARE's:"
 
-#: templates/wirecloud/ui/embed_code_dialog.html:2
+#: templates/wirecloud/logs/details.html:2
+msgid "Exception details"
+msgstr "Detalles de la excepción"
+
+#: templates/wirecloud/logs/details.html:4
+msgid "Stacktrace"
+msgstr "Stacktrace"
+
+#: templates/wirecloud/modals/embed_code.html:2
 msgid "Theme"
 msgstr "Estilo"
 
-#: templates/wirecloud/ui/upgrade_window_menu.html:3
+#: templates/wirecloud/modals/upgrade_downgrade_component.html:2
 msgid "Current version"
 msgstr "Versión actual"
 
-#: templates/wirecloud/ui/upgrade_window_menu.html:3
+#: templates/wirecloud/modals/upgrade_downgrade_component.html:2
 msgid "New version"
 msgstr "Nueva versión"
 
-#: templates/wirecloud/ui/upgrade_window_menu.html:4
+#: templates/wirecloud/modals/upgrade_downgrade_component.html:3
 msgid "Change Log"
 msgstr "Registro de cambios"
 
@@ -321,39 +333,39 @@ msgstr "Iniciando WireCloud"
 msgid "Retrieving WireCloud code"
 msgstr "Obteniendo el código de WireCloud"
 
-#: templates/wirecloud/views/smartphone.html:38
-msgid "Catalogue"
-msgstr "Catálogo"
-
-#: templates/wirecloud/views/smartphone.html:47
-msgid "Mashup Info"
-msgstr "Información del Mashup"
-
 #: templates/wirecloud/wiring/behaviour_sidebar.html:6
 msgid "Behaviours"
 msgstr "Comportamientos"
 
-#: templates/wirecloud/wiring/component_sidebar.html:10
-msgid "Components"
-msgstr "Componentes"
-
-#: templates/wirecloud/wiring/wiring_footer.html:7
+#: templates/wirecloud/wiring/footer.html:8
 msgid "Connections"
 msgstr "Conexiones"
 
-#: templates/wirecloud/wiring/wiring_footer.html:10
+#: templates/wirecloud/wiring/footer.html:11
 msgid "Operators"
 msgstr "Operadores"
 
-#: templates/wirecloud/wiring/wiring_footer.html:13
+#: templates/wirecloud/wiring/footer.html:14
 msgid "Widgets"
 msgstr "Widgets"
 
-#: templates/wirecloud/workspace/missing_widget.html:10
+#: templates/wirecloud/workspace/empty_tab_message.html:4
+msgid "Hey! This tab is empty"
+msgstr "Hola! Esta pestaña está vacía"
+
+#: templates/wirecloud/workspace/empty_tab_message.html:5
+msgid ""
+"Add some widgets using the add widget button (<t:button/>) available on the "
+"top right part of the workspace view."
+msgstr ""
+"Agrega algunos widgets usando el botón de añadir widget (<t:button/>) en la "
+"parte superior derecha del entorno de trabajo."
+
+#: templates/wirecloud/workspace/missing_widget.html:11
 msgid "Missing widget"
 msgstr "Widget ausente"
 
-#: templates/wirecloud/workspace/missing_widget.html:11
+#: templates/wirecloud/workspace/missing_widget.html:12
 msgid ""
 "This widget is currently not available. Probably you or an administrator "
 "uninstalled it."
@@ -361,7 +373,7 @@ msgstr ""
 "Este widget no está actualmente disponible. Probablemente lo has "
 "desinstalado (o un administrador)."
 
-#: templates/wirecloud/workspace/missing_widget.html:12
+#: templates/wirecloud/workspace/missing_widget.html:13
 msgid ""
 "<h5>Suggestions:</h5>\n"
 "            <ul>\n"

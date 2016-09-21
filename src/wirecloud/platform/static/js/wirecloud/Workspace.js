@@ -337,7 +337,7 @@
             }
 
             if (!("mashup" in options) && !("workspace" in options)) {
-                throw new TypeError('One of the following options must be provided: workspace or mashup');
+                throw new TypeError('one of the following options must be provided: workspace or mashup');
             } else if ("mashup" in options && "workspace" in options) {
                 throw new TypeError('workspace and mashup options cannot be used at the same time');
             }
@@ -409,7 +409,7 @@
         rename: function rename(name) {
 
             if (typeof name !== 'string' || !name.trim().length) {
-                throw new TypeError(utils.gettext("The argument `name` is not valid."));
+                throw new TypeError("invalid name parameter");
             }
 
             return new Promise(function (resolve, reject) {

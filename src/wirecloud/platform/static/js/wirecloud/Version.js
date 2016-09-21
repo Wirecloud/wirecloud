@@ -33,7 +33,7 @@
         if (typeof version == 'string') {
             groups = version.match(VERSION_RE);
             if (groups == null) {
-                msg = utils.gettext("%(version)s is not a valid version");
+                msg = "%(version)s is not a valid version";
                 throw new TypeError(utils.interpolate(msg, {version: version}));
             }
             this.array = groups[1].split('.').map(function (x) { return parseInt(x, 10); });
@@ -46,7 +46,7 @@
             this.dev = false;
             this.text = version.join('.');
         } else {
-            throw new TypeError(utils.gettext("missing or invalid version parameter"));
+            throw new TypeError("missing or invalid version parameter");
         }
         this.source = source;
         Object.freeze(this);
@@ -60,7 +60,7 @@
             try {
                 version = new Version(version);
             } catch (e) {
-                throw new TypeError(utils.gettext("invalid version parameter"));
+                throw new TypeError("invalid version parameter");
             }
         }
 

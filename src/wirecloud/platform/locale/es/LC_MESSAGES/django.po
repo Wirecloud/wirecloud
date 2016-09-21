@@ -1,14 +1,14 @@
 # Spanish/Spain translation of WireCloud.
-# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
-# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 0.8\n"
+"Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-26 18:54+0200\n"
-"PO-Revision-Date: 2016-04-26 19:05+0200\n"
+"POT-Creation-Date: 2016-09-21 01:47+0200\n"
+"PO-Revision-Date: 2016-09-21 01:50+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.9\n"
 
 #: admin.py:78
 msgid "Edit"
@@ -52,63 +52,63 @@ msgstr "equipo"
 msgid "teams"
 msgstr "equipos"
 
-#: core/plugins.py:247
+#: core/plugins.py:255
 msgid "Language"
 msgstr "Idioma"
 
-#: core/plugins.py:248
+#: core/plugins.py:256
 msgid "Current language used in the platform"
 msgstr "Idioma actualmente utilizado en la plataforma"
 
-#: core/plugins.py:251
+#: core/plugins.py:259
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: core/plugins.py:252
+#: core/plugins.py:260
 msgid "User name of the current logged user"
 msgstr "Nombre de usuario del usuario actual"
 
-#: core/plugins.py:255
+#: core/plugins.py:263
 msgid "Full name"
 msgstr "Nombre completo"
 
-#: core/plugins.py:256
+#: core/plugins.py:264
 msgid "Full name of the logged user"
 msgstr "Nombre completo del usuario actual"
 
-#: core/plugins.py:259
+#: core/plugins.py:267
 msgid "Is Anonymous"
 msgstr "Es anónimo"
 
-#: core/plugins.py:260
+#: core/plugins.py:268
 msgid "Boolean. Designates whether current user is logged in the system."
 msgstr ""
 "Boleano. Indica cuando hay un usuario registrado actualmente en el sistema."
 
-#: core/plugins.py:263
+#: core/plugins.py:271
 msgid "Is Staff"
 msgstr "Es personal"
 
-#: core/plugins.py:264
+#: core/plugins.py:272
 msgid "Boolean. Designates whether current user can access the admin site."
 msgstr ""
 "Boleano. Indica cuando el usuario actual puede acceder al panel de "
 "administración."
 
-#: core/plugins.py:267
+#: core/plugins.py:275
 msgid "Is Superuser"
 msgstr "Es superusuario"
 
-#: core/plugins.py:268
+#: core/plugins.py:276
 msgid "Boolean. Designates whether current user is a super user."
 msgstr ""
 "Booleano. Indica cuando el usuario actualmente registrado es un super usuario"
 
-#: core/plugins.py:271
+#: core/plugins.py:279
 msgid "Mode"
 msgstr "Modo"
 
-#: core/plugins.py:272
+#: core/plugins.py:280
 msgid ""
 "Rendering mode used by the platform (available modes: classic, smartphone "
 "and embedded)"
@@ -116,35 +116,35 @@ msgstr ""
 "Modo de funcionamiento usado por la plataforma (modos disponibles: classic, "
 "smartphone y embedded)"
 
-#: core/plugins.py:275
+#: core/plugins.py:283
 msgid "Orientation"
 msgstr "Orientación"
 
-#: core/plugins.py:276
+#: core/plugins.py:284
 msgid "Current screen orientation"
 msgstr "Orientación actual de la plataforma"
 
-#: core/plugins.py:279
+#: core/plugins.py:287
 msgid "Theme"
 msgstr "Estilo"
 
-#: core/plugins.py:280
+#: core/plugins.py:288
 msgid "Name of the theme used by the platform"
 msgstr "Nombre del estilo usado por la plataforma"
 
-#: core/plugins.py:283 core/plugins.py:287
+#: core/plugins.py:291 core/plugins.py:295
 msgid "Version"
 msgstr "Versión"
 
-#: core/plugins.py:284 core/plugins.py:288
+#: core/plugins.py:292 core/plugins.py:296
 msgid "Version of the platform"
 msgstr "Versión de la plataforma"
 
-#: core/plugins.py:291
+#: core/plugins.py:299
 msgid "Version Hash"
 msgstr "Hash de la versión"
 
-#: core/plugins.py:292
+#: core/plugins.py:300
 msgid ""
 "Hash for the current version of the platform. This hash changes when the "
 "platform is updated or when an addon is added or removed"
@@ -152,33 +152,33 @@ msgstr ""
 "Hash asignado a la versión actual de la plataforma. Este bash cambia cuando "
 "la plataforma se actualiza o cuando un adán es activado o desactivado."
 
-#: core/plugins.py:304
+#: core/plugins.py:310
 msgid "Anonymous"
 msgstr "Anónimo"
 
-#: core/plugins.py:323 iwidget/models.py:33 markets/models.py:31
+#: core/plugins.py:329 iwidget/models.py:33 markets/models.py:31
 #: markets/models.py:51 preferences/models.py:39 preferences/models.py:54
-#: preferences/models.py:70 workspace/models.py:41 workspace/models.py:106
+#: preferences/models.py:70 workspace/models.py:41 workspace/models.py:107
 msgid "Name"
 msgstr "Nombre"
 
-#: core/plugins.py:324
+#: core/plugins.py:330
 msgid "Current name of the workspace"
 msgstr "Nombre actual del entorno de trabajo"
 
-#: core/plugins.py:327
+#: core/plugins.py:333
 msgid "Owner"
 msgstr "Dueño"
 
-#: core/plugins.py:328
+#: core/plugins.py:334
 msgid "Workspace's owner username"
 msgstr "Nombre de usuario del dueño del entorno de trabajo"
 
-#: core/plugins.py:343
+#: core/plugins.py:349
 msgid "Public"
 msgstr "Público"
 
-#: core/plugins.py:346
+#: core/plugins.py:352
 msgid ""
 "Allow any user to open this workspace (in read-only mode). (default: "
 "disabled)"
@@ -186,33 +186,33 @@ msgstr ""
 "Permite a cualquier usuario acceder a este entorno de trabajo (en modo de "
 "solo lectura). (valor por defecto: deshabilitado) "
 
-#: core/plugins.py:351
+#: core/plugins.py:357
 msgid "Share list"
 msgstr "Lista de compartidos"
 
-#: core/plugins.py:354
+#: core/plugins.py:360
 msgid "List of users with access to this workspace. (default: [])"
 msgstr ""
 "Lista de usuarios con acceso a este entorno de trabajo. (valor por defecto: "
 "[])"
 
-#: core/plugins.py:359
+#: core/plugins.py:365
 msgid "Default layout"
 msgstr "Esquema por defecto"
 
-#: core/plugins.py:362
+#: core/plugins.py:368
 msgid "Base"
 msgstr "Base"
 
-#: core/plugins.py:363
+#: core/plugins.py:369
 msgid "Free"
 msgstr "Libre"
 
-#: core/plugins.py:365
+#: core/plugins.py:371
 msgid "Default layout for the new widgets."
 msgstr "Distribución por defecto para los nuevos widgets."
 
-#: core/plugins.py:377
+#: core/plugins.py:383
 msgid "Base layout"
 msgstr "Distribución base"
 
@@ -224,7 +224,7 @@ msgstr "Widget"
 msgid "Widget URI"
 msgstr "Widget URI"
 
-#: iwidget/models.py:34 workspace/utils.py:470 workspace/views.py:66
+#: iwidget/models.py:34 workspace/utils.py:449 workspace/views.py:60
 msgid "Tab"
 msgstr "Pestaña"
 
@@ -260,7 +260,7 @@ msgstr "Valor inválido para el campo %(field)s"
 msgid "%(uri)s is not a widget"
 msgstr "%(uri)s no es un widget"
 
-#: iwidget/views.py:42 workspace/views.py:194
+#: iwidget/views.py:42 workspace/views.py:182 workspace/views.py:293
 msgid "You don't have permission to access this workspace"
 msgstr "No tienes permisos para acceder a este entorno de trabajo"
 
@@ -328,40 +328,45 @@ msgstr ""
 msgid "Invalid persistent variable: \"%s\""
 msgstr "Variable persistente inválida: \"%s\""
 
-#: localcatalogue/views.py:80
+#: localcatalogue/views.py:81
 msgid "Missing component file in the request"
 msgstr "Falta el fichero del componente en la petición"
 
-#: localcatalogue/views.py:86 localcatalogue/views.py:94
+#: localcatalogue/views.py:87 localcatalogue/views.py:95
 msgid "The uploaded file is not a zip file"
 msgstr "El fichero subido no es un fichero zip"
 
-#: localcatalogue/views.py:112
+#: localcatalogue/views.py:115
 msgid "Missing market name"
 msgstr "Falta el nombre del marketplace"
 
-#: localcatalogue/views.py:118
+#: localcatalogue/views.py:121
 #, python-format
 msgid "Unknown market: %s"
 msgstr "Marketplace desconocido: %s"
 
-#: localcatalogue/views.py:128
+#: localcatalogue/views.py:131
 msgid "Content cannot be downloaded from the specified url"
 msgstr "El contenido no pudo ser descargado desde la URL especificada"
 
-#: localcatalogue/views.py:136
+#: localcatalogue/views.py:139
 msgid "The file downloaded from the marketplace is not a zip file"
 msgstr "El fichero descargado desde el marketplace no es un fichero zip"
 
-#: localcatalogue/views.py:143
+#: localcatalogue/views.py:142
+msgid "You are not allowed to make resources publicly available to all users"
+msgstr ""
+"No tienes permisos para hacer disponibles los recursos a todos los usuarios"
+
+#: localcatalogue/views.py:149
 msgid "Resource already exists"
 msgstr "El recurso ya existía"
 
-#: localcatalogue/views.py:149
+#: localcatalogue/views.py:158
 msgid "The uploaded file is not a valid zip file"
 msgstr "El fichero subido no es un fichero zip valido"
 
-#: localcatalogue/views.py:154
+#: localcatalogue/views.py:163
 msgid ""
 "Error writing the resource into the filesystem. Please, contact the server "
 "administrator."
@@ -369,13 +374,17 @@ msgstr ""
 "Error escribiendo el recurso en el sistema de ficheros. Por favor, contacte "
 "con el administrador del servidor."
 
-#: localcatalogue/views.py:200
+#: localcatalogue/views.py:212
 msgid "You are not allowed to retrieve info about this resource"
 msgstr "No tienes permisos para obtener la información sobre este recurso"
 
-#: localcatalogue/views.py:263
+#: localcatalogue/views.py:275
 msgid "You don't have access to this workspace"
 msgstr "No tienes acceso a este entorno de trabajo"
+
+#: management/commands/populate.py:42
+msgid "Wrong number of arguments"
+msgstr "Número de argumentos incorrecto"
 
 #: markets/models.py:30 markets/models.py:50
 msgid "User"
@@ -414,8 +423,8 @@ msgid "You are not allowed to read this workspace"
 msgstr "No tienes permisos para leer este entorno de trabajo"
 
 #: preferences/views.py:235 preferences/views.py:288 wiring/views.py:44
-#: workspace/views.py:209 workspace/views.py:313 workspace/views.py:317
-#: workspace/views.py:388
+#: workspace/views.py:198 workspace/views.py:305 workspace/views.py:309
+#: workspace/views.py:380
 msgid "You are not allowed to update this workspace"
 msgstr "No tienes permisos para actualizar este entorno de trabajo"
 
@@ -447,11 +456,15 @@ msgstr "Utiliza el estilo de la plataforma"
 msgid "Cacheable"
 msgstr "Cacheable"
 
-#: widget/views.py:101
-msgid "(X)HTML code is not accessible"
-msgstr "El código (X)HTML no está accesible"
+#: widget/views.py:81
+msgid "Widget code not found"
+msgstr "No se ha podido encontrar el código del widget"
 
-#: widget/views.py:110 widget/views.py:123
+#: widget/views.py:83
+msgid "Error reading widget code"
+msgstr "Error procesando el código del widget"
+
+#: widget/views.py:92 widget/views.py:101
 #, python-format
 msgid ""
 "Widget code was not encoded using the specified charset (%(charset)s as "
@@ -460,7 +473,7 @@ msgstr ""
 "El código del widget no ha sido codificado usando el juego de caracteres "
 "indicado (%(charset)s según el descripto del widget)."
 
-#: widget/views.py:126
+#: widget/views.py:104
 msgid "Error processing widget code"
 msgstr "Error procesando el código del widget"
 
@@ -540,19 +553,15 @@ msgstr "Descripción"
 msgid "Long description"
 msgstr "Descripción larga"
 
-#: workspace/models.py:91
-msgid "Active"
-msgstr "Activo"
-
-#: workspace/models.py:92
+#: workspace/models.py:93
 msgid "Manager"
 msgstr "Gestor"
 
-#: workspace/models.py:93
+#: workspace/models.py:94
 msgid "Reason Ref"
 msgstr "Ref.  de razón"
 
-#: workspace/models.py:93
+#: workspace/models.py:94
 msgid ""
 "Reference to the reason why it was added. Used by Workspace Managers to sync "
 "workspaces"
@@ -560,104 +569,104 @@ msgstr ""
 "Referencia a la razón por la que fue añadido. Este campo es usado por los "
 "gestores de entornos de trabajo para sincronizar los entornos de trabajo"
 
-#: workspace/models.py:107
+#: workspace/models.py:108
 msgid "Visible"
 msgstr "Visible"
 
-#: workspace/models.py:109
+#: workspace/models.py:110
 msgid "Workspace"
 msgstr "Entorno de trabajo"
 
-#: workspace/views.py:104
+#: workspace/views.py:92
 msgid "Missing name parameter"
 msgstr "Falta el parámetro name"
 
-#: workspace/views.py:106 workspace/views.py:398
+#: workspace/views.py:94 workspace/views.py:390
 msgid "Workspace and mashup parameters cannot be used at the same time"
 msgstr "No se pueden usar los parámetros workspace y mashup al mismo tiempo"
 
-#: workspace/views.py:111
+#: workspace/views.py:99
 msgid "invalid workspace name"
 msgstr "nombre de entorno de trabajo inválido"
 
-#: workspace/views.py:119 workspace/views.py:174
+#: workspace/views.py:107 workspace/views.py:162
 msgid "A workspace with the given name already exists"
 msgstr "Ya existe un entorno de trabajo con el nombre indicado."
 
-#: workspace/views.py:126 workspace/views.py:403
+#: workspace/views.py:114 workspace/views.py:395
 msgid "invalid mashup id"
 msgstr "identificador de mashup inválido"
 
-#: workspace/views.py:134 workspace/views.py:411
+#: workspace/views.py:122 workspace/views.py:403
 #, python-format
 msgid "Mashup not found: %(mashup_id)s"
 msgstr "Mashup no encontrado: %(mashup_id)s"
 
-#: workspace/views.py:144 workspace/views.py:421
+#: workspace/views.py:132 workspace/views.py:413
 #, python-format
 msgid "You are not allowed to read from workspace %s"
 msgstr "No tienes permisos para leer desde el entorno de trabajo %s"
 
-#: workspace/views.py:238
+#: workspace/views.py:222
 msgid "You are not allowed to delete this workspace"
 msgstr "No tienes permisos para borrar este entorno de trabajo"
 
-#: workspace/views.py:264
+#: workspace/views.py:248
 msgid "Malformed tab JSON: expecting tab name."
 msgstr "JSON mal formado: se esperaba el nombre de la pestaña."
 
-#: workspace/views.py:268 workspace/views.py:291
+#: workspace/views.py:252 workspace/views.py:272
 msgid "You are not allowed to create new tabs for this workspace"
 msgstr ""
 "No tienes permisos para crear nuevas pestañas para este entorno de trabajo"
 
-#: workspace/views.py:273
+#: workspace/views.py:257
 msgid "A tab with the given name already exists for the workspace"
 msgstr ""
 "Una pestaña con el nombre indicado ya existe para el entorno de trabajo"
 
-#: workspace/views.py:326 workspace/views.py:329
+#: workspace/views.py:318 workspace/views.py:321
 msgid "Invalid visible value"
 msgstr "Valor de visibilidad inválido"
 
-#: workspace/views.py:351
+#: workspace/views.py:343
 msgid "You are not allowed to remove this tab"
 msgstr "No tienes permiso para eliminar esta pestaña"
 
-#: workspace/views.py:355
+#: workspace/views.py:347
 msgid "Tab cannot be deleted as workspaces need at least one tab"
 msgstr ""
 "La pestaña no se puede borra dado que el entorno de trabajo necesita como "
 "mínimo una pestaña"
 
-#: workspace/views.py:359
+#: workspace/views.py:351
 msgid "Tab cannot be deleted as it contains widgets that cannot be deleted"
 msgstr ""
 "La pestaña no se puede borrar ya que contiene widgets que no pueden ser "
 "borrados"
 
-#: workspace/views.py:396
+#: workspace/views.py:388
 msgid "Missing workspace or mashup parameter"
 msgstr "Falta o el parámetro workspace o el parámetro mashup"
 
-#: workspace/views.py:480
+#: workspace/views.py:472
 #, python-format
 msgid "malformed json data: %s"
 msgstr "datos json malformados: %s"
 
-#: workspace/views.py:485
+#: workspace/views.py:477
 #, python-format
 msgid "Malformed JSON. The following field(s) are missing: %(fields)s."
 msgstr "JSON mal formado. Faltan los siguientes campos: %(fields)s."
 
-#: workspace/views.py:488
+#: workspace/views.py:480
 msgid "Invalid vendor"
 msgstr "Distribuidor inválido"
 
-#: workspace/views.py:491
+#: workspace/views.py:483
 msgid "Invalid name"
 msgstr "Nombre inválido"
 
-#: workspace/views.py:494
+#: workspace/views.py:486
 msgid "Invalid version number"
 msgstr "Número de versión inválido"

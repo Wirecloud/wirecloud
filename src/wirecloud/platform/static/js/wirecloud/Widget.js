@@ -379,7 +379,7 @@
             }
 
             if (!(name in this.permissions)) {
-                throw new TypeError(utils.gettext("The argument `name` is not valid."));
+                throw new TypeError("invalid name parameter");
             }
 
             return this.permissions[name];
@@ -423,7 +423,7 @@
                 Wirecloud.contextManager.addCallback(callback);
                 break;
             default:
-                throw new TypeError('invalid scope');
+                throw new TypeError('invalid scope parameter');
             }
 
             this.callbacks[scope].push(callback);
@@ -551,7 +551,7 @@
         upgrade: function upgrade(resource) {
 
             if (!is_valid_resource.call(this, resource)) {
-                throw new TypeError(utils.gettext("The argument `resource` is not valid."));
+                throw new TypeError("invalid resource parameter");
             }
 
             return new Promise(function (resolve, reject) {
@@ -688,7 +688,7 @@
     var clean_title = function clean_title(title) {
         /*jshint validthis:true */
         if (typeof title !== 'string' || !title.trim().length) {
-            throw new TypeError(utils.gettext("The argument `title` is not valid."));
+            throw new TypeError("invalid title parameter");
         }
 
         return title.trim();

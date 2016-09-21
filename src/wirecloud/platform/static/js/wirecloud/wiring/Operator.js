@@ -199,7 +199,7 @@
         isAllowed: function isAllowed(name) {
 
             if (!(name in this.permissions)) {
-                throw new TypeError(utils.gettext("The argument `name` is not valid."));
+                throw new TypeError("invalid name parameter");
             }
 
             return this.permissions[name];
@@ -290,7 +290,7 @@
         upgrade: function upgrade(resource) {
 
             if (!is_valid_resource.call(this, resource)) {
-                throw new TypeError(utils.gettext("The argument `resource` is not valid."));
+                throw new TypeError("invalid resource parameter");
             }
 
             return new Promise(function (resolve, reject) {

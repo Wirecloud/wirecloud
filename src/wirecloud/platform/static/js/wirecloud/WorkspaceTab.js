@@ -43,9 +43,12 @@
      * @param {Boolean} [data.initial]
      */
     ns.WorkspaceTab = function WorkspaceTab(workspace, data) {
-        se.ObjectWithEvents.call(this, events);
 
-        workspace = clean_workspace.call(this, workspace);
+        if (!(workspace instanceof Wirecloud.Workspace)) {
+            throw new TypeError("invalid workspace parameter");
+        }
+
+        se.ObjectWithEvents.call(this, events);
         data = clean_data.call(this, data);
 
         _private.set(this, {
@@ -188,7 +191,7 @@
                     return !widget.volatile && !widget.isAllowed('close');
                 });
             default:
-                throw new TypeError(utils.gettext("The argument `permission` is not valid."));
+                throw new TypeError("invalid permission parameter");
             }
         },
 
@@ -317,7 +320,7 @@
     var clean_name = function clean_name(name) {
         /*jshint validthis:true */
         if (typeof name !== 'string' || !name.trim().length) {
-            throw utils.gettext("Error updating a tab: invalid name");
+            throw utils.gettext("Error to update a tab: invalid name");
         }
 
         name = name.trim();
@@ -327,21 +330,12 @@
         }, this);
 
         if (already_taken) {
-            throw utils.interpolate(utils.gettext("Error updating a tab: the name %(name)s is already taken in this workspace"), {
+            throw utils.interpolate(utils.gettext("Error to update tab: the name %(name)s is already taken in this workspace"), {
                 name: name
             });
         }
 
         return name;
-    };
-
-    var clean_workspace = function clean_workspace(workspace) {
-
-        if (!(workspace instanceof Wirecloud.Workspace)) {
-            throw new TypeError(utils.gettext("The argument 'workspace' is not valid."));
-        }
-
-        return workspace;
     };
 
     var create_preferences = function create_preferences(preferences) {

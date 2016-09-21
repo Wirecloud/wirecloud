@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -88,7 +88,7 @@
     var UpgradeWindowMenu = function UpgradeWindowMenu(model) {
         var versions;
 
-        Wirecloud.ui.WindowMenu.call(this, utils.gettext("Versions available"), 'wc-upgrade-component-modal');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext("Available versions"), 'wc-upgrade-component-modal');
         this.model = model;
 
         // Get all available versions

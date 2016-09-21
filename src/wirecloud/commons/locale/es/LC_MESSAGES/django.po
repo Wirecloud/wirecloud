@@ -1,14 +1,14 @@
 # Spanish/Spain translation of WireCloud.
-# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
-# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 0.8\n"
+"Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-26 18:50+0200\n"
-"PO-Revision-Date: 2015-11-25 13:18+0100\n"
+"POT-Creation-Date: 2016-09-21 01:35+0200\n"
+"PO-Revision-Date: 2016-09-21 01:36+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,23 +16,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.9\n"
 
-#: authentication.py:45
+#: authentication.py:39
 msgid "Logged out"
 msgstr "Sesión cerrada"
 
-#: management/commands/resetsearchindexes.py:51
+#: management/commands/resetsearchindexes.py:43
 #, python-format
 msgid "Reseting \"%s\" index"
 msgstr "Reconstruyendo el índice \"%s\""
 
-#: management/commands/resetsearchindexes.py:52
+#: management/commands/resetsearchindexes.py:44
 #, python-format
 msgid "The \"%s\" index was updated successfully"
 msgstr "El índice \"%s\" ha sido actualizado correctamente"
 
-#: management/commands/resetsearchindexes.py:53
+#: management/commands/resetsearchindexes.py:45
 #, python-format
 msgid "The following indexes are not available: %s"
 msgstr "Los siguientes índices no están disponibles: %s"
@@ -105,7 +105,7 @@ msgstr ""
 "Error autorizando a la aplicación para que pueda acceder a WireCloud en tu "
 "nombre (%(username)s)."
 
-#: utils/downloader.py:49 utils/http.py:371
+#: utils/downloader.py:49 utils/http.py:367
 #, python-format
 msgid "Invalid schema: %(schema)s"
 msgstr "Esquema inválido: %(schema)s"
@@ -122,44 +122,44 @@ msgstr ""
 msgid "Unsupported request media type"
 msgstr "Tipo de contenido de la petición no soportado"
 
-#: utils/http.py:363 utils/http.py:374
+#: utils/http.py:359 utils/http.py:370
 #, python-format
 msgid "Missing required parameter: %(parameter)s"
 msgstr "Falta un campo obligatorio: %(parameter)s"
 
-#: utils/http.py:368
+#: utils/http.py:364
 #, python-format
 msgid "%(parameter)s must be an absolute URL"
 msgstr "%(parameter)s tiene que ser una URL absoluta"
 
-#: utils/http.py:377 utils/http.py:390
+#: utils/http.py:373 utils/http.py:386
 #, python-format
 msgid "Invalid %(parameter)s type"
 msgstr "Tipo inválido para el parámetro %(parameter)s"
 
-#: utils/http.py:386
+#: utils/http.py:382
 #, python-format
 msgid "Invalid %(parameter)s value"
 msgstr "Valor inválido para el parámetro %(parameter)s"
 
-#: utils/http.py:412
+#: utils/http.py:408
 #, python-format
 msgid "\"%(path)s\" does not exist"
 msgstr "\"%(path)s\" no existe"
 
-#: utils/http.py:435
+#: utils/http.py:431
 #, python-format
 msgid "malformed json data: %s"
 msgstr "JSON malformado: %s"
 
 #: utils/template/parsers/json.py:48
-msgid "Missing resource type."
-msgstr "Falta el tipo de recurso."
+msgid "Missing component type."
+msgstr "Falta el tipo de componente."
 
 #: utils/template/parsers/json.py:51
 #, python-format
-msgid "Invalid resource type: %s"
-msgstr "Tipo de recurso inválido: %s"
+msgid "Invalid component type: %s"
+msgstr "Tipo de componente inválido: %s"
 
 #: utils/template/parsers/json.py:312 utils/template/parsers/rdf.py:229
 msgid "The format of the vendor is invalid."
@@ -185,7 +185,7 @@ msgid "invalid content for field: %(field)s"
 msgstr "contenido inválido para el campo: %(field)s"
 
 #: utils/template/parsers/rdf.py:151 utils/template/parsers/rdf.py:174
-#: utils/template/parsers/xml.py:185
+#: utils/template/parsers/xml.py:190
 #, python-format
 msgid "missing required field: %(field)s"
 msgstr "falta el parámetro obligatorio: %(field)s"
@@ -210,7 +210,7 @@ msgstr "falta el campo obligatorio hasTargetEndpoint"
 msgid "Missing required field: Javascript files"
 msgstr "Falta el campo obligatorio: JavaScript files"
 
-#: utils/template/parsers/xml.py:605
+#: utils/template/parsers/xml.py:610
 #, python-format
 msgid ""
 "There isn't a translation element for the default translation language: "
@@ -219,14 +219,14 @@ msgstr ""
 "No hay un elemento translation para el idioma por defecto para las "
 "traducciones: (%(default_lang)s)"
 
-#: utils/template/parsers/xml.py:612
+#: utils/template/parsers/xml.py:617
 #, python-format
 msgid "The following translation indexes need a default value: %(indexes)s."
 msgstr ""
 "Los siguientes indices de traducción requieren un valor por defecto: "
 "%(indexes)s."
 
-#: utils/template/parsers/xml.py:616
+#: utils/template/parsers/xml.py:621
 #, python-format
 msgid "The following translation indexes are not used: %(indexes)s."
 msgstr "Los siguientes indices de traducción no están en uso: %(indexes)s."
@@ -252,6 +252,6 @@ msgstr ""
 msgid "Invalid search namespace: %s"
 msgstr "Espacio de nombres para la búsqueda inválido: %s"
 
-#: views.py:88
+#: views.py:89
 msgid "You don't have permission to switch current session user"
 msgstr "No tienes permisos para cambiar el usuario de la sesión actual"
