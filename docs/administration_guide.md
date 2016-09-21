@@ -200,10 +200,19 @@ To:
 
 ```
 
+> **NOTE**: If you plan to upgrade to Django 1.10, take into account that
+> there were some deprecations regarding the syntax of the `url.py` file. We
+> have updated the `urls.py` template in WireCloud 1.0 to support Django
+> 1.8-1.10 but if you created your WireCloud instance using an older version,
+> you will have to update it manually. You can find the current template at
+> [github](https://github.com/Wirecloud/wirecloud/blob/develop/src/wirecloud/commons/conf/platform_project_template/project_name/urls.py)
+
 WireCloud 1.0 has also added a search index for workspaces, you have to
-initialize it by running the `resetsearchindexes` command:
+initialize it by running the `resetsearchindexes` command. The db should be
+migrated before running this command.
 
 ```
+$ python manage.py migrate
 $ python manage.py resetsearchindexes
 ```
 
