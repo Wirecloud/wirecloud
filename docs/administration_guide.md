@@ -169,23 +169,9 @@ $ wirecloud-admin --version
 > 1.9.9
 > ```
 
-WireCloud 1.0 has added a search index for workspaces, you have to initialize it
-by running the `resetsearchindexes` command:
-
-```
-$ python manage.py resetsearchindexes
-```
-
-WireCloud 1.0 added some predefined dashboards, so you have to create them by
-running the following command:
-
-```
-$ python manage.py populate
-```
-
-WireCloud 1.0 has also changed some url definitions to remove some django
-warnings, so you should update your `urls.py` file. In particular, you have to
-change the following lines:
+WireCloud 1.0 has changed some url definitions to remove some django warnings,
+so you should update your `urls.py` file. In particular, you have to change the
+following lines:
 
 ```python
 ...
@@ -212,6 +198,20 @@ To:
 
 ...
 
+```
+
+WireCloud 1.0 has also added a search index for workspaces, you have to
+initialize it by running the `resetsearchindexes` command:
+
+```
+$ python manage.py resetsearchindexes
+```
+
+WireCloud 1.0 added some predefined dashboards, so you have to create them by
+running the following command:
+
+```
+$ python manage.py populate
 ```
 
 Also, WireCloud 1.0 provides support for real-time synchronization using web
