@@ -33,7 +33,6 @@ from django.template.base import Origin
 from django.utils._os import safe_join
 import pkg_resources
 from django.template.loaders.base import Loader
-import six
 
 
 CORE_THEMES = ('wirecloud.defaulttheme', 'wirecloud.fiwaretheme', 'wirecloud.fiwarelabtheme', 'wirecloud.fiwarelabdarktheme')
@@ -57,13 +56,6 @@ def get_available_themes(metadata=False):
         return [get_theme_metadata(theme) for theme in themes]
     else:
         return themes
-
-
-def active_theme_context_processor(request):  # pragma no cover
-    from wirecloud.platform.context_processors import active_theme
-    import warnings
-    warnings.warn('wirecloud.platform.themes.active_theme_context_processor has been deprecated. Please, use wirecloud.commons.context_processors.active_theme instead.', DeprecationWarning)
-    return active_theme(request)
 
 
 def get_theme_dir(theme, dir_type):
