@@ -88,6 +88,15 @@ var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/Popover.js'
 ];
 
+var wc_dependencies = [
+    'js_tests/wirecloud/bootstrap.js',
+];
+
+var WirecloudFiles = [
+    'wirecloud/platform/static/js/wirecloud/constants.js',
+    'wirecloud/platform/static/js/wirecloud/core.js',
+    'wirecloud/platform/static/js/wirecloud/LogManager.js',
+];
 
 module.exports = function (grunt) {
 
@@ -97,24 +106,34 @@ module.exports = function (grunt) {
 
         karma: {
             options: {
-                files: dependencies.concat(styledElementsFiles).concat(['js_tests/*Spec.js']),
                 frameworks: ['jasmine'],
                 reporters: ['progress', 'coverage'],
-                preprocessors: {
-                    "wirecloud/commons/static/js/StyledElements/*.js": ['coverage'],
-                },
-                coverageReporter: {
-                    type : 'html',
-                    dir : 'build/coverage/'
-                },
                 browsers: ['Chrome', 'Firefox'],
                 singleRun: true
             },
-            chrome: {
-                browsers: ['Chrome']
+            styledelements: {
+                options: {
+                    coverageReporter: {
+                        type : 'html',
+                        dir : 'build/coverage/styledelements'
+                    },
+                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/*Spec.js']),
+                    preprocessors: {
+                        "wirecloud/commons/static/js/StyledElements/*.js": ['coverage'],
+                    }
+                }
             },
-            firefox: {
-                browsers: ['Firefox']
+            wirecloud: {
+                options: {
+                    coverageReporter: {
+                        type : 'html',
+                        dir : 'build/coverage/wirecloud'
+                    },
+                    files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/*Spec.js']),
+                    preprocessors: {
+                        "wirecloud/platform/static/js/wirecloud/*.js": ['coverage'],
+                    }
+                }
             }
         },
 
