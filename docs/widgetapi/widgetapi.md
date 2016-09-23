@@ -14,13 +14,29 @@ Latest version:
 
 https://github.com/Wirecloud/wirecloud/tree/develop/docs/widgetapi/
 
+## Editors
+
+  + Álvaro Arranz, Universidad Politécnica de Madrid
+
+## Copyright
+
+Copyright © 2012-2016 by Universidad Politécnica de Madrid
+
+## License
+
+This specification is licensed under the [FIWARE Open Specification License (implicit patents license)](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29).
+
+----
+
+## Abstract
+
 The Application Mashup GE offers two separate APIs that cannot be combined
 because of their different nature: The Widget API (the subject of this
 document) is a JavaScript API, while the Application Mashup API is a
 RESTful one. You can find the Application Mashup RESTful API in the
 following link:
 
-http://docs.fiwareapplicationmashup.apiary.io/
+http://wirecloud.github.io/wirecloud/restapi/latest/
 
 The Widget API is a JavaScript API that allows widgets/operators to gain access
 to the functionalities provided by the Application Mashup GE (wiring,
@@ -31,16 +47,7 @@ in order to gain access to a remote REST API through the cross-domain proxy).
 This document also show some examples that can be tested using WireCloud, the
 reference implementation of the FIWARE Application Mashup GE.
 
-## Editors
-
-  + Álvaro Arranz, Universidad Politécnica de Madrid
-
-## Acknowledgements
-
-The editors would like to express their gratitude to the following people who
-actively contributed to this specification: Aitor Magan and Francisco de la Vega
-
-## Status
+## Status of this document
 
 This is a work in progress and is changing on a daily basis. You can check the latest
 available version on: https://github.com/Wirecloud/wirecloud/tree/develop.
@@ -48,9 +55,7 @@ Please send your comments to wirecloud@conwet.com
 
 This specification is licensed under the [FIWARE Open Specification License (implicit patents license)](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29).
 
-## Copyright
-
-Copyright © 2012-2016 by Universidad Politécnica de Madrid
+----
 
 ## Widget API
 
@@ -1500,3 +1505,16 @@ MashupPlatform.widget.context.registerCallback(function (new_values) {
     }
 });
 ```
+
+## Acknowledgements
+
+The editors would like to express their gratitude to the following people who
+actively contributed to this specification: Aitor Magan and Francisco de la Vega
+
+## References
+
+- [Github source](https://github.com/Wirecloud/wirecloud)
+- [Application Mashup API](http://wirecloud.github.io/wirecloud/restapi/latest/)
+- [FIWARE Open Specification License (implicit patents license)](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29)
+- [CSSOM Views: The getClientRects() and getBoundingClientRect() methods](http://www.w3.org/TR/cssom-view/#the-getclientrects%28%29-and-getboundingclientrect%28%29-methods)
+- [Cross-Origin Resource Sharing](http://www.w3.org/TR/cors/)
