@@ -183,7 +183,7 @@ class BaseSearcher(IndexWriter):
 
     def prepare_search_response(self, search_result, hits, pagenum, maxresults):
         if hits.has_exact_length():
-            search_result['total'] = len(hits.top_n)
+            search_result['total'] = len(hits)
         else:
             search_result['total'] = hits.estimated_length()
 

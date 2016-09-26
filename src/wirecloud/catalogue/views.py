@@ -102,12 +102,22 @@ class ResourceCollection(Resource):
         querytext = request.GET.get('q', '')
 
         filters = {
-            'pagenum': int(request.GET.get('pagenum', '1')),
-            'maxresults': int(request.GET.get('maxresults', '30')),
             'orderby': request.GET.get('orderby', '-creation_date'),
             'scope': request.GET.get('scope', None),
             'staff': request.GET.get('staff', 'false').lower() == 'true',
         }
+
+        try:
+            filters['pagenum'] = int(request.GET.get('pagenum', '1'))
+        except ValueError:
+            message = _('Invalid pagenum value: %s' % request.GET['pagenum'])
+            return build_error_response(request, 422, message)
+
+        try:
+            filters['maxresults'] = int(request.GET.get('maxresults', '30'))
+        except ValueError:
+            message = _('Invalid maxresults value: %s' % request.GET['maxresults'])
+            return build_error_response(request, 422, message)
 
         if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
             return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])

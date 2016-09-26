@@ -73,8 +73,19 @@ class ResourceSearch(Resource):
             message = _('Invalid search namespace: %s' % indexname)
             return build_error_response(request, 422, message)
 
-        pagenum = int(request.GET.get('pagenum', '1'))
-        result = get_search_engine(indexname).search(querytext, request, pagenum)
+        try:
+            pagenum = int(request.GET.get('pagenum', '1'))
+        except ValueError:
+            message = _('Invalid pagenum value: %s' % request.GET['pagenum'])
+            return build_error_response(request, 422, message)
+
+        try:
+            maxresults = int(request.GET.get('maxresults', '30'))
+        except ValueError:
+            message = _('Invalid maxresults value: %s' % request.GET['maxresults'])
+            return build_error_response(request, 422, message)
+
+        result = get_search_engine(indexname).search(querytext, request, pagenum=pagenum, maxresults=maxresults)
 
         return HttpResponse(json.dumps(result, sort_keys=True), status=200, content_type='application/json; charset=utf-8')
 
