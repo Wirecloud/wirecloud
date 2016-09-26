@@ -657,6 +657,10 @@ if (window.StyledElements == null) {
     // Node helpers
     // =========================================================================
 
+    Utils.isElement = function isElement(value) {
+        return value != null && typeof value === 'object' && 'ownerDocument' in value && value instanceof value.ownerDocument.defaultView.HTMLElement;
+    };
+
     /**
      * Insert the `newElement` either to the end of `parentElement` or after
      * the `refElement` given.

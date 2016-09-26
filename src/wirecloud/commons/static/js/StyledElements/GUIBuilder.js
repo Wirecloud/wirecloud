@@ -53,7 +53,7 @@
             new_component = tcomponent;
         }
 
-        if ((new_component instanceof StyledElements.StyledElement) || (new_component instanceof HTMLElement)) {
+        if ((new_component instanceof StyledElements.StyledElement) || utils.isElement(new_component)) {
             new_component = new_component;
         } else if (new_component != null) {
             new_component = element.ownerDocument.createTextNode(new_component);

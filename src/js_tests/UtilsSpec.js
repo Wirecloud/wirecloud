@@ -139,6 +139,58 @@
             });
         });
 
+        describe("isElement(value)", function () {
+            var isElement = StyledElements.Utils.isElement;
+
+            it("returns false if value is null", function () {
+                expect(isElement(null)).toBeFalsy();
+            });
+
+            it("returns false if value is undefined", function () {
+                expect(isElement(undefined)).toBeFalsy();
+            });
+
+            it("returns false if value is a boolean true", function () {
+                expect(isElement(true)).toBeFalsy();
+            });
+
+            it("returns false if value is a boolean false", function () {
+                expect(isElement(false)).toBeFalsy();
+            });
+
+            it("returns false for numbers", function () {
+                expect(isElement(1)).toBeFalsy();
+            });
+
+            it("returns false for strings", function () {
+                expect(isElement("")).toBeFalsy();
+            });
+
+            it("returns false if value is an array", function () {
+                expect(isElement([1, 2, 3])).toBeFalsy();
+            });
+
+            it("returns false if value is a simple object", function () {
+                expect(isElement({})).toBeFalsy();
+            });
+
+            it("returns true if value is an Element", function () {
+                expect(isElement(document.createElement('i'))).toBeTruthy();
+            });
+
+            it("returns true for third-party Elements", function () {
+                var pseudoElementClass = function () {};
+                var element = new pseudoElementClass();
+                element.ownerDocument = {
+                    defaultView: {
+                        HTMLElement: pseudoElementClass
+                    }
+                };
+                expect(isElement(element)).toBeTruthy();
+            });
+
+        });
+
         describe("isEmpty(value)", function () {
             var isEmpty;
 
