@@ -85,9 +85,7 @@ class StartprojectCommand(BaseCommand):
         if options['quick_start']:
 
             os.chdir(project_name)
-            if django.VERSION[1] >= 7:
-                exec_external_python_cmd('manage.py migrate --noinput')
-            else:
-                exec_external_python_cmd('manage.py syncdb --migrate --noinput')
+            exec_external_python_cmd('manage.py migrate --noinput')
+            exec_external_python_cmd('manage.py populate')
             exec_external_python_cmd('manage.py loaddata wirecloud_quick_start')
             exec_external_python_cmd('manage.py collectstatic --noinput')
