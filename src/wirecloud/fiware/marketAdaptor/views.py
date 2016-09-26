@@ -22,7 +22,7 @@ from six.moves.urllib.error import HTTPError
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from requests.exceptions import ConnectionError, ConnectTimeout
+from requests.exceptions import ConnectionError, Timeout
 
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, consumes, parse_json_request, produces
@@ -84,7 +84,7 @@ class ServiceCollection(Resource):
         except HTTPError as e:
             details = "%s" % e
             return build_error_response(request, 502, "Unexpected response", details=details)
-        except (ConnectionError, ConnectTimeout):
+        except (ConnectionError, Timeout):
             return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
@@ -103,7 +103,7 @@ class ServiceSearchCollection(Resource):
         except HTTPError as e:
             details = "%s" % e
             return build_error_response(request, 502, "Unexpected response", details=details)
-        except (ConnectionError, ConnectTimeout):
+        except (ConnectionError, Timeout):
             return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chaset=UTF-8')
@@ -122,7 +122,7 @@ class ServiceEntry(Resource):
         except HTTPError as e:
             details = "%s" % e
             return build_error_response(request, 502, "Unexpected response", details=details)
-        except (ConnectionError, ConnectTimeout):
+        except (ConnectionError, Timeout):
             return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(offering_info, sort_keys=True), content_type='application/json; charset=UTF-8')
@@ -145,7 +145,7 @@ class AllStoresServiceCollection(Resource):
         except HTTPError as e:
             details = "%s" % e
             return build_error_response(request, 502, "Unexpected response", details=details)
-        except (ConnectionError, ConnectTimeout):
+        except (ConnectionError, Timeout):
             return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
@@ -163,7 +163,7 @@ class StoreCollection(Resource):
         except HTTPError as e:
             details = "%s" % e
             return build_error_response(request, 502, "Unexpected response", details=details)
-        except (ConnectionError, ConnectTimeout):
+        except (ConnectionError, Timeout):
             return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chaset=UTF-8')
@@ -187,7 +187,7 @@ class StartPurchaseService(Service):
         except HTTPError as e:
             details = "%s" % e
             return build_error_response(request, 502, "Unexpected response", details=details)
-        except (ConnectionError, ConnectTimeout):
+        except (ConnectionError, Timeout):
             return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chaset=UTF-8')
