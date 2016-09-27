@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -60,8 +60,6 @@ class Command(BaseCommand):
             help='Allow any user to access the mashable application components.')
 
     def _handle(self, *args, **options):
-        if len(options['files']) < 1:
-            raise CommandError(_('Wrong number of arguments'))
 
         self.verbosity = int(options.get('verbosity', 1))
 

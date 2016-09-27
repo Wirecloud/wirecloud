@@ -19,6 +19,7 @@
 
 
 from wirecloud.platform.tests.base import *
+from wirecloud.platform.tests.commands import PopuplateCommandTestCase
 from wirecloud.platform.tests.plugins import WirecloudPluginTestCase
 from wirecloud.platform.tests.rest_api import AdministrationAPI, ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI
 from wirecloud.platform.tests.selenium_tests import *
