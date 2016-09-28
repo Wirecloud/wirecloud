@@ -25,6 +25,8 @@ import time
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from whoosh.collectors import Collector
+from whoosh.compat import xrange
 from whoosh.fields import BOOLEAN, DATETIME, ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, LockError, open_dir
 from whoosh.qparser import MultifieldParser, QueryParser
@@ -355,3 +357,21 @@ def get_search_engine(indexname):
             return s
 
     return None
+
+
+# Fix whoosh bug #453
+def remove(self, global_docnum):
+    """Removes a document from the collector. Not that this method uses the
+    global document number as opposed to :meth:`Collector.collect` which
+    takes a segment-relative docnum.
+    """
+
+    items = self.items
+    for i in xrange(len(items)):
+        if items[i][1] == global_docnum:
+            items.pop(i)
+            self.docset.remove(global_docnum)
+            return
+    raise KeyError(global_docnum)
+
+Collector.remove = remove
