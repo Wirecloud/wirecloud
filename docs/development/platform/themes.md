@@ -595,7 +595,8 @@ This is the list of context variables provided to the Django template engine:
 
 - `_variables.scss`: File defining the values of the constants used in the other
   SCSS files.
-- `modals/base.scss`: contains the style on the modals used in WireCloud.
+- `modals/base.scss`: contains the style used on all the modals used by
+  WireCloud.
 - `modals/logs.scss`: contains the style used on the log modals.
 - `modals/upgrade_downgrade_component.scss`: contains the style used by the
   upgrade/downgrade modals used by the workspace view and the wiring editor view
@@ -603,6 +604,8 @@ This is the list of context variables provided to the Django template engine:
   version of operators.
 - `workspace/dragboard_cursor.scss`: contains the style for the cursor
   displayed when moving widgets inside a workspace.
+- `workspace/modals/share.scss`: contains the style used on the modal for
+  changing the sharing properties of the workspace.
 - `wiring/behaviours.scss`:
 - `wiring/connection.scss`:
 - `wiring/layout.scss`:
