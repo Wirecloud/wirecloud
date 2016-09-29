@@ -30,7 +30,7 @@ from django.test import TestCase
 from mock import DEFAULT, Mock, patch
 
 from wirecloud.commons.wirecloud_admin import CommandLineUtility
-from wirecloud.commons.utils.testcases import cleartree
+from wirecloud.commons.utils.testcases import cleartree, WirecloudTestCase
 import wirecloud.platform
 
 
@@ -166,9 +166,10 @@ class BaseAdminCommandTestCase(TestCase):
         self.assertEqual(second_output, third_output)
 
 
-class ConvertCommandTestCase(TestCase):
+class ConvertCommandTestCase(WirecloudTestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-convert', 'wirecloud-noselenium')
+    fixtures = ()
 
     @classmethod
     def setUpClass(cls):
@@ -243,9 +244,10 @@ class ConvertCommandTestCase(TestCase):
             self.assertNotEqual(f.read(), '')
 
 
-class StartprojectCommandTestCase(TestCase):
+class StartprojectCommandTestCase(WirecloudTestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-startproject', 'wirecloud-noselenium')
+    fixtures = ()
 
     @classmethod
     def setUpClass(cls):

@@ -463,7 +463,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
 
-        # Hash widgets by id se we don't depend on the order (serialization
+        # Hash widgets by id so we don't depend on the order (serialization
         # order depends on the database backend)
         widgets = {widget.get('id'): widget for widget in template.xpath('/mashup/structure/tab[1]/resource')}
         self.assertXPathAttr(widgets["1"], '.', 'readonly', 'false', optional=True)
@@ -1237,7 +1237,7 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
         fillWorkspaceUsingTemplate(self.workspace_with_iwidgets, template)
         wiring = self.workspace_with_iwidgets.wiringStatus
         self.assertEqual(len(wiring['visualdescription']['behaviours']), 2)
-        new_widgets = {six.text_type(widget_id): {} for widget_id in self.workspace_with_iwidgets.tab_set.all()[1].iwidget_set.values_list('id', flat=True)}
+        new_widgets = {six.text_type(widget_id): {} for widget_id in self.workspace_with_iwidgets.tab_set.all().order_by('id')[1].iwidget_set.values_list('id', flat=True)}
         self.assertEqual(wiring['visualdescription']['behaviours'][1]['components'], {'operator': {'1': {}}, 'widget': new_widgets})
 
     def test_fill_workspace_target_with_behaviours_template_with_behaviours(self):
