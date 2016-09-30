@@ -4,8 +4,15 @@
 /node_modules/
 /static/
 /screens/
+/.eggs/
+/build/
+/htmlcov/
+/dist/
 *.pyc
 *.mo
 *.db
 *.egg-info
 *.DS_Store
+.coverage
+.noseids
+nosetests.xml
