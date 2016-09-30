@@ -13,6 +13,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    margin: 0px;
 
     &.dragging {
         transition: opacity 0.35s ease-in;
