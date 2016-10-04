@@ -33,6 +33,7 @@
     };
 
     var coverLayerElement = null;
+    var currentTooltip = null;
 
     /**
      * @private
@@ -130,7 +131,7 @@
 
         // Add some event listeners
         window.addEventListener("resize", resizeUI.bind(this), true);
-        document.addEventListener('click', on_task_click.bind(this), true);
+        document.addEventListener('click', on_click.bind(this), true);
     };
 
     UserInterfaceManager.changeCurrentView = function changeCurrentView(newView, options) {
@@ -192,11 +193,28 @@
         showCover();
     };
 
+    UserInterfaceManager._unregisterTooltip = function _unregisterTooltip(tooltip) {
+        if (currentTooltip === tooltip) {
+            currentTooltip = null;
+        }
+    };
+
     UserInterfaceManager._unregisterPopup = function _unregisterPopup(popup) {
         var index = this.currentPopups.indexOf(popup);
         if (index !== -1) {
             this.currentPopups.splice(index, 1);
         }
+    };
+
+    UserInterfaceManager._registerTooltip = function _registerTooltip(tooltip) {
+        if (tooltip != null && !('hide' in tooltip)) {
+            throw new TypeError('invalid tooltip parameter');
+        }
+
+        if (currentTooltip != null) {
+            currentTooltip.hide();
+        }
+        currentTooltip = tooltip;
     };
 
     UserInterfaceManager._registerPopup = function _registerPopup(popup) {
@@ -277,7 +295,7 @@
         }
     };
 
-    var on_task_click = function on_task_click(event) {
+    var on_click = function on_click(event) {
         var loadingElement = document.getElementById("loading-window");
         if (!(loadingElement.classList.contains("in"))) {
             loadingElement.classList.remove("fade");

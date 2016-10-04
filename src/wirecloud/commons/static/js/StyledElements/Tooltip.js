@@ -105,7 +105,7 @@
     var _show = function _show(refPosition) {
 
         if ('Wirecloud' in window) {
-            Wirecloud.UserInterfaceManager._registerPopup(this);
+            Wirecloud.UserInterfaceManager._registerTooltip(this);
         }
 
         if (this.visible) {
@@ -177,7 +177,7 @@
             document.body.removeChild(this.element);
             this.element = null;
             if ('Wirecloud' in window) {
-                Wirecloud.UserInterfaceManager._unregisterPopup(this);
+                Wirecloud.UserInterfaceManager._unregisterTooltip(this);
             }
         }
     };
