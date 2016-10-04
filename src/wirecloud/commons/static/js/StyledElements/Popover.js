@@ -132,9 +132,10 @@
             content: this.options.content
         }).elements[0];
         this.element.addEventListener('transitionend', _hide.bind(this));
-        document.body.appendChild(this.element);
 
-        document.addEventListener("click", this._disableCallback, true);
+        var baseelement = utils.getFullscreenElement() || document.body;
+        baseelement.appendChild(this.element);
+        baseelement.addEventListener("click", this._disableCallback, true);
 
         searchBestPosition.call(this, refPosition, this.options.placement);
         this.element.classList.add('in');
@@ -196,7 +197,7 @@
 
     var _hide = function _hide() {
         if (this.element != null && !this.element.classList.contains('in')) {
-            document.body.removeChild(this.element);
+            this.element.remove();
             this.element = null;
             if ('Wirecloud' in window) {
                 Wirecloud.UserInterfaceManager._unregisterPopup(this);
