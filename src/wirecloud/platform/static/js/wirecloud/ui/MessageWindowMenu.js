@@ -50,7 +50,7 @@
         this.setMsg(message);
         this.setType(type);
     };
-    MessageWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(MessageWindowMenu, Wirecloud.ui.WindowMenu);
 
     /**
      * Updates the message displayed by this <code>WindowMenu</code>

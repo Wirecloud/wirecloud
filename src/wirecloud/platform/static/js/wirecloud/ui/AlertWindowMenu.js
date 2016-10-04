@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -42,7 +42,7 @@
             cancelLabel: utils.gettext('No')
         }, options);
 
-        this.acceptButton = new StyledElements.Button({
+        this.acceptButton = new se.Button({
             text: options.acceptLabel,
             state: 'danger',
             class: "btn-accept"
@@ -52,7 +52,7 @@
         this.acceptButton.insertInto(this.windowBottom);
 
         // Cancel button
-        this.cancelButton = new StyledElements.Button({
+        this.cancelButton = new se.Button({
             text: options.cancelLabel,
             state: 'primary',
             class: "btn-cancel"
@@ -63,13 +63,13 @@
         this.acceptHandler = null;
         this.cancelHandler = null;
     };
-    AlertWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(AlertWindowMenu, Wirecloud.ui.WindowMenu);
 
     /**
      * Updates the message displayed by this <code>WindowMenu</code>
      */
     AlertWindowMenu.prototype.setMsg = function setMsg(msg) {
-        if (msg instanceof StyledElements.StyledElement) {
+        if (msg instanceof se.StyledElement) {
             this.msgElement.innerHTML = '';
             msg.insertInto(this.msgElement);
         } else {
@@ -113,4 +113,4 @@
 
     Wirecloud.ui.AlertWindowMenu = AlertWindowMenu;
 
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

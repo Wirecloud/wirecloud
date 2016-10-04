@@ -108,7 +108,7 @@
         this.cancel_button.insertInto(this.windowBottom);
         this.cancel_button.addEventListener("click", this._closeListener);
     };
-    ExternalProcessWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(ExternalProcessWindowMenu.prototype, Wirecloud.ui.WindowMenu);
 
     ExternalProcessWindowMenu.prototype.setFocus = function setFocus() {
         this.start_button.focus();

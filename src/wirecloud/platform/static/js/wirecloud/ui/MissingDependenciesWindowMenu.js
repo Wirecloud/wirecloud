@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -54,7 +54,7 @@
         this.msg2Element.textContent = utils.gettext('You will be able to continue after installing all the required dependencies.');
 
         // New Workspace button
-        this.continueButton = new StyledElements.Button({
+        this.continueButton = new se.Button({
             class: 'btn-accept',
             text: utils.gettext('Continue'),
         });
@@ -63,14 +63,14 @@
         this.continueButton.disable();
 
         // Cancel button
-        this.cancelButton = new StyledElements.Button({
+        this.cancelButton = new se.Button({
             class: 'btn-cancel btn-primary',
             text: utils.gettext('Cancel')
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);
     };
-    MissingDependenciesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(MissingDependenciesWindowMenu, Wirecloud.ui.WindowMenu);
 
     MissingDependenciesWindowMenu.prototype.setFocus = function setFocus() {
         this.continueButton.focus();
@@ -84,4 +84,4 @@
 
     Wirecloud.ui.MissingDependenciesWindowMenu = MissingDependenciesWindowMenu;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);

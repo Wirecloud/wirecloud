@@ -136,7 +136,7 @@ if (window.StyledElements == null) {
         element.ownerDocument.addEventListener('webkitfullscreenchange', callback, true);
     };
 
-    Utils.removeFullscreenChangeCallback = function onFullscreenChange(element, callback) {
+    Utils.removeFullscreenChangeCallback = function removeFullscreenChangeCallback(element, callback) {
         if (element instanceof StyledElements.StyledElement) {
             element = element.wrapperElement;
         }

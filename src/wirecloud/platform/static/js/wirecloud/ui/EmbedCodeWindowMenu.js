@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var builder = new StyledElements.GUIBuilder();
+    var builder = new se.GUIBuilder();
 
     var EmbedCodeWindowMenu = function EmbedCodeWindowMenu(title, workspace) {
         Wirecloud.ui.WindowMenu.call(this, title, 'wc-embed-code-modal');
@@ -35,7 +35,7 @@
 
         this.theme = new se.Select({initialEntries: Wirecloud.constants.AVAILABLE_THEMES});
         this.theme.setValue(Wirecloud.currentTheme.name);
-        this.code = new StyledElements.TextArea();
+        this.code = new se.TextArea();
 
         var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/embed_code'], {
             'themeselect': this.theme,
@@ -47,14 +47,14 @@
         build_embed_code.call(this);
 
         // Accept button
-        this.button = new StyledElements.Button({
+        this.button = new se.Button({
             text: utils.gettext('Accept'),
             class: 'btn-primary btn-accept btn-cancel'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
     };
-    EmbedCodeWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(EmbedCodeWindowMenu, Wirecloud.ui.WindowMenu);
 
     EmbedCodeWindowMenu.prototype.setFocus = function setFocus() {
         this.code.select();

@@ -104,11 +104,11 @@
             return -version1.compareTo(version2);
         });
 
-        this.version_selector = new StyledElements.Select({'name': "version"});
+        this.version_selector = new se.Select({'name': "version"});
         this.version_selector.addEventListener('change', request_version.bind(this));
         this.version_selector.addEntries(versions);
 
-        this.changelog = new StyledElements.Container({class: 'markdown-body loading', tagname: 'article'});
+        this.changelog = new se.Container({class: 'markdown-body loading', tagname: 'article'});
 
         builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/upgrade_downgrade_component'], {
             currentversion: this.model.meta.version,
@@ -117,7 +117,7 @@
         }).appendTo(this.windowContent);
 
         // Accept button
-        this.acceptButton = new StyledElements.Button({'class': 'btn-accept'});
+        this.acceptButton = new se.Button({'class': 'btn-accept'});
         this.acceptButton.insertInto(this.windowBottom);
         this.acceptButton.addEventListener("click", function (button) {
             var new_version = this.version_selector.getValue();
@@ -133,14 +133,14 @@
         }.bind(this));
 
         // Cancel button
-        this.cancelButton = new StyledElements.Button({
+        this.cancelButton = new se.Button({
             text: utils.gettext('Cancel'),
             'class': 'btn-default btn-cancel'
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);
     };
-    UpgradeWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(UpgradeWindowMenu, Wirecloud.ui.WindowMenu);
 
     UpgradeWindowMenu.prototype.show = function show() {
         Wirecloud.ui.WindowMenu.prototype.show.apply(this, arguments);

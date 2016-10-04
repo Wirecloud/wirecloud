@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -89,7 +89,7 @@
 
         this.windowContent.innerHTML = options.msg;
 
-        this.nextButton = new StyledElements.Button({
+        this.nextButton = new se.Button({
             'class': 'nextButton btn-primary',
             'text': utils.gettext(this.nextButtonText),
         });
@@ -97,7 +97,7 @@
         this.nextButton.insertInto(this.windowBottom);
 
         // Cancel button
-        this.cancelButton = new StyledElements.Button({
+        this.cancelButton = new se.Button({
             'class': 'cancelButton',
             'text': utils.gettext("Cancel"),
         });
@@ -108,7 +108,7 @@
 
         this.wrapperElement = this.htmlElement;
     };
-    SimpleDescription.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(SimpleDescription, Wirecloud.ui.WindowMenu);
 
     SimpleDescription.prototype._closeListener = function _closeListener(e) {
         Wirecloud.ui.WindowMenu.prototype._closeListener.call(this, e);
@@ -214,4 +214,4 @@
      *************************************************************************/
     Wirecloud.ui.Tutorial.SimpleDescription = SimpleDescription;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);

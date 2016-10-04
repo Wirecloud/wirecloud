@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -44,7 +44,7 @@
         }, options);
         options.buttonArea = this.windowBottom;
 
-        this.form = new StyledElements.Form(fields, options);
+        this.form = new se.Form(fields, options);
         this.form.insertInto(this.windowContent);
         this.form.acceptButton.addClassName('btn-accept');
         this.form.cancelButton.addClassName('btn-cancel');
@@ -60,7 +60,7 @@
         }.bind(this));
         this.form.addEventListener('cancel', this._closeListener);
     };
-    FormWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(FormWindowMenu, Wirecloud.ui.WindowMenu);
 
     FormWindowMenu.prototype.setValue = function setValue(newValue) {
         this.form.setData(newValue);
@@ -79,4 +79,5 @@
     };
 
     Wirecloud.ui.FormWindowMenu = FormWindowMenu;
-})();
+
+})(StyledElements, Wirecloud.Utils);

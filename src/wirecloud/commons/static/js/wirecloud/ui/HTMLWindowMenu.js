@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -44,14 +44,14 @@
         Wirecloud.ui.WindowMenu.call(this, title, extra_class);
 
         // Close button
-        this.button = new StyledElements.Button({
+        this.button = new se.Button({
             text: utils.gettext('Close'),
             'class': 'btn-primary'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
     };
-    HTMLWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(HTMLWindowMenu, Wirecloud.ui.WindowMenu);
 
     HTMLWindowMenu.prototype.show = function show() {
         this.windowContent.innerHTML = '';
@@ -74,4 +74,4 @@
 
     Wirecloud.ui.HTMLWindowMenu = HTMLWindowMenu;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);

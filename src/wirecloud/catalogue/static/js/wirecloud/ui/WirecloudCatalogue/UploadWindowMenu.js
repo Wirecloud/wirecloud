@@ -21,7 +21,7 @@
 
 /* globals StyledElements, Wirecloud */
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -60,7 +60,7 @@
 
                         details.appendChild(item);
                     }
-                    msg = new StyledElements.Fragment([msg, details]);
+                    msg = new se.Fragment([msg, details]);
                     (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                 }
                 this.mainview.viewsByName.search.refresh_if_needed();
@@ -110,10 +110,10 @@
         this.mainview = options.mainview;
         Wirecloud.ui.WindowMenu.call(this, utils.gettext("Upload mashable application components"), 'wc-upload-mac-modal');
 
-        var builder = new StyledElements.GUIBuilder();
+        var builder = new se.GUIBuilder();
         var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/catalogue/modals/upload'], {
             'uploadfilebutton': function () {
-                var button = new StyledElements.FileButton({text: utils.gettext('Select files from your computer')});
+                var button = new se.FileButton({text: utils.gettext('Select files from your computer')});
                 button.addEventListener('fileselect', function (button, files) {
                     for (var i = 0; i < files.length; i++) {
                         this.addFile(files[i]);
@@ -125,7 +125,7 @@
         });
         contents.insertInto(this.windowContent);
 
-        this.fileTable = new StyledElements.ModelTable([
+        this.fileTable = new se.ModelTable([
             {
                 "field": "name",
                 "label": utils.gettext("Name")
@@ -144,7 +144,7 @@
                 "class": "wc-upload-mac-button-column",
                 "sortable": false,
                 "contentBuilder": function (entry) {
-                    var button = new StyledElements.Button({iconClass: "fa fa-remove", plain: true, title: utils.gettext("Remove this file")});
+                    var button = new se.Button({iconClass: "fa fa-remove", plain: true, title: utils.gettext("Remove this file")});
                     button.addEventListener("click", this.removeFile.bind(this, entry.file));
                     return button;
                 }.bind(this)
@@ -152,7 +152,7 @@
         ], {
             pageSize: 0
         });
-        var addMoreButton = new StyledElements.FileButton({text: utils.gettext('Add more files')});
+        var addMoreButton = new se.FileButton({text: utils.gettext('Add more files')});
         addMoreButton.addEventListener('fileselect', function (button, files) {
             for (var i = 0; i < files.length; i++) {
                 this.addFile(files[i]);
@@ -161,7 +161,7 @@
         this.fileTable.statusBar.appendChild(addMoreButton);
         this.fileTable.insertInto(this.windowContent);
 
-        this.acceptButton = new StyledElements.Button({
+        this.acceptButton = new se.Button({
             text: utils.gettext("Upload"),
             'class': 'btn-primary btn-accept'
         });
@@ -175,7 +175,7 @@
         this.windowContent.appendChild(border);
 
         // Cancel button
-        this.cancelButton = new StyledElements.Button({
+        this.cancelButton = new se.Button({
             text: utils.gettext("Cancel"),
             'class': 'btn-default btn-cancel'
         });
@@ -237,7 +237,7 @@
             }
         }.bind(this), true);
     };
-    UploadWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(UploadWindowMenu, Wirecloud.ui.WindowMenu);
 
     UploadWindowMenu.prototype.addFile = function addFile(file) {
         var entry = {
@@ -283,4 +283,4 @@
     Wirecloud.ui.WirecloudCatalogue = {};
     Wirecloud.ui.WirecloudCatalogue.UploadWindowMenu = UploadWindowMenu;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);

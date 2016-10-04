@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -30,7 +30,7 @@
         var label = document.createElement("label");
         label.appendChild(document.createTextNode(preference.label));
         if (typeof preference.description === 'string' && preference.description.trim() !== '') {
-            var tooltip = new StyledElements.Tooltip({content: preference.description, placement: ['right', 'bottom', 'top', 'left']});
+            var tooltip = new se.Tooltip({content: preference.description, placement: ['right', 'bottom', 'top', 'left']});
             tooltip.bind(label);
         }
         return label;
@@ -190,7 +190,7 @@
         Object.defineProperty(this, 'manager', {value: manager});
 
         // Reset button
-        this.resetButton = new StyledElements.Button({
+        this.resetButton = new se.Button({
             text: utils.gettext('Set Defaults'),
         });
         this.resetButton.addEventListener("click", function () {
@@ -209,7 +209,7 @@
         this.resetButton.insertInto(this.windowBottom);
 
         // Accept button
-        this.acceptButton = new StyledElements.Button({
+        this.acceptButton = new se.Button({
             class: 'btn-accept btn-primary',
             text: utils.gettext('Save')
         });
@@ -217,7 +217,7 @@
         this.acceptButton.insertInto(this.windowBottom);
 
         // Cancel button
-        this.cancelButton = new StyledElements.Button({
+        this.cancelButton = new se.Button({
             class: 'btn-cancel',
             text: utils.gettext('Cancel')
         });
@@ -225,7 +225,7 @@
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);
     };
-    PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(PreferencesWindowMenu, Wirecloud.ui.WindowMenu);
 
     PreferencesWindowMenu.prototype.setCancelable = function setCancelable(cancelable) {
         this.cancelButton.setDisabled(!cancelable);
@@ -266,4 +266,4 @@
 
     Wirecloud.ui.PreferencesWindowMenu = PreferencesWindowMenu;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);

@@ -22,48 +22,22 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
     var builder = new StyledElements.GUIBuilder();
 
-    /**
-     * Make Draggable.
-     */
-    var makeDraggable = function makeDraggable(handler) {
-        this.draggable = new Wirecloud.ui.Draggable(handler, {window_menu: this},
-            function onStart(draggable, context) {
-                context.y = context.window_menu.htmlElement.style.top === "" ? 0 : parseInt(context.window_menu.htmlElement.style.top, 10);
-                context.x = context.window_menu.htmlElement.style.left === "" ? 0 : parseInt(context.window_menu.htmlElement.style.left, 10);
-            },
-            function onDrag(e, draggable, context, xDelta, yDelta) {
-                context.window_menu.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
-            },
-            function onFinish(draggable, context) {
-                var position = context.window_menu.getStylePosition();
-                if (position.posX < 0) {
-                    position.posX = 8;
-                }
-                if (position.posY < 0) {
-                    position.posY = 8;
-                }
-                context.window_menu.setPosition(position);
-            },
-            function () { return true; }
-        );
-    };
-
     var WindowMenu = function WindowMenu(title, extra_class, events) {
 
         var ui_fragment, i, element;
 
-        // Allow hierarchy
-        if (arguments.length === 0) {
-            return;
-        }
+        privates.set(this, {
+            parent: null,
+            child: null,
+            insert: insert.bind(this)
+        });
 
-        this.childWindow = null;
         this._closeListener = this._closeListener.bind(this);
 
         ui_fragment = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/base'], {
@@ -79,7 +53,7 @@
                 return this.windowContent;
             }.bind(this),
             'closebutton': function (options) {
-                var button = new StyledElements.Button({plain: true, class: 'fa fa-remove', title: StyledElements.Utils.gettext("Close")});
+                var button = new StyledElements.Button({plain: true, class: 'fa fa-remove', title: utils.gettext("Close")});
                 button.addEventListener('click', this._closeListener);
                 return button;
             }.bind(this),
@@ -155,6 +129,7 @@
             return;
         }
 
+        var priv = privates.get(this);
         var coordenates = [];
         var windowHeight = window.innerHeight;
         var windowWidth = window.innerWidth;
@@ -182,8 +157,8 @@
         }
         this.htmlElement.style.left = coordenates[0] + "px";
 
-        if (this.childWindow != null) {
-            this.childWindow.calculatePosition();
+        if (priv.child != null) {
+            priv.child.calculatePosition();
         }
     };
 
@@ -193,17 +168,17 @@
      * @param parentWindow
      */
     WindowMenu.prototype.show = function show(parentWindow) {
-        this._parentWindowMenu = parentWindow;
-
-        if (this._parentWindowMenu != null) {
-            this._parentWindowMenu._addChildWindow(this);
+        if (parentWindow != null) {
+            addChildWindow(parentWindow, this);
             Wirecloud.UserInterfaceManager._registerPopup(this);
         } else {
             Wirecloud.UserInterfaceManager._registerRootWindowMenu(this);
         }
 
-        document.body.appendChild(this.htmlElement);
-        this.calculatePosition();
+        var priv = privates.get(this);
+        priv.insert();
+        utils.onFullscreenChange(document.body, priv.insert);
+
         this.htmlElement.style.display = "block";
         this.setFocus();
     };
@@ -212,6 +187,8 @@
      * Makes this WindowMenu hidden.
      */
     WindowMenu.prototype.hide = function hide() {
+
+        var priv = privates.get(this);
 
         if (this.htmlElement.parentElement == null) {
             // This windowmenu is currently hidden => Nothing to do
@@ -222,30 +199,58 @@
         if (this.msgElement != null) {
             this.msgElement.textContent = '';
         }
-        if (this.childWindow != null) {
-            this.childWindow.hide();
+
+        // Remove fullscreen listener
+        utils.removeFullscreenChangeCallback(document.body, priv.insert);
+        if (this.child != null) {
+            this.child.hide();
         }
 
-        if (this._parentWindowMenu != null) {
-            this._parentWindowMenu._removeChildWindow(this);
+        if (priv.parent != null) {
+            removeChildWindow(priv.parent, this);
             Wirecloud.UserInterfaceManager._unregisterPopup(this);
-            this._parentWindowMenu = null;
         } else {
             Wirecloud.UserInterfaceManager._unregisterRootWindowMenu(this);
         }
     };
 
-    WindowMenu.prototype._addChildWindow = function _addChildWindow(windowMenu) {
-        if (windowMenu !== this) {
-            this.childWindow = windowMenu;
-        } else {
-            throw new TypeError('Window menus cannot be its own child');
+    var addChildWindow = function addChildWindow(parent, child) {
+
+        var priv_parent = privates.get(parent);
+        var priv_child = privates.get(child);
+
+        if (priv_parent.child != null) {
+            throw new TypeError('Parent modal already has a child modal');
+        } else if (priv_child.parent != null) {
+            throw new TypeError('Modal already has a parent modal');
+        } 
+
+        // Check child is not an ancestor
+        if (parent === child) {
+            throw new TypeError('Modals cannot descend themselves');
         }
+
+        var currentmodal = priv_parent.parent;
+        while (currentmodal != null) {
+            if (currentmodal === child) {
+                throw new TypeError('Modals cannot descend themselves');
+            }
+            currentmodal = privates.get(currentmodal).parent;
+        }
+
+        // Add relationships
+        priv_parent.child = child;
+        priv_child.parent = parent;
     };
 
-    WindowMenu.prototype._removeChildWindow = function _removeChildWindow(windowMenu) {
-        if (this.childWindow === windowMenu) {
-            this.childWindow = null;
+    var removeChildWindow = function removeChildWindow(parent, child) {
+        var priv_parent = privates.get(parent);
+        if (priv_parent.child === child) {
+            var priv_child = privates.get(child);
+
+            // Remove relationships
+            priv_parent.child = null;
+            priv_child.parent = null;
         }
     };
 
@@ -258,6 +263,42 @@
         this._closeListener = null;
     };
 
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
+
+    var makeDraggable = function makeDraggable(handler) {
+        this.draggable = new Wirecloud.ui.Draggable(handler, {window_menu: this},
+            function onStart(draggable, context) {
+                context.y = context.window_menu.htmlElement.style.top === "" ? 0 : parseInt(context.window_menu.htmlElement.style.top, 10);
+                context.x = context.window_menu.htmlElement.style.left === "" ? 0 : parseInt(context.window_menu.htmlElement.style.left, 10);
+            },
+            function onDrag(e, draggable, context, xDelta, yDelta) {
+                context.window_menu.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+            },
+            function onFinish(draggable, context) {
+                var position = context.window_menu.getStylePosition();
+                if (position.posX < 0) {
+                    position.posX = 8;
+                }
+                if (position.posY < 0) {
+                    position.posY = 8;
+                }
+                context.window_menu.setPosition(position);
+            },
+            function () { return true; }
+        );
+    };
+
+    var insert = function insert() {
+        var baseelement = utils.getFullscreenElement() || document.body;
+        baseelement.appendChild(this.htmlElement);
+
+        this.calculatePosition();
+    };
+
     Wirecloud.ui.WindowMenu = WindowMenu;
 
-})();
+})(Wirecloud.Utils);

@@ -22,14 +22,14 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
     var OperatorPreferencesWindowMenu = function OperatorPreferencesWindowMenu() {
-        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Operator Settings'), 'wc-component-preferences-modal');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Operator Settings'), 'wc-component-preferences-modal');
     };
-    OperatorPreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(OperatorPreferencesWindowMenu, Wirecloud.ui.WindowMenu);
 
     OperatorPreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
         var key, details;
@@ -47,7 +47,7 @@
                 this._current_ioperator.prefCallback(new_values);
             } catch (error) {
                 details = this._current_ioperator.logManager.formatException(error);
-                this._current_ioperator.logManager.log(Wirecloud.Utils.gettext('Exception catched while processing preference changes'), {details: details});
+                this._current_ioperator.logManager.log(utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
 
@@ -68,7 +68,7 @@
             }
         }
         this._current_ioperator = ioperator;
-        this.form = new StyledElements.Form(fields, {
+        this.form = new se.Form(fields, {
             setdefaultsButton: true,
             buttonArea: this.windowBottom
         });
@@ -81,4 +81,5 @@
     };
 
     Wirecloud.ui.OperatorPreferencesWindowMenu = OperatorPreferencesWindowMenu;
-})();
+
+})(StyledElements, Wirecloud.Utils);

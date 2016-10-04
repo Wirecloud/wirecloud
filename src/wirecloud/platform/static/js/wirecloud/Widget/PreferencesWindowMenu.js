@@ -22,14 +22,14 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
     var PreferencesWindowMenu = function PreferencesWindowMenu() {
-        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext("Settings"), 'wc-component-preferences-modal');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext("Settings"), 'wc-component-preferences-modal');
     };
-    PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(PreferencesWindowMenu, Wirecloud.ui.WindowMenu);
 
     PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
         var oldValue, newValue, varName, details;
@@ -64,7 +64,7 @@
                 this.widgetModel.prefCallback(new_values);
             } catch (error) {
                 details = this.widgetModel.logManager.formatException(error);
-                this.widgetModel.logManager.log(Wirecloud.Utils.gettext('Exception catched while processing preference changes'), {details: details});
+                this.widgetModel.logManager.log(utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
     };
@@ -83,7 +83,7 @@
             }
         }
         this.widgetModel = widgetModel;
-        this.form = new StyledElements.Form(fields, {
+        this.form = new se.Form(fields, {
             setdefaultsButton: true,
             buttonArea: this.windowBottom
         });
@@ -96,4 +96,5 @@
     };
 
     Wirecloud.Widget.PreferencesWindowMenu = PreferencesWindowMenu;
-})();
+
+})(StyledElements, Wirecloud.Utils);

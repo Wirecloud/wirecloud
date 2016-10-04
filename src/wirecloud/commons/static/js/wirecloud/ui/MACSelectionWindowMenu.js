@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -31,7 +31,7 @@
 
         // Events
         Object.defineProperty(this, 'events', {
-            value: {'select': new StyledElements.Event()}
+            value: {'select': new se.Event()}
         });
         Object.freeze(this.events);
 
@@ -47,17 +47,17 @@
         this.macsearch.insertInto(this.windowContent);
 
         // Accept button
-        this.button = new StyledElements.Button({
+        this.button = new se.Button({
             text: utils.gettext('Close'),
             class: 'btn-primary'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
     };
-    MACSelectionWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(MACSelectionWindowMenu, Wirecloud.ui.WindowMenu);
 
-    MACSelectionWindowMenu.prototype.addEventListener = StyledElements.ObjectWithEvents.prototype.addEventListener;
-    MACSelectionWindowMenu.prototype.removeEventListener = StyledElements.ObjectWithEvents.prototype.removeEventListener;
+    MACSelectionWindowMenu.prototype.addEventListener = se.ObjectWithEvents.prototype.addEventListener;
+    MACSelectionWindowMenu.prototype.removeEventListener = se.ObjectWithEvents.prototype.removeEventListener;
 
     MACSelectionWindowMenu.prototype.setFocus = function setFocus() {
         this.macsearch.focus();
@@ -73,4 +73,4 @@
 
     Wirecloud.ui.MACSelectionWindowMenu = MACSelectionWindowMenu;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);

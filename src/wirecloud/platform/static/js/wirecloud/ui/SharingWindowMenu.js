@@ -90,8 +90,7 @@
         this.visibilityOptions.addEventListener('change', on_visibility_option_change.bind(this));
         on_visibility_option_change.call(this);
     };
-
-    ns.SharingWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+    utils.inherit(ns.SharingWindowMenu, Wirecloud.ui.WindowMenu);
 
     // =========================================================================
     // PRIVATE MEMBERS
