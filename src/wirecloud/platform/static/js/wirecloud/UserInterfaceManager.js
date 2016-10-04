@@ -130,8 +130,9 @@
         }
 
         // Add some event listeners
+        utils.onFullscreenChange(document.body, on_fullscreen_change.bind(this));
         window.addEventListener("resize", resizeUI.bind(this), true);
-        document.addEventListener('click', on_click.bind(this), true);
+        document.addEventListener("click", on_click.bind(this), true);
     };
 
     UserInterfaceManager.changeCurrentView = function changeCurrentView(newView, options) {
@@ -300,6 +301,11 @@
         if (!(loadingElement.classList.contains("in"))) {
             loadingElement.classList.remove("fade");
         }
+    };
+
+    var on_fullscreen_change = function on_fullscreen_change(event) {
+        var baseelement = utils.getFullscreenElement() || document.body;
+        baseelement.insertBefore(coverLayerElement, baseelement.firstChild);
     };
 
     Wirecloud.UserInterfaceManager = UserInterfaceManager;
