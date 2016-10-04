@@ -112,6 +112,19 @@ if (window.StyledElements == null) {
         }
     };
 
+    Utils.getFullscreenElement = function getFullscreenElement() {
+        /* istanbul ignore else */
+        if ('fullscreenElement' in document) {
+            return document.fullscreenElement;
+        } else if ('msFullscreenElement' in document) {
+            return document.msFullscreenElement;
+        } else if ('mozFullScreenElement' in document) {
+            return document.mozFullScreenElement;
+        } else if ('webkitFullscreenElement' in document) {
+            return document.webkitFullscreenElement;
+        }
+    };
+
     Utils.onFullscreenChange = function onFullscreenChange(element, callback) {
         if (element instanceof StyledElements.StyledElement) {
             element = element.wrapperElement;

@@ -205,16 +205,7 @@
 
         Object.defineProperty(this, 'fullscreen', {
             get: function () {
-                /* istanbul ignore else */
-                if ('fullscreenElement' in document) {
-                    return document.fullscreenElement === this.wrapperElement;
-                } else if ('msFullscreenElement' in document) {
-                    return document.msFullscreenElement === this.wrapperElement;
-                } else if ('mozFullScreenElement' in document) {
-                    return document.mozFullScreenElement === this.wrapperElement;
-                } else if ('webkitFullscreenElement' in document) {
-                    return document.webkitFullscreenElement === this.wrapperElement;
-                }
+                return utils.getFullscreenElement() === this.wrapperElement;
             }
         });
     };
