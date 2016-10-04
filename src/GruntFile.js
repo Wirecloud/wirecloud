@@ -96,6 +96,10 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/constants.js',
     'wirecloud/platform/static/js/wirecloud/core.js',
     'wirecloud/platform/static/js/wirecloud/LogManager.js',
+    'wirecloud/platform/static/js/wirecloud/Wiring.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Endpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/KeywordSuggestion.js',
 ];
 
 module.exports = function (grunt) {
