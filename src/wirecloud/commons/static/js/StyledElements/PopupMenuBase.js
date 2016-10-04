@@ -305,7 +305,9 @@
 
         this.wrapperElement.classList.remove('hidden');
 
-        document.body.appendChild(this.wrapperElement);
+        var baseelement = utils.getFullscreenElement() || document.body;
+        baseelement.appendChild(this.wrapperElement);
+
         Wirecloud.UserInterfaceManager._registerPopup(this);
         this.events.visibilityChange.dispatch(this);
 
