@@ -202,6 +202,172 @@
                 expect(engine.endpoints.source.list).toBeUndefined();
             });
         });
+
+        describe("forEachSuggestion(endpoint, callback)", function () {
+            var engine;
+
+            beforeEach(function () {
+                // Provide a default instance of Select for testing
+                engine = new ns.KeywordSuggestion();
+            });
+
+            it("should find target endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.any()).toBe(true);
+            });
+
+            it("should find source endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint2, callback);
+                expect(callback.calls.any()).toBe(true);
+            });
+
+            it("should not find endpoints with the same component", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return true;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "widget/19/target-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return true;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.count()).toEqual(0);
+            });
+
+            it("should find no endpoints for missing endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: "",
+                        missing: true
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.any()).toBe(false);
+            });
+        });
     });
  
 })(Wirecloud.wiring);
