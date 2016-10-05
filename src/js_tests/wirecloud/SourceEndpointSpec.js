@@ -421,6 +421,63 @@
                 expect(connection._disconnect.calls.count()).toEqual(0);
             });
         });
+
+        describe("fullDisconnect()", function () {
+            var widgetModel, operatorModel;
+
+            beforeAll(function () {
+
+                operatorModel = {
+                    id: "1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should disconnect target-endpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc3 = {
+                    name: "endpoint3",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.SourceEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.TargetEndpoint(widgetModel, endpointDesc2);
+                var endpoint3 = new ns.TargetEndpoint(widgetModel, endpointDesc3);
+                var connection1 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+                var connection2 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                endpoint1.connect(endpoint2, connection1);
+                endpoint1.connect(endpoint3, connection2);
+                endpoint1.fullDisconnect();
+                expect(endpoint1.connections.length).toEqual(0);
+                expect(connection1._disconnect.calls.count()).toEqual(1);
+                expect(connection2._disconnect.calls.count()).toEqual(1);
+            });
+        });
     });
 
 })(Wirecloud.wiring);
