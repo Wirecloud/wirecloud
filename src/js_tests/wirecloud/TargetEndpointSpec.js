@@ -353,6 +353,93 @@
                 expect(connection._connect.calls.count()).toEqual(1);
             });
         });
+
+        describe("disconnect(sourceEndpoint)", function () {
+            var widgetModel, operatorModel;
+
+            beforeAll(function () {
+
+                operatorModel = {
+                    id: "1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should disconnect source-endpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.TargetEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.SourceEndpoint(widgetModel, endpointDesc2);
+                var connection = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                endpoint1.connect(endpoint2, connection);
+                endpoint1.disconnect(endpoint2);
+                expect(endpoint1.connections.length).toEqual(0);
+                expect(connection._disconnect.calls.count()).toEqual(1);
+            });
+
+            it("should not throw error when sourceEndpoint does not exist", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.TargetEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.SourceEndpoint(widgetModel, endpointDesc2);
+                var connection = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                endpoint1.disconnect(endpoint2);
+                expect(endpoint1.connections.length).toEqual(0);
+                expect(connection._disconnect.calls.count()).toEqual(0);
+            });
+
+            it("should throw error when sourceEndpoint is not instance of SourceEndpoint", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.TargetEndpoint(operatorModel, endpointDesc1);
+
+                expect(endpoint1.connections.length).toEqual(0);
+                expect(function () {
+                    endpoint1.disconnect(null);
+                }).toThrowError(TypeError);
+            });
+        });
     });
 
 })(Wirecloud.wiring);

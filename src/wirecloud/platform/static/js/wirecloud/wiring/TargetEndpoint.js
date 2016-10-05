@@ -42,7 +42,7 @@
     };
 
     TargetEndpoint.prototype.disconnect = function disconnect(input) {
-        if (!(input instanceof Wirecloud.wiring.TargetEndpoint)) {
+        if (!(input instanceof Wirecloud.wiring.SourceEndpoint)) {
             throw new TypeError('Invalid source endpoint');
         }
 
@@ -63,10 +63,8 @@
     TargetEndpoint.prototype._removeInput = function _removeInput(input, connection) {
         var index = this.inputs.indexOf(input);
 
-        if (index !== -1) {
-            this.inputs.splice(index, 1);
-            this.connections.splice(index, 1);
-        }
+        this.inputs.splice(index, 1);
+        this.connections.splice(index, 1);
     };
 
     TargetEndpoint.prototype.fullDisconnect = function fullDisconnect() {
