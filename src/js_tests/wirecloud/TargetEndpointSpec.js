@@ -205,6 +205,71 @@
                 expect(endpoint + "").toEqual([operatorModel.meta.type, operatorModel.id, endpointDesc.name].join("/"));
             });
         });
+
+        describe("toJSON()", function () {
+            var operatorModel, widgetModel;
+
+            beforeAll(function () {
+
+                operatorModel = {
+                    id: "1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should convert a missing source endpoint to string", function () {
+                var endpointName = "source";
+                var endpointJSON = {
+                    id: widgetModel.id,
+                    type: widgetModel.meta.type,
+                    endpoint: endpointName
+                };
+                var endpoint = new ns.GhostTargetEndpoint(widgetModel, endpointName);
+
+                expect(JSON.parse(JSON.stringify(endpoint))).toEqual(endpointJSON);
+            });
+
+            it("should convert a widget's source endpoint to string", function () {
+                var endpointDesc = {
+                    name: "source",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointJSON = {
+                    id: widgetModel.id,
+                    type: widgetModel.meta.type,
+                    endpoint: endpointDesc.name
+                };
+                var endpoint = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc);
+
+                expect(JSON.parse(JSON.stringify(endpoint))).toEqual(endpointJSON);
+            });
+
+            it("should convert a operator's source endpoint to string", function () {
+                var endpointDesc = {
+                    name: "source",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointJSON = {
+                    id: operatorModel.id,
+                    type: operatorModel.meta.type,
+                    endpoint: endpointDesc.name
+                };
+                var endpoint = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc);
+
+                expect(JSON.parse(JSON.stringify(endpoint))).toEqual(endpointJSON);
+            });
+        });
     });
 
 })(Wirecloud.wiring);
