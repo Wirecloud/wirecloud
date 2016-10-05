@@ -34,7 +34,7 @@
     TargetEndpoint.prototype = new Wirecloud.wiring.Endpoint();
 
     TargetEndpoint.prototype.connect = function connect(input, connection) {
-        if (!(input instanceof Wirecloud.wiring.TargetEndpoint)) {
+        if (!(input instanceof Wirecloud.wiring.SourceEndpoint)) {
             throw new TypeError('Invalid source endpoint');
         }
 

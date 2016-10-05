@@ -270,6 +270,89 @@
                 expect(JSON.parse(JSON.stringify(endpoint))).toEqual(endpointJSON);
             });
         });
+
+        describe("connect(sourceEndpoint, connection)", function () {
+            var widgetModel, operatorModel;
+
+            beforeAll(function () {
+
+                operatorModel = {
+                    id: "1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should connect to source-endpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.TargetEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.SourceEndpoint(widgetModel, endpointDesc2);
+                var connection = {
+                    _connect: jasmine.createSpy('_connect')
+                };
+
+                endpoint1.connect(endpoint2, connection);
+                expect(connection._connect.calls.count()).toEqual(1);
+            });
+
+            it("should throw error when sourceEndpoint is not instance of SourceEndpoint", function () {
+                var endpointDesc = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint = new ns.TargetEndpoint(operatorModel, endpointDesc);
+                var connection = {
+                    _connect: jasmine.createSpy('_connect')
+                };
+
+                expect(function () {
+                    endpoint.connect(null, connection);
+                }).toThrowError(TypeError);
+
+                expect(connection._connect.calls.count()).toEqual(0);
+            });
+
+            it("should not connect to source-endpoints more than once", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.TargetEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.SourceEndpoint(widgetModel, endpointDesc2);
+                var connection = {
+                    _connect: jasmine.createSpy('_connect')
+                };
+
+                endpoint1.connect(endpoint2, connection);
+                expect(connection._connect.calls.count()).toEqual(1);
+                endpoint1.connect(endpoint2, connection);
+                expect(connection._connect.calls.count()).toEqual(1);
+            });
+        });
     });
 
 })(Wirecloud.wiring);
