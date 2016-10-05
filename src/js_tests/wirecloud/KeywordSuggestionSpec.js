@@ -63,6 +63,358 @@
                 expect(engine.appendEndpoint(endpoint)).toBe(engine);
                 expect(engine.endpoints.source.list.length).toBe(1);
             });
+
+            it("should append missing endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: "",
+                        missing: true
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget"
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator"
+                    }
+                );
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                var callback = jasmine.createSpy('callback');
+
+                expect(engine.endpoints.source.list).toBeUndefined();
+                engine.forEachSuggestion(endpoint2, callback);
+                expect(callback.calls.any()).toBe(false);
+            });
+        });
+
+        describe("removeEndpoint(endpoint)", function () {
+            var engine;
+
+            beforeEach(function () {
+                // Provide a default instance of Select for testing
+                engine = new ns.KeywordSuggestion();
+            });
+
+            it("should remove endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint3 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list-sorted",
+                        friendcode: "list list-sorted",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2)
+                    .appendEndpoint(endpoint3)
+                    .removeEndpoint(endpoint3);
+
+                expect(Object.keys(engine.endpoints.target)).toEqual(['list']);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.count()).toEqual(1);
+
+                engine
+                    .removeEndpoint(endpoint2);
+                callback.calls.reset();
+
+                expect(Object.keys(engine.endpoints.target)).toEqual([]);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.count()).toEqual(0);
+            });
+
+            it("should remove missing endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: "",
+                        missing: true
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget"
+                    }
+                );
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .removeEndpoint(endpoint1);
+
+                expect(engine.endpoints.source.list).toBeUndefined();
+            });
+        });
+
+        describe("forEachSuggestion(endpoint, callback)", function () {
+            var engine;
+
+            beforeEach(function () {
+                // Provide a default instance of Select for testing
+                engine = new ns.KeywordSuggestion();
+            });
+
+            it("should find target endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.any()).toBe(true);
+            });
+
+            it("should find source endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint2, callback);
+                expect(callback.calls.any()).toBe(true);
+            });
+
+            it("should not find endpoints with the same component", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return true;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "widget/19/target-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return true;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.count()).toEqual(0);
+            });
+
+            it("should find no endpoints for missing endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: "",
+                        missing: true
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+                var callback = jasmine.createSpy('callback');
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                engine.forEachSuggestion(endpoint1, callback);
+                expect(callback.calls.any()).toBe(false);
+            });
+        });
+
+        describe("empty()", function () {
+            var engine;
+
+            beforeEach(function () {
+                // Provide a default instance of Select for testing
+                engine = new ns.KeywordSuggestion();
+            });
+
+            it("should clear registered endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2)
+                    .empty();
+
+                expect(Object.keys(engine.endpoints.source)).toEqual([]);
+                expect(Object.keys(engine.endpoints.target)).toEqual([]);
+            });
         });
     });
  
