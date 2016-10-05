@@ -63,6 +63,46 @@
                 expect(engine.appendEndpoint(endpoint)).toBe(engine);
                 expect(engine.endpoints.source.list.length).toBe(1);
             });
+
+            it("should append missing endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: "",
+                        missing: true
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget"
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator"
+                    }
+                );
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2);
+
+                var callback = jasmine.createSpy('callback');
+
+                expect(engine.endpoints.source.list).toBeUndefined();
+                engine.forEachSuggestion(endpoint2, callback);
+                expect(callback.calls.any()).toBe(false);
+            });
         });
 
         describe("removeEndpoint(endpoint)", function () {
