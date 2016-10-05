@@ -155,6 +155,56 @@
                 expect(endpoint.missing).toBe(true);
             });
         });
+
+        describe("toString()", function () {
+            var operatorModel, widgetModel;
+
+            beforeAll(function () {
+
+                operatorModel = {
+                    id: "1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should convert a missing source endpoint to string", function () {
+                var endpointName = "source";
+                var endpoint = new ns.GhostSourceEndpoint(widgetModel, endpointName);
+
+                expect(endpoint + "").toEqual([widgetModel.meta.type, widgetModel.id, endpointName].join("/"));
+            });
+
+            it("should convert a widget's source endpoint to string", function () {
+                var endpointDesc = {
+                    name: "source",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint = new ns.WidgetSourceEndpoint(widgetModel, endpointDesc);
+
+                expect(endpoint + "").toEqual([widgetModel.meta.type, widgetModel.id, endpointDesc.name].join("/"));
+            });
+
+            it("should convert a operator's source endpoint to string", function () {
+                var endpointDesc = {
+                    name: "source",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint = new ns.OperatorSourceEndpoint(operatorModel, endpointDesc);
+
+                expect(endpoint + "").toEqual([operatorModel.meta.type, operatorModel.id, endpointDesc.name].join("/"));
+            });
+        });
     });
 
 })(Wirecloud.wiring);
