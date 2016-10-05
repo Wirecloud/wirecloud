@@ -368,6 +368,54 @@
                 expect(callback.calls.any()).toBe(false);
             });
         });
+
+        describe("empty()", function () {
+            var engine;
+
+            beforeEach(function () {
+                // Provide a default instance of Select for testing
+                engine = new ns.KeywordSuggestion();
+            });
+
+            it("should clear registered endpoints", function () {
+                var endpoint1 = new Wirecloud.ui.WiringEditor.Endpoint("source",
+                    {
+                        id: "widget/19/condition-list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/jenkins-project-build-list/0.1.9",
+                        type: "widget",
+                        equals: function () {return false;}
+                    }
+                );
+                var endpoint2 = new Wirecloud.ui.WiringEditor.Endpoint("target",
+                    {
+                        id: "operator/1/list",
+                        friendcode: "list",
+                        name: "",
+                        description: "",
+                        label: ""
+                    },
+                    {
+                        id: "CoNWeT/example-1/1.0",
+                        type: "operator",
+                        equals: function () {return false;}
+                    }
+                );
+
+                engine
+                    .appendEndpoint(endpoint1)
+                    .appendEndpoint(endpoint2)
+                    .empty();
+
+                expect(Object.keys(engine.endpoints.source)).toEqual([]);
+                expect(Object.keys(engine.endpoints.target)).toEqual([]);
+            });
+        });
     });
  
 })(Wirecloud.wiring);
