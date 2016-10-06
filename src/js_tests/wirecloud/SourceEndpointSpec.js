@@ -478,6 +478,165 @@
                 expect(connection2._disconnect.calls.count()).toEqual(1);
             });
         });
+
+        describe("getReachableEndpoints()", function () {
+            var widgetModel, operatorModel;
+
+            beforeAll(function () {
+
+                operatorModel = {
+                    id: "1",
+                    name: "operator1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    name: "widget1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should retrieve an empty list", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc3 = {
+                    name: "endpoint3",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.SourceEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.TargetEndpoint(widgetModel, endpointDesc2);
+                var endpoint3 = new ns.TargetEndpoint(widgetModel, endpointDesc3);
+                var connection1 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+                var connection2 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                endpoint1.connect(endpoint2, connection1);
+                endpoint1.connect(endpoint3, connection2);
+
+                expect(endpoint1.getReachableEndpoints()).toEqual([]);
+            });
+
+            it("should retrieve target-endpoints given widget's target-endpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c",
+                    actionlabel: "push"
+                };
+                var endpointDesc3 = {
+                    name: "endpoint3",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.SourceEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc2);
+                var endpoint3 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc3);
+                var connection1 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+                var connection2 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                endpoint1.connect(endpoint2, connection1);
+                endpoint1.connect(endpoint3, connection2);
+
+                var result = [
+                    {
+                        type: widgetModel.meta.type,
+                        id: widgetModel.id,
+                        endpoint: endpointDesc2.name,
+                        actionlabel: endpointDesc2.actionlabel,
+                        iWidgetName: widgetModel.name
+                    },
+                    {
+                        type: widgetModel.meta.type,
+                        id: widgetModel.id,
+                        endpoint: endpointDesc3.name,
+                        actionlabel: "Use in " + endpointDesc3.label,
+                        iWidgetName: widgetModel.name
+                    }
+                ];
+
+                expect(endpoint1.getReachableEndpoints()).toEqual(result);
+            });
+
+            it("should retrieve target-endpoints given operator's target-endpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c",
+                    actionlabel: "push"
+                };
+                var endpointDesc3 = {
+                    name: "endpoint3",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.SourceEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc2);
+                var endpoint3 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc3);
+                var connection1 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+                var connection2 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                endpoint1.connect(endpoint2, connection1);
+                endpoint1.connect(endpoint3, connection2);
+
+                var result = [
+                    {
+                        type: operatorModel.meta.type,
+                        id: operatorModel.id,
+                        endpoint: endpointDesc2.name,
+                        actionlabel: endpointDesc2.actionlabel
+                    },
+                    {
+                        type: operatorModel.meta.type,
+                        id: operatorModel.id,
+                        endpoint: endpointDesc3.name,
+                        actionlabel: "Use in " + endpointDesc3.label
+                    }
+                ];
+
+                expect(endpoint1.getReachableEndpoints()).toEqual(result);
+            });
+        });
     });
 
 })(Wirecloud.wiring);
