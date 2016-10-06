@@ -66,7 +66,7 @@
 
         for (i = 0; i < list.length; i += 1) {
             target = list[i];
-            if ((target.type === 'ioperator') && (target.id == this.operator.id) && (target.endpoint == this.meta.name)) {
+            if ((target.type === this.component.meta.type) && (target.id == this.component.id) && (target.endpoint == this.name)) {
                 return true;
             }
         }

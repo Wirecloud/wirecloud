@@ -89,10 +89,8 @@
             try {
                 targetEndpoint.propagate(value, options);
             } catch (error) {
-                if (connection != null) {
-                    errorDetails = this.formatException(error);
-                    connection.logManager.log(errorDetails);
-                }
+                errorDetails = this.formatException(error);
+                connection.logManager.log(errorDetails);
             }
         }
     };

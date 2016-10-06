@@ -101,6 +101,8 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/KeywordSuggestion.js',
     'wirecloud/platform/static/js/wirecloud/wiring/Endpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/EndpointTypeError.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/EndpointValueError.js',
     'wirecloud/platform/static/js/wirecloud/wiring/SourceEndpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/TargetEndpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/MissingEndpoint.js',

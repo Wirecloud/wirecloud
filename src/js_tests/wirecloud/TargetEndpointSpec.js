@@ -497,6 +497,272 @@
                 expect(connection2._disconnect.calls.count()).toEqual(1);
             });
         });
+
+        describe("propagate(event, [options])", function () {
+            var widgetModel, operatorModel;
+
+            beforeEach(function () {
+
+                operatorModel = {
+                    id: "1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should save given event into operator's pending events", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.pending_events = {
+                    push: jasmine.createSpy("push")
+                };
+                endpoint1.propagate("test");
+
+                expect(operatorModel.pending_events.push.calls.argsFor(0)).toEqual([{
+                    endpoint: endpointDesc1.name,
+                    value: "test"
+                }]);
+            });
+
+            it("should ignore given event when target-endpoint is missing", function () {
+                var endpointName = "endpoint1";
+                var endpoint1 = new ns.GhostTargetEndpoint(operatorModel, endpointName);
+
+                operatorModel.pending_events = {
+                    push: jasmine.createSpy("push")
+                };
+                endpoint1.propagate("test");
+
+                expect(operatorModel.pending_events.push.calls.count()).toEqual(0);
+            });
+
+            it("should throw error when operator target-endpoint's callback is undefined", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.loaded = true;
+
+                operatorModel.logManager = {
+                    log: jasmine.createSpy("push")
+                };
+
+                endpoint1.propagate("test");
+                expect(operatorModel.logManager.log.calls.count()).toEqual(1);
+            });
+
+            it("should throw error when widget target-endpoint's callback is undefined", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc1);
+
+                widgetModel.loaded = true;
+
+                widgetModel.logManager = {
+                    log: jasmine.createSpy("push")
+                };
+
+                endpoint1.propagate("test");
+                expect(widgetModel.logManager.log.calls.count()).toEqual(1);
+            });
+
+            it("should send given event to operator target-endpoint's callback properly", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.loaded = true;
+                endpoint1.callback = jasmine.createSpy("callback");
+                //spyOn(endpointDesc1, "callback");//.and.throwError("quux");
+
+                endpoint1.propagate("test");
+                expect(endpoint1.callback.calls.count()).toEqual(1);
+            });
+
+            it("should catch unexpected exceptions when operator target-endpoint's callback throws errors", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.loaded = true;
+                operatorModel.logManager = {
+                    formatException: jasmine.createSpy("formatException").and.returnValue("exception"),
+                    log: jasmine.createSpy("push")
+                };
+
+                endpoint1.callback = function () {};
+                spyOn(endpoint1, "callback").and.throwError("unexpected error");
+
+                endpoint1.propagate("test");
+                expect(operatorModel.logManager.log.calls.count()).toEqual(1);
+            });
+
+            it("should catch unexpected exceptions when widget target-endpoint's callback throws errors", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc1);
+
+                widgetModel.loaded = true;
+                widgetModel.logManager = {
+                    formatException: jasmine.createSpy("formatException").and.returnValue("exception"),
+                    log: jasmine.createSpy("push")
+                };
+
+                endpoint1.callback = function () {};
+                spyOn(endpoint1, "callback").and.throwError("unexpected error");
+
+                endpoint1.propagate("test");
+                expect(widgetModel.logManager.log.calls.count()).toEqual(1);
+            });
+
+            it("should throw EndpointTypeError when operator target-endpoint's callback throws EndpointTypeError", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.loaded = true;
+
+                endpoint1.callback = function () {};
+                spyOn(endpoint1, "callback").and.throwError(new ns.EndpointTypeError("test"));
+
+                expect(function () {
+                    endpoint1.propagate("test");
+                }).toThrowError(ns.EndpointTypeError);
+            });
+
+            it("should throw EndpointValueError when widget target-endpoint's callback throws EndpointValueError", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.WidgetTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.loaded = true;
+
+                endpoint1.callback = function () {};
+                spyOn(endpoint1, "callback").and.throwError(new ns.EndpointValueError("test"));
+
+                expect(function () {
+                    endpoint1.propagate("test");
+                }).toThrowError(ns.EndpointValueError);
+            });
+
+            it("should ignore given event when operator's target-endpoint is not in options.targetEndpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.pending_events = {
+                    push: jasmine.createSpy("push")
+                };
+                endpoint1.propagate("test", {
+                    targetEndpoints: [{
+                        type: "widget",
+                        id: "1",
+                        endpoint: "test"
+                    }]
+                });
+
+                expect(operatorModel.pending_events.push.calls.count()).toEqual(0);
+            });
+
+            it("should ignore given event when widget's target-endpoint is not in options.targetEndpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc1);
+
+                widgetModel.pending_events = {
+                    push: jasmine.createSpy("push")
+                };
+                endpoint1.propagate("test", {
+                    targetEndpoints: [{
+                        type: "operator",
+                        id: "1",
+                        endpoint: "test"
+                    }]
+                });
+
+                expect(widgetModel.pending_events.push.calls.count()).toEqual(0);
+            });
+
+            it("should take given event when operator's target-endpoint is in options.targetEndpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc1);
+
+                operatorModel.loaded = true;
+
+                operatorModel.logManager = {
+                    log: jasmine.createSpy("push")
+                };
+
+                endpoint1.propagate("test", {
+                    targetEndpoints: [endpoint1.toJSON()]
+                });
+                expect(operatorModel.logManager.log.calls.count()).toEqual(1);
+            });
+
+            it("should take given event when widget's target-endpoint is in options.targetEndpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc1);
+
+                widgetModel.loaded = true;
+
+                widgetModel.logManager = {
+                    log: jasmine.createSpy("push")
+                };
+
+                endpoint1.propagate("test", {
+                    targetEndpoints: [endpoint1.toJSON()]
+                });
+                expect(widgetModel.logManager.log.calls.count()).toEqual(1);
+            });
+        });
     });
 
 })(Wirecloud.wiring);

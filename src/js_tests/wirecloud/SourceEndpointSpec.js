@@ -637,6 +637,153 @@
                 expect(endpoint1.getReachableEndpoints()).toEqual(result);
             });
         });
+
+        describe("propagate(event, [options])", function () {
+            var widgetModel, operatorModel;
+
+            beforeEach(function () {
+
+                operatorModel = {
+                    id: "1",
+                    meta: {
+                        type: 'operator'
+                    }
+                };
+
+                widgetModel = {
+                    id: "1",
+                    meta: {
+                        type: 'widget'
+                    }
+                };
+            });
+
+            it("should sent given event to connected operator target-endpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc3 = {
+                    name: "endpoint3",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.SourceEndpoint(widgetModel, endpointDesc1);
+                var endpoint2 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc2);
+                var endpoint3 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc3);
+                var connection1 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+                var connection2 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                operatorModel.pending_events = {
+                    push: jasmine.createSpy("push")
+                };
+
+                endpoint1.connect(endpoint2, connection1);
+                endpoint1.connect(endpoint3, connection2);
+                endpoint1.propagate("test");
+                expect(operatorModel.pending_events.push.calls.count()).toEqual(2);
+            });
+
+            it("should sent given event to connected widget target-endpoints", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc3 = {
+                    name: "endpoint3",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.SourceEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc2);
+                var endpoint3 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc3);
+                var connection1 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+                var connection2 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect')
+                };
+
+                widgetModel.pending_events = {
+                    push: jasmine.createSpy("push")
+                };
+
+                endpoint1.connect(endpoint2, connection1);
+                endpoint1.connect(endpoint3, connection2);
+
+                var load = jasmine.createSpy('load');
+
+                Wirecloud.activeWorkspace = {
+                    findWidget: function () {
+                        return {
+                            load: load
+                        };
+                    }
+                };
+
+                endpoint1.propagate("test");
+                expect(widgetModel.pending_events.push.calls.count()).toEqual(2);
+
+                delete Wirecloud.activeWorkspace;
+            });
+
+            it("should catch unexpected errors", function () {
+                var endpointDesc1 = {
+                    name: "endpoint1",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc2 = {
+                    name: "endpoint2",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpointDesc3 = {
+                    name: "endpoint3",
+                    label: "title",
+                    friendcode: "a b c"
+                };
+                var endpoint1 = new ns.SourceEndpoint(operatorModel, endpointDesc1);
+                var endpoint2 = new ns.WidgetTargetEndpoint(widgetModel, endpointDesc2);
+                var connection1 = {
+                    _connect: jasmine.createSpy('_connect'),
+                    _disconnect: jasmine.createSpy('_disconnect'),
+                    logManager: {
+                        log: jasmine.createSpy("log")
+                    }
+                };
+
+                widgetModel.loaded = true;
+
+                endpoint2.callback = function () {};
+                spyOn(endpoint2, "callback").and.throwError(new ns.EndpointValueError("test"));
+
+                endpoint1.connect(endpoint2, connection1);
+                endpoint1.propagate("test");
+
+                expect(connection1.logManager.log.calls.count()).toEqual(1);
+            });
+        });
     });
 
 })(Wirecloud.wiring);
