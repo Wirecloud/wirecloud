@@ -153,7 +153,7 @@
 
                 if (endpoint instanceof Wirecloud.wiring.SourceEndpoint) {
                     this.source = endpoint;
-                } else if (endpoint instanceof Wirecloud.wiring.TargetEndpoint) {
+                } else /* if (endpoint instanceof Wirecloud.wiring.TargetEndpoint) */ {
                     this.target = endpoint;
                 }
 
