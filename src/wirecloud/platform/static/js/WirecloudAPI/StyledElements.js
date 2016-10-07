@@ -74,12 +74,9 @@
     };
 
     var extend = function (parent_class, extra, options) {
-        var new_class = function () {
-            parent_class.apply(this, arguments);
-        };
+        var new_class = new Function('return function ' + parent_class.name + '() {this.superClass.apply(this, arguments);};')();
 
-        new_class.prototype = Object.create(parent_class.prototype);
-        new_class.prototype.constructor = parent_class;
+        platform.StyledElements.Utils.inherit(new_class, parent_class);
 
         for (var key in extra) {
             new_class.prototype[key] = extra[key];
