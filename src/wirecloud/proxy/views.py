@@ -148,9 +148,13 @@ class Proxy():
         if cookie_header_content != '':
             request_data['headers']['Cookie'] = cookie_header_content
 
-        # Workaround some problems with empty bodies
+        # Seems that Django or WSGI provides default values for the
+        # Content-Length and Content-Type headers, so we are not able to detect
+        # if the request provided them :(
         if str(request_data['headers'].get('content-length', '0')).strip() == '0':
             request_data['data'] = None
+            if 'content-type' in request_data['headers']:
+                del request_data['headers']['content-type']
 
         # Open the request
         try:
