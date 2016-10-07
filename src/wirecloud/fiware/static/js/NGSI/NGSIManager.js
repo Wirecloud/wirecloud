@@ -40,12 +40,9 @@
     proxy_base_url = proxy_base_url.slice(0, -"/x/xx".length);
 
     register_widget_proxy = function register_widget_proxy(id, proxy) {
-        var iwidget;
-
         if (!(id in proxiesByWidget)) {
-            iwidget = Wirecloud.activeWorkspace.getIWidget(id).internal_iwidget;
             proxiesByWidget[id] = [];
-            iwidget.addEventListener('unload', unload_widget);
+            Wirecloud.activeWorkspace.findWidget(id).addEventListener('unload', unload_widget);
         }
 
         proxiesByWidget[id].push(proxy);
