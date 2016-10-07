@@ -179,11 +179,11 @@
             });
 
             it("returns true for third-party Elements", function () {
-                var pseudoElementClass = function () {};
-                var element = new pseudoElementClass();
+                var PseudoElementClass = function () {};
+                var element = new PseudoElementClass();
                 element.ownerDocument = {
                     defaultView: {
-                        HTMLElement: pseudoElementClass
+                        HTMLElement: PseudoElementClass
                     }
                 };
                 expect(isElement(element)).toBeTruthy();
