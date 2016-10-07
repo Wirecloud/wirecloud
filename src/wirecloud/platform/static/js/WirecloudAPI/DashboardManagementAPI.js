@@ -184,7 +184,7 @@
         var layout = tab.dragboard.freeLayout;
 
         if (options.refposition != null) {
-            var current_position = Wirecloud.Utils.getRelativePosition(resource_element, resource.tab.wrapperElement);
+            var current_position = Wirecloud.Utils.getRelativePosition(resource_element, tab.wrapperElement);
             options.left = (current_position.x + options.refposition.left - layout.dragboardLeftMargin) + "px";
             options.top = (current_position.y + options.refposition.bottom - layout.dragboardTopMargin) + "px";
         }
