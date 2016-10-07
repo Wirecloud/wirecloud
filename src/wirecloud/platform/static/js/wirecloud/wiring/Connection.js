@@ -94,17 +94,19 @@
         members: {
 
             _connect: function _connect() {
+                var message = utils.gettext("The connection ('%(source)s'-'%(target)s') was established.");
 
                 this.established = true;
-                this.registerLog('info', utils.gettext("The connection ('%(source)s'-'%(target)s') was established."));
+                this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.INFO_MSG);
 
                 return this.dispatchEvent('establish');
             },
 
             _disconnect: function _disconnect() {
+                var message = utils.gettext("The connection ('%(source)s'-'%(target)s') was detached.");
 
                 this.established = false;
-                this.registerLog('info', utils.gettext("The connection ('%(source)s'-'%(target)s') was detached."));
+                this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.INFO_MSG);
 
                 return this.dispatchEvent('detach');
             },
@@ -128,7 +130,8 @@
             establish: function establish() {
 
                 if (this.source.missing || this.target.missing) {
-                    this.registerLog('error', utils.gettext("The connection ('%(source)s'-'%(target)s') has a missing endpoint."));
+                    var message = utils.gettext("The connection ('%(source)s'-'%(target)s') has a missing endpoint.");
+                    this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.ERROR_MSG);
                     return this;
                 }
 
@@ -158,36 +161,6 @@
                 }
 
                 return this.establish();
-            },
-
-            /**
-             * [TODO: registerLog description]
-             *
-             * @param {String} level
-             *      [TODO: description]
-             * @param {String} message
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            registerLog: function registerLog(level, message) {
-                var levelNumber;
-
-                switch (level) {
-                case 'error':
-                    levelNumber = Wirecloud.constants.LOGGING.ERROR_MSG;
-                    break;
-                case 'info':
-                    levelNumber = Wirecloud.constants.LOGGING.INFO_MSG;
-                    break;
-                case 'warning':
-                    levelNumber = Wirecloud.constants.LOGGING.WARN_MSG;
-                    break;
-                }
-
-                this.logManager.log(utils.interpolate(message, this), levelNumber);
-
-                return this;
             },
 
             remove: function remove() {
