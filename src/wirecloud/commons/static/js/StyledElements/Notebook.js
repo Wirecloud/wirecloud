@@ -27,7 +27,7 @@
     "use strict";
 
     var onNewTab = function onNewTab() {
-        this.events.newTab.dispatch(this);
+        this.dispatchEvent('newTab');
     };
 
     /**
@@ -372,7 +372,7 @@
         }
 
         // Event dispatch
-        this.events.tabInsertion.dispatch(this);
+        this.dispatchEvent('tabInsertion', tab);
 
         /* Return the container associated with the newly created tab */
         return tab;
@@ -493,10 +493,10 @@
         }
 
         // Send specific tab close event
-        tabToExtract.events.close.dispatch(tabToExtract, this);
+        tabToExtract.dispatchEvent('close', this);
 
         // Event dispatch
-        this.events.tabDeletion.dispatch(this, tabToExtract);
+        this.dispatchEvent('tabDeletion', tabToExtract);
 
         return this;
     };
@@ -536,7 +536,7 @@
             return;
         }
 
-        this.events.change.dispatch(this, oldTab, newTab, options.context);
+        this.dispatchEvent('change', oldTab, newTab, options.context);
 
         if (this.visibleTab) {
             this.visibleTab.setVisible(false);
@@ -549,7 +549,7 @@
             this.focus(newTab.tabId);
         }
 
-        this.events.changed.dispatch(this, oldTab, newTab, options.context);
+        this.dispatchEvent('changed', oldTab, newTab, options.context);
     };
 
     /**

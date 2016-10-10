@@ -116,7 +116,7 @@
              */
             _onclick: function _onclick(event) {
                 event.stopPropagation();
-                return this.trigger('click', event);
+                return this.dispatchEvent('click', event);
             },
 
             /**

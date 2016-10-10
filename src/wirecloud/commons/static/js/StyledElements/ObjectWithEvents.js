@@ -63,7 +63,7 @@
              * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called.
              */
-            trigger: function trigger(name) {
+            dispatchEvent: function dispatchEvent(name) {
                 var handlerArgs;
 
                 if (!(name in this.events)) {
@@ -73,7 +73,7 @@
                 }
 
                 handlerArgs = [this].concat(Array.prototype.slice.call(arguments, 1));
-                this.events[name].trigger.apply(this.events[name], handlerArgs);
+                this.events[name].dispatch.apply(this.events[name], handlerArgs);
 
                 return this;
             },

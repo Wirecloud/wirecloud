@@ -62,7 +62,7 @@
 
             this.cancelButton.addEventListener('click', function () {
                 this.destroy();
-                this.events.close.dispatch(this);
+                this.dispatchEvent('close');
             }.bind(this));
             this.cancelButton.insertInto(this.wrapperElement);
         }

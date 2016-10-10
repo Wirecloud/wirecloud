@@ -523,7 +523,7 @@
     var acceptHandler = function acceptHandler() {
         if (this.is_valid()) {
             var data = this.getData();
-            this.events.submit.dispatch(this, data);
+            this.dispatchEvent('submit', data);
         }
     };
 
@@ -531,7 +531,7 @@
      * @private
      */
     var cancelHandler = function cancelHandler() {
-        this.trigger("cancel");
+        this.dispatchEvent('cancel');
     };
 
     /**

@@ -40,9 +40,9 @@
         if (priv.totalCount !== options.total_count) {
             priv.totalCount = options.total_count;
             calculatePages.call(this);
-            this.events.paginationChanged.dispatch(this);
+            this.dispatchEvent('paginationChanged');
         }
-        this.events.requestEnd.dispatch(this);
+        this.dispatchEvent('requestEnd');
     };
 
     onErrorCallback = function onErrorCallback(error) {
@@ -54,7 +54,7 @@
             };
         }
 
-        this.events.requestEnd.dispatch(this, error);
+        this.dispatchEvent('requestEnd', error);
     };
 
     /**
@@ -198,7 +198,7 @@
         }
 
         if (changed) {
-            this.events.optionsChanged.dispatch(this, priv.options);
+            this.dispatchEvent('optionsChanged', priv.options);
             this.refresh();
         }
 
@@ -263,7 +263,7 @@
      */
     PaginatedSource.prototype.refresh = function refresh() {
         var priv = privates.get(this);
-        this.events.requestStart.dispatch(this);
+        this.dispatchEvent('requestStart');
         priv.options.requestFunc(priv.currentPage, priv.options, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 
@@ -283,7 +283,7 @@
             idx = priv.totalPages;
         }
 
-        this.events.requestStart.dispatch(this);
+        this.dispatchEvent('requestStart');
         priv.options.requestFunc(idx, priv.options, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 

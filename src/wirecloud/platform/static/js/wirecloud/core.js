@@ -43,7 +43,7 @@
     });
     Object.freeze(Wirecloud.events);
     Wirecloud.addEventListener = StyledElements.ObjectWithEvents.prototype.addEventListener;
-    Wirecloud.trigger = StyledElements.ObjectWithEvents.prototype.trigger;
+    Wirecloud.dispatchEvent = StyledElements.ObjectWithEvents.prototype.dispatchEvent;
 
     var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(options, response) {
         var workspace = null;
@@ -150,7 +150,7 @@
                 var state = Wirecloud.HistoryManager.getCurrentState();
                 Wirecloud.UserInterfaceManager.changeCurrentView('workspace', true);
 
-                this.trigger('loaded');
+                this.dispatchEvent('loaded');
                 var workspace = this.workspacesByUserAndName[state.workspace_owner][state.workspace_name];
                 this.changeActiveWorkspace(workspace, state.tab, {monitor: options.monitor, replaceNavigationState: true});
             }.bind(this);
@@ -195,7 +195,7 @@
                     onSuccess: function (response) {
                         Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));
                         moment.locale(Wirecloud.contextManager.get('language'));
-                        Wirecloud.trigger('contextloaded');
+                        Wirecloud.dispatchEvent('contextloaded');
                         checkPlatformReady();
                     }
                 });
@@ -227,7 +227,7 @@
                     livews.addEventListener('message', function (event) {
                         var msg = JSON.parse(event.data);
 
-                        Wirecloud.live.trigger(msg.category, msg);
+                        Wirecloud.live.dispatchEvent(msg.category, msg);
                     });
                     var LiveManager = function LiveManager() {
                         StyledElements.ObjectWithEvents.call(this, ["workspace", "component"]);
@@ -367,7 +367,7 @@
                                 }
                             }
 
-                            Wirecloud.trigger('viewcontextchanged');
+                            Wirecloud.dispatchEvent('viewcontextchanged');
                             preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, workspace_data, workspace_data.extra_prefs, workspace_data.empty_params);
                             preferences.addEventListener('post-commit', function () {
                                 setTimeout(function () {
@@ -387,7 +387,7 @@
                         }
                         this.activeWorkspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
                         this.workspaceInstances[this.activeWorkspace.id] = this.activeWorkspace;
-                        Wirecloud.trigger('viewcontextchanged');
+                        Wirecloud.dispatchEvent('viewcontextchanged');
 
                         this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
                             var workspace, old_name;
@@ -403,7 +403,7 @@
                         }.bind(this));
 
                         // The activeworkspacechanged event will be captured by WorkspaceView
-                        Wirecloud.trigger('activeworkspacechanged', this.activeWorkspace, options.monitor);
+                        Wirecloud.dispatchEvent('activeworkspacechanged', this.activeWorkspace, options.monitor);
 
                         utils.callCallback(options.onSuccess);
                     }.bind(this)

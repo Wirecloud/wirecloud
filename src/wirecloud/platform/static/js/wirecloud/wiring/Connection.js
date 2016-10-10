@@ -98,7 +98,7 @@
                 this.established = true;
                 this.registerLog('info', utils.gettext("The connection ('%(source)s'-'%(target)s') was established."));
 
-                return this.trigger('establish');
+                return this.dispatchEvent('establish');
             },
 
             _disconnect: function _disconnect() {
@@ -106,7 +106,7 @@
                 this.established = false;
                 this.registerLog('info', utils.gettext("The connection ('%(source)s'-'%(target)s') was detached."));
 
-                return this.trigger('detach');
+                return this.dispatchEvent('detach');
             },
 
             detach: function detach() {
@@ -192,7 +192,7 @@
 
             remove: function remove() {
                 this.detach();
-                return this.trigger('remove');
+                return this.dispatchEvent('remove');
             },
 
             showLogs: function showLogs() {

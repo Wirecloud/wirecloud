@@ -298,12 +298,12 @@
 
     var change_initial = function change_initial(initial) {
         _private.get(this).initial = initial;
-        this.trigger('change', ['initial']);
+        this.dispatchEvent('change', ['initial']);
     };
 
     var change_name = function change_name(name) {
         _private.get(this).name = name;
-        this.trigger('change', ['name']);
+        this.dispatchEvent('change', ['name']);
     };
 
     var clean_data = function clean_data(data) {
@@ -349,7 +349,7 @@
 
         widget.addEventListener('remove', _private.get(this).on_removewidget);
         _private.get(this).widgets.push(widget);
-        this.trigger('createwidget', widget);
+        this.dispatchEvent('createwidget', widget);
 
         return widget;
     };
@@ -367,9 +367,9 @@
 
     var remove_tab = function remove_tab() {
         /*jshint validthis:true */
-        this.trigger('preremove');
+        this.dispatchEvent('preremove');
         this.workspace.removeEventListener('changetab', _private.get(this).on_changetab);
-        this.trigger('remove');
+        this.dispatchEvent('remove');
     };
 
     // =========================================================================
@@ -387,7 +387,7 @@
         /*jshint validthis:true */
         widget.removeEventListener('remove', _private.get(this).on_removewidget);
         _private.get(this).widgets.splice(_private.get(this).widgets.indexOf(widget), 1);
-        this.trigger('removewidget', widget);
+        this.dispatchEvent('removewidget', widget);
     };
 
 })(Wirecloud, StyledElements, StyledElements.Utils);

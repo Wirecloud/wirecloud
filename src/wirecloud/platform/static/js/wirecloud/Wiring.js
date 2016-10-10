@@ -253,7 +253,7 @@
 
             this.visualdescription = status.visualdescription;
 
-            return this.trigger('load');
+            return this.dispatchEvent('load');
         },
 
         /**
@@ -522,7 +522,7 @@
 
         operator.addEventListener('change', priv.on_changecomponent);
         operator.addEventListener('remove', priv.on_removeoperator);
-        this.trigger('createoperator', operator.load());
+        this.dispatchEvent('createoperator', operator.load());
 
         return operator;
     };
@@ -576,7 +576,7 @@
 
         operator.removeEventListener('change', priv.on_changecomponent);
         operator.removeEventListener('remove', priv.on_removeoperator);
-        this.trigger('removeoperator', operator);
+        this.dispatchEvent('removeoperator', operator);
     };
 
     var on_removewidget = function on_removewidget(widget) {

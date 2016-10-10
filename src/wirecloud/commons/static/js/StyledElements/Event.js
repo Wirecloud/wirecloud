@@ -48,33 +48,6 @@
     // PUBLIC MEMBERS
     // =========================================================================
 
-    Event.prototype.trigger = function trigger() {
-        var i;
-
-        map.get(this).dispatching = true;
-
-        for (i = 0; i < this.handlers.length; i++) {
-            if (this.handlers[i] == null) {
-                continue;
-            }
-            try {
-                this.handlers[i].apply(this.context, arguments);
-            } catch (e) {
-                if (window.console != null && typeof window.console.error === 'function') {
-                    window.console.error(e);
-                }
-            }
-        }
-
-        for (i = this.handlers.length - 1; i >= 0; i--) {
-            if (this.handlers[i] == null) {
-                this.handlers.splice(i, 1);
-            }
-        }
-
-        map.get(this).dispatching = false;
-    };
-
     Event.prototype.addEventListener = function addEventListener(handler) {
         if (typeof handler !== 'function') {
             throw new TypeError('Handlers must be functions');
@@ -111,7 +84,30 @@
     };
 
     Event.prototype.dispatch = function dispatch() {
-        this.trigger.apply(this, arguments);
+        var i;
+
+        map.get(this).dispatching = true;
+
+        for (i = 0; i < this.handlers.length; i++) {
+            if (this.handlers[i] == null) {
+                continue;
+            }
+            try {
+                this.handlers[i].apply(this.context, arguments);
+            } catch (e) {
+                if (window.console != null && typeof window.console.error === 'function') {
+                    window.console.error(e);
+                }
+            }
+        }
+
+        for (i = this.handlers.length - 1; i >= 0; i--) {
+            if (this.handlers[i] == null) {
+                this.handlers.splice(i, 1);
+            }
+        }
+
+        map.get(this).dispatching = false;
     };
 
     // =========================================================================

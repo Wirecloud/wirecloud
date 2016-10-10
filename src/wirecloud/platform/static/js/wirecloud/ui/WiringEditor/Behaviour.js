@@ -147,7 +147,7 @@
                 this.components = {operator: {}, widget: {}};
                 this.connections = [];
 
-                return this.trigger('change');
+                return this.dispatchEvent('change');
             },
 
             /**
@@ -254,7 +254,7 @@
                     delete this.components[component.type][component.id];
                 }
 
-                return this.trigger('change');
+                return this.dispatchEvent('change');
             },
 
             /**
@@ -272,7 +272,7 @@
                     this.connections.splice(index, 1);
                 }
 
-                return this.trigger('change');
+                return this.dispatchEvent('change');
             },
 
             /**
@@ -340,7 +340,7 @@
                     this.components[component.type][component.id][name] = view[name];
                 }
 
-                return this.trigger('change');
+                return this.dispatchEvent('change');
             },
 
             /**
@@ -371,7 +371,7 @@
                     this.connections[index][name] = view[name];
                 }
 
-                return this.trigger('change');
+                return this.dispatchEvent('change');
             }
 
         }
@@ -396,7 +396,7 @@
         });
         dialog.setMsg(message);
         dialog.acceptHandler = function () {
-            this.trigger('optremove');
+            this.dispatchEvent('optremove');
         }.bind(this);
         dialog.show();
     };
@@ -422,7 +422,7 @@
         /* jshint validthis:true */
         this.setTitle(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
-        this.trigger('change');
+        this.dispatchEvent('change');
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

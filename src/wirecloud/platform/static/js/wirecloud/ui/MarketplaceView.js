@@ -104,7 +104,7 @@
                         auto_select_initial_market.call(this);
                     } else {
                         // Refresh wirecloud header as current marketplace may have been changed
-                        Wirecloud.trigger('viewcontextchanged');
+                        Wirecloud.dispatchEvent('viewcontextchanged');
                     }
                 }
                 utils.callCallback(options.onSuccess);
@@ -151,7 +151,7 @@
         this.temporalAlternatives = [this.emptyAlternative, this.errorsAlternative];
 
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative, in_alternative) {
-            Wirecloud.trigger('viewcontextchanged', this);
+            Wirecloud.dispatchEvent('viewcontextchanged', this);
         }.bind(this));
         this.appendChild(this.alternatives);
 
@@ -352,7 +352,7 @@
         }
 
         this.loading = true;
-        Wirecloud.trigger('viewcontextchanged');
+        Wirecloud.dispatchEvent('viewcontextchanged');
 
         this.number_of_alternatives = 0;
 

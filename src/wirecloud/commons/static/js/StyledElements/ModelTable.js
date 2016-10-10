@@ -492,6 +492,9 @@
     };
 
     var rowCallback = function rowCallback() {
+        /*
+            FIXME: it is not replaced by this.control.dispatchEvent('click', this.item); because of API's behaviour
+         */
         this.control.events.click.dispatch(this.item);
     };
 

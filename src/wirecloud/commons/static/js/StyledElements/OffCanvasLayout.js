@@ -112,7 +112,7 @@
 
             this.toggleClassName('slipped', true);
 
-            return this.trigger('slideIn', element);
+            return this.dispatchEvent('slideIn', element);
         },
 
         /**
@@ -127,7 +127,7 @@
 
             this.toggleClassName('slipped', false);
 
-            return this.trigger('slideOut');
+            return this.dispatchEvent('slideOut');
         }
 
     });

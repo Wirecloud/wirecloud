@@ -55,7 +55,7 @@
         var new_content = this.wrapperElement.textContent;
         this.wrapperElement.textContent = new_content;
         if (this._prev_content !== new_content) {
-            this.events.change.dispatch(this, new_content);
+            this.dispatchEvent('change', new_content);
         }
         this.disableEdition();
     };

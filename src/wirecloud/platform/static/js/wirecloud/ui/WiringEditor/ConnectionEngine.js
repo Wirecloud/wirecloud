@@ -279,7 +279,7 @@
             .addEventListener('customizestart', connection_oncustomizestart.bind(this))
             .addEventListener('remove', connection_onremove.bind(this));
 
-        return this.trigger('establish', connection, backupConnection);
+        return this.dispatchEvent('establish', connection, backupConnection);
     };
 
     var connection_onclick = function connection_onclick(connection) {
@@ -295,7 +295,7 @@
                     this.activeConnection.click();
                 }
                 this.activeConnection = connection;
-                this.trigger('click', connection);
+                this.dispatchEvent('click', connection);
             } else {
                 delete this.activeConnection;
             }
@@ -361,7 +361,7 @@
         document.addEventListener('mousemove', this._ondrag);
         document.addEventListener('mouseup', this._ondragend);
 
-        this.trigger('dragstart', connection, initialEndpoint, endpoint);
+        this.dispatchEvent('dragstart', connection, initialEndpoint, endpoint);
 
         this.temporalInitialEndpoint = initialEndpoint;
         this.temporalConnection = connection;
@@ -410,7 +410,7 @@
             break;
         case ns.ConnectionEngine.CONNECTION_DUPLICATE:
             this.temporalConnection.remove();
-            this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint).click(), this._connectionBackup);
+            this.dispatchEvent('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint).click(), this._connectionBackup);
             break;
         default:
 
@@ -419,13 +419,13 @@
             }
 
             this.temporalConnection.remove();
-            this.trigger('cancel');
+            this.dispatchEvent('cancel');
         }
 
         document.removeEventListener('mousemove', this._ondrag);
         document.removeEventListener('mouseup', this._ondragend);
 
-        this.trigger('dragend', this.temporalConnection, this.temporalInitialEndpoint);
+        this.dispatchEvent('dragend', this.temporalConnection, this.temporalInitialEndpoint);
 
         delete this.temporalInitialEndpoint;
         delete this._connectionBackup;

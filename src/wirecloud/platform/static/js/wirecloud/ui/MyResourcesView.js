@@ -72,7 +72,7 @@
             Wirecloud.UserInterfaceManager.header._notifyViewChange();
         });
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-            setTimeout(Wirecloud.trigger.bind(Wirecloud, 'viewcontextchanged'), 0);
+            setTimeout(Wirecloud.dispatchEvent.bind(Wirecloud, 'viewcontextchanged'), 0);
         }.bind(this));
 
         this.addEventListener('show', function () {
@@ -174,7 +174,7 @@
                     this.refresh_if_needed();
                     var new_status = this.buildStateData();
                     Wirecloud.HistoryManager.pushState(new_status);
-                    Wirecloud.trigger('viewcontextchanged');
+                    Wirecloud.dispatchEvent('viewcontextchanged');
                 }.bind(this)
             };
         }

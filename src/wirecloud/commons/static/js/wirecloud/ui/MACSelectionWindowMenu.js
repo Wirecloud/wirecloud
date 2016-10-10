@@ -27,13 +27,7 @@
     "use strict";
 
     var MACSelectionWindowMenu = function MACSelectionWindowMenu(title, options) {
-        Wirecloud.ui.WindowMenu.call(this, title, 'mac_selection_dialog');
-
-        // Events
-        Object.defineProperty(this, 'events', {
-            value: {'select': new se.Event()}
-        });
-        Object.freeze(this.events);
+        Wirecloud.ui.WindowMenu.call(this, title, 'mac_selection_dialog', ['select']);
 
         this.macsearch = new Wirecloud.ui.MACSearch({
             scope: options.scope,
@@ -41,7 +35,7 @@
             resourceButtonTooltip: utils.gettext('Select'),
             resourceButtonListener: function (resource) {
                 this._closeListener();
-                this.events.select.dispatch(resource);
+                this.dispatchEvent('select', resource);
             }.bind(this)
         });
         this.macsearch.insertInto(this.windowContent);

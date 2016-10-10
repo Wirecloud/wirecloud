@@ -81,7 +81,7 @@
                                             if (this.secondInput != null) {
                                                 this.secondInput.setDisabled(!this.inputElement.checked);
                                             }
-                                            this.events.change.dispatch(this);
+                                            this.dispatchEvent('change');
                                         }
                                     }.bind(this),
                                     true);

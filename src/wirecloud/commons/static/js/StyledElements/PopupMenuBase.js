@@ -226,7 +226,7 @@
     };
 
     PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
-        this.trigger('click', menuItem);
+        this.dispatchEvent('click', menuItem);
 
         // This if is necessary for touch screens where mouseenter and
         // mouseleave events are not raised
@@ -309,7 +309,7 @@
         baseelement.appendChild(this.wrapperElement);
 
         Wirecloud.UserInterfaceManager._registerPopup(this);
-        this.events.visibilityChange.dispatch(this);
+        this.dispatchEvent("visibilityChange");
 
         if (!('left' in refPosition) && 'x' in refPosition && 'y' in refPosition) {
 
@@ -355,7 +355,7 @@
         }
 
         this._activeMenuItem.activate();
-        this.trigger('itemOver', this._activeMenuItem);
+        this.dispatchEvent('itemOver', this._activeMenuItem);
 
         return this;
     };
@@ -381,7 +381,7 @@
         }
 
         this._activeMenuItem.activate();
-        this.trigger('itemOver', this._activeMenuItem);
+        this.dispatchEvent('itemOver', this._activeMenuItem);
 
         return this;
     };
@@ -443,7 +443,7 @@
         this.wrapperElement.remove();
         Wirecloud.UserInterfaceManager._unregisterPopup(this);
 
-        return this.trigger('visibilityChange');
+        return this.dispatchEvent('visibilityChange');
     };
 
     PopupMenuBase.prototype.destroy = function destroy() {
@@ -498,7 +498,7 @@
 
     var activateMenuItem = function activateMenuItem(menuItem) {
         this._activeMenuItem = menuItem.activate();
-        this.trigger('itemOver', menuItem);
+        this.dispatchEvent('itemOver', menuItem);
     };
 
     var hideContent = function hideContent() {

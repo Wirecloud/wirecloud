@@ -267,7 +267,7 @@
                     expandEndpoints.call(this, offsetWidth);
                 }
 
-                this.refresh().trigger('change', {
+                this.refresh().dispatchEvent('change', {
                     collapsed: collapsed,
                     position: this.position()
                 });
@@ -313,7 +313,7 @@
 
                 endpoint.addEventListener('connectionadded', endpoint_onconnectionadded.bind(this));
                 endpoint.addEventListener('connectionremoved', endpoint_onconnectionremoved.bind(this));
-                this.trigger('endpointadded', endpoint);
+                this.dispatchEvent('endpointadded', endpoint);
 
                 return this;
             },
@@ -431,7 +431,7 @@
 
                 this.active = true;
 
-                return this.trigger('orderstart');
+                return this.dispatchEvent('orderstart');
             },
 
             stopOrderingEndpoints: function stopOrderingEndpoints() {
@@ -450,14 +450,14 @@
 
                 makeDraggable.call(this);
 
-                this.trigger('change', {
+                this.dispatchEvent('change', {
                     endpoints: {
                         source: this.endpoints.source.toJSON(),
                         target: this.endpoints.target.toJSON()
                     }
                 });
 
-                return this.trigger('orderend');
+                return this.dispatchEvent('orderend');
             },
 
             /**
@@ -514,7 +514,7 @@
 
                 if (!arguments.length && !this.hasClassName('cloned')) {
                     this._component.removeEventListener('change', this._on_change_model);
-                    this.trigger('remove');
+                    this.dispatchEvent('remove');
                 }
 
                 return this.superMember(se.Panel, 'remove', childElement);
@@ -580,9 +580,9 @@
     var btnremove_onclick = function btnremove_onclick() {
 
         if (this.background) {
-            this.trigger('optshare');
+            this.dispatchEvent('optshare');
         } else {
-            this.trigger('optremove');
+            this.dispatchEvent('optremove');
         }
     };
 
@@ -619,7 +619,7 @@
         /* jshint validthis: true */
         if (endpoint.missing && !endpoint.hasConnections()) {
             this.endpoints[endpoint.type].removeChild(endpoint);
-            this.trigger('endpointremoved', endpoint);
+            this.dispatchEvent('endpointremoved', endpoint);
             this.refresh();
         }
     };
@@ -659,7 +659,7 @@
                     context.component.active = true;
                 }
 
-                context.component.trigger('dragstart', event);
+                context.component.dispatchEvent('dragstart', event);
             },
             function drag(event, draggable, context, x, y) {
                 context.component
@@ -667,7 +667,7 @@
                         x: context.position.x + x,
                         y: context.position.y + y
                     })
-                    .trigger('drag', x, y, event);
+                    .dispatchEvent('drag', x, y, event);
             },
             function dragend(draggable, context, event) {
                 var position = context.component.removeClassName('dragging').position();
@@ -685,10 +685,10 @@
                     }
 
                     context.component
-                        .trigger('change', {
+                        .dispatchEvent('change', {
                             position: position
                         })
-                        .trigger('dragend', event);
+                        .dispatchEvent('dragend', event);
                 }
             },
             function canDrag() {
@@ -755,7 +755,7 @@
         endpoint.removeEventListener('connectionremoved', this._endpoint_onconnectionremoved_bound);
 
         this.endpoints[endpoint.type].removeChild(endpoint);
-        this.trigger('endpointremoved', endpoint);
+        this.dispatchEvent('endpointremoved', endpoint);
     };
 
     var on_change_model = function on_change_model(model, changes) {

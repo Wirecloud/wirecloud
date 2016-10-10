@@ -130,7 +130,7 @@
         this.refresh_store_info();
 
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-            setTimeout(Wirecloud.trigger.bind(Wirecloud, 'viewcontextchanged'), 0);
+            setTimeout(Wirecloud.dispatchEvent.bind(Wirecloud, 'viewcontextchanged'), 0);
         }.bind(this));
 
         this.addEventListener('show', this.refresh_if_needed.bind(this));

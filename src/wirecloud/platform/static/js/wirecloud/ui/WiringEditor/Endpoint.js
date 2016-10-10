@@ -175,7 +175,7 @@
                     connection.refreshEndpoint(this);
                 }
 
-                return this.trigger('connectionadded', connection);
+                return this.dispatchEvent('connectionadded', connection);
             },
 
             /**
@@ -345,7 +345,7 @@
 
                 if (index !== -1) {
                     this.connections.splice(index, 1);
-                    this.trigger('connectionremoved', connection);
+                    this.dispatchEvent('connectionremoved', connection);
                 }
 
                 return this;
@@ -392,7 +392,7 @@
         if (this.enabled && event.button === 0) {
             event.stopPropagation();
             event.preventDefault();  // Required for disabling text selection
-            this.trigger('mousedown', event);
+            this.dispatchEvent('mousedown', event);
         }
     };
 
@@ -400,7 +400,7 @@
 
         if (this.enabled) {
             event.stopPropagation();
-            this.trigger('mouseenter', event);
+            this.dispatchEvent('mouseenter', event);
         }
     };
 
@@ -408,7 +408,7 @@
 
         if (this.enabled) {
             event.stopPropagation();
-            this.trigger('mouseleave', event);
+            this.dispatchEvent('mouseleave', event);
         }
     };
 
@@ -417,7 +417,7 @@
         if (this.enabled && event.button === 0) {
             event.stopPropagation();
             event.preventDefault();  // Required for disabling text selection
-            this.trigger('mouseup', event);
+            this.dispatchEvent('mouseup', event);
         }
     };
 

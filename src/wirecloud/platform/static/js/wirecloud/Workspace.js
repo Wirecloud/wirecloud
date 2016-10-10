@@ -399,7 +399,7 @@
 
         remove: function remove() {
             return Wirecloud.removeWorkspace(this).then(function () {
-                this.trigger('remove');
+                this.dispatchEvent('remove');
             }.bind(this));
         },
 
@@ -431,7 +431,7 @@
                             this.contextManager.modify({
                                 name: name
                             });
-                            this.trigger('change', ['name']);
+                            this.dispatchEvent('change', ['name']);
                             resolve(this);
                         } else {
                             reject(/* TODO */);
@@ -449,7 +449,7 @@
             this.wiring.removeEventListener('createoperator', on_createoperator.bind(this));
             this.wiring.removeEventListener('removeoperator', on_removeoperator.bind(this));
 
-            this.trigger('unload');
+            this.dispatchEvent('unload');
 
             Wirecloud.GlobalLogManager.log(utils.gettext('Workspace unloaded successfully'), Wirecloud.constants.LOGGING.INFO_MSG);
             Wirecloud.GlobalLogManager.newCycle();
@@ -487,7 +487,7 @@
 
         priv.tabs.push(tab);
 
-        this.trigger('createtab', tab);
+        this.dispatchEvent('createtab', tab);
 
         if (Array.isArray(data.iwidgets) && data.iwidgets.length) {
             data.iwidgets.forEach(function (data) {
@@ -568,17 +568,17 @@
     // =========================================================================
 
     var on_changetab = function on_changetab(tab, changes) {
-        this.trigger('changetab', tab, changes);
+        this.dispatchEvent('changetab', tab, changes);
     };
 
     var on_createoperator = function on_createoperator(wiring, operator) {
         this.resources.addComponent(operator.meta);
-        this.trigger('createoperator', operator);
+        this.dispatchEvent('createoperator', operator);
     };
 
     var on_createwidget = function on_createwidget(tab, widget) {
         this.resources.addComponent(widget.meta);
-        this.trigger('createwidget', widget);
+        this.dispatchEvent('createwidget', widget);
     };
 
     var on_livemessage = function on_livemessage(live, data) {
@@ -586,7 +586,7 @@
             this.contextManager.modify({
                 name: data.name
             });
-            this.trigger('change', ['name']);
+            this.dispatchEvent('change', ['name']);
         }
     };
 
@@ -600,15 +600,15 @@
         tab.removeEventListener('remove', priv.on_removetab);
         tab.removeEventListener('removewidget', priv.on_removewidget);
 
-        this.trigger('removetab', tab);
+        this.dispatchEvent('removetab', tab);
     };
 
     var on_removeoperator = function on_removeoperator(wiring, operator) {
-        this.trigger('removeoperator', operator);
+        this.dispatchEvent('removeoperator', operator);
     };
 
     var on_removewidget = function on_removewidget(tab, widget) {
-        this.trigger('removewidget', widget);
+        this.dispatchEvent('removewidget', widget);
     };
 
 })(Wirecloud, StyledElements, StyledElements.Utils);

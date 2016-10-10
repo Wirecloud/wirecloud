@@ -32,16 +32,16 @@
         if (this.enabled) {
             var optionList = event.target;
             this.textDiv.textContent = optionList[optionList.selectedIndex].text;
-            this.events.change.dispatch(this);
+            this.dispatchEvent('change');
         }
     };
 
     onfocus = function onfocus() {
-        this.addClassName('focus').trigger('focus');
+        this.addClassName('focus').dispatchEvent('focus');
     };
 
     onblur = function onblur() {
-        this.removeClassName('focus').trigger('blur');
+        this.removeClassName('focus').dispatchEvent('blur');
     };
 
     /**

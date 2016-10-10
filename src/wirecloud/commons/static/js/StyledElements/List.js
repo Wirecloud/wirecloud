@@ -136,7 +136,7 @@
 
         if (index !== -1) {
             this.currentSelection.splice(index, 1);
-            this.event.change.dispatch(this, this.currentSelection, [], [value]);
+            this.dispatchEvent('change', this.currentSelection, [], [value]);
         }
     };
 
@@ -170,7 +170,7 @@
 
         _cleanSelection.call(this);
 
-        this.events.change.dispatch(this, [], [], oldSelection);
+        this.dispatchEvent('change', [], [], oldSelection);
     };
 
     /**
@@ -217,7 +217,7 @@
             }
         }
 
-        this.events.change.dispatch(this, this.currentSelection, addedValues, removedValues);
+        this.dispatchEvent('change', this.currentSelection, addedValues, removedValues);
     };
 
     /**
@@ -242,7 +242,7 @@
         }
 
         if (removedValues.length > 0) {
-            this.events.change.dispatch(this, this.currentSelection, [], removedValues);
+            this.dispatchEvent('change', this.currentSelection, [], removedValues);
         }
     };
 

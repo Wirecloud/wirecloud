@@ -71,10 +71,10 @@
         if (title != null) {
             this.title = title;
         }
-        this.trigger("progress", priv.progress);
+        this.dispatchEvent("progress", priv.progress);
         if (priv.progress === 100) {
             priv.status = "resolved";
-            this.trigger("finish");
+            this.dispatchEvent("finish");
         }
     };
 
@@ -83,7 +83,7 @@
 
         if (priv.status === "pending") {
             priv.status = "aborted";
-            this.trigger('fail', msg);
+            this.dispatchEvent('fail', msg);
         }
     };
 
@@ -92,7 +92,7 @@
 
         if (priv.status === "pending") {
             priv.status = "rejected";
-            this.trigger('fail', msg);
+            this.dispatchEvent('fail', msg);
         }
     };
 
@@ -181,7 +181,7 @@
         if (this.status === "pending") {
             this.status = "rejected";
             this.subtasks.forEach(abort_task);
-            this.trigger('fail', msg);
+            this.dispatchEvent('fail', msg);
         }
     };
 

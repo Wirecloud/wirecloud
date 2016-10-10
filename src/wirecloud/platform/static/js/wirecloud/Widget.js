@@ -320,7 +320,7 @@
                         onComplete: function (response) {
                             if (response.status === 204) {
                                 privates.get(this).tab = tab;
-                                this.trigger('change', ['tab']);
+                                this.dispatchEvent('change', ['tab']);
                                 resolve(this);
                             } else {
                                 reject(/* TODO */);
@@ -661,7 +661,7 @@
             on_unload.call(this);
         }
 
-        this.trigger('remove');
+        this.dispatchEvent('remove');
     };
 
     var change_meta = function change_meta(resource) {
@@ -674,7 +674,7 @@
             this.load();
         }
 
-        this.trigger('change', ['meta']);
+        this.dispatchEvent('change', ['meta']);
     };
 
     var _rename = function _rename(title) {
@@ -682,7 +682,7 @@
         this.contextManager.modify({
             title: title
         });
-        this.trigger('change', ['title']);
+        this.dispatchEvent('change', ['title']);
     };
 
     var clean_title = function clean_title(title) {
@@ -754,7 +754,7 @@
             });
         }
 
-        this.trigger('load');
+        this.dispatchEvent('load');
 
         this.pending_events.forEach(send_pending_event, this);
         this.pending_events = [];
@@ -781,7 +781,7 @@
         });
         this.logManager.newCycle();
 
-        this.trigger('unload');
+        this.dispatchEvent('unload');
     };
 
 })(Wirecloud, StyledElements, StyledElements.Utils);

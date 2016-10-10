@@ -177,7 +177,7 @@
 
 
     var component_ondragstart = function component_ondragstart(draggable, context, event) {
-        this.trigger('add', context);
+        this.dispatchEvent('add', context);
 
         var bcr = context.layout.getBoundingClientRect();
 
@@ -197,7 +197,7 @@
     };
 
     var createcomponent_onclick = function createcomponent_onclick(group, button) {
-        this.trigger('create', group, button);
+        this.dispatchEvent('create', group, button);
     };
 
     var component_ondrag = function component_ondrag(event, draggable, context, xDelta, yDelta) {
@@ -227,7 +227,7 @@
         }
 
         context.element.removeClassName("cloned dragging");
-        context.element.trigger('change', context.element.toJSON());
+        context.element.dispatchEvent('change', context.element.toJSON());
 
         context.layout.slideIn(1);
     };

@@ -67,13 +67,13 @@
             });
         });
 
-        describe("trigger(eventType [, ...args])", function () {
+        describe("dispatchEvent(eventType [, ...args])", function () {
 
             it("should throw error if the eventType does not exist", function () {
                 var eventTarget = new StyledElements.ObjectWithEvents(['click']);
 
                 expect(function () {
-                    eventTarget.trigger('focus');
+                    eventTarget.dispatchEvent('focus');
                 }).toThrow(jasmine.any(Error));
             });
 
@@ -85,7 +85,7 @@
                 var eventListener2 = jasmine.createSpy('eventListener2');
 
                 eventTarget.addEventListener('click', eventListener1);
-                eventTarget.trigger('click');
+                eventTarget.dispatchEvent('click');
 
                 expect(eventListener2).toHaveBeenCalledWith(eventTarget);
             });
@@ -102,7 +102,7 @@
                 eventTarget.addEventListener('click', eventListener2);
                 eventTarget.addEventListener('click', eventListener3);
 
-                eventTarget.trigger('click');
+                eventTarget.dispatchEvent('click');
 
                 expect(eventListener2).not.toHaveBeenCalled();
                 expect(eventListener3).toHaveBeenCalledWith(eventTarget);
@@ -118,7 +118,7 @@
                 eventTarget.addEventListener('click', eventListener1);
                 eventTarget.addEventListener('click', eventListener2);
 
-                eventTarget.trigger('click');
+                eventTarget.dispatchEvent('click');
 
                 expect(eventListener2).toHaveBeenCalledWith(eventTarget);
             });

@@ -57,7 +57,7 @@
 
         if (this.enabled) {
             this.active = !this.active;
-            this.trigger('click');
+            this.dispatchEvent('click');
         }
 
         return this;
