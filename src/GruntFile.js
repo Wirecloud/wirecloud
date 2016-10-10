@@ -100,6 +100,16 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/KeywordSuggestion.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/Endpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/EndpointTypeError.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/EndpointValueError.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/SourceEndpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/TargetEndpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/MissingEndpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/WidgetSourceEndpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/WidgetTargetEndpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/OperatorSourceEndpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/OperatorTargetEndpoint.js'
 ];
 
 module.exports = function (grunt) {
