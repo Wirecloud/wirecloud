@@ -52,6 +52,8 @@ class CatalogueResourceSchema(fields.SchemaClass):
     users = fields.KEYWORD(commas=True)
     groups = fields.KEYWORD(commas=True)
     content = fields.NGRAMWORDS()
+    input_friendcodes = fields.KEYWORD()
+    output_friendcodes = fields.KEYWORD()
 
 
 class CatalogueResourceSearcher(BaseSearcher):
@@ -66,12 +68,16 @@ class CatalogueResourceSearcher(BaseSearcher):
         resource_info = resource.get_processed_info(process_urls=False)
 
         endpoint_descriptions = ''
+        input_friendcodes = []
+        output_friendcodes = []
 
         for endpoint in resource_info['wiring']['inputs']:
             endpoint_descriptions += endpoint['description'] + ' '
+            input_friendcodes.append(endpoint['friendcode'])
 
         for endpoint in resource_info['wiring']['outputs']:
             endpoint_descriptions += endpoint['description'] + ' '
+            output_friendcodes.append(endpoint['friendcode'])
 
         fields = {
             'pk': '%s' % resource.pk,
@@ -90,6 +96,8 @@ class CatalogueResourceSearcher(BaseSearcher):
             'smartphoneimage': resource_info['smartphoneimage'],
             'users': ', '.join(resource.users.all().values_list('username', flat=True)),
             'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
+            'input_friendcodes': ' '.join(input_friendcodes),
+            'output_friendcodes': ' '.join(output_friendcodes),
         }
 
         return fields
