@@ -109,7 +109,9 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/wiring/WidgetSourceEndpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/WidgetTargetEndpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/OperatorSourceEndpoint.js',
-    'wirecloud/platform/static/js/wirecloud/wiring/OperatorTargetEndpoint.js'
+    'wirecloud/platform/static/js/wirecloud/wiring/OperatorTargetEndpoint.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/Connection.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/ConnectionLogManager.js'
 ];
 
 module.exports = function (grunt) {
