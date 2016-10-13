@@ -160,6 +160,12 @@ module.exports = function (grunt) {
                     config: true
                 }
             },
+            wirecloud: {
+                src: WirecloudFiles,
+                options: {
+                    config: true
+                }
+            },
             specs: {
                 src: 'js_tests/*Spec.js',
                 options: {
@@ -185,6 +191,11 @@ module.exports = function (grunt) {
             lib: {
                 files: {
                     src: styledElementsFiles
+                }
+            },
+            wirecloud: {
+                files: {
+                    src: WirecloudFiles
                 }
             },
             specs: {
