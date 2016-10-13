@@ -176,7 +176,7 @@
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'hasInputConnections', {
-        value: function getReachableEndpoints(inputName) {
+        value: function hasInputConnections(inputName) {
             if (inputName in resource.inputs) {
                 return resource.inputs[inputName].inputs.length > 0;
             } else {
@@ -186,7 +186,7 @@
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'hasOutputConnections', {
-        value: function getReachableEndpoints(outputName) {
+        value: function hasOutputConnections(outputName) {
             if (outputName in resource.outputs) {
                 return resource.outputs[outputName].outputList.length > 0;
             } else {
