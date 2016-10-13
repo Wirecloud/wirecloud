@@ -187,6 +187,36 @@
         }
     );
 
+    var FRIENDCODES_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
+        {
+            id: "operator/1/query",
+            friendcodeList: ["query", "string"],
+            name: "query",
+            description: "",
+            label: ""
+        },
+        {
+            id: "CoNWeT/example-1/1.0",
+            type: "operator",
+            equals: equals
+        }
+    );
+
+    var FRIENDCODES_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
+        {
+            id: "widget/21/keywords",
+            friendcodeList: ["keywords", "query", "input-text"],
+            name: "keywords",
+            description: "",
+            label: ""
+        },
+        {
+            id: "CoNWeT/jenkins-project-build-list/0.1.9",
+            type: "widget",
+            equals: equals
+        }
+    );
+
 
     describe("KeywordSuggestion", function () {
 
@@ -451,6 +481,33 @@
                 expect(callback.calls.argsFor(0)).toEqual([BASIC_INPUT_ENDPOINT]);
             });
 
+            it("should find input endpoints using friendcode list", function () {
+                var callback = jasmine.createSpy('callback');
+
+                // Prepare the engine
+                engine
+                    .appendEndpoint(FRIENDCODES_INPUT_ENDPOINT)
+                    .appendEndpoint(FRIENDCODES_OUTPUT_ENDPOINT);
+
+                expect(engine.forEachSuggestion(FRIENDCODES_OUTPUT_ENDPOINT, callback)).toBe(engine);
+
+                expect(callback.calls.count()).toBe(1);
+                expect(callback.calls.argsFor(0)).toEqual([FRIENDCODES_INPUT_ENDPOINT]);
+            });
+
+            it("should find output endpoints using friendcode list", function () {
+                var callback = jasmine.createSpy('callback');
+
+                // Prepare the engine
+                engine
+                    .appendEndpoint(FRIENDCODES_INPUT_ENDPOINT)
+                    .appendEndpoint(FRIENDCODES_OUTPUT_ENDPOINT);
+
+                expect(engine.forEachSuggestion(FRIENDCODES_INPUT_ENDPOINT, callback)).toBe(engine);
+
+                expect(callback.calls.count()).toBe(1);
+                expect(callback.calls.argsFor(0)).toEqual([FRIENDCODES_OUTPUT_ENDPOINT]);
+            });
         });
 
         describe("empty()", function () {
