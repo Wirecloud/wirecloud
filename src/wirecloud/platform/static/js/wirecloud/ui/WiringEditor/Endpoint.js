@@ -84,7 +84,7 @@
                 set: function set(value) {this.get().setAttribute('data-index', value);}
             },
 
-            keywords: {value: wiringEndpoint.friendcode.trim().split(/\s+/)},
+            friendcodeList: {value: wiringEndpoint.friendcodeList},
 
             missing: {
                 get: function get() {return this.hasClassName('missing');},

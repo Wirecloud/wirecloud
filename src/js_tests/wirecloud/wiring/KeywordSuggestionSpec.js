@@ -37,7 +37,7 @@
     var BASIC_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/19/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: ""
@@ -52,7 +52,7 @@
     var BASIC_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/19/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: ""
@@ -67,7 +67,7 @@
     var EXTRA_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/22/other-endpoint",
-            friendcode: "other",
+            friendcodeList: ["other"],
             name: "other-endpoint",
             description: "",
             label: ""
@@ -82,7 +82,7 @@
     var EXTRA_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/22/other-endpoint",
-            friendcode: "other",
+            friendcodeList: ["other"],
             name: "other-endpoint",
             description: "",
             label: ""
@@ -97,7 +97,7 @@
     var MISSING_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/20/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: "",
@@ -113,7 +113,7 @@
     var MISSING_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/20/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: "",
@@ -130,7 +130,7 @@
     var OPERATOR_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "operator/1/list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "list",
             description: "",
             label: ""
@@ -145,7 +145,7 @@
     var OPERATOR_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "operator/1/list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "list",
             description: "",
             label: ""
@@ -160,7 +160,7 @@
     var WIDGET_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/21/other-endpoint",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "other-endpoint",
             description: "",
             label: ""
@@ -175,7 +175,7 @@
     var WIDGET_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/21/other-outputendpoint",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "other-outputendpoint",
             description: "",
             label: ""

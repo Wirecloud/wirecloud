@@ -53,7 +53,7 @@
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
                 expect(endpoint.id).toEqual([WIDGET.meta.type, WIDGET.id, endpointDesc.name].join("/"));
                 expect(endpoint.description).toEqual(endpointDesc.description);
-                expect(endpoint.keywords).toEqual(["a", "b", "c"]);
+                expect(endpoint.friendcodeList).toEqual(["a", "b", "c"]);
                 expect(endpoint.missing).toBeFalsy();
             });
 
@@ -69,7 +69,7 @@
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
                 expect(endpoint.id).toEqual(["widget", WIDGET.id, endpointDesc.name].join("/"));
                 expect(endpoint.description).toEqual("");
-                expect(endpoint.keywords).toEqual(["a", "b", "c"]);
+                expect(endpoint.friendcodeList).toEqual(["a", "b", "c"]);
                 expect(endpoint.missing).toBeFalsy();
             });
 
@@ -80,7 +80,7 @@
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
                 expect(endpoint.id).toEqual(null);
                 expect(endpoint.description).toEqual("");
-                expect(endpoint.keywords).toEqual([]);
+                expect(endpoint.friendcodeList).toEqual([]);
                 expect(endpoint.missing).toBeFalsy();
             });
 
@@ -96,7 +96,7 @@
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
                 expect(endpoint.id).toEqual(["widget", WIDGET.id, endpointDesc.name].join("/"));
                 expect(endpoint.description).toEqual("");
-                expect(endpoint.keywords).toEqual([]);
+                expect(endpoint.friendcodeList).toEqual([]);
                 expect(endpoint.missing).toBeFalsy();
             });
 
