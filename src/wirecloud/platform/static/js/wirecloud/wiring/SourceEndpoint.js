@@ -1,5 +1,5 @@
 /*
- *     Copyright 2008-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2008-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -31,7 +31,7 @@
         this.outputList = [];
         this.connections = [];
     };
-    SourceEndpoint.prototype = new Wirecloud.wiring.Endpoint();
+    utils.inherit(SourceEndpoint, Wirecloud.wiring.Endpoint);
 
     SourceEndpoint.prototype.connect = function connect(out, connection) {
         if (!(out instanceof Wirecloud.wiring.TargetEndpoint)) {
@@ -47,7 +47,13 @@
     };
 
     SourceEndpoint.prototype.disconnect = function disconnect(out) {
-        var connection, index = this.outputList.indexOf(out);
+        var connection, index;
+
+        if (!(out instanceof Wirecloud.wiring.TargetEndpoint)) {
+            throw new TypeError('Invalid target endpoint');
+        }
+
+        index = this.outputList.indexOf(out);
 
         if (index !== -1) {
             this.outputList.splice(index, 1);
@@ -60,7 +66,7 @@
 
     SourceEndpoint.prototype.fullDisconnect = function fullDisconnect() {
         // Outputs
-        var outputs = Wirecloud.Utils.clone(this.outputList);
+        var outputs = utils.clone(this.outputList);
         for (var i = 0; i < outputs.length; ++i) {
             this.disconnect(outputs[i]);
         }
@@ -71,17 +77,13 @@
     };
 
     /**
-     * Sets the value for this <code>Wirecloud.wiring.SourceEndpoint</code>. Also, this method propagates this
-     * new value to the output connectables.
+     * Propagates the event to all the TargetEndpoints connected to this
+     * SourceEndpoint.
      */
     SourceEndpoint.prototype.propagate = function propagate(value, options) {
         var i, errorDetails, targetEndpoint, connection;
 
-        options = Wirecloud.Utils.merge({
-            initial: false
-        }, options);
-
-        var outputs = Wirecloud.Utils.clone(this.outputList);
+        var outputs = utils.clone(this.outputList);
 
         for (i = 0; i < outputs.length; ++i) {
             targetEndpoint = outputs[i];
@@ -100,7 +102,7 @@
 
         for (var i = 0; i < this.outputList.length; ++i) {
             var currentEndpoints = this.outputList[i].getReachableEndpoints();
-            if (currentEndpoints && currentEndpoints.length > 0) {
+            if (currentEndpoints.length > 0) {
                 endpoints = endpoints.concat(currentEndpoints);
             }
         }
@@ -110,4 +112,4 @@
 
     Wirecloud.wiring.SourceEndpoint = SourceEndpoint;
 
-})();
+})(Wirecloud.Utils);

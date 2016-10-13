@@ -1,5 +1,5 @@
 /*
- *     Copyright 2008-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2008-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -31,7 +31,7 @@
         this.inputs = [];
         this.connections = [];
     };
-    TargetEndpoint.prototype = new Wirecloud.wiring.Endpoint();
+    utils.inherit(TargetEndpoint, Wirecloud.wiring.Endpoint);
 
     TargetEndpoint.prototype.connect = function connect(input, connection) {
         if (!(input instanceof Wirecloud.wiring.SourceEndpoint)) {
@@ -47,6 +47,10 @@
         }
 
         input.disconnect(this);
+    };
+
+    TargetEndpoint.prototype.propagate = function propagate(data, options) {
+        // Do nothing by default
     };
 
     /**
@@ -77,4 +81,4 @@
 
     Wirecloud.wiring.TargetEndpoint = TargetEndpoint;
 
-})();
+})(Wirecloud.Utils);

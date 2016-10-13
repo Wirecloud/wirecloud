@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,60 +29,70 @@
     var GhostSourceEndpoint = function GhostSourceEndpoint(entity, endpoint) {
         Object.defineProperties(this, {
             id: {value: entity.meta.type + '/' + entity.id + '/' + endpoint},
-            entity: {value: entity},
             component: {value: entity},
             name: {value: endpoint},
             label: {value: endpoint},
-            description: {value: utils.gettext("No description provided")},
-            friendcode: {value: 'ghost_null'},
+            description: {value: ''},
+            friendcode: {value: ''},
             missing: {value: true}
         });
-    };
-    GhostSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
-    GhostSourceEndpoint.prototype.toString = function toString() {
-        return this.id;
+        ns.SourceEndpoint.call(this);
     };
+    utils.inherit(GhostSourceEndpoint, ns.SourceEndpoint, {
 
-    GhostSourceEndpoint.prototype.toJSON = function toJSON() {
-        return {
-            type: this.component.meta.type,
-            id: this.component.id,
-            endpoint: this.name
-        };
-    };
+        propagate: function propagate() {
+            // Do nothing as this endpoint is missing
+        },
+
+        toString: function toString() {
+            return this.id;
+        },
+
+        toJSON: function toJSON() {
+            return {
+                type: this.component.meta.type,
+                id: this.component.id,
+                endpoint: this.name
+            };
+        }
+
+    });
 
     Wirecloud.wiring.GhostSourceEndpoint = GhostSourceEndpoint;
 
     var GhostTargetEndpoint = function GhostTargetEndpoint(entity, endpoint) {
         Object.defineProperties(this, {
             id: {value: entity.meta.type + '/' + entity.id + '/' + endpoint},
-            entity: {value: entity},
             component: {value: entity},
             name: {value: endpoint},
             label: {value: endpoint},
-            description: {value: utils.gettext("No description provided")},
-            friendcode: {value: 'ghost_null'},
+            description: {value: ''},
+            friendcode: {value: ''},
             missing: {value: true}
         });
-    };
-    GhostTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
-    GhostTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
-        // Do nothing
+        ns.TargetEndpoint.call(this);
     };
+    utils.inherit(GhostTargetEndpoint, Wirecloud.wiring.TargetEndpoint, {
 
-    GhostTargetEndpoint.prototype.toString = function toString() {
-        return this.id;
-    };
+        propagate: function propagate() {
+            // Do nothing as this endpoint is missing
+        },
 
-    GhostTargetEndpoint.prototype.toJSON = function toJSON() {
-        return {
-            type: this.component.meta.type,
-            id: this.component.id,
-            endpoint: this.name
-        };
-    };
+        toString: function toString() {
+            return this.id;
+        },
+
+        toJSON: function toJSON() {
+            return {
+                type: this.component.meta.type,
+                id: this.component.id,
+                endpoint: this.name
+            };
+        }
+
+    });
 
     Wirecloud.wiring.GhostTargetEndpoint = GhostTargetEndpoint;
 

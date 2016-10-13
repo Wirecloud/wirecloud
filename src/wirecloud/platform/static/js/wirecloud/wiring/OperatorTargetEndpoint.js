@@ -27,23 +27,27 @@
     "use strict";
 
     var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
-        Object.defineProperty(this, 'operator', {value: operator});
-        Object.defineProperty(this, 'component', {value: operator});
+        Object.defineProperties(this, {
+            component: {value: operator},
+            meta: {value: meta},
+            missing: {value: false}
+        });
 
-        Object.defineProperty(this, 'meta', {value: meta});
         if (meta != null) {
-            Object.defineProperty(this, 'name', {value: meta.name});
-            Object.defineProperty(this, 'missing', {value: false});
-            Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-            Object.defineProperty(this, 'keywords', {value: meta.friendcode.trim().split(/\s+/)});
-            Object.defineProperty(this, 'label', {value: meta.label});
-            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : utils.gettext("No description provided.")});
-            Object.defineProperty(this, 'id', {value: 'operator/' + this.operator.id + '/' + this.meta.name});
+            Object.defineProperties(this, {
+                name: {value: meta.name},
+                friendcode: {value: meta.friendcode},
+                label: {value: meta.label},
+                description: {value: meta.description ? meta.description : ""},
+                id: {value: 'operator/' + operator.id + '/' + this.meta.name},
+            });
         }
+
+        this.callback = null;
 
         Wirecloud.wiring.TargetEndpoint.call(this);
     };
-    OperatorTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
+    utils.inherit(OperatorTargetEndpoint, Wirecloud.wiring.TargetEndpoint);
 
     OperatorTargetEndpoint.prototype.toString = function toString() {
         return this.id;
@@ -55,22 +59,6 @@
             id: this.component.id,
             endpoint: this.name
         };
-    };
-
-    OperatorTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
-        var i, target;
-
-        if (list == null) {
-            return true;
-        }
-
-        for (i = 0; i < list.length; i += 1) {
-            target = list[i];
-            if ((target.type === this.component.meta.type) && (target.id == this.component.id) && (target.endpoint == this.name)) {
-                return true;
-            }
-        }
-        return false;
     };
 
     OperatorTargetEndpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
@@ -89,31 +77,51 @@
     OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
         var msg, details;
 
-        if (!options || this._is_target_slot(options.targetEndpoints)) {
-            if (this.operator.loaded) {
+        if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
+            if (this.component.loaded) {
                 if (this.callback == null) {
                     msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
                     msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
                     details = utils.gettext('Operator has not registered a callback for this input endpoint');
-                    this.operator.logManager.log(msg, {details: details});
+                    this.component.logManager.log(msg, {details: details});
                     return;
                 }
                 try {
-                    this.callback.call(this.operator, newValue);
+                    this.callback.call(this.component, newValue);
                 } catch (error) {
                     if (error instanceof Wirecloud.wiring.EndpointTypeError || error instanceof Wirecloud.wiring.EndpointValueError) {
                         throw error;
                     } else {
                         msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
                         msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
-                        details = this.operator.logManager.formatException(error);
-                        this.operator.logManager.log(msg, {details: details});
+                        details = this.component.logManager.formatException(error);
+                        this.component.logManager.log(msg, {details: details});
                     }
                 }
             } else {
-                this.operator.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
+                this.component.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
             }
         }
+    };
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var is_target_endpoint = function is_target_endpoint(list) {
+        var i, target;
+
+        if (list == null) {
+            return true;
+        }
+
+        for (i = 0; i < list.length; i += 1) {
+            target = list[i];
+            if ((target.type === this.component.meta.type) && (target.id == this.component.id) && (target.endpoint == this.name)) {
+                return true;
+            }
+        }
+        return false;
     };
 
     Wirecloud.wiring.OperatorTargetEndpoint = OperatorTargetEndpoint;

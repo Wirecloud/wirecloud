@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,23 +27,25 @@
     "use strict";
 
     var OperatorSourceEndpoint = function OperatorSourceEndpoint(operator, meta) {
-        Object.defineProperty(this, 'operator', {value: operator});
-        Object.defineProperty(this, 'component', {value: operator});
+        Object.defineProperties(this, {
+            component: {value: operator},
+            meta: {value: meta},
+            missing: {value: false}
+        });
 
-        Object.defineProperty(this, 'meta', {value: meta});
         if (meta != null) {
-            Object.defineProperty(this, 'name', {value: meta.name});
-            Object.defineProperty(this, 'missing', {value: false});
-            Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-            Object.defineProperty(this, 'keywords', {value: meta.friendcode.trim().split(/\s+/)});
-            Object.defineProperty(this, 'label', {value: meta.label});
-            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : utils.gettext("No description provided.")});
-            Object.defineProperty(this, 'id', {value: 'operator/' + this.operator.id + '/' + this.meta.name});
+            Object.defineProperties(this, {
+                name: {value: meta.name},
+                friendcode: {value: meta.friendcode},
+                label: {value: meta.label},
+                description: {value: meta.description ? meta.description : ""},
+                id: {value: 'operator/' + this.component.id + '/' + this.meta.name},
+            });
         }
 
         Wirecloud.wiring.SourceEndpoint.call(this);
     };
-    OperatorSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
+    utils.inherit(OperatorSourceEndpoint, Wirecloud.wiring.SourceEndpoint);
 
     OperatorSourceEndpoint.prototype.toString = function toString() {
         return this.id;

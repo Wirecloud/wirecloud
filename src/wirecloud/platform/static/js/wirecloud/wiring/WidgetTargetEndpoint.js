@@ -26,40 +26,28 @@
 
     "use strict";
 
-    var is_target_endpoint = function is_target_endpoint(list) {
-        var i, target;
+    var WidgetTargetEndpoint = function WidgetTargetEndpoint(widget, meta) {
+        Object.defineProperties(this, {
+            component: {value: widget},
+            meta: {value: meta},
+            missing: {value: false}
+        });
 
-        if (list == null) {
-            return true;
-        }
-
-        for (i = 0; i < list.length; i += 1) {
-            target = list[i];
-            if (target.type === this.component.meta.type && (target.id == this.component.id) && (target.endpoint == this.name)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    var WidgetTargetEndpoint = function WidgetTargetEndpoint(iwidget, meta) {
-        Object.defineProperty(this, 'iwidget', {value: iwidget});
-        Object.defineProperty(this, 'component', {value: iwidget});
-
-        Object.defineProperty(this, 'meta', {value: meta});
         if (meta != null) {
-            Object.defineProperty(this, 'name', {value: meta.name});
-            Object.defineProperty(this, 'missing', {value: false});
-            Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-            Object.defineProperty(this, 'keywords', {value: meta.friendcode.trim().split(/\s+/)});
-            Object.defineProperty(this, 'label', {value: meta.label});
-            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : utils.gettext("No description provided.")});
-            Object.defineProperty(this, 'id', {value: 'widget/' + iwidget.id + '/' + this.meta.name});
+            Object.defineProperties(this, {
+                name: {value: meta.name},
+                friendcode: {value: meta.friendcode},
+                label: {value: meta.label},
+                description: {value: meta.description ? meta.description : ""},
+                id: {value: 'widget/' + this.component.id + '/' + this.meta.name},
+            });
         }
+
+        this.callback = null;
 
         Wirecloud.wiring.TargetEndpoint.call(this);
     };
-    WidgetTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
+    utils.inherit(WidgetTargetEndpoint, Wirecloud.wiring.TargetEndpoint);
 
     WidgetTargetEndpoint.prototype.toString = function toString() {
         return this.id;
@@ -84,7 +72,7 @@
 
         result = this.toJSON();
         result.actionlabel = actionlabel;
-        result.iWidgetName = this.iwidget.name;
+        result.iWidgetName = this.component.title;
 
         return [result];
     };
@@ -93,31 +81,51 @@
         var msg, details;
 
         if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
-            if (this.iwidget.loaded) {
+            if (this.component.loaded) {
                 if (this.callback == null) {
                     msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
                     msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
                     details = utils.gettext('Widget has not registered a callback for this input endpoint');
-                    this.iwidget.logManager.log(msg, {details: details});
+                    this.component.logManager.log(msg, {details: details});
                     return;
                 }
                 try {
-                    this.callback.call(this.iwidget, newValue);
+                    this.callback.call(this.component, newValue);
                 } catch (error) {
                     if (error instanceof Wirecloud.wiring.EndpointTypeError || error instanceof Wirecloud.wiring.EndpointValueError) {
                         throw error;
                     } else {
                         msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
                         msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
-                        details = this.iwidget.logManager.formatException(error);
-                        this.iwidget.logManager.log(msg, {details: details});
+                        details = this.component.logManager.formatException(error);
+                        this.component.logManager.log(msg, {details: details});
                     }
                 }
             } else {
-                this.iwidget.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
-                Wirecloud.activeWorkspace.findWidget(this.iwidget.id).load();
+                this.component.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
+                this.component.load();
             }
         }
+    };
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var is_target_endpoint = function is_target_endpoint(list) {
+        var i, target;
+
+        if (list == null) {
+            return true;
+        }
+
+        for (i = 0; i < list.length; i += 1) {
+            target = list[i];
+            if (target.type === this.component.meta.type && (target.id == this.component.id) && (target.endpoint == this.name)) {
+                return true;
+            }
+        }
+        return false;
     };
 
     Wirecloud.wiring.WidgetTargetEndpoint = WidgetTargetEndpoint;

@@ -115,7 +115,7 @@
 
             this.tooltip = new se.Popover({
                 title: wiringEndpoint.label,
-                content: wiringEndpoint.description,
+                content: wiringEndpoint.description != '' ? wiringEndpoint.description : utils.gettext("No description provided."),
                 placement: ['top', 'bottom', 'right', 'left']
             });
             this.tooltip.bind(this.get(), 'hover');

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,24 +26,26 @@
 
     "use strict";
 
-    var WidgetSourceEndpoint = function WidgetSourceEndpoint(iwidget, meta) {
-        Object.defineProperty(this, 'iwidget', {value: iwidget});
-        Object.defineProperty(this, 'component', {value: iwidget});
+    var WidgetSourceEndpoint = function WidgetSourceEndpoint(widget, meta) {
+        Object.defineProperties(this, {
+            component: {value: widget},
+            meta: {value: meta},
+            missing: {value: false}
+        });
 
-        Object.defineProperty(this, 'meta', {value: meta});
         if (meta != null) {
-            Object.defineProperty(this, 'name', {value: meta.name});
-            Object.defineProperty(this, 'missing', {value: false});
-            Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-            Object.defineProperty(this, 'keywords', {value: meta.friendcode.trim().split(/\s+/)});
-            Object.defineProperty(this, 'label', {value: meta.label});
-            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : utils.gettext("No description provided.")});
-            Object.defineProperty(this, 'id', {value: 'widget/' + iwidget.id + '/' + this.meta.name});
+            Object.defineProperties(this, {
+                name: {value: meta.name},
+                friendcode: {value: meta.friendcode},
+                label: {value: meta.label},
+                description: {value: meta.description ? meta.description : ""},
+                id: {value: 'widget/' + this.component.id + '/' + this.meta.name},
+            });
         }
 
         Wirecloud.wiring.SourceEndpoint.call(this);
     };
-    WidgetSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
+    utils.inherit(WidgetSourceEndpoint, Wirecloud.wiring.SourceEndpoint);
 
     WidgetSourceEndpoint.prototype.toString = function toString() {
         return this.id;

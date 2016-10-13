@@ -27,30 +27,46 @@
     "use strict";
 
     var Endpoint = function Endpoint() {
+
+        if (!('name' in this)) {
+            Object.defineProperty(this, 'name', {value: null});
+        }
+
+        if (!('friendcode' in this)) {
+            Object.defineProperty(this, 'friendcode', {value: ""});
+        }
+
+        var keywords = this.friendcode != '' ? this.friendcode.split(/\s+/) : [];
+        Object.defineProperty(this, 'keywords', {value: keywords});
+
+        if (!('label' in this)) {
+            Object.defineProperty(this, 'label', {value: ""});
+        }
+        if (!('description' in this)) {
+            Object.defineProperty(this, 'description', {value: ""});
+        }
+
+        if (!('id' in this)) {
+            Object.defineProperty(this, 'id', {value: null});
+        }
+
     };
 
     Endpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
-        return null;
+        return [];
     };
 
     /**
      * Disconnects this <code>Endpoint</code> from all the
      * <code>Endpoints</code> this is connected to.
      */
+    /* istanbul ignore next */
     Endpoint.prototype.fullDisconnect = function fullDisconnect() {
         var funcName = 'fullDisconnect';
         var msg = utils.gettext("Unimplemented function: %(funcName)s");
         msg = utils.interpolate(msg, {funcName: funcName}, true);
         Wirecloud.GlobalLogManager.log(msg);
         return;
-    };
-
-    /**
-     * This method must be called to avoid memory leaks caused by circular
-     * references.
-     */
-    Endpoint.prototype.destroy = function destroy() {
-        this.fullDisconnect();
     };
 
     Wirecloud.wiring.Endpoint = Endpoint;

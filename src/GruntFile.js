@@ -143,7 +143,7 @@ module.exports = function (grunt) {
                         type : 'html',
                         dir : 'build/coverage/wirecloud'
                     },
-                    files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/*Spec.js']),
+                    files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/**/*Spec.js']),
                     preprocessors: {
                         "wirecloud/platform/static/js/wirecloud/**/*.js": ['coverage'],
                     }
