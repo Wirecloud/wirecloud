@@ -42,7 +42,7 @@
      */
     ns.ConnectionHandle = function ConnectionHandle(endpoint, options) {
 
-        options = utils.updateObject(defaults, options);
+        options = utils.merge({}, defaults, options);
         se.StyledElement.call(this, events.concat(options.events));
 
         this.wrapperElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'g');

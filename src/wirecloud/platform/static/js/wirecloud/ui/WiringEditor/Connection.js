@@ -439,7 +439,7 @@
                 return this;
             }
 
-            options = utils.updateObject({
+            options = utils.merge({
                 establish: true,
                 wiringConnection: null
             }, options);
