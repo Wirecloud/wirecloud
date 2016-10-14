@@ -417,6 +417,63 @@ if (window.StyledElements == null) {
         };
     }
 
+    /**
+     * Extends a built-in prototype using the Object.create method.
+     * @since 0.6
+     *
+     * @param {Function} child The child's class constructor
+     * @param {Function} parent The parent's class constructor
+     * @param {Object} [members] The child's members
+     *
+     * @example
+     *
+     * var Person = function Person(name) {
+     *     this.name = name;
+     * };
+     *
+     * Person.prototype.toString = function toString() {
+     *     return "This is " + this.name;
+     * };
+     *
+     * var Student = function Student(name) {
+     *     Person.call(this, name);
+     * };
+     *
+     * inherit(Student, Person);
+     *
+     * var Teacher = function Teacher(name, subject) {
+     *     Person.call(this, name);
+     *     this.subject = subject;
+     * };
+     *
+     * inherit(Teacher, Person, {
+     *     toString: function toString() {
+     *         return Person.prototype.toString.call(this) + ", the " + this.subject + "teacher";
+     *     }
+     * });
+     *
+     * var peter = new Student("Peter");
+     *
+     * peter instanceOf Student
+     * => true
+     *
+     * peter instanceOf Person
+     * => true
+     *
+     * "Who are you? " + peter
+     * => "Who are you? This is Peter"
+     *
+     * var john = new Teacher("John");
+     *
+     * john instanceOf Teacher
+     * => true
+     *
+     * john instanceOf Person
+     * => true
+     *
+     * "Who are you? " + john
+     * => "Who are you? This is John, the science teacher"
+     */
     Utils.inherit = function inherit(child, parent, members) {
 
         child.prototype = Object.create(parent.prototype);
