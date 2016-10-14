@@ -32,7 +32,7 @@
 
     ns.ComponentShowcase = function ComponentShowcase() {
 
-        this.superClass(['add', 'create']);
+        se.StyledElement.call(this, ['add', 'create']);
 
         this.components = {operator: {}, widget: {}};
         this.groups = {};

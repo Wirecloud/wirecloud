@@ -32,7 +32,7 @@
 
     ns.ComponentSidebar = function ComponentSidebar() {
 
-        this.superClass(['add', 'create']);
+        se.StyledElement.call(this, ['add', 'create']);
 
         this.components = {mashup: {}, widget: {}};
         this.groups = {};

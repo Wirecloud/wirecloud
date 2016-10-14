@@ -96,7 +96,7 @@
     var Button = function Button(options) {
         options = utils.merge(utils.clone(defaults), options);
 
-        this.superClass(events);
+        se.StyledElement.call(this, events);
 
         if (options.usedInForm) {
             this.wrapperElement = document.createElement("button");

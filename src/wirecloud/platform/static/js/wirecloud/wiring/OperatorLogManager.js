@@ -36,23 +36,17 @@
      * @param {Wiring} wiringEngine
      *      [TODO: description]
      */
-    ns.OperatorLogManager = utils.defineClass({
+    ns.OperatorLogManager = function OperatorLogManager(operator, wiringEngine) {
+        Wirecloud.LogManager.call(this, wiringEngine.logManager);
+        this.operator = operator;
+    };
 
-        constructor: function OperatorLogManager(operator, wiringEngine) {
-            this.superClass(wiringEngine.logManager);
-            this.operator = operator;
-        },
+    utils.inherit(ns.OperatorLogManager, Wirecloud.LogManager, {
 
-        inherit: Wirecloud.LogManager,
-
-        members: {
-
-            buildTitle: function buildTitle() {
-                return utils.interpolate(utils.gettext("%(operator_title)s's logs"), {
-                    operator_title: this.operator.title
-                });
-            }
-
+        buildTitle: function buildTitle() {
+            return utils.interpolate(utils.gettext("%(operator_title)s's logs"), {
+                operator_title: this.operator.title
+            });
         }
 
     });

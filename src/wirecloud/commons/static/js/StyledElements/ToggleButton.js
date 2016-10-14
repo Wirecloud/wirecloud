@@ -32,7 +32,7 @@
         };
         options = utils.merge(defaultOptions, options);
 
-        this.superClass(options);
+        StyledElements.Button.call(this, options);
 
         Object.defineProperty(this, 'active', {
             get: function get() {

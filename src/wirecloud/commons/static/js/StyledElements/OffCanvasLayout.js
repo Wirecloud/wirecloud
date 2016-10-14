@@ -42,7 +42,7 @@
      * @param {String} [options.sideway='left']
      */
     se.OffCanvasLayout = function OffCanvasLayout(options) {
-        this.superClass(['slideIn', 'slideOut']);
+        se.StyledElement.call(this, ['slideIn', 'slideOut']);
 
         options = utils.merge({
             sideway: 'left'

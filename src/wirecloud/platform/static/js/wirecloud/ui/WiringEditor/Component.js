@@ -38,96 +38,90 @@
      * @param {Operator|Widget} wiringComponent
      *      [TODO: description]
      */
-    ns.Component = utils.defineClass({
+    ns.Component = function Component(wiringComponent) {
+        var used = false;
 
-        constructor: function Component(wiringComponent) {
-            var used = false;
+        this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
 
-            this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
+        this.btnPrefs = new se.PopupButton({
+            class: "we-prefs-btn",
+            title: utils.gettext("Preferences"),
+            iconClass: "fa fa-reorder"
+        });
+        this.btnPrefs.popup_menu.append(new ns.ComponentPrefs(this));
 
-            this.btnPrefs = new se.PopupButton({
-                class: "we-prefs-btn",
-                title: utils.gettext("Preferences"),
-                iconClass: "fa fa-reorder"
-            });
-            this.btnPrefs.popup_menu.append(new ns.ComponentPrefs(this));
+        se.Panel.call(this, {
+            state: null,
+            class: "we-component component-" + wiringComponent.meta.type,
+            title: wiringComponent.title,
+            subtitle: "v" + wiringComponent.meta.version,
+            selectable: true,
+            noBody: true,
+            buttons: [this.btnPrefs]
+        });
 
-            this.superClass({
-                state: null,
-                class: "we-component component-" + wiringComponent.meta.type,
-                title: wiringComponent.title,
-                subtitle: "v" + wiringComponent.meta.version,
-                selectable: true,
-                noBody: true,
-                buttons: [this.btnPrefs]
-            });
+        this.heading.title.addClassName('component-title text-truncate');
+        this.heading.subtitle.addClassName("component-version");
 
-            this.heading.title.addClassName('component-title text-truncate');
-            this.heading.subtitle.addClassName("component-version");
+        this.label = document.createElement('span');
 
-            this.label = document.createElement('span');
+        this._component = wiringComponent;
 
-            this._component = wiringComponent;
-
-            Object.defineProperties(this, {
-                id: {value: wiringComponent.id},
-                type: {value: wiringComponent.meta.type},
-                used: {
-                    get: function () {
-                        return used;
-                    },
-                    set: function (value) {
-                        used = value;
-                        update_enable_status.call(this);
-                        update_component_label.call(this);
-                    }
+        Object.defineProperties(this, {
+            id: {value: wiringComponent.id},
+            type: {value: wiringComponent.meta.type},
+            used: {
+                get: function () {
+                    return used;
+                },
+                set: function (value) {
+                    used = value;
+                    update_enable_status.call(this);
+                    update_component_label.call(this);
                 }
-            });
-            this.get().setAttribute('data-id', this.id);
+            }
+        });
+        this.get().setAttribute('data-id', this.id);
 
-            this._on_change_model = on_change_model.bind(this);
+        this._on_change_model = on_change_model.bind(this);
 
-            wiringComponent.addEventListener('change', this._on_change_model);
-            update_enable_status.call(this);
-            update_component_label.call(this);
+        wiringComponent.addEventListener('change', this._on_change_model);
+        update_enable_status.call(this);
+        update_component_label.call(this);
+    };
+
+    utils.inherit(ns.Component, se.Panel, {
+
+        hasSettings: function hasSettings() {
+            return this._component.meta.preferenceList.length > 0;
         },
 
-        inherit: se.Panel,
+        /**
+         * @override
+         */
+        setTitle: function setTitle(title) {
+            var span;
 
-        members: {
+            span = document.createElement('span');
+            span.textContent = title;
+            this.title_tooltip.options.content = title;
+            this.title_tooltip.bind(span);
 
-            hasSettings: function hasSettings() {
-                return this._component.meta.preferenceList.length > 0;
-            },
+            return se.Panel.prototype.setTitle.call(this, span);
+        },
 
-            /**
-             * @override
-             */
-            setTitle: function setTitle(title) {
-                var span;
+        showLogs: function showLogs() {
 
-                span = document.createElement('span');
-                span.textContent = title;
-                this.title_tooltip.options.content = title;
-                this.title_tooltip.bind(span);
+            this._component.showLogs();
 
-                return this.superMember(se.Panel, 'setTitle', span);
-            },
+            return this;
+        },
 
-            showLogs: function showLogs() {
+        showSettings: function showSettings() {
 
-                this._component.showLogs();
+            this._component.showSettings();
 
-                return this;
-            },
-
-            showSettings: function showSettings() {
-
-                this._component.showSettings();
-
-                return this;
-            }
-
+            return this;
         }
 
     });

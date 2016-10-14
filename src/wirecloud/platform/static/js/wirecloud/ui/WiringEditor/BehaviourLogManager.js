@@ -26,24 +26,19 @@
 
     "use strict";
 
-    ns.BehaviourLogManager = utils.defineClass({
+    ns.BehaviourLogManager = function BehaviourLogManager(behaviour) {
+        Wirecloud.LogManager.call(this);
+        this.behaviour = behaviour;
+    };
 
-        constructor: function BehaviourLogManager(behaviour) {
-            this.superClass();
-            this.behaviour = behaviour;
-        },
+    utils.inherit(ns.BehaviourLogManager, Wirecloud.LogManager, {
 
-        inherit: Wirecloud.LogManager,
-
-        members: {
-
-            buildTitle: function buildTitle() {
-                return utils.interpolate(utils.gettext("%(behaviour_title)s's logs"), {
-                    behaviour_title: this.behaviour.title
-                });
-            }
-
+        buildTitle: function buildTitle() {
+            return utils.interpolate(utils.gettext("%(behaviour_title)s's logs"), {
+                behaviour_title: this.behaviour.title
+            });
         }
+
     });
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

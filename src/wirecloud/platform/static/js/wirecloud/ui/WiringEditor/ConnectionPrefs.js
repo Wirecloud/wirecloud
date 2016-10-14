@@ -38,58 +38,52 @@
      * @param {Connection} connection
      *      [TODO: description]
      */
-    ns.ConnectionPrefs = utils.defineClass({
+    ns.ConnectionPrefs = function ConnectionPrefs(connection) {
+        this.connection = connection;
+    };
 
-        constructor: function ConnectionPrefs(connection) {
-            this.connection = connection;
-        },
+    utils.inherit(ns.ConnectionPrefs, se.DynamicMenuItems, {
 
-        inherit: se.DynamicMenuItems,
+        /**
+         * [TODO: _createMenuItem description]
+         * @protected
+         *
+         * @param {String} title
+         *      [TODO: description]
+         * @param {String} iconClass
+         *      [TODO: description]
+         * @param {Function} onclick
+         *      [TODO: description]
+         * @param {Boolean} isEnabled
+         *      [TODO: description]
+         * @returns {MenuItem}
+         *      [TODO: description]
+         */
+        _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
+            var item;
 
-        members: {
+            item = new se.MenuItem(title, onclick);
+            item.addIconClass('fa fa-' + iconClass);
 
-            /**
-             * [TODO: _createMenuItem description]
-             * @protected
-             *
-             * @param {String} title
-             *      [TODO: description]
-             * @param {String} iconClass
-             *      [TODO: description]
-             * @param {Function} onclick
-             *      [TODO: description]
-             * @param {Boolean} isEnabled
-             *      [TODO: description]
-             * @returns {MenuItem}
-             *      [TODO: description]
-             */
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
-                var item;
-
-                item = new se.MenuItem(title, onclick);
-                item.addIconClass('fa fa-' + iconClass);
-
-                if (isEnabled != null) {
-                    item.enabled = isEnabled.call(this.connection);
-                }
-
-                return item;
-            },
-
-            /**
-             * @override
-             */
-            build: function build() {
-                return [
-                    this._createMenuItem(getCustomizeTitle.call(this.connection), "magic", function () {
-                        this.editable = !this.editable;
-                    }.bind(this.connection), canCustomize),
-                    this._createMenuItem(utils.gettext("Restore defaults"), "undo", function () {
-                        this.restoreDefaults();
-                    }.bind(this.connection), canRestore)
-                ];
+            if (isEnabled != null) {
+                item.enabled = isEnabled.call(this.connection);
             }
 
+            return item;
+        },
+
+        /**
+         * @override
+         */
+        build: function build() {
+            return [
+                this._createMenuItem(getCustomizeTitle.call(this.connection), "magic", function () {
+                    this.editable = !this.editable;
+                }.bind(this.connection), canCustomize),
+                this._createMenuItem(utils.gettext("Restore defaults"), "undo", function () {
+                    this.restoreDefaults();
+                }.bind(this.connection), canRestore)
+            ];
         }
 
     });

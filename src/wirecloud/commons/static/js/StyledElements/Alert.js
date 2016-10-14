@@ -38,61 +38,55 @@
      * @since 0.6
      * @param {Object.<String, *>} [options] [description]
      */
-    se.Alert = utils.defineClass({
+    se.Alert = function Alert(options) {
+        options = utils.merge(utils.clone(defaults), options);
+        se.StyledElement.call(this);
 
-        constructor: function Alert(options) {
-            options = utils.merge(utils.clone(defaults), options);
-            this.superClass();
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = 'alert';
 
-            this.wrapperElement = document.createElement('div');
-            this.wrapperElement.className = 'alert';
+        if (options.state != null && options.state.trim() !== "") {
+            this.addClassName('alert-' + options.state);
+        }
 
-            if (options.state != null && options.state.trim() !== "") {
-                this.addClassName('alert-' + options.state);
+        if (options.alignment) {
+            this.addClassName('se-alert-' + options.alignment);
+        }
+
+        this.addClassName(options['class']);
+
+        this.heading = new se.Container({
+            class: "se-alert-heading"
+        });
+        this.heading.appendChild(options.title).insertInto(this.wrapperElement);
+
+        this.body = new se.Container({
+            class: "se-alert-body"
+        });
+        this.body.appendChild(options.message).insertInto(this.wrapperElement);
+    };
+
+    utils.inherit(se.Alert, se.StyledElement, /** @lends StyledElements.Alert.prototype */ {
+
+        /**
+         * [addNote description]
+         *
+         * @param {StyledElement|String} textContent
+         *      [description]
+         * @returns {Alert}
+         *      The instance on which the member is called.
+         */
+        addNote: function addNote(textContent) {
+            var blockquote = document.createElement('blockquote');
+
+            if (textContent instanceof StyledElements.StyledElement) {
+                textContent.appendTo(blockquote);
+            } else {
+                blockquote.innerHTML = textContent;
             }
+            this.body.appendChild(blockquote);
 
-            if (options.alignment) {
-                this.addClassName('se-alert-' + options.alignment);
-            }
-
-            this.addClassName(options['class']);
-
-            this.heading = new se.Container({
-                class: "se-alert-heading"
-            });
-            this.heading.appendChild(options.title).insertInto(this.wrapperElement);
-
-            this.body = new se.Container({
-                class: "se-alert-body"
-            });
-            this.body.appendChild(options.message).insertInto(this.wrapperElement);
-        },
-
-        inherit: se.StyledElement,
-
-        members: /** @lends StyledElements.Alert.prototype */ {
-
-            /**
-             * [addNote description]
-             *
-             * @param {StyledElement|String} textContent
-             *      [description]
-             * @returns {Alert}
-             *      The instance on which the member is called.
-             */
-            addNote: function addNote(textContent) {
-                var blockquote = document.createElement('blockquote');
-
-                if (textContent instanceof StyledElements.StyledElement) {
-                    textContent.appendTo(blockquote);
-                } else {
-                    blockquote.innerHTML = textContent;
-                }
-                this.body.appendChild(blockquote);
-
-                return blockquote;
-            }
-
+            return blockquote;
         }
 
     });

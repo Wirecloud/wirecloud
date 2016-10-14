@@ -29,7 +29,7 @@
     ns.UserTypeahead = function UserTypeahead(options) {
         options = utils.merge(utils.clone(defaults), options);
 
-        this.superClass({
+        se.Typeahead.call(this, {
             autocomplete: options.autocomplete,
             dataFiltered: true,
             lookup: searchForUser,

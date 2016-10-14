@@ -40,18 +40,11 @@
      * @param {ComponentDraggable} component
      *      [TODO: description]
      */
-    ns.TargetEndpoint = utils.defineClass({
+    ns.TargetEndpoint = function TargetEndpoint(wiringEndpoint, component) {
+        ns.Endpoint.call(this, 'target', wiringEndpoint, component);
+    };
 
-        constructor: function TargetEndpoint(wiringEndpoint, component) {
-            this.superClass('target', wiringEndpoint, component);
-        },
-
-        inherit: ns.Endpoint,
-
-        members: {
-
-        }
-
+    utils.inherit(ns.TargetEndpoint, ns.Endpoint, {
     });
 
     // =========================================================================

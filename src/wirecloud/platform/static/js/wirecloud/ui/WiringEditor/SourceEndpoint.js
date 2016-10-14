@@ -40,19 +40,12 @@
      * @param {ComponentDraggable} component
      *      [TODO: description]
      */
-    ns.SourceEndpoint = utils.defineClass({
+    ns.SourceEndpoint = function SourceEndpoint(wiringEndpoint, component) {
+        ns.Endpoint.call(this, 'source', wiringEndpoint, component);
+        this.rightAnchorPoint = true;
+    };
 
-        constructor: function SourceEndpoint(wiringEndpoint, component) {
-            this.superClass('source', wiringEndpoint, component);
-            this.rightAnchorPoint = true;
-        },
-
-        inherit: ns.Endpoint,
-
-        members: {
-
-        }
-
+    utils.inherit(ns.SourceEndpoint, ns.Endpoint, {
     });
 
     // =========================================================================

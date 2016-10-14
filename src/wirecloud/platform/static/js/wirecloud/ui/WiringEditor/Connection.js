@@ -36,556 +36,545 @@
      *
      * @constructor
      */
-    ns.Connection = utils.defineClass({
+    ns.Connection = function Connection() {
+        se.StyledElement.call(this, events);
 
-        constructor: function Connection() {
+        this.wrapperElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
+        this.wrapperElement.setAttribute('class', "connection");
+        this.wrapperElement.addEventListener('click', connection_onclick.bind(this));
+        this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener, true);
 
-            this.superClass(events);
+        this.wrapperElement.addEventListener('mouseenter', connection_onmouseenter.bind(this));
+        this.wrapperElement.addEventListener('mouseleave', connection_onmouseleave.bind(this));
 
-            this.wrapperElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
-            this.wrapperElement.setAttribute('class', "connection");
-            this.wrapperElement.addEventListener('click', connection_onclick.bind(this));
-            this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener, true);
+        this.pathElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
+        this.pathElement.setAttribute('class', "connection-path");
+        this.wrapperElement.appendChild(this.pathElement);
 
-            this.wrapperElement.addEventListener('mouseenter', connection_onmouseenter.bind(this));
-            this.wrapperElement.addEventListener('mouseleave', connection_onmouseleave.bind(this));
+        this.options = new se.Container({class: "connection-options btn-group btn-group-circle btn-group-xs"});
+        this.options.hide();
 
-            this.pathElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
-            this.pathElement.setAttribute('class', "connection-path");
-            this.wrapperElement.appendChild(this.pathElement);
+        this.btnLogs = new se.Button({
+            title: utils.gettext("Logs"),
+            state: 'default',
+            depth: 1,
+            class: "btn-show-logs",
+            iconClass: "fa fa-bell"
+        });
+        this.btnLogs.addEventListener('click', btnerrors_onclick.bind(this));
+        this.btnLogs.appendTo(this.options);
 
-            this.options = new se.Container({class: "connection-options btn-group btn-group-circle btn-group-xs"});
-            this.options.hide();
+        this.btnRemove = new se.Button({
+            title: utils.gettext("Remove"),
+            state: 'danger',
+            depth: 1,
+            class: "btn-remove",
+            iconClass: "fa fa-remove"
+        });
+        this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
+        this.btnRemove.appendTo(this.options);
 
-            this.btnLogs = new se.Button({
-                title: utils.gettext("Logs"),
-                state: 'default',
-                depth: 1,
-                class: "btn-show-logs",
-                iconClass: "fa fa-bell"
-            });
-            this.btnLogs.addEventListener('click', btnerrors_onclick.bind(this));
-            this.btnLogs.appendTo(this.options);
+        this.btnPrefs = new se.PopupButton({
+            title: utils.gettext("Preferences"),
+            state: 'default',
+            depth: 1,
+            class: "we-prefs-btn",
+            iconClass: "fa fa-reorder"
+        });
+        this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));
+        this.btnPrefs.appendTo(this.options);
 
-            this.btnRemove = new se.Button({
-                title: utils.gettext("Remove"),
-                state: 'danger',
-                depth: 1,
-                class: "btn-remove",
-                iconClass: "fa fa-remove"
-            });
-            this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
-            this.btnRemove.appendTo(this.options);
+        this.activeCount = 0;
 
-            this.btnPrefs = new se.PopupButton({
-                title: utils.gettext("Preferences"),
-                state: 'default',
-                depth: 1,
-                class: "we-prefs-btn",
-                iconClass: "fa fa-reorder"
-            });
-            this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));
-            this.btnPrefs.appendTo(this.options);
+        this.source = {};
+        this.target = {};
 
-            this.activeCount = 0;
+        var removeAllowed = true;
 
-            this.source = {};
-            this.target = {};
+        var active;
+        var highlightedCount;
 
-            var removeAllowed = true;
+        Object.defineProperties(this, {
 
-            var active;
-            var highlightedCount;
-
-            Object.defineProperties(this, {
-
-                /**
-                 * @memberof WiringEditor.Connection#
-                 * @type {!Boolean}
-                 */
-                active: {
-                    get: function get() {
-                        return prop_active_get.call(this, active);
-                    },
-                    set: function set(isActive) {
-                        active = prop_active_set.call(this, active, !!isActive);
-                        refreshInternally.call(this);
-                    }
+            /**
+             * @memberof WiringEditor.Connection#
+             * @type {!Boolean}
+             */
+            active: {
+                get: function get() {
+                    return prop_active_get.call(this, active);
                 },
-
-                background: {
-                    get: function get() {return this.hasClassName('background');},
-                    set: function set(value) {this._onbackground(value);}
-                },
-
-                created: {
-                    get: function get() {return this.source.endpoint != null && this.target.endpoint != null;}
-                },
-
-                established: {
-                    get: function get() {return this.created && this._connection != null;}
-                },
-
-                editable: {
-                    get: function get() {return this.hasClassName('editable');},
-                    set: function set(value) {this._oneditable(value);}
-                },
-
-                /**
-                 * @memberof WiringEditor.Connection#
-                 * @type {!Boolean}
-                 */
-                highlighted: {
-                    get: function get() {
-                        return prop_highlighted_get.call(this, highlightedCount);
-                    },
-                    set: function set(isHighlighted) {
-                        highlightedCount = prop_highlighted_set.call(this, highlightedCount, !!isHighlighted);
-                    }
-                },
-
-                missing: {
-                    get: function get() {
-                        return this.created && (this.source.endpoint.missing || this.target.endpoint.missing);
-                    }
-                },
-
-                removeAllowed: {
-                    get: function get() {return removeAllowed;},
-                    set: function set(value) {
-                        removeAllowed = !!value;
-                        if (!this.background) {
-                            updateFlagRemoveAllowed.call(this);
-                        }
-                    }
-                },
-
-                sourceComponent: {
-                    get: function get() {return this.source.endpoint.component;}
-                },
-
-                sourceId: {
-                    get: function get() {return this.source.endpoint.id;}
-                },
-
-                targetComponent: {
-                    get: function get() {return this.target.endpoint.component;}
-                },
-
-                targetId: {
-                    get: function get() {return this.target.endpoint.id;}
+                set: function set(isActive) {
+                    active = prop_active_set.call(this, active, !!isActive);
+                    refreshInternally.call(this);
                 }
+            },
 
-            });
+            background: {
+                get: function get() {return this.hasClassName('background');},
+                set: function set(value) {this._onbackground(value);}
+            },
 
-            // Initial configuration
+            created: {
+                get: function get() {return this.source.endpoint != null && this.target.endpoint != null;}
+            },
 
-            this.highlighted = false;
-            this.active = false;
-            isCreated.call(this);
-        },
+            established: {
+                get: function get() {return this.created && this._connection != null;}
+            },
 
-        inherit: se.StyledElement,
+            editable: {
+                get: function get() {return this.hasClassName('editable');},
+                set: function set(value) {this._oneditable(value);}
+            },
 
-        statics: {
+            /**
+             * @memberof WiringEditor.Connection#
+             * @type {!Boolean}
+             */
+            highlighted: {
+                get: function get() {
+                    return prop_highlighted_get.call(this, highlightedCount);
+                },
+                set: function set(isHighlighted) {
+                    highlightedCount = prop_highlighted_set.call(this, highlightedCount, !!isHighlighted);
+                }
+            },
 
-            SVG_NS: "http://www.w3.org/2000/svg",
+            missing: {
+                get: function get() {
+                    return this.created && (this.source.endpoint.missing || this.target.endpoint.missing);
+                }
+            },
 
-            JSON_TEMPLATE: {
-                sourcename: "",
-                sourcehandle: null,
-                targetname: "",
-                targethandle: null
+            removeAllowed: {
+                get: function get() {return removeAllowed;},
+                set: function set(value) {
+                    removeAllowed = !!value;
+                    if (!this.background) {
+                        updateFlagRemoveAllowed.call(this);
+                    }
+                }
+            },
+
+            sourceComponent: {
+                get: function get() {return this.source.endpoint.component;}
+            },
+
+            sourceId: {
+                get: function get() {return this.source.endpoint.id;}
+            },
+
+            targetComponent: {
+                get: function get() {return this.target.endpoint.component;}
+            },
+
+            targetId: {
+                get: function get() {return this.target.endpoint.id;}
             }
 
+        });
+
+        // Initial configuration
+
+        this.highlighted = false;
+        this.active = false;
+        isCreated.call(this);
+    };
+
+    ns.Connection.SVG_NS = "http://www.w3.org/2000/svg";
+
+    ns.Connection.JSON_TEMPLATE = {
+        sourcename: "",
+        sourcehandle: null,
+        targetname: "",
+        targethandle: null
+    };
+
+    utils.inherit(ns.Connection, se.StyledElement, {
+
+        /**
+         * [TODO: _onbackground description]
+         * @protected
+         *
+         * @param {Boolean} background
+         *      [TODO: description]
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        _onbackground: function _onbackground(background) {
+            var newDepth = this.active || !background ? 1 : 0;
+
+            this.toggleClassName('background', background);
+
+            this.btnLogs.depth = newDepth;
+            this.btnPrefs.depth = newDepth;
+            this.btnRemove.depth = newDepth;
+
+            return background ? this._showButtonAdd() : updateFlagRemoveAllowed.call(this);
         },
 
-        members: {
+        /**
+         * [TODO: _oneditable description]
+         * @protected
+         *
+         * @param {Boolean} editable
+         *      [TODO: description]
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        _oneditable: function _oneditable(editable) {
 
-            /**
-             * [TODO: _onbackground description]
-             * @protected
-             *
-             * @param {Boolean} background
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            _onbackground: function _onbackground(background) {
-                var newDepth = this.active || !background ? 1 : 0;
-
-                this.toggleClassName('background', background);
-
-                this.btnLogs.depth = newDepth;
-                this.btnPrefs.depth = newDepth;
-                this.btnRemove.depth = newDepth;
-
-                return background ? this._showButtonAdd() : updateFlagRemoveAllowed.call(this);
-            },
-
-            /**
-             * [TODO: _oneditable description]
-             * @protected
-             *
-             * @param {Boolean} editable
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            _oneditable: function _oneditable(editable) {
-
-                if (this.editable === editable) {
-                    return this;
-                }
-
-                this.toggleClassName('editable', editable);
-                toggleActiveEndpoints.call(this, editable);
-
-                if (editable) {
-                    this.source.handle.appendTo(this.wrapperElement);
-                    this.target.handle.appendTo(this.wrapperElement);
-                    this.dispatchEvent('customizestart');
-                } else {
-                    this.source.handle.remove();
-                    this.target.handle.remove();
-                    this.dispatchEvent('customizeend');
-                }
-
+            if (this.editable === editable) {
                 return this;
-            },
+            }
 
-            _showButtonAdd: function _showButtonAdd() {
+            this.toggleClassName('editable', editable);
+            toggleActiveEndpoints.call(this, editable);
 
-                this.btnRemove
-                    .replaceClassName("btn-remove", "btn-add")
-                    .removeIconClassName(['fa-trash', 'fa-remove'])
-                    .addIconClassName('fa-plus')
-                    .setTitle(utils.gettext("Add"));
-                this.btnRemove.state = 'info';
+            if (editable) {
+                this.source.handle.appendTo(this.wrapperElement);
+                this.target.handle.appendTo(this.wrapperElement);
+                this.dispatchEvent('customizestart');
+            } else {
+                this.source.handle.remove();
+                this.target.handle.remove();
+                this.dispatchEvent('customizeend');
+            }
 
+            return this;
+        },
+
+        _showButtonAdd: function _showButtonAdd() {
+
+            this.btnRemove
+                .replaceClassName("btn-remove", "btn-add")
+                .removeIconClassName(['fa-trash', 'fa-remove'])
+                .addIconClassName('fa-plus')
+                .setTitle(utils.gettext("Add"));
+            this.btnRemove.state = 'info';
+
+            return this;
+        },
+
+        _showButtonDelete: function _showButtonDelete() {
+
+            this.btnRemove
+                .replaceClassName('btn-add', 'btn-remove')
+                .removeIconClassName(['fa-plus', 'fa-trash'])
+                .addIconClassName('fa-remove')
+                .setTitle(utils.gettext("Remove"));
+            this.btnRemove.state = 'danger';
+
+            return this;
+        },
+
+        _showButtonRemove: function _showButtonRemove() {
+
+            this.btnRemove
+                .replaceClassName('btn-add', 'btn-remove')
+                .removeIconClassName(['fa-plus', 'fa-remove'])
+                .addIconClassName('fa-trash')
+                .setTitle(utils.gettext("Remove"));
+            this.btnRemove.state = 'danger';
+
+            return this;
+        },
+
+        click: function click() {
+
+            if (this.enabled && !this.editable) {
+                this.active = !this.active;
+                this.dispatchEvent('click');
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: createAndBind description]
+         *
+         * @param {Boolean} readonly
+         *      [TODO: description]
+         * @param {Wiring} wiringEngine
+         *      [TODO: description]
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        createAndBind: function createAndBind(readonly, wiringEngine) {
+            var source = this.source.endpoint._endpoint,
+                target = this.target.endpoint._endpoint;
+
+            if (this.established) {
                 return this;
-            },
+            }
 
-            _showButtonDelete: function _showButtonDelete() {
+            establishConnection.call(this, wiringEngine.createConnection(source, target, {
+                readonly: readonly
+            }));
+            this.refresh();
 
-                this.btnRemove
-                    .replaceClassName('btn-add', 'btn-remove')
-                    .removeIconClassName(['fa-plus', 'fa-trash'])
-                    .addIconClassName('fa-remove')
-                    .setTitle(utils.gettext("Remove"));
-                this.btnRemove.state = 'danger';
+            return this;
+        },
 
+        /**
+         * [TODO: equals description]
+         *
+         * @param {Connection} connection
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        equals: function equals(connection) {
+
+            if (!(connection instanceof ns.Connection)) {
+                return false;
+            }
+
+            return this.sourceId === connection.sourceId && this.targetId === connection.targetId;
+        },
+
+        /**
+         * [TODO: hasEndpoint description]
+         *
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        hasEndpoint: function hasEndpoint(endpoint) {
+            return this[endpoint.type].endpoint.equals(endpoint);
+        },
+
+        /**
+         * [TODO: refresh description]
+         *
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        refresh: function refresh() {
+            var sourcePosition, sourceHandle, targetPosition, targetHandle;
+
+            if (!this.created) {
                 return this;
-            },
+            }
 
-            _showButtonRemove: function _showButtonRemove() {
+            this.toggleClassName('missing', this.missing);
 
-                this.btnRemove
-                    .replaceClassName('btn-add', 'btn-remove')
-                    .removeIconClassName(['fa-plus', 'fa-remove'])
-                    .addIconClassName('fa-trash')
-                    .setTitle(utils.gettext("Remove"));
-                this.btnRemove.state = 'danger';
+            sourcePosition = this.source.endpoint.anchorPosition;
+            targetPosition = this.target.endpoint.anchorPosition;
 
-                return this;
-            },
+            sourceHandle = this.source.handle.updateDistance(targetPosition).position();
+            targetHandle = this.target.handle.updateDistance(sourcePosition, true).position();
 
-            click: function click() {
+            updateDistance.call(this, sourcePosition, sourceHandle, targetPosition, targetHandle);
 
-                if (this.enabled && !this.editable) {
-                    this.active = !this.active;
-                    this.dispatchEvent('click');
-                }
+            return this;
+        },
 
-                return this;
-            },
+        refreshEndpoint: function refreshEndpoint(endpoint) {
 
-            /**
-             * [TODO: createAndBind description]
-             *
-             * @param {Boolean} readonly
-             *      [TODO: description]
-             * @param {Wiring} wiringEngine
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            createAndBind: function createAndBind(readonly, wiringEngine) {
-                var source = this.source.endpoint._endpoint,
-                    target = this.target.endpoint._endpoint;
+            if (this.established) {
+                this[endpoint.type].endpoint = endpoint;
+                this[endpoint.type].handle.endpoint = endpoint;
+            }
+
+            return this;
+        },
+
+        /**
+         * @override
+         */
+        remove: function remove(childElement) {
+
+            if (childElement == null) {
 
                 if (this.established) {
-                    return this;
+                    this.source.endpoint.removeConnection(this);
+                    this.target.endpoint.removeConnection(this);
                 }
 
-                establishConnection.call(this, wiringEngine.createConnection(source, target, {
-                    readonly: readonly
-                }));
+                this.dispatchEvent('remove');
+            }
+
+
+            return se.StyledElement.prototype.remove.call(this, childElement);
+        },
+
+        /**
+         * [TODO: restoreDefaults description]
+         *
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        restoreDefaults: function restoreDefaults() {
+
+            if (this.readonly || this.background) {
+                return this;
+            }
+
+            if (this.established) {
+                this.source.handle.auto = true;
+                this.target.handle.auto = true;
+
+                this.refresh().dispatchEvent('change', this.toJSON());
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: stickEndpoint description]
+         *
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @param {PlainObject} [options]
+         *      [TODO: description]
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        stickEndpoint: function stickEndpoint(endpoint, options) {
+
+            if (this.established) {
+                return this;
+            }
+
+            options = utils.updateObject({
+                establish: true,
+                wiringConnection: null
+            }, options);
+
+            appendEndpoint.call(this, endpoint, options);
+
+            if (this.created) {
+
+                if (options.establish) {
+                    establishConnection.call(this, options.wiringConnection);
+                }
+
                 this.refresh();
+            }
 
-                return this;
-            },
+            isCreated.call(this);
 
-            /**
-             * [TODO: equals description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            equals: function equals(connection) {
+            return this;
+        },
 
-                if (!(connection instanceof ns.Connection)) {
-                    return false;
+        /**
+         * [TODO: showLogs description]
+         *
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        showLogs: function showLogs() {
+            var count = this._connection.logManager.getErrorCount();
+
+            this.btnLogs.setBadge(count ? count : null, 'danger');
+            this._connection.showLogs();
+
+            return this;
+        },
+
+        /**
+         * [TODO: toFirst description]
+         *
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        toFirst: function toFirst() {
+            var parentElement;
+
+            if (this.parentElement != null) {
+                this.parentElement.removeChild(this).appendChild(this);
+            } else {
+                parentElement = this.get().parentElement;
+
+                if (parentElement != null) {
+                    parentElement.removeChild(this.get());
+                    parentElement.appendChild(this.get());
                 }
+            }
 
-                return this.sourceId === connection.sourceId && this.targetId === connection.targetId;
-            },
+            return this;
+        },
 
-            /**
-             * [TODO: hasEndpoint description]
-             *
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            hasEndpoint: function hasEndpoint(endpoint) {
-                return this[endpoint.type].endpoint.equals(endpoint);
-            },
+        /**
+         * [TODO: toggleActive description]
+         *
+         * @param {Boolean} active
+         *      [TODO: description]
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        toggleActive: function toggleActive(active) {
+            return active ? this.activate() : this.deactivate();
+        },
 
-            /**
-             * [TODO: refresh description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            refresh: function refresh() {
-                var sourcePosition, sourceHandle, targetPosition, targetHandle;
+        /**
+         * [TODO: toJSON description]
+         *
+         * @returns {PlainObject}
+         *      [TODO: description]
+         */
+        toJSON: function toJSON() {
+            return {
+                sourcename: this.sourceId,
+                sourcehandle: this.source.handle.toJSON(),
+                targetname: this.targetId,
+                targethandle: this.target.handle.toJSON()
+            };
+        },
 
-                if (!this.created) {
-                    return this;
-                }
+        /**
+         * [TODO: unstickEndpoint description]
+         *
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        unstickEndpoint: function unstickEndpoint(endpoint) {
 
-                this.toggleClassName('missing', this.missing);
-
-                sourcePosition = this.source.endpoint.anchorPosition;
-                targetPosition = this.target.endpoint.anchorPosition;
-
-                sourceHandle = this.source.handle.updateDistance(targetPosition).position();
-                targetHandle = this.target.handle.updateDistance(sourcePosition, true).position();
-
-                updateDistance.call(this, sourcePosition, sourceHandle, targetPosition, targetHandle);
-
-                return this;
-            },
-
-            refreshEndpoint: function refreshEndpoint(endpoint) {
-
-                if (this.established) {
-                    this[endpoint.type].endpoint = endpoint;
-                    this[endpoint.type].handle.endpoint = endpoint;
-                }
-
-                return this;
-            },
-
-            /**
-             * @override
-             */
-            remove: function remove(childElement) {
-
-                if (childElement == null) {
-
-                    if (this.established) {
-                        this.source.endpoint.removeConnection(this);
-                        this.target.endpoint.removeConnection(this);
-                    }
-
-                    this.dispatchEvent('remove');
-                }
-
-
-                return this.superMember(se.StyledElement, 'remove', childElement);
-            },
-
-            /**
-             * [TODO: restoreDefaults description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            restoreDefaults: function restoreDefaults() {
-
-                if (this.readonly || this.background) {
-                    return this;
-                }
-
-                if (this.established) {
-                    this.source.handle.auto = true;
-                    this.target.handle.auto = true;
-
-                    this.refresh().dispatchEvent('change', this.toJSON());
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: stickEndpoint description]
-             *
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @param {PlainObject} [options]
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            stickEndpoint: function stickEndpoint(endpoint, options) {
-
-                if (this.established) {
-                    return this;
-                }
-
-                options = utils.updateObject({
-                    establish: true,
-                    wiringConnection: null
-                }, options);
-
-                appendEndpoint.call(this, endpoint, options);
-
-                if (this.created) {
-
-                    if (options.establish) {
-                        establishConnection.call(this, options.wiringConnection);
-                    }
-
-                    this.refresh();
-                }
-
-                isCreated.call(this);
-
-                return this;
-            },
-
-            /**
-             * [TODO: showLogs description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            showLogs: function showLogs() {
-                var count = this._connection.logManager.getErrorCount();
-
-                this.btnLogs.setBadge(count ? count : null, 'danger');
-                this._connection.showLogs();
-
-                return this;
-            },
-
-            /**
-             * [TODO: toFirst description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            toFirst: function toFirst() {
-                var parentElement;
-
-                if (this.parentElement != null) {
-                    this.parentElement.removeChild(this).appendChild(this);
-                } else {
-                    parentElement = this.get().parentElement;
-
-                    if (parentElement != null) {
-                        parentElement.removeChild(this.get());
-                        parentElement.appendChild(this.get());
-                    }
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: toggleActive description]
-             *
-             * @param {Boolean} active
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            toggleActive: function toggleActive(active) {
-                return active ? this.activate() : this.deactivate();
-            },
-
-            /**
-             * [TODO: toJSON description]
-             *
-             * @returns {PlainObject}
-             *      [TODO: description]
-             */
-            toJSON: function toJSON() {
-                return {
-                    sourcename: this.sourceId,
-                    sourcehandle: this.source.handle.toJSON(),
-                    targetname: this.targetId,
-                    targethandle: this.target.handle.toJSON()
-                };
-            },
-
-            /**
-             * [TODO: unstickEndpoint description]
-             *
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            unstickEndpoint: function unstickEndpoint(endpoint) {
-
-                if (this.established) {
-                    return this;
-                }
-
-                removeEndpoint.call(this, endpoint);
-                isCreated.call(this);
-
-                return this;
-            },
-
-            /**
-             * [TODO: updateCursorPosition description]
-             *
-             * @param {PlainObject} position
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            updateCursorPosition: function updateCursorPosition(position) {
-                var source, sourceHandle, target, targetHandle;
-
-                if (this.created) {
-                    return this;
-                }
-
-                if (this.source.endpoint != null) {
-                    source = this.source.endpoint.anchorPosition;
-                    target = position;
-                    sourceHandle = this.source.handle.updateDistance(target).position();
-                    targetHandle = getHandlePosition(target, source, true);
-                } else {
-                    source = position;
-                    target = this.target.endpoint.anchorPosition;
-                    sourceHandle = getHandlePosition(source, target);
-                    targetHandle = this.target.handle.updateDistance(source, true).position();
-                }
-
-                updateDistance.call(this, source, sourceHandle, target, targetHandle);
-
+            if (this.established) {
                 return this;
             }
 
+            removeEndpoint.call(this, endpoint);
+            isCreated.call(this);
+
+            return this;
+        },
+
+        /**
+         * [TODO: updateCursorPosition description]
+         *
+         * @param {PlainObject} position
+         *      [TODO: description]
+         * @returns {Connection}
+         *      The instance on which the member is called.
+         */
+        updateCursorPosition: function updateCursorPosition(position) {
+            var source, sourceHandle, target, targetHandle;
+
+            if (this.created) {
+                return this;
+            }
+
+            if (this.source.endpoint != null) {
+                source = this.source.endpoint.anchorPosition;
+                target = position;
+                sourceHandle = this.source.handle.updateDistance(target).position();
+                targetHandle = getHandlePosition(target, source, true);
+            } else {
+                source = position;
+                target = this.target.endpoint.anchorPosition;
+                sourceHandle = getHandlePosition(source, target);
+                targetHandle = this.target.handle.updateDistance(source, true).position();
+            }
+
+            updateDistance.call(this, source, sourceHandle, target, targetHandle);
+
+            return this;
         }
 
     });

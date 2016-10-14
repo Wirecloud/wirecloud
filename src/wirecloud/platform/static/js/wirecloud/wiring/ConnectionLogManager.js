@@ -36,21 +36,15 @@
      * @param {Wiring} wiringEngine
      *      [TODO: description]
      */
-    ns.ConnectionLogManager = utils.defineClass({
+    ns.ConnectionLogManager = function ConnectionLogManager(connection, wiringEngine) {
+        Wirecloud.LogManager.call(this, wiringEngine.logManager);
+        this.connection = connection;
+    };
 
-        constructor: function ConnectionLogManager(connection, wiringEngine) {
-            this.superClass(wiringEngine.logManager);
-            this.connection = connection;
-        },
+    utils.inherit(ns.ConnectionLogManager, Wirecloud.LogManager, {
 
-        inherit: Wirecloud.LogManager,
-
-        members: {
-
-            buildTitle: function buildTitle() {
-                return utils.gettext("Connection's logs");
-            }
-
+        buildTitle: function buildTitle() {
+            return utils.gettext("Connection's logs");
         }
 
     });
