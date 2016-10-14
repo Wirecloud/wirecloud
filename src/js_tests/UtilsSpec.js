@@ -378,6 +378,44 @@
             });
         });
 
+        describe("inherit(child, parent, [members])", function () {
+            var inherit;
+
+            beforeAll(function () {
+                inherit = StyledElements.Utils.inherit;
+            });
+
+            it("should inherit from another class", function () {
+                var A = function A() {};
+                var B = function B() {};
+
+                expect(inherit(B, A)).toBeUndefined();
+
+                var test = new B();
+
+                expect(test instanceof B).toBe(true);
+                expect(test instanceof A).toBe(true);
+            });
+
+            it("should inherit from another class overwriting methods", function () {
+                var A = function A() {};
+                A.prototype.toString = function toString() {
+                    return "A";
+                };
+
+                var B = function B() {};
+
+                inherit(B, A, {
+                    toString: function toString() {
+                        return "B";
+                    }
+                });
+                var test = new B();
+
+                expect(test.toString()).toEqual("B");
+            });
+        });
+
         describe("formatSize(size)", function () {
             var formatSize = StyledElements.Utils.formatSize;
 
