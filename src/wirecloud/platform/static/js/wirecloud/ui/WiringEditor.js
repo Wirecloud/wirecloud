@@ -43,7 +43,7 @@ Wirecloud.ui = Wirecloud.ui || {};
      *      [TODO: description]
      */
     ns.WiringEditor = function WiringEditor(id, options) {
-        options = utils.updateObject({}, options);
+        options = utils.merge({}, options);
         options['class'] = "wiring-view wc-workspace-wiring";
 
         se.Alternative.call(this, id, options);
@@ -95,7 +95,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         createComponent: function createComponent(wiringComponent, options) {
             var component;
 
-            options = utils.updateObject({commit: true, removecascade_allowed: this.behaviourEngine.enabled}, options);
+            options = utils.merge({commit: true, removecascade_allowed: this.behaviourEngine.enabled}, options);
 
             component = new ns.WiringEditor.ComponentDraggable(wiringComponent, options);
             component
