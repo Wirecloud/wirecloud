@@ -41,7 +41,7 @@
         };
         options = utils.merge(defaultOptions, options);
 
-        this.superClass(options);
+        StyledElements.Button.call(this, options);
 
         if (options.menu != null) {
             this.popup_menu = options.menu;

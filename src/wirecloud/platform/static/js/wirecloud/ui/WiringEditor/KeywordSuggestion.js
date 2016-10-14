@@ -36,71 +36,65 @@
      *
      * @constructor
      */
-    ns.KeywordSuggestion = utils.defineClass({
+    ns.KeywordSuggestion = function KeywordSuggestion() {
+        Wirecloud.wiring.KeywordSuggestion.call(this);
+        this.enabled = true;
+    };
 
-        constructor: function KeywordSuggestion() {
-            this.superClass();
-            this.enabled = true;
+    utils.inherit(ns.KeywordSuggestion, Wirecloud.wiring.KeywordSuggestion, {
+
+        disable: function disable() {
+
+            this.enabled = false;
+
+            return this;
         },
 
-        inherit: Wirecloud.wiring.KeywordSuggestion,
+        enable: function enable() {
 
-        members: {
+            this.enabled = true;
 
-            disable: function disable() {
+            return this;
+        },
 
-                this.enabled = false;
+        /**
+         * [TODO: hideSuggestions description]
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {KeywordSuggestion}
+         *      The instance on which the member is called.
+         */
+        hideSuggestions: function hideSuggestions(endpoint) {
 
+            if (!this.enabled) {
                 return this;
-            },
-
-            enable: function enable() {
-
-                this.enabled = true;
-
-                return this;
-            },
-
-            /**
-             * [TODO: hideSuggestions description]
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {KeywordSuggestion}
-             *      The instance on which the member is called.
-             */
-            hideSuggestions: function hideSuggestions(endpoint) {
-
-                if (!this.enabled) {
-                    return this;
-                }
-
-                endpoint.deactivate();
-
-                return this.forEachSuggestion(endpoint, function (foundEndpoint) {
-                    foundEndpoint.deactivate();
-                });
-            },
-
-            /**
-             * [TODO: showSuggestions description]
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {KeywordSuggestion}
-             *      The instance on which the member is called.
-             */
-            showSuggestions: function showSuggestions(endpoint) {
-
-                if (!this.enabled) {
-                    return this;
-                }
-
-                endpoint.activate();
-
-                return this.forEachSuggestion(endpoint, function (foundEndpoint) {
-                    foundEndpoint.activate();
-                });
             }
 
+            endpoint.deactivate();
+
+            return this.forEachSuggestion(endpoint, function (foundEndpoint) {
+                foundEndpoint.deactivate();
+            });
+        },
+
+        /**
+         * [TODO: showSuggestions description]
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {KeywordSuggestion}
+         *      The instance on which the member is called.
+         */
+        showSuggestions: function showSuggestions(endpoint) {
+
+            if (!this.enabled) {
+                return this;
+            }
+
+            endpoint.activate();
+
+            return this.forEachSuggestion(endpoint, function (foundEndpoint) {
+                foundEndpoint.activate();
+            });
         }
 
     });

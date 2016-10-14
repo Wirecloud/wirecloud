@@ -36,71 +36,65 @@
      *
      * @constructor
      */
-    ns.ComponentDraggablePrefs = utils.defineClass({
+    ns.ComponentDraggablePrefs = function ComponentDraggablePrefs(component) {
+        this.component = component;
+    };
 
-        constructor: function ComponentDraggablePrefs(component) {
-            this.component = component;
-        },
+    utils.inherit(ns.ComponentDraggablePrefs, se.DynamicMenuItems, {
 
-        inherit: se.DynamicMenuItems,
+        _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
+            var item;
 
-        members: {
+            item = new se.MenuItem(title, onclick);
+            item.addIconClass('fa fa-' + iconClass);
 
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
-                var item;
-
-                item = new se.MenuItem(title, onclick);
-                item.addIconClass('fa fa-' + iconClass);
-
-                if (isEnabled != null) {
-                    item.enabled = isEnabled.call(this.component);
-                }
-
-                return item;
-            },
-
-            /**
-             * @override
-             */
-            build: function build() {
-                var item1 = getItemCollapse.call(this.component),
-                    item2 = getItemOrderEndpoints.call(this.component);
-
-                var list = [
-                    this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
-                        showRenameModal.call(this);
-                    }.bind(this), canRename),
-                    this._createMenuItem(item1.title, item1.icon, function () {
-                        this.collapsed = !this.collapsed;
-                    }.bind(this.component), canCollapseEndpoints),
-                    this._createMenuItem(item2.title, item2.icon, function () {
-                        if (this.orderingEndpoints) {
-                            this.stopOrderingEndpoints();
-                        } else {
-                            this.startOrderingEndpoints();
-                        }
-                    }.bind(this.component), canOrderEndpoints),
-                    this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
-                        var dialog = new Wirecloud.ui.UpgradeWindowMenu(this._component);
-                        dialog.show();
-                    }.bind(this.component), canUpgrade),
-                    this._createMenuItem(utils.gettext("Logs"), "tags", function () {
-                        this.showLogs();
-                    }.bind(this.component)),
-                    this._createMenuItem(utils.gettext("Settings"), "gear", function () {
-                        this.showSettings();
-                    }.bind(this.component), canShowSettings)
-                ];
-
-                if (this.component.removeCascadeAllowed) {
-                    list = list.concat(this._createMenuItem(utils.gettext("Delete cascade"), "trash", function () {
-                        this.dispatchEvent("optremovecascade");
-                    }.bind(this.component), canDeleteCascade));
-                }
-
-                return list;
+            if (isEnabled != null) {
+                item.enabled = isEnabled.call(this.component);
             }
 
+            return item;
+        },
+
+        /**
+         * @override
+         */
+        build: function build() {
+            var item1 = getItemCollapse.call(this.component),
+                item2 = getItemOrderEndpoints.call(this.component);
+
+            var list = [
+                this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
+                    showRenameModal.call(this);
+                }.bind(this), canRename),
+                this._createMenuItem(item1.title, item1.icon, function () {
+                    this.collapsed = !this.collapsed;
+                }.bind(this.component), canCollapseEndpoints),
+                this._createMenuItem(item2.title, item2.icon, function () {
+                    if (this.orderingEndpoints) {
+                        this.stopOrderingEndpoints();
+                    } else {
+                        this.startOrderingEndpoints();
+                    }
+                }.bind(this.component), canOrderEndpoints),
+                this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
+                    var dialog = new Wirecloud.ui.UpgradeWindowMenu(this._component);
+                    dialog.show();
+                }.bind(this.component), canUpgrade),
+                this._createMenuItem(utils.gettext("Logs"), "tags", function () {
+                    this.showLogs();
+                }.bind(this.component)),
+                this._createMenuItem(utils.gettext("Settings"), "gear", function () {
+                    this.showSettings();
+                }.bind(this.component), canShowSettings)
+            ];
+
+            if (this.component.removeCascadeAllowed) {
+                list = list.concat(this._createMenuItem(utils.gettext("Delete cascade"), "trash", function () {
+                    this.dispatchEvent("optremovecascade");
+                }.bind(this.component), canDeleteCascade));
+            }
+
+            return list;
         }
 
     });

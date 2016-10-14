@@ -31,7 +31,7 @@
     // =========================================================================
 
     ns.ComponentGroup = function ComponentGroup(resource, title) {
-        this.superClass(events);
+        se.StyledElement.call(this, events);
 
         title = title || utils.gettext("Create");
 

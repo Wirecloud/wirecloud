@@ -35,32 +35,28 @@
      *
      * @param {Object} description metadata information of the Operator
      */
-    ns.OperatorMeta = utils.defineClass({
+    ns.OperatorMeta = function OperatorMeta(description) {
 
-        constructor: function OperatorMeta(description) {
+        if (description.type !== 'operator') {
+            throw new TypeError('Invalid operator description');
+        }
 
-            if (description.type !== 'operator') {
-                throw new TypeError('Invalid operator description');
-            }
+        Wirecloud.MashableApplicationComponent.call(this, description);
 
-            this.superClass(description);
+        if (this.missing) {
+            this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
+        } else {
+            this.codeurl = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({
+                vendor: this.vendor,
+                name: this.name,
+                version: this.version.text
+            });
+        }
+        this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash');
 
-            if (this.missing) {
-                this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
-            } else {
-                this.codeurl = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({
-                    vendor: this.vendor,
-                    name: this.name,
-                    version: this.version.text
-                });
-            }
-            this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash');
+        Object.freeze(this);
+    };
 
-            Object.freeze(this);
-        },
-
-        inherit: Wirecloud.MashableApplicationComponent
-
-    });
+    utils.inherit(ns.OperatorMeta, Wirecloud.MashableApplicationComponent);
 
 })(Wirecloud.wiring, Wirecloud.Utils);

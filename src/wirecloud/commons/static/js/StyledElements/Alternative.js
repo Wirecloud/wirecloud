@@ -38,7 +38,7 @@
      */
     var Alternative = function Alternative(id, options) {
 
-        this.superClass(options, ['hide', 'show']);
+        se.Container.call(this, options, ['hide', 'show']);
 
         this.addClassName('hidden');
 
@@ -60,7 +60,7 @@
             this.repaint(false);
         }
 
-        return this.superMember(se.Container, '_onhidden', hidden);
+        return se.Container.prototype._onhidden.call(this, hidden);
     };
 
     Alternative.prototype.setVisible = function setVisible(visible) {

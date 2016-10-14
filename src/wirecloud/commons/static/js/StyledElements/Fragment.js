@@ -42,7 +42,7 @@
      *     An element or list of elements.
      */
     se.Fragment = function Fragment(newElement) {
-        this.superClass();
+        se.StyledElement.call(this);
 
         /**
          * The list of elements stored.
