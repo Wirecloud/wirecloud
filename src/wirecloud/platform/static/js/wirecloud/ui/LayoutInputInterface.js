@@ -134,7 +134,7 @@
     var LayoutInputInterface = function LayoutInputInterface(fieldId, options) {
         StyledElements.InputInterface.call(this, fieldId, options);
 
-        this.wrapperElement = new StyledElements.HorizontalLayout({'class': 'se-layout-field input input-prepend input-append'});
+        this.wrapperElement = new StyledElements.Container({class: 'se-layout-field se-input-group'});
 
         // Layout type select
         this.selectElement = new StyledElements.Select({
@@ -156,11 +156,11 @@
             }
             updateLayoutSummary.call(this);
         }.bind(this));
-        this.wrapperElement.getWestContainer().appendChild(this.selectElement);
+        this.wrapperElement.appendChild(this.selectElement);
 
         // Summary-addon
         this.summary_addon = new StyledElements.Addon();
-        this.wrapperElement.getCenterContainer().appendChild(this.summary_addon);
+        this.wrapperElement.appendChild(this.summary_addon);
 
         // Settings button
         this.buttonElement = new StyledElements.Button({iconClass: 'fa fa-cogs'});
@@ -178,7 +178,7 @@
             dialog.show(Wirecloud.UserInterfaceManager.currentWindowMenu);
             dialog.setValue(this.layout);
         }.bind(this));
-        this.wrapperElement.getEastContainer().appendChild(this.buttonElement);
+        this.wrapperElement.appendChild(this.buttonElement);
     };
     LayoutInputInterface.prototype = new StyledElements.InputInterface();
 
@@ -219,7 +219,6 @@
 
     LayoutInputInterface.prototype.insertInto = function insertInto(element) {
         this.wrapperElement.insertInto(element);
-        this.wrapperElement.repaint();
     };
 
     Wirecloud.ui.LayoutInputInterface = LayoutInputInterface;
