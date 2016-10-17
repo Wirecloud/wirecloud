@@ -36,50 +36,44 @@
      *
      * @constructor
      */
-    ns.ComponentPrefs = utils.defineClass({
+    ns.ComponentPrefs = function ComponentPrefs(component) {
+        this.component = component;
+    };
 
-        constructor: function ComponentPrefs(component) {
-            this.component = component;
-        },
+    utils.inherit(ns.ComponentPrefs, se.DynamicMenuItems, {
 
-        inherit: se.DynamicMenuItems,
+        _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
+            var item;
 
-        members: {
+            item = new se.MenuItem(title, onclick);
+            item.addIconClass('fa fa-' + iconClass);
 
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
-                var item;
-
-                item = new se.MenuItem(title, onclick);
-                item.addIconClass('fa fa-' + iconClass);
-
-                if (isEnabled != null) {
-                    item.enabled = isEnabled.call(this);
-                }
-
-                return item;
-            },
-
-            /**
-             * @override
-             */
-            build: function build() {
-                return [
-                    this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
-                        showRenameModal.call(this);
-                    }.bind(this), canRename),
-                    this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
-                        var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.component._component);
-                        dialog.show();
-                    }.bind(this), canUpgrade),
-                    this._createMenuItem(utils.gettext("Logs"), "tags", function () {
-                        this.component.showLogs();
-                    }.bind(this)),
-                    this._createMenuItem(utils.gettext("Settings"), "gear", function () {
-                        this.component.showSettings();
-                    }.bind(this), canShowSettings)
-                ];
+            if (isEnabled != null) {
+                item.enabled = isEnabled.call(this);
             }
 
+            return item;
+        },
+
+        /**
+         * @override
+         */
+        build: function build() {
+            return [
+                this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
+                    showRenameModal.call(this);
+                }.bind(this), canRename),
+                this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
+                    var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.component._component);
+                    dialog.show();
+                }.bind(this), canUpgrade),
+                this._createMenuItem(utils.gettext("Logs"), "tags", function () {
+                    this.component.showLogs();
+                }.bind(this)),
+                this._createMenuItem(utils.gettext("Settings"), "gear", function () {
+                    this.component.showSettings();
+                }.bind(this), canShowSettings)
+            ];
         }
 
     });

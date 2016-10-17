@@ -30,224 +30,219 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    se.Container = utils.defineClass({
+    /**
+     * Creates a new instance of class Container.
+     *
+     * @constructor
+     * @extends StyledElements.StyledElement
+     * @name StyledElements.Container
+     * @since 0.5
+     * @param {Object.<String, *>} options [description]
+     * @param {String[]} events [description]
+     */
+    se.Container = function Container(options, events) {
+        options = utils.merge(utils.clone(defaults), options);
+        se.StyledElement.call(this, events);
+
+        this.wrapperElement = document.createElement(options.tagname);
+        this.wrapperElement.className = 'se-container';
+
+        if (options.id) {
+            this.wrapperElement.setAttribute('id', options.id);
+        }
+
+        this.addClassName(options['class']);
+
+        var priv = {
+            children: []
+        };
+
+        privates.set(this, priv);
+
+        Object.defineProperties(this, {
+            'children': {
+                get: function () {
+                    return priv.children.slice(0);
+                }
+            }
+        });
+    };
+
+    utils.inherit(se.Container, se.StyledElement, /** @lends StyledElements.Container.prototype */ {
 
         /**
-         * Creates a new instance of class Container.
+         * Checks if the given element is a direct descendant of this
+         * `Container`.
          *
-         * @constructor
-         * @extends StyledElements.StyledElement
-         * @name StyledElements.Container
-         * @since 0.5
-         * @param {Object.<String, *>} options [description]
-         * @param {String[]} events [description]
+         * @since 0.6
+         *
+         * @param {StyledElements.StyledElement|HTMLElement} childElement
+         *      An element that may be contained.
+         *
+         * @returns {Boolean}
+         *      If the given element is a child of this `Container`.
          */
-        constructor: function Container(options, events) {
-            options = utils.merge(utils.clone(defaults), options);
-            se.StyledElement.call(this, events);
+        has: function has(childElement) {
 
-            this.wrapperElement = document.createElement(options.tagname);
-            this.wrapperElement.className = 'se-container';
+            var priv = privates.get(this);
 
-            if (options.id) {
-                this.wrapperElement.setAttribute('id', options.id);
+            if (childElement instanceof se.StyledElement && priv.children.indexOf(childElement) !== -1) {
+                return true;
             }
 
-            this.addClassName(options['class']);
-
-            var priv = {
-                children: []
-            };
-
-            privates.set(this, priv);
-
-            Object.defineProperties(this, {
-                'children': {
-                    get: function () {
-                        return priv.children.slice(0);
-                    }
-                }
-            });
+            return childElement.parentElement == this.get();
         },
 
-        inherit: se.StyledElement,
+        /**
+         * Inserts the `newElement` either to the end of this Container
+         * or after the `refElement` given.
+         *
+         * @since 0.5
+         *
+         * @param {(StyledElements.StyledElement|Node|String)} newElement
+         *     An element to insert into this Container.
+         * @param {(StyledElements.StyledElement|Node)} [refElement]
+         *     Optional. An element after which `newElement` is inserted.
+         *
+         * @returns {StyledElements.Container}
+         *     The instance on which the member is called.
+         */
+        appendChild: function appendChild(newElement, refElement) {
+            utils.appendChild(this, newElement, refElement).forEach(addChild, this);
+            orderbyIndex.call(this);
+            return this;
+        },
 
-        members: /** @lends StyledElements.Container.prototype */ {
+        /**
+         * Inserts the `newElement` to the beginning of this `Container`
+         * or before the `refElement` given.
+         *
+         * @since 0.7
+         *
+         * @param {(StyledElements.StyledElement|Node|String)} newElement
+         *     An element to insert into this Container.
+         * @param {(StyledElements.StyledElement|Node)} [refElement]
+         *     Optional. An element before which `newElement` is inserted.
+         *
+         * @returns {StyledElements.Container}
+         *      The instance on which the member is called.
+         */
+        prependChild: function prependChild(newElement, refElement) {
+            utils.prependChild(this, newElement, refElement).forEach(addChild, this);
+            orderbyIndex.call(this);
+            return this;
+        },
 
-            /**
-             * Checks if the given element is a direct descendant of this
-             * `Container`.
-             *
-             * @since 0.6
-             *
-             * @param {StyledElements.StyledElement|HTMLElement} childElement
-             *      An element that may be contained.
-             *
-             * @returns {Boolean}
-             *      If the given element is a child of this `Container`.
-             */
-            has: function has(childElement) {
+        /**
+         * Removes the `childElement` from this `Container`.
+         *
+         * @since 0.5
+         *
+         * @param {(StyledElements.StyledElement|Node)} childElement
+         *     An element to remove from this Container.
+         *
+         * @returns {StyledElements.Container}
+         *      The instance on which the member is called.
+         */
+        removeChild: function removeChild(childElement) {
+            utils.removeChild(this, childElement);
 
+            if (childElement instanceof se.StyledElement) {
                 var priv = privates.get(this);
+                priv.children.splice(priv.children.indexOf(childElement), 1);
+            }
 
-                if (childElement instanceof se.StyledElement && priv.children.indexOf(childElement) !== -1) {
-                    return true;
-                }
+            return this;
+        },
 
-                return childElement.parentElement == this.get();
-            },
+        /**
+         * Removes the `childElement` from this `Container`.
+         *
+         * @since 0.5
+         *
+         * @param {(StyledElements.StyledElement|Node)} childElement
+         *     An element to remove from this Container.
+         *
+         * @returns {StyledElements.Container}
+         *      The instance on which the member is called.
+         */
+        repaint: function repaint(temporal) {
+            temporal = temporal !== undefined ? temporal : false;
 
-            /**
-             * Inserts the `newElement` either to the end of this Container
-             * or after the `refElement` given.
-             *
-             * @since 0.5
-             *
-             * @param {(StyledElements.StyledElement|Node|String)} newElement
-             *     An element to insert into this Container.
-             * @param {(StyledElements.StyledElement|Node)} [refElement]
-             *     Optional. An element after which `newElement` is inserted.
-             *
-             * @returns {StyledElements.Container}
-             *     The instance on which the member is called.
-             */
-            appendChild: function appendChild(newElement, refElement) {
-                utils.appendChild(this, newElement, refElement).forEach(addChild, this);
-                orderbyIndex.call(this);
-                return this;
-            },
+            var priv = privates.get(this);
+            for (var i = 0; i < priv.children.length; i++) {
+                priv.children[i].repaint(temporal);
+            }
+        },
 
-            /**
-             * Inserts the `newElement` to the beginning of this `Container`
-             * or before the `refElement` given.
-             *
-             * @since 0.7
-             *
-             * @param {(StyledElements.StyledElement|Node|String)} newElement
-             *     An element to insert into this Container.
-             * @param {(StyledElements.StyledElement|Node)} [refElement]
-             *     Optional. An element before which `newElement` is inserted.
-             *
-             * @returns {StyledElements.Container}
-             *      The instance on which the member is called.
-             */
-            prependChild: function prependChild(newElement, refElement) {
-                utils.prependChild(this, newElement, refElement).forEach(addChild, this);
-                orderbyIndex.call(this);
-                return this;
-            },
+        /**
+         * Removes all children from this `Container`.
+         *
+         * @since 0.5
+         *
+         * @returns {StyledElements.Container}
+         *      The instance on which the member is called.
+         */
+        clear: function clear() {
+            var priv = privates.get(this);
 
-            /**
-             * Removes the `childElement` from this `Container`.
-             *
-             * @since 0.5
-             *
-             * @param {(StyledElements.StyledElement|Node)} childElement
-             *     An element to remove from this Container.
-             *
-             * @returns {StyledElements.Container}
-             *      The instance on which the member is called.
-             */
-            removeChild: function removeChild(childElement) {
-                utils.removeChild(this, childElement);
+            priv.children = [];
+            this.wrapperElement.innerHTML = "";
+            this.wrapperElement.scrollTop = 0;
+            this.wrapperElement.scrollLeft = 0;
+            if (priv.disabledLayer != null) {
+                this.wrapperElement.appendChild(priv.disabledLayer);
+            }
 
-                if (childElement instanceof se.StyledElement) {
-                    var priv = privates.get(this);
-                    priv.children.splice(priv.children.indexOf(childElement), 1);
-                }
+            return this;
+        },
 
-                return this;
-            },
+        /**
+         * Gets the combined text content of this `Container`.
+         *
+         * @param {String} [newText] The text to set as the content of this
+         * `Container`
+         *
+         * @returns {StyledElements.Container|String}
+         *      The combined text content of this `Container` if the
+         *      `newText` parameter is not used. Otherways, the instance on
+         *      which the member is called.
+         */
+        text: function text(text) {
+            if (text == null) {
+                return this.get().textContent;
+            } else {
+                return this.clear().appendChild("" + text);
+            }
+        },
 
-            /**
-             * Removes the `childElement` from this `Container`.
-             *
-             * @since 0.5
-             *
-             * @param {(StyledElements.StyledElement|Node)} childElement
-             *     An element to remove from this Container.
-             *
-             * @returns {StyledElements.Container}
-             *      The instance on which the member is called.
-             */
-            repaint: function repaint(temporal) {
-                temporal = temporal !== undefined ? temporal : false;
+        /**
+         * @deprecated since version 0.6.0
+         * @see {@link StyledElements.Container#enabled}
+         */
+        isDisabled: function isDisabled() {
+            return !this.enabled;
+        },
 
-                var priv = privates.get(this);
-                for (var i = 0; i < priv.children.length; i++) {
-                    priv.children[i].repaint(temporal);
-                }
-            },
+        _onenabled: function _onenabled(enabled) {
+            var icon, priv;
 
-            /**
-             * Removes all children from this `Container`.
-             *
-             * @since 0.5
-             *
-             * @returns {StyledElements.Container}
-             *      The instance on which the member is called.
-             */
-            clear: function clear() {
-                var priv = privates.get(this);
+            priv = privates.get(this);
 
-                priv.children = [];
-                this.wrapperElement.innerHTML = "";
-                this.wrapperElement.scrollTop = 0;
-                this.wrapperElement.scrollLeft = 0;
+            if (enabled) {
                 if (priv.disabledLayer != null) {
-                    this.wrapperElement.appendChild(priv.disabledLayer);
+                    priv.disabledLayer.remove();
                 }
+                priv.disabledLayer = null;
+            } else {
+                priv.disabledLayer = document.createElement('div');
+                priv.disabledLayer.className = 'se-container-disable-layer';
 
-                return this;
-            },
+                icon = document.createElement('i');
+                icon.className = 'disable-icon fa fa-spin fa-spinner';
+                priv.disabledLayer.appendChild(icon);
 
-            /**
-             * Gets the combined text content of this `Container`.
-             *
-             * @param {String} [newText] The text to set as the content of this
-             * `Container`
-             *
-             * @returns {StyledElements.Container|String}
-             *      The combined text content of this `Container` if the
-             *      `newText` parameter is not used. Otherways, the instance on
-             *      which the member is called.
-             */
-            text: function text(text) {
-                if (text == null) {
-                    return this.get().textContent;
-                } else {
-                    return this.clear().appendChild("" + text);
-                }
-            },
-
-            /**
-             * @deprecated since version 0.6.0
-             * @see {@link StyledElements.Container#enabled}
-             */
-            isDisabled: function isDisabled() {
-                return !this.enabled;
-            },
-
-            _onenabled: function _onenabled(enabled) {
-                var icon, priv;
-
-                priv = privates.get(this);
-
-                if (enabled) {
-                    if (priv.disabledLayer != null) {
-                        priv.disabledLayer.remove();
-                    }
-                    priv.disabledLayer = null;
-                } else {
-                    priv.disabledLayer = document.createElement('div');
-                    priv.disabledLayer.className = 'se-container-disable-layer';
-
-                    icon = document.createElement('i');
-                    icon.className = 'disable-icon fa fa-spin fa-spinner';
-                    priv.disabledLayer.appendChild(icon);
-
-                    this.wrapperElement.appendChild(priv.disabledLayer);
-                }
+                this.wrapperElement.appendChild(priv.disabledLayer);
             }
         }
 

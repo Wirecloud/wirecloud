@@ -38,342 +38,332 @@
      * @param {PlainObject} [options]
      *      [TODO: description]
      */
-    ns.Behaviour = utils.defineClass({
+    ns.Behaviour = function Behaviour(index, options) {
+        var descriptionElement;
 
-        constructor: function Behaviour(index, options) {
-            var descriptionElement;
+        options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
 
-            options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
+        if (!options.title) {
+            options.title = ns.Behaviour.JSON_TEMPLATE.title;
+        }
 
-            if (!options.title) {
-                options.title = ns.Behaviour.JSON_TEMPLATE.title;
+        if (!options.description) {
+            options.description = ns.Behaviour.JSON_TEMPLATE.description;
+        }
+
+        this.title_tooltip = new se.Tooltip({content: options.title, placement: ["top", "bottom", "right", "left"]});
+
+        this.btnPrefs = new se.PopupButton({
+            title: utils.gettext("Preferences"),
+            class: "we-prefs-btn",
+            iconClass: "fa fa-reorder"
+        });
+        this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
+
+        this.btnRemove = new se.Button({
+            title: utils.gettext("Remove"),
+            class: "btn-remove",
+            iconClass: "fa fa-times-circle"
+        });
+        this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
+
+        se.Panel.call(this, {
+            events: events,
+            class: "behaviour",
+            title: options.title,
+            selectable: true,
+            buttons: [this.btnPrefs, this.btnRemove]
+        });
+
+        this.heading.title.addClassName("se-link behaviour-title text-truncate");
+
+        descriptionElement = document.createElement('p');
+        descriptionElement.className = "behaviour-description";
+        descriptionElement.textContent = options.description;
+        this.body.appendChild(descriptionElement);
+
+        Object.defineProperties(this, {
+
+            description: {
+                get: function get() {return descriptionElement.textContent;},
+                set: function set(value) {descriptionElement.textContent = value ? value : ns.Behaviour.JSON_TEMPLATE.description;}
+            },
+
+            index: {
+                get: function () {
+                    return this.get().getAttribute('data-index');
+                },
+                set: function (value) {
+                    this.get().setAttribute('data-index', value);
+                }
+            },
+
+            logManager: {value: new ns.BehaviourLogManager(this)}
+
+        });
+
+        this.active = options.active;
+        this.index = index;
+
+        this.components = options.components;
+        this.connections = options.connections;
+    };
+
+    ns.Behaviour.JSON_TEMPLATE = {
+        title: utils.gettext("New behaviour"),
+        description: utils.gettext("No description provided."),
+        active: false,
+        components: {operator: {}, widget: {}},
+        connections: []
+    };
+
+    utils.inherit(ns.Behaviour, se.Panel, {
+
+        /**
+         * @override
+         */
+        _onclick: function _onclick(event) {
+
+            if (!this.active) {
+                se.Panel.prototype._onclick.call(this, event);
             }
 
-            if (!options.description) {
-                options.description = ns.Behaviour.JSON_TEMPLATE.description;
-            }
-
-            this.title_tooltip = new se.Tooltip({content: options.title, placement: ["top", "bottom", "right", "left"]});
-
-            this.btnPrefs = new se.PopupButton({
-                title: utils.gettext("Preferences"),
-                class: "we-prefs-btn",
-                iconClass: "fa fa-reorder"
-            });
-            this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
-
-            this.btnRemove = new se.Button({
-                title: utils.gettext("Remove"),
-                class: "btn-remove",
-                iconClass: "fa fa-times-circle"
-            });
-            this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
-
-            this.superClass({
-                events: events,
-                class: "behaviour",
-                title: options.title,
-                selectable: true,
-                buttons: [this.btnPrefs, this.btnRemove]
-            });
-
-            this.heading.title.addClassName("se-link behaviour-title text-truncate");
-
-            descriptionElement = document.createElement('p');
-            descriptionElement.className = "behaviour-description";
-            descriptionElement.textContent = options.description;
-            this.body.appendChild(descriptionElement);
-
-            Object.defineProperties(this, {
-
-                description: {
-                    get: function get() {return descriptionElement.textContent;},
-                    set: function set(value) {descriptionElement.textContent = value ? value : ns.Behaviour.JSON_TEMPLATE.description;}
-                },
-
-                index: {
-                    get: function () {
-                        return this.get().getAttribute('data-index');
-                    },
-                    set: function (value) {
-                        this.get().setAttribute('data-index', value);
-                    }
-                },
-
-                logManager: {value: new ns.BehaviourLogManager(this)}
-
-            });
-
-            this.active = options.active;
-            this.index = index;
-
-            this.components = options.components;
-            this.connections = options.connections;
+            return this;
         },
 
-        inherit: se.Panel,
+        /**
+         * @override
+         */
+        clear: function clear() {
 
-        statics: {
+            this.components = {operator: {}, widget: {}};
+            this.connections = [];
 
-            JSON_TEMPLATE: {
-                title: utils.gettext("New behaviour"),
-                description: utils.gettext("No description provided."),
-                active: false,
-                components: {operator: {}, widget: {}},
-                connections: []
-            }
-
+            return this.dispatchEvent('change');
         },
 
-        members: {
+        /**
+         * @override
+         */
+        setTitle: function setTitle(title) {
+            var span;
 
-            /**
-             * @override
-             */
-            _onclick: function _onclick(event) {
+            span = document.createElement('span');
+            span.textContent = title;
+            this.title_tooltip.options.content = title;
+            this.title_tooltip.bind(span);
 
-                if (!this.active) {
-                    this.superMember(se.Panel, '_onclick', event);
+            return se.Panel.prototype.setTitle.call(this, span);
+        },
+
+        /**
+         * [TODO: equals description]
+         *
+         * @param {Behaviour} behaviour
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        equals: function equals(behaviour) {
+            return (behaviour instanceof ns.Behaviour) && (this === behaviour);
+        },
+
+        getConnectionIndex: function getConnectionIndex(connection) {
+            var _connection, found, i, index = -1;
+
+            for (found = false, i = 0; !found && i < this.connections.length; i++) {
+                _connection = this.connections[i];
+
+                if (_connection.sourcename == connection.sourceId && _connection.targetname == connection.targetId) {
+                    found = true;
+                    index = i;
                 }
+            }
 
-                return this;
-            },
+            return index;
+        },
 
-            /**
-             * @override
-             */
-            clear: function clear() {
-
-                this.components = {operator: {}, widget: {}};
-                this.connections = [];
-
-                return this.dispatchEvent('change');
-            },
-
-            /**
-             * @override
-             */
-            setTitle: function setTitle(title) {
-                var span;
-
-                span = document.createElement('span');
-                span.textContent = title;
-                this.title_tooltip.options.content = title;
-                this.title_tooltip.bind(span);
-
-                return this.superMember(se.Panel, 'setTitle', span);
-            },
-
-            /**
-             * [TODO: equals description]
-             *
-             * @param {Behaviour} behaviour
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            equals: function equals(behaviour) {
-                return (behaviour instanceof ns.Behaviour) && (this === behaviour);
-            },
-
-            getConnectionIndex: function getConnectionIndex(connection) {
-                var _connection, found, i, index = -1;
-
-                for (found = false, i = 0; !found && i < this.connections.length; i++) {
-                    _connection = this.connections[i];
-
-                    if (_connection.sourcename == connection.sourceId && _connection.targetname == connection.targetId) {
-                        found = true;
-                        index = i;
-                    }
+        getCurrentStatus: function getCurrentStatus() {
+            return {
+                title: this.title,
+                connections: this.connections.length,
+                components: {
+                    operator: Object.keys(this.components.operator).length,
+                    widget: Object.keys(this.components.widget).length
                 }
+            };
+        },
 
-                return index;
-            },
+        /**
+         * [TODO: hasComponent description]
+         *
+         * @param {Component} component
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        hasComponent: function hasComponent(component) {
+            return component.id in this.components[component.type];
+        },
 
-            getCurrentStatus: function getCurrentStatus() {
-                return {
-                    title: this.title,
-                    connections: this.connections.length,
-                    components: {
-                        operator: Object.keys(this.components.operator).length,
-                        widget: Object.keys(this.components.widget).length
-                    }
-                };
-            },
+        /**
+         * [TODO: hasComponentView description]
+         *
+         * @param {Component} component
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        hasComponentView: function hasComponentView(component) {
+            return Object.keys(this.components[component.type][component.id] || {}).length > 0;
+        },
 
-            /**
-             * [TODO: hasComponent description]
-             *
-             * @param {Component} component
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            hasComponent: function hasComponent(component) {
-                return component.id in this.components[component.type];
-            },
+        /**
+         * [TODO: hasConnection description]
+         *
+         * @param {Connection} connection
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        hasConnection: function hasConnection(connection) {
+            return this.connections.some(function (vInfo) {
+                return vInfo.sourcename == connection.sourceId && vInfo.targetname == connection.targetId;
+            });
+        },
 
-            /**
-             * [TODO: hasComponentView description]
-             *
-             * @param {Component} component
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            hasComponentView: function hasComponentView(component) {
-                return Object.keys(this.components[component.type][component.id] || {}).length > 0;
-            },
+        /**
+         * [TODO: removeComponent description]
+         *
+         * @param {ComponentDraggable} component
+         *      [TODO: description]
+         * @returns {Behaviour}
+         *      The instance on which the member is called.
+         */
+        removeComponent: function removeComponent(component) {
 
-            /**
-             * [TODO: hasConnection description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            hasConnection: function hasConnection(connection) {
-                return this.connections.some(function (vInfo) {
-                    return vInfo.sourcename == connection.sourceId && vInfo.targetname == connection.targetId;
+            if (this.hasComponent(component)) {
+                delete this.components[component.type][component.id];
+            }
+
+            return this.dispatchEvent('change');
+        },
+
+        /**
+         * [TODO: removeConnection description]
+         *
+         * @param {Connection} connection
+         *      [TODO: description]
+         * @returns {Behaviour}
+         *      The instance on which the member is called.
+         */
+        removeConnection: function removeConnection(connection) {
+            var index = this.getConnectionIndex(connection);
+
+            if (index !== -1) {
+                this.connections.splice(index, 1);
+            }
+
+            return this.dispatchEvent('change');
+        },
+
+        /**
+         * [TODO: showLogs description]
+         *
+         * @returns {Behaviour}
+         *      The instance on which the member is called.
+         */
+        showLogs: function showLogs() {
+            var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
+            modal.show();
+
+            return this;
+        },
+
+        /**
+         * [TODO: showSettings description]
+         *
+         * @returns {Behaviour}
+         *      The instance on which the member is called.
+         */
+        showSettings: function showSettings() {
+
+            displayUpdateForm.call(this);
+
+            return this;
+        },
+
+        /**
+         * [TODO: toJSON description]
+         *
+         * @returns {PlainObject}
+         *      [TODO: description]
+         */
+        toJSON: function toJSON() {
+            return {
+                title: this.title,
+                description: this.description,
+                active: this.active,
+                components: this.components,
+                connections: this.connections
+            };
+        },
+
+        /**
+         * [TODO: updateComponent description]
+         *
+         * @param {ComponentDraggable} component
+         *      [TODO: description]
+         * @param {PlainObject} [view]
+         *      [TODO: description]
+         * @returns {Behaviour}
+         *      The instance on which the member is called.
+         */
+        updateComponent: function updateComponent(component, view) {
+            var name;
+
+            if (!this.hasComponent(component)) {
+                this.components[component.type][component.id] = {};
+            }
+
+            view = view || {};
+
+            for (name in view) {
+                this.components[component.type][component.id][name] = view[name];
+            }
+
+            return this.dispatchEvent('change');
+        },
+
+        /**
+         * [TODO: updateConnection description]
+         *
+         * @param {Connection} connection
+         *      [TODO: description]
+         * @param {PlainObject} [view]
+         *      [TODO: description]
+         * @returns {Behaviour}
+         *      The instance on which the member is called.
+         */
+        updateConnection: function updateConnection(connection, view) {
+            var name, index;
+
+            index = this.getConnectionIndex(connection);
+
+            if (index < 0) {
+                index = this.connections.push({
+                    sourcename: connection.sourceId,
+                    targetname: connection.targetId
                 });
-            },
-
-            /**
-             * [TODO: removeComponent description]
-             *
-             * @param {ComponentDraggable} component
-             *      [TODO: description]
-             * @returns {Behaviour}
-             *      The instance on which the member is called.
-             */
-            removeComponent: function removeComponent(component) {
-
-                if (this.hasComponent(component)) {
-                    delete this.components[component.type][component.id];
-                }
-
-                return this.dispatchEvent('change');
-            },
-
-            /**
-             * [TODO: removeConnection description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @returns {Behaviour}
-             *      The instance on which the member is called.
-             */
-            removeConnection: function removeConnection(connection) {
-                var index = this.getConnectionIndex(connection);
-
-                if (index !== -1) {
-                    this.connections.splice(index, 1);
-                }
-
-                return this.dispatchEvent('change');
-            },
-
-            /**
-             * [TODO: showLogs description]
-             *
-             * @returns {Behaviour}
-             *      The instance on which the member is called.
-             */
-            showLogs: function showLogs() {
-                var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
-                modal.show();
-
-                return this;
-            },
-
-            /**
-             * [TODO: showSettings description]
-             *
-             * @returns {Behaviour}
-             *      The instance on which the member is called.
-             */
-            showSettings: function showSettings() {
-
-                displayUpdateForm.call(this);
-
-                return this;
-            },
-
-            /**
-             * [TODO: toJSON description]
-             *
-             * @returns {PlainObject}
-             *      [TODO: description]
-             */
-            toJSON: function toJSON() {
-                return {
-                    title: this.title,
-                    description: this.description,
-                    active: this.active,
-                    components: this.components,
-                    connections: this.connections
-                };
-            },
-
-            /**
-             * [TODO: updateComponent description]
-             *
-             * @param {ComponentDraggable} component
-             *      [TODO: description]
-             * @param {PlainObject} [view]
-             *      [TODO: description]
-             * @returns {Behaviour}
-             *      The instance on which the member is called.
-             */
-            updateComponent: function updateComponent(component, view) {
-                var name;
-
-                if (!this.hasComponent(component)) {
-                    this.components[component.type][component.id] = {};
-                }
-
-                view = view || {};
-
-                for (name in view) {
-                    this.components[component.type][component.id][name] = view[name];
-                }
-
-                return this.dispatchEvent('change');
-            },
-
-            /**
-             * [TODO: updateConnection description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @param {PlainObject} [view]
-             *      [TODO: description]
-             * @returns {Behaviour}
-             *      The instance on which the member is called.
-             */
-            updateConnection: function updateConnection(connection, view) {
-                var name, index;
-
-                index = this.getConnectionIndex(connection);
-
-                if (index < 0) {
-                    index = this.connections.push({
-                        sourcename: connection.sourceId,
-                        targetname: connection.targetId
-                    });
-                }
-
-                view = view || {};
-
-                for (name in view) {
-                    this.connections[index][name] = view[name];
-                }
-
-                return this.dispatchEvent('change');
             }
 
+            view = view || {};
+
+            for (name in view) {
+                this.connections[index][name] = view[name];
+            }
+
+            return this.dispatchEvent('change');
         }
 
     });

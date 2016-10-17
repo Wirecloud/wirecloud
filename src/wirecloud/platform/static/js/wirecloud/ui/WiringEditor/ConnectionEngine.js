@@ -40,220 +40,210 @@
      * @param {Function} findWiringEngine
      *      [TODO: description]
      */
-    ns.ConnectionEngine = utils.defineClass({
+    ns.ConnectionEngine = function ConnectionEngine(container, findWiringEngine) {
+        se.StyledElement.call(this, events);
 
-        constructor: function ConnectionEngine(container, findWiringEngine) {
-            this.superClass(events);
+        this.wrapperElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'svg');
+        this.wrapperElement.setAttribute('class', "we-connections-layer");
 
-            this.wrapperElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'svg');
-            this.wrapperElement.setAttribute('class', "we-connections-layer");
+        this.connections = [];
+        this.connectionsElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'g');
+        this.wrapperElement.appendChild(this.connectionsElement);
 
-            this.connections = [];
-            this.connectionsElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'g');
-            this.wrapperElement.appendChild(this.connectionsElement);
+        this.optionsElement = document.createElement('div');
 
-            this.optionsElement = document.createElement('div');
+        this.endpoints = {source: [], target: []};
 
-            this.endpoints = {source: [], target: []};
+        this.container = container;
+        this.container.appendChild(this.wrapperElement);
+        this.container.appendChild(this.optionsElement);
+        this.container.get().addEventListener('scroll', container_onscroll.bind(this));
 
-            this.container = container;
-            this.container.appendChild(this.wrapperElement);
-            this.container.appendChild(this.optionsElement);
-            this.container.get().addEventListener('scroll', container_onscroll.bind(this));
+        this._ondrag = connection_ondrag.bind(this);
+        this._ondragend = connection_ondragend.bind(this);
 
-            this._ondrag = connection_ondrag.bind(this);
-            this._ondragend = connection_ondragend.bind(this);
+        Object.defineProperties(this, {
 
-            Object.defineProperties(this, {
-
-                wiringEngine: {
-                    get: function get() {return findWiringEngine();}
-                }
-
-            });
-
-            this.endpoint_ondragstart = endpoint_ondragstart.bind(this);
-            this.endpoint_onmouseenter = endpoint_onmouseenter.bind(this);
-            this.endpoint_onmouseleave = endpoint_onmouseleave.bind(this);
-            this.endpoint_ondragend = endpoint_ondragend.bind(this);
-        },
-
-        inherit: se.StyledElement,
-
-        statics: {
-
-            CONNECTION_INVALID: -1,
-
-            CONNECTION_ESTABLISHED: 0,
-
-            CONNECTION_DUPLICATE: 1,
-
-            SVG_NS: "http://www.w3.org/2000/svg"
-
-        },
-
-        members: {
-
-            /**
-             * [TODO: appendEndpoint description]
-             *
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {ConnectionEngine}
-             *      The instance on which the member is called.
-             */
-            appendEndpoint: function appendEndpoint(endpoint) {
-
-                this.endpoints[endpoint.type].push(endpoint);
-
-                endpoint
-                    .addEventListener('mousedown', this.endpoint_ondragstart)
-                    .addEventListener('mouseenter', this.endpoint_onmouseenter)
-                    .addEventListener('mouseleave', this.endpoint_onmouseleave)
-                    .addEventListener('mouseup', this.endpoint_ondragend);
-
-                return this;
-            },
-
-            /**
-             * [TODO: connect description]
-             *
-             * @param  {Wiring.Connection} wiringConnection
-             *      [TODO: description]
-             * @param  {SourceEndpoint} source
-             *      [TODO: description]
-             * @param  {TargetEndpoint} target
-             *      [TODO: description]
-             * @param  {PlainObject} [options]
-             *      [TODO: description]
-             * @returns {Connection}
-             *      [TODO: description]
-             */
-            connect: function connect(wiringConnection, source, target, options) {
-                var connection;
-
-                options = options || {};
-
-                connection = new ns.Connection();
-                connection
-                    .stickEndpoint(source, {position: options.sourceHandle})
-                    .stickEndpoint(target, {position: options.targetHandle, wiringConnection: wiringConnection})
-                    .appendTo(this.connectionsElement);
-
-                appendConnection.call(this, connection);
-
-                return this;
-            },
-
-            /**
-             * [deactivateAll description]
-             *
-             * @returns {ConnectionEngine}
-             *      The instance on which the member is called.
-             */
-            deactivateAll: function deactivateAll() {
-
-                if (this.hasActiveConnection()) {
-                    this.activeConnection.click();
-                }
-
-                return this;
-            },
-
-            /**
-             * @override
-             */
-            clear: function clear() {
-                var i;
-
-                this.setUp();
-
-                for (i = this.connections.length - 1; i >= 0; i--) {
-                    this.connections[i].remove();
-                }
-
-                this.connections.length = 0;
-
-                return this;
-            },
-
-            /**
-             * [TODO: forEachConnection description]
-             *
-             * @param  {Function} callback
-             *      [TODO: description]
-             * @returns {ConnectionEngine}
-             *      The instance on which the member is called.
-             */
-            forEachConnection: function forEachConnection(callback) {
-
-                this.connections.forEach(function (connection, index) {
-                    callback(connection, index);
-                });
-
-                return this;
-            },
-
-            getConnection: function getConnection(sourceId, targetId) {
-                var i, connection;
-
-                for (i = 0; i < this.connections.length && !connection; i++) {
-                    if (this.connections[i].sourceId == sourceId && this.connections[i].targetId == targetId) {
-                        connection = this.connections[i];
-                    }
-                }
-
-                return connection;
-            },
-
-            /**
-             * [TODO: hasActiveConnection description]
-             *
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            hasActiveConnection: function hasActiveConnection() {
-                return this.activeConnection != null;
-            },
-
-            /**
-             * [TODO: removeEndpoint description]
-             *
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {ConnectionEngine}
-             *      The instance on which the member is called.
-             */
-            removeEndpoint: function removeEndpoint(endpoint) {
-                var index = this.endpoints[endpoint.type].indexOf(endpoint);
-
-                if (index != -1) {
-                    endpoint
-                        .removeEventListener('mousedown', this.endpoint_ondragstart)
-                        .removeEventListener('mouseenter', this.endpoint_onmouseenter)
-                        .removeEventListener('mouseleave', this.endpoint_onmouseleave)
-                        .removeEventListener('mouseup', this.endpoint_ondragend);
-
-                    this.endpoints[endpoint.type].splice(index, 1);
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: setUp description]
-             *
-             * @returns {ConnectionEngine}
-             *      The instance on which the member is called.
-             */
-            setUp: function setUp() {
-
-                stopCustomizing.call(this);
-                this.deactivateAll();
-
-                return this;
+            wiringEngine: {
+                get: function get() {return findWiringEngine();}
             }
 
+        });
+
+        this.endpoint_ondragstart = endpoint_ondragstart.bind(this);
+        this.endpoint_onmouseenter = endpoint_onmouseenter.bind(this);
+        this.endpoint_onmouseleave = endpoint_onmouseleave.bind(this);
+        this.endpoint_ondragend = endpoint_ondragend.bind(this);
+    };
+
+    ns.ConnectionEngine.CONNECTION_INVALID: -1,
+
+    ns.ConnectionEngine.CONNECTION_ESTABLISHED: 0,
+
+    ns.ConnectionEngine.CONNECTION_DUPLICATE: 1,
+
+    ns.ConnectionEngine.SVG_NS: "http://www.w3.org/2000/svg"
+
+    utils.inherit(ns.ConnectionEngine, se.StyledElement, {
+
+        /**
+         * [TODO: appendEndpoint description]
+         *
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {ConnectionEngine}
+         *      The instance on which the member is called.
+         */
+        appendEndpoint: function appendEndpoint(endpoint) {
+
+            this.endpoints[endpoint.type].push(endpoint);
+
+            endpoint
+                .addEventListener('mousedown', this.endpoint_ondragstart)
+                .addEventListener('mouseenter', this.endpoint_onmouseenter)
+                .addEventListener('mouseleave', this.endpoint_onmouseleave)
+                .addEventListener('mouseup', this.endpoint_ondragend);
+
+            return this;
+        },
+
+        /**
+         * [TODO: connect description]
+         *
+         * @param  {Wiring.Connection} wiringConnection
+         *      [TODO: description]
+         * @param  {SourceEndpoint} source
+         *      [TODO: description]
+         * @param  {TargetEndpoint} target
+         *      [TODO: description]
+         * @param  {PlainObject} [options]
+         *      [TODO: description]
+         * @returns {Connection}
+         *      [TODO: description]
+         */
+        connect: function connect(wiringConnection, source, target, options) {
+            var connection;
+
+            options = options || {};
+
+            connection = new ns.Connection();
+            connection
+                .stickEndpoint(source, {position: options.sourceHandle})
+                .stickEndpoint(target, {position: options.targetHandle, wiringConnection: wiringConnection})
+                .appendTo(this.connectionsElement);
+
+            appendConnection.call(this, connection);
+
+            return this;
+        },
+
+        /**
+         * [deactivateAll description]
+         *
+         * @returns {ConnectionEngine}
+         *      The instance on which the member is called.
+         */
+        deactivateAll: function deactivateAll() {
+
+            if (this.hasActiveConnection()) {
+                this.activeConnection.click();
+            }
+
+            return this;
+        },
+
+        /**
+         * @override
+         */
+        clear: function clear() {
+            var i;
+
+            this.setUp();
+
+            for (i = this.connections.length - 1; i >= 0; i--) {
+                this.connections[i].remove();
+            }
+
+            this.connections.length = 0;
+
+            return this;
+        },
+
+        /**
+         * [TODO: forEachConnection description]
+         *
+         * @param  {Function} callback
+         *      [TODO: description]
+         * @returns {ConnectionEngine}
+         *      The instance on which the member is called.
+         */
+        forEachConnection: function forEachConnection(callback) {
+
+            this.connections.forEach(function (connection, index) {
+                callback(connection, index);
+            });
+
+            return this;
+        },
+
+        getConnection: function getConnection(sourceId, targetId) {
+            var i, connection;
+
+            for (i = 0; i < this.connections.length && !connection; i++) {
+                if (this.connections[i].sourceId == sourceId && this.connections[i].targetId == targetId) {
+                    connection = this.connections[i];
+                }
+            }
+
+            return connection;
+        },
+
+        /**
+         * [TODO: hasActiveConnection description]
+         *
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        hasActiveConnection: function hasActiveConnection() {
+            return this.activeConnection != null;
+        },
+
+        /**
+         * [TODO: removeEndpoint description]
+         *
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {ConnectionEngine}
+         *      The instance on which the member is called.
+         */
+        removeEndpoint: function removeEndpoint(endpoint) {
+            var index = this.endpoints[endpoint.type].indexOf(endpoint);
+
+            if (index != -1) {
+                endpoint
+                    .removeEventListener('mousedown', this.endpoint_ondragstart)
+                    .removeEventListener('mouseenter', this.endpoint_onmouseenter)
+                    .removeEventListener('mouseleave', this.endpoint_onmouseleave)
+                    .removeEventListener('mouseup', this.endpoint_ondragend);
+
+                this.endpoints[endpoint.type].splice(index, 1);
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: setUp description]
+         *
+         * @returns {ConnectionEngine}
+         *      The instance on which the member is called.
+         */
+        setUp: function setUp() {
+
+            stopCustomizing.call(this);
+            this.deactivateAll();
+
+            return this;
         }
 
     });

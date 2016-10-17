@@ -42,341 +42,334 @@
      * @param {ComponentDraggable} component
      *      [TODO: description]
      */
-    ns.Endpoint = utils.defineClass({
+    ns.Endpoint = function Endpoint(type, wiringEndpoint, component) {
+        se.StyledElement.call(this, events);
 
-        constructor: function Endpoint(type, wiringEndpoint, component) {
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = "endpoint";
 
-            this.superClass(events);
+        this.titleElement = document.createElement('span');
+        this.titleElement.className = "endpoint-title";
+        this.wrapperElement.appendChild(this.titleElement);
 
-            this.wrapperElement = document.createElement('div');
-            this.wrapperElement.className = "endpoint";
+        this.anchorElement = document.createElement('span');
+        this.anchorElement.className = "endpoint-anchor";
+        this.wrapperElement.appendChild(this.anchorElement);
 
-            this.titleElement = document.createElement('span');
-            this.titleElement.className = "endpoint-title";
-            this.wrapperElement.appendChild(this.titleElement);
+        this._endpoint = wiringEndpoint;
+        this.component = component;
 
-            this.anchorElement = document.createElement('span');
-            this.anchorElement.className = "endpoint-anchor";
-            this.wrapperElement.appendChild(this.anchorElement);
+        this.activeCount = 0;
+        this.connections = [];
 
-            this._endpoint = wiringEndpoint;
-            this.component = component;
+        Object.defineProperties(this, {
 
-            this.activeCount = 0;
-            this.connections = [];
+            active: {
+                get: function get() {return this.hasClassName('active');},
+                set: function set(value) {this.toggleClassName('active', value);}
+            },
 
-            Object.defineProperties(this, {
+            anchorPosition: {
+                get: function get() {return getAnchorPosition.call(this);}
+            },
 
-                active: {
-                    get: function get() {return this.hasClassName('active');},
-                    set: function set(value) {this.toggleClassName('active', value);}
-                },
+            editableConnection: {
+                get: function get() {return getEditableConnection.call(this);}
+            },
 
-                anchorPosition: {
-                    get: function get() {return getAnchorPosition.call(this);}
-                },
+            id: {value: [component.type, component.id, wiringEndpoint.name].join("/")},
 
-                editableConnection: {
-                    get: function get() {return getEditableConnection.call(this);}
-                },
+            index: {
+                get: function get() {return parseInt(this.get().getAttribute('data-index'), 10);},
+                set: function set(value) {this.get().setAttribute('data-index', value);}
+            },
 
-                id: {value: [component.type, component.id, wiringEndpoint.name].join("/")},
+            keywords: {value: wiringEndpoint.friendcode.trim().split(/\s+/)},
 
-                index: {
-                    get: function get() {return parseInt(this.get().getAttribute('data-index'), 10);},
-                    set: function set(value) {this.get().setAttribute('data-index', value);}
-                },
+            missing: {
+                get: function get() {return this.hasClassName('missing');},
+                set: function set(value) {this.toggleClassName('missing', value);}
+            },
 
-                keywords: {value: wiringEndpoint.friendcode.trim().split(/\s+/)},
+            name: {value: wiringEndpoint.name},
 
-                missing: {
-                    get: function get() {return this.hasClassName('missing');},
-                    set: function set(value) {this.toggleClassName('missing', value);}
-                },
+            title: {
+                get: function get() {return this.titleElement.textContent;},
+                set: function set(value) {this.titleElement.textContent = value;}
+            },
 
-                name: {value: wiringEndpoint.name},
+            type: {value: type}
 
-                title: {
-                    get: function get() {return this.titleElement.textContent;},
-                    set: function set(value) {this.titleElement.textContent = value;}
-                },
+        });
+        this.get().setAttribute('data-name', this._endpoint.name);
 
-                type: {value: type}
+        this.title = wiringEndpoint.label;
+        if (wiringEndpoint.missing) {
+            this.missing = true;
+        }
 
-            });
-            this.get().setAttribute('data-name', this._endpoint.name);
+        this.rightAnchorPoint = false;
 
-            this.title = wiringEndpoint.label;
-            if (wiringEndpoint.missing) {
-                this.missing = true;
+        this.tooltip = new se.Popover({
+            title: wiringEndpoint.label,
+            content: wiringEndpoint.description != '' ? wiringEndpoint.description : utils.gettext("No description provided."),
+            placement: ['top', 'bottom', 'right', 'left']
+        });
+        this.tooltip.bind(this.get(), 'hover');
+
+        this.get().addEventListener('mousedown', endpoint_onmousedown.bind(this));
+        this.get().addEventListener('mouseenter', endpoint_onmouseenter.bind(this));
+        this.get().addEventListener('mouseleave', endpoint_onmouseleave.bind(this));
+        this.get().addEventListener('mouseup', endpoint_onmouseup.bind(this));
+    };
+
+    utils.inherit(ns.Endpoint, se.StyledElement, {
+
+        /**
+         * [TODO: activate description]
+         *
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        activate: function activate() {
+
+            if (this.activeCount === 0) {
+                this.active = true;
             }
 
-            this.rightAnchorPoint = false;
+            this.activeCount++;
 
-            this.tooltip = new se.Popover({
-                title: wiringEndpoint.label,
-                content: wiringEndpoint.description != '' ? wiringEndpoint.description : utils.gettext("No description provided."),
-                placement: ['top', 'bottom', 'right', 'left']
-            });
-            this.tooltip.bind(this.get(), 'hover');
-
-            this.get().addEventListener('mousedown', endpoint_onmousedown.bind(this));
-            this.get().addEventListener('mouseenter', endpoint_onmouseenter.bind(this));
-            this.get().addEventListener('mouseleave', endpoint_onmouseleave.bind(this));
-            this.get().addEventListener('mouseup', endpoint_onmouseup.bind(this));
+            return this;
         },
 
-        inherit: se.StyledElement,
+        /**
+         * [TODO: activateAll description]
+         *
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        activateAll: function activateAll() {
+            return this.forEachConnection(function (connection) {
+                connection.activate();
+            });
+        },
 
-        members: {
+        /**
+         * [TODO: appendConnection description]
+         *
+         * @param {Connection} connection
+         *      [TODO: description]
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        appendConnection: function appendConnection(connection, updateEndpoint) {
 
-            /**
-             * [TODO: activate description]
-             *
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            activate: function activate() {
+            this.connections.push(connection);
 
-                if (this.activeCount === 0) {
-                    this.active = true;
-                }
-
-                this.activeCount++;
-
-                return this;
-            },
-
-            /**
-             * [TODO: activateAll description]
-             *
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            activateAll: function activateAll() {
-                return this.forEachConnection(function (connection) {
-                    connection.activate();
-                });
-            },
-
-            /**
-             * [TODO: appendConnection description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            appendConnection: function appendConnection(connection, updateEndpoint) {
-
-                this.connections.push(connection);
-
-                if (!!updateEndpoint) {
-                    connection.refreshEndpoint(this);
-                }
-
-                return this.dispatchEvent('connectionadded', connection);
-            },
-
-            /**
-             * [TODO: deactivate description]
-             *
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            deactivate: function deactivate() {
-
-                if (this.activeCount === 0) {
-                    return this;
-                }
-
-                this.activeCount--;
-
-                if (this.activeCount === 0) {
-                    this.active = false;
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: deactivateAll description]
-             *
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            deactivateAll: function deactivateAll() {
-                return this.forEachConnection(function (connection) {
-                    connection.deactivate();
-                });
-            },
-
-            /**
-             * [TODO: empty description]
-             *
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            empty: function empty() {
-                var i;
-
-                for (i = this.connections.length - 1; i >= 0; i--) {
-                    this.connections[i].remove();
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: equals description]
-             *
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            equals: function equals(endpoint) {
-
-                if (!(endpoint instanceof ns.Endpoint)) {
-                    return false;
-                }
-
-                return this.type === endpoint.type && this.id === endpoint.id;
-            },
-
-            /**
-             * [TODO: forEachConnection description]
-             *
-             * @param {Function} callback
-             *      [TODO: description]
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            forEachConnection: function forEachConnection(callback) {
-
-                for (var i = this.connections.length - 1; i >= 0; i--) {
-                    callback(this.connections[i], i);
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: getConnectionTo description]
-             *
-             * @param {Endpoint} endpoint
-             *      [description]
-             * @returns {Connection}
-             *      [TODO: description]
-             */
-            getConnectionTo: function getConnectionTo(endpoint) {
-                var connection, i;
-
-                for (i = this.connections.length - 1; connection == null && i >= 0; i--) {
-                    if (this.connections[i].hasEndpoint(endpoint)) {
-                        connection = this.connections[i];
-                    }
-                }
-
-                return connection;
-            },
-
-            /**
-             * @param {Connection} connection
-             * @returns {Boolean}
-             */
-            hasConnection: function hasConnection(connection) {
-
-                if (!(connection instanceof ns.Connection)) {
-                    return false;
-                }
-
-                return this.connections.some(function (connectionSaved) {
-                    return connectionSaved.equals(connection);
-                });
-            },
-
-            /**
-             * [TODO: hasConnections description]
-             *
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            hasConnections: function hasConnections() {
-                return this.connections.length > 0;
-            },
-
-            /**
-             * [TODO: hasConnectionTo description]
-             *
-             * @param {Endpoint} endpoint
-             *      [TODO: description]
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            hasConnectionTo: function hasConnectionTo(endpoint) {
-                return this.connections.some(function (connection) {
-                    return connection.hasEndpoint(endpoint);
-                });
-            },
-
-            /**
-             * [TODO: refresh description]
-             *
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            refresh: function refresh() {
-                return this.connections.forEach(function (connection) {
-                    connection.refresh();
-                });
-            },
-
-            /**
-             * [TODO: removeConnection description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            removeConnection: function removeConnection(connection) {
-                var index = this.connections.indexOf(connection);
-
-                if (index !== -1) {
-                    this.connections.splice(index, 1);
-                    this.dispatchEvent('connectionremoved', connection);
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: toggleActive description]
-             *
-             * @param {Boolean} active
-             *      [TODO: description]
-             * @returns {Endpoint}
-             *      The instance on which the member is called.
-             */
-            toggleActive: function toggleActive(active) {
-                return active ? this.activate() : this.deactivate();
-            },
-
-            /**
-             * [TODO: toJSON description]
-             *
-             * @returns {PlainObject}
-             *      [TODO: description]
-             */
-            toJSON: function toJSON() {
-                return {
-                    type: this.component.type,
-                    id: this.component.id,
-                    endpoint: this.name
-                };
+            if (!!updateEndpoint) {
+                connection.refreshEndpoint(this);
             }
 
+            return this.dispatchEvent('connectionadded', connection);
+        },
+
+        /**
+         * [TODO: deactivate description]
+         *
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        deactivate: function deactivate() {
+
+            if (this.activeCount === 0) {
+                return this;
+            }
+
+            this.activeCount--;
+
+            if (this.activeCount === 0) {
+                this.active = false;
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: deactivateAll description]
+         *
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        deactivateAll: function deactivateAll() {
+            return this.forEachConnection(function (connection) {
+                connection.deactivate();
+            });
+        },
+
+        /**
+         * [TODO: empty description]
+         *
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        empty: function empty() {
+            var i;
+
+            for (i = this.connections.length - 1; i >= 0; i--) {
+                this.connections[i].remove();
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: equals description]
+         *
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        equals: function equals(endpoint) {
+
+            if (!(endpoint instanceof ns.Endpoint)) {
+                return false;
+            }
+
+            return this.type === endpoint.type && this.id === endpoint.id;
+        },
+
+        /**
+         * [TODO: forEachConnection description]
+         *
+         * @param {Function} callback
+         *      [TODO: description]
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        forEachConnection: function forEachConnection(callback) {
+
+            for (var i = this.connections.length - 1; i >= 0; i--) {
+                callback(this.connections[i], i);
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: getConnectionTo description]
+         *
+         * @param {Endpoint} endpoint
+         *      [description]
+         * @returns {Connection}
+         *      [TODO: description]
+         */
+        getConnectionTo: function getConnectionTo(endpoint) {
+            var connection, i;
+
+            for (i = this.connections.length - 1; connection == null && i >= 0; i--) {
+                if (this.connections[i].hasEndpoint(endpoint)) {
+                    connection = this.connections[i];
+                }
+            }
+
+            return connection;
+        },
+
+        /**
+         * @param {Connection} connection
+         * @returns {Boolean}
+         */
+        hasConnection: function hasConnection(connection) {
+
+            if (!(connection instanceof ns.Connection)) {
+                return false;
+            }
+
+            return this.connections.some(function (connectionSaved) {
+                return connectionSaved.equals(connection);
+            });
+        },
+
+        /**
+         * [TODO: hasConnections description]
+         *
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        hasConnections: function hasConnections() {
+            return this.connections.length > 0;
+        },
+
+        /**
+         * [TODO: hasConnectionTo description]
+         *
+         * @param {Endpoint} endpoint
+         *      [TODO: description]
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        hasConnectionTo: function hasConnectionTo(endpoint) {
+            return this.connections.some(function (connection) {
+                return connection.hasEndpoint(endpoint);
+            });
+        },
+
+        /**
+         * [TODO: refresh description]
+         *
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        refresh: function refresh() {
+            return this.connections.forEach(function (connection) {
+                connection.refresh();
+            });
+        },
+
+        /**
+         * [TODO: removeConnection description]
+         *
+         * @param {Connection} connection
+         *      [TODO: description]
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        removeConnection: function removeConnection(connection) {
+            var index = this.connections.indexOf(connection);
+
+            if (index !== -1) {
+                this.connections.splice(index, 1);
+                this.dispatchEvent('connectionremoved', connection);
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: toggleActive description]
+         *
+         * @param {Boolean} active
+         *      [TODO: description]
+         * @returns {Endpoint}
+         *      The instance on which the member is called.
+         */
+        toggleActive: function toggleActive(active) {
+            return active ? this.activate() : this.deactivate();
+        },
+
+        /**
+         * [TODO: toJSON description]
+         *
+         * @returns {PlainObject}
+         *      [TODO: description]
+         */
+        toJSON: function toJSON() {
+            return {
+                type: this.component.type,
+                id: this.component.id,
+                endpoint: this.name
+            };
         }
 
     });

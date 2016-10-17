@@ -36,44 +36,39 @@
      *
      * @constructor
      */
-    ns.BehaviourPrefs = utils.defineClass({
+    ns.BehaviourPrefs = function BehaviourPrefs(behaviour) {
+        this.behaviour = behaviour;
+    };
 
-        constructor: function BehaviourPrefs(behaviour) {
-            this.behaviour = behaviour;
-        },
+    utils.inherit(ns.BehaviourPrefs, se.DynamicMenuItems, {
 
-        inherit: se.DynamicMenuItems,
+        _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
+            var item;
 
-        members: {
+            item = new se.MenuItem(utils.gettext(title), onclick);
+            item.addIconClass('fa fa-' + iconClass);
 
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
-                var item;
-
-                item = new se.MenuItem(utils.gettext(title), onclick);
-                item.addIconClass('fa fa-' + iconClass);
-
-                if (isEnabled != null) {
-                    item.enabled = isEnabled.call(this.behaviour);
-                }
-
-                return item;
-            },
-
-            /**
-             * @override
-             */
-            build: function build() {
-                return [
-                    this._createMenuItem("Logs", "tags", function () {
-                        this.showLogs();
-                    }.bind(this.behaviour)),
-                    this._createMenuItem("Settings", "gear", function () {
-                        this.showSettings();
-                    }.bind(this.behaviour))
-                ];
+            if (isEnabled != null) {
+                item.enabled = isEnabled.call(this.behaviour);
             }
 
+            return item;
+        },
+
+        /**
+         * @override
+         */
+        build: function build() {
+            return [
+                this._createMenuItem("Logs", "tags", function () {
+                    this.showLogs();
+                }.bind(this.behaviour)),
+                this._createMenuItem("Settings", "gear", function () {
+                    this.showSettings();
+                }.bind(this.behaviour))
+            ];
         }
+
 
     });
 

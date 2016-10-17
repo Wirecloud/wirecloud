@@ -73,15 +73,15 @@
         'VerticalLayout': window.parent.StyledElements.VerticalLayout
     };
 
-    var extend = function (parent_class, extra, options) {
-        var new_class = new Function('return function ' + parent_class.name + '() {this.superClass.apply(this, arguments);};')();
+    var extend = function (parent_class, extra) {
+        var new_class = {};
 
-        platform.StyledElements.Utils.inherit(new_class, parent_class);
+        new_class[parent_class.name] = function () {
+            parent_class.apply(this, arguments);
+        };
+        new_class = new_class[parent_class.name];
 
-        for (var key in extra) {
-            new_class.prototype[key] = extra[key];
-        }
-
+        platform.StyledElements.Utils.inherit(new_class, parent_class, extra);
         return new_class;
     };
 
@@ -313,24 +313,24 @@
     /* ModelTable */
     StyledElements.ModelTable = extend(RealStyledElements.ModelTable, {
         Tooltip: StyledElements.Tooltip
-    }, {extending: true});
+    });
 
     /* Button */
     StyledElements.Button = extend(RealStyledElements.Button, {
         Tooltip: StyledElements.Tooltip
-    }, {extending: true});
+    });
     StyledElements.StyledButton = StyledElements.Button; // Alias for backward compatibility
 
     /* ToggleButton */
     StyledElements.ToggleButton = extend(RealStyledElements.ToggleButton, {
         Tooltip: StyledElements.Tooltip
-    }, {extending: true});
+    });
 
     /* PopupButton */
     StyledElements.PopupButton = extend(RealStyledElements.PopupButton, {
         PopupMenu: StyledElements.PopupMenu,
         Tooltip: StyledElements.Tooltip
-    }, {extending: true});
+    });
 
     /* Tab */
     StyledElements.Tab = extend(RealStyledElements.Notebook.prototype.Tab, {
