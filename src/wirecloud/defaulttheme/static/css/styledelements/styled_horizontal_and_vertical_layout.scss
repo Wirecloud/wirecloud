@@ -64,9 +64,14 @@
 /* End deprecation */
 
 .se-input-group {
-    display: flex;
+    display: inline-flex;
+    vertical-align: middle;
     width: auto;
     margin: 3px;
+}
+
+.se-input-group-block {
+    display: flex;
 }
 
 .se-input-group > * {

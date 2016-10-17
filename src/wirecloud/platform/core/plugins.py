@@ -212,7 +212,6 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_pills.scss',
     'css/styledelements/styled_notebook.scss',
     'css/styledelements/styled_form.css',
-    'css/styledelements/styled_pagination.scss',
     'css/styledelements/styled_panel.scss',
     'css/styledelements/styled_numeric_field.scss',
     'css/styledelements/styled_text_field.scss',
@@ -231,6 +230,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_tooltip.css',
     'css/styledelements/styled_expander.scss',
     'css/styledelements/styled_offcanvas_layout.scss',
+    'css/styledelements/styled_pagination.scss',
     'css/styledelements/styled_thumbnail.scss',
 )
 

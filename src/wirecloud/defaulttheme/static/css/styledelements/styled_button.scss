@@ -237,13 +237,11 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     margin: 3px;
 }
 
-.btn-group > .se-btn,
-.pagination > .se-btn {
+.btn-group > .se-btn {
     margin: 0px;
 }
 
-.btn-group > .se-btn:not(:first-child),
-.pagination > .se-btn:not(:first-child) {
+.btn-group > .se-btn:not(:first-child) {
     margin-left: -1px;
 }
 
@@ -252,14 +250,12 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 }
 
 .input-prepend > .se-hl-west-container > .se-btn,
-.btn-group > .se-btn,
-.pagination > .se-btn {
+.btn-group > .se-btn {
     border-radius: 0px;
 }
 
 .input-prepend > .se-hl-west-container > .se-btn:first-child,
-.btn-group > .se-btn:first-child,
-.pagination > .se-btn:first-child {
+.btn-group > .se-btn:first-child {
     border-top-left-radius: $border-radius-base;
     border-bottom-left-radius: $border-radius-base;
 }
@@ -273,7 +269,6 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 }
 
 .input-append > .se-hl-east-container > .se-btn:last-child,
-.pagination > .se-btn:last-child,
 .btn-group > .se-btn:last-child {
     border-top-right-radius: $border-radius-base;
     border-bottom-right-radius: $border-radius-base;
