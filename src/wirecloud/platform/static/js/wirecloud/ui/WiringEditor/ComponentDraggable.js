@@ -122,12 +122,24 @@
                 get: function get() {return this.endpoints.source.endpoints;}
             },
 
+            sourceFriendcodes: {
+                get: function get() {
+                    return find_friendcodes_by_type.call(this, 'source');
+                }
+            },
+
             sourceList: {
                 get: function get() {return this.endpoints.source.children;}
             },
 
             targets: {
                 get: function get() {return this.endpoints.target.endpoints;}
+            },
+
+            targetFriendcodes: {
+                get: function get() {
+                    return find_friendcodes_by_type.call(this, 'target');
+               }
             },
 
             targetList: {
@@ -784,6 +796,21 @@
                 this._missingEndpoints[type][name].forEachConnection(appendMissingConnection.bind(this, type, name));
             }
         }
+    };
+
+    var find_friendcodes_by_type = function find_friendcodes_by_type(endpoint_type) {
+        /* jshint validthis: true */
+        var friendcodes = [];
+
+        this.endpoints[endpoint_type].children.forEach(function (endpoint) {
+            endpoint.keywords.forEach(function (friendcode) {
+                if (friendcodes.indexOf(friendcode) < 0) {
+                    friendcodes.push(friendcode);
+                }
+            });
+        });
+
+        return friendcodes;
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);
