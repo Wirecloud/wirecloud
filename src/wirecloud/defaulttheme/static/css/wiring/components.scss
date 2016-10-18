@@ -264,6 +264,24 @@
             padding: ($endpoint-text-height / 2) ($endpoint-anchor-width / 2);
         }
 
+        .endpoint-actions {
+            position: absolute;
+            top: -1px;
+
+            .se-btn {
+                padding: 0;
+                height: 20px;
+                width: 20px;
+                line-height: 20px;
+                font-size: 12px;
+                margin: 0;
+                background-image: none;
+                box-shadow: none;
+                border-color: rgba(0, 0, 0, 0);
+                background-color: transparent;
+            }
+        }
+
         &:first-child {
             margin-top: $endpoint-margin-vertical;
         }
@@ -275,6 +293,17 @@
             left,
             $source-endpoint-anchor-bg
         );
+
+        .endpoint {
+
+            .endpoint-title {
+                padding-left: 20px;
+            }
+
+            .endpoint-actions {
+                left: 0;
+            }
+        }
     }
 
     &.target-endpoints {
@@ -283,6 +312,17 @@
             right,
             $target-endpoint-anchor-bg
         );
+
+        .endpoint {
+
+            .endpoint-title {
+                padding-right: 20px;
+            }
+
+            .endpoint-actions {
+                right: 0;
+            }
+        }
     }
 
     &:empty {
@@ -301,6 +341,15 @@
 
         .endpoint-anchor {
             background-color: $endpoint-active-bg;
+        }
+
+        .endpoint-actions > .se-btn {
+            color: rgb(255, 255 ,255);
+
+            &:hover,
+            &:focus {
+                background-color: darken($endpoint-active-bg, 10%);
+            }
         }
     }
 

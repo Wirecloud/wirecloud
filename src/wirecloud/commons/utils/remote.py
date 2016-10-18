@@ -1075,6 +1075,10 @@ class WiringEndpointTester(WebElementTester):
     def title(self):
         return self.find_element(".endpoint-title").text
 
+    @property
+    def btn_preferences(self):
+        return ButtonTester(self.testcase, self.find_element(".we-prefs-btn"))
+
     def change_position(self, endpoint):
         new_index = endpoint.index
         actions = ActionChains(self.testcase.driver).click_and_hold(self.element)
@@ -1116,6 +1120,10 @@ class WiringEndpointTester(WebElementTester):
         for endpoint in must_recommend:
             self.testcase.assertTrue(endpoint.is_active)
         return self
+
+    def show_preferences(self):
+        button = self.btn_preferences.click()
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible(".se-popup-menu"), button)
 
 
 class WiringBehaviourTester(WebElementTester):

@@ -56,6 +56,17 @@
         this.anchorElement.className = "endpoint-anchor";
         this.wrapperElement.appendChild(this.anchorElement);
 
+        this.optionsElement = document.createElement('span');
+        this.optionsElement.className = "endpoint-actions";
+        this.wrapperElement.appendChild(this.optionsElement);
+
+        this.btnPrefs = new se.PopupButton({
+            title: utils.gettext("More options"),
+            class: "we-prefs-btn",
+            iconClass: "fa fa-ellipsis-v"
+        });
+        this.btnPrefs.appendTo(this.optionsElement);
+
         this._endpoint = wiringEndpoint;
         this.component = component;
 

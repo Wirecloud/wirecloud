@@ -255,6 +255,18 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.connectionEngine.appendEndpoint(endpoint);
         this.suggestionManager.appendEndpoint(endpoint);
 
+        var menuItem = new se.MenuItem(utils.gettext("Search components"), function () {
+
+            if (!this.btnFindComponents.active) {
+                this.btnFindComponents.click();
+            }
+
+            this.componentManager.searchComponents.search((endpoint.type === "source" ? "input" : "output") + "_friendcodes:(" + endpoint.keywords.join(" OR ") + ") NOT (vendor:" + endpoint.component._component.meta.vendor + " AND name:" + endpoint.component._component.meta.name + ")");
+        }.bind(this));
+        menuItem.addIconClass("fa fa-search");
+
+        endpoint.btnPrefs.popup_menu.append(menuItem);
+
         endpoint
             .addEventListener('mouseenter', function () {
                 if (!this.connectionEngine.temporalConnection) {

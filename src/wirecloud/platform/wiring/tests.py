@@ -1814,6 +1814,34 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
                 self.assertEqual(len(sidebar.find_component_groups('operator')), 0)
                 self.assertEqual(len(sidebar.find_component_groups('widget')), 1)
 
+    @uses_extra_resources(('Wirecloud_TestOperator_FriendcodeList_2.1.zip','Wirecloud_Test_FriendcodeList_3.1.wgt'), shared=True)
+    def test_search_components_by_component_specific_input_endpoint(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/ExistingWorkspace')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                operator = sidebar.add_component('operator', "Wirecloud/TestOperator")
+
+            operator.find_endpoint('target', name="input").show_preferences().click_entry("Search components")
+
+            with wiring.component_sidebar as sidebar:
+                self.assertEqual(len(sidebar.find_component_groups('operator')), 0)
+                self.assertEqual(len(sidebar.find_component_groups('widget')), 1)
+
+    @uses_extra_resources(('Wirecloud_TestOperator_FriendcodeList_2.1.zip','Wirecloud_Test_FriendcodeList_3.1.wgt'), shared=True)
+    def test_search_components_by_component_specific_output_endpoint(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/ExistingWorkspace')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                operator = sidebar.add_component('operator', "Wirecloud/TestOperator")
+
+            operator.find_endpoint('source', name="output-test").show_preferences().click_entry("Search components")
+
+            with wiring.component_sidebar as sidebar:
+                self.assertEqual(len(sidebar.find_component_groups('operator')), 0)
+                self.assertEqual(len(sidebar.find_component_groups('widget')), 1)
+
 
 @wirecloud_selenium_test_case
 class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
