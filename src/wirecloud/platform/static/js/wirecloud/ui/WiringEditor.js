@@ -124,6 +124,34 @@ Wirecloud.ui = Wirecloud.ui || {};
             component.forEachEndpoint(bindEndpoint.bind(this));
             this.initialMessage.hide();
 
+            var subMenuItem = new se.SubMenuItem(utils.gettext("Search component..."));
+            subMenuItem.menuItem.addIconClass("fa fa-search");
+
+            var menuItem1 = new se.MenuItem(utils.gettext("For both endpoints"), function () {
+                if (!this.btnFindComponents.active) {
+                    this.btnFindComponents.click();
+                }
+                this.componentManager.searchComponents.search("input_friendcodes:(" + component.sourceFriendcodes.join(" OR ") + ") OR " + "output_friendcodes:(" + component.targetFriendcodes.join(" OR ") + ") NOT (vendor:" + component._component.meta.vendor + " AND name:" + component._component.meta.name + ")");
+            }.bind(this));
+            var menuItem2 = new se.MenuItem(utils.gettext("For input endpoints"), function () {
+                if (!this.btnFindComponents.active) {
+                    this.btnFindComponents.click();
+                }
+                this.componentManager.searchComponents.search("output_friendcodes:(" + component.targetFriendcodes.join(" OR ") + ") NOT (vendor:" + component._component.meta.vendor + " AND name:" + component._component.meta.name + ")");
+            }.bind(this));
+            var menuItem3 = new se.MenuItem(utils.gettext("For output endpoints"), function () {
+                if (!this.btnFindComponents.active) {
+                    this.btnFindComponents.click();
+                }
+                this.componentManager.searchComponents.search("input_friendcodes:(" + component.sourceFriendcodes.join(" OR ") + ") NOT (vendor:" + component._component.meta.vendor + " AND name:" + component._component.meta.name + ")");
+            }.bind(this));
+
+            subMenuItem.append(menuItem1);
+            subMenuItem.append(menuItem2);
+            subMenuItem.append(menuItem3);
+
+            component.btnPrefs.popup_menu.append(subMenuItem);
+
             if (options.commit) {
                 this.layout.content.appendChild(component);
                 this.behaviourEngine.updateComponent(component, component.toJSON());

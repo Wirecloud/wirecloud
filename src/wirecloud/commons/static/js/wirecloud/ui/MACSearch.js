@@ -78,6 +78,10 @@
     };
     utils.inherit(MACSearch, StyledElements.StyledElement);
 
+    MACSearch.prototype.search = function search(keywords) {
+        this.inputField.setValue(keywords);
+    };
+
     MACSearch.prototype.paintInfo = function paintInfo(message, context) {
         if (context != null) {
             message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);

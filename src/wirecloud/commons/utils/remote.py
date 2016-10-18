@@ -1881,13 +1881,15 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 class WiringComponentSidebarTester(BaseWiringViewTester):
 
     def __enter__(self):
-        self.btn_components.click()
+        if not self.btn_components.is_active:
+            self.btn_components.click()
         self.element = self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring .we-panel-components")
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
         return self
 
     def __exit__(self, type, value, traceback):
-        self.btn_components.click()
+        if self.btn_components.is_active:
+            self.btn_components.click()
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
 
     @property
