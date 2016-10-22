@@ -41,7 +41,7 @@
         };
         options = utils.merge(defaultOptions, options);
 
-        StyledElement.Button.call(this, options);
+        StyledElements.Button.call(this, options);
 
         Object.defineProperty(this, 'inputElement', {value: document.createElement("input")});
         this.inputElement.setAttribute("type", "file");

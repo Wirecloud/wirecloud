@@ -76,13 +76,10 @@
         this.endpoint_ondragend = endpoint_ondragend.bind(this);
     };
 
-    ns.ConnectionEngine.CONNECTION_INVALID: -1,
-
-    ns.ConnectionEngine.CONNECTION_ESTABLISHED: 0,
-
-    ns.ConnectionEngine.CONNECTION_DUPLICATE: 1,
-
-    ns.ConnectionEngine.SVG_NS: "http://www.w3.org/2000/svg"
+    ns.ConnectionEngine.CONNECTION_INVALID = -1;
+    ns.ConnectionEngine.CONNECTION_ESTABLISHED =  0;
+    ns.ConnectionEngine.CONNECTION_DUPLICATE = 1,
+    ns.ConnectionEngine.SVG_NS = "http://www.w3.org/2000/svg";
 
     utils.inherit(ns.ConnectionEngine, se.StyledElement, {
 
