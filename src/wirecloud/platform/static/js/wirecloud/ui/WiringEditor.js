@@ -42,184 +42,177 @@ Wirecloud.ui = Wirecloud.ui || {};
      * @param {PlainObject} [options]
      *      [TODO: description]
      */
-    ns.WiringEditor = utils.defineClass({
+    ns.WiringEditor = function WiringEditor(id, options) {
+        options = utils.merge({}, options);
+        options['class'] = "wiring-view wc-workspace-wiring";
 
-        constructor: function WiringEditor(id, options) {
+        se.Alternative.call(this, id, options);
 
-            options = utils.updateObject({}, options);
-            options['class'] = "wiring-view wc-workspace-wiring";
+        createAndSetUpLayout.call(this);
 
-            this.superClass(id, options);
+        Wirecloud.addEventListener('loaded', createAndSetUpBehaviourEngine.bind(this));
+        Wirecloud.addEventListener('loaded', createAndSetUpComponentManager.bind(this));
+        createAndSetUpConnectionEngine.call(this);
 
-            createAndSetUpLayout.call(this);
+        this.suggestionManager = new ns.WiringEditor.KeywordSuggestion();
 
-            Wirecloud.addEventListener('loaded', createAndSetUpBehaviourEngine.bind(this));
-            Wirecloud.addEventListener('loaded', createAndSetUpComponentManager.bind(this));
-            createAndSetUpConnectionEngine.call(this);
+        this.selectedComponents = {operator: {}, widget: {}};
+        this.selectedCount = 0;
 
-            this.suggestionManager = new ns.WiringEditor.KeywordSuggestion();
+        this.orderableComponent = null;
+    };
 
-            this.selectedComponents = {operator: {}, widget: {}};
-            this.selectedCount = 0;
+    utils.inherit(ns.WiringEditor, se.Alternative, {
 
-            this.orderableComponent = null;
-        },
+        view_name: "wiring",
 
-        inherit: se.Alternative,
+        /**
+         * @override
+         */
+        _onhidden: function _onhidden(hidden) {
 
-        members: {
+            se.Alternative.prototype._onhidden.call(this, hidden);
 
-            view_name: "wiring",
-
-            /**
-             * @override
-             */
-            _onhidden: function _onhidden(hidden) {
-
-                this.superMember(se.Alternative, '_onhidden', hidden);
-
-                if (hidden) {
-                    tearDownView.call(this);
-                } else {
-                    setUpView.call(this);
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: createComponent description]
-             *
-             * @param {Wiring.Component} wiringComponent
-             *      [TODO: description]
-             * @param {PlainObject} [options]
-             *      [TODO: description]
-             * @returns {ComponentDraggable}
-             *      [description]
-             */
-            createComponent: function createComponent(wiringComponent, options) {
-                var component;
-
-                options = utils.updateObject({commit: true, removecascade_allowed: this.behaviourEngine.enabled}, options);
-
-                component = new ns.WiringEditor.ComponentDraggable(wiringComponent, options);
-                component
-                    .addEventListener('endpointadded', component_onendpointadded.bind(this))
-                    .addEventListener('endpointremoved', component_onendpointremoved.bind(this))
-                    .addEventListener('change', function () {
-                        this.behaviourEngine.updateComponent(component, component.toJSON());
-                    }.bind(this))
-                    .addEventListener('click', component_onclick.bind(this))
-                    .addEventListener('dragstart', component_ondragstart.bind(this))
-                    .addEventListener('drag', component_ondrag.bind(this))
-                    .addEventListener('dragend', component_ondragend.bind(this))
-                    .addEventListener('orderstart', component_onorderstart.bind(this))
-                    .addEventListener('orderend', component_onorderend.bind(this))
-                    .addEventListener('optremove', function () {
-                        this.behaviourEngine.removeComponent(component);
-                    }.bind(this))
-                    .addEventListener('optremovecascade', function () {
-                        this.behaviourEngine.removeComponent(component, true);
-                    }.bind(this))
-                    .addEventListener('optshare', function () {
-                        this.behaviourEngine.updateComponent(component, component.toJSON(), true);
-                    }.bind(this))
-                    .addEventListener('remove', component_onremove.bind(this));
-
-                component.forEachEndpoint(bindEndpoint.bind(this));
-                this.initialMessage.hide();
-
-                if (options.commit) {
-                    this.layout.content.appendChild(component);
-                    this.behaviourEngine.updateComponent(component, component.toJSON());
-                    disableComponent.call(this, component);
-                }
-
-                return component;
-            },
-
-            /**
-             * @override
-             */
-            buildStateData: function buildStateData() {
-                var currentState = Wirecloud.HistoryManager.getCurrentState();
-
-                return {
-                    workspace_owner: currentState.workspace_owner,
-                    workspace_name: currentState.workspace_name,
-                    view: this.view_name
-                };
-            },
-
-            /**
-             * @override
-             */
-            getBreadcrum: function getBreadcrum() {
-                var i, workspace_breadcrum = Wirecloud.UserInterfaceManager
-                    .views.workspace.getBreadcrum();
-
-                for (i = 0; i < workspace_breadcrum.length; i += 1) {
-                    delete workspace_breadcrum[i].menu;
-                }
-
-                workspace_breadcrum.push({
-                    label: this.view_name
-                });
-
-                return workspace_breadcrum;
-            },
-
-            /**
-             * @override
-             */
-            getTitle: function getTitle() {
-                return utils.interpolate(utils.gettext("%(workspace_title)s - Wiring"), {
-                    workspace_title: Wirecloud.UserInterfaceManager.views.workspace.getTitle()
-                });
-            },
-
-            /**
-             * @override
-             */
-            getToolbarButtons: function getToolbarButtons() {
-                return [this.btnFindComponents, this.btnListBehaviours];
-            },
-
-            /**
-             * @override
-             */
-            goUp: function goUp() {
-
-                Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
-
-                return this;
-            },
-
-            /**
-             * [TODO: toJSON description]
-             *
-             * @returns {PlainObject}
-             *      [TODO: description]
-             */
-            toJSON: function toJSON() {
-                var wiringStatus = Wirecloud.Wiring.normalize();
-
-                this.connectionEngine.forEachConnection(function (connection) {
-                    wiringStatus.connections.push(connection._connection);
-                });
-
-                this.behaviourEngine.forEachComponent(function (component) {
-
-                    if (component.type === 'operator') {
-                        wiringStatus.operators[component.id] = component._component;
-                    }
-                });
-
-                wiringStatus.visualdescription = this.behaviourEngine.toJSON();
-
-                return wiringStatus;
+            if (hidden) {
+                tearDownView.call(this);
+            } else {
+                setUpView.call(this);
             }
 
+            return this;
+        },
+
+        /**
+         * [TODO: createComponent description]
+         *
+         * @param {Wiring.Component} wiringComponent
+         *      [TODO: description]
+         * @param {PlainObject} [options]
+         *      [TODO: description]
+         * @returns {ComponentDraggable}
+         *      [description]
+         */
+        createComponent: function createComponent(wiringComponent, options) {
+            var component;
+
+            options = utils.merge({commit: true, removecascade_allowed: this.behaviourEngine.enabled}, options);
+
+            component = new ns.WiringEditor.ComponentDraggable(wiringComponent, options);
+            component
+                .addEventListener('endpointadded', component_onendpointadded.bind(this))
+                .addEventListener('endpointremoved', component_onendpointremoved.bind(this))
+                .addEventListener('change', function () {
+                    this.behaviourEngine.updateComponent(component, component.toJSON());
+                }.bind(this))
+                .addEventListener('click', component_onclick.bind(this))
+                .addEventListener('dragstart', component_ondragstart.bind(this))
+                .addEventListener('drag', component_ondrag.bind(this))
+                .addEventListener('dragend', component_ondragend.bind(this))
+                .addEventListener('orderstart', component_onorderstart.bind(this))
+                .addEventListener('orderend', component_onorderend.bind(this))
+                .addEventListener('optremove', function () {
+                    this.behaviourEngine.removeComponent(component);
+                }.bind(this))
+                .addEventListener('optremovecascade', function () {
+                    this.behaviourEngine.removeComponent(component, true);
+                }.bind(this))
+                .addEventListener('optshare', function () {
+                    this.behaviourEngine.updateComponent(component, component.toJSON(), true);
+                }.bind(this))
+                .addEventListener('remove', component_onremove.bind(this));
+
+            component.forEachEndpoint(bindEndpoint.bind(this));
+            this.initialMessage.hide();
+
+            if (options.commit) {
+                this.layout.content.appendChild(component);
+                this.behaviourEngine.updateComponent(component, component.toJSON());
+                disableComponent.call(this, component);
+            }
+
+            return component;
+        },
+
+        /**
+         * @override
+         */
+        buildStateData: function buildStateData() {
+            var currentState = Wirecloud.HistoryManager.getCurrentState();
+
+            return {
+                workspace_owner: currentState.workspace_owner,
+                workspace_name: currentState.workspace_name,
+                view: this.view_name
+            };
+        },
+
+        /**
+         * @override
+         */
+        getBreadcrum: function getBreadcrum() {
+            var i, workspace_breadcrum = Wirecloud.UserInterfaceManager
+                .views.workspace.getBreadcrum();
+
+            for (i = 0; i < workspace_breadcrum.length; i += 1) {
+                delete workspace_breadcrum[i].menu;
+            }
+
+            workspace_breadcrum.push({
+                label: this.view_name
+            });
+
+            return workspace_breadcrum;
+        },
+
+        /**
+         * @override
+         */
+        getTitle: function getTitle() {
+            return utils.interpolate(utils.gettext("%(workspace_title)s - Wiring"), {
+                workspace_title: Wirecloud.UserInterfaceManager.views.workspace.getTitle()
+            });
+        },
+
+        /**
+         * @override
+         */
+        getToolbarButtons: function getToolbarButtons() {
+            return [this.btnFindComponents, this.btnListBehaviours];
+        },
+
+        /**
+         * @override
+         */
+        goUp: function goUp() {
+
+            Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
+
+            return this;
+        },
+
+        /**
+         * [TODO: toJSON description]
+         *
+         * @returns {PlainObject}
+         *      [TODO: description]
+         */
+        toJSON: function toJSON() {
+            var wiringStatus = Wirecloud.Wiring.normalize();
+
+            this.connectionEngine.forEachConnection(function (connection) {
+                wiringStatus.connections.push(connection._connection);
+            });
+
+            this.behaviourEngine.forEachComponent(function (component) {
+
+                if (component.type === 'operator') {
+                    wiringStatus.operators[component.id] = component._component;
+                }
+            });
+
+            wiringStatus.visualdescription = this.behaviourEngine.toJSON();
+
+            return wiringStatus;
         }
 
     });

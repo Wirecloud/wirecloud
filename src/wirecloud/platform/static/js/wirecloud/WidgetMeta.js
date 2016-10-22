@@ -26,65 +26,59 @@
 
     "use strict";
 
-    ns.WidgetMeta = utils.defineClass({
+    ns.WidgetMeta = function WidgetMeta(data) {
+        var i, property;
 
-        constructor: function WidgetMeta(data) {
-
-            var i, property;
-
-            if (data.type == null) {
-                data.type = 'widget';
-            } else if (data.type !== 'widget') {
-                throw new TypeError(utils.interpolate('Invalid component type for a widget: %(type)s.', {type: data.type}));
-            }
-
-            this.superClass(data);
-
-            if (this.missing) {
-                this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, window.location)).href;
-                this.codecontenttype = "application/xhtml+xml";
-            } else {
-                this.codeurl = data.contents.src;
-                this.codecontenttype = data.contents.contenttype;
-            }
-            this.codeurl += "?entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
-
-            // Properties
-            this.properties = {};
-            this.propertyList = [];
-            for (i = 0; i < data.properties.length; i++) {
-                property = new Wirecloud.PersistentVariableDef(data.properties[i].name, data.properties[i].type, data.properties[i]);
-                this.properties[property.name] = property;
-                this.propertyList.push(property);
-            }
-            Object.freeze(this.properties);
-            Object.freeze(this.propertyList);
-
-            Object.defineProperties(this, {
-                "id": {value: this.uri},
-                "default_width": {value: data.widget_width},
-                "default_height": {value: data.widget_height},
-            });
-
-            /* FIXME */
-            this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
-            this.getIPhoneImageURI = this.getIcon;
-            /* END FIXME */
-
-            Object.freeze(this);
-        },
-
-        inherit: Wirecloud.MashableApplicationComponent,
-
-        members: {
-
-            getInfoString: function getInfoString() {
-                var transObj = {vendor: this.vendor, name: this.name, version: this.version};
-                var msg = utils.gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
-                return utils.interpolate(msg, transObj, true);
-            }
-
+        if (data.type == null) {
+            data.type = 'widget';
+        } else if (data.type !== 'widget') {
+            throw new TypeError(utils.interpolate('Invalid component type for a widget: %(type)s.', {type: data.type}));
         }
+
+        Wirecloud.MashableApplicationComponent.call(this, data);
+
+        if (this.missing) {
+            this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, window.location)).href;
+            this.codecontenttype = "application/xhtml+xml";
+        } else {
+            this.codeurl = data.contents.src;
+            this.codecontenttype = data.contents.contenttype;
+        }
+        this.codeurl += "?entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
+
+        // Properties
+        this.properties = {};
+        this.propertyList = [];
+        for (i = 0; i < data.properties.length; i++) {
+            property = new Wirecloud.PersistentVariableDef(data.properties[i].name, data.properties[i].type, data.properties[i]);
+            this.properties[property.name] = property;
+            this.propertyList.push(property);
+        }
+        Object.freeze(this.properties);
+        Object.freeze(this.propertyList);
+
+        Object.defineProperties(this, {
+            "id": {value: this.uri},
+            "default_width": {value: data.widget_width},
+            "default_height": {value: data.widget_height},
+        });
+
+        /* FIXME */
+        this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
+        this.getIPhoneImageURI = this.getIcon;
+        /* END FIXME */
+
+        Object.freeze(this);
+    };
+
+    utils.inherit(ns.WidgetMeta, Wirecloud.MashableApplicationComponent, {
+
+        getInfoString: function getInfoString() {
+            var transObj = {vendor: this.vendor, name: this.name, version: this.version};
+            var msg = utils.gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
+            return utils.interpolate(msg, transObj, true);
+        }
+
     });
 
 })(Wirecloud, Wirecloud.Utils);

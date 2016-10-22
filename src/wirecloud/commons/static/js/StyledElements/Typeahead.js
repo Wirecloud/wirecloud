@@ -43,7 +43,7 @@
      */
     se.Typeahead = function Typeahead(options) {
         options = utils.merge(utils.clone(defaults), options);
-        this.superClass(events);
+        se.ObjectWithEvents.call(this, events);
 
         this.lookup = options.lookup;
         this.compare = options.compare;

@@ -47,7 +47,7 @@
      * of the handler callback
      */
     se.MenuItem = function MenuItem(title, handler, context) {
-        this.superClass(events);
+        se.StyledElement.call(this, events);
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = "se-popup-menu-item";

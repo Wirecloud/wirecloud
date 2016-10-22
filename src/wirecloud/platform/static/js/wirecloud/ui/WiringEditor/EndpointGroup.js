@@ -42,220 +42,210 @@
      * @param {Function} EndpointClass
      *      [TODO: description]
      */
-    ns.EndpointGroup = utils.defineClass({
+    ns.EndpointGroup = function EndpointGroup(type, component, EndpointClass) {
+        se.Container.call(this, {class: "endpoints"});
+        this.addClassName(type + "-endpoints");
 
-        constructor: function EndpointGroup(type, component, EndpointClass) {
-            this.superClass({class: "endpoints"});
-            this.addClassName(type + "-endpoints");
+        this.endpoints = {};
+        this.component = component;
 
-            this.endpoints = {};
-            this.component = component;
+        this.EndpointClass = EndpointClass;
+        this.originalOrder = [];
 
-            this.EndpointClass = EndpointClass;
-            this.originalOrder = [];
-
-            Object.defineProperties(this, {
-                modified: {
-                    get: function get() {
-                        return this.canBeOrdered() && !equalsLists(this.originalOrder, this.children.map(function (endpoint) {
-                            return endpoint.name;
-                        }));
-                    }
-                },
-                orderable: {
-                    get: function get() {return this.hasClassName('orderable');},
-                    set: function set(value) {this.toggleClassName('orderable', value);}
-                },
-                type: {value: type}
-            });
-        },
-
-        inherit: se.Container,
-
-        statics: {
-
-            MIN_LENGTH: 1
-
-        },
-
-        members: {
-
-            /**
-             * [TODO: appendEndpoint description]
-             *
-             * @param {Wiring.Endpoint} wiringEndpoint
-             *      [TODO: description]
-             * @returns {EndpointGroup}
-             *      The instance on which the member is called.
-             */
-            appendEndpoint: function appendEndpoint(wiringEndpoint) {
-                var endpoint = new this.EndpointClass(wiringEndpoint, this.component);
-                var missingEndpoint = findFirstMissingEndpoint.call(this);
-                var i;
-
-                if (!wiringEndpoint.missing) {
-                    this.originalOrder.push(endpoint.name);
-                }
-
-                if (!wiringEndpoint.missing && missingEndpoint != null) {
-                    this.prependChild(endpoint, missingEndpoint);
-                } else {
-                    this.appendChild(endpoint);
-                }
-
-                this.endpoints[endpoint.name] = endpoint;
-
-                for (i = 0; i < this.children.length; i++) {
-                    this.children[i].index = i;
-                }
-
-                return endpoint;
-            },
-
-            /**
-             * [TODO: canBeOrdered description]
-             *
-             * @returns {Boolean}
-             *      [TODO: description]
-             */
-            canBeOrdered: function canBeOrdered() {
-                return this.children.length > ns.EndpointGroup.MIN_LENGTH && !hasMissingEndpoints.call(this);
-            },
-
-            /**
-             * [TODO: getEndpoint description]
-             *
-             * @param {String} name
-             *      [TODO: description]
-             * @returns {Endpoint}
-             *      [TODO: description]
-             */
-            getEndpoint: function getEndpoint(name) {
-                return this.endpoints[name];
-            },
-
-            /**
-             * [TODO: refresh description]
-             *
-             * @returns {EndpointGroup}
-             *      The instance on which the member is called.
-             */
-            refresh: function refresh() {
-                var name;
-
-                for (name in this.endpoints) {
-                    this.endpoints[name].refresh();
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: orderEndpoints description]
-             *
-             * @returns {EndpointGroup}
-             *      The instance on which the member is called.
-             */
-            orderEndpoints: function orderEndpoints(newOrder) {
-
-                if (!this.canBeOrdered()) {
-                    return this;
-                }
-
-                if (newOrder.length < 2 || equalsLists(this.originalOrder, newOrder)) {
-                    return this;
-                }
-
-                if (!equalsLists(this.originalOrder, newOrder, false)) {
-                    return this;
-                }
-
-                newOrder.forEach(function (name, index) {
-                    var endpoint = this.endpoints[name];
-
-                    endpoint.index = index;
-                    this.superMember(se.Container, 'removeChild', endpoint);
-                    this.appendChild(endpoint);
-                }, this);
-
-                return this;
-            },
-
-            removeChild: function removeChild(endpoint) {
-                var index = this.originalOrder.indexOf(endpoint.name);
-                var i;
-
-                if (index !== -1) {
-                    this.originalOrder.splice(index, 1);
-                }
-
-                this.superMember(se.Container, 'removeChild', endpoint);
-                delete this.endpoints[endpoint.name];
-
-                for (i = 0; i < this.children.length; i++) {
-                    this.children[i].index = i;
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: startOrdering description]
-             *
-             * @returns {EndpointGroup}
-             *      The instance on which the member is called.
-             */
-            startOrdering: function startOrdering() {
-
-                if (!this.canBeOrdered() || this.orderable) {
-                    return this;
-                }
-
-                this.orderable = true;
-                this.children.forEach(function (endpoint) {
-                    makeEndpointDraggable.call(this, endpoint);
-                }, this);
-
-                return this;
-            },
-
-            /**
-             * [TODO: stopOrdering description]
-             *
-             * @returns {EndpointGroup}
-             *      The instance on which the member is called.
-             */
-            stopOrdering: function stopOrdering() {
-
-                if (!this.orderable) {
-                    return this;
-                }
-
-                this.orderable = false;
-                this.children.forEach(function (endpoint) {
-                    endpoint.draggable.destroy();
-                }, this);
-
-                return this;
-            },
-
-            /**
-             * [TODO: toJSON description]
-             *
-             * @returns {Array.<String>}
-             *      [TODO: description]
-             */
-            toJSON: function toJSON() {
-
-                if (this.modified) {
-                    return this.children.map(function (endpoint) {
+        Object.defineProperties(this, {
+            modified: {
+                get: function get() {
+                    return this.canBeOrdered() && !equalsLists(this.originalOrder, this.children.map(function (endpoint) {
                         return endpoint.name;
-                    });
+                    }));
                 }
+            },
+            orderable: {
+                get: function get() {return this.hasClassName('orderable');},
+                set: function set(value) {this.toggleClassName('orderable', value);}
+            },
+            type: {value: type}
+        });
+    };
 
-                return [];
+    ns.EndpointGroup.MIN_LENGTH = 1;
+
+    utils.inherit(ns.EndpointGroup, se.Container, {
+
+        /**
+         * [TODO: appendEndpoint description]
+         *
+         * @param {Wiring.Endpoint} wiringEndpoint
+         *      [TODO: description]
+         * @returns {EndpointGroup}
+         *      The instance on which the member is called.
+         */
+        appendEndpoint: function appendEndpoint(wiringEndpoint) {
+            var endpoint = new this.EndpointClass(wiringEndpoint, this.component);
+            var missingEndpoint = findFirstMissingEndpoint.call(this);
+            var i;
+
+            if (!wiringEndpoint.missing) {
+                this.originalOrder.push(endpoint.name);
             }
 
+            if (!wiringEndpoint.missing && missingEndpoint != null) {
+                this.prependChild(endpoint, missingEndpoint);
+            } else {
+                this.appendChild(endpoint);
+            }
+
+            this.endpoints[endpoint.name] = endpoint;
+
+            for (i = 0; i < this.children.length; i++) {
+                this.children[i].index = i;
+            }
+
+            return endpoint;
+        },
+
+        /**
+         * [TODO: canBeOrdered description]
+         *
+         * @returns {Boolean}
+         *      [TODO: description]
+         */
+        canBeOrdered: function canBeOrdered() {
+            return this.children.length > ns.EndpointGroup.MIN_LENGTH && !hasMissingEndpoints.call(this);
+        },
+
+        /**
+         * [TODO: getEndpoint description]
+         *
+         * @param {String} name
+         *      [TODO: description]
+         * @returns {Endpoint}
+         *      [TODO: description]
+         */
+        getEndpoint: function getEndpoint(name) {
+            return this.endpoints[name];
+        },
+
+        /**
+         * [TODO: refresh description]
+         *
+         * @returns {EndpointGroup}
+         *      The instance on which the member is called.
+         */
+        refresh: function refresh() {
+            var name;
+
+            for (name in this.endpoints) {
+                this.endpoints[name].refresh();
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: orderEndpoints description]
+         *
+         * @returns {EndpointGroup}
+         *      The instance on which the member is called.
+         */
+        orderEndpoints: function orderEndpoints(newOrder) {
+
+            if (!this.canBeOrdered()) {
+                return this;
+            }
+
+            if (newOrder.length < 2 || equalsLists(this.originalOrder, newOrder)) {
+                return this;
+            }
+
+            if (!equalsLists(this.originalOrder, newOrder, false)) {
+                return this;
+            }
+
+            newOrder.forEach(function (name, index) {
+                var endpoint = this.endpoints[name];
+
+                endpoint.index = index;
+                se.Container.prototype.removeChild.call(this, endpoint);
+                this.appendChild(endpoint);
+            }, this);
+
+            return this;
+        },
+
+        removeChild: function removeChild(endpoint) {
+            var index = this.originalOrder.indexOf(endpoint.name);
+            var i;
+
+            if (index !== -1) {
+                this.originalOrder.splice(index, 1);
+            }
+
+            se.Container.prototype.removeChild.call(this, endpoint);
+            delete this.endpoints[endpoint.name];
+
+            for (i = 0; i < this.children.length; i++) {
+                this.children[i].index = i;
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: startOrdering description]
+         *
+         * @returns {EndpointGroup}
+         *      The instance on which the member is called.
+         */
+        startOrdering: function startOrdering() {
+
+            if (!this.canBeOrdered() || this.orderable) {
+                return this;
+            }
+
+            this.orderable = true;
+            this.children.forEach(function (endpoint) {
+                makeEndpointDraggable.call(this, endpoint);
+            }, this);
+
+            return this;
+        },
+
+        /**
+         * [TODO: stopOrdering description]
+         *
+         * @returns {EndpointGroup}
+         *      The instance on which the member is called.
+         */
+        stopOrdering: function stopOrdering() {
+
+            if (!this.orderable) {
+                return this;
+            }
+
+            this.orderable = false;
+            this.children.forEach(function (endpoint) {
+                endpoint.draggable.destroy();
+            }, this);
+
+            return this;
+        },
+
+        /**
+         * [TODO: toJSON description]
+         *
+         * @returns {Array.<String>}
+         *      [TODO: description]
+         */
+        toJSON: function toJSON() {
+
+            if (this.modified) {
+                return this.children.map(function (endpoint) {
+                    return endpoint.name;
+                });
+            }
+
+            return [];
         }
 
     });

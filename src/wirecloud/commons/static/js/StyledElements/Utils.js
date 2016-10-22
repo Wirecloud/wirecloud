@@ -417,95 +417,69 @@ if (window.StyledElements == null) {
         };
     }
 
-    var addMembers = function addMembers(constructor, members) {
-
-        for (var name in members) {
-            constructor.prototype[name] = members[name];
-        }
-    };
-
-    var addStatics = function addStatics(constructor, statics) {
-
-        for (var name in statics) {
-            constructor[name] = statics[name];
-        }
-    };
-
-    var bindMixins = function bindMixins(constructor, mixins) {
-        mixins.forEach(function (mixin) {
-            addMembers(constructor, mixin.prototype);
-        });
-
-        constructor.prototype.mixinClass = function mixinClass(index) {
-            mixins[index].apply(this, Array.prototype.slice.call(arguments, 1));
-        };
-    };
-
-    Utils.inherit = function inherit(constructor, superConstructor, members) {
-        var counter = 0;
-
-        constructor.prototype = Object.create(superConstructor.prototype);
-        constructor.prototype.constructor = constructor;
-
-        addMembers(constructor, {
-
-            superConstructor: superConstructor,
-
-            superClass: function superClass() {
-                var currentClass = superConstructor;
-
-                for (var i = 0; i < counter; i++) {
-                    currentClass = currentClass.prototype.superConstructor;
-                }
-
-                counter++;
-
-                try {
-                    currentClass.apply(this, Array.prototype.slice.call(arguments));
-                } catch (e) {
-                    counter = 0;
-                    throw e;
-                }
-
-                counter--;
-            },
-
-            superMember: function superMember(superClass, name) {
-                var memberArgs = Array.prototype.slice.call(arguments, 2);
-
-                return superClass.prototype[name].apply(this, memberArgs);
-            }
-
-        });
-
-        addMembers(constructor, members);
-    };
-
     /**
-     * [defineClass description]
+     * Extends a built-in prototype using the Object.create method.
+     * @since 0.6
      *
-     * @param {Object.<String, *>} features [description]
-     * @returns {Function} [description]
+     * @param {Function} child The child's class constructor
+     * @param {Function} parent The parent's class constructor
+     * @param {Object} [members] The child's members
+     *
+     * @example
+     *
+     * var Person = function Person(name) {
+     *     this.name = name;
+     * };
+     *
+     * Person.prototype.toString = function toString() {
+     *     return "This is " + this.name;
+     * };
+     *
+     * var Student = function Student(name) {
+     *     Person.call(this, name);
+     * };
+     *
+     * inherit(Student, Person);
+     *
+     * var Teacher = function Teacher(name, subject) {
+     *     Person.call(this, name);
+     *     this.subject = subject;
+     * };
+     *
+     * inherit(Teacher, Person, {
+     *     toString: function toString() {
+     *         return Person.prototype.toString.call(this) + ", the " + this.subject + "teacher";
+     *     }
+     * });
+     *
+     * var peter = new Student("Peter");
+     *
+     * peter instanceOf Student
+     * => true
+     *
+     * peter instanceOf Person
+     * => true
+     *
+     * "Who are you? " + peter
+     * => "Who are you? This is Peter"
+     *
+     * var john = new Teacher("John");
+     *
+     * john instanceOf Teacher
+     * => true
+     *
+     * john instanceOf Person
+     * => true
+     *
+     * "Who are you? " + john
+     * => "Who are you? This is John, the science teacher"
      */
-    Utils.defineClass = function defineClass(features) {
+    Utils.inherit = function inherit(child, parent, members) {
 
-        if ('inherit' in features) {
-            Utils.inherit(features.constructor, features.inherit);
-        }
+        child.prototype = Object.create(parent.prototype);
+        child.prototype.constructor = child;
 
-        if ('mixins' in features) {
-            bindMixins(features.constructor, features.mixins);
-        }
-
-        if ('statics' in features) {
-            addStatics(features.constructor, features.statics);
-        }
-
-        if ('members' in features) {
-            addMembers(features.constructor, features.members);
-        }
-
-        return features.constructor;
+        Utils.merge(child.prototype, members);
     };
 
     // =========================================================================
