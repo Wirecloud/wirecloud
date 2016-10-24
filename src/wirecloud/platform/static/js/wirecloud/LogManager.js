@@ -30,8 +30,10 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    var LogManager = function LogManager(parentLogger) {
+    var LogManager = function LogManager(parent) {
         var self = {
+            children: [],
+            parent: null
         };
 
         se.ObjectWithEvents.call(this, ["newentry"]);
@@ -40,17 +42,23 @@
 
         Object.defineProperties(this, {
             wrapperElement: {value: document.createElement('div')},
-            parentLogger: {value: parentLogger}
+            children: {
+                get: function () {
+                    return self.children.slice(0);
+                }
+            },
+            parent: {
+                get: function () {
+                    return self.parent;
+                }
+            }
         });
         this.errorCount = 0;
         this.totalCount = 0;
         this.entries = [];
-        this.childManagers = [];
         this.closed = false;
 
-        if (parentLogger) {
-            parentLogger.childManagers.push(this);
-        }
+        setParent.call(this, parent);
     };
 
     // =========================================================================
@@ -69,8 +77,8 @@
             }
             this.totalCount += 1;
 
-            if (this.parentLogger) {
-                this.parentLogger._addEntry(entry);
+            if (this.parent) {
+                this.parent._addEntry(entry);
             }
 
             this.dispatchEvent('newentry', entry);
@@ -218,11 +226,11 @@
             this.wrapperElement.innerHTML = '';
             this.resetCounters();
             this.entries = [];
-            for (i = this.childManagers.length - 1; i >= 0; i -= 1) {
-                if (this.childManagers[i].isClosed()) {
-                    this.childManagers.splice(i, 1);
+            for (i = this.children.length - 1; i >= 0; i -= 1) {
+                if (this.children[i].isClosed()) {
+                    this.children.splice(i, 1);
                 } else {
-                    this.childManagers[i].reset();
+                    this.children[i].reset();
                 }
             }
         },
@@ -239,6 +247,26 @@
     // =========================================================================
 
     var _private = new WeakMap();
+
+    var appendChild = function appendChild(child) {
+        /*jshint validthis:true */
+        var self = _private.get(this);
+
+        self.children.push(child);
+    };
+
+    var setParent = function setParent(parent) {
+        /*jshint validthis:true */
+        var self = _private.get(this);
+
+        if (parent instanceof LogManager) {
+            if (parent.closed) {
+                throw new Error();
+            }
+            self.parent = parent;
+            appendChild.call(self.parent, this);
+        }
+    };
 
     // =========================================================================
     // EVENT HANDLERS
