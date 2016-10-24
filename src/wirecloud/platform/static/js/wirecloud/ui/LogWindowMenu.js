@@ -132,7 +132,7 @@
             }
         }
 
-        this.windowContent.insertBefore(entry_element, this.windowContent.firstChild);
+        this.windowContent.appendChild(entry_element);
 
         if (this.fadeTimeout != null) {
             clearTimeout(this.fadeTimeout);

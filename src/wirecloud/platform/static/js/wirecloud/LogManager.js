@@ -34,6 +34,7 @@
         var self = {
             children: [],
             closed: false,
+            entries: [],
             parent: null
         };
 
@@ -53,6 +54,11 @@
                     return self.closed;
                 }
             },
+            entries: {
+                get: function () {
+                    return self.entries.slice(0);
+                }
+            },
             parent: {
                 get: function () {
                     return self.parent;
@@ -61,7 +67,6 @@
         });
         this.errorCount = 0;
         this.totalCount = 0;
-        this.entries = [];
 
         setParent.call(this, parent);
     };
@@ -87,23 +92,6 @@
             }
 
             return this;
-        },
-
-        _addEntry: function _addEntry(entry) {
-
-            Object.freeze(entry);
-
-            this.entries.push(entry);
-            if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
-                this.errorCount += 1;
-            }
-            this.totalCount += 1;
-
-            if (this.parent) {
-                this.parent._addEntry(entry);
-            }
-
-            this.dispatchEvent('newentry', entry);
         },
 
         formatAndLog: function formatAndLog(format, transport, e, level) {
@@ -154,51 +142,36 @@
             return this.errorCount;
         },
 
-        log: function log(msg, options) {
-            var date, entry;
+        log: function log(message, options) {
+            var entry;
 
-            if (typeof options === 'number') {
-                // Backwards compatibility
-                options = {level: options};
-            }
-            options = utils.merge({
-                level: Wirecloud.constants.LOGGING.ERROR_MSG,
-                console: true,
-            }, options);
+            if (!this.closed) {
+                if (typeof options === "number") {
+                    options = {
+                        level: options
+                    };
+                }
 
-            date = new Date();
-            if (options.console === true) {
-                switch (options.level) {
-                default:
-                case Wirecloud.constants.LOGGING.ERROR_MSG:
-                    if ('console' in window && typeof console.error === 'function') {
-                        console.error(msg);
-                    }
-                    break;
-                case Wirecloud.constants.LOGGING.WARN_MSG:
-                    if ('console' in window && typeof console.warn === 'function') {
-                        console.warn(msg);
-                    }
-                    break;
-                case Wirecloud.constants.LOGGING.DEBUG_MSG:
-                case Wirecloud.constants.LOGGING.INFO_MSG:
-                    if ('console' in window && typeof console.info === 'function') {
-                        console.info(msg);
-                    }
-                    break;
+                options = utils.merge({
+                    console: true,
+                    level: Wirecloud.constants.LOGGING.ERROR_MSG
+                }, options);
+
+                entry = Object.freeze({
+                    date: new Date(),
+                    details: options.details,
+                    level: options.level,
+                    logManager: this,
+                    msg: message
+                });
+                appendEntry.call(this, entry);
+
+                if (window.console && options.console) {
+                    printEntry.call(this, entry);
                 }
             }
 
-            entry = {
-                "level": options.level,
-                "msg": msg,
-                "date": date,
-                "logManager": this
-            };
-            if (options.details != null) {
-                entry.details = options.details;
-            }
-            this._addEntry(entry);
+            return this;
         },
 
         newCycle: function newCycle() {
@@ -261,6 +234,48 @@
         var self = _private.get(this);
 
         self.children.push(child);
+    };
+
+    var appendEntry = function appendEntry(entry) {
+        /*jshint validthis:true */
+        var self = _private.get(this);
+
+        self.entries.unshift(entry);
+        this.dispatchEvent('newentry', entry);
+
+        if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
+            this.errorCount += 1;
+        }
+        this.totalCount += 1;
+
+        if (self.parent) {
+            appendEntry.call(self.parent, entry);
+        }
+
+        this.dispatchEvent('newentry', entry);
+    };
+
+    var printEntry = function printEntry(entry) {
+
+        switch (entry.level) {
+        default:
+        case Wirecloud.constants.LOGGING.ERROR_MSG:
+            if (typeof console.error === 'function') {
+                console.error(entry.msg);
+            }
+            break;
+        case Wirecloud.constants.LOGGING.WARN_MSG:
+            if (typeof console.warn === 'function') {
+                console.warn(entry.msg);
+            }
+            break;
+        case Wirecloud.constants.LOGGING.DEBUG_MSG:
+        case Wirecloud.constants.LOGGING.INFO_MSG:
+            if (typeof console.info === 'function') {
+                console.info(entry.msg);
+            }
+            break;
+        }
     };
 
     var removeChild = function removeChild(child) {
