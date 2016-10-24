@@ -220,17 +220,16 @@
         },
 
         reset: function reset() {
-            var i;
+            var self = _private.get(this);
 
-            this.wrapperElement.innerHTML = '';
-            this.entries = [];
-            for (i = this.children.length - 1; i >= 0; i -= 1) {
-                if (this.children[i].isClosed()) {
-                    this.children.splice(i, 1);
-                } else {
-                    this.children[i].reset();
-                }
+            if (!self.closed) {
+                self.entries.length = 0;
+                self.children.forEach(function (child) {
+                    child.reset();
+                });
             }
+
+            return this;
         }
 
     });
