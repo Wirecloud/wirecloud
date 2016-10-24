@@ -33,6 +33,7 @@
     var LogManager = function LogManager(parent) {
         var self = {
             children: [],
+            closed: false,
             parent: null
         };
 
@@ -47,6 +48,11 @@
                     return self.children.slice(0);
                 }
             },
+            closed: {
+                get: function () {
+                    return self.closed;
+                }
+            },
             parent: {
                 get: function () {
                     return self.parent;
@@ -56,7 +62,6 @@
         this.errorCount = 0;
         this.totalCount = 0;
         this.entries = [];
-        this.closed = false;
 
         setParent.call(this, parent);
     };
@@ -66,6 +71,23 @@
     // =========================================================================
 
     utils.inherit(LogManager, se.ObjectWithEvents, {
+
+        close: function close() {
+            var i, self = _private.get(this);
+
+            if (!self.closed) {
+                if (self.parent) {
+                    removeChild.call(self.parent, this);
+                }
+
+                for (i = self.children.length - 1; i >= 0; i--) {
+                    removeChild.call(this, self.children[i]);
+                }
+                self.closed = true;
+            }
+
+            return this;
+        },
 
         _addEntry: function _addEntry(entry) {
 
@@ -82,10 +104,6 @@
             }
 
             this.dispatchEvent('newentry', entry);
-        },
-
-        close: function close() {
-            this.closed = true;
         },
 
         formatAndLog: function formatAndLog(format, transport, e, level) {
@@ -134,10 +152,6 @@
 
         getErrorCount: function getErrorCount() {
             return this.errorCount;
-        },
-
-        isClosed: function isClosed() {
-            return this.closed;
         },
 
         log: function log(msg, options) {
@@ -247,6 +261,21 @@
         var self = _private.get(this);
 
         self.children.push(child);
+    };
+
+    var removeChild = function removeChild(child) {
+        /*jshint validthis:true */
+        var self = _private.get(this);
+
+        removeParent.call(child);
+        self.children.splice(self.children.indexOf(child), 1);
+    };
+
+    var removeParent = function removeParent() {
+        /*jshint validthis:true */
+        var self = _private.get(this);
+
+        self.parent = null;
     };
 
     var setParent = function setParent(parent) {
