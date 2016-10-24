@@ -95,7 +95,7 @@
      *      The vendor of the component
      * @param {String} name
      *      The  name of the component
-     * @return {Integer} isInstalled
+     * @return {boolean} isInstalled
      *      If any version of the component is installed
      */
     var isAnyInstalled = function isAnyInstalled(vendor, name) {
@@ -114,7 +114,7 @@
      *      The  name of the component
      * @param {String} version
      *      The version of the component.
-     * @return {Integer} isInstalled
+     * @return {boolean} isInstalled
      *      If the component is installed
      */
     var isInstalled = function isInstalled(vendor, name, version) {
