@@ -78,7 +78,12 @@
         show: function show(parentWindow) {
             var self = _private.get(this);
 
-            this.logManager.entries.forEach(appendEntry, this);
+            this.logManager.history.forEach(function (entries, i) {
+                if (i > 0) {
+                    this.windowContent.appendChild(document.createElement("hr"));
+                }
+                entries.forEach(appendEntry, this);
+            }, this);
             this.logManager.addEventListener("newentry", self.on_newentry);
 
             ns.WindowMenu.prototype.show.call(this, parentWindow);

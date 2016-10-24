@@ -31,10 +31,12 @@
     // =========================================================================
 
     var LogManager = function LogManager(parent) {
+        var entries = [];
         var self = {
             children: [],
             closed: false,
-            entries: [],
+            entries: entries,
+            history: [entries],
             parent: null
         };
 
@@ -43,7 +45,6 @@
         _private.set(this, self);
 
         Object.defineProperties(this, {
-            wrapperElement: {value: document.createElement('div')},
             children: {
                 get: function () {
                     return self.children.slice(0);
@@ -62,6 +63,13 @@
             errorCount: {
                 get: function () {
                     return self.entries.filter(isError).length;
+                }
+            },
+            history: {
+                get: function () {
+                    return self.history.map(function (entries) {
+                        return entries.slice(0);
+                    });
                 }
             },
             parent: {
@@ -179,7 +187,14 @@
         },
 
         newCycle: function newCycle() {
-            this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.firstChild);
+            var self = _private.get(this);
+
+            if (!self.closed) {
+                self.entries = [];
+                self.history.unshift(self.entries);
+            }
+
+            return this;
         },
 
         parseErrorResponse: function parseErrorResponse(response) {
