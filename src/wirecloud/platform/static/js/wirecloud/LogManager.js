@@ -19,16 +19,25 @@
  *
  */
 
-/* globals console, StyledElements, Wirecloud*/
+/* globals console, StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var builder = new StyledElements.GUIBuilder();
+    // =========================================================================
+    // CLASS DEFINITION
+    // =========================================================================
 
     var LogManager = function LogManager(parentLogger) {
+        var self = {
+        };
+
+        se.ObjectWithEvents.call(this, ["newentry"]);
+
+        _private.set(this, self);
+
         Object.defineProperties(this, {
             wrapperElement: {value: document.createElement('div')},
             parentLogger: {value: parentLogger}
@@ -39,180 +48,197 @@
         this.childManagers = [];
         this.closed = false;
 
-        StyledElements.ObjectWithEvents.call(this, ['newentry']);
-
         if (parentLogger) {
             parentLogger.childManagers.push(this);
         }
     };
-    LogManager.prototype = new StyledElements.ObjectWithEvents();
 
-    LogManager.prototype._addEntry = function _addEntry(entry) {
+    // =========================================================================
+    // PUBLIC MEMBERS
+    // =========================================================================
 
-        Object.freeze(entry);
+    utils.inherit(LogManager, se.ObjectWithEvents, {
 
-        this.entries.push(entry);
-        if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
-            this.errorCount += 1;
-        }
-        this.totalCount += 1;
+        _addEntry: function _addEntry(entry) {
 
-        if (this.parentLogger) {
-            this.parentLogger._addEntry(entry);
-        }
+            Object.freeze(entry);
 
-        this.dispatchEvent('newentry', entry);
-    };
-
-    LogManager.prototype.newCycle = function newCycle() {
-        this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.firstChild);
-        this.resetCounters();
-    };
-
-    LogManager.prototype.log = function log(msg, options) {
-        var date, entry;
-
-        if (typeof options === 'number') {
-            // Backwards compatibility
-            options = {level: options};
-        }
-        options = utils.merge({
-            level: Wirecloud.constants.LOGGING.ERROR_MSG,
-            console: true,
-        }, options);
-
-        date = new Date();
-        if (options.console === true) {
-            switch (options.level) {
-            default:
-            case Wirecloud.constants.LOGGING.ERROR_MSG:
-                if ('console' in window && typeof console.error === 'function') {
-                    console.error(msg);
-                }
-                break;
-            case Wirecloud.constants.LOGGING.WARN_MSG:
-                if ('console' in window && typeof console.warn === 'function') {
-                    console.warn(msg);
-                }
-                break;
-            case Wirecloud.constants.LOGGING.DEBUG_MSG:
-            case Wirecloud.constants.LOGGING.INFO_MSG:
-                if ('console' in window && typeof console.info === 'function') {
-                    console.info(msg);
-                }
-                break;
+            this.entries.push(entry);
+            if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
+                this.errorCount += 1;
             }
-        }
+            this.totalCount += 1;
 
-        entry = {
-            "level": options.level,
-            "msg": msg,
-            "date": date,
-            "logManager": this
-        };
-        if (options.details != null) {
-            entry.details = options.details;
-        }
-        this._addEntry(entry);
-    };
+            if (this.parentLogger) {
+                this.parentLogger._addEntry(entry);
+            }
 
-    LogManager.prototype.formatException = function formatException(exception) {
-        return builder.parse(Wirecloud.currentTheme.templates['wirecloud/logs/details'], {
-            message: exception.toString(),
-            stacktrace: exception.stack
-        });
-    };
+            this.dispatchEvent('newentry', entry);
+        },
 
-    LogManager.prototype.parseErrorResponse = function parseErrorResponse(response) {
-        var errorDesc, msg;
+        close: function close() {
+            this.closed = true;
+        },
 
-        try {
-            var errorInfo = JSON.parse(response.responseText);
-            msg = errorInfo.description;
-        } catch (error) {
-            msg = utils.gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
-            if (response.status !== 0 && response.statusText !== '') {
-                errorDesc = response.statusText;
+        formatAndLog: function formatAndLog(format, transport, e, level) {
+            var msg = this.formatError(format, transport, e);
+            this.log(msg, level);
+
+            return msg;
+        },
+
+        formatError: function formatError(format, transport, e) {
+            var msg;
+
+            if (e) {
+                var context;
+                if (e.lineNumber !== undefined) {
+                    // Firefox
+                    context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e.message};
+                } else if (e.line !== undefined) {
+                    // Webkit
+                    context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e.message};
+                } else {
+                    // Other browsers
+                    var text = utils.gettext("unknown");
+                    context = {errorFile: text, errorLine: text, errorDesc: e.message};
+                }
+
+                msg = utils.interpolate(utils.gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+                          context,
+                          true);
             } else {
-                errorDesc = Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS[response.status];
-                if (errorDesc == null) {
-                    errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
+                msg = this.parseErrorResponse(transport);
+            }
+            msg = utils.interpolate(format, {errorMsg: msg}, true);
+
+            return msg;
+        },
+
+        formatException: function formatException(exception) {
+            var builder = new StyledElements.GUIBuilder();
+
+            return builder.parse(Wirecloud.currentTheme.templates['wirecloud/logs/details'], {
+                message: exception.toString(),
+                stacktrace: exception.stack
+            });
+        },
+
+        getErrorCount: function getErrorCount() {
+            return this.errorCount;
+        },
+
+        isClosed: function isClosed() {
+            return this.closed;
+        },
+
+        log: function log(msg, options) {
+            var date, entry;
+
+            if (typeof options === 'number') {
+                // Backwards compatibility
+                options = {level: options};
+            }
+            options = utils.merge({
+                level: Wirecloud.constants.LOGGING.ERROR_MSG,
+                console: true,
+            }, options);
+
+            date = new Date();
+            if (options.console === true) {
+                switch (options.level) {
+                default:
+                case Wirecloud.constants.LOGGING.ERROR_MSG:
+                    if ('console' in window && typeof console.error === 'function') {
+                        console.error(msg);
+                    }
+                    break;
+                case Wirecloud.constants.LOGGING.WARN_MSG:
+                    if ('console' in window && typeof console.warn === 'function') {
+                        console.warn(msg);
+                    }
+                    break;
+                case Wirecloud.constants.LOGGING.DEBUG_MSG:
+                case Wirecloud.constants.LOGGING.INFO_MSG:
+                    if ('console' in window && typeof console.info === 'function') {
+                        console.info(msg);
+                    }
+                    break;
                 }
             }
-            msg = utils.interpolate(msg, {errorCode: response.status, errorDesc: errorDesc}, true);
-        }
 
-        return msg;
-    };
+            entry = {
+                "level": options.level,
+                "msg": msg,
+                "date": date,
+                "logManager": this
+            };
+            if (options.details != null) {
+                entry.details = options.details;
+            }
+            this._addEntry(entry);
+        },
 
-    LogManager.prototype.formatError = function formatError(format, transport, e) {
-        var msg;
+        newCycle: function newCycle() {
+            this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.firstChild);
+            this.resetCounters();
+        },
 
-        if (e) {
-            var context;
-            if (e.lineNumber !== undefined) {
-                // Firefox
-                context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e.message};
-            } else if (e.line !== undefined) {
-                // Webkit
-                context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e.message};
-            } else {
-                // Other browsers
-                var text = utils.gettext("unknown");
-                context = {errorFile: text, errorLine: text, errorDesc: e.message};
+        parseErrorResponse: function parseErrorResponse(response) {
+            var errorDesc, msg;
+
+            try {
+                var errorInfo = JSON.parse(response.responseText);
+                msg = errorInfo.description;
+            } catch (error) {
+                msg = utils.gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
+                if (response.status !== 0 && response.statusText !== '') {
+                    errorDesc = response.statusText;
+                } else {
+                    errorDesc = Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS[response.status];
+                    if (errorDesc == null) {
+                        errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
+                    }
+                }
+                msg = utils.interpolate(msg, {errorCode: response.status, errorDesc: errorDesc}, true);
             }
 
-            msg = utils.interpolate(utils.gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-                      context,
-                      true);
-        } else {
-            msg = this.parseErrorResponse(transport);
-        }
-        msg = utils.interpolate(format, {errorMsg: msg}, true);
+            return msg;
+        },
 
-        return msg;
-    };
+        reset: function reset() {
+            var i;
 
-    LogManager.prototype.formatAndLog = function formatAndLog(format, transport, e, level) {
-        var msg = this.formatError(format, transport, e);
-        this.log(msg, level);
-
-        return msg;
-    };
-
-    LogManager.prototype.reset = function reset() {
-        var i;
-
-        this.wrapperElement.innerHTML = '';
-        this.resetCounters();
-        this.entries = [];
-        for (i = this.childManagers.length - 1; i >= 0; i -= 1) {
-            if (this.childManagers[i].isClosed()) {
-                this.childManagers.splice(i, 1);
-            } else {
-                this.childManagers[i].reset();
+            this.wrapperElement.innerHTML = '';
+            this.resetCounters();
+            this.entries = [];
+            for (i = this.childManagers.length - 1; i >= 0; i -= 1) {
+                if (this.childManagers[i].isClosed()) {
+                    this.childManagers.splice(i, 1);
+                } else {
+                    this.childManagers[i].reset();
+                }
             }
+        },
+
+        resetCounters: function resetCounters() {
+            this.errorCount = 0;
+            this.totalCount = 0;
         }
-    };
 
-    LogManager.prototype.resetCounters = function resetCounters() {
-        this.errorCount = 0;
-        this.totalCount = 0;
-    };
+    });
 
-    LogManager.prototype.getErrorCount = function getErrorCount() {
-        return this.errorCount;
-    };
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
 
-    LogManager.prototype.close = function close() {
-        this.closed = true;
-    };
+    var _private = new WeakMap();
 
-    LogManager.prototype.isClosed = function isClosed() {
-        return this.closed;
-    };
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
 
     Wirecloud.LogManager = LogManager;
     Wirecloud.GlobalLogManager = new LogManager();
 
-})(Wirecloud.Utils);
+})(StyledElements, StyledElements.Utils);
