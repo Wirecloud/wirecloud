@@ -59,14 +59,22 @@
                     return self.entries.slice(0);
                 }
             },
+            errorCount: {
+                get: function () {
+                    return self.entries.filter(isError).length;
+                }
+            },
             parent: {
                 get: function () {
                     return self.parent;
                 }
+            },
+            totalCount: {
+                get: function () {
+                    return self.entries.length;
+                }
             }
         });
-        this.errorCount = 0;
-        this.totalCount = 0;
 
         setParent.call(this, parent);
     };
@@ -138,10 +146,6 @@
             });
         },
 
-        getErrorCount: function getErrorCount() {
-            return this.errorCount;
-        },
-
         log: function log(message, options) {
             var entry;
 
@@ -176,7 +180,6 @@
 
         newCycle: function newCycle() {
             this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.firstChild);
-            this.resetCounters();
         },
 
         parseErrorResponse: function parseErrorResponse(response) {
@@ -205,7 +208,6 @@
             var i;
 
             this.wrapperElement.innerHTML = '';
-            this.resetCounters();
             this.entries = [];
             for (i = this.children.length - 1; i >= 0; i -= 1) {
                 if (this.children[i].isClosed()) {
@@ -214,11 +216,6 @@
                     this.children[i].reset();
                 }
             }
-        },
-
-        resetCounters: function resetCounters() {
-            this.errorCount = 0;
-            this.totalCount = 0;
         }
 
     });
@@ -243,16 +240,13 @@
         self.entries.unshift(entry);
         this.dispatchEvent('newentry', entry);
 
-        if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
-            this.errorCount += 1;
-        }
-        this.totalCount += 1;
-
         if (self.parent) {
             appendEntry.call(self.parent, entry);
         }
+    };
 
-        this.dispatchEvent('newentry', entry);
+    var isError = function isError(entry) {
+        return entry.level === Wirecloud.constants.LOGGING.ERROR_MSG;
     };
 
     var printEntry = function printEntry(entry) {
