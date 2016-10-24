@@ -74,7 +74,7 @@
              * @type {Wirecloud.LogManager}
              */
             logManager: {
-                value: new Wirecloud.wiring.LogManager(this)
+                value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
             },
             /**
              * @type {Array.<Wirecloud.Wiring.Operator>}

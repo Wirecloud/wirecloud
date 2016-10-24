@@ -30,13 +30,17 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    var LogWindowMenu = function LogWindowMenu(logManager) {
+    var LogWindowMenu = function LogWindowMenu(logManager, options) {
         var self = {
             on_fade: on_fade.bind(this),
             on_newentry: on_newentry.bind(this)
         };
 
-        ns.WindowMenu.call(this, logManager.buildTitle(), 'logwindowmenu');
+        options = utils.update({
+            title: utils.gettext("Logs")
+        }, options);
+
+        ns.WindowMenu.call(this, options.title, 'logwindowmenu');
 
         _private.set(this, self);
 

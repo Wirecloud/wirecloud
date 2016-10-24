@@ -56,7 +56,7 @@
             id: {
                 get: function get() {return this.source.id + "//" + this.target.id;}
             },
-            logManager: {value: new ns.ConnectionLogManager(this, wiring)},
+            logManager: {value: new Wirecloud.LogManager(wiring.logManager)},
             readonly: {
                 value: options.readonly
             },
@@ -165,7 +165,9 @@
         },
 
         showLogs: function showLogs() {
-            var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
+            var modal = new Wirecloud.ui.LogWindowMenu(this.logManager, {
+                title: utils.gettext("Connection's logs")
+            });
             modal.show();
 
             return this;
