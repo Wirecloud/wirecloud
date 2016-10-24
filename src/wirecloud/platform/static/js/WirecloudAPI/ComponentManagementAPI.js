@@ -37,13 +37,10 @@
      * @param {String} resourceURL
      *      The URL where the resource is located.
      */
-    var install = function install(resourceURL) {
+    var install = function install(resourceURL, market_info) {
         return new Promise (function (fulfill, reject) {
             var options =  {
-                market_info: {
-                    name: "admin/fiware-bae",
-                    store: "fiware-bae"
-                },
+                market_info: market_info,
                 onSuccess: function () { fulfill(true); },
                 onFailure: function () { reject(false); },
             };
