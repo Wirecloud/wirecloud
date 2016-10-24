@@ -54,18 +54,21 @@
 
 .btn-group-lg .se-add-on, .btn-group-lg .se-box, .se-input-group-lg .se-add-on, .se-input-group-lg .se-box {
     height:  $input-height-large;
+    font-size: $font-size-large;
     padding: $padding-vertical-large $padding-horizontal-large;
     border-radius: $border-radius-large;
 }
 
 .btn-group-sm .se-add-on, .btn-group-sm .se-box, .se-input-group-sm .se-add-on, .se-input-group-sm .se-box {
     height:  $input-height-small;
+    font-size: $font-size-small;
     padding: $padding-vertical-small $padding-horizontal-small;
     border-radius: $border-radius-small;
 }
 
 .btn-group-xs .se-add-on, .btn-group-xs .se-box, .se-input-group-xs .se-add-on, .se-input-group-xs .se-box {
     height:  $input-height-xs;
+    font-size: $font-size-xs;
     padding: $padding-vertical-xs $padding-horizontal-xs;
     border-radius: $border-radius-xs;
 }

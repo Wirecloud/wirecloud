@@ -207,6 +207,7 @@
         for (i = 0; i < buttons.length; i++) {
             buttons[i].addClassName('btn-large');
             buttons[i].addClassName('btn-primary');
+            buttons[i].addIconClassName('fa-fw');
             buttons[i].insertInto(this.toolbar);
         }
     };

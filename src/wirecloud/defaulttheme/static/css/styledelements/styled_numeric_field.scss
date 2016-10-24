@@ -48,8 +48,8 @@
     right: -1px;
     text-align: center;
     line-height: 11px;
-    font-size: 15px;
-    height: 15.5px;
+    font-size: inherit;
+    height: $input-height-base / 2;
 }
 
 .se-numeric-field-top-button {
@@ -73,9 +73,9 @@
     border: 0 none;
     color: rgb(85, 85, 85);
     display: block;
-    height: 28px;
+    height: inherit;
     padding: 4px 6px;
-    line-height: 20px;
+    line-height: inherit;
     margin: 0;
     width: 100%;
     font-size: inherit;
@@ -112,4 +112,13 @@
 
 .se-numeric-field.error {
     @include numeric-field-variant($state-danger-text, $state-danger-border);
+}
+
+.se-input-group-lg > .se-numeric-field {
+    font-size: $font-size-large;
+    height: $input-height-large;
+
+    & > .se-numeric-field-top-button, .se-numeric-field-bottom-button {
+        height: $input-height-large / 2;
+    }
 }

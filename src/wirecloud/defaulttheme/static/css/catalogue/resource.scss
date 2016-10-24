@@ -5,9 +5,6 @@
 
 .resource {
     position: relative;
-    @if ($resource-border) {
-        border: 1px solid $resource-border;
-    }
     padding: 0;
     display: inline-block;
     margin: 6px;
@@ -18,8 +15,6 @@
     overflow: hidden;
     transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
     box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
-    color: contrast-color($resource-bg, $text-color-light, $text-color-dark, $text-color-threshold);
-    background: $resource-bg;
     cursor: pointer;
     box-sizing: border-box;
 
@@ -28,7 +23,7 @@
     }
 
     & > .description.text-truncate:after {
-        @include background-image(linear-gradient(to right, rgba($resource-bg, 0), $resource-bg));
+        @include background-image(linear-gradient(to right, rgba($panel-bg, 0), $panel-bg));
         height: $line-height-small;
         width: 70px;
     }
