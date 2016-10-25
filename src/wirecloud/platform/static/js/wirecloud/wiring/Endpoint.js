@@ -36,7 +36,7 @@
             Object.defineProperty(this, 'friendcode', {value: ""});
         }
 
-        var friendcodeList = this.friendcode != '' ? this.friendcode.split(/\s+/) : [];
+        var friendcodeList = this.friendcode !== '' ? this.friendcode.split(/\s+/) : [];
         Object.defineProperty(this, 'friendcodeList', {value: friendcodeList});
 
         if (!('label' in this)) {
