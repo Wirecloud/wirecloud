@@ -26,21 +26,79 @@
 
     "use strict";
 
-    var LEVEL_CLASS = ['alert-error', 'alert-warning', 'alert-info'];
+    // =========================================================================
+    // CLASS DEFINITION
+    // =========================================================================
 
-    var onfade = function onfade() {
-        this.fadeTimeout = null;
+    var LogWindowMenu = function LogWindowMenu(logManager) {
+        var self = {
+            on_fade: on_fade.bind(this),
+            on_newentry: on_newentry.bind(this)
+        };
 
-        for (var i = 0; i < this.windowContent.childNodes.length; i++) {
-            var classList = this.windowContent.childNodes[i].classList;
-            if (classList.contains('in')) {
-                break;
+        ns.WindowMenu.call(this, logManager.buildTitle(), 'logwindowmenu');
+
+        _private.set(this, self);
+
+        Object.defineProperties(this, {
+            logManager: {
+                value: logManager
             }
-            classList.add('in');
-        }
+        });
+
+        // Accept button
+        this.button = new se.Button({
+            text: utils.gettext("Close"),
+            class: "btn-primary btn-accept"
+        });
+        this.button.insertInto(this.windowBottom);
+        this.button.addEventListener("click", this._closeListener);
     };
 
-    var print_entry = function print_entry(entry) {
+    // =========================================================================
+    // PUBLIC MEMBERS
+    // =========================================================================
+
+    utils.inherit(LogWindowMenu, Wirecloud.ui.WindowMenu, {
+
+        hide: function hide(parentWindow) {
+            var self = _private.get(this);
+
+            this.windowContent.innerHTML = "";
+            this.logManager.removeEventListener("newentry", self.on_newentry);
+
+            ns.WindowMenu.prototype.hide.call(this, parentWindow);
+            return this;
+        },
+
+        show: function show(parentWindow) {
+            var self = _private.get(this);
+
+            this.logManager.entries.forEach(appendEntry, this);
+            this.logManager.addEventListener("newentry", self.on_newentry);
+
+            ns.WindowMenu.prototype.show.call(this, parentWindow);
+            return this;
+        },
+
+        setFocus: function setFocus() {
+            this.button.focus();
+            return this;
+        }
+
+    });
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var _private = new WeakMap();
+
+    var LEVEL_CLASS = ['alert-error', 'alert-warning', 'alert-info'];
+
+    var appendEntry = function appendEntry(entry) {
+        /*jshint validthis:true */
+        var self = _private.get(this);
         var entry_element, dateElement, expander, titleElement;
 
         if (entry.level === Wirecloud.constants.LOGGING.DEBUG_MSG) {
@@ -75,56 +133,31 @@
         if (this.fadeTimeout != null) {
             clearTimeout(this.fadeTimeout);
         }
-        this.fadeTimeout = setTimeout(this._onfade, 200);
+        this.fadeTimeout = setTimeout(self.on_fade, 200);
     };
 
-    var onnewentry = function _onnewentry(logManager, entry) {
-        print_entry.call(this, entry);
-    };
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
 
-    /**
-     * Specific class representing alert dialogs.
-     */
-    var LogWindowMenu = function LogWindowMenu(logManager) {
+    var onfade = function onfade() {
+        /*jshint validthis:true */
+        this.fadeTimeout = null;
 
-        Wirecloud.ui.WindowMenu.call(this, logManager.buildTitle(), 'logwindowmenu');
-
-        Object.defineProperty(this, 'logManager', {value: logManager});
-        this._onfade = onfade.bind(this);
-        this._onnewentry = onnewentry.bind(this);
-
-        // Accept button
-        this.button = new se.Button({
-            text: utils.gettext('Close'),
-            'class': 'btn-primary btn-accept'
-        });
-        this.button.insertInto(this.windowBottom);
-        this.button.addEventListener("click", this._closeListener);
-    };
-    utils.inherit(LogWindowMenu, Wirecloud.ui.WindowMenu);
-
-    LogWindowMenu.prototype.show = function show(parentWindow) {
-        var i;
-
-        for (i = 0; i < this.logManager.entries.length; i++) {
-            print_entry.call(this, this.logManager.entries[i]);
+        for (var i = 0; i < this.windowContent.childNodes.length; i++) {
+            var classList = this.windowContent.childNodes[i].classList;
+            if (classList.contains('in')) {
+                break;
+            }
+            classList.add('in');
         }
-        this.logManager.addEventListener('newentry', this._onnewentry);
-
-        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
     };
 
-    LogWindowMenu.prototype.hide = function hide(parentWindow) {
-        this.windowContent.innerHTML = '';
-
-        this.logManager.removeEventListener('newentry', this._onnewentry);
-        Wirecloud.ui.WindowMenu.prototype.hide.call(this, parentWindow);
+    var on_newentry = function on_newentry(logManager, entry) {
+        /*jshint validthis:true */
+        appendEntry.call(this, entry);
     };
 
-    LogWindowMenu.prototype.setFocus = function setFocus() {
-        this.button.focus();
-    };
+    ns.LogWindowMenu = LogWindowMenu;
 
-    Wirecloud.ui.LogWindowMenu = LogWindowMenu;
-
-})(StyledElements, Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);
