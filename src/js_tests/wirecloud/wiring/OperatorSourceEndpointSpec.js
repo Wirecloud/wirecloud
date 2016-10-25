@@ -53,7 +53,7 @@
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
                 expect(endpoint.id).toEqual(["operator", OPERATOR.id, endpointDesc.name].join("/"));
                 expect(endpoint.description).toEqual(endpointDesc.description);
-                expect(endpoint.keywords).toEqual(["a", "b", "c"]);
+                expect(endpoint.friendcodeList).toEqual(["a", "b", "c"]);
                 expect(endpoint.missing).toBeFalsy();
             });
 
@@ -69,7 +69,7 @@
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
                 expect(endpoint.id).toEqual(["operator", OPERATOR.id, endpointDesc.name].join("/"));
                 expect(endpoint.description).toEqual("");
-                expect(endpoint.keywords).toEqual(["a", "b", "c"]);
+                expect(endpoint.friendcodeList).toEqual(["a", "b", "c"]);
                 expect(endpoint.missing).toBeFalsy();
             });
 
@@ -81,7 +81,7 @@
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
                 expect(endpoint.id).toEqual(null);
                 expect(endpoint.description).toEqual("");
-                expect(endpoint.keywords).toEqual([]);
+                expect(endpoint.friendcodeList).toEqual([]);
                 expect(endpoint.missing).toBeFalsy();
             });
 
@@ -93,7 +93,7 @@
                 };
                 var endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
 
-                expect(endpoint.keywords).toEqual([]);
+                expect(endpoint.friendcodeList).toEqual([]);
             });
 
         });

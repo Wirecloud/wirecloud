@@ -59,8 +59,8 @@
                 return this;
             }
 
-            endpoint.keywords.forEach(function (keyword) {
-                updateKeyword.call(this, keyword, endpoint);
+            endpoint.friendcodeList.forEach(function (friendcode) {
+                updateFriendcode.call(this, friendcode, endpoint);
             }, this);
 
             return this;
@@ -86,8 +86,8 @@
             oppositeType = getOppositeType(endpoint);
             this._endpointList = [];
 
-            endpoint.keywords.forEach(function (keyword) {
-                findEndpoint.call(this, endpoint.component, oppositeType, keyword, callback);
+            endpoint.friendcodeList.forEach(function (friendcode) {
+                findEndpoint.call(this, endpoint.component, oppositeType, friendcode, callback);
             }, this);
 
             delete this._endpointList;
@@ -109,8 +109,8 @@
                 return this;
             }
 
-            endpoint.keywords.forEach(function (keyword) {
-                removeKeyword.call(this, keyword, endpoint);
+            endpoint.friendcodeList.forEach(function (friendcode) {
+                removeFriendcode.call(this, friendcode, endpoint);
             }, this);
 
             return this;
@@ -135,13 +135,13 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var findEndpoint = function findEndpoint(component, type, keyword, callback) {
+    var findEndpoint = function findEndpoint(component, type, friendcode, callback) {
 
-        if (!(keyword in this.endpoints[type])) {
+        if (!(friendcode in this.endpoints[type])) {
             return this;
         }
 
-        this.endpoints[type][keyword].forEach(function (endpoint) {
+        this.endpoints[type][friendcode].forEach(function (endpoint) {
             if (!endpoint.component.equals(component) && (this._endpointList.indexOf(endpoint) < 0)) {
                 callback(endpoint);
                 this._endpointList.push(endpoint);
@@ -155,25 +155,25 @@
         return endpoint.type === 'source' ? 'target' : 'source';
     };
 
-    var removeKeyword = function removeKeyword(keyword, endpoint) {
-        var list = this.endpoints[endpoint.type][keyword];
+    var removeFriendcode = function removeFriendcode(friendcode, endpoint) {
+        var list = this.endpoints[endpoint.type][friendcode];
 
         list.splice(list.indexOf(endpoint), 1);
 
         if (!list.length) {
-            delete this.endpoints[endpoint.type][keyword];
+            delete this.endpoints[endpoint.type][friendcode];
         }
 
         return this;
     };
 
-    var updateKeyword = function updateKeyword(keyword, endpoint) {
+    var updateFriendcode = function updateFriendcode(friendcode, endpoint) {
 
-        if (!(keyword in this.endpoints[endpoint.type])) {
-            this.endpoints[endpoint.type][keyword] = [];
+        if (!(friendcode in this.endpoints[endpoint.type])) {
+            this.endpoints[endpoint.type][friendcode] = [];
         }
 
-        this.endpoints[endpoint.type][keyword].push(endpoint);
+        this.endpoints[endpoint.type][friendcode].push(endpoint);
 
         return this;
     };

@@ -205,7 +205,7 @@ element. These elements have the following attributes:
     does make sense in here.
 -   `label`: text to be displayed in the user interface.
 -   `description`: text that describes the output.
--   `friendcode`: keyword used as an output endpoint tag: it will help
+-   `friendcode`: One or more space-separated keywords used as output endpoint tags: it will help
     the platform to make suggestions in the wiring process.
 
 On the other hand, widgets and operators can receive asynchronous data
@@ -224,7 +224,7 @@ following attributes:
     select what to do (and the widget will send an event to the
     associated target endpoint)
 -   `description`: text that describes the input.
--   `friendcode`: keyword used as an input endpoint tag: it will help
+-   `friendcode`: One or more space-separated keywords used as input endpoint tags: it will help
     the platform to make suggestions in the wiring process.
 
 

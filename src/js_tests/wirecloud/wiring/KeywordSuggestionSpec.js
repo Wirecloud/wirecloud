@@ -37,7 +37,7 @@
     var BASIC_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/19/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: ""
@@ -52,7 +52,7 @@
     var BASIC_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/19/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: ""
@@ -67,7 +67,7 @@
     var EXTRA_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/22/other-endpoint",
-            friendcode: "other",
+            friendcodeList: ["other"],
             name: "other-endpoint",
             description: "",
             label: ""
@@ -82,7 +82,7 @@
     var EXTRA_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/22/other-endpoint",
-            friendcode: "other",
+            friendcodeList: ["other"],
             name: "other-endpoint",
             description: "",
             label: ""
@@ -97,7 +97,7 @@
     var MISSING_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/20/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: "",
@@ -113,7 +113,7 @@
     var MISSING_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/20/condition-list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: "",
@@ -130,7 +130,7 @@
     var OPERATOR_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "operator/1/list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "list",
             description: "",
             label: ""
@@ -145,7 +145,7 @@
     var OPERATOR_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "operator/1/list",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "list",
             description: "",
             label: ""
@@ -160,7 +160,7 @@
     var WIDGET_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
         {
             id: "widget/21/other-endpoint",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "other-endpoint",
             description: "",
             label: ""
@@ -175,8 +175,38 @@
     var WIDGET_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
         {
             id: "widget/21/other-outputendpoint",
-            friendcode: "list",
+            friendcodeList: ["list"],
             name: "other-outputendpoint",
+            description: "",
+            label: ""
+        },
+        {
+            id: "CoNWeT/jenkins-project-build-list/0.1.9",
+            type: "widget",
+            equals: equals
+        }
+    );
+
+    var FRIENDCODES_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
+        {
+            id: "operator/1/query",
+            friendcodeList: ["query", "string"],
+            name: "query",
+            description: "",
+            label: ""
+        },
+        {
+            id: "CoNWeT/example-1/1.0",
+            type: "operator",
+            equals: equals
+        }
+    );
+
+    var FRIENDCODES_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
+        {
+            id: "widget/21/keywords",
+            friendcodeList: ["keywords", "query", "input-text"],
+            name: "keywords",
             description: "",
             label: ""
         },
@@ -451,6 +481,33 @@
                 expect(callback.calls.argsFor(0)).toEqual([BASIC_INPUT_ENDPOINT]);
             });
 
+            it("should find input endpoints using friendcode list", function () {
+                var callback = jasmine.createSpy('callback');
+
+                // Prepare the engine
+                engine
+                    .appendEndpoint(FRIENDCODES_INPUT_ENDPOINT)
+                    .appendEndpoint(FRIENDCODES_OUTPUT_ENDPOINT);
+
+                expect(engine.forEachSuggestion(FRIENDCODES_OUTPUT_ENDPOINT, callback)).toBe(engine);
+
+                expect(callback.calls.count()).toBe(1);
+                expect(callback.calls.argsFor(0)).toEqual([FRIENDCODES_INPUT_ENDPOINT]);
+            });
+
+            it("should find output endpoints using friendcode list", function () {
+                var callback = jasmine.createSpy('callback');
+
+                // Prepare the engine
+                engine
+                    .appendEndpoint(FRIENDCODES_INPUT_ENDPOINT)
+                    .appendEndpoint(FRIENDCODES_OUTPUT_ENDPOINT);
+
+                expect(engine.forEachSuggestion(FRIENDCODES_INPUT_ENDPOINT, callback)).toBe(engine);
+
+                expect(callback.calls.count()).toBe(1);
+                expect(callback.calls.argsFor(0)).toEqual([FRIENDCODES_OUTPUT_ENDPOINT]);
+            });
         });
 
         describe("empty()", function () {
