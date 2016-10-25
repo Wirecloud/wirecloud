@@ -206,7 +206,7 @@ module.exports = function (grunt) {
         },
 
         uglify: {
-            my_target: {
+            styledelements: {
                 files: {
                     'dist/StyledElements.min.js': styledElementsFiles
                 }
