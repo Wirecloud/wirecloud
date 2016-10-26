@@ -179,7 +179,14 @@ module.exports = function (grunt) {
             lib: {
                 src: styledElementsFiles,
                 options: {
-                    destination: 'dist/docs/StyledElements',
+                    destination: 'dist/docs/styledelements',
+                    configure: '.jsdocrc'
+                }
+            },
+            wirecloud: {
+                src: WirecloudFiles,
+                options: {
+                    destination: 'dist/docs/wirecloud',
                     configure: '.jsdocrc'
                 }
             }
