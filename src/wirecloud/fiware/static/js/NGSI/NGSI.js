@@ -90,12 +90,19 @@
             parameters: parameters,
             postBody: body,
             onSuccess: function (response) {
-                if (typeof callbacks.onSuccess === 'function') {
+                var error;
+
+                if (response.status !== 200) {
+                    if (typeof callbacks.onFailure === 'function') {
+                        error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
+                        callbacks.onFailure(error);
+                    }
+                } else if (typeof callbacks.onSuccess === 'function') {
                     var data;
                     try {
                         try {
                             data = JSON.parse(response.responseText);
-                        } catch (error) {
+                        } catch (e1) {
                             throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
                         }
                         data = parse_func(data, callbacks);
@@ -160,7 +167,7 @@
                 vertice = scope.value.polygon.vertices[i];
                 result.polygon.vertices.push({
                     latitude: "" + vertice.latitude,
-                    longuitude: "" + vertice.longuitude
+                    longitude: "" + vertice.longitude
                 });
             }
 
@@ -315,17 +322,12 @@
                     }
 
                     if (updateAction !== 'DELETE') {
-                        if (attribute.contextValue == null) {
-                            contextValue = 'emptycontent';
-                        } else if (typeof attribute.contextValue === 'string') {
+                        if (attribute.value != null) {
+                            contextValue = attribute.value;
+                        } else if (attribute.contextValue != null) {
                             contextValue = attribute.contextValue;
-                            if (contextValue.trim() === '') {
-                                attributeElement.valuecontextValue = 'emptycontent';
-                            }
-                        } else if (typeof attribute.contextValue === 'number' || typeof attribute.contextValue === 'boolean') {
-                            contextValue = "" + attribute.contextValue;
                         } else {
-                            contextValue = attribute.contextValue;
+                            contextValue = null;
                         }
 
                         attributeElement.value = contextValue;
@@ -582,9 +584,6 @@
                     attribute_info = contextResponse.attributes[j];
                     if (!update_response) {
                         contextValue = attribute_info.value;
-                        if (contextValue === 'emptycontent') {
-                            contextValue = '';
-                        }
                     }
 
                     if (flat) {
@@ -661,9 +660,17 @@
     };
 
     var parse_type_info_response = function parse_type_info_response(data) {
-        var status_info = process_status_info_json(data);
+        var status_info;
 
-        if (status_info.code != 200) {
+        if (typeof data !== 'object' || Array.isArray(data)) {
+            throw new NGSI.InvalidResponseError('The server returned an invalid json structure');
+        }
+
+        status_info = process_status_info_json(data);
+
+        if (status_info.code == 404) {
+            throw new NGSI.NotFoundError(data);
+        } else if (status_info.code != 200) {
             throw new NGSI.InvalidResponseError('Unexpected error code');
         }
 
@@ -1103,6 +1110,13 @@
     };
     NGSI.InvalidResponseError.prototype = new Error();
     NGSI.InvalidResponseError.prototype.constructor = NGSI.InvalidResponseError;
+
+    NGSI.NotFoundError = function NotFoundError(details) {
+        this.name = 'NotFound';
+        this.details = details || '';
+    };
+    NGSI.NotFoundError.prototype = new Error();
+    NGSI.NotFoundError.prototype.constructor = NGSI.NotFoundError;
 
     NGSI.ProxyConnectionError = function ProxyConnectionError(cause) {
         this.name = 'ProxyConnectionError';
