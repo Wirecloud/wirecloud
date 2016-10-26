@@ -132,20 +132,16 @@
     };
 
     var orderVersions = function orderVersions(versions) {
-        versions = versions.map(function (value) {
-            return new Wirecloud.Version(value);
-        }).sort(function (version1, version2) {
+        versions = versions.sort(function (version1, version2) {
             return -version1.compareTo(version2);
-        }).map(function (version, i) {
-            return {
-                label: "v" + version,
-                value: version.text
-            };
         });
 
-        versions[0].label = utils.interpolate(utils.gettext("%(version)s (latest)"), {
-            version: versions[0].label
-        });
+        versions[0] = {
+            label: utils.interpolate(utils.gettext("%(version)s (latest)"), {
+                version: versions[0]
+            }),
+            value: versions[0]
+        };
 
         return versions;
     };
