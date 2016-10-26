@@ -61,12 +61,17 @@ class WorkspaceSearcher(BaseSearcher):
             [Term('groups', group.name) for group in request.user.groups.all()])
 
     def build_compatible_fields(self, workspace):
+        if workspace.last_modified is not None:
+            lastmodified = datetime.datetime.utcfromtimestamp(workspace.last_modified / 1e3)
+        else:
+            lastmodified = datetime.datetime.utcfromtimestamp(workspace.creation_date / 1e3)
+
         return {
             'id': '%s' % workspace.pk,
             'owner': '%s' % workspace.creator,
             'name': '%s' % workspace.name,
             'description': workspace.description,
-            'lastmodified': datetime.datetime.utcfromtimestamp(workspace.last_modified / 1e3),
+            'lastmodified': lastmodified,
             'longdescription': workspace.longdescription,
             'public': workspace.public,
             'users': ', '.join(workspace.users.all().values_list('username', flat=True)),
