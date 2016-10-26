@@ -26,9 +26,20 @@
 
     "use strict";
 
-    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?(-dev.*)?$/; // Hangs if it doesn't match the RE
+    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?(-dev(.+)?)?$/; // Hangs if it doesn't match the RE
 
-    var Version = function Version(version, source) {
+    /**
+     * Creates a Version object. This kind of instance allows you to:
+     * - validate versions
+     * - compare versions
+     * - remove internal details when displaying them to the end user
+     *
+     * @constructor
+     * @name Wirecloud.Version
+     * @param {String} version
+     *     version as a string
+     */
+    var Version = function Version(version) {
         var groups, msg;
         if (typeof version == 'string') {
             groups = version.match(VERSION_RE);
@@ -36,22 +47,65 @@
                 msg = "%(version)s is not a valid version";
                 throw new TypeError(utils.interpolate(msg, {version: version}));
             }
+
             this.array = groups[1].split('.').map(function (x) { return parseInt(x, 10); });
+            /**
+             * Pre-version part of the version, `null` if this version has not a
+             * pre-version part.
+             *
+             * **Example**: "a1"
+             *
+             * @name Wirecloud.Version#pre_version
+             * @type {String}
+             */
             this.pre_version = groups[2] != null ? groups[2] : null;
+            /**
+             * Indicates if this version is a development version
+             *
+             * @name Wirecloud.Version#dev
+             * @type {Boolean}
+             */
             this.dev = groups[3] != null;
+            /**
+             * Dev user part of the version, `null` if this version has not a
+             * dev user part.
+             *
+             * **Example**: "admin"
+             *
+             * @name Wirecloud.Version#devtext
+             * @type {String}
+             */
+            this.devtext = groups[4];
+            /**
+             * String representing this version.
+             *
+             * **Example**: "1.0rc1-devadmin"
+             *
+             * @name Wirecloud.Version#text
+             * @type {String}
+             * @See {@link Wirecloud.Version#toString} for getting a string
+             *     representation for the end user.
+             */
             this.text = version;
-        } else if (version instanceof Array) {
-            this.array = version;
-            this.pre_version = null;
-            this.dev = false;
-            this.text = version.join('.');
         } else {
             throw new TypeError("missing or invalid version parameter");
         }
-        this.source = source;
         Object.freeze(this);
     };
 
+    /**
+     * Compares this version with the specified version for order
+     *
+     * @name Wirecloud.Version#compareTo
+     * @method
+     *
+     * @param {String|Wirecloud.Version} version
+     *     the version to be compared.
+     *
+     * @returns {Number}
+     *     a negative integer, zero, or a positive integer as this version is
+     *     less than, equal to, or greater than the specified version. 
+     */
     Version.prototype.compareTo = function compareTo(version) {
         var len, value1, value2, pre_version1, pre_version2, i;
 
@@ -89,9 +143,10 @@
         } else if (pre_version1 > pre_version2) {
             return 1;
         } else {
-            // If neither or both are dev return 0 (equals)
             if (this.dev === version.dev) {
-                return 0;
+                // If neither or both are dev return 0 (equals) if devtext are the same
+                // If neither are dev versions, both devtext will be null
+                return this.devtext === version.devtext ? 0 : 1;
             } else {
                 // Development versions are lower
                 return this.dev ? -1 : 1;
@@ -99,6 +154,22 @@
         }
     };
 
+    /**
+     * Returns a string representation of the version.
+     *
+     * **Example**:
+     *
+     * ```javascript
+     * var version = new Wirecloud.Version("1.0-devadmin");
+     * version.toString() => "1.0-dev"
+     * ```
+     *
+     * @name Wirecloud.Version#toString
+     * @method
+     *
+     * @returns {String}
+     *     a string representation of the version.
+     */
     Version.prototype.toString = function toString() {
         return this.text.replace(/-dev.*$/, '-dev');
     };
