@@ -1074,6 +1074,25 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
         self.assertEqual(len(data['tabs']), 4)
         self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
 
+    def test_fill_workspace_using_behaviours_template_with_missing_references(self):
+
+        def check_description(description):
+            self.assertEqual(len(description['connections']), 1)
+            self.assertFalse(description['connections'][0]['sourcename'].endswith('missing_outputendpoint'))
+            self.assertEqual(len(description['components']['widget']), 1)
+            widget_id = description['components']['widget'].keys()[0]
+            self.assertFalse('missing_outputendpoint' in description['components']['widget'][widget_id]['endpoints']['source'])
+
+        template = self.read_template('wt_missing_references_in_behaviours.xml')
+        fillWorkspaceUsingTemplate(self.workspace, template)
+
+        wiring = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())['wiring']
+        self.assertEqual(len(wiring['connections']), 1)
+        self.assertNotEqual(wiring['connections'][0]['source']['endpoint'], 'missing_outputendpoint')
+
+        check_description(wiring['visualdescription'])
+        check_description(wiring['visualdescription']['behaviours'][0])
+
     def test_build_workspace_from_template(self):
         template = self.read_template('wt1.xml')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
