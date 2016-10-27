@@ -134,7 +134,7 @@ module.exports = function (grunt) {
                         type : 'html',
                         dir : 'build/coverage/styledelements'
                     },
-                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/*Spec.js']),
+                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/*Spec.js']),
                     preprocessors: {
                         "wirecloud/commons/static/js/StyledElements/*.js": ['coverage'],
                     }
