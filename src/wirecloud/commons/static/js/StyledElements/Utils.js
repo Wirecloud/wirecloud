@@ -395,17 +395,6 @@ if (window.StyledElements == null) {
         return targetValue;
     };
 
-    if (!Object.hasOwnProperty('create')) {
-        Object.create = function create(parentPrototype) {
-            var ParentClass;
-
-            ParentClass = function ParentClass() {};
-            ParentClass.prototype = parentPrototype;
-
-            return new ParentClass();
-        };
-    }
-
     /**
      * Extends a built-in prototype using the Object.create method.
      * @since 0.6

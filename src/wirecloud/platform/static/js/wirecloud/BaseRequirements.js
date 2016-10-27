@@ -41,6 +41,10 @@
             throw new Error('Missing Object.freeze support');
         }
 
+        if (!('create' in Object)) {
+            throw new Error('Missing Object.create support');
+        }
+
         if (!('defineProperty' in Object)) {
             throw new Error('Missing Object.defineProperty support');
         }
