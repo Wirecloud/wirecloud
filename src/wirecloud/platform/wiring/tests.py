@@ -576,6 +576,85 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus, self.empty_wiring)
 
+    def test_remove_widget_from_workspace_with_behaviours(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'connections': [
+                {
+                    'source': {
+                        'type': 'widget',
+                        'id': '1',
+                        'endpoint': 'event'
+                    },
+                    'target': {
+                        'type': 'widget',
+                        'id': '2',
+                        'endpoint': 'slot'
+                    },
+                },
+            ],
+            'visualdescription': {
+                'components': {
+                    'widget': {
+                        '1': {},
+                        '2': {}
+                    }
+                },
+                'connections': [
+                    {
+                        'sourcename': "widget/1/event",
+                        'targetname': "widget/2/slot"
+                    }
+                ],
+                'behaviours': [
+                    {
+                        'components': {
+                            'widget': {
+                                '1': {},
+                                '2': {}
+                            }
+                        },
+                        'connections': [
+                            {
+                                'sourcename': "widget/1/event",
+                                'targetname': "widget/2/slot"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': self.workspace_id, 'tab_id': 1, 'iwidget_id': 1})
+        client.delete(url)
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus, {
+            'connections': [],
+            'visualdescription': {
+                'components': {
+                    'widget': {
+                        '2': {}
+                    }
+                },
+                'connections': [],
+                'behaviours': [
+                    {
+                        'components': {
+                            'widget': {
+                                '2': {}
+                            }
+                        },
+                        'connections': []
+                    }
+                ]
+            }
+        })
+
 
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
 @override_settings(DEBUG=False, FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
