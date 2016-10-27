@@ -111,6 +111,25 @@
             });
         });
 
+        describe("formatSize(size)", function () {
+            var formatSize = StyledElements.Utils.formatSize;
+
+            check_simple_call("should format work without passing arguments", formatSize, [], 'N/A');
+            check_simple_call("should format `null` correctly", formatSize, [null], 'N/A');
+            check_simple_call("should format 0 as 0 bytes", formatSize, [0], '0 bytes');
+            check_simple_call("should format 1023 as 1023 bytes", formatSize, [1023], '1023 bytes');
+            check_simple_call("should format 1536 as 1.5 KiB", formatSize, [1536], '1.5 KiB');
+            check_simple_call("should format 1024 as 1 KiB", formatSize, [1024], '1 KiB');
+            check_simple_call("should format 1047552 as 1023 KiB", formatSize, [1047552], '1023 KiB');
+            check_simple_call("should format 1048576 as 1 MiB", formatSize, [1048576], '1 MiB');
+            check_simple_call("should format 1488978 as 1.42 MiB", formatSize, [1488978], '1.42 MiB');
+            check_simple_call("should format 1488978 as 1 MiB when using 3 decimals", formatSize, [1488978, 3], '1.42 MiB');
+            check_simple_call("should format 1072693248 as 1023 MiB", formatSize, [1072693248], '1023 MiB');
+            check_simple_call("should format 1073741824 as 1 GiB", formatSize, [1073741824], '1 GiB');
+            check_simple_call("should format 1098437885952 as 1023 GiB", formatSize, [1098437885952], '1023 GiB');
+            check_simple_call("should format 1099511627776 as 1 TiB", formatSize, [1099511627776], '1 TiB');
+        });
+
         describe("getRelativePosition(element1, element2)", function () {
             var element1, element2, getRelativePosition = StyledElements.Utils.getRelativePosition;
 
@@ -136,6 +155,44 @@
                 element2.style.cssText = "position: absolute; top: 20px; left: 10px; right: 0px; height: 10px;";
 
                 expect(getRelativePosition(element2, element1)).toEqual({x: 10, y: 20});
+            });
+        });
+
+        describe("inherit(child, parent, [members])", function () {
+            var inherit;
+
+            beforeAll(function () {
+                inherit = StyledElements.Utils.inherit;
+            });
+
+            it("should inherit from another class", function () {
+                var A = function A() {};
+                var B = function B() {};
+
+                expect(inherit(B, A)).toBeUndefined();
+
+                var test = new B();
+
+                expect(test instanceof B).toBe(true);
+                expect(test instanceof A).toBe(true);
+            });
+
+            it("should inherit from another class overwriting methods", function () {
+                var A = function A() {};
+                A.prototype.toString = function toString() {
+                    return "A";
+                };
+
+                var B = function B() {};
+
+                inherit(B, A, {
+                    toString: function toString() {
+                        return "B";
+                    }
+                });
+                var test = new B();
+
+                expect(test.toString()).toEqual("B");
             });
         });
 
@@ -251,40 +308,6 @@
             });
         });
 
-        describe("normalizeKey(event)", function () {
-            var normalizeKey = StyledElements.Utils.normalizeKey;
-
-            var initkeyevent = function initkeyevent(event) {
-                ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].forEach(function (attr) {
-                    if (!(attr in event)) {
-                        event[attr] = false;
-                    }
-                });
-                return event;
-            };
-
-            it("returns Unidentified for unknown keyCodes", function () {
-                expect(normalizeKey(initkeyevent({keyCode: 0}))).toBe("Unidentified");
-            });
-
-            it("returns a translated value for known keyCodes", function () {
-                expect(normalizeKey(initkeyevent({keyCode: 8}))).toBe("Backspace");
-            });
-
-            it("returns key value if present", function () {
-                expect(normalizeKey(initkeyevent({key: "Escape"}))).toBe("Escape");
-            });
-
-            it("returns fixed key value if needed", function () {
-                expect(normalizeKey(initkeyevent({key: "Left"}))).toBe("ArrowLeft");
-            });
-
-            it("return unaltered key value if the alt key is pressed", function () {
-                expect(normalizeKey(initkeyevent({altKey: true, key: "å", keyCode: 65}))).toBe("a");
-            });
-
-        });
-
         describe("merge(object, ...sources)", function () {
             var merge;
 
@@ -323,6 +346,40 @@
                 expect(src.other).toBe(true);
                 expect(defaults.state).toBe("default");
             });
+        });
+
+        describe("normalizeKey(event)", function () {
+            var normalizeKey = StyledElements.Utils.normalizeKey;
+
+            var initkeyevent = function initkeyevent(event) {
+                ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].forEach(function (attr) {
+                    if (!(attr in event)) {
+                        event[attr] = false;
+                    }
+                });
+                return event;
+            };
+
+            it("returns Unidentified for unknown keyCodes", function () {
+                expect(normalizeKey(initkeyevent({keyCode: 0}))).toBe("Unidentified");
+            });
+
+            it("returns a translated value for known keyCodes", function () {
+                expect(normalizeKey(initkeyevent({keyCode: 8}))).toBe("Backspace");
+            });
+
+            it("returns key value if present", function () {
+                expect(normalizeKey(initkeyevent({key: "Escape"}))).toBe("Escape");
+            });
+
+            it("returns fixed key value if needed", function () {
+                expect(normalizeKey(initkeyevent({key: "Left"}))).toBe("ArrowLeft");
+            });
+
+            it("return unaltered key value if the alt key is pressed", function () {
+                expect(normalizeKey(initkeyevent({altKey: true, key: "å", keyCode: 65}))).toBe("a");
+            });
+
         });
 
         describe("update(object, ...sources)", function () {
@@ -378,62 +435,6 @@
             });
         });
 
-        describe("inherit(child, parent, [members])", function () {
-            var inherit;
-
-            beforeAll(function () {
-                inherit = StyledElements.Utils.inherit;
-            });
-
-            it("should inherit from another class", function () {
-                var A = function A() {};
-                var B = function B() {};
-
-                expect(inherit(B, A)).toBeUndefined();
-
-                var test = new B();
-
-                expect(test instanceof B).toBe(true);
-                expect(test instanceof A).toBe(true);
-            });
-
-            it("should inherit from another class overwriting methods", function () {
-                var A = function A() {};
-                A.prototype.toString = function toString() {
-                    return "A";
-                };
-
-                var B = function B() {};
-
-                inherit(B, A, {
-                    toString: function toString() {
-                        return "B";
-                    }
-                });
-                var test = new B();
-
-                expect(test.toString()).toEqual("B");
-            });
-        });
-
-        describe("formatSize(size)", function () {
-            var formatSize = StyledElements.Utils.formatSize;
-
-            check_simple_call("should format work without passing arguments", formatSize, [], 'N/A');
-            check_simple_call("should format `null` correctly", formatSize, [null], 'N/A');
-            check_simple_call("should format 0 as 0 bytes", formatSize, [0], '0 bytes');
-            check_simple_call("should format 1023 as 1023 bytes", formatSize, [1023], '1023 bytes');
-            check_simple_call("should format 1536 as 1.5 KiB", formatSize, [1536], '1.5 KiB');
-            check_simple_call("should format 1024 as 1 KiB", formatSize, [1024], '1 KiB');
-            check_simple_call("should format 1047552 as 1023 KiB", formatSize, [1047552], '1023 KiB');
-            check_simple_call("should format 1048576 as 1 MiB", formatSize, [1048576], '1 MiB');
-            check_simple_call("should format 1488978 as 1.42 MiB", formatSize, [1488978], '1.42 MiB');
-            check_simple_call("should format 1488978 as 1 MiB when using 3 decimals", formatSize, [1488978, 3], '1.42 MiB');
-            check_simple_call("should format 1072693248 as 1023 MiB", formatSize, [1072693248], '1023 MiB');
-            check_simple_call("should format 1073741824 as 1 GiB", formatSize, [1073741824], '1 GiB');
-            check_simple_call("should format 1098437885952 as 1023 GiB", formatSize, [1098437885952], '1023 GiB');
-            check_simple_call("should format 1099511627776 as 1 TiB", formatSize, [1099511627776], '1 TiB');
-        });
     });
 
 })();
