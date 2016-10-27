@@ -157,17 +157,6 @@ if (window.StyledElements == null) {
         }
     };
 
-    /**
-     * Comprueba si una palabra está incluida en un string dado.
-     *
-     * @param {String} text Texto en el que se va a realizar la comprobación.
-     * @param {String} word Palabra que se va a comprobar si está en el texto.
-     * @return {Boolean}
-     */
-    Utils.hasWord = function hasWord(text, word) {
-        return text.match(new RegExp("(^\\s*|\\s+)" + word + "(\\s+|\\s*$)", "g")) != null;
-    };
-
     Utils.removeWord = function removeWord(text, word) {
         return text.replace(new RegExp("(^\\s*|\\s+)" + word + "(\\s+|\\s*$)", "g"), " ").trim();
     };
