@@ -246,7 +246,11 @@
          *      The instance on which the member is called.
          */
         prependTo: function prependTo(parentElement, refElement) {
-            utils.prependChild(parentElement, this, refElement);
+            if (parentElement instanceof se.StyledElement && typeof parentElement.prependChild === 'function') {
+                parentElement.prependChild(this, refElement);
+            } else {
+                utils.prependChild(parentElement, this, refElement);
+            }
             return this;
         },
 

@@ -665,7 +665,7 @@ if (window.StyledElements == null) {
      */
     Utils.appendChild = function appendChild(parentElement, newElement, refElement) {
         var parentNode = getNode(parentElement);
-        var refNode = getNode(refElement);
+        var refNode = getLastNode(refElement);
 
         if (refNode != null) {
             refNode = refNode.nextSibling;
@@ -703,7 +703,7 @@ if (window.StyledElements == null) {
      */
     Utils.prependChild = function prependChild(parentElement, newElement, refElement) {
         var parentNode = getNode(parentElement);
-        var refNode = getNode(refElement);
+        var refNode = getFirstNode(refElement);
 
         if (typeof newElement === 'string') {
             newElement = document.createTextNode(newElement);
@@ -739,6 +739,22 @@ if (window.StyledElements == null) {
 
     var getNode = function getNode(value) {
         return value instanceof StyledElements.StyledElement ? value.get() : value;
+    };
+
+    var getFirstNode = function getFirstNode(value) {
+        if (value instanceof StyledElements.Fragment) {
+            return value.elements[0];
+        } else {
+            return value instanceof StyledElements.StyledElement ? value.get() : value;
+        }
+    };
+
+    var getLastNode = function getLastNode(value) {
+        if (value instanceof StyledElements.Fragment) {
+            return value.elements[value.elements.length - 1];
+        } else {
+            return value instanceof StyledElements.StyledElement ? value.get() : value;
+        }
     };
 
     var getNodes = function getNodes(value) {
