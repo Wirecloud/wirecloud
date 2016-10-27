@@ -158,12 +158,45 @@
             });
         });
 
-        describe("inherit(child, parent, [members])", function () {
-            var inherit;
+        describe("hasFocus(element)", function () {
+            var hasFocus = StyledElements.Utils.hasFocus;
+            var dom = null;
 
-            beforeAll(function () {
-                inherit = StyledElements.Utils.inherit;
+            beforeEach(function () {
+                dom = document.createElement('div');
+                document.body.appendChild(dom);
             });
+
+            afterEach(function () {
+                dom.remove();
+                dom = null;
+            });
+
+            it("should return false if the provided element is not focused", function () {
+                var element1 = document.createElement('input');
+                dom.appendChild(element1);
+
+                var element2 = document.createElement('input');
+                dom.appendChild(element2);
+
+                element2.focus();
+
+                expect(hasFocus(element1)).toBeFalsy();
+            });
+
+            it("should return true if the provided element is focused", function () {
+                var element = document.createElement('input');
+                dom.appendChild(element);
+
+                element.focus();
+
+                expect(hasFocus(element)).toBeTruthy();
+            });
+
+        });
+
+        describe("inherit(child, parent, [members])", function () {
+            var inherit = StyledElements.Utils.inherit;
 
             it("should inherit from another class", function () {
                 var A = function A() {};
@@ -378,6 +411,33 @@
 
             it("return unaltered key value if the alt key is pressed", function () {
                 expect(normalizeKey(initkeyevent({altKey: true, key: "å", keyCode: 65}))).toBe("a");
+            });
+
+        });
+
+        describe("preventDefaultListener(event)", function () {
+
+            it("should stop the propagation of the event", function () {
+                var event = jasmine.createSpyObj("event", ["stopPropagation", "preventDefault"]);
+
+                StyledElements.Utils.preventDefaultListener(event);
+
+                expect(event.preventDefault.calls.count()).toBe(1);
+                expect(event.preventDefault.calls.argsFor()).toEqual([]);
+                expect(event.stopPropagation.calls.count()).toBe(0);
+            });
+
+        });
+        describe("stopPropagationListener(event)", function () {
+
+            it("should stop the propagation of the event", function () {
+                var event = jasmine.createSpyObj("event", ["stopPropagation", "preventDefault"]);
+
+                StyledElements.Utils.stopPropagationListener(event);
+
+                expect(event.stopPropagation.calls.count()).toBe(1);
+                expect(event.stopPropagation.calls.argsFor()).toEqual([]);
+                expect(event.preventDefault.calls.count()).toBe(0);
             });
 
         });

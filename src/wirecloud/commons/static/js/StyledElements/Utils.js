@@ -31,6 +31,9 @@ if (window.StyledElements == null) {
 
     "use strict";
 
+    /**
+     * @namespace StyledElements.Utils
+     */
     var Utils = {};
 
     /**
@@ -80,6 +83,8 @@ if (window.StyledElements == null) {
 
     /**
      * Event listener that stops any event propagation.
+     *
+     * @memberof StyledElements.Utils
      */
     Utils.stopPropagationListener = function stopPropagationListener(e) {
         e.stopPropagation();
@@ -87,6 +92,8 @@ if (window.StyledElements == null) {
 
     /**
      * Event listener that prevents the default action for a event.
+     *
+     * @memberof StyledElements.Utils
      */
     Utils.preventDefaultListener = function preventDefaultListener(e) {
         e.preventDefault();
@@ -96,6 +103,7 @@ if (window.StyledElements == null) {
      * This method provides a shortcut for handling common error control
      * patterns when calling callbacks.
      *
+     * @memberof StyledElements.Utils
      * @since 0.5
      *
      * @param {*} [callback] This parameter should provide the callback to call,
@@ -170,10 +178,13 @@ if (window.StyledElements == null) {
     };
 
     /**
-     * Escapes a minimal set of characters (\, *, +, ?, |, {, [, (,), ^, $,.,
-     * #, and white space) by replacing them with their escape codes. This
-     * instructs the regular expression engine to interpret these characters
-     * literally rather than as metacharacters.
+     * Escapes a minimal set of characters (`\`, `*`, `+`, `?`,  `|`, `{`, `[`,
+     * `(`, `)`, `^`, `$`, `.`,  `#`, and white space) by replacing them with
+     * their escape codes. This instructs the regular expression engine to
+     * interpret these characters literally rather than as metacharacters.
+     *
+     * @memberof StyledElements.Utils
+     * @since 0.5
      *
      * @param {String} text Text to be used as part of a regex
      * @returns {String} Text to use in a regex
@@ -194,21 +205,18 @@ if (window.StyledElements == null) {
     var tmp_div = document.createElement('div');
 
     /**
-     * Escapes a minimal set of characters (\, *, +, ?, |, {, [, (,), ^, $,.,
-     * #, and white space) by replacing them with their escape codes. this
-     * instructs the regular expression engine to interpret these characters
-     * literally rather than as metacharacters.
+     * Escapes the characters in a String using HTML entities.
      *
-     * @param {String} text Text to be used as part of a regex
-     * @returns {String} Text to use in a regex
+     * @memberof StyledElements.Utils
+     * @since 0.5
+     *
+     * @param {String} text Text to be used as text in a HTLM document
+     * @returns {String} HTML representation of the provided text
      *
      * @example
      *
-     * var user_input = "Case inSensitive search";
-     * new RegExp(escapeRegExp(user_input), "i");
-     *
-     * var user_input = "RegExp with user input";
-     * new RegExp(escapeRegExp(user_input) + "... (OK|FAIL|ERROR)")
+     * var user_input = "<hello> world";
+     * new Frament("User input: " + escapeHTML(user_input));
      */
     Utils.escapeHTML = function escapeHTML(text) {
         tmp_div.textContent = text;
@@ -218,8 +226,13 @@ if (window.StyledElements == null) {
     /**
      * Returns the position of a given element relative to another given element.
      *
+     * @memberof StyledElements.Utils
+     * @since 0.5
+     *
      * @param {Element} element1 Element to position
      * @param {Element} element2 Base element
+     * @returns {Object}
+     *     an object with the relative coordinates in the `x` and `y` attributes
      */
     Utils.getRelativePosition = function getRelativePosition(element1, element2) {
 
@@ -301,6 +314,7 @@ if (window.StyledElements == null) {
     /**
      * Checks if *element* has the focus
      *
+     * @memberof StyledElements.Utils
      * @since 0.6.2
      *
      * @param {Element} element element to test
@@ -397,6 +411,8 @@ if (window.StyledElements == null) {
 
     /**
      * Extends a built-in prototype using the Object.create method.
+     *
+     * @memberof StyledElements.Utils
      * @since 0.6
      *
      * @param {Function} child The child's class constructor
@@ -467,6 +483,7 @@ if (window.StyledElements == null) {
     /**
      * [TODO: highlight description]
      *
+     * @memberof StyledElements.Utils
      * @since 0.6.2
      *
      * @param {String} text - [TODO: description]
@@ -556,6 +573,7 @@ if (window.StyledElements == null) {
     /**
      * Extracts modifier keys information from keyboard events.
      *
+     * @memberof StyledElements.Utils
      * @since 0.7.0
      *
      * @param {KeyboardEvent} event keyboard event
@@ -578,6 +596,7 @@ if (window.StyledElements == null) {
      * if the user is not pressing a modifier key (without taking into account
      * the shift key) or if the if the pressed key is the Backspace.
      *
+     * @memberof StyledElements.Utils
      * @since 0.7.0
      *
      * @param {KeyboardEvent} event keyboard event
@@ -596,6 +615,7 @@ if (window.StyledElements == null) {
     /**
      * Normalizes the key code info from keyboard events
      *
+     * @memberof StyledElements.Utils
      * @since 0.6.2
      *
      * @param {KeyboardEvent} event keyboard event
@@ -627,8 +647,10 @@ if (window.StyledElements == null) {
     };
 
     /**
-     * Insert the `newElement` either to the end of `parentElement` or after
-     * the `refElement` given.
+     * Inserts `newElement` either at the end of `parentElement` or after
+     * the passed `refElement`.
+     *
+     * @memberof StyledElements.Utils
      * @since 0.7
      *
      * @param {(StyledElements.StyledElement|Node)} parentElement
@@ -665,8 +687,10 @@ if (window.StyledElements == null) {
     };
 
     /**
-     * Insert the `newElement` either to the beginning of `parentElement` or
-     * before the `refElement` given.
+     * Inserts `newElement` either at the beginning of `parentElement` or
+     * before the passed `refElement`.
+     *
+     * @memberof StyledElements.Utils
      * @since 0.7
      *
      * @param {(StyledElements.StyledElement|Node)} parentElement
@@ -699,7 +723,9 @@ if (window.StyledElements == null) {
     };
 
     /**
-     * Remove the `childElement` from the `parentElement`.
+     * Removes `childElement` from `parentElement`.
+     *
+     * @memberof StyledElements.Utils
      * @since 0.7
      *
      * @param {(StyledElements.StyledElement|Node)} parentElement
@@ -747,6 +773,8 @@ if (window.StyledElements == null) {
      * Checks if `value` is an empty object. Objects are considered empty if they have no
      * own enumerable properties. Arrays or strings are considered empty if they have a
      * `length` of `0`.
+     *
+     * @memberof StyledElements.Utils
      * @since 0.5
      *
      * @param {*} value Reference to check.
@@ -781,6 +809,8 @@ if (window.StyledElements == null) {
      * object `object`. Source objects are applied from left to right. Source objects
      * that resolve to `undefined` or `null` are skipped. Subsequent sources overwrite
      * property assignments of previous sources.
+     *
+     * @memberof StyledElements.Utils
      * @since 0.5
      *
      * @param {Object} object The destination object.
@@ -836,6 +866,7 @@ if (window.StyledElements == null) {
      * skipped. Subsequent sources overwrite property assignments of previous
      * sources.
      *
+     * @memberof StyledElements.Utils
      * @since 0.8
      *
      * @param {Object} object The destination object.
@@ -888,6 +919,8 @@ if (window.StyledElements == null) {
 
     /**
      * Creates an array of the `object` own enumerable property values.
+     *
+     * @memberof StyledElements.Utils
      * @since 0.5
      *
      * @param {Object} object The object to query.
