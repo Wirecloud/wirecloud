@@ -29,6 +29,9 @@ pip install -U setuptools wheel
 cd ${WORKSPACE}/src; ./setup.py bdist_wheel; cd ..
 pip install ${WORKSPACE}/src/dist/wirecloud*-py2.py3-none-any.whl
 
+# Force selenium < 3 for now
+pip install "selenium<3"
+
 # Install the required testing tools
 pip install coverage django-nose mock radon
 
