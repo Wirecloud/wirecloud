@@ -64,7 +64,17 @@ def get_market_user_data(user, market_user, market_name):
             user_data[user_data_entry.name] = None
 
     try:
-        user_data['idm_token'] = user.social_auth.filter(provider='fiware').get().access_token
+        oauth_info = user.social_auth.get(provider='fiware')
+        if oauth_info.access_token is None:
+            raise Exception
+
+        # Refresh the token if the token has been expired or the token expires
+        # in less than 30 seconds
+        # Also refresh the token if expires_on information does not exist yet
+        if time.time() > oauth_info.extra_data.get('expires_on', 0) - 30:
+            oauth_info.refresh_token(STRATEGY)
+
+        user_data['idm_token'] = oauth_info.access_token
     except:
         pass
 
