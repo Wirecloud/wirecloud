@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page
+import requests
 
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.core.plugins import get_version_hash
@@ -35,6 +36,7 @@ try:
     from social.apps.django_app.utils import BACKENDS
     from social.backends.utils import get_backend
     FIWARE_SOCIAL_AUTH_BACKEND = get_backend(BACKENDS, 'fiware')
+
     IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social.apps.django_app.default' in settings.INSTALLED_APPS
 except:
     IDM_SUPPORT_ENABLED = False
@@ -45,6 +47,43 @@ def auth_fiware_token(auth_type, token):
     from social.apps.django_app.default.models import UserSocialAuth
     user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
     return UserSocialAuth.objects.get(provider='fiware', uid=user_data['username']).user
+
+class FIWAREBAEManager(MarketManager):
+
+    _user = None
+    _name = None
+    _options = None
+
+    def __init__(self, user, name, options):
+
+        self._user = user
+        self._name = name
+        self._options = options
+
+    def search_resource(self, vendor, name, version, user):
+        return None
+
+    def download_resource(self, user, url, endpoint):
+
+        store = endpoint['store']
+        user_data = get_market_user_data(user, self._user, self._name)
+
+        store_token_key = store + '/token'
+        if store_token_key in user_data:
+            token = user_data[store_token_key]
+        else:
+            token = user_data['idm_token']
+
+        headers = {
+            'Authorization': 'Bearer ' + token,
+        }
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code not in (200, 201, 204):
+            raise Exception(response)
+
+        return response.content
 
 
 class FiWareMarketManager(MarketManager):
@@ -143,6 +182,7 @@ class FiWarePlugin(WirecloudPlugin):
     def get_market_classes(self):
         return {
             'fiware': FiWareMarketManager,
+            'fiware-bae': FIWAREBAEManager,
         }
 
     def get_scripts(self, view):
