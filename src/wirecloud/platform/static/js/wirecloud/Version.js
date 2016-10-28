@@ -104,7 +104,7 @@
      *
      * @returns {Number}
      *     a negative integer, zero, or a positive integer as this version is
-     *     less than, equal to, or greater than the specified version. 
+     *     less than, equal to, or greater than the specified version.
      */
     Version.prototype.compareTo = function compareTo(version) {
         var len, value1, value2, pre_version1, pre_version2, i;

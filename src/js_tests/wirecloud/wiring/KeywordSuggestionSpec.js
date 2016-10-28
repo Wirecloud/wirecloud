@@ -20,7 +20,7 @@
  */
 
 /* jshint jasmine:true */
-/* globals StyledElements */
+/* globals Wirecloud */
 
 
 (function (ns) {

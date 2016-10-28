@@ -155,7 +155,7 @@ module.exports = function (grunt) {
         },
 
         jscs: {
-            lib: {
+            styledelements: {
                 src: styledElementsFiles,
                 options: {
                     config: true
@@ -168,7 +168,7 @@ module.exports = function (grunt) {
                 }
             },
             specs: {
-                src: 'js_tests/*Spec.js',
+                src: 'js_tests/**/*Spec.js',
                 options: {
                     config: true
                 }
@@ -176,7 +176,7 @@ module.exports = function (grunt) {
         },
 
         jsdoc: {
-            lib: {
+            styledelements: {
                 src: styledElementsFiles,
                 options: {
                     destination: 'dist/docs/styledelements',
@@ -196,7 +196,7 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: true
             },
-            lib: {
+            styledelements: {
                 files: {
                     src: styledElementsFiles
                 }
@@ -208,7 +208,7 @@ module.exports = function (grunt) {
             },
             specs: {
                 files: {
-                    src: 'js_tests/*Spec.js'
+                    src: 'js_tests/**/*Spec.js',
                 }
             }
         },
