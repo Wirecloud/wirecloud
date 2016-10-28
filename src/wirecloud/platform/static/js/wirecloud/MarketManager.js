@@ -32,7 +32,10 @@
         'wirecloud': {
             label: 'Wirecloud',
             view_class: CatalogueView
-        }
+        },
+        "fiware-bae": {
+            label: "FIWARE Business API Ecosystem"
+        },
     };
     MarketManager = {};
 
