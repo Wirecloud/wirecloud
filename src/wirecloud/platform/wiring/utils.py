@@ -29,38 +29,40 @@ from wirecloud.commons.utils.http import get_absolute_static_url, get_current_do
 from wirecloud.platform.plugins import get_operator_api_extensions
 
 
-def has_component(endpoint, component_id, component_type):
-    c_type, c_id, e_name = tuple(endpoint.split('/'))
+def remove_widget_from_wiring_status(id, status):
 
-    return c_type == component_type and c_id == component_id
+    def has_model_widget(connection):
 
+        def check_endpoint(endpoint):
+            return endpoint['type'] == 'widget' and ("%s" % endpoint['id']) == id
 
-def is_component(connection, endpoint_type, component_type, component_id):
-    return connection[endpoint_type]['type'] == component_type and connection[endpoint_type]['id'] == component_id
+        return check_endpoint(connection['source']) or check_endpoint(connection['target'])
 
+    def has_view_widget(connection):
 
-def remove_related_iwidget_connections(wiring, iwidget):
+        def check_endpoint(endpoint):
+            c_type, c_id, e_name = tuple(endpoint.split('/'))
+            return c_type == 'widget' and c_id == id
 
-    removed_connections = []
+        return check_endpoint(connection['sourcename']) or check_endpoint(connection['targetname'])
 
-    for i, connection in enumerate(wiring['connections']):
-        if is_component(connection, 'source', 'widget', iwidget.id) or is_component(connection, 'target', 'widget', iwidget.id):
-            removed_connections.append(connection)
+    def remove_references(description, has_widget):
 
-    if 'visualdescription' in wiring:
-        if 'connections' in wiring['visualdescription']:
-            removed_visual_connections = []
+        if 'components' in description and id in description['components']['widget']:
+            del description['components']['widget'][id]
 
-            for connection in wiring['visualdescription']['connections']:
-                if has_component(connection['sourcename'], iwidget.id, 'widget') or has_component(connection['targetname'], iwidget.id, 'widget'):
-                    removed_visual_connections.append(connection)
+        for connection in [c for c in description['connections'] if has_widget(c)]:
+            description['connections'].remove(connection)
 
-            for connection in removed_visual_connections:
-                wiring['visualdescription']['connections'].remove(connection)
+    remove_references(status, has_model_widget)
 
-    for connection in removed_connections:
-        wiring['connections'].remove(connection)
+    if 'visualdescription' in status:
+        remove_references(status['visualdescription'], has_view_widget)
 
+        for behaviour in status['visualdescription']['behaviours']:
+            remove_references(behaviour, has_view_widget)
+
+    return status
 
 def get_operator_cache_key(operator, domain, mode):
     return '_operator_xhtml/%s/%s/%s?mode=%s' % (operator.cache_version, domain, operator.id, mode)
