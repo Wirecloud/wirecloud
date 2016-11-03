@@ -48,8 +48,8 @@
             }.bind(this),
             'body': function (options) {
                 this.windowContent = document.createElement('div');
-                if (options && typeof options['class'] === 'string') {
-                    this.windowContent.className = options['class'];
+                if (options && typeof options.class === 'string') {
+                    this.windowContent.className = options.class;
                 }
                 return this.windowContent;
             }.bind(this),
@@ -60,8 +60,8 @@
             }.bind(this),
             'footer': function (options) {
                 this.windowBottom = document.createElement('div');
-                if (options && typeof options['class'] === 'string') {
-                    this.windowBottom.className = options['class'];
+                if (options && typeof options.class === 'string') {
+                    this.windowBottom.className = options.class;
                 }
                 return this.windowBottom;
             }.bind(this)
@@ -224,7 +224,7 @@
             throw new TypeError('Parent modal already has a child modal');
         } else if (priv_child.parent != null) {
             throw new TypeError('Modal already has a parent modal');
-        } 
+        }
 
         // Check child is not an ancestor
         if (parent === child) {

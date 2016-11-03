@@ -26,9 +26,6 @@
 
     "use strict";
 
-    /*************************************************************************
-     * Constructor
-     *************************************************************************/
     var PopUp = function PopUp(element, options) {
 
         StyledElements.ObjectWithEvents.call(this, ['close']);
@@ -140,9 +137,6 @@
         this.arrow = null;
     };
 
-    /*************************************************************************
-     * Make Anchor public
-     *************************************************************************/
     Wirecloud.ui.Tutorial.PopUp = PopUp;
 
 

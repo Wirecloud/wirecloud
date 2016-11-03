@@ -673,7 +673,7 @@
     };
 
     var _removeConnection = function _removeConnection(index, connection) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         this.description.connections.splice(index, 1);
         connection.remove();
@@ -682,7 +682,7 @@
     };
 
     var disabled_removeComponent = function disabled_removeComponent(component) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         delete this.description.components[component.type][component.id];
         delete this.components[component.type][component.id];
@@ -696,7 +696,7 @@
     };
 
     var desactivateAllExcept = function desactivateAllExcept(behaviour) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         var i, found;
 
@@ -715,7 +715,7 @@
     };
 
     var enableToRemoveBehaviour = function enableToRemoveBehaviour() {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         var enabled = this.behaviours.length > 1;
 
@@ -727,7 +727,7 @@
     };
 
     var btncreate_onclick = function btncreate_onclick() {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         var dialog = new Wirecloud.ui.FormWindowMenu([
                 {name: 'title', label: utils.gettext("Title"), type: 'text'},
@@ -742,7 +742,7 @@
     };
 
     var btnenable_onclick = function btnenable_onclick() {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         var dialog, message;
 
@@ -773,7 +773,7 @@
     };
 
     var insertBehaviour = function insertBehaviour(behaviour) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         this.body.appendChild(behaviour);
         this.behaviours.push(behaviour);
@@ -798,7 +798,7 @@
     };
 
     var _removeComponent = function _removeComponent(component, cascade) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
 
         if (cascade) {
             this.behaviours.forEach(function (behaviour) {
@@ -825,7 +825,7 @@
     };
 
     var showComponentRemoveModal = function showComponentRemoveModal(component) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
         var modal, message;
 
         message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
@@ -842,7 +842,7 @@
     };
 
     var showComponentListRemoveModal = function showComponentListRemoveModal(componentList) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
         var i, modal, message, components;
 
         message = new se.Fragment();
@@ -875,7 +875,7 @@
     };
 
     var showComponentDeleteCascadeModal = function showComponentDeleteCascadeModal(component) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
         var modal, message;
 
         message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING, {

@@ -26,9 +26,6 @@
 
     "use strict";
 
-    /*************************************************************************
-     * Constructor
-     *************************************************************************/
     var AutoAction = function AutoAction(tutorial, options) {
         this.options = options;
         // Normalize asynchronous option
@@ -121,8 +118,6 @@
         this.arrow = null;
     };
 
-    /*************************************************************************
-     * Make Anchor public
-     *************************************************************************/
     Wirecloud.ui.Tutorial.AutoAction = AutoAction;
+
 })();

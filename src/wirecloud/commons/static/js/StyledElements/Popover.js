@@ -158,9 +158,11 @@
 
         Object.defineProperties(this, {
             element: {value: null, writable: true},
-            visible: {get: function () {
-                return this.element != null;
-            }},
+            visible: {
+                get: function () {
+                    return this.element != null;
+                }
+            },
             _disableCallback: {value: disableCallback.bind(this), enumerable: false}
         });
     };

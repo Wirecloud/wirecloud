@@ -9,15 +9,22 @@
     "disallowNewlineBeforeBlockStatements": true,
     "disallowFunctionDeclarations": true,
     "disallowSpaceAfterPrefixUnaryOperators": ["++", "--", "+", "-", "~", "!"],
+    "disallowSpaceBeforeBinaryOperators": [
+        ","
+    ],
     "disallowSpaceBeforePostfixUnaryOperators": ["++", "--"],
+    "disallowSpacesInCallExpression": true,
+    "disallowSpacesInNamedFunctionExpression": {
+        "beforeOpeningRoundBrace": true
+    },
     "disallowSpacesInsideArrayBrackets": true,
     "disallowSpacesInsideObjectBrackets": true,
     "disallowSpacesInsideParentheses": true,
     "disallowSpaceAfterObjectKeys": true,
     "requireCapitalizedConstructors": true,
     "requireDotNotation": true,
-    "requireSpaceAfterLineComment": true,
     "requireSpacesInConditionalExpression": true,
+    "requireSpaceAfterLineComment": true,
     "requireSpaceBeforeObjectValues": true,
     "requireSpaceBeforeBlockStatements": true,
     "requireSpaceBeforeBinaryOperators": [
@@ -69,6 +76,9 @@
     ],
     "requireSpacesInAnonymousFunctionExpression": {
         "beforeOpeningRoundBrace": true,
+        "beforeOpeningCurlyBrace": true
+    },
+    "requireSpacesInNamedFunctionExpression": {
         "beforeOpeningCurlyBrace": true
     },
     "requireCurlyBraces": [

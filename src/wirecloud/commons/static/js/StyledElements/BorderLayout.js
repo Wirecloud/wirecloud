@@ -37,7 +37,7 @@
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord(options['class'], "se-border-layout");
+        this.wrapperElement.className = utils.appendWord(options.class, "se-border-layout");
 
         Object.defineProperties(this, {
             north: {value: new StyledElements.Container({'class': 'se-bl-north-container'})},

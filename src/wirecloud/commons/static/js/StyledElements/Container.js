@@ -51,7 +51,7 @@
             this.wrapperElement.setAttribute('id', options.id);
         }
 
-        this.addClassName(options['class']);
+        this.addClassName(options.class);
 
         var priv = {
             children: []

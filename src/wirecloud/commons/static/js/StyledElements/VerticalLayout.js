@@ -34,7 +34,7 @@
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord(this.options['class'], "se-vertical-layout");
+        this.wrapperElement.className = utils.appendWord(this.options.class, "se-vertical-layout");
 
         this.north = new StyledElements.Container({'class': 'se-vl-north-container'});
         this.center = new StyledElements.Container({'class': 'se-vl-center-container'});

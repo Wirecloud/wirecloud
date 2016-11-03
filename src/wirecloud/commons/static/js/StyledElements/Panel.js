@@ -51,7 +51,7 @@
             this.addClassName('panel-selectable');
         }
 
-        this.addClassName(options['class']);
+        this.addClassName(options.class);
 
         this.heading = new se.Container({class: "panel-heading"});
         this.heading.insertInto(this.wrapperElement);

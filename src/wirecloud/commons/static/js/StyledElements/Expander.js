@@ -43,7 +43,7 @@
         StyledElements.StyledElement.call(this, ['expandChange']);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord("panel se-expander", options['class']);
+        this.wrapperElement.className = utils.appendWord("panel se-expander", options.class);
 
         if (options.state != null && options.state.trim() !== "") {
             this.addClassName('panel-' + options.state);

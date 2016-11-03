@@ -66,8 +66,8 @@
 
         this.wrapperElement = this.inputElement;
         this.wrapperElement.className = "se-text-field";
-        if (options['class'] !== "") {
-            this.wrapperElement.className += " " + options['class'];
+        if (options.class !== "") {
+            this.wrapperElement.className += " " + options.class;
         }
 
         if (options.name) {

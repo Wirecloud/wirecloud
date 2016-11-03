@@ -45,17 +45,17 @@
      */
     var List = function List(options) {
         options = utils.merge({
-            'class':            '',
-            'id':               null,
-            'multivalued':      false,
-            'initialEntries':   [],
-            'initialSelection': []
+            class: '',
+            id: null,
+            multivalued: false,
+            initialEntries: [],
+            initialSelection: []
         }, options);
 
         StyledElements.StyledElement.call(this, ['change']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = utils.prependWord(options['class'], "styled_list");
+        this.wrapperElement.className = utils.prependWord(options.class, "styled_list");
 
         if (options.id != null) {
             this.wrapperElement.id = options.id;

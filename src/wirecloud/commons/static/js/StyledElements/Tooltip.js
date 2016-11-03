@@ -144,9 +144,11 @@
 
         Object.defineProperties(this, {
             element: {value: null, writable: true},
-            visible: {get: function () {
-                return this.element != null;
-            }}
+            visible: {
+                get: function () {
+                    return this.element != null;
+                }
+            }
         });
     };
     utils.inherit(Tooltip, StyledElements.StyledElement);

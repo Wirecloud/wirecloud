@@ -76,8 +76,8 @@
 
         this.layout = new StyledElements.HorizontalLayout({'class': 'se-file-field input input-append'});
         this.wrapperElement = this.layout.wrapperElement;
-        if (options['class'] !== "") {
-            this.wrapperElement.className += " " + options['class'];
+        if (options.class !== "") {
+            this.wrapperElement.className += " " + options.class;
         }
 
         var wrapper = document.createElement('div');

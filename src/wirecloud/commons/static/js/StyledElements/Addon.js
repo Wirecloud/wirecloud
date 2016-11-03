@@ -65,7 +65,7 @@
 
         this.wrapperElement = document.createElement("span");
         this.wrapperElement.className = "se-add-on";
-        this.addClassName(options['class']);
+        this.addClassName(options.class);
 
         privates.set(this, {
             related_input: null

@@ -39,8 +39,8 @@
 
             cell = document.createElement('div');
             cell.className = 'se-model-table-cell';
-            if (typeof column['class'] === 'string') {
-                cell.classList.add(column['class']);
+            if (typeof column.class === 'string') {
+                cell.classList.add(column.class);
             }
             if (column.width != null && column.width !== "css") {
                 cell.style.width = column.width;
@@ -108,8 +108,8 @@
                     cell.style.flexGrow = 0;
                 }
 
-                if (typeof column['class'] === 'string') {
-                    cell.classList.add(column['class']);
+                if (typeof column.class === 'string') {
+                    cell.classList.add(column.class);
                 }
 
                 if (column.contentBuilder) {
@@ -206,8 +206,8 @@
         };
         options = utils.merge(defaultOptions, options);
 
-        if (options['class'] != null) {
-            className = utils.appendWord('se-model-table full', options['class']);
+        if (options.class != null) {
+            className = utils.appendWord('se-model-table full', options.class);
         } else {
             className = 'se-model-table full';
         }

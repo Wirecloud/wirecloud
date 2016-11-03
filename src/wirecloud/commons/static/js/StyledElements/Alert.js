@@ -53,7 +53,7 @@
             this.addClassName('se-alert-' + options.alignment);
         }
 
-        this.addClassName(options['class']);
+        this.addClassName(options.class);
 
         this.heading = new se.Container({
             class: "se-alert-heading"

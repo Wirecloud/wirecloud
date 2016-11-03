@@ -70,8 +70,8 @@
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = 'se-mac-field se-input-group';
-        if (options['class'] !== "") {
-            this.wrapperElement.className += " " + options['class'];
+        if (options.class !== "") {
+            this.wrapperElement.className += " " + options.class;
         }
 
         this.inputElement = document.createElement("input");

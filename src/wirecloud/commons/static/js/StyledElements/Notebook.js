@@ -63,7 +63,7 @@
         options = utils.merge(defaultOptions, options);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = utils.prependWord(options['class'], "se-notebook");
+        this.wrapperElement.className = utils.prependWord(options.class, "se-notebook");
 
         tabWrapper = new StyledElements.HorizontalLayout({'class': 'se-notebook-tabs-wrapper', 'autoHeight': false});
         this.tabWrapper = tabWrapper;

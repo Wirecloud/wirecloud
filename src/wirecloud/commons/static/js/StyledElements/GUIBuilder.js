@@ -150,7 +150,7 @@
         if (container_element != null) {
             options = utils.merge(extractOptions(container_element), extractOptionsFromAttributes(container_element));
             if (options != null && 'class' in options) {
-                container.addClassName(options['class']);
+                container.addClassName(options.class);
             }
 
             fragment = processRoot(builder, container_element, tcomponents, context);

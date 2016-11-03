@@ -50,7 +50,7 @@
         StyledElements.StyledElement.call(this, ['preTransition', 'postTransition']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = utils.prependWord(options['class'], "se-alternatives");
+        this.wrapperElement.className = utils.prependWord(options.class, "se-alternatives");
 
         /* Process options */
         if (options.id) {

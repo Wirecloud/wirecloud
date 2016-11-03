@@ -147,9 +147,6 @@
         configure_start_phase.call(this);
     };
 
-    /*************************************************************************
-     * Constructor
-     *************************************************************************/
     var UserAction = function UserAction(tutorial, options) {
         this.options = options;
         // Normalize asynchronous option
@@ -322,8 +319,6 @@
         this.arrow = null;
     };
 
-    /*************************************************************************
-     * Make Anchor public
-     *************************************************************************/
     Wirecloud.ui.Tutorial.UserAction = UserAction;
+
 })();

@@ -179,9 +179,9 @@
         handler.addEventListener("mousedown", startdrag, false);
         handler.addEventListener("touchstart", startdrag, false);
 
-        /**********
-         * Public methods
-         **********/
+        // =====================================================================
+        // PUBLIC MEMBERS
+        // =====================================================================
 
         this.destroy = function destroy() {
             handler.removeEventListener("mousedown", startdrag, false);

@@ -57,8 +57,8 @@
 
         this.wrapperElement = this.inputElement;
         this.wrapperElement.className = "se-password-field";
-        if (options['class'] !== "") {
-            this.wrapperElement.className += " " + options['class'];
+        if (options.class !== "") {
+            this.wrapperElement.className += " " + options.class;
         }
 
         if ('name' in options) {

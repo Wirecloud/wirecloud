@@ -38,15 +38,17 @@
         this.full = options.full;
         this.children = [];
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "styled_accordion");
+        this.wrapperElement.className = StyledElements.Utils.appendWord(options.class, "styled_accordion");
     };
     utils.inherit(Accordion, StyledElements.StyledElement);
 
     Accordion.prototype.createContainer = function createContainer(options) {
-        var expander, defaultOptions = {
+        var expander;
+
+        options = utils.merge({
             'listenOnTitle': true
-        };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        }, options);
+
         expander = new StyledElements.Expander(options);
         expander.insertInto(this.wrapperElement);
 

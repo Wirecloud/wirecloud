@@ -28,22 +28,22 @@
 
     var setDialogPosition = function setDialogPosition(ref_pos, pos) {
         switch (pos) {
-            case 'up':
-                this.htmlElement.style.top = (ref_pos.top - this.htmlElement.offsetHeight - 20) + 'px';
-                this.htmlElement.style.left = (ref_pos.left + (ref_pos.width - this.htmlElement.offsetWidth) / 2) + 'px';
-                break;
-            case 'right':
-                this.htmlElement.style.top = (ref_pos.top + (ref_pos.height - this.htmlElement.offsetHeight) / 2) + 'px';
-                this.htmlElement.style.left = (ref_pos.right + 20) + 'px';
-                break;
-            case 'left':
-                this.htmlElement.style.top = (ref_pos.top + (ref_pos.height - this.htmlElement.offsetHeight) / 2) + 'px';
-                this.htmlElement.style.left = (ref_pos.left - this.htmlElement.offsetWidth - 20) + 'px';
-                break;
-            case 'down':
-                this.htmlElement.style.top = (ref_pos.bottom + 20) + 'px';
-                this.htmlElement.style.left = (ref_pos.left + (ref_pos.width - this.htmlElement.offsetWidth) / 2) + 'px';
-                break;
+        case 'up':
+            this.htmlElement.style.top = (ref_pos.top - this.htmlElement.offsetHeight - 20) + 'px';
+            this.htmlElement.style.left = (ref_pos.left + (ref_pos.width - this.htmlElement.offsetWidth) / 2) + 'px';
+            break;
+        case 'right':
+            this.htmlElement.style.top = (ref_pos.top + (ref_pos.height - this.htmlElement.offsetHeight) / 2) + 'px';
+            this.htmlElement.style.left = (ref_pos.right + 20) + 'px';
+            break;
+        case 'left':
+            this.htmlElement.style.top = (ref_pos.top + (ref_pos.height - this.htmlElement.offsetHeight) / 2) + 'px';
+            this.htmlElement.style.left = (ref_pos.left - this.htmlElement.offsetWidth - 20) + 'px';
+            break;
+        case 'down':
+            this.htmlElement.style.top = (ref_pos.bottom + 20) + 'px';
+            this.htmlElement.style.left = (ref_pos.left + (ref_pos.width - this.htmlElement.offsetWidth) / 2) + 'px';
+            break;
         }
     };
 
@@ -209,9 +209,6 @@
         }
     };
 
-    /*************************************************************************
-     * Make SimpleDescription public
-     *************************************************************************/
     Wirecloud.ui.Tutorial.SimpleDescription = SimpleDescription;
 
 })(StyledElements, Wirecloud.Utils);

@@ -42,7 +42,7 @@
         StyledElements.StyledElement.call(this, ['change']);
 
         this.wrapperElement = document.createElement("ul");
-        this.wrapperElement.className = utils.appendWord(options['class'], "se-pills");
+        this.wrapperElement.className = utils.appendWord(options.class, "se-pills");
 
         this.activePill = null;
         this.pills = {};

@@ -276,7 +276,7 @@
     };
 
     // Search the position of the element
-    var searchElement = function searchElement (list, el, idAttr) {
+    var searchElement = function searchElement(list, el, idAttr) {
         if (!idAttr) {
             return -2;
         }

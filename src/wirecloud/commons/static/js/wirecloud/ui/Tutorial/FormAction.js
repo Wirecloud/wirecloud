@@ -26,9 +26,6 @@
 
     "use strict";
 
-    /*************************************************************************
-     * Constructor TODO
-     *************************************************************************/
     /*     {'type': 'formAction', 'mainMsg': "Complete the form ", 'form': windowForm, 'actionElements': [newName, newUrl], 'actionMsgs': ["chose a new name for the Catalogue.", "Complete the url. for example: 'https://wirecloud.conwet.fi.upm.es'"], 'endElement': acceptButton, 'asynchronous': true},*/
     var FormAction = function FormAction(tutorial, options) {
 
@@ -98,20 +95,20 @@
             // Positions
             pos = form.getBoundingClientRect();
             switch (this.mainPos) {
-                case 'up':
-                    this.mainStep.wrapperElement.style.top = (pos.top - this.mainStep.wrapperElement.offsetHeight - 20) + 'px';
-                    break;
-                case 'right':
-                    this.mainStep.wrapperElement.style.left = (pos.right + 20) + 'px';
-                    break;
-                case 'left':
-                    this.mainStep.wrapperElement.style.left = (pos.left - this.mainStep.wrapperElement.offsetWidth - 20) + 'px';
-                    break;
-                case 'down':
-                    this.mainStep.wrapperElement.style.top = (pos.bottom + 20) + 'px';
-                    break;
-                default:
-                    break;
+            case 'up':
+                this.mainStep.wrapperElement.style.top = (pos.top - this.mainStep.wrapperElement.offsetHeight - 20) + 'px';
+                break;
+            case 'right':
+                this.mainStep.wrapperElement.style.left = (pos.right + 20) + 'px';
+                break;
+            case 'left':
+                this.mainStep.wrapperElement.style.left = (pos.left - this.mainStep.wrapperElement.offsetWidth - 20) + 'px';
+                break;
+            case 'down':
+                this.mainStep.wrapperElement.style.top = (pos.bottom + 20) + 'px';
+                break;
+            default:
+                break;
             }
         }
         // main action for next step
@@ -225,9 +222,6 @@
         }
     };
 
-    /*************************************************************************
-     * Make Anchor public
-     *************************************************************************/
     Wirecloud.ui.Tutorial.FormAction = FormAction;
 
 })(Wirecloud.Utils);

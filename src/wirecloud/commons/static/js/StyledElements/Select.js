@@ -66,7 +66,7 @@
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = "se-select";
-        this.addClassName(options['class']);
+        this.addClassName(options.class);
 
         var div =  document.createElement("div");
         div.className = "se-select-arrow";

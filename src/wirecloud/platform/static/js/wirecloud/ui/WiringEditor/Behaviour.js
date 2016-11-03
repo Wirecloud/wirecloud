@@ -393,12 +393,14 @@
 
     var displayUpdateForm = function displayUpdateForm() {
         /* jshint validthis:true */
-        var dialog = new Wirecloud.ui.FormWindowMenu([
+        var dialog = new Wirecloud.ui.FormWindowMenu(
+            [
                 {name: 'title', label: utils.gettext("Title"), type: 'text'},
                 {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
             ],
             utils.gettext("Behaviour settings"),
-            'behaviour-update-form');
+            'behaviour-update-form'
+        );
 
         dialog.executeOperation = function (data) {
             updateInfo.call(this, data);

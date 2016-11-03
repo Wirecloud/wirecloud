@@ -37,7 +37,7 @@
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord(this.options['class'], "se-horizontal-layout");
+        this.wrapperElement.className = utils.appendWord(this.options.class, "se-horizontal-layout");
 
         this.west = new StyledElements.Container({'class': 'se-hl-west-container'});
         this.center = new StyledElements.Container({'class': 'se-hl-center-container'});

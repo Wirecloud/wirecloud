@@ -40,7 +40,7 @@
 
         this.wrapperElement = document.createElement("div");
 
-        this.wrapperElement.className = utils.prependWord(options['class'], 'styled_hidden_field');
+        this.wrapperElement.className = utils.prependWord(options.class, 'styled_hidden_field');
 
         this.inputElement = document.createElement("input");
         this.inputElement.setAttribute("type", "hidden");

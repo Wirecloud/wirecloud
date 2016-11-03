@@ -111,7 +111,7 @@
         this.badgeElement = null;
         this.tooltip = null;
 
-        this.addClassName(options['class']);
+        this.addClassName(options.class);
 
         if (options.id.trim() !== "") {
             this.wrapperElement.setAttribute('id', options.id);
