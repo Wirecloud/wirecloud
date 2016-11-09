@@ -1,9 +1,7 @@
 @import 'variables';
 
 .pagination {
-    display: inline-flex;
     font-size: $font-size-base;
-    margin: 5px 3px;
 }
 
 .pagination .icon-first-page:before { content: "\f048"; }

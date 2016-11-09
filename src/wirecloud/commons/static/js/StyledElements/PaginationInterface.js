@@ -79,7 +79,7 @@
 
     PaginationInterface = function PaginationInterface(source, options) {
         var defaultOptions = {
-            'layout': utils.gettext('<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><t:firstBtn/><t:prevBtn/><div class="se-box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>'),
+            'layout': utils.gettext(builder.DEFAULT_OPENING + '<div class="se-input-group"><t:firstBtn/><t:prevBtn/><div class="se-box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></div>' + builder.DEFAULT_CLOSING),
             'autoHide': false
         };
         options = utils.merge(defaultOptions, options);
@@ -89,7 +89,7 @@
 
         this.source = source;
 
-        this.wrapperContainer = new StyledElements.Container({class: 'pagination se-input-group'});
+        this.wrapperContainer = new StyledElements.Container({class: 'pagination'});
         this.wrapperElement = this.wrapperContainer.wrapperElement;
 
         this.firstBtn = new StyledElements.Button({'iconClass': 'icon-first-page'});
