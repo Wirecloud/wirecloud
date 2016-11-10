@@ -95,20 +95,27 @@ def check_mashup_dependencies(template, user):
 def map_id(endpoint_view, id_mapping):
     return id_mapping[endpoint_view['type']]["%s" % endpoint_view['id']]['id']
 
+def is_valid_connection(connection, id_mapping):
+
+    def is_valid_endpoint(endpoint):
+        return ("%s" % endpoint['id']) in id_mapping[endpoint['type']]
+
+    return is_valid_endpoint(connection['source']) and is_valid_endpoint(connection['target'])
 
 def _remap_component_ids(id_mapping, components_description, isGlobal=False):
 
     operators = {}
     for key, operator in six.iteritems(components_description['operator']):
-        operators[six.text_type(id_mapping['operator'][key]['id'])] = operator
+        if key in id_mapping['operator']:
+            operators[six.text_type(id_mapping['operator'][key]['id'])] = operator
     components_description['operator'] = operators
 
     widgets = {}
     for key, widget in six.iteritems(components_description['widget']):
-        if isGlobal:
-            widget['name'] = id_mapping['widget'][key]['name']
-
-        widgets[six.text_type(id_mapping['widget'][key]['id'])] = widget
+        if key in id_mapping['widget']:
+            if isGlobal:
+                widget['name'] = id_mapping['widget'][key]['name']
+            widgets[six.text_type(id_mapping['widget'][key]['id'])] = widget
     components_description['widget'] = widgets
 
 
@@ -144,10 +151,11 @@ def _remap_connection_endpoints(source_mapping, target_mapping, description):
     connections = []
 
     for connection in description['connections']:
-        new_connection = connection
-        new_connection['sourcename'] = source_mapping[connection['sourcename']]
-        new_connection['targetname'] = target_mapping[connection['targetname']]
-        connections.append(new_connection)
+        if connection['sourcename'] in source_mapping and connection['targetname'] in target_mapping:
+            new_connection = connection
+            new_connection['sourcename'] = source_mapping[connection['sourcename']]
+            new_connection['targetname'] = target_mapping[connection['targetname']]
+            connections.append(new_connection)
 
     description['connections'] = connections
 
@@ -307,6 +315,10 @@ def fillWorkspaceUsingTemplate(workspace, template):
     target_mapping = {}
 
     for connection in mashup_description['wiring']['connections']:
+
+        if not is_valid_connection(connection, id_mapping):
+            continue
+
         old_source_name = get_endpoint_name(connection['source'])
         old_target_name = get_endpoint_name(connection['target'])
 
@@ -316,8 +328,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
         source_mapping[old_source_name] = get_endpoint_name(connection['source'])
         target_mapping[old_target_name] = get_endpoint_name(connection['target'])
 
-    # Add new connections
-    workspace.wiringStatus['connections'] += mashup_description['wiring']['connections']
+        # Add new connection
+        workspace.wiringStatus['connections'].append(connection)
 
     # Merging visual description...
     _remap_component_ids(id_mapping, mashup_description['wiring']['visualdescription']['components'], isGlobal=True)

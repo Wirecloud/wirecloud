@@ -22,7 +22,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.fields import JSONField
-from wirecloud.platform.wiring.utils import remove_related_iwidget_connections
+from wirecloud.platform.wiring.utils import remove_widget_from_wiring_status
 
 
 @python_2_unicode_compatible
@@ -71,7 +71,7 @@ class IWidget(models.Model):
     def delete(self, *args, **kwargs):
 
         # Delete IWidget from wiring
-        remove_related_iwidget_connections(self.tab.workspace.wiringStatus, self)
+        remove_widget_from_wiring_status("%s" % self.id, self.tab.workspace.wiringStatus)
         self.tab.workspace.save()  # This also invalidates the workspace cache
 
         super(IWidget, self).delete(*args, **kwargs)
