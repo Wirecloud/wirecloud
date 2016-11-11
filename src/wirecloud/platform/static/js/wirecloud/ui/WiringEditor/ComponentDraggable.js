@@ -697,7 +697,7 @@
     var notifyErrors = function notifyErrors() {
         var title, label, count;
 
-        count = this._component.logManager.getErrorCount();
+        count = this._component.logManager.errorCount;
         this.toggleClassName('missing', this.missing);
 
         if (this.heading.has(this.heading.notice)) {

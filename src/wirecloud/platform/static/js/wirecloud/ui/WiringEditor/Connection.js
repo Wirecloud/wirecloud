@@ -467,7 +467,7 @@
          *      The instance on which the member is called.
          */
         showLogs: function showLogs() {
-            var count = this._connection.logManager.getErrorCount();
+            var count = this._connection.logManager.errorCount;
 
             this.btnLogs.setBadge(count ? count : null, 'danger');
             this._connection.showLogs();
@@ -688,7 +688,7 @@
     };
 
     var notifyErrors = function notifyErrors() {
-        var count = this._connection.logManager.getErrorCount();
+        var count = this._connection.logManager.errorCount;
 
         this.toggleClassName('has-error', !!count);
         this.btnLogs.setBadge(count ? count : null, 'danger', true);

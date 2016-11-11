@@ -96,7 +96,7 @@
              * @type {Wirecloud.LogManager}
              */
             logManager: {
-                value: new Wirecloud.wiring.OperatorLogManager(this, wiring)
+                value: new Wirecloud.LogManager(wiring.logManager)
             },
             /**
              * @memberOf Wirecloud.Wiring.Operator#
@@ -248,7 +248,11 @@
          * @returns {Wirecloud.Wiring.Operator}
          */
         showLogs: function showLogs() {
-            var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
+            var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager, {
+                title: utils.interpolate(utils.gettext("%(operator_title)s's logs"), {
+                    operator_title: this.title
+                })
+            });
             dialog.htmlElement.classList.add("wc-component-logs-modal");
             dialog.show();
             return this;
