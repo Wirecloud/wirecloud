@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,7 +32,7 @@ Wirecloud.location = {
 
     "use strict";
 
-    var HANDLER_RE = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
+    var HANDLER_RE = new RegExp(/^on(?:Complete|Exception|Failure|Success|UploadProgress|\d{3})$/);
 
     var setRequestHeaders = function setRequestHeaders() {
         var headers, name;
@@ -73,7 +73,7 @@ Wirecloud.location = {
     };
 
     var onReadyStateChange = function onReadyStateChange() {
-        if (this.transport.readyState == 4 && this.transport.aborted !== true) {
+        if (this.transport.readyState === 4 && this.transport.aborted !== true) {
 
             var response = new Response(this);
 
@@ -144,12 +144,12 @@ Wirecloud.location = {
         var key;
 
         this.options = utils.merge({
-            method:       'POST',
+            method: 'POST',
             asynchronous: true,
             responseType: null,
-            contentType:  null,
-            encoding:     null,
-            postBody:     null
+            contentType: null,
+            encoding: null,
+            postBody: null
         }, options);
 
         for (key in this.options) {
@@ -157,7 +157,20 @@ Wirecloud.location = {
                 throw new TypeError(utils.interpolate('Invalid %(callback)s callback', {callback: key}, true));
             }
         }
-        this.method = this.options.method.toUpperCase();
+
+        if (this.options.context != null) {
+            for (key in this.options) {
+                if (HANDLER_RE.test(key) && typeof this.options[key] === 'function') {
+                    this.options[key] = this.options[key].bind(this.options.context);
+                }
+            }
+        }
+
+        Object.defineProperties(this, {
+            method: {
+                value: this.options.method.toUpperCase()
+            }
+        });
 
         if (this.options.parameters != null && (typeof this.options.parameters === 'string' || typeof this.options.parameters === 'object')) {
             if (['PUT', 'POST'].indexOf(this.method) !== -1 && this.options.postBody == null) {
@@ -167,12 +180,6 @@ Wirecloud.location = {
                 }
                 if (this.options.encoding == null) {
                     this.options.encoding = 'UTF-8';
-                }
-            } else {
-                if (url.indexOf('?') !== -1) {
-                    url += '&' + toQueryString(this.options.parameters);
-                }  else {
-                    url += '?' + toQueryString(this.options.parameters);
                 }
             }
         }
@@ -185,6 +192,7 @@ Wirecloud.location = {
                 value: function () {
                     this.transport.aborted = true;
                     this.transport.abort();
+                    return this;
                 }
             }
         });
@@ -211,9 +219,14 @@ Wirecloud.location = {
     io.buildProxyURL = function buildProxyURL(url, options) {
         var forceProxy;
 
-        if (options == null) {
-            options = {};
-        }
+        options = utils.merge({
+            method: 'POST',
+            asynchronous: true,
+            responseType: null,
+            contentType: null,
+            encoding: null,
+            postBody: null
+        }, options);
 
         forceProxy = !!options.forceProxy;
 
@@ -222,24 +235,27 @@ Wirecloud.location = {
         }
 
         if (forceProxy || (options.supportsAccessControl !== true && url.origin !== Wirecloud.location.domain)) {
-            return Wirecloud.location.domain +
-                Wirecloud.URLs.PROXY.evaluate({protocol: url.protocol.slice(0, -1), domain: url.host, path: url.pathname});
+            url = Wirecloud.location.domain +
+                Wirecloud.URLs.PROXY.evaluate({protocol: url.protocol.slice(0, -1), domain: url.host, path: url.pathname}) + url.search;
         } else {
-            return url.toString();
+            url = url.toString();
         }
-    };
 
-    io.makeRequest = function makeRequest(url, options) {
-        var key;
-
-        if (options != null && options.context != null) {
-            for (key in options) {
-                if (HANDLER_RE.test(key) && typeof options[key] === 'function') {
-                    options[key] = options[key].bind(options.context);
+        // Add parameters
+        if (options.parameters != null && (typeof options.parameters === 'string' || typeof options.parameters === 'object')) {
+            if (['PUT', 'POST'].indexOf(options.method) === -1 || options.postBody != null) {
+                if (url.indexOf('?') !== -1) {
+                    url += '&' + toQueryString(options.parameters);
+                }  else {
+                    url += '?' + toQueryString(options.parameters);
                 }
             }
         }
 
+        return url;
+    };
+
+    io.makeRequest = function makeRequest(url, options) {
         return new Request(Wirecloud.io.buildProxyURL(url, options), options);
     };
 
