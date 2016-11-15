@@ -4,6 +4,11 @@
         constants: {
 {% for entry in constants %}            {{ entry.key }}: {{ entry.value }}{% if not forloop.last %},{% endif %}
 {% endfor %}        },
+        location: {
+            'domain': document.location.protocol + '//' + document.location.host,
+            'protocol': document.location.protocol.substr(0, document.location.protocol.length - 1),
+            'host': document.location.host
+        },
         ui: {}
     };
 </script>

@@ -22,12 +22,6 @@
 /* globals Wirecloud */
 
 
-Wirecloud.location = {
-    'domain': document.location.protocol + '//' + document.location.host,
-    'protocol': document.location.protocol.substr(0, document.location.protocol.length - 1),
-    'host': document.location.host
-};
-
 (function (utils) {
 
     "use strict";

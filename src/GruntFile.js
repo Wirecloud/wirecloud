@@ -96,6 +96,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/constants.js',
     'wirecloud/platform/static/js/wirecloud/core.js',
     'wirecloud/platform/static/js/wirecloud/LogManager.js',
+    'wirecloud/platform/static/js/wirecloud/io.js',
     'wirecloud/platform/static/js/wirecloud/Version.js',
     'wirecloud/platform/static/js/wirecloud/Wiring.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
