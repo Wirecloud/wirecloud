@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals StyledElements */
 
 
@@ -35,7 +34,7 @@
             menuItem = null;
         });
 
-        describe ("MenuItem(title, handler, context)", function () {
+        describe("MenuItem(title, handler, context)", function () {
             it("Should be created when no parameters are received", function () {
                 menuItem = new StyledElements.MenuItem();
                 expect(menuItem).toBeTruthy();
@@ -56,7 +55,7 @@
             });
         });
 
-        describe ("addIconClass(iconClass)", function () {
+        describe("addIconClass(iconClass)", function () {
             var iconClass;
             it("Should add icon", function () {
                 menuItem = new StyledElements.MenuItem();
@@ -77,7 +76,7 @@
             });
         });
 
-        describe ("setDescription(description)", function () {
+        describe("setDescription(description)", function () {
             it("Should work with strings", function () {
                 menuItem = new StyledElements.MenuItem();
                 menuItem.setDescription("Hello World");

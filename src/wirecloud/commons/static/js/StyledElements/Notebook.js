@@ -339,9 +339,10 @@
         var tabId = this.tabsById.push(null);
 
         // Create the tab
-        if ((options.tab_constructor != this.Tab) && !(options.tab_constructor.prototype instanceof StyledElements.Tab)) {
+        if ((options.tab_constructor !== this.Tab) && !(options.tab_constructor.prototype instanceof StyledElements.Tab)) {
             throw new TypeError();
         }
+        // eslint-disable-next-line new-cap
         var tab = new options.tab_constructor(tabId, this, options);
 
         // Insert it into our hashes
@@ -447,7 +448,7 @@
      */
     Notebook.prototype.getTabIndex = function getTabIndex(id) {
         for (var i = 0; i < this.tabs.length; i++) {
-            if (this.tabs[i].tabId == id) {
+            if (this.tabs[i].tabId === id) {
                 return i;
             }
         }
@@ -529,7 +530,7 @@
             options = {};
         }
 
-        if (this.visibleTab && newTab == this.visibleTab) {
+        if (this.visibleTab && newTab === this.visibleTab) {
             if (this.focusOnSetVisible) {
                 this.focus(newTab.tabId);
             }

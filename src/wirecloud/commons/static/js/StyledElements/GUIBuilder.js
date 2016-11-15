@@ -69,7 +69,7 @@
 
         for (i = 0; i < element.childNodes.length; i += 1) {
             child = element.childNodes[i];
-            if (child.nodeType != Node.ELEMENT_NODE) {
+            if (child.nodeType !== Node.ELEMENT_NODE) {
                 continue;
             }
 

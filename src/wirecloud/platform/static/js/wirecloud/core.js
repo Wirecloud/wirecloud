@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint -W002 */
 /* globals gettext, moment, StyledElements, Wirecloud */
 
 
@@ -450,7 +449,7 @@
     Wirecloud.removeWorkspace = function removeWorkspace(workspace) {
         if (workspace.id == null) {
             if (workspace.owner == null || workspace.name == null) {
-                throw TypeError("missing id or owner/name parameters");
+                throw new TypeError("missing id or owner/name parameters");
             }
             workspace = this.workspacesByUserAndName[workspace.owner][workspace.name];
         }

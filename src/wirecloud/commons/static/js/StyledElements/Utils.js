@@ -47,7 +47,7 @@ if (window.StyledElements == null) {
      * Overwrite the following method for supporting translations
      */
     Utils.ngettext = function ngettext(singular, plural, count) {
-        return (count == 1) ? singular : plural;
+        return (count === 1) ? singular : plural;
     };
 
     /**

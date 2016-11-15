@@ -102,4 +102,4 @@ provide as much detail and context as possible.
 - Four spaces for indentation, never tabs.
 - strict mode.
 - "Attractive".
-- Use jshint (there is a .jshintrc file on the source code of WireCloud ;-).
+- Use eslint (there is a `.eslintrc` file on the source code of WireCloud ;-).

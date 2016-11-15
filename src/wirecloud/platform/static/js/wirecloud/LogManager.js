@@ -86,18 +86,24 @@
             switch (options.level) {
             default:
             case Wirecloud.constants.LOGGING.ERROR_MSG:
+                // eslint-disable-next-line no-console
                 if ('console' in window && typeof console.error === 'function') {
+                    // eslint-disable-next-line no-console
                     console.error(msg);
                 }
                 break;
             case Wirecloud.constants.LOGGING.WARN_MSG:
+                // eslint-disable-next-line no-console
                 if ('console' in window && typeof console.warn === 'function') {
+                    // eslint-disable-next-line no-console
                     console.warn(msg);
                 }
                 break;
             case Wirecloud.constants.LOGGING.DEBUG_MSG:
             case Wirecloud.constants.LOGGING.INFO_MSG:
+                // eslint-disable-next-line no-console
                 if ('console' in window && typeof console.info === 'function') {
+                    // eslint-disable-next-line no-console
                     console.info(msg);
                 }
                 break;

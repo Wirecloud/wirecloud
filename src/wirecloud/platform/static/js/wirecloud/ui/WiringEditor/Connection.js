@@ -715,20 +715,18 @@
         }
     };
 
+    var b1 = function b1(t) { return t * t * t; };
+    var b2 = function b2(t) { return 3 * t * t * (1 - t); };
+    var b3 = function b3(t) { return 3 * t * (1 - t) * (1 - t); };
+    var b4 = function b4(t) { return (1 - t) * (1 - t) * (1 - t); };
+
+    var bezier = function bezier(percent, c1, c2, c3, c4) {
+        var x = c1.x * b1(percent) + c2.x * b2(percent) + c3.x * b3(percent) + c4.x * b4(percent);
+        var y = c1.y * b1(percent) + c2.y * b2(percent) + c3.y * b3(percent) + c4.y * b4(percent);
+        return {x: Math.round(x), y: Math.round(y)};
+    };
+
     var calculateMiddle = function calculateMiddle(source, sourceHandle, target, targetHandle) {
-        var B1, B2, B3, B4, bezier;
-
-        B1 = function B1(t) { return t * t * t; };
-        B2 = function B2(t) { return 3 * t * t * (1 - t); };
-        B3 = function B3(t) { return 3 * t * (1 - t) * (1 - t); };
-        B4 = function B4(t) { return (1 - t) * (1 - t) * (1 - t); };
-
-        bezier = function bezier(percent, C1, C2, C3, C4) {
-            var X = C1.x * B1(percent) + C2.x * B2(percent) + C3.x * B3(percent) + C4.x * B4(percent);
-            var Y = C1.y * B1(percent) + C2.y * B2(percent) + C3.y * B3(percent) + C4.y * B4(percent);
-            return {x: Math.round(X), y: Math.round(Y)};
-        };
-
         return bezier(0.5, source, sourceHandle, targetHandle, target);
     };
 

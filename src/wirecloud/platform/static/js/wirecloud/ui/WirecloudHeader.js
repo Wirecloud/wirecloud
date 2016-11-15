@@ -161,7 +161,7 @@
         breadcrum_part.textContent = breadcrum_entry.label;
         breadcrum_part.className = breadcrum_levels[i];
         if ('class' in breadcrum_entry) {
-            breadcrum_part.classList.add(breadcrum_entry['class']);
+            breadcrum_part.classList.add(breadcrum_entry.class);
         }
 
         this.breadcrum.appendChild(breadcrum_part);

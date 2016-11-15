@@ -28,8 +28,8 @@
 
     Wirecloud.constants.LOGGING = {
         ERROR_MSG: 1,
-        WARN_MSG:  2,
-        INFO_MSG:  3,
+        WARN_MSG: 2,
+        INFO_MSG: 3,
         DEBUG_MSG: 4
     };
 

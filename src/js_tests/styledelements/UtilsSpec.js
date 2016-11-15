@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals StyledElements */
 
 
@@ -150,7 +149,7 @@
                 expect(getRelativePosition(element1, element1)).toEqual({x: 0, y: 0});
             });
 
-            it ("returns the relative position when providing different values for element1 and element2", function () {
+            it("returns the relative position when providing different values for element1 and element2", function () {
                 element1.style.cssText = "position: absolute; top: 0px; left: 0px; right: 0px; height: 10px;";
                 element2.style.cssText = "position: absolute; top: 20px; left: 10px; right: 0px; height: 10px;";
 

@@ -122,7 +122,10 @@
     };
 
     Expander.prototype.setExpanded = function setExpanded(expanded) {
-        if (this.isExpanded() == expanded) {
+        // Force boolean value
+        expanded = !!expanded;
+
+        if (this.isExpanded() === expanded) {
             return;
         }
 

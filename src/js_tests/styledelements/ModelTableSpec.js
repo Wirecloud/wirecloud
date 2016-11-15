@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals StyledElements */
 
 
@@ -283,7 +282,7 @@
                 {field: "test", sortable: true, type: "date"}
             ];
 
-            var dateParser = function dateParser (date) {
+            var dateParser = function dateParser(date) {
                 return new Date(date);
             };
 
@@ -361,7 +360,7 @@
                 table.source.changeElements(data);
             });
 
-            it ("should allow simple selections", function () {
+            it("should allow simple selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.selection).toEqual([1]);
 
@@ -370,10 +369,10 @@
                 rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
 
-                expect(observed).toEqual(observed);
+                expect(observed).toEqual(expected);
             });
 
-            it ("should allow multiple selections", function () {
+            it("should allow multiple selections", function () {
                 expect(table.select([1, 2])).toBe(table);
                 expect(table.selection).toEqual([1, 2]);
 
@@ -382,10 +381,10 @@
                 rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
 
-                expect(observed).toEqual(observed);
+                expect(observed).toEqual(expected);
             });
 
-            it ("should allow cleaning selections", function () {
+            it("should allow cleaning selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.select()).toBe(table);
                 expect(table.selection).toEqual([]);
@@ -394,10 +393,10 @@
                 expected = [false, false, false];
                 rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                expect(observed).toEqual(observed);
+                expect(observed).toEqual(expected);
             });
 
-            it ("should ignore not matching ids", function () {
+            it("should ignore not matching ids", function () {
                 expect(table.select(4)).toBe(table);
                 expect(table.selection).toEqual([4]);
 
@@ -405,13 +404,14 @@
                 expected = [false, false, false];
                 rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
-                expect(observed).toEqual(observed);
+                expect(observed).toEqual(expected);
             });
+
         });
 
         it("Should handle row's content builder", function () {
             var rows;
-            var contentBuilder = function contentBuilder (el) {
+            var contentBuilder = function contentBuilder(el) {
                 return "hello " + el.test;
             };
 
@@ -436,7 +436,7 @@
 
         it("Should handle state functions", function () {
             var rows;
-            var stateFunc = function stateFunc (el) {
+            var stateFunc = function stateFunc(el) {
                 if (el.test >= 2) {
                     return "success";
                 } else {

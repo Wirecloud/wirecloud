@@ -158,6 +158,7 @@
         if ((options.alternative_constructor !== StyledElements.Alternative) && !(options.alternative_constructor.prototype instanceof StyledElements.Alternative)) {
             throw new TypeError();
         }
+        // eslint-disable-next-line new-cap
         var alt = new options.alternative_constructor(altId, options.containerOptions);
         alt.parentElement = this;
 

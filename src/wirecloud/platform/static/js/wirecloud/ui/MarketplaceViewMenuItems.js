@@ -88,7 +88,7 @@
                     }
                 };
                 if (Wirecloud.contextManager.get('issuperuser')) {
-                    fields['public'] = {
+                    fields.public = {
                         'type': 'boolean',
                         'label': utils.gettext('Public')
                     };
@@ -105,7 +105,7 @@
                             "type": data.type,
                         }
                     };
-                    if (data['public'] === true) {
+                    if (data.public === true) {
                         market_info.options.user = null;
                     } else {
                         market_info.options.user = Wirecloud.contextManager.get('username');

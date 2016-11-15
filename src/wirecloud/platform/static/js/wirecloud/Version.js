@@ -41,7 +41,7 @@
      */
     var Version = function Version(version) {
         var groups, msg;
-        if (typeof version == 'string') {
+        if (typeof version === 'string') {
             groups = version.match(VERSION_RE);
             if (groups == null) {
                 msg = "%(version)s is not a valid version";

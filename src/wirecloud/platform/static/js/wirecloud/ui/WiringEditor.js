@@ -44,7 +44,7 @@ Wirecloud.ui = Wirecloud.ui || {};
      */
     ns.WiringEditor = function WiringEditor(id, options) {
         options = utils.merge({}, options);
-        options['class'] = "wiring-view wc-workspace-wiring";
+        options.class = "wiring-view wc-workspace-wiring";
 
         se.Alternative.call(this, id, options);
 
@@ -495,7 +495,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             };
 
             for (i = vInfo.length - 1; i >= 0; i--) {
-                if (connection.source.id == vInfo[i].sourcename && connection.target.id == vInfo[i].targetname) {
+                if (connection.source.id === vInfo[i].sourcename && connection.target.id === vInfo[i].targetname) {
                     data.options.sourceHandle = vInfo[i].sourcehandle;
                     data.options.targetHandle = vInfo[i].targethandle;
                     vInfo.splice(i, 1);
@@ -621,12 +621,12 @@ Wirecloud.ui = Wirecloud.ui || {};
         case ns.WiringEditor.BehaviourEngine.GLOBAL:
 
             this.connectionEngine.forEachConnection(function (connection) {
-                connection.removeAllowed = (behaviourEngine.filterByConnection(connection).length == 1);
+                connection.removeAllowed = (behaviourEngine.filterByConnection(connection).length === 1);
                 connection.show().background = !behaviour.hasConnection(connection);
             });
 
             this.behaviourEngine.forEachComponent(function (component) {
-                component.removeAllowed = (behaviourEngine.filterByComponent(component).length == 1);
+                component.removeAllowed = (behaviourEngine.filterByComponent(component).length === 1);
                 component.removeCascadeAllowed = true;
                 component.background = !behaviour.hasComponent(component);
             });
@@ -897,7 +897,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         for (type in this.selectedComponents) {
             for (id in this.selectedComponents[type]) {
-                if (component.type !== type || component.id != id) {
+                if (component.type !== type || component.id !== id) {
                     selectedComponent = this.selectedComponents[type][id];
                     selectedComponent.position({
                         x: selectedComponent.initialPosition.x + x,
@@ -918,7 +918,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 selectedComponent = this.selectedComponents[type][id];
                 selectedComponent.active = true;
 
-                if (component.type !== type || component.id != id) {
+                if (component.type !== type || component.id !== id) {
                     selectedComponent.dispatchEvent('change', {position: selectedComponent.position()});
                 }
             }

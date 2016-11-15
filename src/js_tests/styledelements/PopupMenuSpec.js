@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals StyledElements */
 
 
@@ -27,7 +26,7 @@
 
     "use strict";
 
-    describe ("Styled PopupMenuBase", function () {
+    describe("Styled PopupMenuBase", function () {
         var popupMenu;
 
         describe("PopupMenuBase(options)", function () {
@@ -40,7 +39,7 @@
         describe("append(child)", function () {
             describe("Should work with MenuItem instances", function () {
                 var menuItem1, menuItem2;
-                var empty = function empty () {
+                var empty = function empty() {
                 };
                 beforeAll(function () {
                     popupMenu = new StyledElements.PopupMenu();
@@ -59,7 +58,7 @@
                     expect(popupMenu._items.length).toBe(2);
                 });
 
-                it ("Should receive menuItem's click callbacks", function () {
+                it("Should receive menuItem's click callbacks", function () {
                     menuItem1.click();
                     expect(menuItem1.dispatchEvent).toHaveBeenCalled();
                     expect(menuItem2.dispatchEvent).not.toHaveBeenCalled();
@@ -93,10 +92,11 @@
             });
         });
 
-        it ("Should handle visibility", function () {
+        it("Should handle visibility", function () {
             popupMenu = new StyledElements.PopupMenu();
             expect(popupMenu).toBeTruthy();
             expect(popupMenu.wrapperElement.classList[1]).toEqual("hidden");
         });
+
     });
 })();

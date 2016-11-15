@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals FocusEvent, KeyboardEvent, MouseEvent, StyledElements */
 
 

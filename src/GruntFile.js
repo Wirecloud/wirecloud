@@ -121,6 +121,21 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
+        eslint: {
+            styledelements: {
+                src: styledElementsFiles
+            },
+            wirecloud: {
+                src: WirecloudFiles
+            },
+            specs: {
+                options: {
+                    configFile: ".eslintrc-jasmine",
+                },
+                src: 'js_tests/**/*Spec.js',
+            }
+        },
+
         karma: {
             options: {
                 frameworks: ['jasmine'],
@@ -154,27 +169,6 @@ module.exports = function (grunt) {
             }
         },
 
-        jscs: {
-            styledelements: {
-                src: styledElementsFiles,
-                options: {
-                    config: true
-                }
-            },
-            wirecloud: {
-                src: WirecloudFiles,
-                options: {
-                    config: true
-                }
-            },
-            specs: {
-                src: 'js_tests/**/*Spec.js',
-                options: {
-                    config: true
-                }
-            }
-        },
-
         jsdoc: {
             styledelements: {
                 src: styledElementsFiles,
@@ -192,27 +186,6 @@ module.exports = function (grunt) {
             }
         },
 
-        jshint: {
-            options: {
-                jshintrc: true
-            },
-            styledelements: {
-                files: {
-                    src: styledElementsFiles
-                }
-            },
-            wirecloud: {
-                files: {
-                    src: WirecloudFiles
-                }
-            },
-            specs: {
-                files: {
-                    src: 'js_tests/**/*Spec.js',
-                }
-            }
-        },
-
         uglify: {
             styledelements: {
                 files: {
@@ -223,15 +196,13 @@ module.exports = function (grunt) {
 
     });
 
+    grunt.loadNpmTasks("gruntify-eslint");
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-jsdoc");
 
     grunt.registerTask('test', [
-        'jshint',
-        'jscs',
+        'eslint',
         'karma'
     ]);
 

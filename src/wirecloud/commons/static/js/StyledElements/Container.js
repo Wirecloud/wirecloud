@@ -90,7 +90,7 @@
                 return true;
             }
 
-            return childElement.parentElement == this.get();
+            return childElement.parentElement === this.get();
         },
 
         /**

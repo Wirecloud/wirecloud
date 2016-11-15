@@ -388,12 +388,7 @@
     };
 
     var addMissingEndpoint = function addMissingEndpoint(component, endpointGroup, name) {
-        var endpoint, info;
-
-        info = {
-            name: name,
-            friendcode: ''
-        };
+        var endpoint;
 
         switch (endpointGroup) {
         case 'inputs':
@@ -469,7 +464,7 @@
     };
 
     var get_operators_by_id = function get_operators_by_id() {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
         var operators = {};
 
         privates.get(this).operators.forEach(function (operator) {
@@ -515,7 +510,7 @@
     };
 
     var append_operator = function append_operator(operator) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
         var priv = privates.get(this);
 
         priv.operators.push(operator);
@@ -567,7 +562,7 @@
     };
 
     var on_removeoperator = function on_removeoperator(operator) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
         var priv = privates.get(this);
 
         priv.operators.splice(priv.operators.indexOf(operator), 1);
@@ -580,7 +575,7 @@
     };
 
     var on_removewidget = function on_removewidget(widget) {
-        /*jshint validthis:true */
+        /* jshint validthis:true */
         var priv = privates.get(this);
 
         removeComponent.call(this, widget);

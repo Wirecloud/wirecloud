@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals StyledElements */
 
 
@@ -203,7 +202,8 @@
         check_template_context_type("null values", null);
         check_template_context_type("normal text", "hello world!!");
         check_template_context_type("text with especial chars", "a < 5 & b > 4");
-        check_template_context_type("function returning elements", function (options) {
+        check_template_context_type("function returning elements",
+            function (options) {
                 var element = document.createElement('div');
                 if (options != null && 'class' in options) {
                     element.className = options.class;
@@ -213,7 +213,8 @@
             '<div></div>',
             '<div class="my-class"></div>'
         );
-        check_template_context_type("function returning styled elements", function (options) {
+        check_template_context_type("function returning styled elements",
+            function (options) {
                 var element = new StyledElements.Button();
                 if (options != null && 'class' in options) {
                     element.addClassName(options.class);

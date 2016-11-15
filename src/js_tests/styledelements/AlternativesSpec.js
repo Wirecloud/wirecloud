@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals StyledElements, TransitionEvent */
 
 
@@ -28,7 +27,7 @@
     "use strict";
 
     describe("Alternatives", function () {
-        var endTransition, mockEvents, dom = null;
+        var endTransition, dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -41,11 +40,6 @@
                 dom = null;
             }
         });
-
-        mockEvents = function mockEvents(element) {
-            spyOn(element, 'addEventListener');
-            spyOn(element, 'removeEventListener');
-        };
 
         endTransition = function endTransition(element) {
             element.dispatchEvent(new TransitionEvent("transitionend"));
@@ -65,13 +59,13 @@
         });
 
         describe("clear()", function () {
-            var element, tab1, tab2;
+            var element;
 
             beforeEach(function () {
                 element = new StyledElements.Alternatives();
                 element.appendTo(dom);
-                tab1 = element.createAlternative();
-                tab2 = element.createAlternative();
+                element.createAlternative();
+                element.createAlternative();
             });
 
             it("should remove all the alternatives", function () {
@@ -317,7 +311,16 @@
 
             it("does nothing if the passed alternative is the visible alternative", function () {
                 expect(element.showAlternative(alt1)).toBe(element);
-                // TODO
+                expect(element.visibleAlt).toBe(alt1);
+            });
+
+            it("should call the onComplete listener", function (done) {
+                expect(element.showAlternative(alt3, {
+                    onComplete: function (element) {
+                        expect(element.visibleAlt).toBe(alt3);
+                        done();
+                    }
+                })).toBe(element);
             });
 
             it("should allow to use alternative ids", function (done) {

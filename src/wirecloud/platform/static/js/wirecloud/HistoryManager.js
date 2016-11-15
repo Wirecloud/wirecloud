@@ -39,10 +39,11 @@
     };
 
     var prepareData = function prepareData(data) {
-        var header, key, default_data = {
+        var header, key, default_data;
+
+        data = utils.merge({
             view: "workspace"
-        };
-        data = utils.merge(default_data, data);
+        }, data);
 
         header = Wirecloud.UserInterfaceManager.header;
         if (header != null && header.currentView != null) {

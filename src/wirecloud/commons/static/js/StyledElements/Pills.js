@@ -65,7 +65,7 @@
             throw new TypeError('Invalid pill id');
         }
 
-        if (id == this.activePill) {
+        if (id === this.activePill) {
             return;
         }
 

@@ -199,7 +199,7 @@
             for (pref_name in this.interfaces) {
                 preference = this.manager.preferences[pref_name].meta;
 
-                this.interfaces[pref_name].base.setValue(preference['default']);
+                this.interfaces[pref_name].base.setValue(preference.default);
                 if ('inherit' in this.interfaces[pref_name]) {
                     this.interfaces[pref_name].inherit.setValue(preference.inheritByDefault);
                     this.interfaces[pref_name].base.setDisabled(preference.inheritByDefault);

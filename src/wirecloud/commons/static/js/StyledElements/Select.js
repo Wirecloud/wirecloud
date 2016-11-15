@@ -150,9 +150,10 @@
      * newEntries is null.
      */
     Select.prototype.addEntries = function addEntries(newEntries) {
-        var oldSelectedIndex, optionValue, optionLabel, newEntry;
+        var oldSelectedIndex, optionValue, optionLabel, newEntry, defaultValue;
 
         oldSelectedIndex = this.inputElement.options.selectedIndex;
+        defaultValue = this.defaultValue !== undefined ? this.idFunc(this.defaultValue) : null;
 
         if (newEntries == null || newEntries.length === 0) {
             return;
@@ -181,7 +182,7 @@
             option.setAttribute("value", optionValue);
             option.appendChild(document.createTextNode(optionLabel));
 
-            if (this.defaultValue == optionValue) {
+            if (defaultValue === optionValue) {
                 option.setAttribute("selected", "selected");
             }
 

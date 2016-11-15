@@ -95,7 +95,8 @@
     };
 
     var showRenameModal = function showRenameModal() {
-        var dialog = new Wirecloud.ui.FormWindowMenu([
+        var dialog = new Wirecloud.ui.FormWindowMenu(
+            [
                 {name: 'title', label: utils.gettext("Title"), type: 'text', placeholder: this.component.title},
             ],
             utils.interpolate(utils.gettext("Rename %(type)s"), this.component),

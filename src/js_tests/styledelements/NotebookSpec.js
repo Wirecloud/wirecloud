@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals StyledElements */
 
 
@@ -151,6 +150,16 @@
             it("does nothing if the passed tab is the visible tab", function () {
                 element.goToTab(tab1);
                 expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.getTabElement());
+            });
+
+            it("should allow to move to a middle tab", function () {
+                element.goToTab(tab2);
+                expect(element.visibleTab).toBe(tab2);
+            });
+
+            it("should allow to move to the last tab", function () {
+                element.goToTab(tab3);
+                expect(element.visibleTab).toBe(tab3);
             });
 
         });
@@ -312,13 +321,13 @@
         });
 
         describe("clear()", function () {
-            var element, tab1, tab2;
+            var element;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
                 element.appendTo(dom);
-                tab1 = element.createTab();
-                tab2 = element.createTab();
+                element.createTab();
+                element.createTab();
             });
 
             it("should remove all the tabs", function () {
@@ -380,14 +389,14 @@
         });
 
         describe("getTabByLabel(label)", function () {
-            var element, tab1, tab2, tab3;
+            var element, tab1, tab2;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
                 element.appendTo(dom);
                 tab1 = element.createTab({name: "Tab 1"});
                 tab2 = element.createTab({name: "mytab"});
-                tab3 = element.createTab({name: "mytab"});
+                element.createTab({name: "mytab"});
             });
 
             it("returns null if the tab doesn't exist", function () {

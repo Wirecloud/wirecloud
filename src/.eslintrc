@@ -1,5 +1,19 @@
 {
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "Promise": false,
+    "WeakMap": false
+  },
   "rules": {
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
     "indent": [
       2,
       4,
@@ -11,10 +25,22 @@
       2,
       "unix"
     ],
+    "guard-for-in": 0,
+    "no-alert": 2,
+    "no-console": 2,
+    "no-debugger": 2,
     "no-empty": [
       2,
       {
         "allowEmptyCatch": true
+      }
+    ],
+    "new-cap": [
+      2,
+      {
+        "newIsCap": true,
+        "capIsNew": true,
+        "properties": true
       }
     ],
     "brace-style": [
@@ -26,6 +52,19 @@
     ],
     "no-trailing-spaces": 2,
     "no-mixed-spaces-and-tabs": 2,
+    "no-undef": 2,
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "none",
+        "caughtErrors": "none"
+      }
+    ],
+    "func-call-spacing": [
+      2,
+      "never"
+    ],
     "func-style": [
       2,
       "expression"
@@ -72,6 +111,10 @@
     "space-before-function-paren": [
       2,
       {"anonymous": "always", "named": "never", "asyncArrow": "always"}
+    ],
+    "strict": [
+      "error",
+      "function"
     ],
     "curly": [
       2,
