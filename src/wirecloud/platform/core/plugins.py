@@ -409,6 +409,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/ObjectWithEvents.js',
             'js/wirecloud/core.js',
             'js/wirecloud/UserInterfaceManager.js',
+            'js/wirecloud/Task.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/PreferenceDoesNotExistError.js',
