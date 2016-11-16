@@ -131,6 +131,7 @@
 
                 var request = Wirecloud.io.makeRequest(original);
                 expect(request.url).toBe(expected);
+                expect(request.progress).toBe(0);
             });
 
             it("should ignore null headers", function () {
@@ -279,6 +280,8 @@
                 var request = Wirecloud.io.makeRequest(url, {
                     onComplete: function (response) {
                         expect(response.request).toBe(request);
+                        expect(request.progress).toBe(0);
+                        expect(request.status).toBe("aborted");
                         done();
                     }
                 });
@@ -539,7 +542,7 @@
                 request.transport[key] = extra[key];
             }
         }
-        findListener(request.transport.addEventListener, 'readystatechange')();
+        findListener(request.transport.addEventListener, status === 0 ? 'load' : 'error')();
     };
 
     var findListener = function findListener(spy, name) {

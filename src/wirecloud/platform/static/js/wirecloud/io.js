@@ -55,6 +55,7 @@
         event.preventDefault();
 
         var response = new Response(this);
+        Wirecloud.Task.prototype.abort.call(this, response);
 
         utils.callCallback(this.options.onAbort);
         if (this.options.onComplete) {
@@ -66,31 +67,31 @@
         }
     };
 
-    var onReadyStateChange = function onReadyStateChange() {
-        if (this.transport.readyState === 4 && this.transport.aborted !== true) {
+    var onReadyStateChange = function onReadyStateChange(handler) {
+        var response = new Response(this);
+        handler(response);
 
-            var response = new Response(this);
+        try {
+            if (('on' + response.status) in this.options) {
+                this.options['on' + response.status](response);
+            } else if (this.options.onSuccess && (response.status >= 200 && response.status < 300)) {
+                this.options.onSuccess(response);
+            } else if (this.options.onFailure && (response.status < 200 || response.status >= 300)) {
+                this.options.onFailure(response);
+            }
+        } catch (e) {
+            utils.callCallback(this.options.onException, response, e);
+        }
 
+        if (this.options.onComplete) {
             try {
-                if (('on' + response.status) in this.options) {
-                    this.options['on' + response.status](response);
-                } else if (this.options.onSuccess && (response.status >= 200 && response.status < 300)) {
-                    this.options.onSuccess(response);
-                } else if (this.options.onFailure && (response.status < 200 || response.status >= 300)) {
-                    this.options.onFailure(response);
-                }
+                this.options.onComplete(response);
             } catch (e) {
                 utils.callCallback(this.options.onException, response, e);
             }
-
-            if (this.options.onComplete) {
-                try {
-                    this.options.onComplete(response);
-                } catch (e) {
-                    utils.callCallback(this.options.onException, response, e);
-                }
-            }
         }
+
+        return response;
     };
 
     var Response = function Response(request) {
@@ -195,18 +196,38 @@
         if (this.options.withCredentials === true && this.options.supportsAccessControl) {
             this.transport.withCredentials = true;
         }
-        this.transport.open(this.options.method, this.url, this.options.asynchronous);
         if (this.options.responseType) {
             this.transport.responseType = this.options.responseType;
         }
         this.transport.addEventListener('abort', onAbort.bind(this), true);
-        this.transport.addEventListener('readystatechange', onReadyStateChange.bind(this), true);
         if (typeof this.options.onUploadProgress === 'function') {
             this.transport.upload.addEventListener('progress', options.onUploadProgress, false);
         }
+
+        Wirecloud.Task.call(this, "making request", function (resolve, reject, update) {
+            this.transport.upload.addEventListener('progress', function (event) {
+                var progress = Math.round(event.loaded * 100 / event.total);
+                update(progress / 2);
+            });
+            this.transport.addEventListener("progress", function (event) {
+                if (event.lengthComputable) {
+                    var progress = Math.round(event.loaded * 100 / event.total);
+                    update(50 + (progress / 2));
+                }
+            }.bind(this));
+            this.transport.addEventListener("load", function () {
+                onReadyStateChange.call(this, resolve);
+            }.bind(this));
+            this.transport.addEventListener("error", function () {
+                onReadyStateChange.call(this, reject);
+            }.bind(this));
+        }.bind(this));
+
+        this.transport.open(this.method, this.url, this.options.asynchronous);
         setRequestHeaders.call(this);
         this.transport.send(this.options.postBody);
     };
+    utils.inherit(Request, Wirecloud.Task);
 
     var io = {};
 
