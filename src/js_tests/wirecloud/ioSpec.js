@@ -72,6 +72,26 @@
                     .toBe(original.toString());
             });
 
+            it("should ignore the supportAccessControl option if using the forceProxy option", function () {
+                var original = "http://server:1234/path?q=1";
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    supportsAccessControl: true,
+                    forceProxy: true
+                })).toBe(expected);
+            });
+
+            it("should ignore the supportAccessControl option if using the forceProxy option (using URL instances)", function () {
+                var original = new URL("http://server:1234/path?q=1");
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    supportsAccessControl: true,
+                    forceProxy: true
+                })).toBe(expected);
+            });
+
             it("should support the parameters option (using URL instances)", function () {
                 var original = new URL("http://server:1234/path");
                 var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
