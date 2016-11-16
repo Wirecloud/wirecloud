@@ -92,6 +92,38 @@
                 })).toBe(expected);
             });
 
+            it("should do nothing when using data urls and the forceProxy option", function () {
+                var original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    forceProxy: true
+                })).toBe(original);
+            });
+
+            it("should do nothing when using data urls and the forceProxy option (using URL instances)", function () {
+                var original = new URL("data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val");
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    forceProxy: true
+                })).toBe(original.toString());
+            });
+
+            it("should do nothing when using blob urls and the forceProxy option", function () {
+                var original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    forceProxy: true
+                })).toBe(original);
+            });
+
+            it("should do nothing when using blob urls and the forceProxy option (using URL instances)", function () {
+                var original = new URL("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    forceProxy: true
+                })).toBe(original.toString());
+            });
+
             it("should support the parameters option (using URL instances)", function () {
                 var original = new URL("http://server:1234/path");
                 var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
@@ -139,6 +171,30 @@
                         b: "c"
                     }
                 })).toBe(expected);
+            });
+
+            it("should ignore the parameters option when using data URL instances", function () {
+                var original = new URL("data:text/html,lots of text...<p><a name%3D\"bottom\">bottom</a>?arg=val");
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {
+                        e: 1,
+                        b: "c"
+                    }
+                })).toBe(original.toString());
+            });
+
+            it("should ignore the parameters option when using blob URL instances", function () {
+                var original = new URL("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {
+                        e: 1,
+                        b: "c"
+                    }
+                })).toBe(original.toString());
             });
 
         });
