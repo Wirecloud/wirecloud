@@ -217,7 +217,7 @@ Wirecloud.location = {
     var io = {};
 
     io.buildProxyURL = function buildProxyURL(url, options) {
-        var forceProxy;
+        var forceProxy, inmemoryurl;
 
         options = utils.merge({
             method: 'POST',
@@ -228,13 +228,14 @@ Wirecloud.location = {
             postBody: null
         }, options);
 
-        forceProxy = !!options.forceProxy;
-
         if (!(url instanceof URL)) {
             url = new URL(url, Wirecloud.location.domain + Wirecloud.URLs.ROOT_URL);
         }
 
-        if (forceProxy || (options.supportsAccessControl !== true && url.origin !== Wirecloud.location.domain)) {
+        forceProxy = !!options.forceProxy;
+        inmemoryurl = ["blob:", "data:"].indexOf(url.protocol) !== -1;
+
+        if (!inmemoryurl && (forceProxy || (options.supportsAccessControl !== true && url.origin !== Wirecloud.location.domain))) {
             url = Wirecloud.location.domain +
                 Wirecloud.URLs.PROXY.evaluate({protocol: url.protocol.slice(0, -1), domain: url.host, path: url.pathname}) + url.search;
         } else {
@@ -242,7 +243,7 @@ Wirecloud.location = {
         }
 
         // Add parameters
-        if (options.parameters != null && (typeof options.parameters === 'string' || typeof options.parameters === 'object')) {
+        if (!inmemoryurl && options.parameters != null && (typeof options.parameters === 'string' || typeof options.parameters === 'object')) {
             if (['PUT', 'POST'].indexOf(options.method) === -1 || options.postBody != null) {
                 if (url.indexOf('?') !== -1) {
                     url += '&' + toQueryString(options.parameters);
