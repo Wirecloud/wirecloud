@@ -197,6 +197,72 @@
                 })).toBe(original.toString());
             });
 
+            it("should maintain the hash part for proxied URLs", function () {
+                var original = "http://server:1234/path?q=1#id";
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1#id";
+
+                expect(Wirecloud.io.buildProxyURL(original)).toBe(expected);
+            });
+
+            it("should maintain the hash part for proxied URLs when providing parameters", function () {
+                var original = "http://server:1234/path#id";
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1#id";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {
+                        q: 1
+                    }
+                })).toBe(expected);
+            });
+
+            it("should maintain the \"hash\" part when using blob URLs", function () {
+                // In fact, blob urls don't support hashes. This test checks
+                // buildProxyURL don't process data as a hash component
+                var original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf#id";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET'
+                })).toBe(original);
+            });
+
+            it("should maintain the \"hash\" part when using blob URLs and providing parameters", function () {
+                // In fact, blob urls don't support hashes. This test checks
+                // buildProxyURL don't process data as a hash component
+                var original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf#id";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {
+                        e: 1,
+                        b: "c"
+                    }
+                })).toBe(original);
+            });
+
+            it("should maintain the \"hash\" part when using data URLs", function () {
+                // In fact, data urls don't support hashes. This test checks
+                // buildProxyURL don't process data as a hash component
+                var original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val#id";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET'
+                })).toBe(original);
+            });
+
+            it("should maintain the \"hash\" part when using data URLs and providing parameters", function () {
+                // In fact, data urls don't support hashes. This test checks
+                // buildProxyURL don't process data as a hash component
+                var original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val#id";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {
+                        e: 1,
+                        b: "c"
+                    }
+                })).toBe(original);
+            });
         });
 
         describe("makeRequest(url, options)", function () {
