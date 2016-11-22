@@ -7,6 +7,13 @@
     "WeakMap": false
   },
   "rules": {
+    "comma-spacing": [
+      "error",
+      {
+        "before": false,
+        "after": true
+      }
+    ],
     "eqeqeq": [
       "error",
       "always",

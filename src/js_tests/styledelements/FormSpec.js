@@ -158,7 +158,7 @@
             check_invalid_parameter("raises a TypeError exception if the passed parameter is a boolean", true);
             check_invalid_parameter("raises a TypeError exception if the passed parameter is a string", "hello");
 
-            it("should allow to replace current values" , function () {
+            it("should allow to replace current values", function () {
                 var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.setData({
@@ -176,7 +176,7 @@
                 });
             });
 
-            it("should use empty values if the attribute is undefined" , function () {
+            it("should use empty values if the attribute is undefined", function () {
                 var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.setData({})).toBe(element);
