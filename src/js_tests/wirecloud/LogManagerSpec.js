@@ -19,7 +19,6 @@
  *
  */
 
-/* jshint jasmine:true */
 /* globals Wirecloud */
 
 
@@ -62,10 +61,8 @@
             });
 
             it("should throw an error given a closed parent", function () {
-                var childB;
-
                 expect(function () {
-                    childB = new ns.LogManager(parentA.close());
+                    new ns.LogManager(parentA.close());
                 }).toThrowError(Error);
             });
         });
@@ -183,6 +180,7 @@
                     console: false
                 })).toEqual(parentA);
                 expect(parentA.errorCount).toBe(1);
+                // eslint-disable-next-line no-console
                 expect(console.error).not.toHaveBeenCalled();
             });
         });

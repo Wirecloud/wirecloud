@@ -32,7 +32,7 @@
 
     var LogManager = function LogManager(parent) {
         var entries = [];
-        var self = {
+        var priv = {
             children: [],
             closed: false,
             entries: entries,
@@ -42,44 +42,44 @@
 
         se.ObjectWithEvents.call(this, ["newentry"]);
 
-        _private.set(this, self);
+        privates.set(this, priv);
 
         Object.defineProperties(this, {
             children: {
                 get: function () {
-                    return self.children.slice(0);
+                    return priv.children.slice(0);
                 }
             },
             closed: {
                 get: function () {
-                    return self.closed;
+                    return priv.closed;
                 }
             },
             entries: {
                 get: function () {
-                    return self.entries.slice(0);
+                    return priv.entries.slice(0);
                 }
             },
             errorCount: {
                 get: function () {
-                    return self.entries.filter(isError).length;
+                    return priv.entries.filter(isError).length;
                 }
             },
             history: {
                 get: function () {
-                    return self.history.map(function (entries) {
+                    return priv.history.map(function (entries) {
                         return entries.slice(0);
                     });
                 }
             },
             parent: {
                 get: function () {
-                    return self.parent;
+                    return priv.parent;
                 }
             },
             totalCount: {
                 get: function () {
-                    return self.entries.length;
+                    return priv.entries.length;
                 }
             }
         });
@@ -94,17 +94,17 @@
     utils.inherit(LogManager, se.ObjectWithEvents, {
 
         close: function close() {
-            var i, self = _private.get(this);
+            var i, priv = privates.get(this);
 
-            if (!self.closed) {
-                if (self.parent) {
-                    removeChild.call(self.parent, this);
+            if (!priv.closed) {
+                if (priv.parent) {
+                    removeChild.call(priv.parent, this);
                 }
 
-                for (i = self.children.length - 1; i >= 0; i--) {
-                    removeChild.call(this, self.children[i]);
+                for (i = priv.children.length - 1; i >= 0; i--) {
+                    removeChild.call(this, priv.children[i]);
                 }
-                self.closed = true;
+                priv.closed = true;
             }
 
             return this;
@@ -188,11 +188,11 @@
         },
 
         newCycle: function newCycle() {
-            var self = _private.get(this);
+            var priv = privates.get(this);
 
-            if (!self.closed) {
-                self.entries = [];
-                self.history.unshift(self.entries);
+            if (!priv.closed) {
+                priv.entries = [];
+                priv.history.unshift(priv.entries);
             }
 
             return this;
@@ -221,11 +221,11 @@
         },
 
         reset: function reset() {
-            var self = _private.get(this);
+            var priv = privates.get(this);
 
-            if (!self.closed) {
-                self.entries.length = 0;
-                self.children.forEach(function (child) {
+            if (!priv.closed) {
+                priv.entries.length = 0;
+                priv.children.forEach(function (child) {
                     child.reset();
                 });
             }
@@ -239,24 +239,22 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var appendChild = function appendChild(child) {
-        /*jshint validthis:true */
-        var self = _private.get(this);
+        var priv = privates.get(this);
 
-        self.children.push(child);
+        priv.children.push(child);
     };
 
     var appendEntry = function appendEntry(entry) {
-        /*jshint validthis:true */
-        var self = _private.get(this);
+        var priv = privates.get(this);
 
-        self.entries.unshift(entry);
+        priv.entries.unshift(entry);
         this.dispatchEvent('newentry', entry);
 
-        if (self.parent) {
-            appendEntry.call(self.parent, entry);
+        if (priv.parent) {
+            appendEntry.call(priv.parent, entry);
         }
     };
 
@@ -294,30 +292,27 @@
     };
 
     var removeChild = function removeChild(child) {
-        /*jshint validthis:true */
-        var self = _private.get(this);
+        var priv = privates.get(this);
 
         removeParent.call(child);
-        self.children.splice(self.children.indexOf(child), 1);
+        priv.children.splice(priv.children.indexOf(child), 1);
     };
 
     var removeParent = function removeParent() {
-        /*jshint validthis:true */
-        var self = _private.get(this);
+        var priv = privates.get(this);
 
-        self.parent = null;
+        priv.parent = null;
     };
 
     var setParent = function setParent(parent) {
-        /*jshint validthis:true */
-        var self = _private.get(this);
+        var priv = privates.get(this);
 
         if (parent instanceof LogManager) {
             if (parent.closed) {
                 throw new Error();
             }
-            self.parent = parent;
-            appendChild.call(self.parent, this);
+            priv.parent = parent;
+            appendChild.call(priv.parent, this);
         }
     };
 

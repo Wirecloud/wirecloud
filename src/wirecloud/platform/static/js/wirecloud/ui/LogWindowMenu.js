@@ -22,7 +22,7 @@
 /* globals moment, StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
@@ -31,7 +31,7 @@
     // =========================================================================
 
     var LogWindowMenu = function LogWindowMenu(logManager, options) {
-        var self = {
+        var priv = {
             on_fade: on_fade.bind(this),
             on_newentry: on_newentry.bind(this)
         };
@@ -42,7 +42,7 @@
 
         ns.WindowMenu.call(this, options.title, 'logwindowmenu');
 
-        _private.set(this, self);
+        privates.set(this, priv);
 
         Object.defineProperties(this, {
             logManager: {
@@ -66,17 +66,17 @@
     utils.inherit(LogWindowMenu, Wirecloud.ui.WindowMenu, {
 
         hide: function hide(parentWindow) {
-            var self = _private.get(this);
+            var priv = privates.get(this);
 
             this.windowContent.innerHTML = "";
-            this.logManager.removeEventListener("newentry", self.on_newentry);
+            this.logManager.removeEventListener("newentry", priv.on_newentry);
 
             ns.WindowMenu.prototype.hide.call(this, parentWindow);
             return this;
         },
 
         show: function show(parentWindow) {
-            var self = _private.get(this);
+            var priv = privates.get(this);
 
             this.logManager.history.forEach(function (entries, i) {
                 if (i > 0) {
@@ -84,7 +84,7 @@
                 }
                 entries.forEach(appendEntry, this);
             }, this);
-            this.logManager.addEventListener("newentry", self.on_newentry);
+            this.logManager.addEventListener("newentry", priv.on_newentry);
 
             ns.WindowMenu.prototype.show.call(this, parentWindow);
             return this;
@@ -101,13 +101,12 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var LEVEL_CLASS = ['alert-error', 'alert-warning', 'alert-info'];
 
     var appendEntry = function appendEntry(entry) {
-        /*jshint validthis:true */
-        var self = _private.get(this);
+        var priv = privates.get(this);
         var entry_element, dateElement, expander, titleElement;
 
         if (entry.level === Wirecloud.constants.LOGGING.DEBUG_MSG) {
@@ -142,15 +141,14 @@
         if (this.fadeTimeout != null) {
             clearTimeout(this.fadeTimeout);
         }
-        this.fadeTimeout = setTimeout(self.on_fade, 200);
+        this.fadeTimeout = setTimeout(priv.on_fade, 200);
     };
 
     // =========================================================================
     // EVENT HANDLERS
     // =========================================================================
 
-    var onfade = function onfade() {
-        /*jshint validthis:true */
+    var on_fade = function on_fade() {
         this.fadeTimeout = null;
 
         for (var i = 0; i < this.windowContent.childNodes.length; i++) {
@@ -163,7 +161,6 @@
     };
 
     var on_newentry = function on_newentry(logManager, entry) {
-        /*jshint validthis:true */
         appendEntry.call(this, entry);
     };
 
