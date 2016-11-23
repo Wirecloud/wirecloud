@@ -33,10 +33,10 @@
     var LogManager = function LogManager(parent) {
         var entries = [];
         var priv = {
-            children: [],
             closed: false,
             entries: entries,
-            history: [entries],
+            errorcount: 0,
+            previouscycles: [],
             parent: null
         };
 
@@ -45,11 +45,6 @@
         privates.set(this, priv);
 
         Object.defineProperties(this, {
-            children: {
-                get: function () {
-                    return priv.children.slice(0);
-                }
-            },
             closed: {
                 get: function () {
                     return priv.closed;
@@ -62,14 +57,12 @@
             },
             errorCount: {
                 get: function () {
-                    return priv.entries.filter(isError).length;
+                    return priv.errorcount;
                 }
             },
             history: {
                 get: function () {
-                    return priv.history.map(function (entries) {
-                        return entries.slice(0);
-                    });
+                    return [this.entries].concat(priv.previouscycles);
                 }
             },
             parent: {
@@ -94,19 +87,7 @@
     utils.inherit(LogManager, se.ObjectWithEvents, {
 
         close: function close() {
-            var i, priv = privates.get(this);
-
-            if (!priv.closed) {
-                if (priv.parent) {
-                    removeChild.call(priv.parent, this);
-                }
-
-                for (i = priv.children.length - 1; i >= 0; i--) {
-                    removeChild.call(this, priv.children[i]);
-                }
-                priv.closed = true;
-            }
-
+            privates.get(this).closed = true;
             return this;
         },
 
@@ -157,31 +138,37 @@
         log: function log(message, options) {
             var entry;
 
-            if (!this.closed) {
-                // Backwards compatibility
-                if (typeof options === "number") {
-                    options = {
-                        level: options
-                    };
-                }
+            if (this.closed) {
+                throw new Error("Trying to log a message in a closed LogManager");
+            }
 
-                options = utils.merge({
-                    console: true,
-                    level: Wirecloud.constants.LOGGING.ERROR_MSG
-                }, options);
+            // Backwards compatibility
+            if (typeof options === "number") {
+                options = {
+                    level: options
+                };
+            }
 
-                entry = Object.freeze({
-                    date: new Date(),
-                    details: options.details,
-                    level: options.level,
-                    logManager: this,
-                    msg: message
-                });
-                appendEntry.call(this, entry);
+            options = utils.merge({
+                console: true,
+                level: Wirecloud.constants.LOGGING.ERROR_MSG
+            }, options);
 
-                if (window.console && options.console) {
-                    printEntry.call(this, entry);
-                }
+            if (typeof options.level !== "number" || options.level < 0 || options.level > 4) {
+                throw new TypeError("Invalid level value");
+            }
+
+            entry = Object.freeze({
+                date: new Date(),
+                details: options.details,
+                level: options.level,
+                logManager: this,
+                msg: message
+            });
+            appendEntry.call(this, entry);
+
+            if (window.console && options.console) {
+                printEntry.call(this, entry);
             }
 
             return this;
@@ -190,10 +177,17 @@
         newCycle: function newCycle() {
             var priv = privates.get(this);
 
-            if (!priv.closed) {
-                priv.entries = [];
-                priv.history.unshift(priv.entries);
+            if (priv.closed) {
+                throw new Error("Trying to create a new cycle in a closed LogManager");
             }
+
+            // Freeze current entry list
+            Object.freeze(priv.entries);
+            priv.previouscycles.unshift(priv.entries);
+
+            // Create a new list of entries
+            priv.entries = [];
+            priv.errorcount = 0;
 
             return this;
         },
@@ -223,12 +217,13 @@
         reset: function reset() {
             var priv = privates.get(this);
 
-            if (!priv.closed) {
-                priv.entries.length = 0;
-                priv.children.forEach(function (child) {
-                    child.reset();
-                });
+            if (priv.closed) {
+                throw new Error("Closed LogManagers cannot be reset");
             }
+
+            priv.entries.length = 0;
+            priv.errorcount = 0;
+            priv.previouscycles = [];
 
             return this;
         }
@@ -241,15 +236,12 @@
 
     var privates = new WeakMap();
 
-    var appendChild = function appendChild(child) {
-        var priv = privates.get(this);
-
-        priv.children.push(child);
-    };
-
     var appendEntry = function appendEntry(entry) {
         var priv = privates.get(this);
 
+        if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
+            priv.errorcount += 1;
+        }
         priv.entries.unshift(entry);
         this.dispatchEvent('newentry', entry);
 
@@ -258,50 +250,23 @@
         }
     };
 
-    var isError = function isError(entry) {
-        return entry.level === Wirecloud.constants.LOGGING.ERROR_MSG;
-    };
-
     var printEntry = function printEntry(entry) {
 
         switch (entry.level) {
-        default:
         case Wirecloud.constants.LOGGING.ERROR_MSG:
             // eslint-disable-next-line no-console
-            if (typeof console.error === 'function') {
-                // eslint-disable-next-line no-console
-                console.error(entry.msg);
-            }
+            console.error(entry.msg);
             break;
         case Wirecloud.constants.LOGGING.WARN_MSG:
             // eslint-disable-next-line no-console
-            if (typeof console.warn === 'function') {
-                // eslint-disable-next-line no-console
-                console.warn(entry.msg);
-            }
+            console.warn(entry.msg);
             break;
         case Wirecloud.constants.LOGGING.DEBUG_MSG:
         case Wirecloud.constants.LOGGING.INFO_MSG:
             // eslint-disable-next-line no-console
-            if (typeof console.info === 'function') {
-                // eslint-disable-next-line no-console
-                console.info(entry.msg);
-            }
+            console.info(entry.msg);
             break;
         }
-    };
-
-    var removeChild = function removeChild(child) {
-        var priv = privates.get(this);
-
-        removeParent.call(child);
-        priv.children.splice(priv.children.indexOf(child), 1);
-    };
-
-    var removeParent = function removeParent() {
-        var priv = privates.get(this);
-
-        priv.parent = null;
     };
 
     var setParent = function setParent(parent) {
@@ -312,7 +277,6 @@
                 throw new Error();
             }
             priv.parent = parent;
-            appendChild.call(priv.parent, this);
         }
     };
 

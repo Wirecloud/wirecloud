@@ -27,18 +27,11 @@
     "use strict";
 
     describe("LogManager", function () {
-        var childA, parentA;
-
-        beforeEach(function () {
-            parentA = new ns.LogManager();
-            childA = new ns.LogManager(parentA);
-        });
 
         describe("new LogManager([parent])", function () {
 
             var check_initial_props = function check_initial_props(logManager, parent) {
                 expect(logManager.parent).toEqual(parent);
-                expect(logManager.children.length).toBe(0);
                 expect(logManager.closed).toBe(false);
                 expect(logManager.entries.length).toBe(0);
                 expect(logManager.history.length).toBe(1);
@@ -47,187 +40,324 @@
             };
 
             it("should create an instance", function () {
-                var parentB = new ns.LogManager();
+                var manager = new ns.LogManager();
 
-                expect(parentB instanceof ns.LogManager).toBe(true);
-                check_initial_props(parentB, null);
+                expect(manager instanceof ns.LogManager).toBe(true);
+                check_initial_props(manager, null);
             });
 
             it("should create an instance given a parent", function () {
-                var childB = new ns.LogManager(parentA);
+                var parent = new ns.LogManager();
 
-                check_initial_props(childB, parentA);
-                expect(parentA.children).toEqual([childA, childB]);
+                var manager = new ns.LogManager(parent);
+
+                check_initial_props(manager, parent);
             });
 
             it("should throw an error given a closed parent", function () {
+                var parent = new ns.LogManager();
+
                 expect(function () {
-                    new ns.LogManager(parentA.close());
+                    new ns.LogManager(parent.close());
                 }).toThrowError(Error);
             });
         });
 
         describe("close()", function () {
 
-            it("should close properly", function () {
-                expect(parentA.close()).toEqual(parentA);
-                expect(parentA.closed).toBe(true);
+            it("should make manager state the new status", function () {
+                var manager = new ns.LogManager();
+
+                expect(manager.close()).toEqual(manager);
+
+                expect(manager.closed).toBe(true);
             });
 
             it("should do nothing if it is already closed", function () {
-                parentA.close();
-                expect(parentA.close()).toEqual(parentA);
+                var manager = new ns.LogManager();
+                manager.close();
+
+                expect(manager.close()).toEqual(manager);
+
+                expect(manager.closed).toBe(true);
             });
 
-            it("should keep last entries", function () {
-                parentA.log("error1");
+            it("should keep previous entries", function () {
+                var manager = new ns.LogManager();
+                manager.log("error1");
 
-                expect(parentA.close()).toEqual(parentA);
-                expect(parentA.entries.length).toBe(1);
-                expect(parentA.history.length).toBe(1);
-                expect(parentA.history[0].length).toBe(1);
+                expect(manager.close()).toEqual(manager);
+                expect(manager.entries.length).toBe(1);
+                expect(manager.history.length).toBe(1);
+                expect(manager.history[0].length).toBe(1);
             });
 
-            it("should remove parent", function () {
-                expect(childA.close()).toEqual(childA);
-                expect(childA.parent).toBe(null);
-                expect(parentA.children.length).toBe(0);
+            it("should maintain the parent", function () {
+                var parent = new ns.LogManager();
+                var manager = new ns.LogManager(parent);
+
+                expect(manager.close()).toEqual(manager);
+
+                expect(manager.parent).toBe(parent);
             });
 
-            it("should remove children", function () {
-                expect(parentA.close()).toEqual(parentA);
-                expect(parentA.children.length).toBe(0);
-                expect(childA.parent).toBe(null);
-            });
         });
 
         describe("log(message, [options])", function () {
 
-            var equals_entries = function equals_entries(entryA, entryB) {
-                expect(entryA.msg).toEqual(entryB.msg);
-                expect(entryA.level).toEqual(entryB.level);
-                expect(entryA.logManager).toEqual(entryB.logManager);
-            };
+            var manager;
+
+            beforeEach(function () {
+                manager = new ns.LogManager();
+            });
 
             it("should add an error entry by default", function () {
-                expect(parentA.log("test")).toEqual(parentA);
-                expect(parentA.errorCount).toBe(1);
-                equals_entries(parentA.entries[0], {
+
+                expect(manager.log("test")).toEqual(manager);
+
+                expect(manager.errorCount).toBe(1);
+                equals_entries(manager.entries[0], {
                     msg: "test",
                     level: Wirecloud.constants.LOGGING.ERROR_MSG,
-                    logManager: parentA
+                    logManager: manager
                 });
+
             });
 
-            it("should send entry to parent", function () {
-                expect(childA.log("test")).toEqual(childA);
-                expect(parentA.entries.length).toBe(1);
-                equals_entries(parentA.entries[0], {
+            it("should prepend entries into the entries list", function () {
+
+                manager.log("test1");
+
+                expect(manager.log("test2")).toEqual(manager);
+
+                expect(manager.errorCount).toBe(2);
+                equals_entries(manager.entries[0], {
+                    msg: "test2",
+                    level: Wirecloud.constants.LOGGING.ERROR_MSG,
+                    logManager: manager
+                });
+                equals_entries(manager.entries[1], {
+                    msg: "test1",
+                    level: Wirecloud.constants.LOGGING.ERROR_MSG,
+                    logManager: manager
+                });
+
+            });
+
+            it("should only affect the current cycle", function () {
+
+                manager.log("error1");
+                manager.log("error2");
+                manager.newCycle();
+
+                expect(manager.log("test")).toEqual(manager);
+
+                expect(manager.errorCount).toBe(1);
+                equals_entries(manager.entries[0], {
                     msg: "test",
                     level: Wirecloud.constants.LOGGING.ERROR_MSG,
-                    logManager: childA
+                    logManager: manager
                 });
+                expect(manager.history[1].length).toBe(2);
+                equals_entries(manager.history[0][0], {
+                    msg: "test",
+                    level: Wirecloud.constants.LOGGING.ERROR_MSG,
+                    logManager: manager
+                });
+
             });
 
-            it("should add a warning entry (in options.level)", function () {
-                expect(parentA.log("test", {
+            it("should support adding warning entries using the level option", function () {
+
+                expect(manager.log("test", {
                     level: Wirecloud.constants.LOGGING.WARN_MSG
-                })).toEqual(parentA);
-                expect(parentA.errorCount).toBe(0);
-                equals_entries(parentA.entries[0], {
+                })).toEqual(manager);
+
+                expect(manager.errorCount).toBe(0);
+                equals_entries(manager.entries[0], {
                     msg: "test",
                     level: Wirecloud.constants.LOGGING.WARN_MSG,
-                    logManager: parentA
+                    logManager: manager
                 });
+
             });
 
-            it("should add an info entry (in options.level)", function () {
-                expect(parentA.log("test", {
+            it("should support adding info entries using the level option", function () {
+
+                expect(manager.log("test", {
                     level: Wirecloud.constants.LOGGING.INFO_MSG
-                })).toEqual(parentA);
-                expect(parentA.errorCount).toBe(0);
-                equals_entries(parentA.entries[0], {
+                })).toEqual(manager);
+
+                expect(manager.errorCount).toBe(0);
+                equals_entries(manager.entries[0], {
                     msg: "test",
                     level: Wirecloud.constants.LOGGING.INFO_MSG,
-                    logManager: parentA
+                    logManager: manager
                 });
+
             });
 
-            it("should add a debug entry (in options.level)", function () {
-                expect(parentA.log("test", {
+            it("should support adding debug entries using the level option", function () {
+
+                expect(manager.log("test", {
                     level: Wirecloud.constants.LOGGING.DEBUG_MSG
-                })).toEqual(parentA);
-                expect(parentA.errorCount).toBe(0);
-                equals_entries(parentA.entries[0], {
+                })).toEqual(manager);
+
+                expect(manager.errorCount).toBe(0);
+                equals_entries(manager.entries[0], {
                     msg: "test",
                     level: Wirecloud.constants.LOGGING.DEBUG_MSG,
-                    logManager: parentA
+                    logManager: manager
                 });
+
             });
 
-            it("should do nothing if it is already closed", function () {
-                parentA.close();
+            describe("throws a TypeError exception when using an invalid value for the level option:", function () {
 
-                expect(parentA.log("test")).toEqual(parentA);
-                expect(parentA.errorCount).toBe(0);
-                expect(parentA.entries.length).toBe(0);
+                var test = function test(level) {
+                    expect(function () {
+                        manager.log("test", {
+                            level: level
+                        });
+                    }).toThrowError(TypeError);
+
+                    expect(manager.entries.length).toBe(0);
+                };
+
+                it("string", test.bind(null, "a"));
+                it("invalid number", test.bind(null, -4));
+                it("true", test.bind(null, true));
+                it("false", test.bind(null, false));
+
+            });
+
+            it("throws an Error if the LogManager is already closed", function () {
+
+                manager.close();
+
+                expect(function () {
+                    manager.log("test");
+                }).toThrowError();
+
+                expect(manager.errorCount).toBe(0);
+                expect(manager.entries.length).toBe(0);
+
+            });
+
+            it("should run on console-less environments", function () {
+                var _old_console = window.console;
+                window.console = null;
+
+                try {
+                    expect(manager.log("test")).toEqual(manager);
+
+                    expect(manager.errorCount).toBe(1);
+                } catch (e) {
+                    window.console = _old_console;
+                    throw e;
+                }
+                window.console = _old_console;
             });
 
             it("should not call console when options.console is false", function () {
                 spyOn(console, 'error');
 
-                expect(parentA.log("test", {
+                expect(manager.log("test", {
                     console: false
-                })).toEqual(parentA);
-                expect(parentA.errorCount).toBe(1);
+                })).toEqual(manager);
+
+                expect(manager.errorCount).toBe(1);
                 // eslint-disable-next-line no-console
                 expect(console.error).not.toHaveBeenCalled();
             });
+
         });
 
         describe("newCycle()", function () {
 
-            it("should restart properly", function () {
-                expect(parentA.newCycle()).toEqual(parentA);
-                expect(parentA.entries.length).toBe(0);
-                expect(parentA.history.length).toBe(2);
-                expect(parentA.history[0].length).toBe(0);
-                expect(parentA.history[1].length).toBe(0);
+            var manager;
+
+            beforeEach(function () {
+                manager = new ns.LogManager();
             });
 
-            it("should restart properly and keep last entries", function () {
-                parentA.log("error1");
+            it("should work on empty log managers", function () {
 
-                expect(parentA.newCycle()).toEqual(parentA);
-                expect(parentA.history[1].length).toBe(1);
+                expect(manager.newCycle()).toEqual(manager);
+
+                expect(manager.entries.length).toBe(0);
+                expect(manager.history.length).toBe(2);
+                expect(manager.history[0].length).toBe(0);
+                expect(manager.history[1].length).toBe(0);
             });
 
-            it("should do nothing if it is already closed", function () {
-                parentA.close();
+            it("should keep previous entries", function () {
+                manager.log("error1");
+                var previouscycle = manager.entries;
 
-                expect(parentA.newCycle()).toEqual(parentA);
-                expect(parentA.history.length).toBe(1);
+                expect(manager.newCycle()).toEqual(manager);
+
+                expect(manager.history[0]).toEqual([]);
+                expect(manager.history[1]).toEqual(previouscycle);
+            });
+
+            it("throws an Error if the LogManager is already closed", function () {
+                manager.close();
+
+                expect(function () {
+                    manager.newCycle();
+                }).toThrowError();
+
+                expect(manager.history.length).toBe(1);
             });
         });
 
         describe("reset()", function () {
 
-            it("should reset properly", function () {
-                childA.log("error1");
+            var manager;
 
-                expect(parentA.reset()).toEqual(parentA);
-                expect(parentA.entries.length).toBe(0);
-                expect(childA.entries.length).toBe(0);
+            beforeEach(function () {
+                manager = new ns.LogManager();
             });
 
-            it("should do nothing if it is already closed", function () {
-                parentA.log("error1");
-                parentA.close();
+            it("should work on empty log managers", function () {
+                expect(manager.reset()).toEqual(manager);
 
-                expect(parentA.reset()).toEqual(parentA);
-                expect(parentA.entries.length).toBe(1);
+                expect(manager.entries.length).toBe(0);
+                expect(manager.history.length).toBe(1);
+                expect(manager.history[0]).toEqual(manager.entries);
+            });
+
+            it("should remove all entries", function () {
+                manager.log("error1");
+                manager.newCycle();
+                manager.log("error2");
+
+                expect(manager.reset()).toEqual(manager);
+
+                expect(manager.entries.length).toBe(0);
+                expect(manager.history.length).toBe(1);
+                expect(manager.history[0]).toEqual(manager.entries);
+            });
+
+            it("throws an Error if the LogManager is already closed", function () {
+                var manager = new ns.LogManager();
+                manager.log("error1");
+                manager.close();
+
+                expect(function () {
+                    manager.reset();
+                }).toThrowError();
+
+                expect(manager.entries.length).toBe(1);
             });
         });
     });
+
+    var equals_entries = function equals_entries(entryA, entryB) {
+        expect(entryA.msg).toEqual(entryB.msg);
+        expect(entryA.level).toEqual(entryB.level);
+        expect(entryA.logManager).toEqual(entryB.logManager);
+    };
 
 })(Wirecloud);
