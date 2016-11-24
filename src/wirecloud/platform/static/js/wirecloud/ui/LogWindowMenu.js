@@ -32,6 +32,7 @@
 
     var LogWindowMenu = function LogWindowMenu(logManager, options) {
         var priv = {
+            fadeTimeout: null,
             on_fade: on_fade.bind(this),
             on_newentry: on_newentry.bind(this)
         };
@@ -105,8 +106,7 @@
 
     var LEVEL_CLASS = ['alert-error', 'alert-warning', 'alert-info'];
 
-    var appendEntry = function appendEntry(entry) {
-        var priv = privates.get(this);
+    var buildEntry = function buildEntry(entry) {
         var entry_element, dateElement, expander, titleElement;
 
         if (entry.level === Wirecloud.constants.LOGGING.DEBUG_MSG) {
@@ -136,12 +136,24 @@
             }
         }
 
+        return entry_element;
+    };
+
+    var appendEntry = function appendEntry(entry) {
+        var entry_element = buildEntry.call(this, entry);
+        if (entry_element == null) {
+            // Ignore this entry
+            return;
+        }
+
         this.windowContent.appendChild(entry_element);
 
-        if (this.fadeTimeout != null) {
-            clearTimeout(this.fadeTimeout);
+        var priv = privates.get(this);
+
+        if (priv.fadeTimeout != null) {
+            clearTimeout(priv.fadeTimeout);
         }
-        this.fadeTimeout = setTimeout(priv.on_fade, 200);
+        priv.fadeTimeout = setTimeout(priv.on_fade, 200);
     };
 
     // =========================================================================
@@ -149,7 +161,7 @@
     // =========================================================================
 
     var on_fade = function on_fade() {
-        this.fadeTimeout = null;
+        privates.get(this).fadeTimeout = null;
 
         for (var i = 0; i < this.windowContent.childNodes.length; i++) {
             var classList = this.windowContent.childNodes[i].classList;
@@ -161,7 +173,21 @@
     };
 
     var on_newentry = function on_newentry(logManager, entry) {
-        appendEntry.call(this, entry);
+        var entry_element = buildEntry.call(this, entry);
+        if (entry_element == null) {
+            // Ignore this entry
+            return;
+        }
+
+        // Add new entries at beginning to match the expected order
+        this.windowContent.insertBefore(entry_element, this.windowContent.firstChild);
+
+        var priv = privates.get(this);
+
+        if (priv.fadeTimeout != null) {
+            clearTimeout(priv.fadeTimeout);
+        }
+        priv.fadeTimeout = setTimeout(priv.on_fade, 200);
     };
 
     ns.LogWindowMenu = LogWindowMenu;
