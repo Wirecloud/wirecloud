@@ -1080,7 +1080,7 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
             self.assertEqual(len(description['connections']), 1)
             self.assertFalse(description['connections'][0]['sourcename'].endswith('missing_outputendpoint'))
             self.assertEqual(len(description['components']['widget']), 1)
-            widget_id = description['components']['widget'].keys()[0]
+            widget_id = list(description['components']['widget'])[0]
             self.assertFalse('missing_outputendpoint' in description['components']['widget'][widget_id]['endpoints']['source'])
 
         template = self.read_template('wt_missing_references_in_behaviours.xml')
