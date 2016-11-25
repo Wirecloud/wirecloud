@@ -209,7 +209,11 @@ class WorkspaceEntry(Resource):
             workspace.longdescription = ts['longdescription']
             fields.append('longdescription')
 
-        workspace.save(update_fields=fields)
+        try:
+            workspace.save(update_fields=fields)
+        except IntegrityError:
+            msg = _('A workspace with the given name already exists')
+            return build_error_response(request, 409, msg)
 
         return HttpResponse(status=204)
 

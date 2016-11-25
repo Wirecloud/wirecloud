@@ -3481,6 +3481,16 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(user_workspace.workspace.longdescription, data['longdescription'])
         check_cache_is_purged(self, 2, update_workspace_descriptions)
 
+    def test_workspace_entry_post_conflict(self):
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'name': 'ExistingWorkspace'}
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 409)
+
     def test_workspace_entry_post_workspace_not_found(self):
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
 
