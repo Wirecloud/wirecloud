@@ -39,7 +39,7 @@
             name: model.name
         });
 
-        _private.set(this, {
+        privates.set(this, {
             widgets: [],
             on_changetab: on_changetab.bind(this),
             on_createwidget: on_createwidget.bind(this),
@@ -77,7 +77,7 @@
              */
             widgets: {
                 get: function () {
-                    return _private.get(this).widgets.slice(0);
+                    return privates.get(this).widgets.slice(0);
                 }
             },
             /**
@@ -128,10 +128,10 @@
         this.model.preferences.addEventListener('pre-commit', on_change_preferences.bind(this));
         this.model.widgets.forEach(_create_widget, this);
 
-        this.model.addEventListener('change', _private.get(this).on_changetab);
-        this.model.addEventListener('createwidget', _private.get(this).on_createwidget);
-        this.model.addEventListener('remove', _private.get(this).on_removetab);
-        this.model.addEventListener('removewidget', _private.get(this).on_removewidget);
+        this.model.addEventListener('change', privates.get(this).on_changetab);
+        this.model.addEventListener('createwidget', privates.get(this).on_createwidget);
+        this.model.addEventListener('remove', privates.get(this).on_removetab);
+        this.model.addEventListener('removewidget', privates.get(this).on_removewidget);
     };
 
     // =========================================================================
@@ -211,7 +211,7 @@
          */
         remove: function remove() {
 
-            if (_private.get(this).widgets.length) {
+            if (privates.get(this).widgets.length) {
                 var dialog = new Wirecloud.ui.AlertWindowMenu();
 
                 dialog.setMsg(utils.gettext("The tab's widgets will also be removed. Would you like to continue?"));
@@ -295,12 +295,12 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var _create_widget = function _create_widget(model) {
         var widget = new Wirecloud.ui.WidgetView(this, model);
 
-        _private.get(this).widgets.push(widget);
+        privates.get(this).widgets.push(widget);
 
         this.initialMessage.hidden = this.widgets.length > 0;
 
@@ -328,7 +328,7 @@
     var get_widgets_by_id = function get_widgets_by_id() {
         var widgets = {};
 
-        _private.get(this).widgets.forEach(function (widget) {
+        privates.get(this).widgets.forEach(function (widget) {
             widgets[widget.id] = widget;
         });
 
@@ -372,7 +372,7 @@
     };
 
     var on_removewidget = function on_removewidget(widget) {
-        _private.get(this).widgets.splice(_private.get(this).widgets.indexOf(widget), 1);
+        privates.get(this).widgets.splice(privates.get(this).widgets.indexOf(widget), 1);
         this.initialMessage.hidden = this.widgets.length > 0;
     };
 

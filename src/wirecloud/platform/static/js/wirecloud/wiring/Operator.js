@@ -60,7 +60,7 @@
             'upgrade': true
         }, data.permissions);
 
-        _private.set(this, {
+        privates.set(this, {
             resource: resource,
             status: STATUS.CREATED
         });
@@ -88,7 +88,7 @@
              */
             loaded: {
                 get: function () {
-                    return _private.get(this).status === STATUS.RUNNING;
+                    return privates.get(this).status === STATUS.RUNNING;
                 }
             },
             /**
@@ -104,7 +104,7 @@
              */
             meta: {
                 get: function () {
-                    return _private.get(this).resource;
+                    return privates.get(this).resource;
                 }
             },
             /**
@@ -210,11 +210,11 @@
          */
         load: function load() {
 
-            if (_private.get(this).status !== STATUS.CREATED) {
+            if (privates.get(this).status !== STATUS.CREATED) {
                 return this;
             }
 
-            _private.get(this).status = STATUS.LOADING;
+            privates.get(this).status = STATUS.LOADING;
             this.wrapperElement.setAttribute('src', this.codeurl);
 
             return this;
@@ -305,7 +305,7 @@
                     change_meta.call(this, resource);
                     resolve(this);
                 } else {
-                    switch (resource.version.compareTo(_private.get(this).resource.version)) {
+                    switch (resource.version.compareTo(privates.get(this).resource.version)) {
                     case 1: // upgrade
                         message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
                             type: this.meta.type,
@@ -334,7 +334,7 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var STATUS = {
         CREATED: 0,
@@ -382,7 +382,7 @@
     };
 
     var change_meta = function change_meta(resource) {
-        _private.get(this).resource = resource;
+        privates.get(this).resource = resource;
         build_endpoints.call(this);
         build_prefs.call(this, this.preferences);
 
@@ -404,7 +404,7 @@
             return;
         }
 
-        _private.get(this).status = STATUS.RUNNING;
+        privates.get(this).status = STATUS.RUNNING;
         this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
 
         if (this.missing) {
@@ -430,7 +430,7 @@
             return;
         }
 
-        _private.get(this).status = STATUS.CREATED;
+        privates.get(this).status = STATUS.CREATED;
         this.prefCallback = null;
 
         for (var name in this.inputs) {

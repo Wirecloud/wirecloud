@@ -51,7 +51,7 @@
         se.ObjectWithEvents.call(this, events);
         data = clean_data.call(this, data);
 
-        _private.set(this, {
+        privates.set(this, {
             initial: data.initial,
             name: data.name,
             widgets: [],
@@ -71,7 +71,7 @@
              */
             initial: {
                 get: function () {
-                    return _private.get(this).initial;
+                    return privates.get(this).initial;
                 }
             },
             /**
@@ -79,7 +79,7 @@
              */
             name: {
                 get: function () {
-                    return _private.get(this).name;
+                    return privates.get(this).name;
                 }
             },
             /**
@@ -87,7 +87,7 @@
              */
             widgets: {
                 get: function () {
-                    return _private.get(this).widgets.slice(0);
+                    return privates.get(this).widgets.slice(0);
                 }
             },
             /**
@@ -115,7 +115,7 @@
             }
         });
 
-        this.workspace.addEventListener('changetab', _private.get(this).on_changetab);
+        this.workspace.addEventListener('changetab', privates.get(this).on_changetab);
     };
 
     // =========================================================================
@@ -187,7 +187,7 @@
         isAllowed: function isAllowed(permission) {
             switch (permission) {
             case 'remove':
-                return !this.workspace.restricted && Object.keys(this.workspace.tabs).length > 1 && !_private.get(this).widgets.some(function (widget) {
+                return !this.workspace.restricted && Object.keys(this.workspace.tabs).length > 1 && !privates.get(this).widgets.some(function (widget) {
                     return !widget.volatile && !widget.isAllowed('close');
                 });
             default:
@@ -292,17 +292,17 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var events = ['change', 'createwidget', 'preremove', 'remove', 'removewidget'];
 
     var change_initial = function change_initial(initial) {
-        _private.get(this).initial = initial;
+        privates.get(this).initial = initial;
         this.dispatchEvent('change', ['initial']);
     };
 
     var change_name = function change_name(name) {
-        _private.get(this).name = name;
+        privates.get(this).name = name;
         this.dispatchEvent('change', ['name']);
     };
 
@@ -344,8 +344,8 @@
     var create_widget = function create_widget(resource, data) {
         var widget = new Wirecloud.Widget(this, resource, data);
 
-        widget.addEventListener('remove', _private.get(this).on_removewidget);
-        _private.get(this).widgets.push(widget);
+        widget.addEventListener('remove', privates.get(this).on_removewidget);
+        privates.get(this).widgets.push(widget);
         this.dispatchEvent('createwidget', widget);
 
         return widget;
@@ -354,7 +354,7 @@
     var get_widgets_by_id = function get_widgets_by_id() {
         var widgets = {};
 
-        _private.get(this).widgets.forEach(function (widget) {
+        privates.get(this).widgets.forEach(function (widget) {
             widgets[widget.id] = widget;
         });
 
@@ -363,7 +363,7 @@
 
     var remove_tab = function remove_tab() {
         this.dispatchEvent('preremove');
-        this.workspace.removeEventListener('changetab', _private.get(this).on_changetab);
+        this.workspace.removeEventListener('changetab', privates.get(this).on_changetab);
         this.dispatchEvent('remove');
     };
 
@@ -378,8 +378,8 @@
     };
 
     var on_removewidget = function on_removewidget(widget) {
-        widget.removeEventListener('remove', _private.get(this).on_removewidget);
-        _private.get(this).widgets.splice(_private.get(this).widgets.indexOf(widget), 1);
+        widget.removeEventListener('remove', privates.get(this).on_removewidget);
+        privates.get(this).widgets.splice(privates.get(this).widgets.indexOf(widget), 1);
         this.dispatchEvent('removewidget', widget);
     };
 
