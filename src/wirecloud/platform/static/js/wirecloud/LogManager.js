@@ -60,9 +60,9 @@
                     return priv.errorcount;
                 }
             },
-            history: {
+            previouscycles: {
                 get: function () {
-                    return [this.entries].concat(priv.previouscycles);
+                    return priv.previouscycles;
                 }
             },
             parent: {

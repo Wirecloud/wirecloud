@@ -79,10 +79,9 @@
         show: function show(parentWindow) {
             var priv = privates.get(this);
 
-            this.logManager.history.forEach(function (entries, i) {
-                if (i > 0) {
-                    this.windowContent.appendChild(document.createElement("hr"));
-                }
+            this.logManager.entries.forEach(appendEntry, this);
+            this.logManager.previouscycles.forEach(function (entries, i) {
+                this.windowContent.appendChild(document.createElement("hr"));
                 entries.forEach(appendEntry, this);
             }, this);
             this.logManager.addEventListener("newentry", priv.on_newentry);

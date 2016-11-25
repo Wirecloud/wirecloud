@@ -34,7 +34,7 @@
                 expect(logManager.parent).toEqual(parent);
                 expect(logManager.closed).toBe(false);
                 expect(logManager.entries.length).toBe(0);
-                expect(logManager.history.length).toBe(1);
+                expect(logManager.previouscycles.length).toBe(0);
                 expect(logManager.totalCount).toBe(0);
                 expect(logManager.errorCount).toBe(0);
             };
@@ -85,11 +85,14 @@
             it("should keep previous entries", function () {
                 var manager = new ns.LogManager();
                 manager.log("error1");
+                manager.newCycle();
+                manager.log("info1", {level: Wirecloud.constants.LOGGING.INFO_MSG});
+                var entries = manager.entries;
+                var cycles = manager.previouscycles;
 
                 expect(manager.close()).toEqual(manager);
-                expect(manager.entries.length).toBe(1);
-                expect(manager.history.length).toBe(1);
-                expect(manager.history[0].length).toBe(1);
+                expect(manager.entries).toEqual(entries);
+                expect(manager.previouscycles).toBe(cycles);
             });
 
             it("should maintain the parent", function () {
@@ -149,6 +152,7 @@
                 manager.log("error1");
                 manager.log("error2");
                 manager.newCycle();
+                var cycles = manager.previouscycles;
 
                 expect(manager.log("test")).toEqual(manager);
 
@@ -158,13 +162,7 @@
                     level: Wirecloud.constants.LOGGING.ERROR_MSG,
                     logManager: manager
                 });
-                expect(manager.history[1].length).toBe(2);
-                equals_entries(manager.history[0][0], {
-                    msg: "test",
-                    level: Wirecloud.constants.LOGGING.ERROR_MSG,
-                    logManager: manager
-                });
-
+                expect(manager.previouscycles).toBe(cycles);
             });
 
             it("should support adding warning entries using the level option", function () {
@@ -286,9 +284,8 @@
                 expect(manager.newCycle()).toEqual(manager);
 
                 expect(manager.entries.length).toBe(0);
-                expect(manager.history.length).toBe(2);
-                expect(manager.history[0].length).toBe(0);
-                expect(manager.history[1].length).toBe(0);
+                expect(manager.previouscycles.length).toBe(1);
+                expect(manager.previouscycles[0].length).toBe(0);
             });
 
             it("should keep previous entries", function () {
@@ -297,8 +294,7 @@
 
                 expect(manager.newCycle()).toEqual(manager);
 
-                expect(manager.history[0]).toEqual([]);
-                expect(manager.history[1]).toEqual(previouscycle);
+                expect(manager.previouscycles[0]).toEqual(previouscycle);
             });
 
             it("throws an Error if the LogManager is already closed", function () {
@@ -308,7 +304,7 @@
                     manager.newCycle();
                 }).toThrowError();
 
-                expect(manager.history.length).toBe(1);
+                expect(manager.previouscycles.length).toBe(0);
             });
         });
 
@@ -324,8 +320,7 @@
                 expect(manager.reset()).toEqual(manager);
 
                 expect(manager.entries.length).toBe(0);
-                expect(manager.history.length).toBe(1);
-                expect(manager.history[0]).toEqual(manager.entries);
+                expect(manager.previouscycles.length).toBe(0);
             });
 
             it("should remove all entries", function () {
@@ -336,8 +331,7 @@
                 expect(manager.reset()).toEqual(manager);
 
                 expect(manager.entries.length).toBe(0);
-                expect(manager.history.length).toBe(1);
-                expect(manager.history[0]).toEqual(manager.entries);
+                expect(manager.previouscycles.length).toBe(0);
             });
 
             it("throws an Error if the LogManager is already closed", function () {
