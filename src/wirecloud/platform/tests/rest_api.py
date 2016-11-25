@@ -1310,6 +1310,16 @@ class ApplicationMashupAPI(WirecloudTestCase):
         tab1 = Tab.objects.get(pk=102)
         self.assertTrue(tab1.visible)
 
+    def test_tab_entry_post_conflict(self):
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 102})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'name': 'Tab 2'}
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 409)
+
     def test_tab_entry_post_workspace_not_found(self):
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 404, 'tab_id': 103})
 

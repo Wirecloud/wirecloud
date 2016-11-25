@@ -333,7 +333,11 @@ class TabEntry(Resource):
         if 'name' in data:
             tab.name = data['name']
 
-        tab.save()
+        try:
+            tab.save()
+        except IntegrityError:
+            msg = _('A tab with the given name already exists for the workspace')
+            return build_error_response(request, 409, msg)
 
         return HttpResponse(status=204)
 
