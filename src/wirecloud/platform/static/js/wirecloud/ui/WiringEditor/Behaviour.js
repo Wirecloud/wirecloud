@@ -379,7 +379,6 @@
     var events = ['change', 'optremove'];
 
     var btnremove_onclick = function btnremove_onclick(event) {
-        /* jshint validthis:true */
         var dialog, message;
 
         message = utils.gettext("The following operation is irreversible and removes the behaviour completely. Would you like to continue?");
@@ -396,7 +395,6 @@
     };
 
     var displayUpdateForm = function displayUpdateForm() {
-        /* jshint validthis:true */
         var dialog = new Wirecloud.ui.FormWindowMenu(
             [
                 {name: 'title', label: utils.gettext("Title"), type: 'text'},
@@ -415,7 +413,6 @@
     };
 
     var updateInfo = function updateInfo(data) {
-        /* jshint validthis:true */
         this.setTitle(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
         this.dispatchEvent('change');

@@ -326,7 +326,6 @@
     };
 
     var get_widgets_by_id = function get_widgets_by_id() {
-        /* jshint validthis:true */
         var widgets = {};
 
         _private.get(this).widgets.forEach(function (widget) {
@@ -347,7 +346,6 @@
     };
 
     var on_changetab = function on_changetab(tab, changes) {
-        /* jshint validthis:true */
         if (changes.indexOf('name') !== -1) {
             se.Tab.prototype.rename.call(this, tab.name);
 
@@ -362,7 +360,6 @@
     };
 
     var on_createwidget = function on_createwidget(tab, model) {
-        /* jshint validthis:true */
         var widget = _create_widget.call(this, model);
 
         if (!this.hidden) {
@@ -371,12 +368,10 @@
     };
 
     var on_removetab = function on_removetab(model) {
-        /* jshint validthis:true */
         se.Tab.prototype.close.call(this);
     };
 
     var on_removewidget = function on_removewidget(widget) {
-        /* jshint validthis:true */
         _private.get(this).widgets.splice(_private.get(this).widgets.indexOf(widget), 1);
         this.initialMessage.hidden = this.widgets.length > 0;
     };

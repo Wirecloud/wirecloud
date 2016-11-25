@@ -605,7 +605,6 @@
     };
 
     var endpoint_onconnectionremoved = function endpoint_onconnectionremoved(endpoint, connection) {
-        /* jshint validthis: true */
         if (endpoint.missing && !endpoint.hasConnections()) {
             this.endpoints[endpoint.type].removeChild(endpoint);
             this.dispatchEvent('endpointremoved', endpoint);
@@ -721,7 +720,6 @@
     };
 
     var cleanEndpoints = function cleanEndpoints() {
-        /* jshint validthis: true */
         var id;
 
         for (id in this.targets) {
@@ -734,8 +732,6 @@
     };
 
     var cleanEndpoint = function cleanEndpoint(endpoint) {
-        /* jshint validthis: true */
-
         if (endpoint.hasConnections()) {
             this._missingEndpoints[endpoint.type][endpoint.name] = endpoint;
         }
@@ -748,7 +744,6 @@
     };
 
     var on_change_model = function on_change_model(model, changes) {
-        /* jshint validthis: true */
         if (changes.indexOf('title') !== -1) {
             this.setTitle(model.title).refresh();
         }
@@ -775,7 +770,6 @@
     };
 
     var appendMissingEndpoints = function appendMissingEndpoints(componentUpdated, type, namespace) {
-        /* jshint validthis: true */
         var name;
 
         for (name in componentUpdated[namespace]) {

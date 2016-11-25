@@ -121,7 +121,6 @@
     };
 
     var assign_endpoint_value = function assign_endpoint_value(endpoint) {
-        /*jshint validthis:true */
         endpoint.value = this + '#' + endpoint.value;
     };
 

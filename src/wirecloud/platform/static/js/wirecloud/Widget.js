@@ -654,7 +654,6 @@
     };
 
     var _remove = function _remove() {
-        /*jshint validthis:true */
         this.fullDisconnect();
 
         if (this.loaded) {
@@ -678,7 +677,6 @@
     };
 
     var _rename = function _rename(title) {
-        /*jshint validthis:true */
         this.contextManager.modify({
             title: title
         });
@@ -686,7 +684,6 @@
     };
 
     var clean_title = function clean_title(title) {
-        /*jshint validthis:true */
         if (typeof title !== 'string' || !title.trim().length) {
             throw new TypeError("invalid title parameter");
         }
@@ -695,7 +692,6 @@
     };
 
     var is_valid_resource = function is_valid_resource(resource) {
-        /*jshint validthis:true */
         return resource instanceof Wirecloud.WidgetMeta && resource.group_id === this.meta.group_id;
     };
 

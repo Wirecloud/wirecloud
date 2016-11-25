@@ -262,8 +262,6 @@
     };
 
     var addChild = function addChild(newElement) {
-        /* jshint validthis: true */
-
         var priv = privates.get(this);
         if (newElement instanceof se.StyledElement) {
             var index = priv.children.indexOf(newElement);
@@ -275,7 +273,6 @@
     };
 
     var orderbyIndex = function orderbyIndex() {
-        /* jshint validthis: true */
         var children = [], priv;
 
         priv = privates.get(this);

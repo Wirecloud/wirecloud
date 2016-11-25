@@ -93,17 +93,14 @@
     // =========================================================================
 
     var canCustomize = function canCustomize() {
-        /* jshint validthis:true */
         return !this.readonly && !this.background;
     };
 
     var canRestore = function canRestore() {
-        /* jshint validthis:true */
         return !this.readonly && !this.background;
     };
 
     var getCustomizeTitle = function getCustomizeTitle() {
-        /* jshint validthis:true */
         return this.editable ? utils.gettext("Stop customizing") : utils.gettext("Customize");
     };
 

@@ -666,15 +666,11 @@
     var builder = new se.GUIBuilder();
 
     var behaviour_list_component = function behaviour_list_component(options) {
-        /* jshint validthis:true */
-
         this.body = new se.Container({class: options.class});
         return this.body;
     };
 
     var _removeConnection = function _removeConnection(index, connection) {
-        /* jshint validthis:true */
-
         this.description.connections.splice(index, 1);
         connection.remove();
 
@@ -682,8 +678,6 @@
     };
 
     var disabled_removeComponent = function disabled_removeComponent(component) {
-        /* jshint validthis:true */
-
         delete this.description.components[component.type][component.id];
         delete this.components[component.type][component.id];
 
@@ -696,8 +690,6 @@
     };
 
     var desactivateAllExcept = function desactivateAllExcept(behaviour) {
-        /* jshint validthis:true */
-
         var i, found;
 
         for (found = false, i = 0; i < this.behaviours.length; i++) {
@@ -715,8 +707,6 @@
     };
 
     var enableToRemoveBehaviour = function enableToRemoveBehaviour() {
-        /* jshint validthis:true */
-
         var enabled = this.behaviours.length > 1;
 
         this.behaviours.forEach(function (behaviour) {
@@ -727,8 +717,6 @@
     };
 
     var btncreate_onclick = function btncreate_onclick() {
-        /* jshint validthis:true */
-
         var dialog = new Wirecloud.ui.FormWindowMenu([
                 {name: 'title', label: utils.gettext("Title"), type: 'text'},
                 {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
@@ -742,8 +730,6 @@
     };
 
     var btnenable_onclick = function btnenable_onclick() {
-        /* jshint validthis:true */
-
         var dialog, message;
 
         if (this.enabled) {
@@ -773,8 +759,6 @@
     };
 
     var insertBehaviour = function insertBehaviour(behaviour) {
-        /* jshint validthis:true */
-
         this.body.appendChild(behaviour);
         this.behaviours.push(behaviour);
 
@@ -798,8 +782,6 @@
     };
 
     var _removeComponent = function _removeComponent(component, cascade) {
-        /* jshint validthis:true */
-
         if (cascade) {
             this.behaviours.forEach(function (behaviour) {
                 behaviour.removeComponent(component);
@@ -825,7 +807,6 @@
     };
 
     var showComponentRemoveModal = function showComponentRemoveModal(component) {
-        /* jshint validthis:true */
         var modal, message;
 
         message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
@@ -842,7 +823,6 @@
     };
 
     var showComponentListRemoveModal = function showComponentListRemoveModal(componentList) {
-        /* jshint validthis:true */
         var i, modal, message, components;
 
         message = new se.Fragment();
@@ -875,7 +855,6 @@
     };
 
     var showComponentDeleteCascadeModal = function showComponentDeleteCascadeModal(component) {
-        /* jshint validthis:true */
         var modal, message;
 
         message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING, {

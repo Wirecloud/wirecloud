@@ -97,7 +97,6 @@
     var events = ['btncreate.click'];
 
     var version_onchange = function version_onchange(element) {
-        /* jshint validthis: true */
         var version = element.getValue();
 
         this.meta = Wirecloud.LocalCatalogue.getResourceId(this.id + "/" + version.text);
@@ -109,7 +108,6 @@
     };
 
     var setImage = function setImage(imageURL) {
-        /* jshint validthis: true */
         var thumbnailElement = this.imageElement.parentElement;
 
         thumbnailElement.classList.remove('se-thumbnail-missing');
@@ -126,7 +124,6 @@
     };
 
     var image_onerror = function image_onerror() {
-        /* jshint validthis: true */
         this.imageElement.parentElement.classList.add('se-thumbnail-missing');
         this.imageElement.parentElement.appendChild(document.createTextNode(utils.gettext("No image available")));
     };

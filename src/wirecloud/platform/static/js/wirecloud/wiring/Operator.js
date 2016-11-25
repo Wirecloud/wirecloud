@@ -378,7 +378,6 @@
     };
 
     var is_valid_resource = function is_valid_resource(resource) {
-        /*jshint validthis:true */
         return resource instanceof Wirecloud.wiring.OperatorMeta && resource.group_id === this.meta.group_id;
     };
 

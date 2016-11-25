@@ -318,7 +318,6 @@
     };
 
     var clean_name = function clean_name(name) {
-        /*jshint validthis:true */
         if (typeof name !== 'string' || !name.trim().length) {
             throw utils.gettext("Error to update a tab: invalid name");
         }
@@ -339,12 +338,10 @@
     };
 
     var create_preferences = function create_preferences(preferences) {
-        /*jshint validthis:true */
         return Wirecloud.PreferenceManager.buildPreferences('tab', preferences, this);
     };
 
     var create_widget = function create_widget(resource, data) {
-        /*jshint validthis:true */
         var widget = new Wirecloud.Widget(this, resource, data);
 
         widget.addEventListener('remove', _private.get(this).on_removewidget);
@@ -355,7 +352,6 @@
     };
 
     var get_widgets_by_id = function get_widgets_by_id() {
-        /*jshint validthis:true */
         var widgets = {};
 
         _private.get(this).widgets.forEach(function (widget) {
@@ -366,7 +362,6 @@
     };
 
     var remove_tab = function remove_tab() {
-        /*jshint validthis:true */
         this.dispatchEvent('preremove');
         this.workspace.removeEventListener('changetab', _private.get(this).on_changetab);
         this.dispatchEvent('remove');
@@ -377,14 +372,12 @@
     // =========================================================================
 
     var on_changetab = function on_changetab(workspace, tab, changes) {
-        /*jshint validthis:true */
         if (tab !== this && changes.initial && tab.initial && this.initial) {
             change_initial.call(this, false);
         }
     };
 
     var on_removewidget = function on_removewidget(widget) {
-        /*jshint validthis:true */
         widget.removeEventListener('remove', _private.get(this).on_removewidget);
         _private.get(this).widgets.splice(_private.get(this).widgets.indexOf(widget), 1);
         this.dispatchEvent('removewidget', widget);

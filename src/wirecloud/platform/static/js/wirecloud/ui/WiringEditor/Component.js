@@ -131,8 +131,6 @@
     // =========================================================================
 
     var update_component_label = function update_component_label() {
-        /*jshint validthis:true */
-
         if (this._component.volatile) {
             this.label.textContent = utils.gettext("volatile");
             this.label.className = "label label-info";
