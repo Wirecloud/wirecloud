@@ -121,7 +121,7 @@
              * @type {Boolean}
              */
             logManager: {
-                value: new Wirecloud.WidgetLogManager(this)
+                value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
             },
             /**
              * @memberOf Wirecloud.Widget#

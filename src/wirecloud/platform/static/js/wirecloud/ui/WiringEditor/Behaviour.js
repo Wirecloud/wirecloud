@@ -98,7 +98,7 @@
                 }
             },
 
-            logManager: {value: new ns.BehaviourLogManager(this)}
+            logManager: {value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)}
 
         });
 
@@ -274,7 +274,11 @@
          *      The instance on which the member is called.
          */
         showLogs: function showLogs() {
-            var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
+            var modal = new Wirecloud.ui.LogWindowMenu(this.logManager, {
+                title: utils.interpolate(utils.gettext("%(behaviour_title)s's logs"), {
+                    behaviour_title: this.title
+                })
+            });
             modal.show();
 
             return this;

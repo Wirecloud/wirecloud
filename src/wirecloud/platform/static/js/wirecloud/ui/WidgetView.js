@@ -605,7 +605,7 @@
     // =========================================================================
 
     var on_add_log = function on_add_log() {
-        var label, errorCount = this.model.logManager.getErrorCount();
+        var label, errorCount = this.model.logManager.errorCount;
         this.errorbutton.setDisabled(errorCount === 0);
 
         label = utils.ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);

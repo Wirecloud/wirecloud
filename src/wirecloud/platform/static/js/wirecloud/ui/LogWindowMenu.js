@@ -22,25 +22,91 @@
 /* globals moment, StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var LEVEL_CLASS = ['alert-error', 'alert-warning', 'alert-info'];
+    // =========================================================================
+    // CLASS DEFINITION
+    // =========================================================================
 
-    var onfade = function onfade() {
-        this.fadeTimeout = null;
+    var LogWindowMenu = function LogWindowMenu(logManager, options) {
+        var priv = {
+            fadeTimeout: null,
+            on_fade: on_fade.bind(this),
+            on_newentry: on_newentry.bind(this)
+        };
 
-        for (var i = 0; i < this.windowContent.childNodes.length; i++) {
-            var classList = this.windowContent.childNodes[i].classList;
-            if (classList.contains('in')) {
-                break;
+        options = utils.update({
+            title: utils.gettext("Logs")
+        }, options);
+
+        ns.WindowMenu.call(this, options.title, 'logwindowmenu');
+
+        privates.set(this, priv);
+
+        Object.defineProperties(this, {
+            logManager: {
+                value: logManager
             }
-            classList.add('in');
-        }
+        });
+
+        // Accept button
+        this.button = new se.Button({
+            text: utils.gettext("Close"),
+            class: "btn-primary btn-accept"
+        });
+        this.button.insertInto(this.windowBottom);
+        this.button.addEventListener("click", this._closeListener);
     };
 
-    var print_entry = function print_entry(entry) {
+    // =========================================================================
+    // PUBLIC MEMBERS
+    // =========================================================================
+
+    utils.inherit(LogWindowMenu, Wirecloud.ui.WindowMenu, {
+
+        hide: function hide(parentWindow) {
+            var priv = privates.get(this);
+
+            this.windowContent.innerHTML = "";
+            this.logManager.removeEventListener("newentry", priv.on_newentry);
+
+            ns.WindowMenu.prototype.hide.call(this, parentWindow);
+            return this;
+        },
+
+        show: function show(parentWindow) {
+            var priv = privates.get(this);
+
+            this.logManager.history.forEach(function (entries, i) {
+                if (i > 0) {
+                    this.windowContent.appendChild(document.createElement("hr"));
+                }
+                entries.forEach(appendEntry, this);
+            }, this);
+            this.logManager.addEventListener("newentry", priv.on_newentry);
+
+            ns.WindowMenu.prototype.show.call(this, parentWindow);
+            return this;
+        },
+
+        setFocus: function setFocus() {
+            this.button.focus();
+            return this;
+        }
+
+    });
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
+
+    var LEVEL_CLASS = ['alert-error', 'alert-warning', 'alert-info'];
+
+    var buildEntry = function buildEntry(entry) {
         var entry_element, dateElement, expander, titleElement;
 
         if (entry.level === Wirecloud.constants.LOGGING.DEBUG_MSG) {
@@ -70,61 +136,60 @@
             }
         }
 
+        return entry_element;
+    };
+
+    var appendEntry = function appendEntry(entry) {
+        var entry_element = buildEntry.call(this, entry);
+        if (entry_element == null) {
+            // Ignore this entry
+            return;
+        }
+
+        this.windowContent.appendChild(entry_element);
+
+        var priv = privates.get(this);
+
+        if (priv.fadeTimeout != null) {
+            clearTimeout(priv.fadeTimeout);
+        }
+        priv.fadeTimeout = setTimeout(priv.on_fade, 200);
+    };
+
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
+
+    var on_fade = function on_fade() {
+        privates.get(this).fadeTimeout = null;
+
+        for (var i = 0; i < this.windowContent.childNodes.length; i++) {
+            var classList = this.windowContent.childNodes[i].classList;
+            if (classList.contains('in')) {
+                break;
+            }
+            classList.add('in');
+        }
+    };
+
+    var on_newentry = function on_newentry(logManager, entry) {
+        var entry_element = buildEntry.call(this, entry);
+        if (entry_element == null) {
+            // Ignore this entry
+            return;
+        }
+
+        // Add new entries at beginning to match the expected order
         this.windowContent.insertBefore(entry_element, this.windowContent.firstChild);
 
-        if (this.fadeTimeout != null) {
-            clearTimeout(this.fadeTimeout);
+        var priv = privates.get(this);
+
+        if (priv.fadeTimeout != null) {
+            clearTimeout(priv.fadeTimeout);
         }
-        this.fadeTimeout = setTimeout(this._onfade, 200);
+        priv.fadeTimeout = setTimeout(priv.on_fade, 200);
     };
 
-    var onnewentry = function _onnewentry(logManager, entry) {
-        print_entry.call(this, entry);
-    };
+    ns.LogWindowMenu = LogWindowMenu;
 
-    /**
-     * Specific class representing alert dialogs.
-     */
-    var LogWindowMenu = function LogWindowMenu(logManager) {
-
-        Wirecloud.ui.WindowMenu.call(this, logManager.buildTitle(), 'logwindowmenu');
-
-        Object.defineProperty(this, 'logManager', {value: logManager});
-        this._onfade = onfade.bind(this);
-        this._onnewentry = onnewentry.bind(this);
-
-        // Accept button
-        this.button = new se.Button({
-            text: utils.gettext('Close'),
-            'class': 'btn-primary btn-accept'
-        });
-        this.button.insertInto(this.windowBottom);
-        this.button.addEventListener("click", this._closeListener);
-    };
-    utils.inherit(LogWindowMenu, Wirecloud.ui.WindowMenu);
-
-    LogWindowMenu.prototype.show = function show(parentWindow) {
-        var i;
-
-        for (i = 0; i < this.logManager.entries.length; i++) {
-            print_entry.call(this, this.logManager.entries[i]);
-        }
-        this.logManager.addEventListener('newentry', this._onnewentry);
-
-        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
-    };
-
-    LogWindowMenu.prototype.hide = function hide(parentWindow) {
-        this.windowContent.innerHTML = '';
-
-        this.logManager.removeEventListener('newentry', this._onnewentry);
-        Wirecloud.ui.WindowMenu.prototype.hide.call(this, parentWindow);
-    };
-
-    LogWindowMenu.prototype.setFocus = function setFocus() {
-        this.button.focus();
-    };
-
-    Wirecloud.ui.LogWindowMenu = LogWindowMenu;
-
-})(StyledElements, Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

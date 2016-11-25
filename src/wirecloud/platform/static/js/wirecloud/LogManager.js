@@ -19,206 +19,272 @@
  *
  */
 
-/* globals console, StyledElements, Wirecloud*/
+/* globals console, StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var builder = new StyledElements.GUIBuilder();
+    // =========================================================================
+    // CLASS DEFINITION
+    // =========================================================================
 
-    var LogManager = function LogManager(parentLogger) {
-        Object.defineProperties(this, {
-            wrapperElement: {value: document.createElement('div')},
-            parentLogger: {value: parentLogger}
-        });
-        this.errorCount = 0;
-        this.totalCount = 0;
-        this.entries = [];
-        this.childManagers = [];
-        this.closed = false;
-
-        StyledElements.ObjectWithEvents.call(this, ['newentry']);
-
-        if (parentLogger) {
-            parentLogger.childManagers.push(this);
-        }
-    };
-    LogManager.prototype = new StyledElements.ObjectWithEvents();
-
-    LogManager.prototype._addEntry = function _addEntry(entry) {
-
-        Object.freeze(entry);
-
-        this.entries.push(entry);
-        if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
-            this.errorCount += 1;
-        }
-        this.totalCount += 1;
-
-        if (this.parentLogger) {
-            this.parentLogger._addEntry(entry);
-        }
-
-        this.dispatchEvent('newentry', entry);
-    };
-
-    LogManager.prototype.newCycle = function newCycle() {
-        this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.firstChild);
-        this.resetCounters();
-    };
-
-    LogManager.prototype.log = function log(msg, options) {
-        var date, entry;
-
-        if (typeof options === 'number') {
-            // Backwards compatibility
-            options = {level: options};
-        }
-        options = utils.merge({
-            level: Wirecloud.constants.LOGGING.ERROR_MSG,
-            console: true,
-        }, options);
-
-        date = new Date();
-        if (options.console === true) {
-            switch (options.level) {
-            default:
-            case Wirecloud.constants.LOGGING.ERROR_MSG:
-                // eslint-disable-next-line no-console
-                if ('console' in window && typeof console.error === 'function') {
-                    // eslint-disable-next-line no-console
-                    console.error(msg);
-                }
-                break;
-            case Wirecloud.constants.LOGGING.WARN_MSG:
-                // eslint-disable-next-line no-console
-                if ('console' in window && typeof console.warn === 'function') {
-                    // eslint-disable-next-line no-console
-                    console.warn(msg);
-                }
-                break;
-            case Wirecloud.constants.LOGGING.DEBUG_MSG:
-            case Wirecloud.constants.LOGGING.INFO_MSG:
-                // eslint-disable-next-line no-console
-                if ('console' in window && typeof console.info === 'function') {
-                    // eslint-disable-next-line no-console
-                    console.info(msg);
-                }
-                break;
-            }
-        }
-
-        entry = {
-            "level": options.level,
-            "msg": msg,
-            "date": date,
-            "logManager": this
+    var LogManager = function LogManager(parent) {
+        var entries = [];
+        var priv = {
+            closed: false,
+            entries: entries,
+            errorcount: 0,
+            previouscycles: [],
+            parent: null
         };
-        if (options.details != null) {
-            entry.details = options.details;
-        }
-        this._addEntry(entry);
-    };
 
-    LogManager.prototype.formatException = function formatException(exception) {
-        return builder.parse(Wirecloud.currentTheme.templates['wirecloud/logs/details'], {
-            message: exception.toString(),
-            stacktrace: exception.stack
-        });
-    };
+        se.ObjectWithEvents.call(this, ["newentry"]);
 
-    LogManager.prototype.parseErrorResponse = function parseErrorResponse(response) {
-        var errorDesc, msg;
+        privates.set(this, priv);
 
-        try {
-            var errorInfo = JSON.parse(response.responseText);
-            msg = errorInfo.description;
-        } catch (error) {
-            msg = utils.gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
-            if (response.status !== 0 && response.statusText !== '') {
-                errorDesc = response.statusText;
-            } else {
-                errorDesc = Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS[response.status];
-                if (errorDesc == null) {
-                    errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
+        Object.defineProperties(this, {
+            closed: {
+                get: function () {
+                    return priv.closed;
+                }
+            },
+            entries: {
+                get: function () {
+                    return priv.entries.slice(0);
+                }
+            },
+            errorCount: {
+                get: function () {
+                    return priv.errorcount;
+                }
+            },
+            history: {
+                get: function () {
+                    return [this.entries].concat(priv.previouscycles);
+                }
+            },
+            parent: {
+                get: function () {
+                    return priv.parent;
+                }
+            },
+            totalCount: {
+                get: function () {
+                    return priv.entries.length;
                 }
             }
-            msg = utils.interpolate(msg, {errorCode: response.status, errorDesc: errorDesc}, true);
-        }
+        });
 
-        return msg;
+        setParent.call(this, parent);
     };
 
-    LogManager.prototype.formatError = function formatError(format, transport, e) {
-        var msg;
+    // =========================================================================
+    // PUBLIC MEMBERS
+    // =========================================================================
 
-        if (e) {
-            var context;
-            if (e.lineNumber !== undefined) {
-                // Firefox
-                context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e.message};
-            } else if (e.line !== undefined) {
-                // Webkit
-                context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e.message};
+    utils.inherit(LogManager, se.ObjectWithEvents, {
+
+        close: function close() {
+            privates.get(this).closed = true;
+            return this;
+        },
+
+        formatAndLog: function formatAndLog(format, transport, e, level) {
+            var msg = this.formatError(format, transport, e);
+            this.log(msg, level);
+
+            return msg;
+        },
+
+        formatError: function formatError(format, transport, e) {
+            var msg;
+
+            if (e) {
+                var context;
+                if (e.lineNumber !== undefined) {
+                    // Firefox
+                    context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e.message};
+                } else if (e.line !== undefined) {
+                    // Webkit
+                    context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e.message};
+                } else {
+                    // Other browsers
+                    var text = utils.gettext("unknown");
+                    context = {errorFile: text, errorLine: text, errorDesc: e.message};
+                }
+
+                msg = utils.interpolate(utils.gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+                          context,
+                          true);
             } else {
-                // Other browsers
-                var text = utils.gettext("unknown");
-                context = {errorFile: text, errorLine: text, errorDesc: e.message};
+                msg = this.parseErrorResponse(transport);
+            }
+            msg = utils.interpolate(format, {errorMsg: msg}, true);
+
+            return msg;
+        },
+
+        formatException: function formatException(exception) {
+            var builder = new StyledElements.GUIBuilder();
+
+            return builder.parse(Wirecloud.currentTheme.templates['wirecloud/logs/details'], {
+                message: exception.toString(),
+                stacktrace: exception.stack
+            });
+        },
+
+        log: function log(message, options) {
+            var entry;
+
+            if (this.closed) {
+                throw new Error("Trying to log a message in a closed LogManager");
             }
 
-            msg = utils.interpolate(utils.gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-                      context,
-                      true);
-        } else {
-            msg = this.parseErrorResponse(transport);
-        }
-        msg = utils.interpolate(format, {errorMsg: msg}, true);
-
-        return msg;
-    };
-
-    LogManager.prototype.formatAndLog = function formatAndLog(format, transport, e, level) {
-        var msg = this.formatError(format, transport, e);
-        this.log(msg, level);
-
-        return msg;
-    };
-
-    LogManager.prototype.reset = function reset() {
-        var i;
-
-        this.wrapperElement.innerHTML = '';
-        this.resetCounters();
-        this.entries = [];
-        for (i = this.childManagers.length - 1; i >= 0; i -= 1) {
-            if (this.childManagers[i].isClosed()) {
-                this.childManagers.splice(i, 1);
-            } else {
-                this.childManagers[i].reset();
+            // Backwards compatibility
+            if (typeof options === "number") {
+                options = {
+                    level: options
+                };
             }
+
+            options = utils.merge({
+                console: true,
+                level: Wirecloud.constants.LOGGING.ERROR_MSG
+            }, options);
+
+            if (typeof options.level !== "number" || options.level < 0 || options.level > 4) {
+                throw new TypeError("Invalid level value");
+            }
+
+            entry = Object.freeze({
+                date: new Date(),
+                details: options.details,
+                level: options.level,
+                logManager: this,
+                msg: message
+            });
+            appendEntry.call(this, entry);
+
+            if (window.console && options.console) {
+                printEntry.call(this, entry);
+            }
+
+            return this;
+        },
+
+        newCycle: function newCycle() {
+            var priv = privates.get(this);
+
+            if (priv.closed) {
+                throw new Error("Trying to create a new cycle in a closed LogManager");
+            }
+
+            // Freeze current entry list
+            Object.freeze(priv.entries);
+            priv.previouscycles.unshift(priv.entries);
+
+            // Create a new list of entries
+            priv.entries = [];
+            priv.errorcount = 0;
+
+            return this;
+        },
+
+        parseErrorResponse: function parseErrorResponse(response) {
+            var errorDesc, msg;
+
+            try {
+                var errorInfo = JSON.parse(response.responseText);
+                msg = errorInfo.description;
+            } catch (error) {
+                msg = utils.gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
+                if (response.status !== 0 && response.statusText !== '') {
+                    errorDesc = response.statusText;
+                } else {
+                    errorDesc = Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS[response.status];
+                    if (errorDesc == null) {
+                        errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
+                    }
+                }
+                msg = utils.interpolate(msg, {errorCode: response.status, errorDesc: errorDesc}, true);
+            }
+
+            return msg;
+        },
+
+        reset: function reset() {
+            var priv = privates.get(this);
+
+            if (priv.closed) {
+                throw new Error("Closed LogManagers cannot be reset");
+            }
+
+            priv.entries.length = 0;
+            priv.errorcount = 0;
+            priv.previouscycles = [];
+
+            return this;
+        }
+
+    });
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
+
+    var appendEntry = function appendEntry(entry) {
+        var priv = privates.get(this);
+
+        if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
+            priv.errorcount += 1;
+        }
+        priv.entries.unshift(entry);
+        this.dispatchEvent('newentry', entry);
+
+        if (priv.parent) {
+            appendEntry.call(priv.parent, entry);
         }
     };
 
-    LogManager.prototype.resetCounters = function resetCounters() {
-        this.errorCount = 0;
-        this.totalCount = 0;
+    var printEntry = function printEntry(entry) {
+
+        switch (entry.level) {
+        case Wirecloud.constants.LOGGING.ERROR_MSG:
+            // eslint-disable-next-line no-console
+            console.error(entry.msg);
+            break;
+        case Wirecloud.constants.LOGGING.WARN_MSG:
+            // eslint-disable-next-line no-console
+            console.warn(entry.msg);
+            break;
+        case Wirecloud.constants.LOGGING.DEBUG_MSG:
+        case Wirecloud.constants.LOGGING.INFO_MSG:
+            // eslint-disable-next-line no-console
+            console.info(entry.msg);
+            break;
+        }
     };
 
-    LogManager.prototype.getErrorCount = function getErrorCount() {
-        return this.errorCount;
+    var setParent = function setParent(parent) {
+        var priv = privates.get(this);
+
+        if (parent instanceof LogManager) {
+            if (parent.closed) {
+                throw new Error();
+            }
+            priv.parent = parent;
+        }
     };
 
-    LogManager.prototype.close = function close() {
-        this.closed = true;
-    };
-
-    LogManager.prototype.isClosed = function isClosed() {
-        return this.closed;
-    };
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
 
     Wirecloud.LogManager = LogManager;
     Wirecloud.GlobalLogManager = new LogManager();
 
-})(Wirecloud.Utils);
+})(StyledElements, StyledElements.Utils);

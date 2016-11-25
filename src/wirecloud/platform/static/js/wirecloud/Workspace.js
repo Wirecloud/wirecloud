@@ -198,7 +198,7 @@
         });
 
         /* FIXME */
-        this.restricted = data.owner != Wirecloud.contextManager.get('username') || Wirecloud.contextManager.get('mode') === 'embedded';
+        this.restricted = data.owner !== Wirecloud.contextManager.get('username') || Wirecloud.contextManager.get('mode') === 'embedded';
         this.removable = !this.restricted && data.removable;
         /* END FIXME */
 
@@ -332,7 +332,7 @@
          * @param {Object} options
          */
         merge: function merge(options) {
-            if (options == null || typeof options != "object") {
+            if (options == null || typeof options !== "object") {
                 throw new TypeError("options must be an object");
             }
 
@@ -466,7 +466,6 @@
     var privates = new WeakMap();
 
     var get_tabs_by_id = function get_tabs_by_id() {
-        /*jshint validthis:true */
         var tabs = {};
 
         privates.get(this).tabs.forEach(function (tab) {
