@@ -583,10 +583,12 @@
 
     var on_livemessage = function on_livemessage(live, data) {
         if (data.workspace === this.id) {
-            this.contextManager.modify({
-                name: data.name
-            });
-            this.trigger('change', ['name']);
+            if ('name' in data) {
+                this.contextManager.modify({
+                    name: data.name
+                });
+                this.trigger('change', ['name']);
+            }
         }
     };
 
