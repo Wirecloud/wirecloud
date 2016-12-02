@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -54,6 +54,13 @@
              */
             id: {
                 value: model.id
+            },
+            /**
+             * @memberOf Wirecloud.ui.WorkspaceTabView#
+             * @type {Wirecloud.LogManager}
+             */
+            logManager: {
+                value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
             },
             /**
              * @memberOf Wirecloud.ui.WorkspaceTabView#
@@ -227,22 +234,17 @@
         },
 
         /**
+         * Renames this tab
+         *
          * @param {String} name
          *
          * @returns {Promise}
          */
         rename: function rename(name) {
-            var promise = this.model.rename(name);
-
-            promise.catch(function (reason) {
-                Wirecloud.GlobalLogManager.log(reason);
-                /*
-                var msg = Wirecloud.GlobaLogManager.formatError(gettext("Error renaming tab: %(errorMsg)s."), transport, e);
-        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                 */
+            return this.model.rename(name).catch((reason) => {
+                this.logManager.log(reason);
+                return Promise.reject(reason);
             });
-
-            return promise;
         },
 
         repaint: function repaint() {

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -220,40 +220,41 @@
         },
 
         /**
-         * @param {String} name
+         * Renames this tab.
+         *
+         * @param {String} name new name for this workspace tab
+         *
+         * @returns {Wirecloud.Task}
          */
         rename: function rename(name) {
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
-                    workspace_id: this.workspace.id,
-                    tab_id: this.id
-                });
 
-                try {
-                    name = clean_name.call(this, name);
-                } catch (e) {
-                    reject(e);
+            if (typeof name !== 'string' || !name.trim().length) {
+                throw new TypeError("invalid name parameter");
+            }
+
+            var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
+                workspace_id: this.workspace.id,
+                tab_id: this.id
+            });
+
+            var content = {
+                name: name
+            };
+
+            return Wirecloud.io.makeRequest(url, {
+                method: 'POST',
+                requestHeaders: {'Accept': 'application/json'},
+                contentType: 'application/json',
+                postBody: JSON.stringify(content),
+            }).then(function (response) {
+                if ([204, 401, 403, 409, 500].indexOf(response.status) === -1) {
+                    return reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 409, 500].indexOf(response.status) !== -1) {
+                    return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
-
-                var content = {
-                    name: name
-                };
-
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(content),
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            change_name.call(this, name);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
-            }.bind(this));
+                change_name.call(this, name);
+                resolve(this);
+            });
         },
 
         /**
@@ -315,26 +316,6 @@
         data.name = data.name;
 
         return data;
-    };
-
-    var clean_name = function clean_name(name) {
-        if (typeof name !== 'string' || !name.trim().length) {
-            throw utils.gettext("Error to update a tab: invalid name");
-        }
-
-        name = name.trim();
-
-        var already_taken = this.workspace.tabs.some(function (tab) {
-            return tab.id !== this.id && tab.name === name;
-        }, this);
-
-        if (already_taken) {
-            throw utils.interpolate(utils.gettext("Error to update tab: the name %(name)s is already taken in this workspace"), {
-                name: name
-            });
-        }
-
-        return name;
     };
 
     var create_preferences = function create_preferences(preferences) {

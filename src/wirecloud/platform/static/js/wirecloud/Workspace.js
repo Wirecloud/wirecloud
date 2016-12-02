@@ -407,7 +407,11 @@
         },
 
         /**
-         * @param {String} name
+         * Renames this workspace.
+         *
+         * @param {String} name new name for this workspace
+         *
+         * @returns {Wirecloud.Task}
          */
         rename: function rename(name) {
 
@@ -415,33 +419,34 @@
                 throw new TypeError("invalid name parameter");
             }
 
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
-                    workspace_id: this.id
-                });
+            var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
+                workspace_id: this.id
+            });
 
-                var content = {
-                    name: name
-                };
+            var content = {
+                name: name
+            };
 
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(content),
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            this.contextManager.modify({
-                                name: name
-                            });
-                            this.dispatchEvent('change', ['name']);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
+            return Wirecloud.io.makeRequest(url, {
+                method: 'POST',
+                requestHeaders: {'Accept': 'application/json'},
+                contentType: 'application/json',
+                postBody: JSON.stringify(content)
+            }).then((response) => {
+                return new Promise((resolve, reject) => {
+                    if ([204, 401, 403, 409, 500].indexOf(response.status) === -1) {
+                        return reject(utils.gettext("Unexpected response from server"));
+                    } else if ([401, 403, 409, 500].indexOf(response.status) !== -1) {
+                        return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                    }
+
+                    this.contextManager.modify({
+                        name: name
+                    });
+                    this.dispatchEvent('change', ['name']);
+                    resolve(this);
                 });
-            }.bind(this));
+            });
         },
 
         unload: function unload() {
