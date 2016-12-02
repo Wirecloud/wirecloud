@@ -40,13 +40,45 @@ class LiveNotificationsTestCase(WirecloudTestCase):
     def setUp(self):
         self.normuser = User.objects.get(username="normuser")
 
-    def test_new_macs_are_notified(self, notify_mock):
+    def test_mac_install_by_user_are_notified(self, notify_mock):
         instance = CatalogueResource.objects.create(type=1, creation_date=datetime.datetime.now(), short_name="MyWidget", vendor="Wirecloud", version="1.0")
         instance.users.add(self.normuser)
         notify_mock.assert_called_once_with(
             {
                 "component": "Wirecloud/MyWidget/1.0",
                 "action": "install",
+                "category": "component"
+            },
+            {"normuser"}
+        )
+
+    def test_mac_user_clear_are_notified(self, notify_mock):
+        instance = CatalogueResource.objects.create(type=1, creation_date=datetime.datetime.now(), short_name="MyWidget", vendor="Wirecloud", version="1.0")
+        instance.users.add(self.normuser)
+        notify_mock.reset_mock()
+
+        instance.users.clear()
+
+        notify_mock.assert_called_once_with(
+            {
+                "component": "Wirecloud/MyWidget/1.0",
+                "action": "uninstall",
+                "category": "component"
+            },
+            {"normuser"}
+        )
+
+    def test_mac_uninstall_by_user_are_notified(self, notify_mock):
+        instance = CatalogueResource.objects.create(type=1, creation_date=datetime.datetime.now(), short_name="MyWidget", vendor="Wirecloud", version="1.0")
+        instance.users.add(self.normuser)
+        notify_mock.reset_mock()
+
+        instance.users.remove(self.normuser)
+
+        notify_mock.assert_called_once_with(
+            {
+                "component": "Wirecloud/MyWidget/1.0",
+                "action": "uninstall",
                 "category": "component"
             },
             {"normuser"}
@@ -67,13 +99,15 @@ class LiveNotificationsTestCase(WirecloudTestCase):
     def test_workspace_simple_updates_are_notified(self, notify_mock):
         instance = Workspace.objects.get(pk="2")
         instance.description = "New description"
-        instance.save(update_fields=("description",))
+        with patch("time.time", return_value=123456):
+            instance.save(update_fields=("description",))
         notify_mock.assert_called_once_with(
             {
                 "workspace": "2",
                 "action": "update",
                 "category": "workspace",
                 "description": "New description",
+                "last_modified": 123456000,
             },
             {"user_with_workspaces"}
         )
@@ -83,13 +117,15 @@ class LiveNotificationsTestCase(WirecloudTestCase):
         instance.userworkspace_set.create(user=User.objects.get(username="normuser"))
         instance.groups.add(Group.objects.get(name="org"))
         instance.description = "New description"
-        instance.save(update_fields=("description",))
+        with patch("time.time", return_value=123456):
+            instance.save(update_fields=("description",))
         notify_mock.assert_called_once_with(
             {
                 "workspace": "2",
                 "action": "update",
                 "category": "workspace",
                 "description": "New description",
+                "last_modified": 123456000,
             },
             {"user_with_workspaces", "org", "orguser", "normuser"}
         )
@@ -97,13 +133,15 @@ class LiveNotificationsTestCase(WirecloudTestCase):
     def test_workspace_public_updates_are_notified(self, notify_mock):
         instance = Workspace.objects.get(pk="4")
         instance.description = "New description"
-        instance.save(update_fields=("description",))
+        with patch("time.time", return_value=123456):
+            instance.save(update_fields=("description",))
         notify_mock.assert_called_once_with(
             {
                 "workspace": "4",
                 "action": "update",
                 "category": "workspace",
                 "description": "New description",
+                "last_modified": 123456000,
             },
             {"*"}
         )

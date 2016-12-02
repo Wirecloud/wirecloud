@@ -74,7 +74,7 @@ class Workspace(models.Model):
 
         self.last_modified = int(time.time() * 1000)
         if 'update_fields' in kwargs and 'last_modified' not in kwargs['update_fields']:
-            kwargs['update_fields'].append('last_modified')
+            kwargs['update_fields'] = tuple(kwargs['update_fields']) + ('last_modified',)
 
         super(Workspace, self).save(*args, **kwargs)
 

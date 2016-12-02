@@ -68,14 +68,28 @@ def workspace_update(sender, instance, created, raw, using, update_fields, **kwa
 @receiver(m2m_changed, sender=CatalogueResource.groups.through)
 @receiver(m2m_changed, sender=CatalogueResource.users.through)
 def update_users_or_groups(sender, instance, action, reverse, model, pk_set, using, **kwargs):
-    if reverse or action.startswith('pre_') or (pk_set is not None and len(pk_set) == 0):
+    if reverse or action.startswith('post_') or (pk_set is not None and len(pk_set) == 0):
         return
 
-    affected_users = set(model.objects.filter(pk__in=pk_set).values_list("username", flat=True))
+    if sender == CatalogueResource.users.through:
+        if action == "pre_clear":
+            affected_users = set(instance.users.all().values_list("username", flat=True))
+        else:
+            affected_users = set(model.objects.filter(pk__in=pk_set).values_list("username", flat=True))
+    else:
+        if action == "pre_clear":
+            groups = instance.groups.all()
+        else:
+            groups = model.objects.filter(pk__in=pk_set)
+
+        affected_users = set()
+        for group in groups:
+            affected_users.update(group.user_set.values_list("username", flat=True))
+
     notify(
         {
             "component": instance.local_uri_part,
-            "action": "install" if action == "post_add" else "uninstall",
+            "action": "install" if action == "pre_add" else "uninstall",
             "category": "component"
         },
         affected_users
