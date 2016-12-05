@@ -149,9 +149,9 @@ Wirecloud.ui = Wirecloud.ui || {};
         /**
          * @override
          */
-        getBreadcrum: function getBreadcrum() {
+        getBreadcrumb: function getBreadcrumb() {
             var i, workspace_breadcrum = Wirecloud.UserInterfaceManager
-                .views.workspace.getBreadcrum();
+                .views.workspace.getBreadcrumb();
 
             for (i = 0; i < workspace_breadcrum.length; i += 1) {
                 delete workspace_breadcrum[i].menu;

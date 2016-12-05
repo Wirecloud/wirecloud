@@ -133,7 +133,7 @@
         this.changeCurrentView('search');
     };
 
-    MyResourcesView.prototype.getBreadcrum = function getBreadcrum() {
+    MyResourcesView.prototype.getBreadcrumb = function getBreadcrumb() {
         var breadcrum = [utils.gettext('My Resources')];
 
         if (this.alternatives.getCurrentAlternative() === this.viewsByName.details && this.viewsByName.details.currentEntry != null) {

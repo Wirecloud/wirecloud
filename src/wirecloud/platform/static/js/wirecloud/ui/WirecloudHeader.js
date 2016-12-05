@@ -167,13 +167,13 @@
         this.breadcrum.appendChild(breadcrum_part);
     };
 
-    WirecloudHeader.prototype._paintBreadcrum = function _paintBreadcrum(newView) {
+    WirecloudHeader.prototype._paintBreadcrumb = function _paintBreadcrumb(newView) {
         var i, breadcrum;
 
         this.breadcrum.innerHTML = '';
 
-        if (newView != null && 'getBreadcrum' in newView) {
-            breadcrum = newView.getBreadcrum();
+        if (newView != null && 'getBreadcrumb' in newView) {
+            breadcrum = newView.getBreadcrumb();
         } else {
             return;
         }
@@ -235,7 +235,7 @@
     };
 
     WirecloudHeader.prototype.refresh = function refresh() {
-        this._paintBreadcrum(this.currentView);
+        this._paintBreadcrumb(this.currentView);
         this._paintToolbar(this.currentView);
         this._replaceMenu(this.currentView);
         this.backButton.setDisabled(this.currentView == null || !('goUp' in this.currentView));

@@ -331,7 +331,7 @@
         };
     };
 
-    WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
+    WorkspaceView.prototype.getBreadcrumb = function getBreadcrumb() {
         var entries, current_state;
 
         current_state = Wirecloud.HistoryManager.getCurrentState();

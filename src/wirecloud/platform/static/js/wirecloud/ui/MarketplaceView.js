@@ -243,7 +243,7 @@
         }
     };
 
-    MarketplaceView.prototype.getBreadcrum = function getBreadcrum() {
+    MarketplaceView.prototype.getBreadcrumb = function getBreadcrumb() {
         var breadcrum, current_alternative, subalternative;
 
         current_alternative = this.alternatives.getCurrentAlternative();
