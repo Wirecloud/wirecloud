@@ -844,8 +844,8 @@ if (window.StyledElements == null) {
      */
     Utils.merge = function merge(object) {
 
-        if (object == null) {
-            throw new TypeError("The argument `object` must be an `Object`.");
+        if (object == null || typeof object !== "object") {
+            throw new TypeError("object argument must be an object");
         }
 
         Array.prototype.slice.call(arguments, 1).forEach(function (source) {
@@ -900,8 +900,8 @@ if (window.StyledElements == null) {
      */
     Utils.update = function update(object) {
 
-        if (object == null) {
-            throw new TypeError("The argument `object` must be an `Object`.");
+        if (object == null || typeof object !== "object") {
+            throw new TypeError("object argument must be an object");
         }
 
         Array.prototype.slice.call(arguments, 1).forEach(function (source) {

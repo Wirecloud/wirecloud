@@ -350,13 +350,13 @@
             it("throws exception if object is null", function () {
                 expect(function () {
                     return merge();
-                }).toThrowError(TypeError, "The argument `object` must be an `Object`.");
+                }).toThrowError(TypeError);
             });
 
             it("throws exception if object is undefined", function () {
                 expect(function () {
                     return merge(null);
-                }).toThrowError(TypeError, "The argument `object` must be an `Object`.");
+                }).toThrowError(TypeError);
             });
 
             it("should merge sources into object", function () {
@@ -451,13 +451,13 @@
             it("throws exception if object is null", function () {
                 expect(function () {
                     return update();
-                }).toThrowError(TypeError, "The argument `object` must be an `Object`.");
+                }).toThrowError(TypeError);
             });
 
             it("throws exception if object is undefined", function () {
                 expect(function () {
                     return update(null);
-                }).toThrowError(TypeError, "The argument `object` must be an `Object`.");
+                }).toThrowError(TypeError);
             });
 
             it("should update sources into object", function () {
