@@ -34,17 +34,17 @@
      *
      * @since 1.0
      *
-     * @param {String} resourceURL
-     *      The URL where the resource is located.
+     * @param {String} componentURL
+     *      The URL where the component is located.
      */
-    var install = function install(resourceURL, market_info) {
-        return new Promise (function (fulfill, reject) {
+    var install = function install(componentURL, market_info) {
+        return new Promise(function (fulfill, reject) {
             var options =  {
                 market_info: market_info,
                 onSuccess: function () { fulfill(true); },
                 onFailure: function () { reject(false); },
             };
-            Wirecloud.LocalCatalogue.addResourceFromURL(resourceURL, options);
+            Wirecloud.LocalCatalogue.addResourceFromURL(componentURL, options);
         });
     };
 
@@ -61,23 +61,23 @@
      *      The version of the component. If undefined all versions will be uninstalled.
      */
     var uninstall = function uninstall(vendor, name, version) {
-        return new Promise (function (fulfill, reject) {
+        return new Promise(function (fulfill, reject) {
             var options = {
                 onSuccess: function () { fulfill(true); },
                 onFailure: function () { reject(false); },
             };
 
-            var resource;
+            var component;
 
             if (version) {
-                resource = Wirecloud.LocalCatalogue.getResource(vendor, name, version);
+                component = Wirecloud.LocalCatalogue.getResource(vendor, name, version);
             } else {
-                resource = Wirecloud.LocalCatalogue.resourceVersions[[vendor, name].join('/')][0];
+                component = Wirecloud.LocalCatalogue.resourceVersions[[vendor, name].join('/')][0];
                 options.allVersions = true;
             }
-            if (resource) {
-                Wirecloud.LocalCatalogue.uninstallResource (resource, options);
-            } else { // If the resource does not exist, its already uninstalled
+            if (component) {
+                Wirecloud.LocalCatalogue.uninstallResource(component, options);
+            } else { // If the component does not exist, its already uninstalled
                 fulfill(true);
             }
         });
@@ -125,4 +125,5 @@
         isInstalled: {value: isInstalled},
         isAnyInstalled: {value: isAnyInstalled},
     });
+
 })();
