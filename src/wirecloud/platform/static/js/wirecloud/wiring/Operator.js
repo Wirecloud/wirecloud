@@ -31,7 +31,7 @@
     // =========================================================================
 
     /**
-     * @name Wirecloud.Wiring.Operator
+     * @name Wirecloud.wiring.Operator
      *
      * @extends {StyledElements.ObjectWithEvents}
      * @constructor
@@ -67,7 +67,9 @@
 
         Object.defineProperties(this, {
             /**
-             * @memberOf Wirecloud.Widget#
+             * URL pointing to the html view of this operator.
+             *
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {String}
              */
             codeurl: {
@@ -76,14 +78,18 @@
                 }
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
+             * Id of this operator.
+             *
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {String}
              */
             id: {
                 value: data.id
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
+             * `true` if the operator has been loaded.
+             *
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {Boolean}
              */
             loaded: {
@@ -92,15 +98,17 @@
                 }
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
+             * Log manager for this operator.
+             *
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {Wirecloud.LogManager}
              */
             logManager: {
                 value: new Wirecloud.LogManager(wiring.logManager)
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
-             * @type {Wirecloud.Wiring.OperatorMeta}
+             * @memberOf Wirecloud.wiring.Operator#
+             * @type {Wirecloud.wiring.OperatorMeta}
              */
             meta: {
                 get: function () {
@@ -108,7 +116,7 @@
                 }
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {Boolean}
              */
             missing: {
@@ -117,7 +125,7 @@
                 }
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {String}
              */
             title: {
@@ -126,14 +134,14 @@
                 }
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {Boolean}
              */
             volatile: {
                 value: !!data.volatile
             },
             /**
-             * @memberOf Wirecloud.Wiring.Operator#
+             * @memberOf Wirecloud.wiring.Operator#
              * @type {Wirecloud.Wiring}
              */
             wiring: {
@@ -163,7 +171,7 @@
     // PUBLIC MEMBERS
     // =========================================================================
 
-    utils.inherit(ns.Operator, se.ObjectWithEvents, /** @lends Wirecloud.Wiring.Operator.prototype */{
+    utils.inherit(ns.Operator, se.ObjectWithEvents, /** @lends Wirecloud.wiring.Operator.prototype */{
 
         fullDisconnect: function fullDisconnect() {
             var name;
@@ -188,7 +196,7 @@
         },
 
         is: function is(component) {
-            return this.meta.type == component.meta.type && this.id == component.id;
+            return this.meta.type === component.meta.type && this.id === component.id;
         },
 
         /**
@@ -206,7 +214,7 @@
         },
 
         /**
-         * @returns {Wirecloud.Wiring.Operator}
+         * @returns {Wirecloud.wiring.Operator}
          */
         load: function load() {
 
@@ -245,7 +253,7 @@
         },
 
         /**
-         * @returns {Wirecloud.Wiring.Operator}
+         * @returns {Wirecloud.wiring.Operator}
          */
         showLogs: function showLogs() {
             var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager, {
@@ -259,7 +267,7 @@
         },
 
         /**
-         * @returns {Wirecloud.Wiring.Operator}
+         * @returns {Wirecloud.wiring.Operator}
          */
         showSettings: function showSettings() {
             var dialog = new Wirecloud.ui.OperatorPreferencesWindowMenu();
@@ -289,40 +297,42 @@
         },
 
         /**
-         * @param {Wirecloud.Wiring.OperatorMeta} resource
+         * Upgrade/downgrade this operator.
+         *
+         * @param {Wirecloud.wiring.OperatorMeta} meta
          */
-        upgrade: function upgrade(resource) {
+        upgrade: function upgrade(meta) {
 
-            if (!is_valid_resource.call(this, resource)) {
-                throw new TypeError("invalid resource parameter");
+            if (!is_valid_meta.call(this, meta)) {
+                throw new TypeError("invalid meta parameter");
             }
 
             return new Promise(function (resolve, reject) {
                 var message;
 
-                if (this.meta.uri === resource.uri) {
+                if (this.meta.uri === meta.uri) {
                     // From/to missing
-                    change_meta.call(this, resource);
+                    change_meta.call(this, meta);
                     resolve(this);
                 } else {
-                    switch (resource.version.compareTo(privates.get(this).resource.version)) {
+                    switch (meta.version.compareTo(privates.get(this).meta.version)) {
                     case 1: // upgrade
                         message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
                             type: this.meta.type,
-                            version: resource.version.text
+                            version: meta.version.text
                         });
                         this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
                         break;
                     case -1: // downgrade
                         message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
                             type: this.meta.type,
-                            version: resource.version.text
+                            version: meta.version.text
                         });
                         this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
                         break;
                     }
 
-                    change_meta.call(this, resource);
+                    change_meta.call(this, meta);
                     resolve(this);
                 }
             }.bind(this));
@@ -377,8 +387,8 @@
         this.inputs[pendingEvent.endpoint].propagate(pendingEvent.value);
     };
 
-    var is_valid_resource = function is_valid_resource(resource) {
-        return resource instanceof Wirecloud.wiring.OperatorMeta && resource.group_id === this.meta.group_id;
+    var is_valid_meta = function is_valid_meta(meta) {
+        return meta instanceof Wirecloud.wiring.OperatorMeta && meta.group_id === this.meta.group_id;
     };
 
     var change_meta = function change_meta(resource) {

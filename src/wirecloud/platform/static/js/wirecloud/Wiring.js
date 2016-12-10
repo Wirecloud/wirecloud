@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -51,8 +51,10 @@
         ]);
 
         privates.set(this, {
+            freezedOperatorsById: null,
             operatorId: 1,
             operators: [],
+            operatorsById: {},
             connections: [],
             on_changecomponent: on_changecomponent.bind(this),
             on_createwidget: on_createwidget.bind(this),
@@ -88,12 +90,13 @@
              * @type {Object.<String, Wirecloud.Wiring.Operator>}
              */
             operatorsById: {
-                get: function () {
-                    return get_operators_by_id.call(this);
-                }
+                get: get_operators_by_id
             },
             status: {
                 get: on_status_get
+            },
+            visualdescription: {
+                get: on_visualdescription_get
             },
             /**
              * @type {Wirecloud.Workspace}
@@ -201,25 +204,34 @@
         },
 
         load: function load(status) {
-            var connection, i, id, operator;
+            var connection, i, id, operator, priv;
 
-            privates.get(this).connections.forEach(function (connection) {
-                connection.detach();
+            status = ns.Wiring.normalize(status);
+
+            priv = privates.get(this);
+
+            priv.connections.forEach(function (connection) {
+                if (!connection.volatile) {
+                    connection.detach();
+                }
             });
 
-            for (i = privates.get(this).operators.length - 1; i >= 0; i--) {
-                operator = privates.get(this).operators[i];
+            for (i = priv.operators.length - 1; i >= 0; i--) {
+                operator = priv.operators[i];
                 if (!operator.volatile && !(operator.id in status.operators)) {
                     operator.remove();
+                    // Force on_removeoperator call
+                    // does nothing if previously called using events
+                    on_removeoperator.call(this, operator);
                 }
             }
 
-            for (i = privates.get(this).connections.length - 1; i >= 0; i--) {
-                connection = privates.get(this).connections[i];
+            for (i = priv.connections.length - 1; i >= 0; i--) {
+                connection = priv.connections[i];
 
                 if (!connection.volatile) {
-                    connection.removeEventListener('remove', privates.get(this).on_removeconnection);
-                    privates.get(this).connections.splice(i, 1);
+                    connection.removeEventListener('remove', priv.on_removeconnection);
+                    priv.connections.splice(i, 1);
                 }
             }
 
@@ -228,86 +240,85 @@
             for (id in status.operators) {
                 operator = status.operators[id];
 
-                if (this.findOperator(id) == null) {
+                if (priv.operatorsById[id] == null) {
                     append_operator.call(this, operator);
                 }
             }
 
-            privates.get(this).operatorId = 1;
-
-            privates.get(this).operators.forEach(function (operator) {
-
-                if (Number(operator.id) >= privates.get(this).operatorId) {
-                    privates.get(this).operatorId = Number(operator.id) + 1;
+            // Init operatorId counter
+            priv.operatorId = 1;
+            priv.operators.forEach(function (operator) {
+                if (Number(operator.id) >= priv.operatorId) {
+                    priv.operatorId = Number(operator.id) + 1;
                 }
             }, this);
 
             status.connections.forEach(function (connection) {
-                connection.addEventListener('remove', privates.get(this).on_removeconnection);
-                privates.get(this).connections.push(connection);
+                connection.addEventListener('remove', priv.on_removeconnection);
+                priv.connections.push(connection);
             }, this);
 
-            privates.get(this).connections.forEach(function (connection) {
+            priv.connections.forEach(function (connection) {
                 connection.establish();
             });
 
-            this.visualdescription = status.visualdescription;
+            priv.visualdescription = status.visualdescription;
 
             return this.dispatchEvent('load');
         },
 
         /**
+         * Persists current wiring status into the WireCloud server.
+         *
          * @returns {Promise}
          */
-        save: function save(status) {
-            if (status == null) {
-                status = this.status;
-            }
+        save: function save() {
+            var url = Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                workspace_id: this.workspace.id
+            });
 
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.WIRING_ENTRY.evaluate({
-                    workspace_id: this.workspace.id
+            return Wirecloud.io.makeRequest(url, {
+                method: 'PUT',
+                requestHeaders: {'Accept': 'application/json'},
+                contentType: 'application/json',
+                postBody: JSON.stringify(this)
+            }).then(function (response) {
+                return new Promise(function (resolve, reject) {
+                    if (response.status === 204) {
+                        resolve();
+                    } else {
+                        // TODO
+                        reject(new Error("Unexpected error response"));
+                    }
                 });
-
-                Wirecloud.io.makeRequest(url, {
-                    method: 'PUT',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(this.toJSON(status)),
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
-            }.bind(this));
+            });
         },
 
         /**
+         * Creates a representation of the status of this wiring engine to be
+         * used for being stored in persistence. Volatile components,
+         * connections, ... will be filtered.
+         *
          * @returns {Object}
          */
-        toJSON: function toJSON(status) {
-            var operators = {}, id;
+        toJSON: function toJSON() {
+            var operators = {}, id, priv;
 
-            if (status == null) {
-                status = this.status;
-            }
+            priv = privates.get(this);
 
-            for (id in status.operators) {
-                if (!status.operators[id].volatile) {
-                    operators[id] = status.operators[id];
+            for (id in priv.operatorsById) {
+                if (!priv.operatorsById[id].volatile) {
+                    operators[id] = priv.operatorsById[id];
                 }
             }
 
             return {
                 version: '2.0',
-                connections: status.connections.filter(function (connection) {
+                connections: priv.connections.filter(function (connection) {
                     return !connection.volatile;
                 }),
                 operators: operators,
-                visualdescription: status.visualdescription
+                visualdescription: priv.visualdescription
             };
         }
 
@@ -322,11 +333,15 @@
     var on_status_get = function on_status_get() {
         var priv = privates.get(this);
         return {
-            veresion: '2.0',
+            version: '2.0',
             connections: priv.connections.slice(0),
-            operators: utils.clone(this.operatorsById),
-            visualdescription: utils.clone(this.visualdescription, true)
+            operators: this.operatorsById,
+            visualdescription: this.visualdescription
         };
+    };
+
+    var on_visualdescription_get = function on_visualdescription_get() {
+        return utils.clone(privates.get(this).visualdescription, true);
     };
 
     var unmarshall = function unmarshall(status) {
@@ -341,15 +356,14 @@
             meta = this.workspace.resources.getOrCreateMissing(operator_info.name, 'operator');
             operator_info.id = id;
             status.operators[id] = new Wirecloud.wiring.Operator(this, meta, operator_info);
-            append_operator.call(this, status.operators[id]);
         }
 
         // Convert connections into instances
         for (i = status.connections.length - 1; i >= 0; i--) {
             connection_info = utils.merge({}, Wirecloud.wiring.Connection.JSON_TEMPLATE, status.connections[i]);
 
-            source = getEndpoint.call(this, 'outputs', connection_info.source);
-            target = getEndpoint.call(this, 'inputs', connection_info.target);
+            source = getEndpoint.call(this, 'outputs', connection_info.source, status);
+            target = getEndpoint.call(this, 'inputs', connection_info.target, status);
 
             if (source != null && target != null) {
                 status.connections[i] = new Wirecloud.wiring.Connection(this, source, target, {
@@ -360,8 +374,6 @@
                 status.connections.splice(i, 1);
             }
         }
-
-        this.visualdescription = status.visualdescription;
 
         return status;
     };
@@ -412,15 +424,15 @@
         }
     };
 
-    var getEndpoint = function getEndpoint(endpointGroup, endpointInfo) {
+    var getEndpoint = function getEndpoint(endpointGroup, endpointInfo, status) {
         var component;
 
         switch (endpointInfo.type) {
         case 'widget':
-            component = this.workspace.findWidget(endpointInfo.id.toString());
+            component = this.workspace.findWidget(endpointInfo.id);
             break;
         case 'operator':
-            component = this.findOperator(endpointInfo.id.toString());
+            component = status.operators[endpointInfo.id];
             break;
         }
 
@@ -432,7 +444,6 @@
     };
 
     var reconnect = function reconnect(component) {
-        this.logManager.newCycle();
         privates.get(this).connections.forEach(function (connection) {
             if (connection.source.component.is(component)) {
                 connection.updateEndpoint(getEndpointOrCreateMissing(component, 'outputs', connection.source.name));
@@ -464,13 +475,13 @@
     };
 
     var get_operators_by_id = function get_operators_by_id() {
-        var operators = {};
+        var priv = privates.get(this);
 
-        privates.get(this).operators.forEach(function (operator) {
-            operators[operator.id] = operator;
-        });
+        if (priv.freezedOperatorsById == null) {
+            priv.freezedOperatorsById = Object.freeze(utils.clone(priv.operatorsById));
+        }
 
-        return operators;
+        return priv.freezedOperatorsById;
     };
 
     var removeComponent = function removeComponent(component) {
@@ -487,10 +498,10 @@
             }
         }
 
-        removeComponentInfo(component, this.visualdescription);
+        removeComponentInfo(component, priv.visualdescription);
 
-        for (i = this.visualdescription.behaviours.length - 1; i >= 0; i--) {
-            removeComponentInfo(component, this.visualdescription.behaviours[i]);
+        for (i = priv.visualdescription.behaviours.length - 1; i >= 0; i--) {
+            removeComponentInfo(component, priv.visualdescription.behaviours[i]);
         }
 
         return this;
@@ -511,7 +522,9 @@
     var append_operator = function append_operator(operator) {
         var priv = privates.get(this);
 
+        priv.operatorsById[operator.id] = operator;
         priv.operators.push(operator);
+        priv.freezedOperatorsById = null;
 
         operator.addEventListener('change', priv.on_changecomponent);
         operator.addEventListener('remove', priv.on_removeoperator);
@@ -562,7 +575,12 @@
     var on_removeoperator = function on_removeoperator(operator) {
         var priv = privates.get(this);
 
+        if (!(operator.id in priv.operatorsById)) {
+            return;
+        }
         priv.operators.splice(priv.operators.indexOf(operator), 1);
+        delete priv.operatorsById[operator.id];
+        priv.freezedOperatorsById = null;
 
         removeComponent.call(this, operator);
 

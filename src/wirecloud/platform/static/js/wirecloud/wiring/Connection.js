@@ -54,7 +54,9 @@
 
         Object.defineProperties(this, {
             id: {
-                get: function get() {return this.source.id + "//" + this.target.id;}
+                get: function get() {
+                    return this.source.id + "//" + this.target.id;
+                }
             },
             logManager: {value: new Wirecloud.LogManager(wiring.logManager)},
             readonly: {
@@ -62,7 +64,11 @@
             },
             source: {value: source, writable: true},
             target: {value: target, writable: true},
-            volatile: {value: source.component.volatile || target.component.volatile},
+            volatile: {
+                get: function get() {
+                    return source.component.volatile || target.component.volatile;
+                }
+            },
             wiring: {
                 value: wiring
             }

@@ -100,6 +100,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/io.js',
     'wirecloud/platform/static/js/wirecloud/Version.js',
     'wirecloud/platform/static/js/wirecloud/Wiring.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/Operator.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/KeywordSuggestion.js',
