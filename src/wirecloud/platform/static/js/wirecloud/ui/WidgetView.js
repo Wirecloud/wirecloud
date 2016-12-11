@@ -211,7 +211,7 @@
                 this.titleelement.setTextContent(widget.title);
             }
 
-            if (changes.indexOf('resource') !== -1) {
+            if (changes.indexOf('meta') !== -1) {
                 update_className.call(this);
             }
         }.bind(this));
