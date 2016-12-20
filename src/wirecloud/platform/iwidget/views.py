@@ -130,6 +130,8 @@ class IWidgetEntry(Resource):
         iwidget['id'] = iwidget_id
         try:
             UpdateIWidget(iwidget, request.user, tab)
+        except Tab.DoesNotExist:
+            return build_error_response(request, 422, _("Target tab {id} does not exist").format(id=iwidget['tab']))
         except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
             msg = _('refered widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
