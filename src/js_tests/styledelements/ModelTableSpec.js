@@ -374,7 +374,6 @@
                     {id: 0}
                 ];
                 table.source.changeElements(data);
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
 
                 expect(function () {table.select(0);}).toThrow(new Error("Selection is disabled"));
 
@@ -405,7 +404,6 @@
                     {id: 1}
                 ];
                 table.source.changeElements(data);
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
 
                 expect(function () {table.select([0, 1]);}).toThrow(new Error("Selection is set to \"single\" but tried to select 2 rows."));
             });
