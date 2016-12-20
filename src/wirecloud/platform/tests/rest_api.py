@@ -466,6 +466,27 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=1, name='test').exists())
 
+    def test_workspace_collection_post_long_name(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'test' * 30,
+            'allow_renaming': False
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
+        # Check basic response structure
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('description', response_data)
+        self.assertTrue(isinstance(response_data["description"], six.text_type))  # description must be an string
+
     def test_workspace_collection_post_from_workspace(self):
 
         # Make TestOperator available to emptyuser

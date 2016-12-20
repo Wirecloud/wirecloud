@@ -24,6 +24,7 @@ import json
 import os
 import zipfile
 
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -53,6 +54,7 @@ def createEmptyWorkspace(workspaceName, user, allow_renaming=False):
     if allow_renaming is True:
         save_alternative(Workspace, 'name', workspace)
     else:
+        workspace.full_clean(validate_unique=False)
         workspace.save()
     UserWorkspace.objects.create(user=user, workspace=workspace)
 
@@ -103,6 +105,8 @@ class WorkspaceCollection(Resource):
 
             try:
                 workspace = createEmptyWorkspace(workspace_name, request.user, allow_renaming=allow_renaming)
+            except ValidationError as e:
+                return build_error_response(request, 422, _('Following fields contains invalid values: %s') % ', '.join(sorted(e.error_dict)))
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)
