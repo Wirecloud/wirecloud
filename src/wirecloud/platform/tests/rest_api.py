@@ -325,8 +325,8 @@ def check_cache_is_purged(self, workspace, change_function, current_etag=None, i
     if not inverse:
         response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=current_etag)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
+        json.loads(response.content.decode('utf-8'))
 
         new_etag = response['ETag']
     else:
@@ -1613,8 +1613,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
                 {'id': 1, 'left': 0, 'top': 0, 'width': 10, 'height': 10},
                 {'id': 2, 'left': 9.5, 'top': 10.5, 'width': 10.5, 'height': 10.5}
             ]
-            response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-            self.assertEqual(response.status_code, 204)
+            real_method = Workspace.save
+            with patch('wirecloud.platform.workspace.models.Workspace.save', autospec=True, side_effect=real_method) as save_mock:
+                response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+                self.assertEqual(save_mock.call_count, 1)
+                self.assertEqual(response.status_code, 204)
         check_cache_is_purged(self, 2, place_iwidgets)
 
     def test_iwidget_collection_put_workspace_not_found(self):

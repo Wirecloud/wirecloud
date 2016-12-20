@@ -88,13 +88,17 @@ class IWidgetCollection(Resource):
 
         for iwidget in iwidgets:
             try:
-                UpdateIWidget(iwidget, request.user, tab)
+                UpdateIWidget(iwidget, request.user, tab, updatecache=False)
             except IWidget.DoesNotExist:
                 return build_error_response(request, 422, _("Widget {id} does not exist").format(id=iwidget.get('id')))
             except TypeError as e:
                 return build_error_response(request, 400, e)
             except ValueError as e:
                 return build_error_response(request, 422, e)
+
+        if len(iwidgets) > 0:
+            # Invalidate workspace cache
+            tab.workspace.save()
 
         return HttpResponse(status=204)
 

@@ -62,11 +62,14 @@ class IWidget(models.Model):
 
     def save(self, *args, **kwargs):
 
+        updatecache = kwargs.pop('updatecache', True)
         if self.widget is not None:
             self.widget_uri = self.widget.resource.local_uri_part
 
         super(IWidget, self).save(*args, **kwargs)
-        self.tab.workspace.save()  # Invalidate workspace cache
+
+        if updatecache:
+            self.tab.workspace.save()  # Invalidate workspace cache
 
     def delete(self, *args, **kwargs):
 
