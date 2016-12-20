@@ -300,7 +300,12 @@
         this._paintBreadcrum(this.currentView);
         this._paintToolbar(this.currentView);
         this._replaceMenu(this.currentView);
-        this.backButton.setDisabled(this.currentView == null || !('goUp' in this.currentView));
+
+        var canGoUp = this.currentView != null && 'goUp' in this.currentView;
+        if (canGoUp && typeof this.currentView.canGoUp === 'function') {
+            canGoUp = this.currentView.canGoUp();
+        }
+        this.backButton.enabled = canGoUp;
     };
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
