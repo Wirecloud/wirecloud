@@ -1889,6 +1889,43 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(iwidget.name, 'New Title')
         check_cache_is_purged(self, 2, update_iwidget_name)
 
+    def test_iwidget_entry_post_move_between_tabs(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 3, 'tab_id': 102, 'iwidget_id': 3})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def update_iwidget_tab():
+            data = {
+                'tab': 103,
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content.decode('utf-8'), '')
+
+            # Check iwidget has been moved to the new tab
+            iwidget = IWidget.objects.get(pk=3)
+            self.assertEqual(iwidget.tab.id, 103)
+        check_cache_is_purged(self, 3, update_iwidget_tab)
+
+    def test_iwidget_entry_post_invalid_target_tab(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'tab': 404,
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_iwidget_entry_post_workspace_not_found(self):
 
         # Authenticate
