@@ -192,7 +192,7 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
     return new_iwidget
 
 
-def UpdateIWidget(data, user, tab):
+def UpdateIWidget(data, user, tab, updatecache=True):
 
     iwidget = IWidget.objects.get(tab=tab, pk=data.get('id'))
 
@@ -213,4 +213,4 @@ def UpdateIWidget(data, user, tab):
     update_icon_position(iwidget, data)
 
     # save the changes
-    iwidget.save()
+    iwidget.save(updatecache=updatecache)
