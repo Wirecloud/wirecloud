@@ -307,6 +307,14 @@
         };
     };
 
+    WorkspaceView.prototype.canGoUp = function canGoUp() {
+        return Wirecloud.activeWorkspace.owner !== "wirecloud" || Wirecloud.activeWorkspace.name !== "home";
+    };
+
+    WorkspaceView.prototype.goUp = function goUp() {
+        Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'});
+    };
+
     WorkspaceView.prototype.getBreadcrumb = function getBreadcrumb() {
         var entries, current_state;
 
