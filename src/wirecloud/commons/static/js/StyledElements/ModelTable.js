@@ -202,7 +202,7 @@
             'initialSortColumn': -1,
             'pageSize': 5,
             'emptyMessage': utils.gettext('No data available'),
-            'selectionType': "ignore"
+            'selectionType': "none"
         };
 
         options = utils.merge(defaultOptions, options);
@@ -270,7 +270,7 @@
                         throw new TypeError();
                     }
                     if (priv.selectionType === "single" && value.length > 1) {
-                        throw new Error("Selection is set to \"single\" but tried to select " + value.length + " rows.");
+                        throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
                     }
                     // Unhighlihgt previous selection
                     priv.selection.forEach(function (id) {
@@ -393,15 +393,18 @@
     ModelTable.prototype.Tooltip = StyledElements.Tooltip;
 
     /**
-     * Changes current selection
+     * Changes current selection. Removes the selection when no passing any parameter
+     *
      * @since 0.6.3
      *
-     * @param {String|String[]} [id]
+     * @param {String|String[]} [selection]
+     * @returns {StyledElements.ModelTable}
+     *     The instance on which the member is called.
      */
-    ModelTable.prototype.select = function select(id) {
-        if (id != null) {
+    ModelTable.prototype.select = function select(selection) {
+        if (selection != null) {
             // Update current selection
-            this.selection = Array.isArray(id) ? id : [id];
+            this.selection = Array.isArray(selection) ? selection : [selection];
         } else {
             this.selection = [];
         }
@@ -660,6 +663,8 @@
         }
 
         this.source.destroy();
+
+        return this;
     };
 
     var privates = new WeakMap();
