@@ -19,8 +19,7 @@
  *
  */
 
-/* globals moment, StyledElements */
-
+/* globals moment, StyledElements, WeakMap */
 
 (function (utils) {
 
@@ -83,7 +82,7 @@
         for (i = 0; i < items.length; i += 1) {
             item = items[i];
 
-            callback = rowCallback.bind({control: this, item: item});
+            callback = rowCallback.bind({table: this, item: item, index: i});
 
             row = document.createElement('div');
             row.className = 'se-model-table-row';
@@ -202,8 +201,10 @@
         defaultOptions = {
             'initialSortColumn': -1,
             'pageSize': 5,
-            'emptyMessage': utils.gettext('No data available')
+            'emptyMessage': utils.gettext('No data available'),
+            'selectionType': "none"
         };
+
         options = utils.merge(defaultOptions, options);
 
         if (options.class != null) {
@@ -216,10 +217,14 @@
         var priv = {};
         privates.set(this, priv);
 
+        StyledElements.StyledElement.call(this, ['click', 'select']);
 
-        StyledElements.StyledElement.call(this, ['click']);
+        // Initialize private variables
+        var priv = {};
+        privates.set(this, priv);
 
         priv.selection = [];
+        priv.selectionType = options.selectionType;
         var source;
         if (options.source != null) {
             source = options.source;
@@ -257,18 +262,23 @@
                     return priv.selection;
                 },
                 set: function (value) {
+                    // Check if selection is ignored
+                    if (!isSelectionEnabled(priv.selectionType)) {
+                        throw new Error("Selection is disabled");
+                    }
                     if (!Array.isArray(value)) {
                         throw new TypeError();
                     }
-
-                    // Unhighlihgt previous selection
-                    if (priv.selection != null) {
-                        priv.selection.forEach(function (id) {
-                            if (id in priv.current_elements) {
-                                priv.current_elements[id].row.classList.remove('highlight');
-                            }
-                        }, this);
+                    if (priv.selectionType === "single" && value.length > 1) {
+                        throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
                     }
+                    // Unhighlihgt previous selection
+                    priv.selection.forEach(function (id) {
+                        if (id in priv.current_elements) {
+                            priv.current_elements[id].row.classList.remove('highlight');
+                        }
+                    }, this);
+
                     priv.selection = value;
 
                     // Highlight the new selection
@@ -288,6 +298,22 @@
         });
 
         this.wrapperElement = priv.layout.wrapperElement;
+
+        // Deselect rows if clicked no row is clicked
+        this.wrapperElement.addEventListener("click", function (evt) {
+            var priv = privates.get(this);
+            if (!isSelectionEnabled(priv.selectionType)) {
+                return;
+            }
+
+            // Only deselect if no modifier key is pressed
+            if (!evt.shiftKey && !evt.ctrlKey) {
+                this.select([]);
+                // this.trigger("select", []);
+                this.events.select.dispatch([]);
+            }
+
+        }.bind(this));
 
         /*
          * Header
@@ -318,6 +344,7 @@
         this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
         if (this.source.options.pageSize !== 0) {
+
             priv.paginationInterface = new StyledElements.PaginationInterface(this.source);
             priv.statusBar.appendChild(priv.paginationInterface);
         }
@@ -366,15 +393,18 @@
     ModelTable.prototype.Tooltip = StyledElements.Tooltip;
 
     /**
-     * Changes current selection
+     * Changes current selection. Removes the selection when no passing any parameter
+     *
      * @since 0.6.3
      *
-     * @param {String|String[]} [id]
+     * @param {String|String[]} [selection]
+     * @returns {StyledElements.ModelTable}
+     *     The instance on which the member is called.
      */
-    ModelTable.prototype.select = function select(id) {
-        if (id != null) {
+    ModelTable.prototype.select = function select(selection) {
+        if (selection != null) {
             // Update current selection
-            this.selection = Array.isArray(id) ? id : [id];
+            this.selection = Array.isArray(selection) ? selection : [selection];
         } else {
             this.selection = [];
         }
@@ -491,11 +521,102 @@
         return element;
     };
 
-    var rowCallback = function rowCallback() {
-        /*
-            FIXME: it is not replaced by this.control.dispatchEvent('click', this.item); because of API's behaviour
-         */
-        this.control.events.click.dispatch(this.item);
+    // Row clicked callback
+    var rowCallback = function rowCallback(evt) {
+        // Stop propagation so wrapperElement's click is not called
+        evt.stopPropagation();
+
+        changeSelection.call(this.table, this.item, evt, this.index);
+
+        this.table.events.click.dispatch(this.item, evt);
+    };
+
+    var isSelectionEnabled = function isSelectionEnabled(selectionSettings) {
+        return selectionSettings === "single" || selectionSettings === "multiple";
+    };
+
+    // Row selection
+    var changeSelection = function changeSelection(row, event, index) {
+        var priv = privates.get(this);
+
+        // Check if selection is ignored
+        if (!isSelectionEnabled(priv.selectionType)) {
+            return;
+        }
+
+        var selected, data, lastSelectedIndex, lower, upper, j;
+        var id = priv.extractIdFunc(row);
+
+        if (priv.selectionType === "multiple" && event.ctrlKey && event.shiftKey) {
+            // Control + shift behaviour
+            data = this.source.getCurrentPage();
+            lastSelectedIndex = data.indexOf(priv.lastSelected);
+            if (lastSelectedIndex === -1) {
+                priv.lastSelected = row;
+                selected = [id];
+            } else {
+                selected = priv.savedSelection.slice();
+                selected.splice(selected.indexOf(priv.extractIdFunc(priv.lastSelected)), 1); // Remove pivot row from selection as it will be selected again
+
+                // Get the new selection group and append it
+                var aux = [];
+                lower = Math.min(index, lastSelectedIndex);
+                upper = Math.max(index, lastSelectedIndex);
+                for (j = lower; j <= upper; j++) {
+                    aux.push(priv.extractIdFunc(data[j]));
+                }
+                selected = selected.concat(aux);
+                event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
+            }
+
+        } else if (priv.selectionType === "multiple" && event.shiftKey) {
+            // Shift behaviour
+            data = this.source.getCurrentPage();
+            lastSelectedIndex = data.indexOf(priv.lastSelected);
+            // Choose current
+            if (lastSelectedIndex === -1) {
+                priv.lastSelected = row;
+                selected = [id];
+            // Choose range
+            } else {
+                selected = [];
+
+                lower = Math.min(index, lastSelectedIndex);
+                upper = Math.max(index, lastSelectedIndex);
+                for (j = lower; j <= upper; j++) {
+                    selected.push(priv.extractIdFunc(data[j]));
+                }
+                event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
+            }
+
+        } else if (priv.selectionType === "multiple" && event.ctrlKey) {
+            // control behaviour
+            priv.lastSelected = row;
+            selected = this.selection.slice();
+
+            var i = selected.indexOf(id);
+
+            // Remove from selection
+            if (i !== -1) {
+                priv.lastSelected = null;
+                selected.splice(i, 1);
+            // Add to selection
+            } else {
+                selected.push(id);
+            }
+            priv.savedSelection = selected;
+
+        } else {
+            // Normal behaviour
+            selected = [id];
+            priv.lastSelected = row;
+            priv.savedSelection = selected;
+        }
+
+        // Update the selection
+        this.select(selected);
+        // this.trigger("select", selected);
+        this.events.select.dispatch(selected);
     };
 
     var clearTable = function clearTable() {
@@ -542,6 +663,8 @@
         }
 
         this.source.destroy();
+
+        return this;
     };
 
     var privates = new WeakMap();

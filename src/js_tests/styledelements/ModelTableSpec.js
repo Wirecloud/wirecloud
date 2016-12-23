@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements */
+/* globals StyledElements*/
 
 
 (function () {
@@ -92,107 +92,111 @@
             table = null;
         });
 
-        it("can be created using the minimal required info", function () {
-            var columns = [
-                {field: "test", type: "string"}
-            ];
+        describe("new ModelTable(columns, [options])", function () {
 
-            // Create a new table using the default options
-            table = new StyledElements.ModelTable(columns);
+            it("can be created using the minimal required info", function () {
+                var columns = [
+                    {field: "test", type: "string"}
+                ];
 
-            expect(table).not.toBe(null);
-        });
+                // Create a new table using the default options
+                table = new StyledElements.ModelTable(columns);
 
-        it("can be created providing exta CSS classes", function () {
-            var columns = [
-                {field: "test", type: "string"}
-            ];
+                expect(table).not.toBe(null);
+            });
 
-            var options = {
-                class: "my-css-class"
-            };
+            it("can be created providing exta CSS classes", function () {
+                var columns = [
+                    {field: "test", type: "string"}
+                ];
 
-            // Create a new table
-            table = new StyledElements.ModelTable(columns, options);
+                var options = {
+                    class: "my-css-class"
+                };
 
-            expect(table.wrapperElement.classList.contains('my-css-class')).toBeTruthy();
-        });
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, options);
 
-        it("can be created providing exta CSS classes for the columns", function () {
-            var columns = [
-                {field: "test", type: "string", class: "my-css-class"}
-            ];
+                expect(table.wrapperElement.classList.contains('my-css-class')).toBeTruthy();
+            });
 
-            var options = {
-                class: "my-css-class"
-            };
+            it("can be created providing exta CSS classes for the columns", function () {
+                var columns = [
+                    {field: "test", type: "string", class: "my-css-class"}
+                ];
 
-            // Create a new table
-            table = new StyledElements.ModelTable(columns, options);
+                var options = {
+                    class: "my-css-class"
+                };
 
-            // Create and push the data
-            var data = [
-                {test: "Hello"},
-                {test: "world"}
-            ];
-            table.source.changeElements(data);
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, options);
 
-            var column = table.wrapperElement.querySelectorAll(".my-css-class");
-            expect(column.length).toBe(3); // 1 header + 2 rows
-        });
+                // Create and push the data
+                var data = [
+                    {test: "Hello"},
+                    {test: "world"}
+                ];
+                table.source.changeElements(data);
 
-        it("can be created with custom cell width", function () {
-            var columns = [
-                {field: "test", type: "string", width: "100px"}
-            ];
+                var column = table.wrapperElement.querySelectorAll(".my-css-class");
+                expect(column.length).toBe(3); // 1 header + 2 rows
+            });
 
-            var options = {
-                initialSortColumn: "test2"
-            };
+            it("can be created with custom cell width", function () {
+                var columns = [
+                    {field: "test", type: "string", width: "100px"}
+                ];
 
-            table = new StyledElements.ModelTable(columns, options);
+                var options = {
+                    initialSortColumn: "test2"
+                };
 
-            // Create and push the data
-            var data = [
-                {test: "Hello"},
-                {test: "world"}
-            ];
-            table.source.changeElements(data);
+                table = new StyledElements.ModelTable(columns, options);
 
-            var column = table.wrapperElement.querySelectorAll(".se-model-table-cell");
+                // Create and push the data
+                var data = [
+                    {test: "Hello"},
+                    {test: "world"}
+                ];
+                table.source.changeElements(data);
 
-            expect(column.length).toBe(3);
-            for (var i = 0; i < column.length; i++) {
-                expect(column[i].style.width).toBe("100px");
-            }
+                var column = table.wrapperElement.querySelectorAll(".se-model-table-cell");
 
-        });
+                expect(column.length).toBe(3);
+                for (var i = 0; i < column.length; i++) {
+                    expect(column[i].style.width).toBe("100px");
+                }
 
-        it("can be created using the initialSortColumn option", function () {
+            });
 
-            var columns = [
-                {field: "test", type: "string", sortable: true},
-                {field: "test2", type: "string", sortable: true}
-            ];
+            it("can be created using the initialSortColumn option", function () {
 
-            var options = {
-                initialSortColumn: "test2"
-            };
+                var columns = [
+                    {field: "test", type: "string", sortable: true},
+                    {field: "test2", type: "string", sortable: true}
+                ];
 
-            // Create a new table
-            table = new StyledElements.ModelTable(columns, options);
+                var options = {
+                    initialSortColumn: "test2"
+                };
 
-            // Create and push the data
-            var data = [
-                {test: "a", test2: "b"},
-                {test: "b", test2: "a"}
-            ];
-            table.source.changeElements(data);
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, options);
 
-            // Check if data was sorted correctly
-            var column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
-            var observed = Array.prototype.map.call(column, function (cell) {return cell.innerHTML;});
-            expect(observed).toEqual(["b", "a"]);
+                // Create and push the data
+                var data = [
+                    {test: "a", test2: "b"},
+                    {test: "b", test2: "a"}
+                ];
+                table.source.changeElements(data);
+
+                // Check if data was sorted correctly
+                var column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+                var observed = Array.prototype.map.call(column, function (cell) {return cell.innerHTML;});
+                expect(observed).toEqual(["b", "a"]);
+            });
+
         });
 
         it("should handle data added to the data source", function () {
@@ -339,7 +343,7 @@
             });
         });
 
-        describe("should handle element selection", function () {
+        describe("select(selection)", function () {
             var expected, observed, rows;
             beforeEach(function () {
 
@@ -349,7 +353,7 @@
                 ];
 
                 // Create a new table
-                table = new StyledElements.ModelTable(columns, {id: 'id'});
+                table = new StyledElements.ModelTable(columns, {id: 'id', selectionType: "multiple"});
 
                 // Create and push the data
                 var data = [
@@ -358,18 +362,54 @@
                     {id: 2, test: "other world"}
                 ];
                 table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
             });
 
-            it("should allow simple selections", function () {
+            it("should throw an error if selection is disabled", function () {
+                var columns = [
+                    {field: "id", type: "number"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {id: 'id', selectionType: "none"});
+
+                // Create and push the data
+                var data = [
+                    {id: 0}
+                ];
+                table.source.changeElements(data);
+
+                expect(function () {table.select(0);}).toThrow(new Error("Selection is disabled"));
+
+            });
+
+            it("should allow single selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.selection).toEqual([1]);
 
                 // Check if css are applied properly
                 expected = [false, true, false];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
 
                 expect(observed).toEqual(expected);
+            });
+
+            it("should throw an error if selection is simple and tries to select more than one row", function () {
+                var columns = [
+                    {field: "id", type: "number"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {id: 'id', selectionType: "single"});
+
+                // Create and push the data
+                var data = [
+                    {id: 0},
+                    {id: 1}
+                ];
+                table.source.changeElements(data);
+
+                expect(function () {table.select([0, 1]);}).toThrow(new Error("Selection is set to \"single\" but tried to select more than one rows."));
             });
 
             it("should allow multiple selections", function () {
@@ -378,7 +418,6 @@
 
                 // Check if css are applied properly
                 expected = [false, true, true];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
 
                 expect(observed).toEqual(expected);
@@ -391,7 +430,6 @@
 
                 // Check if css are applied properly
                 expected = [false, false, false];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
                 expect(observed).toEqual(expected);
             });
@@ -402,12 +440,209 @@
 
                 // Check if css are applied properly
                 expected = [false, false, false];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
                 expect(observed).toEqual(expected);
             });
 
         });
+
+        describe("Should handle mouse to select", function () {
+            var expected, observed, rows;
+            beforeEach(function () {
+
+                var columns = [
+                    {field: "id", type: "number"},
+                    {field: "test", type: "number"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {id: 'id', selectionType: "multiple"});
+
+                // Create and push the data
+                var data = [
+                    {id: 0, test: "hello world"},
+                    {id: 1, test: "bye world"},
+                    {id: 2, test: "other world"}
+                ];
+                table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+            });
+
+            var cell, event;
+
+            it("should allow click selections without modifiers", function () {
+                cell = rows[0].querySelector(".se-model-table-cell");
+                event = new MouseEvent("click");
+                cell.dispatchEvent(event);
+
+                // Check if css are applied properly
+                expected = [true, false, false];
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                expect(observed).toEqual(expected);
+            });
+
+            describe("should allow click selections with control key pressed", function () {
+
+                it("should allow first selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, false, false];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+
+                it("should allow multiple selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click");
+                    cell.dispatchEvent(event);
+
+                    cell = rows[2].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, false, true];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+
+                it("should allow diselect selected rows", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click");
+                    cell.dispatchEvent(event);
+
+                    event = new MouseEvent("click", {ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [false, false, false];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+            });
+
+            describe("should allow click selections with shift key pressed", function () {
+                it("should allow first selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {shiftKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, false, false];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+
+                it("should allow range selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click");
+                    cell.dispatchEvent(event);
+
+                    cell = rows[2].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {shiftKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, true, true];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+
+                it("should overwrite previous selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click");
+                    cell.dispatchEvent(event);
+
+                    cell = rows[1].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    cell = rows[2].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {shiftKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [false, true, true];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+            });
+
+            describe("should allow click selections with shift and control keys pressed", function () {
+                it("should allow first selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {shiftKey: true, ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, false, false];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+
+                it("should allow range selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click");
+                    cell.dispatchEvent(event);
+
+                    cell = rows[2].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {shiftKey: true, ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, true, true];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+
+                it("should not overwrite previous selection", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click");
+                    cell.dispatchEvent(event);
+
+                    cell = rows[1].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    cell = rows[2].querySelector(".se-model-table-cell");
+                    event = new MouseEvent("click", {shiftKey: true, ctrlKey: true});
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, true, true];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(expected);
+                });
+            });
+
+            it("should deselect rows when no row is clicked", function () {
+                cell = rows[0].querySelector(".se-model-table-cell");
+                event = new MouseEvent("click");
+                cell.dispatchEvent(event);
+
+                cell = rows[2].querySelector(".se-model-table-cell");
+                event = new MouseEvent("click", {shiftKey: true});
+                cell.dispatchEvent(event);
+
+
+                expected = [true, true, true];
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                expect(observed).toEqual(expected);
+
+                table.wrapperElement.click();
+
+                // Check if css are applied properly
+                expected = [false, false, false];
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                expect(observed).toEqual(expected);
+
+            });
+
+        });
+
 
         it("Should handle row's content builder", function () {
             var rows;
@@ -489,31 +724,56 @@
             expect(cell).toBe(null);
         });
 
-        it("Destroy model table", function () {
-            var cell;
-            var columns = [
-                {field: "test", "label": "TestName", sortable: false, type: "number"}
-            ];
-            // Default options
-            var options = {};
-            // Create the table
-            table = new StyledElements.ModelTable(columns, options);
+        describe("destroy()", function () {
 
-            // Create and push the data
-            var data = [
-                {test: "hello world"}
-            ];
-            table.source.changeElements(data);
+            it("Destroy empty model table", function () {
+                var columns = [
+                    {field: "test", "label": "TestName", sortable: false, type: "number"}
+                ];
+                // Default options
+                var options = {};
+                // Create the table
+                table = new StyledElements.ModelTable(columns, options);
 
-            cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
-            expect(cell.innerHTML).toBe("hello world");
+                expect(table.destroy()).toBe(table);
+            });
 
-            // Wipe the data
-            table.destroy();
+            it("Destroy model table with data", function () {
+                //
+                // Preparation
+                //
+                var cell;
+                var columns = [
+                    {field: "test", "label": "TestName", sortable: true, type: "number"}
+                ];
+                // Default options
+                var options = {};
+                // Create the table
+                table = new StyledElements.ModelTable(columns, options);
 
-            cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
-            expect(cell).toBe(null);
+                // Create and push the data
+                var data = [
+                    {test: "hello world"}
+                ];
+                table.source.changeElements(data);
+
+                cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
+                expect(cell.innerHTML).toBe("hello world");
+
+                //
+                // Action
+                //
+                expect(table.destroy()).toBe(table);
+
+                //
+                // Validation
+                //
+                cell = table.wrapperElement.querySelector(".se-model-table-row .se-model-table-cell:first-child");
+                expect(cell).toBe(null);
+            });
+
         });
+
     });
 
 })();
