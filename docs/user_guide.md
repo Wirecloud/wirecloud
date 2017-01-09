@@ -198,7 +198,7 @@ catalogue those you want to use in your mashup:
 
 To ensure that you find the required widgets/operators for this example
 mashup, go to the FIWARE Lab marketplace and install them using the
-[*WireCloudUserGuide* offering](https://store.lab.fiware.org/offering/CoNWeT/WireCloudUserGuide/1.0).
+[*WireCloudUserGuide* offering](https://store.lab.fiware.org/#/offering/458).
 You can also download them using the following URLs:
 
 -   [CoNWeT_simple-history-module2linear-graph_2.3.2.wgt](attachments/CoNWeT_simple-history-module2linear-graph_2.3.2.wgt)
