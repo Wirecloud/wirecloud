@@ -19,7 +19,7 @@
  *
  */
 
-/* globals Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns) {
@@ -102,6 +102,24 @@
                 expect(manager.close()).toEqual(manager);
 
                 expect(manager.parent).toBe(parent);
+            });
+
+        });
+
+        describe("formatException(exception)", function () {
+
+            var manager;
+
+            beforeEach(function () {
+                manager = new ns.LogManager();
+            });
+
+            it("should format exceptions", function () {
+
+                var details = manager.formatException(new Error("error message"));
+
+                expect(details).toEqual(jasmine.any(StyledElements.Fragment));
+
             });
 
         });
@@ -306,6 +324,73 @@
 
                 expect(manager.previouscycles.length).toBe(0);
             });
+        });
+
+        describe("parseErrorResponse(response)", function () {
+
+            var manager;
+
+            beforeEach(function () {
+                manager = new ns.LogManager();
+            });
+
+            it("should extract error message from WireCloud's error responses", function () {
+
+                var response = {
+                    responseText: '{"description": "error description"}'
+                }
+
+                var msg = manager.parseErrorResponse(response);
+
+                expect(msg).toBe("error description");
+
+            });
+
+            it("should provide an error description for responses using an unexpected json format", function () {
+
+                var response = {
+                    status: 503,
+                    statusText: "Status text for Service Unavailable",
+                    responseText: '{"message": "error description coming form another service (e.g. a load balancer)"}'
+                }
+
+                var msg = manager.parseErrorResponse(response);
+
+                expect(msg).toContain(response.status);
+                expect(msg).toContain(response.statusText);
+
+            });
+
+            it("should provide an error description for responses not using json responses at all", function () {
+
+                var response = {
+                    status: 503,
+                    statusText: "",
+                    responseText: '<html><body>Error description coming form another service (e.g. a load balancer)</body></html>'
+                }
+
+                var msg = manager.parseErrorResponse(response);
+
+                expect(msg).toContain(response.status);
+                expect(msg).toContain("Service Unavailable");
+
+            });
+
+            it("should provide an error description for responses not using json responses at all", function () {
+
+                var response = {
+                    status: 600,
+                    statusText: "",
+                    responseText: '<html><body>Error description coming form another service (e.g. a load balancer)</body></html>'
+                }
+
+                var msg = manager.parseErrorResponse(response);
+
+                expect(msg).toContain(response.status);
+                expect(msg).toContain("Unknown status code");
+
+            });
+
         });
 
         describe("reset()", function () {

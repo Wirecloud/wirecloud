@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -86,46 +86,42 @@
 
     utils.inherit(LogManager, se.ObjectWithEvents, {
 
+        /**
+         * Marks this log manager as closed. Closed log managers are read only
+         * log managers that are used by log entries created before the
+         * associated resource were closed.
+         *
+         * @returns
+         */
         close: function close() {
             privates.get(this).closed = true;
             return this;
         },
 
-        formatAndLog: function formatAndLog(format, transport, e, level) {
-            var msg = this.formatError(format, transport, e);
-            this.log(msg, level);
+        formatAndLog: function formatAndLog(format, response, e, level) {
+            var msg, options;
 
-            return msg;
-        },
+            options = {
+                level: level
+            };
 
-        formatError: function formatError(format, transport, e) {
-            var msg;
-
-            if (e) {
-                var context;
-                if (e.lineNumber !== undefined) {
-                    // Firefox
-                    context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e.message};
-                } else if (e.line !== undefined) {
-                    // Webkit
-                    context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e.message};
-                } else {
-                    // Other browsers
-                    var text = utils.gettext("unknown");
-                    context = {errorFile: text, errorLine: text, errorDesc: e.message};
-                }
-
-                msg = utils.interpolate(utils.gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-                          context,
-                          true);
+            if (e != null) {
+                msg = utils.gettext("JavaScript exception");
+                options.details = this.formatException(e);
             } else {
-                msg = this.parseErrorResponse(transport);
+                msg = this.parseErrorResponse(response);
             }
             msg = utils.interpolate(format, {errorMsg: msg}, true);
+            this.log(msg, options);
 
             return msg;
         },
 
+        /**
+         * Formats an exceptions to be used as the details of a log entry.
+         *
+         * @returns {StyledElements.Fragment}
+         */
         formatException: function formatException(exception) {
             var builder = new StyledElements.GUIBuilder();
 
@@ -135,6 +131,13 @@
             });
         },
 
+        /**
+         * Adds a log entry into this log manager.
+         *
+         * @param {String} message
+         * @param {Object} [options]
+         * @returns {Wirecloud.LogManager}
+         */
         log: function log(message, options) {
             var entry;
 
@@ -174,6 +177,12 @@
             return this;
         },
 
+        /**
+         * Creates a new cycle moving the current entries into the
+         * previouscycles list.
+         *
+         * @returns {Wirecloud.LogManager}
+         */
         newCycle: function newCycle() {
             var priv = privates.get(this);
 
@@ -192,11 +201,24 @@
             return this;
         },
 
+        /**
+         * Parses the error descriptions included in error responses provided by
+         * the WireCloud server. If the response doesn't provide a error
+         * description because it comes from another service (e.g. a load
+         * balancer server), this method will provide an error description using
+         * the error code as reference.
+         *
+         * @param {Response} response server response to parse
+         * @returns {String} error description
+         */
         parseErrorResponse: function parseErrorResponse(response) {
             var errorDesc, msg;
 
             try {
                 var errorInfo = JSON.parse(response.responseText);
+                if (!("description" in errorInfo)) {
+                    throw new Error();
+                }
                 msg = errorInfo.description;
             } catch (error) {
                 msg = utils.gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
@@ -214,6 +236,12 @@
             return msg;
         },
 
+        /**
+         * Removes all the log entries stored by this log manager, including all
+         * those entries associated with previous cycles.
+         *
+         * @returns {Wirecloud.LogManager}
+         */
         reset: function reset() {
             var priv = privates.get(this);
 
