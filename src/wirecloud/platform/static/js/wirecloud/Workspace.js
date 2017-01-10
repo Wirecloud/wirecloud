@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -289,6 +289,9 @@
         findWidget: function findWidget(id) {
             var widgets = this.widgets,
                 i;
+
+            // Force string ids
+            id = String(id);
 
             for (i = 0; i < widgets.length; i++) {
                 if (widgets[i].id === id) {
