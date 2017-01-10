@@ -721,19 +721,19 @@
                                     sourcename: "operator/1/output",
                                     sourcehandle: "auto",
                                     targetname: "operator/2/input",
-                                    targethandle:"auto"
+                                    targethandle: "auto"
                                 },
                                 {
                                     sourcename: "operator/1/output",
                                     sourcehandle: "auto",
                                     targetname: "operator/3/input",
-                                    targethandle:"auto"
+                                    targethandle: "auto"
                                 },
                                 {
                                     sourcename: "operator/3/output",
                                     sourcehandle: "auto",
                                     targetname: "operator/2/input",
-                                    targethandle:"auto"
+                                    targethandle: "auto"
                                 }
                             ]
                         }
@@ -747,19 +747,19 @@
                             sourcename: "operator/1/output",
                             sourcehandle: "auto",
                             targetname: "operator/2/input",
-                            targethandle:"auto"
+                            targethandle: "auto"
                         },
                         {
                             sourcename: "operator/1/output",
                             sourcehandle: "auto",
                             targetname: "operator/3/input",
-                            targethandle:"auto"
+                            targethandle: "auto"
                         },
                         {
                             sourcename: "operator/3/output",
                             sourcehandle: "auto",
                             targetname: "operator/2/input",
-                            targethandle:"auto"
+                            targethandle: "auto"
                         }
                     ]
                 }
