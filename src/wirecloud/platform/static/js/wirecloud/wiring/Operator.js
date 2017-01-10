@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -37,10 +37,10 @@
      * @constructor
      *
      * @param {Wirecloud.Wiring} wiring
-     * @param {Wirecloud.OperatorMeta} resource
+     * @param {Wirecloud.OperatorMeta} meta
      * @param {Object} data
      */
-    ns.Operator = function Operator(wiring, resource, data) {
+    ns.Operator = function Operator(wiring, meta, data) {
         se.ObjectWithEvents.call(this, [
             'change',
             'load',
@@ -61,7 +61,7 @@
         }, data.permissions);
 
         privates.set(this, {
-            resource: resource,
+            meta: meta,
             status: STATUS.CREATED
         });
 
@@ -112,7 +112,7 @@
              */
             meta: {
                 get: function () {
-                    return privates.get(this).resource;
+                    return privates.get(this).meta;
                 }
             },
             /**
@@ -391,8 +391,8 @@
         return meta instanceof Wirecloud.wiring.OperatorMeta && meta.group_id === this.meta.group_id;
     };
 
-    var change_meta = function change_meta(resource) {
-        privates.get(this).resource = resource;
+    var change_meta = function change_meta(meta) {
+        privates.get(this).meta = meta;
         build_endpoints.call(this);
         build_prefs.call(this, this.preferences);
 
