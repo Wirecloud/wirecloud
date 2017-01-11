@@ -264,6 +264,19 @@
                     });
                 });
 
+                it("Task sequences can be created using promises", function () {
+                    var success_value = "success value";
+                    var build_promise = function () {
+                        return Promise.resolve(success_value);
+                    };
+                    var task = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                        fulfill(success_value);
+                    });
+                    task.then(build_promise).toTask("sequence task").then(function (value) {
+                        expect(value).toBe(success_value);
+                    });
+                });
+
             });
         });
 

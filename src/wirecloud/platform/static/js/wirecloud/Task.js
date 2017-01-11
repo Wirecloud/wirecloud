@@ -29,6 +29,9 @@
     /**
      * Like a Promise, but Task have title, and are able to provide
      * progress and be abortable. They are also usable as a standard Promise.
+     *
+     * @param {String} title
+     * @param {Function} executor
      */
     var Task = function Task(title, executor) {
         if (title == null) {
@@ -38,7 +41,9 @@
         if (typeof executor !== "function") {
             throw new TypeError("executor must be a function");
         }
+
         privates.set(this, {
+            parent: null,
             title: title,
             progress: 0,
             status: "pending",
@@ -138,16 +143,34 @@
                 result = callback(this.value);
             } catch (e) {
                 reject(e);
+                return;
             }
         } else {
             result = this.value;
         }
-        if (result != null && typeof result.then === "function") {
 
+        if (result != null && typeof result.then === "function") {
             result.then(resolve, reject);
+
         } else {
             next(result);
         }
+    };
+
+    /**
+     * Creates a new task asociated to the progress of the chain of task
+     * associated with this instance.
+     *
+     * @param {String} title new title for this task
+     * @returns {Wirecloud.Task}
+     */
+    Task.prototype.toTask = function toTask(title) {
+        return new Task(title, function (resolve, reject, update) {
+            this.addEventListener("progress", function (task, progress) {
+                update(progress);
+            });
+            this.then(resolve, reject);
+        }.bind(this));
     };
 
     Task.prototype.catch = function _catch(reject) {
@@ -160,7 +183,7 @@
     };
 
     Task.prototype.then = function then(onFulfilled, onRejected) {
-        return new Promise(function (internal_resolve, internal_reject) {
+        return new TaskContinuation(this, function (internal_resolve, internal_reject) {
             if (this.status === 'resolved') {
                 resolve_then.call(this, onFulfilled, internal_resolve, internal_resolve, internal_reject);
             } else if (this.status === 'rejected' || this.status === 'aborted') {
@@ -173,6 +196,46 @@
     };
 
     var privates = new WeakMap();
+
+    var TaskContinuation = function TaskContinuation(parent, executor) {
+
+        if (typeof executor !== "function" && !Array.isArray(executor)) {
+            throw new TypeError("executor must be a function or an array");
+        }
+
+        privates.set(this, {
+            parent: parent,
+            progress: 0,
+            status: "pending",
+            value: undefined
+        });
+
+        Object.defineProperties(this, {
+            progress: {
+                get: on_progress_get
+            },
+            status: {
+                get: on_status_get
+            },
+            value: {
+                get: on_value_get
+            }
+        });
+
+        StyledElements.ObjectWithEvents.call(this, ['abort', 'fail', 'finish', 'progress', 'upgrade']);
+
+        executor(resolve.bind(this), reject.bind(this), update.bind(this));
+    };
+    utils.inherit(TaskContinuation, StyledElements.ObjectWithEvents);
+
+    TaskContinuation.prototype.then = Task.prototype.then;
+    TaskContinuation.prototype.catch = Task.prototype.catch;
+    TaskContinuation.prototype.toTask = function toTask(title) {
+        return new Task(title, function (resolve, reject, update) {
+            this.then(resolve, reject);
+        }.bind(this));
+    };
+
 
     var on_status_get = function on_status_get() {
         return privates.get(this).status;
