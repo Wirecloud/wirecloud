@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -31,8 +31,10 @@
     // =========================================================================
 
     /**
-     * Create a new instance of class Endpoint.
-     * @extends {StyledElement}
+     * Creates a new instance of class Endpoint.
+     *
+     * @extends {StyledElements.StyledElement}
+     * @name Wirecloud.ui.WiringEditor.Endpoint
      *
      * @constructor
      * @param {String} type
@@ -123,7 +125,7 @@
         this.get().addEventListener('mouseup', endpoint_onmouseup.bind(this));
     };
 
-    utils.inherit(ns.Endpoint, se.StyledElement, {
+    utils.inherit(ns.Endpoint, se.StyledElement, /** @lends Wirecloud.ui.WiringEditor.Endpoint.prototype */ {
 
         /**
          * [TODO: activate description]

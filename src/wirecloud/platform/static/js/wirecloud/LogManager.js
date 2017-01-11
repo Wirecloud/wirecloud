@@ -30,6 +30,15 @@
     // CLASS DEFINITION
     // =========================================================================
 
+    /**
+     * Creates a new instance of class LogManager.
+     *
+     * @constructor
+     * @extends StyledElements.ObjectWithEvents
+     * @name Wirecloud.LogManager
+     * @since 0.5
+     * @param {Wirecloud.LogManager} [parent] parent log manager
+     */
     var LogManager = function LogManager(parent) {
         var entries = [];
         var priv = {
@@ -84,14 +93,14 @@
     // PUBLIC MEMBERS
     // =========================================================================
 
-    utils.inherit(LogManager, se.ObjectWithEvents, {
+    utils.inherit(LogManager, se.ObjectWithEvents, /** @lends Wirecloud.LogManager.prototype */  {
 
         /**
          * Marks this log manager as closed. Closed log managers are read only
          * log managers that are used by log entries created before the
          * associated resource were closed.
          *
-         * @returns
+         * @returns {Wirecloud.LogManager}
          */
         close: function close() {
             privates.get(this).closed = true;
@@ -120,6 +129,7 @@
         /**
          * Formats an exceptions to be used as the details of a log entry.
          *
+         * @param {Error} exception exception to format
          * @returns {StyledElements.Fragment}
          */
         formatException: function formatException(exception) {
