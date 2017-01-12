@@ -74,6 +74,16 @@
         }
     },
     {
+        "model": "platform.Workspace",
+        "pk": "202",
+        "fields": {
+            "name": "workspaceSecure",
+            "public": false,
+            "creator": "2",
+            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": \"\"}, \"username\": {\"secure\": false, \"readonly\": false, \"hidden\": false, \"value\": \"username\"}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": \"test_password\"}, \"username\": {\"secure\": false, \"readonly\": false, \"hidden\": false, \"value\": \"test_username\"}}}}, \"connections\": []}"
+        }
+    },
+    {
         "model": "platform.UserWorkspace",
         "pk": "1",
         "fields": {
@@ -82,11 +92,28 @@
         }
     },
     {
+        "model": "platform.UserWorkspace",
+        "pk": "2",
+        "fields": {
+            "user": "2",
+            "workspace": "202"
+        }
+    },
+    {
         "model": "platform.Tab",
         "pk": "1",
         "fields": {
             "workspace": "1",
             "name": "tab",
+            "visible": true
+        }
+    },
+    {
+        "model": "platform.Tab",
+        "pk": "2",
+        "fields": {
+            "workspace": "202",
+            "name": "tabSecure",
             "visible": true
         }
     },
@@ -111,6 +138,30 @@
             "name": "Test Widget 2",
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":5,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "tab": "1",
+            "variables": "{\"password\": \"test_password\", \"username\": \"test_username\", \"prop\": \"test_data\"}"
+        }
+    },
+    {
+        "model": "platform.IWidget",
+        "pk": "3",
+        "fields": {
+            "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
+            "name": "Secure Widget 1",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "tab": "2",
+            "variables": "{\"password\": \"\", \"username\": \"test_username\", \"prop\": \"test_data\"}"
+        }
+    },
+    {
+        "model": "platform.IWidget",
+        "pk": "4",
+        "fields": {
+            "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
+            "name": "Secure Widget 2",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "tab": "2",
             "variables": "{\"password\": \"test_password\", \"username\": \"test_username\", \"prop\": \"test_data\"}"
         }
     },
@@ -142,6 +193,24 @@
             "vendor": "Wirecloud",
             "short_name": "TestOperator",
             "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [{\"default\": \"\", \"name\": \"pref_with_val\", \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"},{\"default\": \"false\", \"name\": \"readonly_pref\", \"label\": \"Throw exceptions\", \"type\": \"text\", \"description\": \"Raise exception on event arrival\"},{\"default\": \"false\", \"name\": \"hidden_pref\", \"label\": \"Run logging tests\", \"type\": \"boolean\", \"description\": \"Run logging support tests on change to true\"}, {\"default\": \"default_value\", \"name\": \"empty_pref\", \"label\": \"Empty\", \"type\": \"text\", \"description\": \"\"}], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
+            "creator": 2,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "type": 2,
+            "public": false,
+            "users": [2]
+        }
+    },
+    {
+        "pk": 3,
+        "model": "catalogue.CatalogueResource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_TestOperatorSecure_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "TestOperatorSecure",
+            "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [{\"default\": \"\", \"name\": \"pref_secure\", \"secure\": true, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}, {\"default\": \"\", \"name\": \"username\", \"secure\": false, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
             "creator": 2,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",

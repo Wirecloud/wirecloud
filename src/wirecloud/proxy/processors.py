@@ -36,14 +36,22 @@ WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
 VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
-def get_variable_value_by_ref(ref, cache_manager):
+def get_variable_value_by_ref(ref, cache_manager, componentType="widget"):
 
     result = VAR_REF_RE.match(ref)
     try:
-        if result.group('iwidget_id') == 'c':
-            return result.group('var_name')
+        # Get widget variables
+        if componentType == "widget":
+            if result.group('iwidget_id') == 'c':
+                return result.group('var_name')
+            else:
+                return cache_manager.get_variable_value_from_varname(result.group('iwidget_id'), result.group('var_name'))
+        # Get operator variables
+        elif componentType == "operator":
+            return cache_manager.workspace.wiringStatus["operators"][result.group('iwidget_id')]["preferences"][result.group('var_name')]["value"]
+
         else:
-            return cache_manager.get_variable_value_from_varname(result.group('iwidget_id'), result.group('var_name'))
+            raise ValidationError()
     except (IWidget.DoesNotExist, KeyError):
         return None
     except:
@@ -95,7 +103,9 @@ def process_secure_data(text, request):
             var_ref = options.get('var_ref', '')
             check_empty_params(substr=substr, var_ref=var_ref)
 
-            value = get_variable_value_by_ref(var_ref, cache_manager)
+            componentType = options.get("type", "widget") # default is widget
+            value = get_variable_value_by_ref(var_ref, cache_manager, componentType)
+
             check_invalid_refs(var_ref=value)
 
             encoding = options.get('encoding', 'none')
@@ -116,8 +126,10 @@ def process_secure_data(text, request):
             password_ref = options.get('pass_ref', '')
             check_empty_params(user_ref=user_ref, password_ref=password_ref)
 
-            user_value = get_variable_value_by_ref(user_ref, cache_manager)
-            password_value = get_variable_value_by_ref(password_ref, cache_manager)
+            componentType = options.get("type", "widget") # default is widget
+            user_value = get_variable_value_by_ref(user_ref, cache_manager, componentType)
+            password_value = get_variable_value_by_ref(password_ref, cache_manager, componentType)
+
             check_invalid_refs(user_ref=user_value, password_ref=password_value)
 
             token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]

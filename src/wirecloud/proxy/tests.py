@@ -29,7 +29,7 @@ from django.core.urlresolvers import reverse
 from django.test import Client, override_settings
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
-from wirecloud.platform.models import IWidget
+from wirecloud.platform.models import IWidget, Workspace
 from wirecloud.platform.plugins import clear_cache
 
 
@@ -445,6 +445,28 @@ class ProxySecureDataTests(ProxyTestsBase):
 
     tags = ('wirecloud-proxy', 'wirecloud-proxy-secure-data', 'wirecloud-noselenium')
 
+    def test_secure_data_operator(self):
+        pass_ref = '2/pref_secure'
+        user_ref = '2/username'
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref + ", type = operator"
+        response = self.client.post(self.basic_url,
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost/test/workspaceSecure',
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.read_response(response), b'username=|username|&password=|password|')
+
+    test_secure_data_operator.tags = ("current",)
     def test_secure_data(self):
 
         iwidget = IWidget.objects.get(pk=1)
