@@ -39,7 +39,7 @@
             newValue = new_values[varName];
 
             if (newValue !== oldValue) {
-                if (this.widgetModel.preferences[varName].meta.options.secure && this.widgetModel.preferences[varName].value !== "") {
+                if (this.widgetModel.preferences[varName].meta.options.secure && newValue !== "") {
                     this.widgetModel.preferences[varName].value = "********";
                 } else {
                     this.widgetModel.preferences[varName].value = newValue;
