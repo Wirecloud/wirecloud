@@ -36,7 +36,12 @@
 
         for (key in new_values) {
             if (this._current_ioperator.preferences[key].value !== new_values[key]) {
-                this._current_ioperator.preferences[key].value = new_values[key];
+
+                if (this._current_ioperator.preferences[key].meta.options.secure && new_values[key] !== "") {
+                    this._current_ioperator.preferences[key].value = "********";
+                } else {
+                    this._current_ioperator.preferences[key].value = new_values[key];
+                }
             } else {
                 delete new_values[key];
             }
