@@ -466,7 +466,6 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'username=|username|&password=|password|')
 
-    test_secure_data_operator.tags = ("current",)
     def test_secure_data(self):
 
         iwidget = IWidget.objects.get(pk=1)
