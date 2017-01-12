@@ -1090,6 +1090,75 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         check_put_bad_request_syntax(self, url)
 
+    def test_workspace_update_operator_preferences_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_operatorpref', kwargs={'workspace_id': 202, "operator_id": 2})
+        data = {
+            'pref_secure': 'helloWorld'
+        }
+        check_post_requires_authentication(self, url, json.dumps(data))
+
+    def test_workspace_update_operator_preferences_post(self):
+
+        url = reverse('wirecloud.workspace_operatorpref', kwargs={'workspace_id': 202, "operator_id": 2})
+
+        data = {
+            'pref_secure': 'helloWorld'
+        }
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
+        self.assertEqual(response.status_code, 204)
+
+        # Check if preferences changed
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"], "helloWorld")
+
+    def test_workspace_update_operator_preferences_read_only_permission(self):
+        url = reverse('wirecloud.workspace_operatorpref', kwargs={'workspace_id': 202, "operator_id": 2})
+
+        data = {
+            'username': 'helloWorld'
+        }
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
+        self.assertEqual(response.status_code, 403)
+
+        # Check if preferences changed
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"], "test_username")
+
+    def test_workspace_update_operator_preferences_no_changes(self):
+
+        url = reverse('wirecloud.workspace_operatorpref', kwargs={'workspace_id': 202, "operator_id": 1})
+
+        data = {
+        }
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
+        self.assertEqual(response.status_code, 204)
+
+    def test_workspace_update_operator_preferences_does_not_exist(self):
+        url = reverse('wirecloud.workspace_operatorpref', kwargs={'workspace_id': 202, "operator_id": 1})
+
+        data = {
+            "doesNotExist": "helloWorld"
+        }
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
+        self.assertEqual(response.status_code, 400)
+
+        self.assertFalse("doesNotExist" in Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"])
+
     def test_tab_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})

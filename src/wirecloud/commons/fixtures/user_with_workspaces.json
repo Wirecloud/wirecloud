@@ -281,6 +281,16 @@
         }
     },
     {
+        "model": "platform.Workspace",
+        "pk": 202,
+        "fields": {
+            "name": "workspaceSecure",
+            "public": false,
+            "creator": "4",
+            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": \"\"}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": \"username\"}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": \"test_password\"}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": \"test_username\"}}}}, \"connections\": []}"
+        }
+    },
+    {
         "pk": 2,
         "model": "platform.userworkspace",
         "fields": {
