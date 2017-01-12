@@ -98,6 +98,28 @@ def process_requirements(requirements):
 
     return dict((requirement['name'], {}) for requirement in requirements)
 
+class OperatorPreferencesEntry(Resource):
+
+    @authentication_required
+    @consumes(('application/json',))
+    def create (self, request, workspace_id, operator_id):
+
+        workspace = get_object_or_404(Workspace, id=workspace_id)
+        if not request.user.is_superuser and workspace.creator != request.user:
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+        new_values = parse_json_request(request)
+        if len(new_values):
+            operator_prefs = workspace.wiringStatus["operators"][operator_id]["preferences"]
+            for preference in new_values:
+                if operator_prefs[preference].get('readonly', False):
+                    return build_error_response(request, 403, _('Read only preferences cannot be updated'))
+                else:
+                    operator_prefs[preference]["value"] = new_values[preference]
+
+            workspace.save()
+
+        return HttpResponse(status=204)
 
 class OperatorEntry(Resource):
 

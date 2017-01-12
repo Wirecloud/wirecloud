@@ -173,6 +173,11 @@ urlpatterns = (
         name='wirecloud.workspace_wiring'
     ),
 
+    url(r'^api/workspace/(?P<workspace_id>\d+)/operatorpref/(?P<operator_id>\d+)$',
+        wiring_views.OperatorPreferencesEntry(permitted_methods=('POST',)),
+        name='wirecloud.workspace_operatorpref'
+    ),
+
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
         workspace_views.MashupMergeService(),
         name='wirecloud.workspace_merge'

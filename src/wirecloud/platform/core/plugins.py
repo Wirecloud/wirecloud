@@ -603,6 +603,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'WORKSPACE_PUBLISH', 'url': build_url_template('wirecloud.workspace_publish', ['workspace_id'])},
             {'id': 'WORKSPACE_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud.workspace_resource_collection', ['workspace_id'])},
             {'id': 'WORKSPACE_VIEW', 'url': build_url_template('wirecloud.workspace_view', ['owner', 'name'])},
+
+            {'id': 'OPERATOR_PREFERENCES', 'url': build_url_template('wirecloud.workspace_operatorpref', ['workspace_id', 'operator_id'])},
         )
 
         from django.conf import settings

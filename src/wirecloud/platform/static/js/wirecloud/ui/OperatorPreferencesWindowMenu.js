@@ -32,7 +32,7 @@
     utils.inherit(OperatorPreferencesWindowMenu, Wirecloud.ui.WindowMenu);
 
     OperatorPreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var key, details;
+        var key;
 
         for (key in new_values) {
             if (this._current_ioperator.preferences[key].value !== new_values[key]) {
@@ -42,18 +42,31 @@
             }
         }
 
+        this.hide();
+
+        Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_PREFERENCES.evaluate({
+                workspace_id: this._current_ioperator.wiring.workspace.id,
+                operator_id: this._current_ioperator.id
+            }), {
+                method: 'POST',
+                contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
+                postBody: JSON.stringify(new_values),
+                onSuccess: operatorCallback.call(this, new_values)
+            }
+        );
+    };
+
+    var operatorCallback = function operatorCallback(new_values) {
         if (typeof this._current_ioperator.prefCallback === 'function') {
             try {
                 this._current_ioperator.prefCallback(new_values);
             } catch (error) {
-                details = this._current_ioperator.logManager.formatException(error);
+                var details = this._current_ioperator.logManager.formatException(error);
                 this._current_ioperator.logManager.log(utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
-
-        this.hide();
     };
-
     OperatorPreferencesWindowMenu.prototype.show = function show(ioperator, parentWindow) {
         var i, prefs, pref, fields;
 
