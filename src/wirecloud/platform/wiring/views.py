@@ -112,6 +112,8 @@ class OperatorPreferencesEntry(Resource):
         if len(new_values):
             operator_prefs = workspace.wiringStatus["operators"][operator_id]["preferences"]
             for preference in new_values:
+                if not preference in operator_prefs:
+                    return  build_error_response(request, 400, _("Preference does not exist"))
                 if operator_prefs[preference].get('readonly', False):
                     return build_error_response(request, 403, _('Read only preferences cannot be updated'))
                 else:
