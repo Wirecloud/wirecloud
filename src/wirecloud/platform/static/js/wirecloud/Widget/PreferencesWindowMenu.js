@@ -32,14 +32,18 @@
     utils.inherit(PreferencesWindowMenu, Wirecloud.ui.WindowMenu);
 
     PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var oldValue, newValue, varName, details;
+        var oldValue, newValue, varName;
 
         for (varName in new_values) {
             oldValue = this.widgetModel.preferences[varName].value;
             newValue = new_values[varName];
 
             if (newValue !== oldValue) {
-                this.widgetModel.preferences[varName].value = newValue;
+                if (this.widgetModel.preferences[varName].meta.options.secure && this.widgetModel.preferences[varName].value !== "") {
+                    this.widgetModel.preferences[varName].value = "********";
+                } else {
+                    this.widgetModel.preferences[varName].value = newValue;
+                }
             } else {
                 delete new_values[varName];
             }
@@ -55,15 +59,25 @@
                 method: 'POST',
                 contentType: 'application/json',
                 requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify(new_values)
+                postBody: JSON.stringify(new_values),
+                onSuccess: widgetCallback.call(this, new_values)
             }
         );
+    };
 
+    // Notify preference changes to widget
+    var widgetCallback = function widgetCallback(new_values) {
         if (typeof this.widgetModel.prefCallback === 'function') {
             try {
+                // Censor secure preferences
+                for (var varName in new_values) {
+                    if (this.widgetModel.preferences[varName].meta.options.secure && this.widgetModel.preferences[varName].value !== "") {
+                        new_values[varName] = "********";
+                    }
+                }
                 this.widgetModel.prefCallback(new_values);
             } catch (error) {
-                details = this.widgetModel.logManager.formatException(error);
+                var details = this.widgetModel.logManager.formatException(error);
                 this.widgetModel.logManager.log(utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
