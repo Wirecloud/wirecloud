@@ -264,19 +264,6 @@
         show: function show() {
             se.Tab.prototype.show.call(this);
 
-            var currentState = Wirecloud.HistoryManager.getCurrentState();
-            var newState = utils.merge({}, currentState, {
-                tab: this.model.name
-            });
-
-            if (currentState.tab != null) {
-                if (currentState.tab !== newState.tab) {
-                    Wirecloud.HistoryManager.pushState(newState);
-                }
-            } else {
-                Wirecloud.HistoryManager.replaceState(newState);
-            }
-
             this.widgets.forEach(function (widget) {
                 widget.load();
             });

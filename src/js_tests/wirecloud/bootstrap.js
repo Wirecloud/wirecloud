@@ -16,7 +16,8 @@ Wirecloud = {
     ui: {},
     URLs: {
         ROOT_URL: '/',
-        PROXY: new StyledElements.Utils.Template("/cdp/%(protocol)s/%(domain)s%(path)s")
+        PROXY: new StyledElements.Utils.Template("/cdp/%(protocol)s/%(domain)s%(path)s"),
+        WORKSPACE_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s"),
     },
     Utils: StyledElements.Utils
 };

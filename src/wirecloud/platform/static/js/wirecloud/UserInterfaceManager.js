@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -124,6 +124,48 @@
             this.views.myresources = this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.MyResourcesView});
         }.bind(this));
 
+        // Handle Workspace changes
+        Wirecloud.addEventListener('activeworkspacechanged', function (Wirecloud, workspace) {
+            this.layout.slideOut();
+
+            var state = Wirecloud.HistoryManager.getCurrentState();
+            try {
+                this.loadWorkspace(workspace, {initialtab: state.tab});
+            } catch (error) {
+                // Error during initialization
+                // TODO: Init failsafe mode
+                return;
+            }
+
+            // Handle tab changes
+            this.notebook.addEventListener("changed", function (notebook, oldTab, newTab) {
+                var currentState = Wirecloud.HistoryManager.getCurrentState();
+                var newState = utils.merge({}, currentState, {
+                    tab: newTab.model.name
+                });
+
+                if (currentState.tab != null) {
+                    if (currentState.tab !== newState.tab) {
+                        Wirecloud.HistoryManager.pushState(newState);
+                    }
+                } else {
+                    Wirecloud.HistoryManager.replaceState(newState);
+                }
+            });
+
+            // Init wiring error badge
+            this._updateWiringErrors = function (entry) {
+                var errorCount = workspace.wiring.logManager.errorCount;
+                this.wiringButton.setBadge(errorCount ? errorCount : null, 'danger');
+            }.bind(this);
+
+            workspace.wiring.logManager.addEventListener('newentry', this._updateWiringErrors);
+            this._updateWiringErrors();
+
+            Wirecloud.GlobalLogManager.log(utils.gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
+        }.bind(this.views.workspace));
+
+        // Handle initial content
         var plain_content = document.querySelector('.plain_content');
         if (plain_content != null) {
             this.views.initial.appendChild(plain_content);
@@ -227,16 +269,16 @@
         this.currentPopups.push(popup);
     };
 
-    UserInterfaceManager.createTask = function createTask(task, subtasks) {
-        var monitor = new Wirecloud.TaskMonitorModel(task, subtasks);
+    UserInterfaceManager.monitorTask = function monitorTask(task) {
         var element = document.getElementById("loading-window");
         element.classList.add("in");
         element.classList.add("fade");
 
-        monitor.addEventListener('progress', updateTaskProgress);
-        monitor.addEventListener('fail', notifyPlatformReady);
-        updateTaskProgress(monitor, 0);
-        return monitor;
+        task.addEventListener('progress', updateTaskProgress);
+        task.addEventListener('fail', notifyPlatformReady);
+        task.addEventListener('finish', notifyPlatformReady);
+        updateTaskProgress(task, 0);
+        return this;
     };
 
     UserInterfaceManager.onHistoryChange = function onHistoryChange(state) {
@@ -249,33 +291,35 @@
         });
     };
 
-    var updateTaskProgress = function updateTaskProgress(monitor, progress) {
+    var updateTaskProgress = function updateTaskProgress(task, progress) {
         var msg;
 
         msg = gettext("%(task)s %(percentage)s%");
-        msg = interpolate(msg, {task: monitor.title, percentage: Math.round(progress)}, true);
+        msg = interpolate(msg, {task: task.title, percentage: Math.round(progress)}, true);
         document.getElementById("loading-task-title").textContent = msg;
 
-        if (monitor.subtasks.length === 0) {
-            msg = '';
-        } else if (monitor.subtasks[monitor.currentsubtask].title != "") {
-            msg = gettext("%(subTask)s: %(percentage)s%");
-            msg = interpolate(msg, {
-                subTask: monitor.subtasks[monitor.currentsubtask].title,
-                percentage: Math.round(monitor.subtasks[monitor.currentsubtask].progress)
-            }, true);
-        } else {
-            msg = "%(percentage)s";
-            msg = interpolate(msg, {
-                percentage: Math.round(monitor.subtasks[monitor.currentsubtask].progress)
-            }, true);
-        }
+        var list = document.createElement('ul');
+        task.subtasks.forEach(function (subtask) {
+            if (subtask.type === "then") {
+                if (subtask.subtasks.length === 0) {
+                    return;
+                }
+                subtask = subtask.subtasks[0];
+            }
 
-        document.getElementById("loading-subtask-title").textContent = msg;
+            if (subtask.title != "") {
+                var msg = interpolate(gettext("%(subTask)s: %(percentage)s%"), {
+                    subTask: subtask.title,
+                    percentage: Math.round(subtask.progress)
+                }, true);
+                var li = document.createElement('li');
+                li.textContent = msg;
+                list.appendChild(li);
+            }
+        });
 
-        if (progress === 100) {
-            notifyPlatformReady();
-        }
+        document.getElementById("loading-subtask-title").innerHTML = '';
+        document.getElementById("loading-subtask-title").appendChild(list);
     };
 
     var resizeUI = function resizeUI() {

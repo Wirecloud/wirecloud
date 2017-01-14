@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -69,32 +69,6 @@
         this.layout = new StyledElements.OffCanvasLayout();
         this.appendChild(this.layout);
 
-        // Init wiring error badge
-        Wirecloud.addEventListener('activeworkspacechanged', function (Wirecloud, workspace, global_monitor) {
-            this.layout.slideOut();
-
-            var monitor = global_monitor.nextSubtask(utils.gettext('Processing workspace data'));
-
-            try {
-                this.loadWorkspace(workspace);
-            } catch (error) {
-                // Error during initialization
-                // TODO: Init failsafe mode
-                return;
-            }
-
-            this._updateWiringErrors = function (entry) {
-                var errorCount = workspace.wiring.logManager.errorCount;
-                this.wiringButton.setBadge(errorCount ? errorCount : null, 'danger');
-            }.bind(this);
-
-            workspace.wiring.logManager.addEventListener('newentry', this._updateWiringErrors);
-            this._updateWiringErrors();
-
-            monitor.update(100);
-            Wirecloud.GlobalLogManager.log(utils.gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
-        }.bind(this));
-
         Object.defineProperties(this, {
             activeTab: {
                 get: function () {
@@ -154,7 +128,7 @@
             }.bind(this));
         }.bind(this));
     };
-    WorkspaceView.prototype = new StyledElements.Alternative();
+    utils.inherit(WorkspaceView, StyledElements.Alternative);
 
     WorkspaceView.prototype.view_name = 'workspace';
 
@@ -188,8 +162,12 @@
         return this;
     };
 
-    WorkspaceView.prototype.loadWorkspace = function loadWorkspace(workspace) {
+    WorkspaceView.prototype.loadWorkspace = function loadWorkspace(workspace, options) {
         var loadingTab;
+
+        options = utils.merge({
+            initialtab: null
+        }, options);
 
         this.walletButton.active = false;
 
@@ -213,8 +191,7 @@
         }, this);
 
         var initialTab = null;
-        var statusTab = null;
-        var status = Wirecloud.HistoryManager.getCurrentState();
+        var requestedTab = null;
 
         this.model.tabs.forEach(function (model) {
             var tab = this.notebook.createTab({
@@ -223,18 +200,17 @@
                 workspace: this
             });
 
-            if (status.tab != null && status.tab === model.name) {
-                statusTab = tab;
+            if (options.initialtab === model.name) {
+                requestedTab = tab;
             }
 
             if (model.initial) {
                 initialTab = tab;
             }
-
         }, this);
 
-        if (statusTab != null) {
-            this.notebook.goToTab(statusTab);
+        if (requestedTab != null) {
+            this.notebook.goToTab(requestedTab);
         } else {
             this.notebook.goToTab(initialTab);
         }
