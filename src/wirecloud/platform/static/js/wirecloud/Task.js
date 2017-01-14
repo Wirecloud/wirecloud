@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,16 +30,23 @@
      * Like a Promise, but Task have title, and are able to provide
      * progress and be abortable. They are also usable as a standard Promise.
      *
+     * @since 1.1
+     * @name Wirecloud.Task
+     * @constructor
+     * @extends {external:StyledElements.ObjectWithEvents}
+     *
      * @param {String} title
-     * @param {Function} executor
+     * @param {Function|Array.<Wirecloud.Task>} executor
      */
     var Task = function Task(title, executor) {
         if (title == null) {
             throw new TypeError("missing title parameter");
         }
 
-        if (typeof executor !== "function") {
-            throw new TypeError("executor must be a function");
+        if (typeof executor !== "function" && !Array.isArray(executor)) {
+            throw new TypeError("executor must be a function or a task array");
+        } else if (Array.isArray(executor) && executor.length === 0) {
+            throw new TypeError("at least one subtask is required");
         }
 
         privates.set(this, {
@@ -47,7 +54,8 @@
             title: title,
             progress: 0,
             status: "pending",
-            value: undefined
+            value: undefined,
+            subtasks: []
         });
 
         Object.defineProperties(this, {
@@ -62,16 +70,25 @@
             },
             value: {
                 get: on_value_get
+            },
+            subtasks: {
+                get: on_subtasks_get
             }
         });
 
-        StyledElements.ObjectWithEvents.call(this, ['abort', 'fail', 'finish', 'progress']);
+        StyledElements.ObjectWithEvents.call(this, ['abort', 'fail', 'finish', 'progress', 'nexttask']);
 
-        executor(resolve.bind(this), reject.bind(this), update.bind(this));
+        if (typeof executor === "function") {
+            executor(resolve.bind(this), reject.bind(this), update.bind(this));
+        } else {
+            executor.forEach(addAggregatedTask, this);
+            updateAggregatedTaskProgress.call(this);
+            on_task_finish.call(this);
+        }
     };
     utils.inherit(Task, StyledElements.ObjectWithEvents);
 
-    var update = function update(progress, title) {
+    var update = function update(progress) {
         var priv = privates.get(this);
 
         if (priv.status === "aborted") {
@@ -86,9 +103,6 @@
             priv.progress = 100;
         } else {
             priv.progress = progress;
-        }
-        if (title != null) {
-            priv.title = title;
         }
         this.dispatchEvent("progress", priv.progress);
     };
@@ -135,7 +149,7 @@
         this.dispatchEvent("finish");
     };
 
-    var resolve_then = function resolve_then(callback, next, resolve, reject) {
+    var resolve_then = function resolve_then(tc, callback, next, resolve, reject) {
         var result;
 
         if (typeof callback === 'function') {
@@ -149,12 +163,20 @@
             result = this.value;
         }
 
+        if (result instanceof Wirecloud.Task) {
+            privates.get(tc).subtasks.push(result);
+            tc.dispatchEvent("nexttask", result);
+        }
+
         if (result != null && typeof result.then === "function") {
             result.then(resolve, reject);
-
         } else {
             next(result);
         }
+    };
+
+    Task.prototype.toString = function toString() {
+        return this.title + ': ' + this.progress + '%';
     };
 
     /**
@@ -165,12 +187,15 @@
      * @returns {Wirecloud.Task}
      */
     Task.prototype.toTask = function toTask(title) {
-        return new Task(title, function (resolve, reject, update) {
+        var task = new Task(title, (resolve, reject, update) => {
             this.addEventListener("progress", function (task, progress) {
                 update(progress);
             });
+            update(this.progress);
             this.then(resolve, reject);
-        }.bind(this));
+        });
+        privates.get(task).subtasks.push(this);
+        return task;
     };
 
     Task.prototype.catch = function _catch(reject) {
@@ -183,59 +208,86 @@
     };
 
     Task.prototype.then = function then(onFulfilled, onRejected) {
-        return new TaskContinuation(this, function (internal_resolve, internal_reject) {
-            if (this.status === 'resolved') {
-                resolve_then.call(this, onFulfilled, internal_resolve, internal_resolve, internal_reject);
-            } else if (this.status === 'rejected' || this.status === 'aborted') {
-                resolve_then.call(this, onRejected, internal_reject, internal_resolve, internal_reject);
-            } else {
-                this.addEventListener("finish", resolve_then.bind(this, onFulfilled, internal_resolve, internal_resolve, internal_reject));
-                this.addEventListener("fail", resolve_then.bind(this, onRejected, internal_reject, internal_resolve, internal_reject));
-            }
-        }.bind(this));
+        return new TaskContinuation(this, onFulfilled, onRejected);
     };
 
     var privates = new WeakMap();
 
-    var TaskContinuation = function TaskContinuation(parent, executor) {
-
-        if (typeof executor !== "function" && !Array.isArray(executor)) {
-            throw new TypeError("executor must be a function or an array");
-        }
+    var TaskContinuation = function TaskContinuation(parent, onFulfilled, onRejected) {
 
         privates.set(this, {
             parent: parent,
             progress: 0,
             status: "pending",
-            value: undefined
+            value: undefined,
+            subtasks: []
         });
 
         Object.defineProperties(this, {
             progress: {
                 get: on_progress_get
             },
+            type: {
+                value: "then"
+            },
             status: {
                 get: on_status_get
             },
             value: {
                 get: on_value_get
+            },
+            subtasks: {
+                get: on_subtasks_get
             }
         });
 
-        StyledElements.ObjectWithEvents.call(this, ['abort', 'fail', 'finish', 'progress', 'upgrade']);
+        StyledElements.ObjectWithEvents.call(this, ['abort', 'fail', 'finish', 'progress', 'upgrade', 'nexttask']);
 
-        executor(resolve.bind(this), reject.bind(this), update.bind(this));
+        var internal_resolve = resolve.bind(this);
+        var internal_reject = reject.bind(this);
+        if (parent.status === 'resolved') {
+            resolve_then.call(parent, this, onFulfilled, internal_resolve, internal_resolve, internal_reject);
+        } else if (parent.status === 'rejected' || parent.status === 'aborted') {
+            resolve_then.call(parent, this, onRejected, internal_reject, internal_resolve, internal_reject);
+        } else {
+            parent.addEventListener("finish", resolve_then.bind(parent, this, onFulfilled, internal_resolve, internal_resolve, internal_reject));
+            parent.addEventListener("fail", resolve_then.bind(parent, this, onRejected, internal_reject, internal_resolve, internal_reject));
+        }
     };
-    utils.inherit(TaskContinuation, StyledElements.ObjectWithEvents);
+    utils.inherit(TaskContinuation, Task);
 
     TaskContinuation.prototype.then = Task.prototype.then;
     TaskContinuation.prototype.catch = Task.prototype.catch;
+
+    /**
+     * Creates a new task asociated to the progress of the chain of task
+     * associated with this instance.
+     *
+     * @param {String} title new title for this task
+     * @returns {Wirecloud.Task}
+     */
     TaskContinuation.prototype.toTask = function toTask(title) {
-        return new Task(title, function (resolve, reject, update) {
+        var task = new Task(title, function (resolve, reject, update) {
             this.then(resolve, reject);
         }.bind(this));
-    };
 
+        var current_task = this;
+        var priv = privates.get(task);
+        while (current_task != null) {
+            current_task.addEventListener("nexttask", (tc, newtask) => {
+                var index = priv.subtasks.indexOf(tc);
+                priv.subtasks[index] = newtask;
+                newtask.addEventListener('progress', updateAggregatedTaskProgress.bind(task));
+                updateAggregatedTaskProgress.call(task);
+            });
+            priv.subtasks.push(current_task);
+            current_task = privates.get(current_task).parent;
+        }
+        priv.subtasks = priv.subtasks.reverse();
+        priv.subtasks[0].addEventListener('progress', updateAggregatedTaskProgress.bind(task));
+        updateAggregatedTaskProgress.call(task);
+        return task;
+    };
 
     var on_status_get = function on_status_get() {
         return privates.get(this).status;
@@ -251,6 +303,65 @@
 
     var on_title_get = function on_title_get() {
         return privates.get(this).title;
+    };
+
+    var on_subtasks_get = function on_subtasks_get() {
+        return privates.get(this).subtasks.slice(0);
+    };
+
+    var on_task_finish = function on_task_finish() {
+        var priv = privates.get(this);
+        var status = null;
+
+        priv.subtasks.some(function (task) {
+            if (task.status === "pending") {
+                status = "pending";
+                // Stop looping
+                return true;
+            } else if (task.status === "aborted") {
+                status = "aborted";
+            } else if (task.status === "resolved" && status === null) {
+                status = "resolved";
+            } else if (task.status === "rejected" && status !== "aborted") {
+                status = "rejected";
+            }
+        });
+
+        if (status !== "pending") {
+            priv.value = priv.subtasks.map(function (task) {return task.value});
+            priv.status = status;
+            switch (status) {
+            case "resolved":
+                this.dispatchEvent("finish");
+                break;
+            case "rejected":
+            case "aborted":
+                this.dispatchEvent("fail");
+                break;
+            }
+        }
+    };
+
+    var addAggregatedTask = function addAggregatedTask(task) {
+        var priv = privates.get(this);
+
+        priv.subtasks.push(task);
+        task.addEventListener('progress', updateAggregatedTaskProgress.bind(this));
+        task.addEventListener('finish', on_task_finish.bind(this));
+        task.addEventListener('fail', on_task_finish.bind(this));
+    };
+
+    var updateAggregatedTaskProgress = function updateAggregatedTaskProgress() {
+        var priv, accumulated_progress = 0;
+
+        priv = privates.get(this);
+
+        priv.subtasks.forEach((subtask) => {
+            accumulated_progress += subtask.progress;
+        });
+        priv.progress = accumulated_progress / priv.subtasks.length;
+
+        this.dispatchEvent("progress", priv.progress);
     };
 
     Wirecloud.Task = Task;

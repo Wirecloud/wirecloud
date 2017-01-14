@@ -57,21 +57,25 @@
             });
 
             it("should allow immediate fulfillment", function () {
+                var value = "task value";
                 var task = new Wirecloud.Task("task", function (fulfill, reject, update) {
-                    fulfill();
+                    fulfill(value);
                 });
                 expect(task.progress).toEqual(100);
                 expect(task.status).toEqual("resolved");
                 expect(task.title).toEqual("task");
+                expect(task.value).toEqual(value);
             });
 
             it("should allow immediate rejection", function () {
+                var value = "task value";
                 var task = new Wirecloud.Task("task", function (resolve, reject, update) {
-                    reject();
+                    reject(value);
                 });
                 expect(task.progress).toEqual(0);
                 expect(task.status).toEqual("rejected");
                 expect(task.title).toEqual("task");
+                expect(task.value).toEqual(value);
             });
 
             it("should allow progress updates", function () {
@@ -85,19 +89,6 @@
                 expect(task.progress).toEqual(20);
                 expect(task.status).toEqual("pending");
                 expect(task.title).toEqual("task");
-            });
-
-            it("should allow title updates", function () {
-                var task_update;
-                var task = new Wirecloud.Task("task", function (resolve, reject, update) {
-                    task_update = update;
-                });
-
-                task_update(20, "new title");
-
-                expect(task.progress).toEqual(20);
-                expect(task.status).toEqual("pending");
-                expect(task.title).toEqual("new title");
             });
 
             it("should normalize less than zero values on progress updates", function () {
@@ -264,20 +255,101 @@
                     });
                 });
 
-                it("Task sequences can be created using promises", function () {
-                    var success_value = "success value";
-                    var build_promise = function () {
-                        return Promise.resolve(success_value);
-                    };
-                    var task = new Wirecloud.Task("task", function (fulfill, reject, update) {
-                        fulfill(success_value);
+            });
+
+            describe("should support task aggregations:", function () {
+
+                it("requires at least one subtask", function () {
+                    expect(() => {
+                        new Wirecloud.Task("parallel work", []);
+                    }).toThrowError(TypeError);
+                });
+
+                it("immediate fulfillment", function () {
+                    var subtask1 = new Wirecloud.Task("task", (fulfill, reject, update) => {
+                        fulfill("1");
                     });
-                    task.then(build_promise).toTask("sequence task").then(function (value) {
-                        expect(value).toBe(success_value);
+                    var subtask2 = new Wirecloud.Task("task", (fulfill, reject, update) => {
+                        fulfill("2");
                     });
+
+
+                    var task = new Wirecloud.Task("parallel work", [subtask1, subtask2]);
+
+
+                    expect(task.progress).toEqual(100);
+                    expect(task.status).toEqual("resolved");
+                    expect(task.title).toEqual("parallel work");
+                    expect(task.value).toEqual(["1", "2"]);
+                    expect(task.subtasks).toEqual([subtask1, subtask2]);
+                });
+
+                it("immediate rejection", function () {
+                    // aggregations only require one rejected subtask to be considered rejected
+                    var subtask1 = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                        reject("1");
+                    });
+                    var subtask2 = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                        fulfill("2");
+                    });
+
+
+                    var task = new Wirecloud.Task("parallel work", [subtask1, subtask2]);
+
+
+                    expect(task.progress).toEqual(50);
+                    expect(task.status).toEqual("rejected");
+                    expect(task.title).toEqual("parallel work");
+                    expect(task.value).toEqual(["1", "2"]);
+                    expect(task.subtasks).toEqual([subtask1, subtask2]);
+                });
+
+                it("async resolution", function () {
+                    var fulfill_methods = [];
+                    var subtask1 = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                        fulfill_methods.push(fulfill);
+                    });
+                    var subtask2 = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                        fulfill_methods.push(fulfill);
+                    });
+
+
+                    var task = new Wirecloud.Task("parallel work", [subtask1, subtask2]);
+
+                    expect(task.progress).toEqual(0);
+                    expect(task.status).toEqual("pending");
+                    expect(task.title).toEqual("parallel work");
+                    expect(task.value).toEqual(undefined);
+                    expect(task.subtasks).toEqual([subtask1, subtask2]);
+
+                    fulfill_methods[0]("1");
+                    expect(task.progress).toEqual(50);
+                    expect(task.status).toEqual("pending");
+
+                    fulfill_methods[1]("2");
+                    expect(task.progress).toEqual(100);
+                    expect(task.status).toEqual("resolved");
+                });
+
+                it("subtasks can be aborted", function () {
+                    // aggregations only require one rejected subtask to be considered rejected
+                    var subtask1 = new Wirecloud.Task("task", function (fulfill, reject, update) {});
+                    var subtask2 = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                        fulfill("2");
+                    });
+
+
+                    var task = new Wirecloud.Task("parallel work", [subtask1, subtask2]);
+
+                    subtask1.abort();
+
+                    expect(task.progress).toEqual(50);
+                    expect(task.status).toEqual("aborted");
+                    expect(task.subtasks).toEqual([subtask1, subtask2]);
                 });
 
             });
+
         });
 
         describe("abort()", function () {
@@ -389,26 +461,26 @@
 
             it("should react on already aborted tasks", function (done) {
                 var task = new Wirecloud.Task("task", function () {});
-                var reason = "aborted";
+                var expected_reason = "aborted";
 
-                task.abort(reason);
+                task.abort(expected_reason);
 
                 task.catch(function (reason) {
-                    expect(reason).toBe(reason);
+                    expect(reason).toBe(expected_reason);
                     done();
                 });
             });
 
             it("should catch abort events", function (done) {
                 var task = new Wirecloud.Task("task", function () {});
-                var reason = "aborted";
+                var expected_reason = "aborted";
 
                 task.catch(function (reason) {
-                    expect(reason).toBe(reason);
+                    expect(reason).toBe(expected_reason);
                     done();
                 });
 
-                expect(task.abort(reason)).toBe(task);
+                expect(task.abort(expected_reason)).toBe(task);
             });
 
             it("propagate success values", function (done) {
@@ -441,6 +513,80 @@
 
         });
 
+        describe("toString()", () => {
+
+            it("should be implemented", () => {
+                var task = new Wirecloud.Task("task title", () => {});
+
+                expect(task.toString()).not.toBe("[object Object]");
+                expect(task.toString()).toContain("task title");
+            });
+
+        });
+
+        describe("toTask(title)", () => {
+
+            it("wraps simple tasks", () => {
+                var task_update, task_resolve;
+
+                var subtask = new Wirecloud.Task("subtask title", (resolve, reject, update) => {
+                    task_update = update;
+                    task_resolve = resolve;
+                    update(50);
+                });
+
+                var task = subtask.toTask("new task");
+
+                expect(task).not.toBe(subtask);
+                expect(task.status).toEqual("pending");
+                expect(task.title).toEqual("new task");
+                expect(task.value).toEqual(undefined);
+                expect(task.subtasks).toEqual([subtask]);
+                expect(task.progress).toBe(50);
+
+                task_update(70);
+                expect(task.progress).toBe(70);
+
+                task_resolve("final value");
+                expect(task.status).toBe("resolved");
+                expect(task.value).toBe("final value");
+            });
+
+            it("Task sequences can be created using promises", (done) => {
+                var success_value = "success value";
+                var build_promise = function (value) {
+                    return Promise.resolve(value);
+                };
+                var build_task = function (value) {
+                    return new Wirecloud.Task("task", function (fulfill) {
+                        fulfill(value);
+                    });
+                };
+                var listener = jasmine.createSpy("listener");
+
+                var initial_task = new Wirecloud.Task("initial task", function (fulfill, reject, update) {
+                    fulfill(success_value);
+                });
+                var task = initial_task.then(build_promise).then(build_task).then(build_promise).toTask("sequence task").on("progress", listener);
+
+                task.then(function (value) {
+                    expect(value).toBe(success_value);
+                    expect(task.subtasks).toEqual([
+                        jasmine.any(Wirecloud.Task),
+                        jasmine.any(Wirecloud.Task),
+                        jasmine.any(Wirecloud.Task),
+                        jasmine.any(Wirecloud.Task)
+                    ]);
+                    expect(task.progress).toBe(100);
+                    expect(listener.calls.allArgs()).toEqual([
+                        [task, 75], // 3 of 4 completed steps
+                        [task, 100] // 4 of 4 completed steps
+                    ]);
+                    done();
+                });
+            });
+
+        });
 
     });
 
