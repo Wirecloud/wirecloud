@@ -144,6 +144,6 @@ class SecureDataProcessor(object):
         # Process secure data from the X-WireCloud-Secure-Data header
         if WIRECLOUD_SECURE_DATA_HEADER in request['headers']:
             secure_data_value = request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
-            component_type = request['headers'][WIRECLOUD_COMPONENT_TYPE_HEADER]
+            component_type = request['headers'].get(WIRECLOUD_COMPONENT_TYPE_HEADER, "widget")
             process_secure_data(secure_data_value, request, component_type)
             del request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
