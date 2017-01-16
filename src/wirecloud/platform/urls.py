@@ -173,9 +173,9 @@ urlpatterns = (
         name='wirecloud.workspace_wiring'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/operatorpref/(?P<operator_id>\d+)$',
+    url(r'^api/workspace/(?P<workspace_id>\d+)/wiring/operator/(?P<operator_id>\d+)/preferences/?$',
         wiring_views.OperatorPreferencesEntry(permitted_methods=('POST',)),
-        name='wirecloud.workspace_operatorpref'
+        name='wirecloud.workspace_operator_preferences'
     ),
 
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
