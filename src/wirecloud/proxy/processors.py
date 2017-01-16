@@ -33,21 +33,22 @@ from wirecloud.proxy.utils import ValidationError
 
 
 WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
+WIRECLOUD_COMPONENT_TYPE_HEADER = 'wirecloud-component-type'
 VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
-def get_variable_value_by_ref(ref, cache_manager, componentType="widget"):
+def get_variable_value_by_ref(ref, cache_manager, component_type="widget"):
 
     result = VAR_REF_RE.match(ref)
     try:
         # Get widget variables
-        if componentType == "widget":
+        if component_type == "widget":
             if result.group('iwidget_id') == 'c':
                 return result.group('var_name')
             else:
                 return cache_manager.get_variable_value_from_varname(result.group('iwidget_id'), result.group('var_name'))
         # Get operator variables
-        elif componentType == "operator":
+        elif component_type == "operator":
             return cache_manager.workspace.wiringStatus["operators"][result.group('iwidget_id')]["preferences"][result.group('var_name')]["value"]
 
         else:
@@ -82,7 +83,7 @@ def check_invalid_refs(**kargs):
         raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
-def process_secure_data(text, request):
+def process_secure_data(text, request, component_type):
 
     definitions = text.split('&')
     cache_manager = VariableValueCacheManager(request['workspace'], request['user'])
@@ -103,8 +104,7 @@ def process_secure_data(text, request):
             var_ref = options.get('var_ref', '')
             check_empty_params(substr=substr, var_ref=var_ref)
 
-            componentType = options.get("type", "widget") # default is widget
-            value = get_variable_value_by_ref(var_ref, cache_manager, componentType)
+            value = get_variable_value_by_ref(var_ref, cache_manager, component_type)
 
             check_invalid_refs(var_ref=value)
 
@@ -122,14 +122,13 @@ def process_secure_data(text, request):
             request['data'] = BytesIO(new_body)
 
         elif action == 'basic_auth':
+
             user_ref = options.get('user_ref', '')
             password_ref = options.get('pass_ref', '')
             check_empty_params(user_ref=user_ref, password_ref=password_ref)
 
-            componentType = options.get("type", "widget") # default is widget
-            user_value = get_variable_value_by_ref(user_ref, cache_manager, componentType)
-            password_value = get_variable_value_by_ref(password_ref, cache_manager, componentType)
-
+            user_value = get_variable_value_by_ref(user_ref, cache_manager, component_type)
+            password_value = get_variable_value_by_ref(password_ref, cache_manager, component_type)
             check_invalid_refs(user_ref=user_value, password_ref=password_value)
 
             token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]
@@ -145,5 +144,6 @@ class SecureDataProcessor(object):
         # Process secure data from the X-WireCloud-Secure-Data header
         if WIRECLOUD_SECURE_DATA_HEADER in request['headers']:
             secure_data_value = request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
-            process_secure_data(secure_data_value, request)
+            component_type = request['headers'][WIRECLOUD_COMPONENT_TYPE_HEADER]
+            process_secure_data(secure_data_value, request, component_type)
             del request['headers'][WIRECLOUD_SECURE_DATA_HEADER]

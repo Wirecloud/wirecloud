@@ -29,6 +29,7 @@
     var platform = window.parent;
     var Wirecloud = platform.Wirecloud;
     var resource = MashupPlatform.priv.resource;
+    var componentType = resource instanceof Wirecloud.Widget ? "widget" : "operator";
     var guibuilder = new platform.StyledElements.GUIBuilder();
 
     // HTTP module
@@ -37,6 +38,7 @@
     Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {
         value: function makeRequest(url, options) {
             url = new platform.URL(url, window.location);
+            options.requestHeaders["wirecloud-component-type"] = componentType;
             return Wirecloud.io.makeRequest(url, options);
         }
     });
