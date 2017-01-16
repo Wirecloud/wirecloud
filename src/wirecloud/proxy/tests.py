@@ -455,13 +455,15 @@ class ProxySecureDataTests(ProxyTestsBase):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
 
-        secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref + ", type = operator"
+        secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
+
         response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
                             HTTP_REFERER='http://localhost/test/workspaceSecure',
-                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header,
+                            HTTP_WIRECLOUD_COMPONENT_TYPE="operator")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'username=|username|&password=|password|')
