@@ -38,6 +38,9 @@
     Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {
         value: function makeRequest(url, options) {
             url = new platform.URL(url, window.location);
+            if (!options.requestHeaders) {
+                options.requestHeaders = {};
+            }
             options.requestHeaders["wirecloud-component-type"] = componentType;
             return Wirecloud.io.makeRequest(url, options);
         }
