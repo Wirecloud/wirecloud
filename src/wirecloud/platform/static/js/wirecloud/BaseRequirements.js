@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -82,6 +82,12 @@
 
         if (!('WeakMap' in window)) {
             throw new Error('Missing WeakMap support');
+        }
+
+        try {
+            eval("var bar = (x) => x+1");
+        } catch (e) {
+            throw new Error('Missing arrow functions support');
         }
     };
 
