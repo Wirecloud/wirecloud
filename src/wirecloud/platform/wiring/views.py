@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import jsonpatch
 
 from django.core.cache import cache
 from django.http import HttpResponse
@@ -35,17 +36,7 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_op
 
 class WiringEntry(Resource):
 
-    @authentication_required
-    @consumes(('application/json',))
-    def update(self, request, workspace_id):
-
-        workspace = get_object_or_404(Workspace, id=workspace_id)
-        if not request.user.is_superuser and workspace.creator != request.user:
-            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-
-        new_wiring_status = parse_json_request(request)
-        old_wiring_status = workspace.wiringStatus
-
+    def checkWiring(self, new_wiring_status, old_wiring_status, can_update_secure = False):
         # Check read only connections
         old_read_only_connections = [connection for connection in old_wiring_status['connections'] if connection.get('readonly', False)]
         new_read_only_connections = [connection for connection in new_wiring_status['connections'] if connection.get('readonly', False)]
@@ -88,10 +79,42 @@ class WiringEntry(Resource):
                 if new_preference.get('readonly', False) and new_preference.get('value') != old_preference.get('value'):
                     return build_error_response(request, 403, _('Read only preferences cannot be updated'))
 
+
+    @authentication_required
+    @consumes(('application/json',))
+    def update(self, request, workspace_id):
+
+        workspace = get_object_or_404(Workspace, id=workspace_id)
+        if not request.user.is_superuser and workspace.creator != request.user:
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+        new_wiring_status = parse_json_request(request)
+        old_wiring_status = workspace.wiringStatus
+
+        self.checkWiring(new_wiring_status, old_wiring_status)
+
         workspace.wiringStatus = new_wiring_status
         workspace.save()
 
         return HttpResponse(status=204)
+
+    @authentication_required
+    @consumes(('application/json-patch+json',))
+    def patch (self, request, workspace_id):
+        workspace = get_object_or_404(Workspace, id=workspace_id)
+        if not request.user.is_superuser and workspace.creator != request.user:
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+        old_wiring_status = workspace.wiringStatus
+
+        new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
+
+        self.checkWiring(new_wiring_status, old_wiring_status, can_update_secure = True)
+
+        workspace.wiringStatus = new_wiring_status
+        workspace.save()
+
+        return HttpResponse(status=200)
 
 
 def process_requirements(requirements):

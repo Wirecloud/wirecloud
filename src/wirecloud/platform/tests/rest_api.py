@@ -1090,7 +1090,79 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         check_put_bad_request_syntax(self, url)
 
+    def test_workspace_wiring_entry_patch_requires_authentication(self):
 
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
+        workspace = Workspace.objects.get(id=1)
+        old_wiring_status = workspace.wiringStatus
+
+        data = json.dumps([{
+            'op': "add",
+            'path': "/operators/0",
+            'value': {'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}}},
+        }])
+
+        response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Error response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Workspace wiring status should not have change
+        workspace = Workspace.objects.get(id=1)
+        self.assertEqual(workspace.wiringStatus, old_wiring_status)
+
+        # Check using Accept: text/html
+        response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Content type of the response should be text/html
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_workspace_wiring_entry_patch(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
+        new_wiring_status = {
+            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}},
+            'connections': [],
+        }
+
+        data = json.dumps([{
+            'op': "add",
+            'path': "/operators/0",
+            'value': new_wiring_status["operators"]["0"],
+        }])
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def patch_workspace_wiring():
+            response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 200)
+
+            # Workspace wiring status should have change
+            workspace = Workspace.objects.get(id=1)
+            self.assertEqual(workspace.wiringStatus["operators"], new_wiring_status["operators"])
+        check_cache_is_purged(self, 1, update_workspace_wiring)
+
+    def test_workspace_wiring_entry_patch_not_found(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = json.dumps([{
+            'op': "add",
+            'path': "/operators/0",
+            'value': new_wiring_status["operators"]["0"],
+        }])
+        check_not_found_response(self, 'patch', url, json.dumps(data))
 
     def test_tab_collection_post_requires_authentication(self):
 
@@ -2401,6 +2473,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'pref_secure': 'helloWorld'
         }
         check_post_requires_authentication(self, url, json.dumps(data))
+
 
 class ResourceManagementAPI(WirecloudTestCase):
 

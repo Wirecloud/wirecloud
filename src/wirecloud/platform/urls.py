@@ -169,7 +169,7 @@ urlpatterns = (
     ),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
-        wiring_views.WiringEntry(permitted_methods=('PUT',)),
+        wiring_views.WiringEntry(permitted_methods=('PUT', 'PATCH')),
         name='wirecloud.workspace_wiring'
     ),
 
