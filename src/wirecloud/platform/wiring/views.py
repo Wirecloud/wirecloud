@@ -36,7 +36,7 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_op
 
 class WiringEntry(Resource):
 
-    def checkWiring(self, new_wiring_status, old_wiring_status, can_update_secure = False):
+    def checkWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure = False):
         # Check read only connections
         old_read_only_connections = [connection for connection in old_wiring_status['connections'] if connection.get('readonly', False)]
         new_read_only_connections = [connection for connection in new_wiring_status['connections'] if connection.get('readonly', False)]
@@ -91,7 +91,7 @@ class WiringEntry(Resource):
         new_wiring_status = parse_json_request(request)
         old_wiring_status = workspace.wiringStatus
 
-        self.checkWiring(new_wiring_status, old_wiring_status)
+        self.checkWiring(request, new_wiring_status, old_wiring_status)
 
         workspace.wiringStatus = new_wiring_status
         workspace.save()
@@ -109,7 +109,7 @@ class WiringEntry(Resource):
 
         new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
 
-        self.checkWiring(new_wiring_status, old_wiring_status, can_update_secure = True)
+        self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure = True)
 
         workspace.wiringStatus = new_wiring_status
         workspace.save()
