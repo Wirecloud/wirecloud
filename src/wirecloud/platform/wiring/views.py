@@ -78,6 +78,7 @@ class WiringEntry(Resource):
 
                 if new_preference.get('readonly', False) and new_preference.get('value') != old_preference.get('value'):
                     return build_error_response(request, 403, _('Read only preferences cannot be updated'))
+        return True
 
 
     @authentication_required
@@ -91,7 +92,9 @@ class WiringEntry(Resource):
         new_wiring_status = parse_json_request(request)
         old_wiring_status = workspace.wiringStatus
 
-        self.checkWiring(request, new_wiring_status, old_wiring_status)
+        result = self.checkWiring(request, new_wiring_status, old_wiring_status)
+        if result != True:
+            return result
 
         workspace.wiringStatus = new_wiring_status
         workspace.save()
@@ -109,7 +112,9 @@ class WiringEntry(Resource):
 
         new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
 
-        self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure = True)
+        result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure = True)
+        if result != True:
+            return result
 
         workspace.wiringStatus = new_wiring_status
         workspace.save()
