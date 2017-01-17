@@ -272,6 +272,192 @@
 
         });
 
+        describe("removeWorkspace(options)", () => {
+
+            it("throws an Error when not providing any of the owner, name or id options", () => {
+                expect(() => {
+                    Wirecloud.removeWorkspace();
+                }).toThrowError();
+            });
+
+            it("throws a TypeError when passing the owner option without passing a name option", function () {
+                expect(() => {
+                    Wirecloud.removeWorkspace({
+                        owner: "user"
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("throws a TypeError when passing the name option without passing a owner option", function () {
+                expect(() => {
+                    Wirecloud.removeWorkspace({
+                        name: "MyWorkspace"
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("remove workspaces by owner/name", function (done) {
+                var workspace = {
+                    id: 1,
+                    owner: "wirecloud",
+                    name: "home"
+                };
+                Wirecloud.workspaceInstances = {
+                    1: workspace
+                };
+                Wirecloud.workspacesByUserAndName = {
+                    wirecloud: {home: workspace}
+                };
+                spyOn(Wirecloud.URLs.WORKSPACE_ENTRY, "evaluate");
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function () {
+                    expect(Wirecloud.URLs.WORKSPACE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        workspace_id: 1
+                    });
+                    return new Wirecloud.Task("Requesting workspace data", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                var task = Wirecloud.removeWorkspace({owner: "wirecloud", name: "home"});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then(function () {
+                    expect(Wirecloud.workspaceInstances).toEqual({});
+                    expect(Wirecloud.workspacesByUserAndName).toEqual({"wirecloud": {}});
+                    done();
+                });
+            });
+
+            it("remove workspaces by id", function (done) {
+                var workspace = {
+                    id: 100,
+                    owner: "wirecloud",
+                    name: "home"
+                };
+                Wirecloud.workspaceInstances = {
+                    100: workspace
+                };
+                Wirecloud.workspacesByUserAndName = {
+                    wirecloud: {home: workspace}
+                };
+                spyOn(Wirecloud.URLs.WORKSPACE_ENTRY, "evaluate");
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url) => {
+                    expect(Wirecloud.URLs.WORKSPACE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        workspace_id: 100
+                    });
+                    return new Wirecloud.Task("Requesting workspace data", (resolve) => {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                var task = Wirecloud.removeWorkspace({id: 100});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then(function () {
+                    expect(Wirecloud.workspaceInstances).toEqual({});
+                    expect(Wirecloud.workspacesByUserAndName).toEqual({"wirecloud": {}});
+                    done();
+                });
+            });
+
+            it("remove workspaces by id (not tracked)", function (done) {
+                var workspace = {
+                    id: 100,
+                    owner: "wirecloud",
+                    name: "home"
+                };
+                Wirecloud.workspaceInstances = {
+                    100: workspace
+                };
+                Wirecloud.workspacesByUserAndName = {
+                    wirecloud: {home: workspace}
+                };
+                spyOn(Wirecloud.URLs.WORKSPACE_ENTRY, "evaluate");
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url) => {
+                    expect(Wirecloud.URLs.WORKSPACE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        workspace_id: 2
+                    });
+                    return new Wirecloud.Task("Requesting workspace data", (resolve) => {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                var task = Wirecloud.removeWorkspace({id: 2});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then(function () {
+                    expect(Wirecloud.workspaceInstances).toEqual({100: workspace});
+                    expect(Wirecloud.workspacesByUserAndName).toEqual({"wirecloud": {home: workspace}});
+                    done();
+                });
+            });
+
+            describe("calls reject on unexepected responses", () => {
+
+                var test = (status) => {
+                    return (done) => {
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status
+                                });
+                            });
+                        });
+
+                        var task = Wirecloud.removeWorkspace({id: 100});
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            done();
+                        });
+                    };
+                };
+
+                it("200", test(200));
+                it("201", test(201));
+                it("409", test(409));
+
+            });
+
+            describe("calls reject on error responses", () => {
+
+                var test = (status) => {
+                    return (done) => {
+                        var description = "detailed error description";
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status,
+                                    responseText: JSON.stringify({description: description})
+                                });
+                            });
+                        });
+
+                        var task = Wirecloud.removeWorkspace({id: 100});
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            expect(error).toBe(description);
+                            done();
+                        });
+                    };
+                };
+
+                it("401", test(401));
+                it("403", test(403));
+                it("404", test(404));
+                it("500", test(500));
+
+            });
+
+        });
+
     });
 
 })();

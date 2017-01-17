@@ -32,6 +32,9 @@
         }
     };
 
+    /**
+     * @namespace Wirecloud
+     */
     Object.defineProperty(Wirecloud, 'events', {
         value: {
             'contextloaded': new StyledElements.Event(Wirecloud),
@@ -445,6 +448,29 @@
         }).then(onCreateWorkspaceSuccess.bind(this));
     };
 
+    /**
+     * Removes a workspace from the WireCloud server
+     *
+     * @since 1.1
+     *
+     * @param {Object|Wirecloud.Workspace} workspace
+     *  workspace to remove.
+     *
+     * @returns {Wirecloud.Task}
+     *
+     * @example <caption>Remove a workspace using a {@link Wirecloud.Workspace} instance</caption>
+     * Wirecloud.removeWorkspace(workspace).then(function () {
+     *     // Workspace removed successfully
+     * }, function (error) {
+     *     // Error removing workspace
+     * };
+     *
+     * @example <caption>Remove a workspace by id</caption>
+     * Wirecloud.removeWorkspace({id: 1});
+     *
+     * @example <caption>Remove a workspace by owner/name</caption>
+     * Wirecloud.removeWorkspace({owner: "user", name: "dashboard"});
+     */
     Wirecloud.removeWorkspace = function removeWorkspace(workspace) {
         if (workspace.id == null) {
             if (workspace.owner == null || workspace.name == null) {
@@ -453,27 +479,31 @@
             workspace = this.workspacesByUserAndName[workspace.owner][workspace.name];
         }
 
-        return new Promise(function (resolve, reject) {
-            var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
-                workspace_id: workspace.id
-            });
+        var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
+            workspace_id: workspace.id
+        });
 
-            Wirecloud.io.makeRequest(url, {
-                method: 'DELETE',
-                requestHeaders: {'Accept': 'application/json'},
-                onComplete: function (response) {
-                    if (response.status === 204) {
-                        // Removing reference
-                        delete this.workspacesByUserAndName[workspace.owner][workspace.name];
-                        delete this.workspaceInstances[workspace.id];
+        return Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'}
+        }).then((response) => {
+            return new Promise((resolve, reject) => {
+                if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                    return reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                    return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
 
-                        resolve(this);
-                    } else {
-                        reject(/* TODO */);
-                    }
-                }.bind(this)
+                if (workspace.id in this.workspaceInstances) {
+                    // Remove internal references
+                    var stored_workspace = this.workspaceInstances[workspace.id];
+                    delete this.workspaceInstances[workspace.id];
+                    delete this.workspacesByUserAndName[stored_workspace.owner][stored_workspace.name];
+                }
+
+                resolve();
             });
-        }.bind(this));
+        });
     };
 
     Wirecloud.mergeWorkspace = function mergeWorkspace(resource, options) {
