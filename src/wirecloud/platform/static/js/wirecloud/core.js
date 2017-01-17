@@ -48,38 +48,33 @@
         return new Promise((resolve, reject) => {
             var workspace = null;
 
-            if ([201, 204, 403, 422].indexOf(response.status) === -1) {
-                reject(utils.gettext("Unexpected response from server"));
-                return;
+            if ([201, 401, 403, 409, 422, 500].indexOf(response.status) === -1) {
+                return reject(utils.gettext("Unexpected response from server"));
             } else if (response.status === 422) {
                 try {
                     var error = JSON.parse(response.responseText);
                 } catch (e) {
-                    reject(e);
+                    return reject(e);
                 }
-                reject(error);
-            } else if ([403].indexOf(response.status) !== -1) {
-                reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                return reject(error);
+            } else if ([401, 403, 500].indexOf(response.status) !== -1) {
+                return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
             }
 
-            if (response.status === 201) {
-                workspace = JSON.parse(response.responseText);
-                // TODO
-                Object.defineProperty(workspace, 'url', {
-                    get: function () {
-                        var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
-                        return document.location.protocol + '//' + document.location.host + path;
-                    }
-                });
-                this.workspaceInstances[workspace.id] = workspace;
-                if (!(workspace.owner in this.workspacesByUserAndName)) {
-                    this.workspacesByUserAndName[workspace.owner] = {};
+            workspace = JSON.parse(response.responseText);
+            // TODO
+            Object.defineProperty(workspace, 'url', {
+                get: function () {
+                    var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
+                    return document.location.protocol + '//' + document.location.host + path;
                 }
-                this.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
-                resolve(workspace);
-            } else {
-                resolve();
+            });
+            this.workspaceInstances[workspace.id] = workspace;
+            if (!(workspace.owner in this.workspacesByUserAndName)) {
+                this.workspacesByUserAndName[workspace.owner] = {};
             }
+            this.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
+            resolve(workspace);
         });
     };
 
@@ -380,6 +375,33 @@
             .then(switch_active_workspace.bind(this));
     };
 
+    /**
+     * Creates a new workspace.
+     *
+     * @since 1.1
+     *
+     * @param {Object} options
+     * - `allow_renaming` (Boolean, default: `true`)
+     * - `mashup` (String): Mashup reference to use as template.
+     * - `name` (String): This options is required if the `mashup` and
+     *   `workspace` options are not used and optional in any other case.
+     * - `workspace` (String): id of the workspace to clone.
+     *
+     * @returns {Wirecloud.Task}
+     *
+     * @example <caption>Create an empty workspace</caption>
+     * Wirecloud.createWorkspace({name: "MyWorkspace"}).then(function (workspace) {
+     *     // Workspace created successfully
+     * }, function (error) {
+     *     // Error creating workspace
+     * };
+     *
+     * @example <caption>Create a workspace using a mashup as template</caption>
+     * Wirecloud.createWorkspace({mashup: "Wirecloud/Mashup/1.0"});
+     *
+     * @example <caption>Create a workspace copy</caption>
+     * Wirecloud.createWorkspace({workspace: 123});
+     */
     Wirecloud.createWorkspace = function createWorkspace(options) {
         var body;
 
@@ -393,16 +415,26 @@
             dry_run: !!options.dry_run
         };
 
-        if (options.name != null) {
-            body.name = options.name;
+        if (options.mashup == null && options.workspace == null && options.name == null) {
+            throw new Error(utils.gettext('Missing name parameter'));
+        } else if (options.mashup != null && options.workspace != null) {
+            throw new Error(utils.gettext('Workspace and mashup options cannot be used at the same time'));
         }
 
         if (options.mashup != null) {
             body.mashup = options.mashup;
         }
 
+        if (options.name != null) {
+            body.name = options.name;
+        }
+
         if (options.preferences != null) {
             body.preferences = options.preferences;
+        }
+
+        if (options.workspace != null) {
+            body.workspace = options.workspace;
         }
 
         return Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {

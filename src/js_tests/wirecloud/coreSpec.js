@@ -35,6 +35,152 @@
 
         });
 
+        describe("createWorkspace(options)", () => {
+
+            it("throws an Error when not providing any of the mashup, workspace or name options", () => {
+                expect(() => {
+                    Wirecloud.createWorkspace();
+                }).toThrowError();
+            });
+
+            it("throws an Error when using the mashup and workspace options at the same time", () => {
+                expect(() => {
+                    Wirecloud.createWorkspace({
+                        mashup: "Wirecloud/TestMashup/1.0",
+                        workspace: 123
+                    });
+                }).toThrowError();
+            });
+
+            it("allows creating simple workspaces", (done) => {
+                Wirecloud.workspaceInstances = {};
+                Wirecloud.workspacesByUserAndName = {};
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function () {
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 201,
+                            responseText: JSON.stringify({
+                                "id": 123,
+                                "owner": "user",
+                                "name": "MyWorkspace",
+                                "empty_params": []
+                            })
+                        });
+                    });
+                });
+
+                var task = Wirecloud.createWorkspace({name: "MyWorkspace"});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then((workspace) => {
+                    expect(workspace).toEqual(jasmine.any(Object));
+                    expect(Wirecloud.workspaceInstances[123]).toBe(workspace);
+                    expect(Wirecloud.workspacesByUserAndName).toEqual({
+                        "user": {
+                            "MyWorkspace": workspace
+                        }
+                    });
+                    done();
+                });
+            });
+
+            it("allows creating workspaces from mashup templates", (done) => {
+                var template = "Wirecloud/TestMashup/1.0";
+                Wirecloud.workspaceInstances = {};
+                Wirecloud.workspacesByUserAndName = {};
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    var payload = JSON.parse(options.postBody);
+                    expect(payload.mashup).toBe(template);
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 201,
+                            responseText: JSON.stringify({
+                                "id": 123,
+                                "owner": "user",
+                                "name": "TestMashup 2",
+                                "empty_params": []
+                            })
+                        });
+                    });
+                });
+
+                var task = Wirecloud.createWorkspace({mashup: template});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then((workspace) => {
+                    expect(workspace).toEqual(jasmine.any(Object));
+                    expect(Wirecloud.workspaceInstances[123]).toBe(workspace);
+                    expect(Wirecloud.workspacesByUserAndName).toEqual({
+                        "user": {
+                            "TestMashup 2": workspace
+                        }
+                    });
+                    done();
+                });
+            });
+
+            describe("calls reject on unexepected responses", () => {
+
+                var test = (status) => {
+                    return (done) => {
+                        Wirecloud.workspaceInstances = {};
+                        Wirecloud.workspacesByUserAndName = {};
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status
+                                });
+                            });
+                        });
+
+                        var task = Wirecloud.createWorkspace({name: "Test"});
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            done();
+                        });
+                    };
+                };
+
+                it("200", test(200));
+                it("404", test(404));
+
+            });
+
+            describe("calls reject on error responses", () => {
+
+                var test = (status) => {
+                    return (done) => {
+                        var description = "detailed error description";
+                        Wirecloud.workspaceInstances = {};
+                        Wirecloud.workspacesByUserAndName = {};
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status,
+                                    responseText: JSON.stringify({description: description})
+                                });
+                            });
+                        });
+
+                        var task = Wirecloud.createWorkspace({name: "Test"});
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            expect(error).toBe(description);
+                            done();
+                        });
+                    };
+                };
+
+                it("401", test(401));
+                it("403", test(403));
+                it("500", test(500));
+
+            });
+
+        });
+
         describe("loadWorkspace(workspace[, options])", function () {
 
             it("should throw a TypeError when not passing the workspace parameter", function () {
