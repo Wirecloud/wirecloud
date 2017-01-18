@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -126,10 +126,18 @@
         this.dispatchEvent('search');
         priv.request = Wirecloud.LocalCatalogue.search({
             scope: this.search_scope,
-            search_criteria: keywords,
-            onSuccess: on_search_success.bind(this, keywords),
-            onFailure: on_search_failure.bind(this),
-            onComplete: on_search_complete.bind(this)
+            search_criteria: keywords
+        }).then((search_info) => {
+            on_search_success.call(this, keywords, search_info.resources, search_info);
+        }, (error) => {
+            var msg = utils.gettext("Connection error: No resource retrieved");
+
+            _load_resource_painter.call(this);
+            priv.list.clear().appendChild(this.paintError(msg));
+            return Promise.resolve();
+        }).then(() => {
+            priv.request = null;
+            priv.list.enable();
         });
     };
 
@@ -219,19 +227,6 @@
             }
             priv.list.appendChild(this.paintError(new StyledElements.Fragment(msg)));
         }
-    };
-
-    var on_search_failure = function () {
-        var msg = utils.gettext("Connection error: No resource retrieved");
-
-        _load_resource_painter.call(this);
-        privates.get(this).list.clear().appendChild(this.paintError(msg));
-    };
-
-    var on_search_complete = function on_search_complete() {
-        var priv = privates.get(this);
-        priv.request = null;
-        priv.list.enable();
     };
 
     Wirecloud.ui.MACSearch = MACSearch;

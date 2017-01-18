@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,73 +30,73 @@
      * Private methods
      *************************************************************************/
 
-    var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result, monitor) {
-        var i, resource_full_id, index;
-
-        if (result.affectedVersions == null) {
-            result.affectedVersions = [resource.version];
-        }
-
+    var unload_affected_components = function unload_affected_components(resource, result) {
+        var task_title;
         switch (resource.type) {
         case 'widget':
-            monitor.update(100 / 3, utils.gettext('Unloading affected widgets'));
-            result.affectedVersions.forEach(function (version) {
-                var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
-                if (new_meta != null) {
-                    Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
-                        if (widget.meta.uri == new_meta.uri) {
-                            widget.upgrade(new_meta);
-                        }
-                    });
-                }
-            });
-            monitor.update(200 / 3, utils.gettext('Purging widget info'));
+            task_title = utils.gettext('Unloading affected operators');
             break;
         case 'operator':
-            monitor.update(100 / 3, utils.gettext('Unloading affected operators'));
-            result.affectedVersions.forEach(function (version) {
-                var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
-                if (new_meta != null) {
-                    Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
-                        if (operator.meta.uri == new_meta.uri) {
-                            operator.upgrade(new_meta);
-                        }
-                    });
-                }
-            });
-            monitor.update(200 / 3, utils.gettext('Purging operator info'));
+            task_title = utils.gettext('Unloading affected operators');
             break;
         case 'mashup':
-            monitor.update(200 / 3, utils.gettext('Purging mashup info'));
+            return Promise.resolve(result);
         }
 
-        for (i = 0; i < result.affectedVersions.length; i++) {
-            try {
-                resource_full_id = resource.group_id + '/' + result.affectedVersions[i];
-                resource = this.resources[resource_full_id];
-                delete this.resources[resource_full_id];
-                delete this.resourcesByType[resource.type][resource_full_id];
-
-                index = this.resourceVersions[resource.group_id].indexOf(resource);
-                this.resourceVersions[resource.group_id].splice(index, 1);
-            } catch (e) {}
-        }
-
-        monitor.finish();
-        utils.callCallback(next);
+        return new Wirecloud.Task(task_title, function (resolve, reject, update) {
+            switch (resource.type) {
+            case 'widget':
+                result.affectedVersions.forEach(function (version) {
+                    var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
+                    if (new_meta != null) {
+                        Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
+                            if (widget.meta.uri == new_meta.uri) {
+                                widget.upgrade(new_meta);
+                            }
+                        });
+                    }
+                });
+                break;
+            case 'operator':
+                result.affectedVersions.forEach(function (version) {
+                    var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
+                    if (new_meta != null) {
+                        Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
+                            if (operator.meta.uri == new_meta.uri) {
+                                operator.upgrade(new_meta);
+                            }
+                        });
+                    }
+                });
+                break;
+            }
+            resolve(result);
+        });
     };
 
-    var uninstallSuccessCallback = function uninstallSuccessCallback(resource, options, response) {
-        var result = JSON.parse(response.responseText);
-        uninstallOrDeleteSuccessCallback.call(this, resource, options.onSuccess, result, options.request_task);
-    };
+    var purge_component_info = function purge_component_info(resource, result) {
+        var task_title = utils.interpolate(
+            utils.gettext("Purging %(componenttype)s info"),
+            {
+                componenttype: resource.type
+            }
+        );
 
-    var uninstallErrorCallback = function uninstallErrorCallback(options, response) {
-        var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error uninstalling resource: %(errorMsg)s."), response);
+        return new Wirecloud.Task(task_title, function (resolve, reject) {
+            result.affectedVersions.forEach(function (version) {
+                var resource_full_id, index;
+                try {
+                    resource_full_id = resource.group_id + '/' + version;
+                    resource = this.resources[resource_full_id];
+                    delete this.resources[resource_full_id];
+                    delete this.resourcesByType[resource.type][resource_full_id];
 
-        if (typeof options.onFailure === 'function') {
-            options.onFailure(msg);
-        }
+                    index = this.resourceVersions[resource.group_id].indexOf(resource);
+                    this.resourceVersions[resource.group_id].splice(index, 1);
+                } catch (e) {}
+            }, this);
+            resolve(result);
+        }.bind(this));
     };
 
     var loadSuccessCallback = function loadSuccessCallback(context, transport) {
@@ -132,31 +132,15 @@
     };
 
     var process_upload_response = function process_upload_response(response_data) {
-        var i, id, resource_data;
-
-        if (!Array.isArray(response_data)) {
-            response_data = [response_data];
-        }
-
-        for (i = 0; i < response_data.length; i += 1) {
-            resource_data = response_data[i];
-            id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
-            if (this.resourceExistsId(id)) {
-                continue;
-            }
-
-            this._includeResource.call(this, resource_data);
-        }
-    };
-
-    var process_packaged_upload_response = function process_packaged_upload_response(next, response_data) {
-        process_upload_response.call(this, response_data);
-
-        if (typeof next === 'function') {
-            try {
-                next();
-            } catch (e) {}
-        }
+        return new Promise(function (resolve, reject) {
+            var components = [response_data.resource_details].concat(response_data.extra_resources);
+            components.forEach(function (component) {
+                var id = [component.vendor, component.name, component.version].join('/');
+                if (!this.resourceExistsId(id)) {
+                    this._includeResource.call(this, component);
+                }
+            }, this);
+        }.bind(this));
     };
 
     /*************************************************************************
@@ -210,42 +194,43 @@
             msg = utils.interpolate(utils.gettext("Uninstalling %(title)s (%(uri)s)"), resource);
         }
 
-        if (options.monitor == null) {
-            options.monitor = Wirecloud.UserInterfaceManager.createTask(msg, 1);
-            options.request_task = options.monitor.nextSubtask('Sending request to the server');
-        } else {
-            options.request_task = options.monitor.nextSubtask(msg);
-        }
-
         // Send request to uninstall de widget
-        Wirecloud.io.makeRequest(url + '?affected=true', {
+        return Wirecloud.io.makeRequest(url + '?affected=true', {
             method: 'DELETE',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: uninstallSuccessCallback.bind(this, resource, options),
-            onFailure: uninstallErrorCallback.bind(this, options),
-            onComplete: options.onComplete
-        });
+            requestHeaders: {'Accept': 'application/json'}
+        }).then(function (response) {
+            return new Promise(function (resolve, reject) {
+                var result;
+                if (response.status !== 200) {
+                    reject(new Error("Unexpected response from server"));
+                }
+
+                try {
+                    result = JSON.parse(response.responseText);
+                    if (result.affectedVersions == null) {
+                        result.affectedVersions = [resource.version];
+                    }
+                } catch (e) {
+                    reject(e);
+                    return;
+                }
+                resolve(result);
+            });
+        }).then(unload_affected_components.bind(this, resource))
+        .then(purge_component_info.bind(this, resource))
+        .toTask(msg);
     };
 
     LocalCatalogue.deleteResource = function deleteResource(resource, options) {
-        if (options == null) {
-            options = {};
-        }
-
-        options.onSuccess = uninstallOrDeleteSuccessCallback.bind(this, resource, options.onSuccess);
-        Wirecloud.WirecloudCatalogue.prototype.deleteResource.call(this, resource, options);
+        return Wirecloud.WirecloudCatalogue.prototype.deleteResource.call(this, resource, options)
+            .then(unload_affected_components.bind(this, resource))
+            .then(purge_component_info.bind(this, resource));
     };
 
     LocalCatalogue.addPackagedResource = function addPackagedResource(data, options) {
-        if (options == null) {
-            options = {};
-        }
-
-        options.onSuccess = function (next, main_resource, extra_resources) {
-            process_packaged_upload_response.call(this, next, [main_resource].concat(extra_resources));
-        }.bind(this, options.onSuccess);
-
-        Wirecloud.WirecloudCatalogue.prototype.addPackagedResource.call(this, data, options);
+        var task = Wirecloud.WirecloudCatalogue.prototype.addPackagedResource.call(this, data, options);
+        task.then(process_upload_response.bind(this));
+        return task;
     };
 
     LocalCatalogue.addResourceFromURL = function addResourceFromURL(url, options) {
@@ -267,20 +252,10 @@
                 var response_data;
 
                 response_data = JSON.parse(response.responseText);
-                process_upload_response.call(this, [response_data.resource_details].concat(response_data.extra_resources));
-
-                if (options.monitor) {
-                    options.monitor.finish();
-                }
-                utils.callCallback(options.onSuccess);
+                process_upload_response.call(this, response_data);
             }.bind(this),
             onFailure: function (response) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding resource from URL: %(errorMsg)s."), response);
-
-                if (options.monitor) {
-                    options.monitor.fail();
-                }
-                utils.callCallback(options.onFailure, msg);
             },
             onComplete: function () {
                 utils.callCallback(options.onComplete);

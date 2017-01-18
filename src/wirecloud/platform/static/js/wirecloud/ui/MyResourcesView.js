@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -159,8 +159,8 @@
         return [this.uploadButton, this.marketButton];
     };
 
-    MyResourcesView.prototype.search = function search(onSuccess, onError, options) {
-        return this.catalogue.search(onSuccess, onError, options);
+    MyResourcesView.prototype.search = function search(options) {
+        return this.catalogue.search(options);
     };
 
     MyResourcesView.prototype.changeCurrentView = function changeCurrentView(view_name, options) {
@@ -194,60 +194,55 @@
 
     MyResourcesView.prototype.ui_commands.install = function install(resource, catalogue_source) {
         return function () {
+            Wirecloud.UserInterfaceManager.monitorTask(
+                this.catalogue.addResourceFromURL(resource.description_url).then(
+                    function () {
+                        this.refresh_search_results();
 
-            var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing component into local repository"));
-            this.catalogue.addResourceFromURL(resource.description_url, {
-                monitor: task,
-                onSuccess: function () {
-                    this.refresh_search_results();
-
-                    catalogue_source.home();
-                    catalogue_source.refresh_search_results();
-                }.bind(this),
-                onFailure: function (msg) {
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                    Wirecloud.GlobalLogManager.log(msg);
-                }
-            });
+                        catalogue_source.home();
+                        catalogue_source.refresh_search_results();
+                    }.bind(this),
+                    logerror
+                )
+            );
         }.bind(this);
     };
 
     MyResourcesView.prototype.ui_commands.uninstall = function uninstall(resource, catalogue_source) {
         return function () {
-            this.catalogue.uninstallResource(resource, {
-                onSuccess: function () {
-                    this.refresh_search_results();
+            Wirecloud.UserInterfaceManager.monitorTask(
+                this.catalogue.uninstallResource(resource).then(
+                    function () {
+                        this.refresh_search_results();
 
-                    if (catalogue_source != null) {
-                        catalogue_source.home();
-                        catalogue_source.refresh_search_results();
-                    }
-                }.bind(this),
-                onFailure: function (msg) {
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                    Wirecloud.GlobalLogManager.log(msg);
-                }
-            });
+                        if (catalogue_source != null) {
+                            catalogue_source.home();
+                            catalogue_source.refresh_search_results();
+                        }
+                    }.bind(this),
+                    logerror
+                )
+            );
         }.bind(this);
     };
 
     MyResourcesView.prototype.ui_commands.uninstallall = function uninstallall(resource, catalogue_source) {
         return function () {
-            this.catalogue.uninstallResource(resource, {
-                allversions: true,
-                onSuccess: function () {
-                    this.refresh_search_results();
+            Wirecloud.UserInterfaceManager.monitorTask(
+                this.catalogue.uninstallResource(resource, {
+                    allversions: true
+                }).then(
+                    function () {
+                        this.refresh_search_results();
 
-                    if (catalogue_source != null) {
-                        catalogue_source.home();
-                        catalogue_source.refresh_search_results();
-                    }
-                }.bind(this),
-                onFailure: function (msg) {
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                    Wirecloud.GlobalLogManager.log(msg);
-                }
-            });
+                        if (catalogue_source != null) {
+                            catalogue_source.home();
+                            catalogue_source.refresh_search_results();
+                        }
+                    }.bind(this),
+                    logerror
+                )
+            );
         }.bind(this);
     };
 
@@ -329,22 +324,18 @@
     };
 
     MyResourcesView.prototype.ui_commands.delete = function (resource) {
-        var success_callback, error_callback, doRequest, msg, context;
+        var success_callback, doRequest, msg, context;
 
         success_callback = function (response) {
             this.home();
             this.refresh_search_results();
         }.bind(this);
 
-        error_callback = function (msg) {
-            (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-        };
-
         doRequest = function () {
-            this.catalogue.deleteResource(resource, {
-                onSuccess: success_callback,
-                onFailure: error_callback
-            });
+            Wirecloud.UserInterfaceManager.monitorTask(this.catalogue.deleteResource(resource).then(
+                success_callback,
+                logerror
+            ).toTask(""));
         };
 
         // First ask the user
@@ -359,23 +350,20 @@
     };
 
     MyResourcesView.prototype.ui_commands.deleteall = function deleteall(resource) {
-        var success_callback, error_callback, doRequest, msg, context;
+        var success_callback, doRequest, msg, context;
 
         success_callback = function (response) {
             this.home();
             this.refresh_search_results();
         }.bind(this);
 
-        error_callback = function (msg) {
-            (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-        };
-
         doRequest = function () {
-            this.catalogue.deleteResource(resource, {
-                allversions: true,
-                onSuccess: success_callback,
-                onFailure: error_callback
-            });
+            Wirecloud.UserInterfaceManager.monitorTask(
+                this.catalogue.deleteResource(resource, {allversions: true}).then(
+                    success_callback,
+                    logerror
+                ).toTask("")
+            );
         };
 
         // First ask the user
@@ -409,6 +397,11 @@
         if (typeof subview.handleKeydownEvent === "function") {
             return subview.handleKeydownEvent(key, modifiers);
         }
+    };
+
+    var logerror = function logerror(msg) {
+        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+        Wirecloud.GlobalLogManager.log(msg);
     };
 
     Wirecloud.ui.MyResourcesView = MyResourcesView;

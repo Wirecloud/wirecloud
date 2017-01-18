@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -66,10 +66,14 @@
         _addComponent.call(this, resource);
     };
 
-    var loadSuccessCallback = function loadSuccessCallback(context, transport) {
+    var loadSuccessCallback = function loadSuccessCallback(response) {
         var resources, resource_id, msg;
 
-        resources = JSON.parse(transport.responseText);
+        if (response.status != 200) {
+            throw Error('Unexpected error code');
+        }
+
+        resources = JSON.parse(response.responseText);
 
         this.resources = {};
         this.resourceVersions = {};
@@ -86,16 +90,6 @@
                     {details: e}
                 );
             }
-        }
-
-        if (typeof context.onSuccess === 'function') {
-            context.onSuccess(this);
-        }
-    };
-
-    var loadFailureCallback = function loadFailureCallback(context, transport) {
-        if (typeof context.onError === 'function') {
-            context.onError(this);
         }
     };
 
@@ -118,29 +112,18 @@
      * Public methods
      *************************************************************************/
 
-    var WorkspaceCatalogue = function WorkspaceCatalogue(workspace_id, options) {
+    var WorkspaceCatalogue = function WorkspaceCatalogue(workspace_id) {
         Object.defineProperty(this, 'workspace_id', {value: workspace_id});
-        this.reload(options);
     };
 
-    WorkspaceCatalogue.prototype.reload = function reload(options) {
-
-        if (typeof options !== 'object') {
-            options = {};
-        }
-
-        var context = {
-            'onSuccess': options.onSuccess,
-            'onError': options.onError
-        };
+    WorkspaceCatalogue.prototype.reload = function reload() {
 
         var url = Wirecloud.URLs.WORKSPACE_RESOURCE_COLLECTION.evaluate({workspace_id: this.workspace_id});
-        Wirecloud.io.makeRequest(url, {
+        return Wirecloud.io.makeRequest(url, {
             method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: loadSuccessCallback.bind(this, context),
-            onFailure: loadFailureCallback.bind(this, context)
-        });
+            requestHeaders: {'Accept': 'application/json'}
+        }).then(loadSuccessCallback.bind(this))
+            .toTask("Requesting workspace components");
     };
 
     WorkspaceCatalogue.prototype.getAvailableResourcesByType = function getAvailableResourcesByType(type) {

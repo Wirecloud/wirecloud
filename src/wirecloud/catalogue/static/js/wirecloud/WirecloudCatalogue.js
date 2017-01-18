@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,48 +26,8 @@
 
     "use strict";
 
-    var WirecloudCatalogue, _onSearchSuccess, _onSearchFailure, deleteSuccessCallback, deleteErrorCallback;
-
-    _onSearchSuccess = function _onSearchSuccess(response) {
-        var i, data, raw_data;
-
-        raw_data = JSON.parse(response.responseText);
-        data = {
-            'resources': raw_data.results,
-            'current_page': parseInt(raw_data.pagenum, 10),
-            'total_count': parseInt(raw_data.total, 10)
-        };
-        if ('corrected_q' in raw_data) {
-            data.corrected_query = raw_data.corrected_q;
-        }
-
-        this.onSuccess(data.resources, data);
-    };
-
-    _onSearchFailure = function _onSearchFailure(reponse) {
-        utils.callCallback(this.onFailure);
-    };
-
-    deleteSuccessCallback = function deleteSuccessCallback(response) {
-        var result;
-
-        this.request_task.update(100 / 3);
-
-        if (typeof this.onSuccess === 'function') {
-            result = JSON.parse(response.responseText);
-            this.onSuccess(result, this.request_task);
-        }
-    };
-
-    deleteErrorCallback = function deleteErrorCallback(response, e) {
-        var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error deleting resource: %(errorMsg)s."), response, e);
-
-        this.request_task.fail(msg);
-        utils.callCallback(this.onFailure, msg);
-    };
-
     /*************************************************************************/
-    WirecloudCatalogue = function WirecloudCatalogue(options) {
+    var WirecloudCatalogue = function WirecloudCatalogue(options) {
 
         Object.defineProperty(this, 'name', {'value': options.name});
         Object.defineProperty(this, 'permissions', {'value': options.permissions});
@@ -95,6 +55,13 @@
         }
     };
 
+    /**
+     * Retrieves the available components from the server in a paginated way.
+     *
+     * @params {Object} options
+     *
+     * @returns {Wirecloud.Task}
+     */
     WirecloudCatalogue.prototype.search = function search(options) {
         var params, url;
 
@@ -136,10 +103,26 @@
         return Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
-            parameters: params,
-            onSuccess: _onSearchSuccess.bind(options),
-            onFailure: _onSearchFailure.bind(options),
-            onComplete: options.onComplete
+            parameters: params
+        }).then((response) => {
+            return new Promise((resolve, reject) => {
+                if ([200, 401, 403, 500].indexOf(response.status) === -1) {
+                    return reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 500].indexOf(response.status) !== -1) {
+                    return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
+
+                var raw_data = JSON.parse(response.responseText);
+                var data = {
+                    'resources': raw_data.results,
+                    'current_page': parseInt(raw_data.pagenum, 10),
+                    'total_count': parseInt(raw_data.total, 10)
+                };
+                if ('corrected_q' in raw_data) {
+                    data.corrected_query = raw_data.corrected_q;
+                }
+                resolve(data);
+            });
         });
     };
 
@@ -168,7 +151,7 @@
     };
 
     WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(file, options) {
-        var url, parameters, requestHeaders, task, onUploadProgress;
+        var url, parameters, requestHeaders, task;
 
         requestHeaders = {
             'Accept': 'application/json'
@@ -197,36 +180,31 @@
             parameters.force_create = "true";
         }
 
-        if (options.monitor) {
-            task = options.monitor.nextSubtask(utils.gettext('Uploading packaged resource'));
-            onUploadProgress = function (event) {
-                var progress = Math.round(event.loaded * 100 / event.total);
-                if (progress !== 100) {
-                    task.update(progress);
-                }
-            };
-        }
-
-        Wirecloud.io.makeRequest(url, {
+        var task_title = utils.interpolate(
+            utils.gettext('Uploading packaged component %(filename)s'),
+            {
+                filename: file.name
+            }
+        );
+        return Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/octet-stream',
             requestHeaders: requestHeaders,
             postBody: file,
-            parameters: parameters,
-            onSuccess: function (transport) {
-                var response_data = JSON.parse(transport.responseText);
-                utils.callCallback(options.onSuccess, response_data.resource_details, response_data.extra_resources);
-            }.bind(this),
-            onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error uploading packaged resource: %(errorMsg)s."), response);
-                utils.callCallback(options.onFailure, Wirecloud.GlobalLogManager.parseErrorResponse(response));
-            },
-            onComplete: function () {
-                task.finish();
-                utils.callCallback(options.onComplete);
-            },
-            onUploadProgress: onUploadProgress
-        });
+            parameters: parameters
+        }).then(function (response) {
+            return new Promise(function (resolve, reject) {
+                if ([201, 403, 409, 500].indexOf(response.status) === -1) {
+                    reject(utils.gettext("Unexpected response from server"));
+                    return;
+                } else if (response.status !== 201) {
+                    reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                    return;
+                }
+                var response_data = JSON.parse(response.responseText);
+                resolve(response_data);
+            });
+        }).toTask(task_title);
     };
 
     WirecloudCatalogue.prototype.addResourceFromURL = function addResourceFromURL(url, options) {
@@ -258,6 +236,11 @@
         });
     };
 
+    /**
+     * Completely removes a component from the server.
+     *
+     * @returns {Wirecloud.Task}
+     */
     WirecloudCatalogue.prototype.deleteResource = function deleteResource(resource, options) {
         var url, msg;
 
@@ -280,17 +263,29 @@
             msg = utils.interpolate(utils.gettext("Deleting %(title)s (%(uri)s)"), resource);
         }
 
-        options.monitor = Wirecloud.UserInterfaceManager.createTask(msg, 1);
-        options.request_task = options.monitor.nextSubtask('Sending request to the server');
-
         // Send request to delete de widget
-        Wirecloud.io.makeRequest(url, {
+        return Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: deleteSuccessCallback.bind(options),
-            onFailure: deleteErrorCallback.bind(options),
-            onException: deleteErrorCallback.bind(options)
-        });
+            requestHeaders: {'Accept': 'application/json'}
+        }).then(function (response) {
+            return new Promise(function (resolve, reject) {
+                var result;
+                if (response.status !== 200) {
+                    reject(new Error("Unexpected response from server"));
+                }
+
+                try {
+                    result = JSON.parse(response.responseText);
+                    if (result.affectedVersions == null) {
+                        result.affectedVersions = [resource.version];
+                    }
+                } catch (e) {
+                    reject(e);
+                    return;
+                }
+                resolve(result);
+            });
+        }).toTask(msg);
     };
 
     Wirecloud.WirecloudCatalogue = WirecloudCatalogue;
