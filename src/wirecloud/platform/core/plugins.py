@@ -443,7 +443,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PreferenceManager.js',
             'js/wirecloud/WorkspacePreferences.js',
             'js/wirecloud/TabPreferences.js',
-            'js/wirecloud/TaskMonitorModel.js',
             'js/wirecloud/PropertyCommiter.js',
             'js/wirecloud/LogManager.js',
             'js/wirecloud/Widget.js',
