@@ -36,7 +36,7 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_op
 
 class WiringEntry(Resource):
 
-    def checkWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure = False):
+    def checkWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure=False):
         # Check read only connections
         old_read_only_connections = [connection for connection in old_wiring_status['connections'] if connection.get('readonly', False)]
         new_read_only_connections = [connection for connection in new_wiring_status['connections'] if connection.get('readonly', False)]
@@ -83,7 +83,6 @@ class WiringEntry(Resource):
                     new_preference["value"] = old_preference["value"]
         return True
 
-
     @authentication_required
     @consumes(('application/json',))
     def update(self, request, workspace_id):
@@ -96,7 +95,7 @@ class WiringEntry(Resource):
         old_wiring_status = workspace.wiringStatus
 
         result = self.checkWiring(request, new_wiring_status, old_wiring_status)
-        if result != True:
+        if result is not True:
             return result
 
         workspace.wiringStatus = new_wiring_status
@@ -106,7 +105,7 @@ class WiringEntry(Resource):
 
     @authentication_required
     @consumes(('application/json-patch+json',))
-    def patch (self, request, workspace_id):
+    def patch(self, request, workspace_id):
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
@@ -115,8 +114,8 @@ class WiringEntry(Resource):
 
         new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
 
-        result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure = True)
-        if result != True:
+        result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+        if result is not True:
             return result
 
         workspace.wiringStatus = new_wiring_status
@@ -129,11 +128,12 @@ def process_requirements(requirements):
 
     return dict((requirement['name'], {}) for requirement in requirements)
 
+
 class OperatorPreferencesEntry(Resource):
 
     @authentication_required
     @consumes(('application/json',))
-    def create (self, request, workspace_id, operator_id):
+    def create(self, request, workspace_id, operator_id):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:
@@ -143,8 +143,8 @@ class OperatorPreferencesEntry(Resource):
         if len(new_values):
             operator_prefs = workspace.wiringStatus["operators"][operator_id]["preferences"]
             for preference in new_values:
-                if not preference in operator_prefs:
-                    return  build_error_response(request, 422, _("Preference does not exist"))
+                if preference not in operator_prefs:
+                    return build_error_response(request, 422, _("Preference does not exist"))
                 if operator_prefs[preference].get('readonly', False):
                     return build_error_response(request, 403, _('Read only preferences cannot be updated'))
                 else:
@@ -154,13 +154,14 @@ class OperatorPreferencesEntry(Resource):
 
         return HttpResponse(status=204)
 
+
 class OperatorEntry(Resource):
 
     def read(self, request, vendor, name, version):
 
         operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)
         # For now, all operators are freely accessible/distributable
-        #if not operator.is_available_for(request.user):
+        # if not operator.is_available_for(request.user):
         #    return HttpResponseForbidden()
 
         mode = request.GET.get('mode', 'classic')
