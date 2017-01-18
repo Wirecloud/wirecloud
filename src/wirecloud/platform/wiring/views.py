@@ -55,6 +55,13 @@ class WiringEntry(Resource):
                 added_preferences = set(operator['preferences'].keys()) - set(old_operator['preferences'].keys())
                 removed_preferences = set(old_operator['preferences'].keys()) - set(operator['preferences'].keys())
                 updated_preferences = set(operator['preferences'].keys()).intersection(old_operator['preferences'].keys())
+
+                vendor, name, version = operator["name"].split("/")
+                try:
+                    operator_preferences = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["preferences"]
+                except CatalogueResource.DoesNotExist:
+                    operator_preferences = None
+                    pass
             else:
                 # New operator
                 added_preferences = operator['preferences'].keys()
@@ -73,13 +80,22 @@ class WiringEntry(Resource):
                 old_preference = old_operator['preferences'][preference_name]
                 new_preference = operator['preferences'][preference_name]
 
+                # Check if the preference is
+                preference_secure = False
+                if operator_preferences:
+                    for pref in operator_preferences:
+                        if pref["name"] == preference_name:
+                            preference_secure = pref.get("secure", False)
+                            operator_preferences.remove(pref) # Speed up search
+                            break
+
                 if old_preference.get('readonly', False) != new_preference.get('readonly', False) or old_preference.get('hidden', False) != new_preference.get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden status cannot be changed using this API'))
 
                 if new_preference.get('readonly', False) and new_preference.get('value') != old_preference.get('value'):
                     return build_error_response(request, 403, _('Read only preferences cannot be updated'))
 
-                if old_preference.get("secure", False) and not can_update_secure:
+                if preference_secure and not can_update_secure:
                     new_preference["value"] = old_preference["value"]
         return True
 
