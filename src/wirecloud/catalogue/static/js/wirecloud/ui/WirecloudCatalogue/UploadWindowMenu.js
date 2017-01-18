@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var UploadWindowMenu, upload_wgt_files, acceptListener, updateEmptyStatus, onUploadSuccess;
+    var UploadWindowMenu, upload_wgt_files, acceptListener, updateEmptyStatus, onUploadFailure, onUploadSuccess;
 
     /*************************************************************************
      *                            Private methods                            *
@@ -35,51 +35,53 @@
         this.mainview.viewsByName.search.mark_outdated();
     };
 
+    onUploadFailure = function onUploadFailure(file_entry, msg) {
+        this.failures.push({'file': file_entry.name, 'msg': msg});
+    };
+
     upload_wgt_files = function upload_wgt_files() {
-        var monitor, entries, count, failures, onComplete, onUploadFailure;
+        var entries = this.fileTable.source.getElements();
+        this.failures = [];
 
-        monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Uploading packaged components"), 0);
-        entries = this.fileTable.source.getElements();
-        count = this.fileTable.source.length;
-        failures = [];
+        var task = new Wirecloud.Task(
+            utils.gettext("Uploading packaged components"),
+            entries.map(function (entry) {
+                var task = this.catalogue.addPackagedResource(entry.file, {
+                    force_create: true
+                });
+                task.then(
+                    onUploadSuccess.bind(this),
+                    onUploadFailure.bind(this, entry)
+                );
+                return task;
+            }, this)
+        );
 
-        onComplete = function () {
-            if (--count === 0) {
-                if (failures.length > 0) {
-                    var msg = document.createElement('p');
-                    msg.textContent = utils.gettext('Error uploading the following components:');
-                    var details = document.createElement('ul');
-                    for (var i = 0; i < failures.length; i++) {
-                        var item = document.createElement('li');
-                        var file_name = document.createElement('b');
-                        file_name.textContent = failures[i].file;
-                        item.appendChild(file_name);
+        task.catch(function () {
+            return new Promise(function (resolve, reject) {
+                var msg = document.createElement('p');
+                msg.textContent = utils.gettext('Error uploading the following components:');
+                var details = document.createElement('ul');
+                for (var i = 0; i < this.failures.length; i++) {
+                    var item = document.createElement('li');
+                    var file_name = document.createElement('b');
+                    file_name.textContent = this.failures[i].file;
+                    item.appendChild(file_name);
 
-                        var error_description = document.createTextNode(": " + failures[i].msg);
-                        item.appendChild(error_description);
+                    var error_description = document.createTextNode(": " + this.failures[i].msg);
+                    item.appendChild(error_description);
 
-                        details.appendChild(item);
-                    }
-                    msg = new se.Fragment([msg, details]);
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+                    details.appendChild(item);
                 }
-                this.mainview.viewsByName.search.refresh_if_needed();
-            }
-        };
+                msg = new se.Fragment([msg, details]);
+                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+                resolve();
+            }.bind(this));
+        }.bind(this)).then(function () {
+            this.mainview.viewsByName.search.refresh_if_needed();
+        }.bind(this));
 
-        onUploadFailure = function onUploadFailure(file_entry, msg) {
-            failures.push({'file': file_entry.name, 'msg': msg});
-        };
-
-        for (var i = 0; i < entries.length; i++) {
-            this.catalogue.addPackagedResource(entries[i].file, {
-                force_create: true,
-                monitor: monitor,
-                onSuccess: onUploadSuccess.bind(this),
-                onFailure: onUploadFailure.bind(this, entries[i]),
-                onComplete: onComplete.bind(this)
-            });
-        }
+        Wirecloud.UserInterfaceManager.monitorTask(task);
         this.fileTable.source.changeElements([]);
         updateEmptyStatus.call(this);
     };
