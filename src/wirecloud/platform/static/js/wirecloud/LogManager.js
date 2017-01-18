@@ -107,25 +107,6 @@
             return this;
         },
 
-        formatAndLog: function formatAndLog(format, response, e, level) {
-            var msg, options;
-
-            options = {
-                level: level
-            };
-
-            if (e != null) {
-                msg = utils.gettext("JavaScript exception");
-                options.details = this.formatException(e);
-            } else {
-                msg = this.parseErrorResponse(response);
-            }
-            msg = utils.interpolate(format, {errorMsg: msg}, true);
-            this.log(msg, options);
-
-            return msg;
-        },
-
         /**
          * Formats an exceptions to be used as the details of a log entry.
          *

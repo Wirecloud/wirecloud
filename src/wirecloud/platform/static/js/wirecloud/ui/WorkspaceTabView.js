@@ -192,14 +192,6 @@
                     resolve(this.findWidget(model.id));
                 }.bind(this), function (reason) {
                     reject(reason);
-                    // (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                    /*
-                    var message = gettext("Error adding iwidget to persistence: %(errorMsg)s.");
-                        message = Wirecloud.GlobalLogManager.formatAndLog(message, response);
-
-                        Wirecloud.Utils.callCallback(options.onFailure, message);
-
-                     */
                 });
             }.bind(this));
         },
@@ -257,10 +249,7 @@
          * @returns {Promise}
          */
         setInitial: function setInitial() {
-            this.model.setInitial().catch(function (reason) {
-                // Wirecloud.GlobalLogManager.formatAndLog(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), transport, e);
-            });
-            return this;
+            return this.model.setInitial();
         },
 
         show: function show() {
@@ -297,12 +286,7 @@
     };
 
     var _remove = function _remove() {
-        this.model.remove().catch(function (reason) {
-            /*
-            var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error removing tab: %(errorMsg)s."), transport, e);
-        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-             */
-        });
+        this.model.remove();
     };
 
     var clean_number = function clean_number(value, min, max) {
