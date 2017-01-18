@@ -1143,12 +1143,12 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Make the request
         def patch_workspace_wiring():
             response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='application/json')
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 204)
 
             # Workspace wiring status should have change
             workspace = Workspace.objects.get(id=1)
             self.assertEqual(workspace.wiringStatus["operators"], new_wiring_status["operators"])
-        check_cache_is_purged(self, 1, update_workspace_wiring)
+        check_cache_is_purged(self, 1, patch_workspace_wiring)
 
     def test_workspace_wiring_entry_patch_not_found(self):
 
@@ -1160,9 +1160,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = json.dumps([{
             'op': "add",
             'path': "/operators/0",
-            'value': new_wiring_status["operators"]["0"],
+            'value': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}
         }])
-        check_not_found_response(self, 'patch', url, json.dumps(data))
+
+        response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 404)
 
     def test_tab_collection_post_requires_authentication(self):
 
@@ -2462,7 +2464,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 422)
 
         self.assertFalse("doesNotExist" in Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"])
 

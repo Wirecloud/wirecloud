@@ -122,7 +122,7 @@ class WiringEntry(Resource):
         workspace.wiringStatus = new_wiring_status
         workspace.save()
 
-        return HttpResponse(status=200)
+        return HttpResponse(status=204)
 
 
 def process_requirements(requirements):
@@ -144,7 +144,7 @@ class OperatorPreferencesEntry(Resource):
             operator_prefs = workspace.wiringStatus["operators"][operator_id]["preferences"]
             for preference in new_values:
                 if not preference in operator_prefs:
-                    return  build_error_response(request, 400, _("Preference does not exist"))
+                    return  build_error_response(request, 422, _("Preference does not exist"))
                 if operator_prefs[preference].get('readonly', False):
                     return build_error_response(request, 403, _('Read only preferences cannot be updated'))
                 else:
