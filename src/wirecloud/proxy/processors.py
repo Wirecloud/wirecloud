@@ -34,22 +34,23 @@ from wirecloud.proxy.utils import ValidationError
 
 WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
 WIRECLOUD_COMPONENT_TYPE_HEADER = 'wirecloud-component-type'
-VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
+WIRECLOUD_COMPONENT_ID_HEADER = 'wirecloud-component-id'
+
+VAR_REF_RE = re.compile(r'^((?P<constant>c)/)?(?P<var_name>.+)$', re.S)
 
 
-def get_variable_value_by_ref(ref, cache_manager, component_type="widget"):
-
+def get_variable_value_by_ref(ref, cache_manager, component_id, component_type="widget"):
     result = VAR_REF_RE.match(ref)
     try:
         # Get widget variables
         if component_type == "widget":
-            if result.group('iwidget_id') == 'c':
+            if result.group('constant') == 'c':
                 return result.group('var_name')
             else:
-                return cache_manager.get_variable_value_from_varname(result.group('iwidget_id'), result.group('var_name'))
+                return cache_manager.get_variable_value_from_varname(component_id, result.group('var_name'))
         # Get operator variables
         elif component_type == "operator":
-            return cache_manager.workspace.wiringStatus["operators"][result.group('iwidget_id')]["preferences"][result.group('var_name')]["value"]
+            return cache_manager.workspace.wiringStatus["operators"][component_id]["preferences"][result.group('var_name')]["value"]
 
         else:
             raise ValidationError()
@@ -83,7 +84,7 @@ def check_invalid_refs(**kargs):
         raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
-def process_secure_data(text, request, component_type):
+def process_secure_data(text, request, component_id, component_type):
 
     definitions = text.split('&')
     cache_manager = VariableValueCacheManager(request['workspace'], request['user'])
@@ -104,8 +105,7 @@ def process_secure_data(text, request, component_type):
             var_ref = options.get('var_ref', '')
             check_empty_params(substr=substr, var_ref=var_ref)
 
-            value = get_variable_value_by_ref(var_ref, cache_manager, component_type)
-
+            value = get_variable_value_by_ref(var_ref, cache_manager, component_id, component_type)
             check_invalid_refs(var_ref=value)
 
             encoding = options.get('encoding', 'none')
@@ -127,8 +127,8 @@ def process_secure_data(text, request, component_type):
             password_ref = options.get('pass_ref', '')
             check_empty_params(user_ref=user_ref, password_ref=password_ref)
 
-            user_value = get_variable_value_by_ref(user_ref, cache_manager, component_type)
-            password_value = get_variable_value_by_ref(password_ref, cache_manager, component_type)
+            user_value = get_variable_value_by_ref(user_ref, cache_manager, component_id, component_type)
+            password_value = get_variable_value_by_ref(password_ref, cache_manager, component_id, component_type)
             check_invalid_refs(user_ref=user_value, password_ref=password_value)
 
             token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]
@@ -145,5 +145,6 @@ class SecureDataProcessor(object):
         if WIRECLOUD_SECURE_DATA_HEADER in request['headers']:
             secure_data_value = request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
             component_type = request['headers'].get(WIRECLOUD_COMPONENT_TYPE_HEADER, "widget")
-            process_secure_data(secure_data_value, request, component_type)
+            component_id = request['headers'].get(WIRECLOUD_COMPONENT_ID_HEADER, "")
+            process_secure_data(secure_data_value, request, component_id, component_type)
             del request['headers'][WIRECLOUD_SECURE_DATA_HEADER]

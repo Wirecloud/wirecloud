@@ -42,6 +42,7 @@
                 options.requestHeaders = {};
             }
             options.requestHeaders["wirecloud-component-type"] = componentType;
+            options.requestHeaders["wirecloud-component-id"] = resource.id;
             return Wirecloud.io.makeRequest(url, options);
         }
     });
