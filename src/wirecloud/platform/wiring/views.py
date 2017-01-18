@@ -78,6 +78,9 @@ class WiringEntry(Resource):
 
                 if new_preference.get('readonly', False) and new_preference.get('value') != old_preference.get('value'):
                     return build_error_response(request, 403, _('Read only preferences cannot be updated'))
+
+                if old_preference.get("secure", False) and not can_update_secure:
+                    new_preference["value"] = old_preference["value"]
         return True
 
 
