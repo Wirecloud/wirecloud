@@ -9,20 +9,20 @@
 
     -   *Help -> Install New Software...*
 
-        ![](images/user_guide/WireCloudIDE/install_new_software.png)
+        ![](../images/user_guide/WireCloudIDE/install_new_software.png)
 
     -   Add a new repository using the *Add* button
 
-        ![](images/user_guide/WireCloudIDE/add_repository.png)
+        ![](../images/user_guide/WireCloudIDE/add_repository.png)
 
     -   Click *Archive* and select the WireCloud IDE plugin file
         downloaded in previous steps
 
-        ![](images/user_guide/WireCloudIDE/add_repository2.png)
+        ![](../images/user_guide/WireCloudIDE/add_repository2.png)
 
     -   Select the WireCloud IDE entry
 
-        ![](images/user_guide/WireCloudIDE/select_wirecloud_ide.png)
+        ![](../images/user_guide/WireCloudIDE/select_wirecloud_ide.png)
 
     -   Click *Next* and complete the wizard.
 
@@ -38,18 +38,18 @@ servers. You can manage WireCloud servers from the "Server" view
 you don't have such a view, you can add it via *Window -> Show View
 -> Servers*:
 
-![](images/user_guide/WireCloudIDE/open_server_view.png)
+![](../images/user_guide/WireCloudIDE/open_server_view.png)
 
 -   Right click inside the "Server" tab to open the New Server dialogue:
 
-    ![](images/user_guide/WireCloudIDE/create_wirecloud_server1.png)
+    ![](../images/user_guide/WireCloudIDE/create_wirecloud_server1.png)
 
 -   In the next step, select WireCloud as the type of server to define
     (you will find it under the CoNWeTLab category), update the host
     name of the server where WireCloud is located and give it a name.
     After filling this info, click *Next*:
 
-    ![](images/user_guide/WireCloudIDE/create_wirecloud_server2.png)
+    ![](../images/user_guide/WireCloudIDE/create_wirecloud_server2.png)
 
 -   Review the protocol and port configuration. You will also need to
     provide a client id and a client secret obtained from the IdM (see
@@ -58,21 +58,21 @@ you don't have such a view, you can add it via *Window -> Show View
     `[WIRECLOUD_SERVER_URL]/oauth2/default_redirect_uri` as the
     callback URL field. Once finished click *Next*:
 
-    ![](images/user_guide/WireCloudIDE/create_wirecloud_server3.png)
+    ![](../images/user_guide/WireCloudIDE/create_wirecloud_server3.png)
 
 -   The next step is authorising WireCloud IDE to install and uninstall
     resources on the server. This will require you to log in to the
     WireCloud server.
 
-    ![](images/user_guide/WireCloudIDE/create_wirecloud_server_signin.png)
+    ![](../images/user_guide/WireCloudIDE/create_wirecloud_server_signin.png)
 
 -   And to confirm the authorisation:
 
-    ![](images/user_guide/WireCloudIDE/create_wirecloud_server_authorizeMashup.png)
+    ![](../images/user_guide/WireCloudIDE/create_wirecloud_server_authorizeMashup.png)
 
 -   After which, a confirmation message should be displayed:
 
-    ![](images/user_guide/WireCloudIDE/create_wirecloud_server_autothized.png)
+    ![](../images/user_guide/WireCloudIDE/create_wirecloud_server_autothized.png)
 
 -   At this step you can choose between clicking *Next* and selecting a
     list of projects to upload initially to the server, or clicking
@@ -80,7 +80,7 @@ you don't have such a view, you can add it via *Window -> Show View
     after finishing the wizard, a new WireCloud server should appear in
     the "Server" tab:
 
-    ![](images/user_guide/WireCloudIDE/wirecloud_server_created.png)
+    ![](../images/user_guide/WireCloudIDE/wirecloud_server_created.png)
 
 [KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application 
 
@@ -89,17 +89,17 @@ you don't have such a view, you can add it via *Window -> Show View
 
 -   Open the new project wizard page:
 
-    ![](images/user_guide/WireCloudIDE/create_widget_project1.png)
+    ![](../images/user_guide/WireCloudIDE/create_widget_project1.png)
 
 -   And select the Widget/Operator project depending on the type of
     resource you want to create (you will find them on the WireCloud
     Project category):
 
-    ![](images/user_guide/WireCloudIDE/create_widget_project2.png)
+    ![](../images/user_guide/WireCloudIDE/create_widget_project2.png)
 
 -   Give a name to the project and click *Finish*:
 
-    ![](images/user_guide/WireCloudIDE/create_widget_project3.png)
+    ![](../images/user_guide/WireCloudIDE/create_widget_project3.png)
 
 Once created the project, you will obtain the following features in
 addition to the ones provided directly by Eclipse:
@@ -117,9 +117,9 @@ addition to the ones provided directly by Eclipse:
   example skeleton including basic html/style code.
 - Import the downloaded file into a Widget project:
 
-	![](images/user_guide/WireCloudIDE/import_widget1.png)
-    ![](images/user_guide/WireCloudIDE/import_widget2.png)
-    ![](images/user_guide/WireCloudIDE/import_widget3.png)
+	![](../images/user_guide/WireCloudIDE/import_widget1.png)
+    ![](../images/user_guide/WireCloudIDE/import_widget2.png)
+    ![](../images/user_guide/WireCloudIDE/import_widget3.png)
 
 - Follow the *3.1.3. Making requests and wiring* tutorial available on the
   [WireCloud's course @ FIWARE
@@ -128,12 +128,12 @@ addition to the ones provided directly by Eclipse:
   WireCloud servers](#adding-wirecloud-servers) sections for more info). The
   first step is opening the "Add and remove ..." view:
 
-    ![](images/user_guide/WireCloudIDE/upload_widget1.png)
+    ![](../images/user_guide/WireCloudIDE/upload_widget1.png)
 
 - Once opened the "Add and Remove" view, you will need to move the project from
   the available section to the configured one:
 
-    ![](images/user_guide/WireCloudIDE/upload_widget2.png)
+    ![](../images/user_guide/WireCloudIDE/upload_widget2.png)
 
 - Click *Finish* and the widget will be uploaded to the selected server where you
   will be able to test your widget following the steps documented on the
