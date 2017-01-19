@@ -266,39 +266,35 @@
     };
 
     /**
-     * Unloads the Wirecloud Platform. This method is called, by default, when
+     * Unloads the WireCloud Platform. This method is called, by default, when
      * the unload event is captured.
      */
     Wirecloud.unload = function unload() {
-        Wirecloud.UserInterfaceManager.createTask(gettext('Unloading WireCloud'));
+        Wirecloud.UserInterfaceManager.monitorTask(
+            new Wirecloud.Task(gettext('Unloading WireCloud'), () => {})
+        );
     };
 
+    /**
+     * Logouts from WireCloud
+     */
     Wirecloud.logout = function logout() {
-        var promises, i, portal;
-
         if (Wirecloud.constants.FIWARE_PORTALS) {
 
-            promises = [];
-            for (i = 0; i < Wirecloud.constants.FIWARE_PORTALS.length; i++) {
-                portal = Wirecloud.constants.FIWARE_PORTALS[i];
-                if (!('logout_path' in portal)) {
-                    continue;
+            var promises = [];
+            Wirecloud.constants.FIWARE_PORTALS.forEach((portal) => {
+                if ('logout_path' in portal) {
+                    promises.push(Wirecloud.io.makeRequest(portal.url + portal.logout_path, {
+                        method: 'GET',
+                        supportsAccessControl: true,
+                        withCredentials: true,
+                        requestHeaders: {
+                            'X-Requested-With': null
+                        }
+                    }).catch(function (error) {}));
                 }
-                try {
-                    promises.push(new Promise(function (resolve, reject) {
-                        Wirecloud.io.makeRequest(portal.url + portal.logout_path, {
-                            method: 'GET',
-                            supportsAccessControl: true,
-                            withCredentials: true,
-                            requestHeaders: {
-                                'X-Requested-With': null
-                            },
-                            onComplete: resolve
-                        });
-                    }));
-                } catch (error) {}
-            }
-            Promise.all(promises).then(function () {window.location = Wirecloud.URLs.LOGOUT_VIEW;}, 1000);
+            });
+            Promise.all(promises).then(() => {window.location = Wirecloud.URLs.LOGOUT_VIEW;});
 
         } else {
             window.location = Wirecloud.URLs.LOGOUT_VIEW;
