@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -16,6 +16,8 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import absolute_import, unicode_literals
 
 from six import text_type
 from six.moves.urllib.parse import urljoin
