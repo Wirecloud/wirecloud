@@ -60,10 +60,12 @@
                     function () {
                         this.hide();
                     }.bind(this),
-                    function () {
+                    function (error) {
+                        this.form.displayMessage(error);
                         this.form.acceptButton.removeClassName('busy');
                         this.form.acceptButton.enable();
                         this.form.cancelButton.enable();
+
                     }.bind(this)
                 );
             } else if (options.autoHide === true) {

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,6 +32,26 @@
         {name: "field3", type: "text", defaultValue: "default text", initialValue: "hello world!", required: true},
         {name: "field4", type: "longtext", defaultValue: "default long text", initialValue: "long hello world!"}
     ];
+
+    var grouped_fields = [
+        {
+            name: "group1",
+            type: "group",
+            fields: [
+                {name: "field1", type: "boolean", defaultValue: true, initialValue: false},
+                {name: "field2", type: "number", defaultValue: 10, initialValue: 1}
+            ]
+        },
+        {
+            name: "group2",
+            type: "group",
+            fields: [
+                {name: "field3", type: "text", defaultValue: "default text", initialValue: "hello world!", required: true},
+                {name: "field4", type: "longtext", defaultValue: "default long text", initialValue: "long hello world!"}
+            ]
+        }
+    ];
+
 
     describe("Styled Forms", function () {
 
@@ -115,6 +135,43 @@
                 expect(element.setdefaultsButton).toBe(null);
                 expect(element.resetButton).toEqual(jasmine.any(StyledElements.Button));
             });
+
+            describe("allows creating forms using custom buttons:", () => {
+                var test = (buttonName) => {
+                    it(buttonName, () => {
+                        var button = new StyledElements.Button();
+                        var buttonAttr = buttonName + "Button";
+                        var options = {};
+                        options[buttonAttr] = button;
+                        var element = new StyledElements.Form(fields_with_defaults_and_initial_values, options);
+
+                        expect(element[buttonAttr]).toBe(button);
+                    });
+                };
+
+                test("accept");
+                test("cancel");
+                test("reset");
+                test("setdefaults");
+
+            });
+
+            it("allows creating read only forms", () => {
+                var element = new StyledElements.Form(fields_with_defaults_and_initial_values, {
+                    readOnly: true
+                });
+
+                expect(element).not.toBe(null);
+                expect(element.acceptButton).toEqual(null);
+                expect(element.cancelButton).toEqual(null);
+            });
+
+            it("allows creating forms using field groups", () => {
+                var element = new StyledElements.Form(grouped_fields);
+
+                expect(element).not.toBe(null);
+            });
+
         });
 
         describe("getData()", function () {
@@ -283,6 +340,52 @@
                 expect(element.is_valid()).toBe(false);
             });
         });
+
+        describe("repaint()", () => {
+
+            it("repaint all the fields on temporal repaints", () => {
+                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                element.fieldList.forEach((field) => {
+                    spyOn(element.fieldInterfaces[field.name], "repaint");
+                });
+
+                expect(element.repaint(true)).toBe(element);
+
+                element.fieldList.forEach((field) => {
+                    expect(element.fieldInterfaces[field.name].repaint).toHaveBeenCalledWith();
+                });
+            });
+
+        });
+
+        describe("update(data)", () => {
+            var element;
+
+            beforeEach(function () {
+                element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+            });
+
+            describe("throws TypeError exceptions when passing invalid data parameter values:", function () {
+                var test = (value) => {
+                    return () => {
+                        expect(() => {
+                            element.update(value);
+                        }).toThrowError(TypeError);
+                    };
+                };
+
+                it("null", test(null));
+                it("undefined", test(undefined));
+                it("number (0)", test(0));
+                it("number (5)", test(5));
+                it("true", test(true));
+                it("false", test(false));
+                it("function", test(() => {}));
+
+            });
+
+        });
+
 
         describe("should support the enable/disable methods/attributes", function () {
 

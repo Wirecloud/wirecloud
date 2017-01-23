@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -134,7 +134,7 @@
         this.msgElement = document.createElement('div');
         this.msgElement.className = 'alert alert-error';
         div.appendChild(this.msgElement);
-        this.pSetMsgs([]);
+        setMsgs.call(this, []);
 
         if (options.buttonArea != null) {
             buttonArea = options.buttonArea;
@@ -180,50 +180,17 @@
         for (i in this.fieldInterfaces) {
             this.fieldInterfaces[i].repaint();
         }
-    };
 
-    var norm_fields = function norm_fields(fields) {
-        var key, field, list = [];
-
-        // backwards compatilibity
-        for (key in fields) {
-            field = fields[key];
-
-            if (!('name' in field)) {
-                field.name = key;
-            }
-
-            list.push(field);
-        }
-
-        return list;
-    };
-
-    Form.prototype.pSetMsgs = function (msgs) {
-        var i, wrapper;
-
-        this.msgElement.innerHTML = '';
-
-        if (msgs.length > 0) {
-            for (i = 0; i < msgs.length; i += 1) {
-                wrapper = document.createElement('p');
-                wrapper.textContent = msgs[i];
-                this.msgElement.appendChild(wrapper);
-            }
-            this.msgElement.style.display = '';
-        } else {
-            this.msgElement.style.display = 'none';
-        }
+        return this;
     };
 
     Form.prototype.pBuildFieldGroups = function (fields) {
-        var notebook, i, field, tab, tmp_field, tmp_input;
+        var notebook, tab, tmp_field, tmp_input;
 
         notebook = new StyledElements.Notebook({full: false});
         this.childComponents.push(notebook);
 
-        for (i = 0; i < fields.length; i += 1) {
-            field = fields[i];
+        fields.forEach((field) => {
             tab = notebook.createTab({
                 label: field.shortTitle,
                 closable: false
@@ -244,7 +211,7 @@
             } else {
                 tab.appendChild(this.pBuildFieldTable(field.fields));
             }
-        }
+        });
 
         return notebook.wrapperElement;
     };
@@ -260,7 +227,7 @@
         table = document.createElement('table');
         table.setAttribute('cellspacing', '0');
         table.setAttribute('cellpadding', '0');
-        tbody = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+        tbody = document.createElement('tbody');
         table.appendChild(tbody);
 
         fields.forEach(function (field) {
@@ -287,118 +254,6 @@
         }, this);
 
         return table;
-    };
-
-    var insertColumnLayout = function insertColumnLayout(desc, wrapper) {
-        var table, tbody, row, cell, i;
-
-        table = document.createElement('table');
-        table.setAttribute('cellspacing', '0');
-        table.setAttribute('cellpadding', '0');
-        tbody = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
-        table.appendChild(tbody);
-        row = tbody.insertRow(-1);
-
-        for (i = 0; i < desc.columns.length; i += 1) {
-            cell = row.insertCell(-1);
-            cell.appendChild(this.pBuildFieldTable(desc.columns[i]));
-        }
-        wrapper.appendChild(table);
-    };
-
-    var insertLineLayout = function insertLineLayout(desc, wrapper) {
-
-        var fields = norm_fields(desc.fields);
-        fields.forEach(function (field) {
-            var  fieldId, inputInterface, wrapperElement;
-
-            fieldId = field.name;
-
-            inputInterface = this.factory.createInterface(fieldId, field);
-            inputInterface.assignDefaultButton(this.acceptButton);
-            inputInterface.insertInto(wrapper);
-            // TODO
-            wrapperElement = null;
-            if (inputInterface.wrapperElement && inputInterface.wrapperElement.wrapperElement) {
-                wrapperElement = inputInterface.wrapperElement.wrapperElement;
-            } else if (inputInterface.inputElement && inputInterface.inputElement.wrapperElement) {
-                wrapperElement = inputInterface.inputElement.wrapperElement;
-            }
-            if (wrapperElement) {
-                wrapperElement.style.display = 'inline-block';
-                wrapperElement.style.verticalAlign = 'middle';
-            }
-
-            this.fieldInterfaces[fieldId] = inputInterface;
-
-            this.fields[fieldId] = field;
-        }, this);
-    };
-
-    /**
-     * @private
-     */
-    var insertField = function insertField(fieldId, field, row) {
-        var separator, hr, labelRow, labelCell, label, requiredMark, inputCell, inputInterface, tooltip;
-
-        if (field.type === 'separator') {
-            separator = row.insertCell(-1);
-            separator.setAttribute('colspan', '2');
-            hr = document.createElement('hr');
-            separator.appendChild(hr);
-            return;
-        }
-
-        if (field.type === 'label') {
-            labelRow = row.insertCell(-1);
-            labelRow.setAttribute('colspan', '2');
-            labelRow.addClassName('label-row');
-            if (field.url) {
-                label = document.createElement('a');
-                label.setAttribute("href", field.url);
-                label.setAttribute("target", "_blank");
-            } else {
-                label = document.createElement('label');
-            }
-            label.appendChild(document.createTextNode(field.label));
-            labelRow.appendChild(label);
-            return;
-        }
-
-        inputInterface = this.factory.createInterface(fieldId, field);
-
-        // Label Cell
-        labelCell = row.insertCell(-1);
-        labelCell.classList.add('label-cell');
-
-        label = document.createElement('label');
-        label.textContent = field.label;
-        labelCell.appendChild(label);
-        if (field.description != null) {
-            tooltip = new StyledElements.Tooltip({content: field.description, placement: ['right', 'bottom', 'top', 'left']});
-            tooltip.bind(label);
-        }
-
-        if (field.required && !this.readOnly) {
-            requiredMark = document.createElement('span');
-            requiredMark.appendChild(document.createTextNode('*'));
-            requiredMark.className = 'required_mark';
-            labelCell.appendChild(requiredMark);
-        }
-
-        // Input Cell
-        inputCell = document.createElement('td');
-        row.appendChild(inputCell);
-
-        inputInterface.assignDefaultButton(this.acceptButton);
-        inputInterface.insertInto(inputCell);
-        if (this.readOnly || inputInterface._readOnly) {
-            inputInterface.setDisabled(true);
-        }
-
-        this.fieldInterfaces[fieldId] = inputInterface;
-
-        this.fields[fieldId] = field;
     };
 
     /**
@@ -450,7 +305,7 @@
             throw new TypeError();
         }
 
-        this.pSetMsgs([]);
+        setMsgs.call(this, []);
         if (data != null) {
             for (fieldId in this.fieldInterfaces) {
                 field = this.fieldInterfaces[fieldId];
@@ -483,7 +338,7 @@
             throw new TypeError("Invalid data value");
         }
 
-        this.pSetMsgs([]);
+        setMsgs.call(this, []);
         for (fieldId in this.fieldInterfaces) {
             if (fieldId in data) {
                 field = this.fieldInterfaces[fieldId];
@@ -513,25 +368,8 @@
         }
 
         // Show error message if needed
-        this.pSetMsgs(errorMsgs);
+        setMsgs.call(this, errorMsgs);
         return errorMsgs.length === 0;
-    };
-
-    /**
-     * @private
-     */
-    var acceptHandler = function acceptHandler() {
-        if (this.is_valid()) {
-            var data = this.getData();
-            this.dispatchEvent('submit', data);
-        }
-    };
-
-    /**
-     * @private
-     */
-    var cancelHandler = function cancelHandler() {
-        this.dispatchEvent('cancel');
     };
 
     /**
@@ -551,34 +389,13 @@
     Form.prototype.defaults = function defaults() {
         var field, fieldId;
 
-        this.pSetMsgs([]);
+        setMsgs.call(this, []);
         for (fieldId in this.fields) {
             field = this.fieldInterfaces[fieldId];
             field._setValue(field._defaultValue);
         }
 
         return this;
-    };
-
-    Form.prototype.normalSubmit = function (method, url, options) {
-        options = options ? options : {};
-
-        this.wrapperElement.method = method;
-        this.wrapperElement.action = url;
-
-        if (options.enctype) {
-            this.wrapperElement.setAttribute('enctype', options.enctype);
-        } else {
-            this.wrapperElement.removeAttribute('enctype');
-        }
-
-        if (options.target) {
-            this.wrapperElement.setAttribute('target', options.target);
-        } else {
-            this.wrapperElement.removeAttribute('target');
-        }
-
-        this.wrapperElement.submit();
     };
 
     Form.prototype.destroy = function destroy() {
@@ -652,9 +469,171 @@
         return this;
     };
 
+    Form.prototype.displayMessage = function displayMessage(message) {
+        setMsgs.call(this, [message]);
+    };
+
     Form.prototype.insertInto = function insertInto(element, refElement) {
         StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
         this.repaint();
+    };
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var norm_fields = function norm_fields(fields) {
+        var key, field, list = [];
+
+        // backwards compatilibity
+        for (key in fields) {
+            field = fields[key];
+
+            if (!('name' in field)) {
+                field.name = key;
+            }
+
+            list.push(field);
+        }
+
+        return list;
+    };
+
+    var acceptHandler = function acceptHandler() {
+        if (this.is_valid()) {
+            var data = this.getData();
+            this.dispatchEvent('submit', data);
+        }
+    };
+
+    var cancelHandler = function cancelHandler() {
+        this.dispatchEvent('cancel');
+    };
+
+    var insertColumnLayout = function insertColumnLayout(desc, wrapper) {
+        var table, tbody, row, cell, i;
+
+        table = document.createElement('table');
+        table.setAttribute('cellspacing', '0');
+        table.setAttribute('cellpadding', '0');
+        tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+        row = tbody.insertRow(-1);
+
+        for (i = 0; i < desc.columns.length; i += 1) {
+            cell = row.insertCell(-1);
+            cell.appendChild(this.pBuildFieldTable(desc.columns[i]));
+        }
+        wrapper.appendChild(table);
+    };
+
+    var insertLineLayout = function insertLineLayout(desc, wrapper) {
+
+        var fields = norm_fields(desc.fields);
+        fields.forEach(function (field) {
+            var  fieldId, inputInterface, wrapperElement;
+
+            fieldId = field.name;
+
+            inputInterface = this.factory.createInterface(fieldId, field);
+            inputInterface.assignDefaultButton(this.acceptButton);
+            inputInterface.insertInto(wrapper);
+            // TODO
+            wrapperElement = null;
+            if (inputInterface.wrapperElement && inputInterface.wrapperElement.wrapperElement) {
+                wrapperElement = inputInterface.wrapperElement.wrapperElement;
+            } else if (inputInterface.inputElement && inputInterface.inputElement.wrapperElement) {
+                wrapperElement = inputInterface.inputElement.wrapperElement;
+            }
+            if (wrapperElement) {
+                wrapperElement.style.display = 'inline-block';
+                wrapperElement.style.verticalAlign = 'middle';
+            }
+
+            this.fieldInterfaces[fieldId] = inputInterface;
+
+            this.fields[fieldId] = field;
+        }, this);
+    };
+
+    var insertField = function insertField(fieldId, field, row) {
+        var separator, hr, labelRow, labelCell, label, requiredMark, inputCell, inputInterface, tooltip;
+
+        if (field.type === 'separator') {
+            separator = row.insertCell(-1);
+            separator.setAttribute('colspan', '2');
+            hr = document.createElement('hr');
+            separator.appendChild(hr);
+            return;
+        }
+
+        if (field.type === 'label') {
+            labelRow = row.insertCell(-1);
+            labelRow.setAttribute('colspan', '2');
+            labelRow.addClassName('label-row');
+            if (field.url) {
+                label = document.createElement('a');
+                label.setAttribute("href", field.url);
+                label.setAttribute("target", "_blank");
+            } else {
+                label = document.createElement('label');
+            }
+            label.appendChild(document.createTextNode(field.label));
+            labelRow.appendChild(label);
+            return;
+        }
+
+        inputInterface = this.factory.createInterface(fieldId, field);
+
+        // Label Cell
+        labelCell = row.insertCell(-1);
+        labelCell.classList.add('label-cell');
+
+        label = document.createElement('label');
+        label.textContent = field.label;
+        labelCell.appendChild(label);
+        if (field.description != null) {
+            tooltip = new StyledElements.Tooltip({content: field.description, placement: ['right', 'bottom', 'top', 'left']});
+            tooltip.bind(label);
+        }
+
+        if (field.required && !this.readOnly) {
+            requiredMark = document.createElement('span');
+            requiredMark.appendChild(document.createTextNode('*'));
+            requiredMark.className = 'required_mark';
+            labelCell.appendChild(requiredMark);
+        }
+
+        // Input Cell
+        inputCell = document.createElement('td');
+        row.appendChild(inputCell);
+
+        inputInterface.assignDefaultButton(this.acceptButton);
+        inputInterface.insertInto(inputCell);
+        if (this.readOnly || inputInterface._readOnly) {
+            inputInterface.setDisabled(true);
+        }
+
+        this.fieldInterfaces[fieldId] = inputInterface;
+
+        this.fields[fieldId] = field;
+    };
+
+    var setMsgs = function setMsgs(msgs) {
+        var i, wrapper;
+
+        this.msgElement.innerHTML = '';
+
+        if (msgs.length > 0) {
+            for (i = 0; i < msgs.length; i += 1) {
+                wrapper = document.createElement('p');
+                wrapper.textContent = msgs[i];
+                this.msgElement.appendChild(wrapper);
+            }
+            this.msgElement.style.display = '';
+        } else {
+            this.msgElement.style.display = 'none';
+        }
     };
 
     StyledElements.Form = Form;
