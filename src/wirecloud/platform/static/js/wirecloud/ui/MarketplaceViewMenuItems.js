@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -96,7 +96,7 @@
                 menu = new Wirecloud.ui.FormWindowMenu(fields, utils.gettext('Add marketplace'), 'wc-add-external-catalogue-modal');
 
                 // Form data is sent to server
-                menu.executeOperation = function (data) {
+                menu.executeOperation = (data) => {
                     var market_info = {
                         "name": data.name,
                         "options": {
@@ -110,8 +110,13 @@
                     } else {
                         market_info.options.user = Wirecloud.contextManager.get('username');
                     }
-                    Wirecloud.MarketManager.addMarket(market_info, this.market.addMarket.bind(this.market, market_info.options));
-                }.bind(this);
+                    var task = Wirecloud.MarketManager.addMarket(market_info);
+                    // TODO move to use events
+                    task.then(() => {
+                        this.market.addMarket(market_info.options);
+                    });
+                    return task;
+                };
 
                 menu.show();
             }.bind(this));
@@ -125,26 +130,15 @@
                 var dialog = new Wirecloud.ui.AlertWindowMenu();
                 dialog.setMsg(msg);
                 dialog.setHandler(function () {
-                        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Deleting marketplace"), 2);
-                        var delete_task = monitor.nextSubtask(utils.gettext('Deleting marketplace'));
-
-                        Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc, {
-                            onSuccess: function () {
-                                delete_task.finish(utils.gettext('Marketplace deleted successfully'));
-                                var refresh_task = monitor.nextSubtask("Refreshing marketplace view");
-                                this.market.refreshViewInfo({
-                                    onComplete: function () {
-                                        refresh_task.finish();
-                                    }
-                                });
-                            }.bind(this),
-                            onFailure: function (msg) {
-                                delete_task.fail(msg);
-                                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                                Wirecloud.GlobalLogManager.log(msg);
-                            }
-                        });
-                    }.bind(this));
+                    Wirecloud.UserInterfaceManager.monitorTask(
+                        Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc)
+                            .then(this.market.refreshViewInfo.bind(this.market))
+                            .catch(function (error) {
+                                (new Wirecloud.ui.MessageWindowMenu(error, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+                                Wirecloud.GlobalLogManager.log(error);
+                            })
+                    );
+                }.bind(this));
                 dialog.show();
             }.bind(this));
             item.addIconClass('fa fa-trash');

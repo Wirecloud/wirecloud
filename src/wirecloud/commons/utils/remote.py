@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -254,11 +254,9 @@ class WebElementTester(object):
 
     def find_element(self, css_selector):
         try:
-            element = self.element.find_element_by_css_selector(css_selector)
+            return self.element.find_element_by_css_selector(css_selector)
         except NoSuchElementException:
             return None
-
-        return element
 
     def find_elements(self, css_selector):
         try:
@@ -361,12 +359,10 @@ class ModalTester(WebElementTester):
 
     def accept(self):
         self.btn_accept.click()
-        WebDriverWait(self.testcase.driver, timeout=5).until(EC.staleness_of(self.element))
         return self
 
     def cancel(self):
         self.btn_cancel.click()
-        WebDriverWait(self.testcase.driver, timeout=5).until(EC.staleness_of(self.element))
         return self
 
     def find_button(self, title):
@@ -374,6 +370,10 @@ class ModalTester(WebElementTester):
             if e.text == title:
                 return ButtonTester(self.testcase, e)
         return None
+
+    def wait_close(self, timeout=3):
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(EC.staleness_of(self.element))
+        return self
 
 
 class AlertTester(WebElementTester):
@@ -413,11 +413,19 @@ class FormTester(WebElementTester):
 
 class FormModalTester(ModalTester):
 
+    @property
+    def error_message(self):
+        return self.find_element("div.alert-error")
+
     def get_field(self, name):
         field = self.body.find_element_by_css_selector("[name='%s']" % (name,))
         if field.tag_name == 'select':
             return ChoiceFieldTester(self.testcase, field)
         return FieldTester(self.testcase, field)
+
+    def wait_error(self, timeout=3):
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: self.error_message)
+        return self
 
 
 ###############################################################################
@@ -1551,19 +1559,18 @@ class MarketplaceViewTester(object):
             form.get_field('public').click()
 
         form.accept()
-        self.testcase.wait_wirecloud_ready()
-        time.sleep(0.1)  # work around some problems
 
-        window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
         if expect_error:
-            if window_menus == 1:
-                self.testcase.fail('Error: marketplace shouldn\'t be added')
+            try:
+                form.wait_error()
+            except TimeoutException:
+                self.testcase.fail("Marketplace addition didn't fail as expected")
+            finally:
+                form.cancel()
 
-            self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
             self.testcase.assertNotEqual(self.get_current_marketplace_name(), name)
         else:
-            if window_menus != 1:
-                self.testcase.fail('Error: marketplace was not added')
+            form.wait_close()
 
             self.testcase.assertEqual(self.get_current_marketplace_name(), name)
             self.wait_catalogue_ready()

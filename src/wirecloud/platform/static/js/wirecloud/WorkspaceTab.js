@@ -246,14 +246,14 @@
                 requestHeaders: {'Accept': 'application/json'},
                 contentType: 'application/json',
                 postBody: JSON.stringify(content),
-            }).then(function (response) {
+            }).then((response) => {
                 if ([204, 401, 403, 409, 500].indexOf(response.status) === -1) {
-                    return reject(utils.gettext("Unexpected response from server"));
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
                 } else if ([401, 403, 409, 500].indexOf(response.status) !== -1) {
-                    return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
                 change_name.call(this, name);
-                resolve(this);
+                return Promise.resolve(this);
             });
         },
 

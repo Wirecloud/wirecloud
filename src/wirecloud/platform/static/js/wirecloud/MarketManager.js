@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,97 +32,112 @@
         'wirecloud': {
             label: 'Wirecloud',
             view_class: CatalogueView
-        },
-        "fiware-bae": {
-            label: "FIWARE Business API Ecosystem"
-        },
+        }
     };
     MarketManager = {};
 
-    MarketManager.getMarkets = function getMarkets(callback, onFailureCallback, onCompleteCallback) {
-        Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
+    /**
+     * Returns all the available marketplaces.
+     *
+     * @returns {Wirecloud.Task}
+     */
+    MarketManager.getMarkets = function getMarkets() {
+        return Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: function onSuccess(transport) {
-                var raw_data = JSON.parse(transport.responseText);
-                for (var key in raw_data) {
-                    if (raw_data[key].url == null) {
-                        delete raw_data[key];
-                    }
-                }
-                callback(raw_data);
-            },
-            onFailure: function onFailure(transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error retrieving market list from the server: %(errorMsg)s."), transport);
+            requestHeaders: {'Accept': 'application/json'}
+        }).then(function (response) {
+            if ([200, 401, 403, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if (response.status !== 200) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+            }
 
-                if (typeof onFailureCallback === 'function') {
-                    onFailureCallback(msg);
-                }
-            },
-            onComplete: function onComplete(transport) {
-                if (typeof onCompleteCallback === 'function') {
-                    onCompleteCallback();
+            var raw_data = JSON.parse(response.responseText);
+            for (var key in raw_data) {
+                if (raw_data[key].url == null) {
+                    delete raw_data[key];
                 }
             }
-        });
+            return Promise.resolve(raw_data);
+        }).toTask("Requesting available marketplaces");
     };
 
-    MarketManager.deleteMarket = function deleteMarket(marketplace, options) {
+    /**
+     * Removes a marketplace form WireCloud.
+     *
+     * @param {Object} marketplace
+     *     marketplace to remove
+     * @returns {Wirecloud.Task}
+     */
+    MarketManager.deleteMarket = function deleteMarket(marketplace) {
+        return new Wirecloud.Task("Deleting marketplace", function (resolve, reject) {
+            var url;
 
-        var url;
+            if (marketplace.user != null) {
+                url = Wirecloud.URLs.MARKET_ENTRY.evaluate({user: marketplace.user, market: marketplace.name});
+            } else {
+                url = Wirecloud.URLs.GLOBAL_MARKET_ENTRY.evaluate({market: marketplace.name});
+            }
 
-        if (typeof options !== 'object') {
-            options = {};
-        }
-
-        if (marketplace.user != null) {
-            url = Wirecloud.URLs.MARKET_ENTRY.evaluate({user: marketplace.user, market: marketplace.name});
-        } else {
-            url = Wirecloud.URLs.GLOBAL_MARKET_ENTRY.evaluate({market: marketplace.name});
-        }
-
-        Wirecloud.io.makeRequest(url, {
-            method: 'DELETE',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: options.onSuccess,
-            onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error deleting marketplace: %(errorMsg)s."), transport);
-                if (typeof options.onFailure === 'function') {
-                    options.onFailure(msg);
+            Wirecloud.io.makeRequest(url, {
+                method: 'DELETE',
+                requestHeaders: {'Accept': 'application/json'}
+            }).then((response) => {
+                if ([204, 401, 403, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if (response.status !== 204) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
-            },
-            onComplete: options.onComplete
+
+                return Promise.resolve(marketplace);
+            }).then(resolve, reject);
         });
     };
 
-    MarketManager.addMarket = function addMarket(market_info, callback) {
-
-        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Adding marketplace"), 1);
-        var add_task = monitor.nextSubtask(utils.gettext('Adding marketplace'));
-
-        Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
+    /**
+     * Adds a marketplace into WireCloud.
+     *
+     * @param {Object} market_info
+     *     Info about the new marketplace
+     * @returns {Wirecloud.Task}
+     *
+     * @example
+     * manager.addMarket({
+     * }).then();
+     *
+     */
+    MarketManager.addMarket = function addMarket(market_info) {
+        return Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'POST',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
-            postBody: JSON.stringify(market_info),
-
-            onSuccess: function (transport) {
-                add_task.finish(utils.gettext('Marketplace added successfully'));
-                callback();
-            },
-            onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding marketplace: %(errorMsg)s."), transport);
-                add_task.fail(msg);
-                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+            postBody: JSON.stringify(market_info)
+        }).then((response) => {
+            if ([201, 401, 403, 409, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if (response.status !== 201) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
             }
-        });
+
+            return Promise.resolve(market_info);
+        }).toTask(utils.gettext("Adding marketplace"));
     };
 
+    /**
+     * Registers a new marketplace type and the associated view class.
+     *
+     * @param {String} type
+     * @param {String} label
+     * @param {Function} view_class
+     *
+     * @returns {Wirecloud.MarketManager}
+     */
     MarketManager.addMarketType = function addMarketType(type, label, view_class) {
         market_types[type] = {
             label: label,
             view_class: view_class
         };
+        return this;
     };
 
     MarketManager.getMarketViewClass = function getMarketplaceViewClass(type) {

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -59,6 +59,13 @@
         }
     };
 
+    /**
+     * Retrieves the available offering from the server in a paginated way.
+     *
+     * @params {Object} options
+     *
+     * @returns {Wirecloud.Task}
+     */
     Marketplace.prototype.search = function search(options) {
         var url;
 
@@ -76,11 +83,28 @@
             url = Wirecloud.URLs.FIWARE_STORE_SEARCH.evaluate({market_user: this.market_user, market_name: this.market_name, store: options.store, search_string: options.search_criteria});
         }
 
-        Wirecloud.io.makeRequest(url, {
+        return Wirecloud.io.makeRequest(url, {
             method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: _onSearchSuccess.bind(options),
-            onFailure: _onSearchFailure.bind(options)
+            requestHeaders: {'Accept': 'application/json'}
+        }).then((response) => {
+            if ([200, 401, 403, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if ([401, 403, 500].indexOf(response.status) !== -1) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+            }
+
+            var response_data = JSON.parse(response.responseText);
+            var offerings = response_data.resources.map((offering) => {
+                return new Wirecloud.FiWare.Offering(offering, this.catalogue);
+            });
+
+            var data = {
+                'resources': offerings,
+                'query_results_number': offerings.length,
+                'resources_per_page': 10,
+                'current_page': 1
+            };
+            return Promise.resolve(data);
         });
     };
 
