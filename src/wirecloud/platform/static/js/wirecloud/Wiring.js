@@ -182,12 +182,29 @@
                 volatile: false
             }, data);
 
+            var operator = create_operator.call(this, resource, data)
+
             if (data.volatile) {
-                return append_operator.call(this, create_operator.call(this, resource, data));
+                return append_operator.call(this, operator);
             }
 
+            var requestContent = [{
+                op: "add",
+                path: "/operators/" + operator.id,
+                value: operator,
+            }];
             return new Promise(function (resolve, reject) {
-                resolve(create_operator.call(this, resource, data));
+                Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                    workspace_id: this.workspace.id,
+                }), {
+                    method: 'PATCH',
+                    contentType: 'application/json-patch+json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(requestContent),
+                    onSuccess: resolve(operator),
+                    onFailure: reject(operator)
+                }
+                );
             }.bind(this));
         },
 
