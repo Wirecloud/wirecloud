@@ -49,17 +49,19 @@
 
         this.hide();
 
-        Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_PREFERENCES.evaluate({
-                workspace_id: this._current_ioperator.wiring.workspace.id,
-                operator_id: this._current_ioperator.id
-            }), {
-                method: 'POST',
-                contentType: 'application/json',
-                requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify(new_values),
-                onSuccess: operatorCallback.call(this, new_values)
-            }
-        );
+        if (!this._current_ioperator.volatile) {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_PREFERENCES.evaluate({
+                    workspace_id: this._current_ioperator.wiring.workspace.id,
+                    operator_id: this._current_ioperator.id
+                }), {
+                    method: 'POST',
+                    contentType: 'application/json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(new_values),
+                    onSuccess: operatorCallback.call(this, new_values)
+                }
+            );
+        }
     };
 
     var operatorCallback = function operatorCallback(new_values) {

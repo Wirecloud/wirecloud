@@ -50,19 +50,20 @@
         }
 
         this.hide();
-
-        Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
-                workspace_id: this.widgetModel.tab.workspace.id,
-                tab_id: this.widgetModel.tab.id,
-                iwidget_id: this.widgetModel.id
-            }), {
-                method: 'POST',
-                contentType: 'application/json',
-                requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify(new_values),
-                onSuccess: widgetCallback.call(this, new_values)
-            }
-        );
+        if (!this.widgetModel.volatile) {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
+                    workspace_id: this.widgetModel.tab.workspace.id,
+                    tab_id: this.widgetModel.tab.id,
+                    iwidget_id: this.widgetModel.id
+                }), {
+                    method: 'POST',
+                    contentType: 'application/json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(new_values),
+                    onSuccess: widgetCallback.call(this, new_values)
+                }
+            );
+        }
     };
 
     // Notify preference changes to widget
