@@ -33,15 +33,24 @@
 
     OperatorPreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
         var key;
+        var requestBody = [];
 
         for (key in new_values) {
             if (this._current_ioperator.preferences[key].value !== new_values[key]) {
 
+                // Censor preference
                 if (this._current_ioperator.preferences[key].meta.options.secure && new_values[key] !== "") {
                     this._current_ioperator.preferences[key].value = "********";
                 } else {
                     this._current_ioperator.preferences[key].value = new_values[key];
                 }
+
+                // Build patch
+                requestBody.push({
+                    op: "replace",
+                    path: "/operators/" + this._current_ioperator.id + "/preferences/" + key + "/value",
+                    value: new_values[key],
+                });
             } else {
                 delete new_values[key];
             }
@@ -50,14 +59,13 @@
         this.hide();
 
         if (!this._current_ioperator.volatile) {
-            Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_PREFERENCES.evaluate({
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
                     workspace_id: this._current_ioperator.wiring.workspace.id,
-                    operator_id: this._current_ioperator.id
                 }), {
-                    method: 'POST',
-                    contentType: 'application/json',
+                    method: 'PATCH',
+                    contentType: 'application/json-patch+json',
                     requestHeaders: {'Accept': 'application/json'},
-                    postBody: JSON.stringify(new_values),
+                    postBody: JSON.stringify(requestBody),
                     onSuccess: operatorCallback.call(this, new_values)
                 }
             );

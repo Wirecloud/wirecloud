@@ -1166,6 +1166,73 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 404)
 
+    def test_workspace_wiring_entry_patch_preference_value(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
+
+        data = [{
+            "op": "replace",
+            "path": "/operators/2/preferences/pref_secure/value",
+            "value": 'helloWorld',
+        }]
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+        response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
+
+        self.assertEqual(response.status_code, 204)
+
+        # Check if preferences changed
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"], "helloWorld")
+
+    def test_workspace_wiring_entry_patch_preference_value_read_only_permission(self):
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
+
+        data = [{
+            "op": "replace",
+            "path": "/operators/2/preferences/username/value",
+            "value": 'helloWorld',
+        }]
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
+        self.assertEqual(response.status_code, 403)
+
+        # Check if preferences changed
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"], "test_username")
+
+    def test_workspace_wiring_entry_patch_empty_request(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
+
+        data = []
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
+        self.assertEqual(response.status_code, 204)
+
+    def test_workspace_wiring_entry_patch_preference_value_nonexistent_preference(self):
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
+
+        data = [{
+            "op": "replace",
+            "path": "/operators/1/preferences/doesNotExist/value",
+            "value": 'helloWorld',
+        }]
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
+        self.assertEqual(response.status_code, 422)
+
+        self.assertFalse("doesNotExist" in Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"])
+
+
     def test_tab_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
@@ -2406,75 +2473,6 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # IWidget should not be deleted
         IWidget.objects.get(pk=4)
-
-    def test_operator_preferences_entry_post(self):
-
-        url = reverse('wirecloud.workspace_operator_preferences', kwargs={'workspace_id': 202, "operator_id": 2})
-
-        data = {
-            'pref_secure': 'helloWorld'
-        }
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
-        self.assertEqual(response.status_code, 204)
-
-        # Check if preferences changed
-        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"], "helloWorld")
-
-    def test_operator_preferences_entry_post_read_only_permission(self):
-        url = reverse('wirecloud.workspace_operator_preferences', kwargs={'workspace_id': 202, "operator_id": 2})
-
-        data = {
-            'username': 'helloWorld'
-        }
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
-        self.assertEqual(response.status_code, 403)
-
-        # Check if preferences changed
-        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"], "test_username")
-
-    def test_operator_preferences_entry_post_empty_request(self):
-
-        url = reverse('wirecloud.workspace_operator_preferences', kwargs={'workspace_id': 202, "operator_id": 1})
-
-        data = {
-        }
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
-        self.assertEqual(response.status_code, 204)
-
-    def test_operator_preferences_entry_post_nonexistent_preference(self):
-        url = reverse('wirecloud.workspace_operator_preferences', kwargs={'workspace_id': 202, "operator_id": 1})
-
-        data = {
-            "doesNotExist": "helloWorld"
-        }
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8')
-        self.assertEqual(response.status_code, 422)
-
-        self.assertFalse("doesNotExist" in Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"])
-
-    def test_operator_preferences_entry_post_requires_permission(self):
-
-        url = reverse('wirecloud.workspace_operator_preferences', kwargs={'workspace_id': 202, "operator_id": 2})
-        data = {
-            'pref_secure': 'helloWorld'
-        }
-        check_post_requires_authentication(self, url, json.dumps(data))
 
 
 class ResourceManagementAPI(WirecloudTestCase):
