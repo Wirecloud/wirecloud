@@ -124,6 +124,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
         font-size: round($font-size-base * 0.7);
     }
+
 }
 
 .se-btn:focus, .se-btn:hover {
@@ -483,6 +484,36 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 // ============================================================================
 // COMPONENT - BUTTON - ANIMATIONS
 // ============================================================================
+
+@keyframes se-busy-spin {
+    0% {
+        -webkit-transform: translate(-50%, -50%) rotate(0deg);
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        -webkit-transform: translate(-50%, -50%) rotate(359deg);
+        transform: translate(-50%, -50%) rotate(359deg);
+    }
+}
+
+.se-btn.busy {
+
+    &:before {
+        animation: se-busy-spin 2s infinite linear;
+        content: "\f110";
+        font: normal normal normal 14px / 1 FontAwesome;
+        font-size: 120%;
+        position: absolute;
+        text-align: center;
+        top: 50%;
+        left: 50%;
+    }
+
+    & > * {
+        visibility: hidden;
+    }
+
+}
 
 @keyframes btn-has-alert {
     50% {

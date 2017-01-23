@@ -55,11 +55,13 @@
                 var operation = this.executeOperation(data);
             } catch (e) {}
             if (operation != null && typeof operation.then === "function") {
+                this.form.acceptButton.addClassName('busy');
                 operation.then(
                     function () {
                         this.hide();
                     }.bind(this),
                     function () {
+                        this.form.acceptButton.removeClassName('busy');
                         this.form.acceptButton.enable();
                         this.form.cancelButton.enable();
                     }.bind(this)
