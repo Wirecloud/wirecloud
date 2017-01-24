@@ -32,7 +32,7 @@
 
         this.wsMenu = new StyledElements.PopupMenu();
         this.wsMenu.append(new Wirecloud.ui.WorkspaceListItems(function (context, workspace) {
-            Wirecloud.changeActiveWorkspace(workspace);
+            Wirecloud.UserInterfaceManager.monitorTask(Wirecloud.changeActiveWorkspace(workspace));
         }));
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new Wirecloud.ui.WorkspaceViewMenuItems(this));

@@ -371,7 +371,8 @@
         }
 
         return this.loadWorkspace(workspace, options)
-            .then(switch_active_workspace.bind(this));
+            .then(switch_active_workspace.bind(this))
+            .toTask(gettext("Switching active workspace"));
     };
 
     /**
@@ -565,7 +566,7 @@
 
     var switch_active_workspace = function switch_active_workspace(workspace) {
 
-        return new Wirecloud.Task("Switching active workspace", function (resolve, reject) {
+        return new Wirecloud.Task(gettext("Switching active workspace"), function (resolve, reject) {
 
             if (this.activeWorkspace) {
                 this.activeWorkspace.unload();
