@@ -75,6 +75,12 @@
     var operatorCallback = function operatorCallback(new_values) {
         if (typeof this._current_ioperator.prefCallback === 'function') {
             try {
+                // Censor secure preferences
+                for (var varName in new_values) {
+                    if (this._current_ioperator.preferences[varName].meta.options.secure && this._current_ioperator.preferences[varName].value !== "") {
+                        new_values[varName] = "********";
+                    }
+                }
                 this._current_ioperator.prefCallback(new_values);
             } catch (error) {
                 var details = this._current_ioperator.logManager.formatException(error);
@@ -82,6 +88,7 @@
             }
         }
     };
+
     OperatorPreferencesWindowMenu.prototype.show = function show(ioperator, parentWindow) {
         var i, prefs, pref, fields;
 
