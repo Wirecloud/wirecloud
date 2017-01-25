@@ -1,8 +1,8 @@
 FORMAT: 1A
 HOST: https://mashup.lab.fiware.org/
 TITLE: FIWARE Application Mashup RESTful v2.1 Specification
-DATE: 26th August 2016
-VERSION: v2.1
+DATE: 25th January 2017
+VERSION: v2.2
 PREVIOUS_VERSION: v2
 APIARY_PROJECT: fiwareapplicationmashup
 SPEC_URL: http://wirecloud.github.io/wirecloud/restapi/
@@ -43,7 +43,7 @@ to [wirecloud@conwet.com](mailto:wirecloud@conwet.com)
 
 ## Copyright
 
-Copyright © 2012-2016 by Universidad Politécnica de Madrid
+Copyright © 2012-2017 by Universidad Politécnica de Madrid
 
 ## License
 
@@ -115,10 +115,8 @@ Where possible, this API strives to use appropriate HTTP verbs for each action.
 | `POST`    | Used for creating resources.                                         |
 | `PUT`     | Used for replacing resources.                                        |
 | `DELETE`  | Used for deleting resources.                                         |
-
-<!--
 | `PATCH`   | Used for updating resources with partial JSON data (using the `application/json-patch+json` mimetype). For instance, a Workspace resource has several attributes. A `PATCH` request may accept one or more of the attributes to update the resource. `PATCH` is a relatively new and uncommon HTTP verb, so resource endpoints also accept `POST` requests. |
--->
+
 
 Any API endpoint supporting the `GET` method must also support the `HEAD` method.
 
@@ -691,6 +689,67 @@ Workspace attributes that can be modified:
 
 + Response 204
 
+
+### Patch workspace wiring configuration [PATCH /api/workspace/{workspace_id}/wiring]
+
+- `version` (string): Format version used in this wiring configuration. At present, the only available version is "2.0".
+- `operators` (object): Description of the operators used in this wiring description.
+- `connections` (array): Connections stablished between widgets and operators.
+- `visualdescription` (object): Visual description. Used for displaying this wiring configuration in the user interface.
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 422
+
+> *new in WireCloud 1.1 / FIWARE Application Mashup RESTful Specification v2.2*
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+
++ Request Replace a preference and add an operator (application/json-patch+json)
+
+    + Headers
+
+            Accept: application/json-patch+json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+            [
+                {
+                    "op": "replace",
+                    "path": "/operators/1/preferences/preferenceName/value",
+                    "value": 'newPreferenceValue',
+                },
+                {
+                    "op": "add",
+                    "path": "/operators/0/",
+                    "value": {
+                        "name": "UPM/Operator/0.1",
+                        "id": "0"
+                    },
+                }
+            ]
+
++ Response 204
+
++ Request Remove operator
+
+    + Headers
+
+            Accept: application/json-patch+json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+            [
+                {
+                    "op": "remove",
+                    "path": "/operators/1",
+                }
+            ]
+
++ Response 204
+
+
+
 ### Update workspace wiring configuration [PUT /api/workspace/{workspace_id}/wiring]
 
 - `version` (string): Format version used in this wiring configuration. At present, the only available version is "2.0".
@@ -816,7 +875,7 @@ Returned fields:
 
 **Used status codes**: 200, 401, 403, 404, 406, 413, 415, 422
 
-> *new in WireCloud 1.0*
+> *new in WireCloud 1.0 / FIWARE Application Mashup RESTful Specification v2.1*
 
 + Request
 
