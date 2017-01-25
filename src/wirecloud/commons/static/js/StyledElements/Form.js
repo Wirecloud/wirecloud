@@ -190,7 +190,7 @@
         notebook = new StyledElements.Notebook({full: false});
         this.childComponents.push(notebook);
 
-        fields.forEach((field) => {
+        fields.forEach(function (field) {
             tab = notebook.createTab({
                 label: field.shortTitle,
                 closable: false
@@ -211,7 +211,7 @@
             } else {
                 tab.appendChild(this.pBuildFieldTable(field.fields));
             }
-        });
+        }, this);
 
         return notebook.wrapperElement;
     };
