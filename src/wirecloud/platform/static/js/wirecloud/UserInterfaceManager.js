@@ -19,7 +19,7 @@
  *
  */
 
-/* globals Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (utils) {
@@ -294,8 +294,8 @@
     var updateTaskProgress = function updateTaskProgress(task, progress) {
         var msg;
 
-        msg = gettext("%(task)s %(percentage)s%");
-        msg = interpolate(msg, {task: task.title, percentage: Math.round(progress)}, true);
+        msg = utils.gettext("%(task)s %(percentage)s%");
+        msg = utils.interpolate(msg, {task: task.title, percentage: Math.round(progress)}, true);
         document.getElementById("loading-task-title").textContent = msg;
 
         var list = document.createElement('ul');
@@ -307,8 +307,8 @@
                 subtask = subtask.subtasks[0];
             }
 
-            if (subtask.title != "") {
-                var msg = interpolate(gettext("%(subTask)s: %(percentage)s%"), {
+            if (subtask.title !== "") {
+                var msg = utils.interpolate(utils.gettext("%(subTask)s: %(percentage)s%"), {
                     subTask: subtask.title,
                     percentage: Math.round(subtask.progress)
                 }, true);

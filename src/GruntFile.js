@@ -93,6 +93,8 @@ var wc_dependencies = [
 ];
 
 var WirecloudFiles = [
+    'wirecloud/platform/static/js/wirecloud/HistoryManager.js',
+    'wirecloud/platform/static/js/wirecloud/UserInterfaceManager.js',
     'wirecloud/platform/static/js/wirecloud/constants.js',
     'wirecloud/platform/static/js/wirecloud/core.js',
     'wirecloud/platform/static/js/wirecloud/LogManager.js',

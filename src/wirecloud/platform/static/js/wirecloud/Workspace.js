@@ -440,10 +440,11 @@
                         return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                     }
 
+                    var old_name = this.contextManager.get('name');
                     this.contextManager.modify({
                         name: name
                     });
-                    this.dispatchEvent('change', ['name']);
+                    this.dispatchEvent('change', ['name'], {name: old_name});
                     resolve(this);
                 });
             });
@@ -591,10 +592,11 @@
     var on_livemessage = function on_livemessage(live, data) {
         if (data.workspace === this.id) {
             if ('name' in data) {
+                var old_name = this.contextManager.get('name');
                 this.contextManager.modify({
                     name: data.name
                 });
-                this.dispatchEvent('change', ['name']);
+                this.dispatchEvent('change', ['name'], {name: old_name});
             }
         }
     };

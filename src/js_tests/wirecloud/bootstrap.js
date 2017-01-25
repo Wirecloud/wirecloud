@@ -21,3 +21,7 @@ Wirecloud = {
     },
     Utils: StyledElements.Utils
 };
+
+var gettext = function gettext(msg) {
+    return msg;
+};

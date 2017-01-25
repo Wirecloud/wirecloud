@@ -72,11 +72,7 @@
                     return document.location.protocol + '//' + document.location.host + path;
                 }
             });
-            this.workspaceInstances[workspace.id] = workspace;
-            if (!(workspace.owner in this.workspacesByUserAndName)) {
-                this.workspacesByUserAndName[workspace.owner] = {};
-            }
-            this.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
+            cache_workspace(workspace);
             resolve(workspace);
         });
     };
@@ -87,7 +83,7 @@
             owner: Wirecloud.activeWorkspace.owner,
             name: Wirecloud.activeWorkspace.name
         };
-        Wirecloud.changeActiveWorkspace(workspace, null, options);
+        Wirecloud.changeActiveWorkspace(workspace, options);
     };
 
     var onMergeFailure = function onMergeFailure(options, response, e) {
@@ -213,20 +209,9 @@
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'}
         }).then(function (response) {
-            return new Promise(function (resolve, reject) {
-                var workspaces = JSON.parse(response.responseText);
-
-                for (var i = 0; i < workspaces.length; i++) {
-                    var workspace = workspaces[i];
-
-                    Wirecloud.workspaceInstances[workspace.id] = workspace;
-                    if (!(workspace.owner in Wirecloud.workspacesByUserAndName)) {
-                        Wirecloud.workspacesByUserAndName[workspace.owner] = {};
-                    }
-                    Wirecloud.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
-                }
-                resolve();
-            });
+            var workspaces = JSON.parse(response.responseText);
+            workspaces.forEach(cache_workspace);
+            return Promise.resolve();
         }).catch(function (error) {
             return new Promise(function (resolve, reject) {
                 Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving workspace list"), error);
@@ -253,7 +238,7 @@
 
                 this.dispatchEvent('loaded');
                 var workspace = this.workspacesByUserAndName[state.workspace_owner][state.workspace_name];
-                return this.changeActiveWorkspace(workspace, state.tab, {replaceNavigationState: true});
+                return this.changeActiveWorkspace(workspace, {initialTab: state.tab, history: "replace"});
             }.bind(this));
         }
 
@@ -307,8 +292,8 @@
      *
      * @since 1.1
      *
-     * @param {Object} workspace workspace information to use for requesting
-     *      Workspace information
+     * @param {Object} workspace
+     *      workspace information to use for requesting full workspace details
      *
      * @returns {Wirecloud.Task}
      *
@@ -342,15 +327,35 @@
         }.bind(this)).toTask("Downloading workspace");
     };
 
-    Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
+    /**
+     * Changes the active workspace by the indicated one.
+     *
+     * @since 1.1
+     *
+     * @param {Object} workspace
+     *     workspace information to use for switching to the new workspace
+     *
+     * @returns {Wirecloud.Task}
+     *
+     * @example
+     * Wirecloud.changeActiveWorkspace({"id": 1}).then(() => {
+     *     // Workspace loaded and activated successfully
+     * }, (error) => {
+     *     // Error loading or activating the workspace
+     * });
+     */
+    Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, options) {
         var workspace_full_name, state;
 
         options = utils.merge({
-            replaceNavigationState: false
+            initialTab: null,
+            history: "push"
         }, options);
 
         if (!('id' in workspace)) {
             workspace = this.workspacesByUserAndName[workspace.owner][workspace.name];
+        } else {
+            workspace = this.workspaceInstances[workspace.id];
         }
 
         state = {
@@ -358,16 +363,15 @@
             workspace_name: workspace.name,
             view: "workspace"
         };
-        if (initial_tab) {
-            options.initial_tab = initial_tab;
-            state.tab = initial_tab;
+        if (options.initialTab != null) {
+            state.tab = options.initialTab;
         }
         workspace_full_name = workspace.owner + '/' + workspace.name;
         document.title = workspace_full_name;
-        if (options.replaceNavigationState === true) {
-            Wirecloud.HistoryManager.replaceState(state);
-        } else if (options.replaceNavigationState !== 'leave') {
+        if (options.history === "push") {
             Wirecloud.HistoryManager.pushState(state);
+        } else if (options.history === "replace") {
+            Wirecloud.HistoryManager.replaceState(state);
         }
 
         return this.loadWorkspace(workspace, options)
@@ -529,7 +533,7 @@
 
     var process_workspace_data = function process_workspace_data(response, workspace_resources, options) {
 
-        return new Wirecloud.Task("Processing workspace data", function (resolve, reject, update) {
+        return new Wirecloud.Task("Processing workspace data", (resolve, reject, update) => {
             var workspace_data = JSON.parse(response.responseText);
 
             // Check if the workspace needs to ask some values before loading this workspace
@@ -548,7 +552,7 @@
                 preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, workspace_data, workspace_data.extra_prefs, workspace_data.empty_params);
                 preferences.addEventListener('post-commit', function () {
                     setTimeout(function () {
-                        Wirecloud.changeActiveWorkspace(workspace, options.initial_tab, options);
+                        Wirecloud.changeActiveWorkspace(workspace, options);
                     }, 0);
                 }.bind(this));
 
@@ -559,14 +563,14 @@
             }
 
             var workspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
-            this.workspaceInstances[workspace.id] = workspace;
+            cache_workspace(workspace);
             resolve(workspace);
-        }.bind(this));
+        });
     };
 
     var switch_active_workspace = function switch_active_workspace(workspace) {
 
-        return new Wirecloud.Task(gettext("Switching active workspace"), function (resolve, reject) {
+        return new Wirecloud.Task(gettext("Switching active workspace"), (resolve, reject) => {
 
             if (this.activeWorkspace) {
                 this.activeWorkspace.unload();
@@ -576,24 +580,29 @@
             this.activeWorkspace = workspace;
             Wirecloud.dispatchEvent('viewcontextchanged');
 
-            this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
-                var workspace, old_name;
-
-                if ('name' in updated_attributes) {
-                    workspace = this.workspaceInstances[this.activeWorkspace.id];
-                    old_name = workspace.name;
-                    delete this.workspacesByUserAndName[workspace.owner][old_name];
-
-                    workspace.name = updated_attributes.name;
-                    this.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
-                }
-            }.bind(this));
-
             // The activeworkspacechanged event will be captured by WorkspaceView
             Wirecloud.dispatchEvent('activeworkspacechanged', this.activeWorkspace);
             resolve(workspace);
-        }.bind(this));
+        });
 
+    };
+
+    var cache_workspace = function cache_workspace(workspace) {
+        Wirecloud.workspaceInstances[workspace.id] = workspace;
+        if (!(workspace.owner in Wirecloud.workspacesByUserAndName)) {
+            Wirecloud.workspacesByUserAndName[workspace.owner] = {};
+        }
+        Wirecloud.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
+
+        if (workspace instanceof Wirecloud.Workspace) {
+            workspace.addEventListener("change", (workspace, updated_attributes, old_values) => {
+                if (updated_attributes.indexOf('name') !== -1) {
+                    delete Wirecloud.workspacesByUserAndName[workspace.owner][old_values.name];
+
+                    Wirecloud.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
+                }
+            });
+        }
     };
 
 })(Wirecloud.Utils);

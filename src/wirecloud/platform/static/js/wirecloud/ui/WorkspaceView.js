@@ -394,7 +394,7 @@
             this.appendChild(alert_msg);
             Wirecloud.dispatchEvent('viewcontextchanged');
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
-            Wirecloud.changeActiveWorkspace(nextWorkspace, newState.tab, {replaceNavigationState: 'leave'});
+            Wirecloud.changeActiveWorkspace(nextWorkspace, {initialTab: newState.tab, history: 'ignore'});
         } else if (newState.tab != null) {
             target_tab = this.notebook.getTabByLabel(newState.tab);
             this.notebook.goToTab(target_tab);
