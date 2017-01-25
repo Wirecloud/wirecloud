@@ -132,6 +132,8 @@ class WiringEntry(Resource):
             new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
         except jsonpatch.JsonPointerException:
             return build_error_response(request, 422, _('Failed to apply patch'))
+        except jsonpatch.InvalidJsonPatch:
+            return build_error_response(request, 400, _('Invalid JSON patch'))
 
         result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
         if result is not True:

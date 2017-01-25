@@ -1232,6 +1232,17 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         self.assertFalse("doesNotExist" in Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"])
 
+    def test_workspace_wiring_entry_patch_invalid_patch_operation(self):
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
+
+        data = {"this": "isNotAPatch"}
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
+        self.assertEqual(response.status_code, 400)
+
 
     def test_tab_collection_post_requires_authentication(self):
 
