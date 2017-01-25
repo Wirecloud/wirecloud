@@ -256,9 +256,11 @@ Wirecloud.ui = Wirecloud.ui || {};
             button.disable();
 
             if (group.meta.type === 'operator') {
-                this.workspace.wiring.createOperator(group.meta).then(function (operator) {
+                this.workspace.wiring.createOperator(group.meta).then((operator) => {
                     button.enable();
                     showcase.addComponent(operator);
+                }, (error) => {
+                    button.enable();
                 });
             } else {
                 this.workspace.view.activeTab.createWidget(group.meta).then(function (widgetView) {

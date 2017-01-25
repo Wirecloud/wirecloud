@@ -177,12 +177,14 @@
          * @returns {Promise}
          */
         createOperator: function createOperator(resource, data) {
+            var priv = privates.get(this);
+
             data = utils.merge({
-                id: (privates.get(this).operatorId).toString(),
+                id: (priv.operatorId).toString(),
                 volatile: false
             }, data);
 
-            var operator = create_operator.call(this, resource, data)
+            var operator = create_operator.call(this, resource, data);
 
             if (data.volatile) {
                 return append_operator.call(this, operator);
@@ -191,21 +193,25 @@
             var requestContent = [{
                 op: "add",
                 path: "/operators/" + operator.id,
-                value: operator,
+                value: operator
             }];
-            return new Promise(function (resolve, reject) {
-                Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
-                    workspace_id: this.workspace.id,
-                }), {
-                    method: 'PATCH',
-                    contentType: 'application/json-patch+json',
-                    requestHeaders: {'Accept': 'application/json'},
-                    postBody: JSON.stringify(requestContent),
-                    onSuccess: resolve(operator),
-                    onFailure: reject(operator)
+            return Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                workspace_id: this.workspace.id,
+            }), {
+                method: 'PATCH',
+                contentType: 'application/json-patch+json',
+                requestHeaders: {'Accept': 'application/json'},
+                postBody: JSON.stringify(requestContent)
+            }).then((response) => {
+                if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
-                );
-            }.bind(this));
+
+                priv.operators.push(operator);
+                return Promise.resolve(operator);
+            });
         },
 
         /**
