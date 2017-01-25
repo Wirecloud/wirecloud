@@ -78,15 +78,13 @@
                     options = Wirecloud.Utils.merge({
                         allow_renaming: true
                     },  options);
-                    options.onSuccess = function (workspace) {
+
+                    Wirecloud.createWorkspace(options).then((workspace) => {
                         Wirecloud.changeActiveWorkspace(workspace).then(
                             autoAction.nextHandler,
                             autoAction.errorHandler
                         );
-                    };
-                    options.onFailure = autoAction.errorHandler;
-
-                    Wirecloud.createWorkspace(options);
+                    }, autoAction.errorHandler);
                 };
             },
             input: function input(text, options) {
@@ -150,10 +148,8 @@
             uploadComponent: function uploadComponent(id) {
                 return function (autoAction, element) {
                     if (!Wirecloud.LocalCatalogue.resourceExistsId(id)) {
-                        Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/' + id.split('/').join('_') + '.wgt'), {
-                            onSuccess: autoAction.nextHandler,
-                            onFailure: autoAction.errorHandler
-                        });
+                        Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/' + id.split('/').join('_') + '.wgt'))
+                            .then(autoAction.nextHandler, autoAction.errorHandler);
                     } else {
                         autoAction.nextHandler();
                     }
