@@ -26,7 +26,11 @@
 
     "use strict";
 
-    /*************************************************************************/
+    /**
+     * Class for accessing WireCloud catalogues.
+     *
+     * @param {Object} options
+     */
     var WirecloudCatalogue = function WirecloudCatalogue(options) {
 
         Object.defineProperty(this, 'name', {'value': options.name});
@@ -63,13 +67,11 @@
      * @returns {Wirecloud.Task}
      */
     WirecloudCatalogue.prototype.search = function search(options) {
-        var params, url;
-
         if (options == null) {
             throw new TypeError();
         }
 
-        params = {};
+        var params = {};
 
         if (options.search_criteria != null && options.search_criteria !== '') {
             params.q = options.search_criteria;
@@ -151,13 +153,13 @@
     };
 
     WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(file, options) {
-        var url, parameters, requestHeaders, task;
+        var url, parameters, requestHeaders;
 
         requestHeaders = {
             'Accept': 'application/json'
         };
 
-        if (typeof options != 'object') {
+        if (typeof options !== 'object') {
             options = {};
         }
 
@@ -168,7 +170,7 @@
 
 
             if (this.accesstoken != null) {
-                requestHeaders['Authorization'] = 'Bearer ' + this.accesstoken;
+                requestHeaders.Authorization = 'Bearer ' + this.accesstoken;
             }
         }
 
@@ -208,7 +210,7 @@
     };
 
     WirecloudCatalogue.prototype.addResourceFromURL = function addResourceFromURL(url, options) {
-        if (typeof options != 'object') {
+        if (typeof options !== 'object') {
             options = {};
         }
 

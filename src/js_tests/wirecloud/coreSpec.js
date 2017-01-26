@@ -62,6 +62,8 @@
                         resolve(initworkspace);
                     });
                 });
+                spyOn(Wirecloud.HistoryManager, 'pushState');
+                spyOn(Wirecloud.HistoryManager, 'replaceState');
             });
 
             it("throws a TypeError exception when not passing the workspace parameter", () => {
@@ -86,7 +88,7 @@
                 }).toThrowError(TypeError);
             });
 
-            it("retrieves workspace information by id", function (done) {
+            it("allows switching the active workspace by passing ids", function (done) {
                 // Arrange
                 var listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
@@ -104,7 +106,7 @@
                 });
             });
 
-            it("retrieves workspace information by owner/name", function (done) {
+            it("allows switching the active workspace by passing owner/name pairs", function (done) {
                 // Arrange
                 var listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
@@ -152,8 +154,6 @@
                 // Arrange
                 var listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
-                spyOn(Wirecloud.HistoryManager, "replaceState");
-                spyOn(Wirecloud.HistoryManager, "pushState");
 
                 // Act
                 var task = Wirecloud.changeActiveWorkspace({id: 1}, {initialTab: "MyTab"});
@@ -179,8 +179,6 @@
                 // Arrange
                 var listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
-                spyOn(Wirecloud.HistoryManager, "pushState");
-                spyOn(Wirecloud.HistoryManager, "replaceState");
 
                 // Act
                 var task = Wirecloud.changeActiveWorkspace({id: 1}, {history: "replace"});
@@ -205,8 +203,6 @@
                 // Arrange
                 var listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
-                spyOn(Wirecloud.HistoryManager, "pushState");
-                spyOn(Wirecloud.HistoryManager, "replaceState");
 
                 // Act
                 var task = Wirecloud.changeActiveWorkspace({id: 1}, {history: "ignore"});
@@ -367,6 +363,133 @@
                 it("403", test(403));
                 it("500", test(500));
 
+            });
+
+        });
+
+        describe("init([options])", () => {
+
+            beforeEach(() => {
+                spyOn(window, "addEventListener");
+                spyOn(Wirecloud.HistoryManager, "init");
+                spyOn(Wirecloud.HistoryManager, "getCurrentState");
+                spyOn(Wirecloud.UserInterfaceManager, "init");
+                spyOn(Wirecloud.UserInterfaceManager, "monitorTask");
+                spyOn(Wirecloud.UserInterfaceManager, "changeCurrentView");
+                Wirecloud.ui.Theme = jasmine.createSpy("Theme");
+                Wirecloud.PreferenceManager = {
+                    buildPreferences: jasmine.createSpy('buildPreferences').and.callFake(() => {
+                        return {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        };
+                    })
+                };
+                spyOn(Wirecloud, "changeActiveWorkspace").and.callFake(() => {
+                    return new Wirecloud.Task("", (resolve) => (resolve()));
+                });
+                window.moment = {
+                    locale: jasmine.createSpy("locale")
+                };
+
+                Wirecloud.ContextManager = jasmine.createSpy("ContextManager");
+                Wirecloud.ContextManager.prototype.get = jasmine.createSpy("get").and.callFake((name) => {
+                    switch (name) {
+                    case "theme":
+                        return "wirecloud.defaulttheme";
+                    case "username":
+                        return "admin";
+                    case "version_hash":
+                        return "dcbd0816066ec878d2b2e9792be025c45e71a8d5";
+                    };
+                });
+                Wirecloud.ContextManager.prototype.modify = jasmine.createSpy("modify");
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                    var response;
+
+                    switch (url) {
+                    case Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION:
+                        response = '{}';
+                        break;
+                    case Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION:
+                        response = '{"platform": {"fullname": {"description": "Full name of the logged user", "label": "Full name", "value": "Administrator"}, "isanonymous": {"description": "Boolean. Designates whether current user is logged in the system.", "label": "Is Anonymous", "value": false}, "isstaff": {"description": "Boolean. Designates whether current user can access the admin site.", "label": "Is Staff", "value": true}, "issuperuser": {"description": "Boolean. Designates whether current user is a super user.", "label": "Is Superuser", "value": true}, "language": {"description": "Current language used in the platform", "label": "Language", "value": "en"}, "mode": {"description": "Rendering mode used by the platform (available modes: classic, smartphone and embedded)", "label": "Mode", "value": "classic"}, "orientation": {"description": "Current screen orientation", "label": "Orientation", "value": "landscape"}, "theme": {"description": "Name of the theme used by the platform", "label": "Theme", "value": "wirecloud.defaulttheme"}, "username": {"description": "User name of the current logged user", "label": "Username", "value": "admin"}, "version": {"description": "Version of the platform", "label": "Version", "value": "1.1.0"}, "version_hash": {"description": "Hash for the current version of the platform. This hash changes when the platform is updated or when an addon is added or removed", "label": "Version Hash", "value": "dcbd0816066ec878d2b2e9792be025c45e71a8d5"}}, "workspace": {"name": {"description": "Current name of the workspace", "label": "Name"}, "owner": {"description": "Workspace\'s owner username", "label": "Owner"}}}';
+                        break;
+                    case "/api/theme/wirecloud.defaulttheme?v=dcbd0816066ec878d2b2e9792be025c45e71a8d5":
+                        response = '{"baseurl": "http://localhost:8000/static/theme/wirecloud.defaulttheme/", "label": "Basic", "name": "wirecloud.defaulttheme"}';
+                        break;
+                    case Wirecloud.URLs.PLATFORM_PREFERENCES:
+                        response = '{"language": {"inherit": false, "value": "en"}}';
+                        break;
+                    case Wirecloud.URLs.WORKSPACE_COLLECTION:
+                        response = '[{"description": "", "id": "1", "lastmodified": 1481098766279, "longdescription": "", "name": "home", "owner": "wirecloud", "public": true, "removable": false, "shared": true}]';
+                        break;
+                    }
+
+                    return new Wirecloud.Task("request", (resolve) => {
+                        resolve({
+                            responseText: response
+                        });
+                    });
+                });
+
+            });
+
+            it("should return a Task", function (done) {
+                Wirecloud.HistoryManager.getCurrentState.and.returnValue({
+                    workspace_owner: "wirecloud",
+                    workspace_name: "home",
+                    view: "workspace"
+                });
+
+                var task = Wirecloud.init();
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then(() => {
+                    expect(Wirecloud.UserInterfaceManager.init).toHaveBeenCalledWith();
+                    expect(Wirecloud.HistoryManager.init).toHaveBeenCalledWith();
+                    expect(Wirecloud.UserInterfaceManager.monitorTask).toHaveBeenCalledWith(task);
+                    done();
+                });
+            });
+
+            it("should when using the preventDefault option", (done) => {
+                Wirecloud.HistoryManager.getCurrentState.and.returnValue({
+                    workspace_owner: "wirecloud",
+                    workspace_name: "home",
+                    view: "workspace"
+                });
+
+                var task = Wirecloud.init({preventDefault: true});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then(() => {
+                    expect(Wirecloud.UserInterfaceManager.init).toHaveBeenCalledWith();
+                    expect(Wirecloud.HistoryManager.init).not.toHaveBeenCalledWith();
+                    expect(Wirecloud.UserInterfaceManager.monitorTask).not.toHaveBeenCalled();
+                    expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it("should handle context errors", (done) => {
+                spyOn(Wirecloud.GlobalLogManager, "log");
+                Wirecloud.HistoryManager.getCurrentState.and.returnValue({
+                    workspace_owner: "wirecloud",
+                    workspace_name: "home",
+                    view: "workspace"
+                });
+                Wirecloud.ContextManager.and.throwError("invalid data");
+
+                var task = Wirecloud.init();
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.catch(() => {
+                    expect(Wirecloud.GlobalLogManager.log).toHaveBeenCalled();
+                    expect(Wirecloud.UserInterfaceManager.init).toHaveBeenCalledWith();
+                    expect(Wirecloud.HistoryManager.init).not.toHaveBeenCalledWith();
+                    expect(Wirecloud.UserInterfaceManager.monitorTask).toHaveBeenCalled();
+                    expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
+                    done();
+                });
             });
 
         });

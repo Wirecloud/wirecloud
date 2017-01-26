@@ -26,9 +26,9 @@
 
     "use strict";
 
-    /*************************************************************************
-     * Private methods
-     *************************************************************************/
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
 
     var unload_affected_components = function unload_affected_components(resource, result) {
         var task_title;
@@ -50,7 +50,7 @@
                     var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
                     if (new_meta != null) {
                         Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
-                            if (widget.meta.uri == new_meta.uri) {
+                            if (widget.meta.uri === new_meta.uri) {
                                 widget.upgrade(new_meta);
                             }
                         });
@@ -62,7 +62,7 @@
                     var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
                     if (new_meta != null) {
                         Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
-                            if (operator.meta.uri == new_meta.uri) {
+                            if (operator.meta.uri === new_meta.uri) {
                                 operator.upgrade(new_meta);
                             }
                         });
@@ -99,38 +99,6 @@
         }.bind(this));
     };
 
-    var loadSuccessCallback = function loadSuccessCallback(context, transport) {
-        var resources, resource_id, msg;
-
-        resources = JSON.parse(transport.responseText);
-
-        this.resources = {};
-        this.resourceVersions = {};
-        this.resourcesByType = {};
-
-        for (resource_id in resources) {
-            try {
-                this._includeResource.call(this, resources[resource_id]);
-            } catch (e) {
-                msg = utils.gettext("Error loading %(resource)s metadata");
-                Wirecloud.GlobalLogManager.log(
-                    utils.interpolate(msg, {resource: resource_id}),
-                    {details: e}
-                );
-            }
-        }
-
-        if (typeof context.onSuccess === 'function') {
-            context.onSuccess();
-        }
-    };
-
-    var loadFailureCallback = function loadFailureCallback(context, transport) {
-        if (typeof context.onError === 'function') {
-            context.onError();
-        }
-    };
-
     var process_upload_response = function process_upload_response(response_data) {
         return new Promise(function (resolve, reject) {
             var components = [response_data.resource_details].concat(response_data.extra_resources);
@@ -143,33 +111,48 @@
         }.bind(this));
     };
 
-    /*************************************************************************
-     * Public methods
-     *************************************************************************/
+    // =========================================================================
+    // CLASS DEFINITION
+    // =========================================================================
 
     var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local', permissions: {'delete': false}});
 
-    LocalCatalogue.reload = function reload(options) {
-
-        if (typeof options !== 'object') {
-            options = {};
-        }
-
-        var context = {
-            'onSuccess': options.onSuccess,
-            'onError': options.onError
-        };
+    LocalCatalogue.reload = function reload() {
+        var request;
 
         if (Wirecloud.contextManager.get('username') !== 'anonymous') {
-            Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
+            request = Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
                 method: 'GET',
-                requestHeaders: {'Accept': 'application/json'},
-                onSuccess: loadSuccessCallback.bind(this, context),
-                onFailure: loadFailureCallback.bind(this, context)
+                requestHeaders: {'Accept': 'application/json'}
             });
         } else {
-            loadSuccessCallback.call(this, context, {responseText: "{}"});
+            request = new Wirecloud.Task("", (resolve) => {
+                resolve({responseText: "[]"});
+            });
         }
+
+        return request.then((response) => {
+            var resources, resource_id, msg;
+
+            resources = JSON.parse(response.responseText);
+
+            this.resources = {};
+            this.resourceVersions = {};
+            this.resourcesByType = {};
+
+            for (resource_id in resources) {
+                try {
+                    this._includeResource.call(this, resources[resource_id]);
+                } catch (e) {
+                    msg = utils.gettext("Error loading %(resource)s metadata");
+                    Wirecloud.GlobalLogManager.log(
+                        utils.interpolate(msg, {resource: resource_id}),
+                        {details: e}
+                    );
+                }
+            }
+            return Promise.resolve();
+        });
     };
 
     LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
@@ -234,7 +217,7 @@
     };
 
     LocalCatalogue.addResourceFromURL = function addResourceFromURL(url, options) {
-        if (typeof options != 'object') {
+        if (typeof options !== 'object') {
             options = {};
         }
 
@@ -282,7 +265,7 @@
             resource = new Wirecloud.WidgetMeta(resource_data);
             if (Wirecloud.activeWorkspace != null) {
                 Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
-                    if (widget.missing && widget.meta.uri == resource.uri) {
+                    if (widget.missing && widget.meta.uri === resource.uri) {
                         widget.upgrade(resource);
                     }
                 });
@@ -293,7 +276,7 @@
             if (Wirecloud.activeWorkspace != null) {
                 try {
                     Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
-                        if (operator.missing && operator.meta.uri == resource.uri) {
+                        if (operator.missing && operator.meta.uri === resource.uri) {
                             operator.upgrade(resource);
                         }
                     });

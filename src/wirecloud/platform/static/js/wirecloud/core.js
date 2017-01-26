@@ -48,33 +48,31 @@
     Wirecloud.dispatchEvent = StyledElements.ObjectWithEvents.prototype.dispatchEvent;
 
     var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(response) {
-        return new Promise((resolve, reject) => {
-            var workspace = null;
+        var workspace = null;
 
-            if ([201, 401, 403, 409, 422, 500].indexOf(response.status) === -1) {
-                return reject(utils.gettext("Unexpected response from server"));
-            } else if (response.status === 422) {
-                try {
-                    var error = JSON.parse(response.responseText);
-                } catch (e) {
-                    return reject(e);
-                }
-                return reject(error);
-            } else if ([401, 403, 500].indexOf(response.status) !== -1) {
-                return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+        if ([201, 401, 403, 409, 422, 500].indexOf(response.status) === -1) {
+            return Promise.reject(utils.gettext("Unexpected response from server"));
+        } else if (response.status === 422) {
+            try {
+                var error = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(e);
             }
+            return Promise.reject(error);
+        } else if ([401, 403, 500].indexOf(response.status) !== -1) {
+            return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+        }
 
-            workspace = JSON.parse(response.responseText);
-            // TODO
-            Object.defineProperty(workspace, 'url', {
-                get: function () {
-                    var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
-                    return document.location.protocol + '//' + document.location.host + path;
-                }
-            });
-            cache_workspace(workspace);
-            resolve(workspace);
+        workspace = JSON.parse(response.responseText);
+        // TODO
+        Object.defineProperty(workspace, 'url', {
+            get: function () {
+                var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
+                return document.location.protocol + '//' + document.location.host + path;
+            }
         });
+        cache_workspace(workspace);
+        return Promise.resolve(workspace);
     };
 
     var onMergeSuccess = function onMergeSuccess(options, response) {
@@ -128,100 +126,76 @@
             method: 'GET',
             parameters: {theme: Wirecloud.constants.CURRENT_THEME},
             requestHeaders: {'Accept': 'application/json'}
-        }).then(function (response) {
-            return new Promise(function (resolve, reject) {
-                var context_info = JSON.parse(response.responseText);
-                Wirecloud.constants.WORKSPACE_CONTEXT = context_info.workspace;
-                Object.freeze(Wirecloud.constants.WORKSPACE_CONTEXT);
-                Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, context_info.platform);
-                Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
-                resolve();
-            });
-        }).toTask("Retrieve platform context");
+        }).then((response) => {
+            var context_info = JSON.parse(response.responseText);
+            Wirecloud.constants.WORKSPACE_CONTEXT = context_info.workspace;
+            Object.freeze(Wirecloud.constants.WORKSPACE_CONTEXT);
+            Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, context_info.platform);
+            Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
 
-        var themeTask = contextTask.then(function () {
+            // Init moment locale
+            moment.locale(Wirecloud.contextManager.get('language'));
+
+            return Promise.resolve();
+        }).toTask("Retrieving context information");
+
+        var themeTask = contextTask.then(() => {
             // Init theme
             var url =  Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')}) + "?v=" + Wirecloud.contextManager.get('version_hash');
             return Wirecloud.io.makeRequest(url, {
                 method: 'GET',
                 requestHeaders: {'Accept': 'application/json'}
-            }).then(function (response) {
-                return new Promise(function (resolve, reject) {
-                    Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));
-                    moment.locale(Wirecloud.contextManager.get('language'));
-                    Wirecloud.dispatchEvent('contextloaded');
-                    resolve();
-                });
+            }).then((response) => {
+                Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));
+                Wirecloud.dispatchEvent('contextloaded');
+                return Promise.resolve();
             });
         });
 
-        var localCatalogueTask = contextTask.then(function () {
-            return new Wirecloud.Task("Loading component catalog", function (resolve, reject) {
-                // Load local catalogue
-                Wirecloud.LocalCatalogue.reload({
-                    onSuccess: resolve,
-                    onFailure: function (response) {
-                        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), response);
-                        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                        reject();
-                    }
-                });
-            });
+        var localCatalogueTask = contextTask.then(() => {
+            return Wirecloud.LocalCatalogue.reload();
         });
 
         // Init platform preferences
         var preferencesTask = Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_PREFERENCES, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'}
-        }).then(function (response) {
-            return new Promise(function (resolve, reject) {
-                var url, values = JSON.parse(response.responseText);
+        }).then((response) => {
+            var url, values = JSON.parse(response.responseText);
 
-                Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', values);
-                if ('WEBSOCKET' in Wirecloud.URLs) {
-                    url = new URL(Wirecloud.URLs.WEBSOCKET, document.location);
-                    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-                    var livews = new WebSocket(url);
-                    livews.addEventListener('message', function (event) {
-                        var msg = JSON.parse(event.data);
-
-                        Wirecloud.live.dispatchEvent(msg.category, msg);
-                    });
-                    var LiveManager = function LiveManager() {
-                        StyledElements.ObjectWithEvents.call(this, ["workspace", "component"]);
-                    };
-                    utils.inherit(LiveManager, StyledElements.ObjectWithEvents);
-                    Wirecloud.live = new LiveManager();
-                }
-                resolve();
-            });
-        }).catch(function (error) {
-            return new Promise(function (resolve, reject) {
-                Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving platform preferences data: %(errorMsg)s"), error);
-                Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', {});
-            });
-        }).then(function () {
+            Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', values);
             Wirecloud.preferences.addEventListener('post-commit', preferencesChanged.bind(this));
+            if ('WEBSOCKET' in Wirecloud.URLs) {
+                url = new URL(Wirecloud.URLs.WEBSOCKET, document.location);
+                url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+                var livews = new WebSocket(url);
+                livews.addEventListener('message', function (event) {
+                    var msg = JSON.parse(event.data);
+
+                    Wirecloud.live.dispatchEvent(msg.category, msg);
+                });
+                var LiveManager = function LiveManager() {
+                    StyledElements.ObjectWithEvents.call(this, ["workspace", "component"]);
+                };
+                utils.inherit(LiveManager, StyledElements.ObjectWithEvents);
+                Wirecloud.live = new LiveManager();
+            }
+            return Promise.resolve();
         });
 
         // Load workspace list
         var workspaceListTask = Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'}
-        }).then(function (response) {
+        }).then((response) => {
             var workspaces = JSON.parse(response.responseText);
             workspaces.forEach(cache_workspace);
             return Promise.resolve();
-        }).catch(function (error) {
-            return new Promise(function (resolve, reject) {
-                Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving workspace list"), error);
-                reject(error);
-            });
         });
 
         var initTask = new Wirecloud.Task(gettext('Retrieving WireCloud code'), function (resolve) {
             resolve();
-        }).then(function () {
+        }).then(() => {
             return new Wirecloud.Task(gettext('Retrieving initial data'), [
                 themeTask,
                 localCatalogueTask,
@@ -231,16 +205,25 @@
         });
 
         if (options.preventDefault !== true) {
-            initTask = initTask.then(function () {
+            initTask = initTask.then(() => {
                 Wirecloud.HistoryManager.init();
                 var state = Wirecloud.HistoryManager.getCurrentState();
                 Wirecloud.UserInterfaceManager.changeCurrentView('workspace', true);
 
-                this.dispatchEvent('loaded');
-                var workspace = this.workspacesByUserAndName[state.workspace_owner][state.workspace_name];
-                return this.changeActiveWorkspace(workspace, {initialTab: state.tab, history: "replace"});
-            }.bind(this));
+                Wirecloud.dispatchEvent('loaded');
+                var workspace = Wirecloud.workspacesByUserAndName[state.workspace_owner][state.workspace_name];
+                return Wirecloud.changeActiveWorkspace(workspace, {initialTab: state.tab, history: "replace"});
+            }, (error) => {
+                var msg = gettext("Error loading WireCloud");
+                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+                return Promise.reject();
+            });
         }
+
+        initTask.catch((error) => {
+            Wirecloud.GlobalLogManager.log(error);
+            return Promise.reject();
+        });
 
         var task = initTask.toTask(gettext('Loading WireCloud Platform'));
         if (options.preventDefault !== true) {
@@ -488,22 +471,20 @@
             method: 'DELETE',
             requestHeaders: {'Accept': 'application/json'}
         }).then((response) => {
-            return new Promise((resolve, reject) => {
-                if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
-                    return reject(utils.gettext("Unexpected response from server"));
-                } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
-                    return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
-                }
+            if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+            }
 
-                if (workspace.id in this.workspaceInstances) {
-                    // Remove internal references
-                    var stored_workspace = this.workspaceInstances[workspace.id];
-                    delete this.workspaceInstances[workspace.id];
-                    delete this.workspacesByUserAndName[stored_workspace.owner][stored_workspace.name];
-                }
+            if (workspace.id in this.workspaceInstances) {
+                // Remove internal references
+                var stored_workspace = this.workspaceInstances[workspace.id];
+                delete this.workspaceInstances[workspace.id];
+                delete this.workspacesByUserAndName[stored_workspace.owner][stored_workspace.name];
+            }
 
-                resolve();
-            });
+            return Promise.resolve();
         });
     };
 

@@ -15,8 +15,13 @@ Wirecloud = {
     },
     ui: {},
     URLs: {
-        ROOT_URL: '/',
+        LOCAL_RESOURCE_COLLECTION: "/api/resources",
+        PLATFORM_CONTEXT_COLLECTION: "/api/context",
+        PLATFORM_PREFERENCES: "/api/preferences/platform",
         PROXY: new StyledElements.Utils.Template("/cdp/%(protocol)s/%(domain)s%(path)s"),
+        ROOT_URL: '/',
+        THEME_ENTRY: new StyledElements.Utils.Template("/api/theme/%(name)s"),
+        WORKSPACE_COLLECTION: "/api/workspaces",
         WORKSPACE_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s"),
     },
     Utils: StyledElements.Utils
