@@ -20,7 +20,9 @@
 
 /* globals StyledElements, Wirecloud */
 
-
+/**
+ * @namespace Wirecloud.ui
+ */
 Wirecloud.ui = Wirecloud.ui || {};
 
 
@@ -33,10 +35,14 @@ Wirecloud.ui = Wirecloud.ui || {};
     // =========================================================================
 
     /**
-     * Create a new instance of class WiringEditor.
-     * @extends {Alternative}
+     * Creates a new wiring editor usable for adding operators, creating and
+     * remove connections, ...
+     *
+     * @name Wirecloud.ui.WiringEditor
+     * @extends {StyledElements.Alternative}
      *
      * @constructor
+     *
      * @param {Number} id
      *      [TODO: description]
      * @param {PlainObject} [options]
@@ -62,7 +68,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.orderableComponent = null;
     };
 
-    utils.inherit(ns.WiringEditor, se.Alternative, {
+    utils.inherit(ns.WiringEditor, se.Alternative, /** @lends Wirecloud.ui.WiringEditor.prototype */ {
 
         view_name: "wiring",
 

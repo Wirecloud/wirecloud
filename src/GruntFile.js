@@ -188,7 +188,7 @@ module.exports = function (grunt) {
                 }
             },
             wirecloud: {
-                src: WirecloudFiles,
+                src: styledElementsFiles.concat(WirecloudFiles),
                 options: {
                     destination: 'dist/docs/wirecloud',
                     configure: '.jsdocrc'

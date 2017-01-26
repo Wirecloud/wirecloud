@@ -26,7 +26,11 @@
 
     "use strict";
 
-    ns.wiring = {}; // TODO: move to another file
+    // TODO: move to another file
+    /**
+     * @namespace Wirecloud.wiring
+     */
+    ns.wiring = {};
 
     // =========================================================================
     // CLASS DEFINITION

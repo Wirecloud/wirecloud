@@ -31,17 +31,19 @@
     // =========================================================================
 
     /**
-     * Create a new instance of class Connection.
-     * @extends {StyledElement}
+     * Creates a new instance of class Connection.
+     *
+     * @name Wirecloud.wiring.Connection
+     * @mixes {StyledElement.ObjectWithEvents}
      *
      * @constructor
-     * @param {Boolean} readonly
+     * @param {Wirecloud.Wiring} wiring
      *      [TODO: description]
      * @param {SourceEndpoint} source
      *      [TODO: description]
      * @param {TargetEndpoint} target
      *      [TODO: description]
-     * @param {Wiring} wiringEngine
+     * @param {Object} options
      *      [TODO: description]
      */
     ns.Connection = function Connection(wiring, source, target, options) {
@@ -93,7 +95,7 @@
     // PUBLIC MEMBERS
     // =========================================================================
 
-    utils.inherit(ns.Connection, se.ObjectWithEvents, {
+    utils.inherit(ns.Connection, se.ObjectWithEvents, /** @lends Wirecloud.wiring.Connection.prototype */ {
 
         _connect: function _connect() {
             var message = utils.gettext("The connection ('%(source)s'-'%(target)s') was established.");

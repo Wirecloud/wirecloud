@@ -103,7 +103,18 @@
     };
 
     /**
-     * Loads the Wirecloud Platform.
+     * Loads and init all the required components for running the Wirecloud
+     * Platform. Those components initialized includes the @{link
+     * Wirecloud.UserInterfaceManager}, @{link Wirecloud.HistoryManager},
+     * @{link Wirecloud.LocalCatalogue}, @{link Wirecloud#contextManager},
+     * @{link Wirecloud#currentTheme}, @{link Wirecloud#preferences} and the
+     * workspace list.
+     *
+     * @param {Object} options
+     *     - `preventDefault` use this to not monitor the progress of the Task
+     *     and to not load the initial workspace.
+     *
+     * @returns {Wirecloud.Task}
      */
     Wirecloud.init = function init(options) {
 
