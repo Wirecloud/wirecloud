@@ -32,26 +32,61 @@
     utils.inherit(OperatorPreferencesWindowMenu, Wirecloud.ui.WindowMenu);
 
     OperatorPreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var key, details;
+        var key;
+        var requestBody = [];
 
         for (key in new_values) {
             if (this._current_ioperator.preferences[key].value !== new_values[key]) {
-                this._current_ioperator.preferences[key].value = new_values[key];
+
+                // Censor preference
+                if (this._current_ioperator.preferences[key].meta.options.secure && new_values[key] !== "") {
+                    this._current_ioperator.preferences[key].value = "********";
+                } else {
+                    this._current_ioperator.preferences[key].value = new_values[key];
+                }
+
+                // Build patch
+                requestBody.push({
+                    op: "replace",
+                    path: "/operators/" + this._current_ioperator.id + "/preferences/" + key + "/value",
+                    value: new_values[key],
+                });
             } else {
                 delete new_values[key];
             }
         }
 
+        this.hide();
+
+        if (!this._current_ioperator.volatile) {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                    workspace_id: this._current_ioperator.wiring.workspace.id,
+                }), {
+                    method: 'PATCH',
+                    contentType: 'application/json-patch+json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(requestBody),
+                    onSuccess: operatorCallback.call(this, new_values)
+                }
+            );
+        }
+    };
+
+    var operatorCallback = function operatorCallback(new_values) {
         if (typeof this._current_ioperator.prefCallback === 'function') {
             try {
+                // Censor secure preferences
+                for (var varName in new_values) {
+                    if (this._current_ioperator.preferences[varName].meta.options.secure && this._current_ioperator.preferences[varName].value !== "") {
+                        new_values[varName] = "********";
+                    }
+                }
                 this._current_ioperator.prefCallback(new_values);
             } catch (error) {
-                details = this._current_ioperator.logManager.formatException(error);
+                var details = this._current_ioperator.logManager.formatException(error);
                 this._current_ioperator.logManager.log(utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
-
-        this.hide();
     };
 
     OperatorPreferencesWindowMenu.prototype.show = function show(ioperator, parentWindow) {

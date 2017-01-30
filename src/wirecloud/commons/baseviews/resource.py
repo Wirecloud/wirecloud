@@ -31,6 +31,7 @@ METHOD_MAPPING = {
     'PUT': 'update',
     'DELETE': 'delete',
     'HEAD': 'head',
+    'PATCH': 'patch',
 }
 
 

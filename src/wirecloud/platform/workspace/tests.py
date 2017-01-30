@@ -64,11 +64,32 @@ class WorkspaceTestCase(WirecloudTestCase):
 
         tab = data['tabs'][0]
         preferences = tab['iwidgets'][0]['preferences']
-        self.assertEqual(preferences['password']['value'], '')
+        self.assertEqual(preferences['password']['value'], '********')
         self.assertEqual(preferences['password']['secure'], True)
         self.assertEqual(preferences['username']['value'], 'test_username')
         properties = tab['iwidgets'][0]['properties']
         self.assertEqual(properties['prop']['value'], 'test_data')
+
+    def test_secure_preferences_censor (self):
+        workspace = Workspace.objects.get(pk=202)
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+        self.assertEqual(len(data['tabs']), 1)
+
+        tab = data['tabs'][0]
+        preferences = tab['iwidgets'][0]['preferences']
+        self.assertEqual(preferences['password']['value'], '')
+        self.assertEqual(preferences['password']['secure'], True)
+
+        tab = data['tabs'][0]
+        preferences = tab['iwidgets'][1]['preferences']
+        self.assertEqual(preferences['password']['value'], '********')
+        self.assertEqual(preferences['password']['secure'], True)
+
+        self.assertEqual(data["wiring"]["operators"]["1"]["preferences"]["pref_secure"]['secure'], True)
+        self.assertEqual(data["wiring"]["operators"]["1"]["preferences"]["pref_secure"]["value"], "")
+
+        self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]['secure'], True)
+        self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]["value"], "********")
 
     def test_create_empty_workspace(self):
 
@@ -129,7 +150,7 @@ class WorkspaceCacheTestCase(WirecloudTestCase):
 
         data = json.loads(workspace_info.get_data())
         preferences = data['tabs'][0]['iwidgets'][0]['preferences']
-        self.assertEqual(preferences['password']['value'], '')
+        self.assertEqual(preferences['password']['value'], '********')
         self.assertEqual(preferences['password']['secure'], True)
         self.assertEqual(preferences['username']['value'], 'new_username')
         properties = data['tabs'][0]['iwidgets'][0]['properties']
@@ -146,7 +167,7 @@ class WorkspaceCacheTestCase(WirecloudTestCase):
 
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         preferences = data['tabs'][0]['iwidgets'][0]['preferences']
-        self.assertEqual(preferences['password']['value'], '')
+        self.assertEqual(preferences['password']['value'], '********')
         self.assertEqual(preferences['password']['secure'], True)
         self.assertEqual(preferences['username']['value'], 'test_username')
         properties = data['tabs'][0]['iwidgets'][0]['properties']

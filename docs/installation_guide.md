@@ -35,6 +35,7 @@ step, as they will be installed throughout the documentation:**
     - pyScss 1.3.4+
     - Pygments
     - pillow
+    - jsonpatch
 
 All these dependencies are available for Linux, Mac OS and Windows, so WireCloud
 should work on any of these operating systems. However, it is better to use

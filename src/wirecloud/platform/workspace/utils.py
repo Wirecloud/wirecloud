@@ -282,12 +282,19 @@ class VariableValueCacheManager():
     def get_variable_data(self, iwidget, var_name):
         values = self.get_variable_values()
         entry = values['by_varname'][iwidget.id][var_name]
+
+        # If secure and has value, censor it
+        if entry["secure"] and entry["value"] != "":
+            value = "********"
+        else:
+            value = entry["value"]
+
         return {
             'name': var_name,
             'secure': entry['secure'],
             'readonly': entry['readonly'],
             'hidden': entry['hidden'],
-            'value': '' if entry['secure'] else entry['value']
+            'value': value,
         }
 
 
@@ -473,7 +480,8 @@ def _get_global_workspace_data(workspaceDAO, user):
                 preference['value'] = operator_forced_values[preference_name]['value']
             elif preference.get('value') is None and vardef is not None:
                 preference['value'] = parse_value_from_text(vardef, vardef['default'])
-
+            if vardef is not None and vardef["secure"]:
+                preference['value'] = "" if preference.get('value') is None or preference.get('value') == "" else "********"
     return json.dumps(data_ret, cls=LazyEncoder)
 
 

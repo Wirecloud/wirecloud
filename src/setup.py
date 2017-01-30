@@ -150,6 +150,7 @@ setup(
         'pyScss>=1.3.4,<2.0',
         'Pygments',
         'pillow',
+        'jsonpatch',
     ),
     extras_require={
         ":python_version < '3.2'": ('futures>=2.1.3',),
