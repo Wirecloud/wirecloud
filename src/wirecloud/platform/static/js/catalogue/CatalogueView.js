@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -156,25 +156,17 @@
 
     CatalogueView.prototype.ui_commands.install = function install(resource, catalogue_source) {
         return function () {
+            Wirecloud.UserInterfaceManager.monitorTask(
+                this.catalogue.addComponent({url: resource.description_url}).then(
+                    () => {
+                        this.refresh_search_results();
 
-            var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing component into local repository"), 1);
-            var upload_monitor = monitor.nextSubtask(utils.gettext('Uploading component'));
-
-            this.catalogue.addResourceFromURL(resource.description_url, {
-                onSuccess: function () {
-                    upload_monitor.updateTaskProgress(100, utils.gettext('Component installed successfully'));
-
-                    this.refresh_search_results();
-
-                    catalogue_source.home();
-                    catalogue_source.refresh_search_results();
-                }.bind(this),
-                onFailure: function (msg) {
-                    upload_monitor.updateTaskProgress(100, utils.gettext('Error installing component'));
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                    Wirecloud.GlobalLogManager.log(msg);
-                }
-            });
+                        catalogue_source.home();
+                        catalogue_source.refresh_search_results();
+                    },
+                    logerror
+                )
+            );
         }.bind(this);
     };
 
@@ -270,6 +262,11 @@
     var replace_nav_history = function replace_nav_history() {
         var new_status = this.mainview.buildStateData();
         Wirecloud.HistoryManager.replaceState(new_status);
+    };
+
+    var logerror = function logerror(msg) {
+        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+        Wirecloud.GlobalLogManager.log(msg);
     };
 
     window.CatalogueView = CatalogueView;

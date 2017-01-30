@@ -1,5 +1,5 @@
 /*
- *     Copyright 2013-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2013-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -87,36 +87,18 @@
         });
         data.resource = this.resource.uri;
 
-        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Publishing resource"), 1);
-        var publish_task = monitor.nextSubtask(utils.gettext("Sending request to the server"));
-
-        Wirecloud.io.makeRequest(url, {
+        return Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
-            postBody: JSON.stringify(data),
-            onSuccess: function () {
-                publish_task.finish(utils.gettext('Resource published successfully'));
-            },
-            onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error publishing resource: %(errorMsg)s."), response, null);
-                var dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
-                publish_task.fail(msg);
-
-                // TODO
-                dialog.msgElement.textContent = msg;
-                var response_data = JSON.parse(response.responseText);
-                if ('details' in response_data) {
-                    var expander = new StyledElements.Expander({title: utils.gettext('Details')});
-                    expander.insertInto(dialog.msgElement);
-                    for (var key in response_data.details) {
-                        expander.appendChild(new StyledElements.Fragment('<p><b>' + key + '</b>' + response_data.details[key] + '</p>'));
-                    }
-                }
-                // END TODO
-
-                dialog.show();
+            postBody: JSON.stringify(data)
+        }).then((response) => {
+            if ([204, 401, 403, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if ([401, 403, 500].indexOf(response.status) !== -1) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
             }
+            return Promise.resolve();
         });
     };
 

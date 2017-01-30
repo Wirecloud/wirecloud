@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -46,16 +46,13 @@
             market_id = this.catalogue.market_name;
         }
 
-        Wirecloud.LocalCatalogue.addResourceFromURL(resource.url, {
+        return Wirecloud.LocalCatalogue.addComponent({
+            url: resource.url,
             forceCreate: true,
-            monitor: options.monitor,
             market_info: {
                 name: market_id,
                 store: this.store
-            },
-            onSuccess: options.onSuccess,
-            onFailure: options.onFailure,
-            onComplete: options.onComplete
+            }
         });
     };
 
@@ -130,7 +127,7 @@
             'installed': {get: installed}
         });
 
-        if (this.open === true || ['purchased', 'rated'].indexOf(this.state) != -1) {
+        if (this.open === true || ['purchased', 'rated'].indexOf(this.state) !== -1) {
             for (var i = 0; i < this.resources.length; i += 1) {
                 var resource = this.resources[i];
                 resource.offering = this;
@@ -144,8 +141,9 @@
                             vendor: parts[0],
                             name: parts[1],
                             title: resource.name,
+                            type: resource.type,
                             group_id: parts[0] + '/' + parts[1],
-                            version: new Wirecloud.Version(parts[2], 'catalogue')
+                            version: new Wirecloud.Version(parts[2])
                         };
                         resource.install = installResource.bind(this, resource);
                         this.wirecloudresources.push(resource);
@@ -162,47 +160,23 @@
     };
 
     Offering.prototype.install = function install(options) {
-        var i, subtask, onComplete = null, onSuccess, onFailure, count = this.wirecloudresources.length, msg;
-
         if (options == null) {
             options = {};
         }
 
-        if (typeof options.onComplete === 'function') {
-            onComplete = function () {
-                if (--count === 0) {
-                    try {
-                        options.onComplete(options);
-                    } catch (e) {}
-                }
-            };
-        }
-
-        for (i = 0; i < this.wirecloudresources.length; i++) {
-            if (options.monitor) {
-                msg = utils.gettext('Installing "%(resource_name)s" from the offering');
-                subtask = options.monitor.nextSubtask(utils.interpolate(msg, {resource_name: this.wirecloudresources[i].name}, true));
-            }
-
-            if (typeof options.onResourceSuccess === 'function') {
-                onSuccess = options.onResourceSuccess.bind(null, this.wirecloudresources[i]);
-            }
-
-            if (typeof options.onResourceFailure === 'function') {
-                onFailure = options.onResourceFailure.bind(null, this.wirecloudresources[i]);
-            }
-
-            this.wirecloudresources[i].install({
-                monitor: subtask,
-                onSuccess: onSuccess,
-                onFailure: onFailure,
-                onComplete: onComplete
+        var title = utils.gettext("Importing offering components into local repository");
+        if (this.wirecloudresources.length > 0) {
+            var subtasks = this.wirecloudresources.map((component) => {
+                var subtask = component.install();
+                subtask.then(options.onResourceSuccess, options.onResourceFailure);
+                return subtask;
             });
+
+            return new Wirecloud.Task(title, subtasks);
+        } else {
+            return new Wirecloud.Task(title, (resolve) => {resolve();});
         }
 
-        if (count === 0) {
-            options.onComplete(options);
-        }
     };
 
     Wirecloud.FiWare.Offering = Offering;

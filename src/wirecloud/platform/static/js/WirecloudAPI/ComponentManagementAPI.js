@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -36,16 +36,11 @@
      *
      * @param {String} componentURL
      *      The URL where the component is located.
+     *
+     * @returns {Wirecloud.Task}
      */
-    var install = function install(componentURL, market_info) {
-        return new Promise(function (fulfill, reject) {
-            var options =  {
-                market_info: market_info,
-                onSuccess: function () { fulfill(true); },
-                onFailure: function () { reject(false); },
-            };
-            Wirecloud.LocalCatalogue.addResourceFromURL(componentURL, options);
-        });
+    var install = function install(options) {
+        return Wirecloud.LocalCatalogue.addComponent(options);
     };
 
     /**

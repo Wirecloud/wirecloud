@@ -99,18 +99,6 @@
         }.bind(this));
     };
 
-    var process_upload_response = function process_upload_response(response_data) {
-        return new Promise(function (resolve, reject) {
-            var components = [response_data.resource_details].concat(response_data.extra_resources);
-            components.forEach(function (component) {
-                var id = [component.vendor, component.name, component.version].join('/');
-                if (!this.resourceExistsId(id)) {
-                    this._includeResource.call(this, component);
-                }
-            }, this);
-        }.bind(this));
-    };
-
     // =========================================================================
     // CLASS DEFINITION
     // =========================================================================
@@ -210,40 +198,24 @@
             .then(purge_component_info.bind(this, resource));
     };
 
-    LocalCatalogue.addPackagedResource = function addPackagedResource(data, options) {
-        var task = Wirecloud.WirecloudCatalogue.prototype.addPackagedResource.call(this, data, options);
-        task.then(process_upload_response.bind(this));
-        return task;
-    };
-
-    LocalCatalogue.addResourceFromURL = function addResourceFromURL(url, options) {
-        if (typeof options !== 'object') {
-            options = {};
-        }
-
-        Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
-            method: 'POST',
-            contentType: 'application/json',
-            requestHeaders: {'Accept': 'application/json'},
-            postBody: JSON.stringify({
-                url: url,
-                force_create: !!options.forceCreate,
-                install_embedded_resources: true,
-                market_endpoint: options.market_info
-            }),
-            onSuccess: function (response) {
-                var response_data;
-
-                response_data = JSON.parse(response.responseText);
-                process_upload_response.call(this, response_data);
-            }.bind(this),
-            onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding resource from URL: %(errorMsg)s."), response);
-            },
-            onComplete: function () {
-                utils.callCallback(options.onComplete);
+    LocalCatalogue.addComponent = function addComponent(options) {
+        var task = Wirecloud.WirecloudCatalogue.prototype.addComponent.call(this, options);
+        task.then((response_data) => {
+            var components;
+            if ('resource_details' in response_data) {
+                components = [response_data.resource_details].concat(response_data.extra_resources);
+            } else {
+                components = [response_data];
             }
+            components.forEach((component) => {
+                var id = [component.vendor, component.name, component.version].join('/');
+                if (!this.resourceExistsId(id)) {
+                    this._includeResource.call(this, component);
+                }
+            });
+            return Promise.resolve(response_data);
         });
+        return task;
     };
 
     LocalCatalogue.getAvailableResourcesByType = function getAvailableResourcesByType(type) {

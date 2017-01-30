@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,44 +33,39 @@
     };
 
     var onInstallClick = function onInstallClick(offering, catalogue_view) {
-
-        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing offering components into local repository"), 0);
-
-        offering.install({
-            monitor: monitor,
-            onResourceSuccess: function () {
-                var local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
-                local_catalogue_view.viewsByName.search.mark_outdated();
-            },
-            onComplete: function () {
+        Wirecloud.UserInterfaceManager.monitorTask(
+            offering.install({
+                onResourceSuccess: function () {
+                    var local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
+                    local_catalogue_view.viewsByName.search.mark_outdated();
+                }
+            }).then(() => {
                 this.update_buttons();
-            }.bind(this)
-        });
+            }, (error) => {
+                this.update_buttons();
+            })
+        );
     };
 
     var onUninstallClick = function onUninstallClick(offering, catalogue_view) {
-        var local_catalogue_view, monitor, i, count, callbacks;
+        var local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
 
-        local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
-        monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Uninstalling offering resources"), 0);
+        var subtasks = offering.wirecloudresources.map((component) => {
+            return local_catalogue_view.catalogue.uninstallResource(component.wirecloud);
+        });
 
-        count = offering.wirecloudresources.length;
-        callbacks = {
-            monitor: monitor,
-            onSuccess: function () {
+        Wirecloud.UserInterfaceManager.monitorTask(
+            new Wirecloud.Task(
+                utils.gettext("Uninstalling offering resources"),
+                subtasks
+            ).then(() => {
                 local_catalogue_view.viewsByName.search.mark_outdated();
                 catalogue_view.viewsByName.search.mark_outdated();
-            },
-            onComplete: function () {
-                if (--count === 0) {
-                    this.update_buttons();
-                }
-            }.bind(this)
-        };
-
-        for (i = 0; i < offering.wirecloudresources.length; i++) {
-            local_catalogue_view.catalogue.uninstallResource(offering.wirecloudresources[i].wirecloud, callbacks);
-        }
+                this.update_buttons();
+            }, (error) => {
+                this.update_buttons();
+            })
+        );
     };
 
     var is_single_payment = function is_single_payment(offering) {
@@ -205,9 +200,7 @@
     };
 
     OfferingEntry.prototype.update_mainbuttons = function update_mainbuttons() {
-        var i, button, local_catalogue_view;
-
-        local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
+        var i, button;
 
         for (i = 0; i < this.mainbuttons.length; i++) {
             button = this.mainbuttons[i];

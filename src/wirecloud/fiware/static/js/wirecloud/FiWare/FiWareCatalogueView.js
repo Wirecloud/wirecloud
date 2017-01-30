@@ -54,34 +54,31 @@
 
     var onBuySuccess = function onBuySuccess(offering, offering_entry) {
 
-        var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing offering components into local repository"), 2);
-
-        this.catalogue.get_offering_info(offering.store, offering.id, {
-            monitor: monitor,
-            onSuccess: function (refreshed_offering) {
+        Wirecloud.UserInterfaceManager.monitorTask(
+            this.catalogue.get_offering_info(offering.store, offering.id).then((refreshed_offering) => {
                 refreshed_offering.install({
-                    monitor: monitor,
-                    onResourceSuccess: function (resource) {
+                    onResourceSuccess: () => {
                         Wirecloud.UserInterfaceManager.views.myresources.viewsByName.search.mark_outdated();
                         this.viewsByName.search.mark_outdated();
-                    }.bind(this),
-                    onFailure: function (msg) {
-                        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                    },
-                    onComplete: function () {
-                        if (this.alternatives.getCurrentAlternative() === this.viewsByName.details) {
-                            this.createUserCommand('showDetails', refreshed_offering)();
-                        } else {
-                            this.refresh_search_results();
-                            if (offering_entry) {
-                                offering_entry.update_buttons();
-                            }
+                    }
+                }).then(() => {
+                    // TODO do this also on error
+                    if (this.alternatives.getCurrentAlternative() === this.viewsByName.details) {
+                        this.createUserCommand('showDetails', refreshed_offering)();
+                    } else {
+                        this.refresh_search_results();
+                        if (offering_entry) {
+                            offering_entry.update_buttons();
                         }
-                    }.bind(this)
+                    }
+                }, (msg) => {
+                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                 });
-            }.bind(this),
-            onFailure: this.refresh_search_results.bind(this)
-        });
+            },
+            this.refresh_search_results.bind(this)
+            )
+        );
+
     };
 
     var FiWareCatalogueView = function (id, options) {
@@ -154,7 +151,7 @@
             };
 
             currentOffering = this.viewsByName.details.currentEntry;
-            if (currentOffering != null && currentOffering.store == offering_info.store && currentOffering.id == offering_info.id) {
+            if (currentOffering != null && currentOffering.store === offering_info.store && currentOffering.id === offering_info.id) {
                 currentOffering = currentOffering;
             }
             this.createUserCommand('showDetails', offering_info, {history: "replace", tab: state.tab})();
@@ -231,7 +228,7 @@
             onSuccess: this.addStoreInfo.bind(this),
             onFailure: this._getStoresErrorCallback.bind(this),
             onComplete: function () {
-                for (var i = 0; i < this.callbacks.length; i+= 1) {
+                for (var i = 0; i < this.callbacks.length; i++) {
                     try {
                         this.callbacks[i]();
                     } catch (e) {}
@@ -288,8 +285,8 @@
         return function () {
             var onSuccess = function onSuccess(offering) {
                 this.viewsByName.details.paint(offering, {
-                        tab: options.tab
-                    });
+                    tab: options.tab
+                });
                 this.viewsByName.details.repaint();
             };
             var onComplete = function onComplete() {
@@ -306,14 +303,15 @@
             this.viewsByName.details.disable();
             this.changeCurrentView('details', {
                 onComplete: function () {
-
                     if (offering instanceof Wirecloud.FiWare.Offering) {
                         onSuccess.call(this, offering);
                         onComplete.call(this);
                     } else {
-                        this.catalogue.get_offering_info(offering.store, offering.id, {
-                            onSuccess: onSuccess.bind(this),
-                            onComplete: onComplete.bind(this)
+                        this.catalogue.get_offering_info(offering.store, offering.id).then((refreshed_offering) => {
+                            onSuccess.call(this, refreshed_offering);
+                            onComplete.call(this);
+                        }, (error) => {
+                            onComplete.call(this);
                         });
                     }
                 }.bind(this)

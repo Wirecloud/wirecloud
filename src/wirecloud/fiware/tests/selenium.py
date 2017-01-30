@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -295,20 +295,15 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
                 resource.advanced_operation('Publish')
 
-                window_menu = self.wait_element_visible('.window_menu.publish_resource')
-                window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
-                self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-                self.wait_wirecloud_ready()
-
-                window_menus = self.driver.find_elements_by_css_selector('.window_menu')
-                self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
+                dialog = FormModalTester(self, self.wait_element_visible(".publish_resource"))
+                dialog.find_element('[value="user_with_markets/fiware"]').click()
+                dialog.accept().wait_close()
 
     def _buy_offering(self):
         bought_response_text = read_response_file('responses', 'store2', 'service2_bought.json')
         self.network._servers['http']['store2.example.com'].add_response('GET', '/mystore/api/offering/offerings/service2.rdf', {'content': bought_response_text})
         dialog = FormModalTester(self, self.wait_element_visible(".wc-buy-modal"))
-        dialog.accept()
-        WebDriverWait(self.driver, 10).until(EC.staleness_of(dialog.element))
+        dialog.accept().wait_close(timeout=10)
         self.wait_wirecloud_ready()
 
     def check_store_buy_offering(self, from_details):

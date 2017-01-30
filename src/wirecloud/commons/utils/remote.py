@@ -373,6 +373,7 @@ class ModalTester(WebElementTester):
 
     def wait_close(self, timeout=3):
         WebDriverWait(self.testcase.driver, timeout=timeout).until(EC.staleness_of(self.element))
+        time.sleep(0.1)
         return self
 
 

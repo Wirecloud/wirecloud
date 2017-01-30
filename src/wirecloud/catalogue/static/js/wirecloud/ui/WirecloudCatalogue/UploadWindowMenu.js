@@ -46,7 +46,8 @@
         var task = new Wirecloud.Task(
             utils.gettext("Uploading packaged components"),
             entries.map(function (entry) {
-                var task = this.catalogue.addPackagedResource(entry.file, {
+                var task = this.catalogue.addComponent({
+                    file: entry.file,
                     force_create: true
                 });
                 task.then(

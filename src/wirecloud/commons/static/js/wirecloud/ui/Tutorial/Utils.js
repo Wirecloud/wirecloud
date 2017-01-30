@@ -148,8 +148,12 @@
             uploadComponent: function uploadComponent(id) {
                 return function (autoAction, element) {
                     if (!Wirecloud.LocalCatalogue.resourceExistsId(id)) {
-                        Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/' + id.split('/').join('_') + '.wgt'))
-                            .then(autoAction.nextHandler, autoAction.errorHandler);
+                        Wirecloud.LocalCatalogue.addComponent({
+                            url: build_static_url('tutorial-data/' + id.split('/').join('_') + '.wgt')
+                        }).then(
+                            autoAction.nextHandler,
+                            autoAction.errorHandler
+                        );
                     } else {
                         autoAction.nextHandler();
                     }

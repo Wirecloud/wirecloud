@@ -195,13 +195,12 @@
     MyResourcesView.prototype.ui_commands.install = function install(resource, catalogue_source) {
         return function () {
             Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.addResourceFromURL(resource.description_url).then(
-                    function () {
+                this.catalogue.addComponent({url: resource.description_url}).then(() => {
                         this.refresh_search_results();
 
                         catalogue_source.home();
                         catalogue_source.refresh_search_results();
-                    }.bind(this),
+                    },
                     logerror
                 )
             );

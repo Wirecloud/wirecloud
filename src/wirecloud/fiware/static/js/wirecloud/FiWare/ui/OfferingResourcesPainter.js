@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,40 +30,31 @@
     };
 
     var onInstallClick = function onInstallClick(resource, catalogue, offering_entry, button) {
-        var local_catalogue_view, monitor, install_task;
+        var local_catalogue_view;
 
         button.disable();
 
         local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
-        monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Importing component into local repository"), 1);
-        install_task = monitor.nextSubtask(utils.gettext('Uploading component'));
 
-        resource.install({
-            onSuccess: function () {
-                install_task.finish(utils.gettext('Component installed successfully'));
-
+        Wirecloud.UserInterfaceManager.monitorTask(
+            resource.install().then(() => {
                 offering_entry.update_buttons();
 
                 catalogue.viewsByName.search.mark_outdated();
                 local_catalogue_view.viewsByName.search.mark_outdated();
-            },
-            onFailure: function (msg) {
-                install_task.fail(msg);
+                button.enable();
+            }, (msg) => {
                 Wirecloud.GlobalLogManager.log(msg);
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-            },
-            onComplete: function () {
                 button.enable();
-            }
-        });
+            })
+        );
     };
 
     var onUninstallClick = function onUninstallClick(resource, catalogue, offering_entry, button) {
-        var local_catalogue_view, monitor;
-
         button.disable();
 
-        local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
+        var local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
 
         local_catalogue_view.catalogue.uninstallResource(resource.wirecloud, {
             onSuccess: function () {
@@ -85,7 +76,8 @@
     OfferingResourcePainter.prototype.paint = function paint(offering, dom_element, catalogue, offering_entry) {
         var i, resource, btn_group, button, details_button, resource_entry;
 
-        offering_entry.resources = new StyledElements.ModelTable([
+        offering_entry.resources = new StyledElements.ModelTable(
+            [
                 {
                     "field": ["resource", "name"],
                     "label": utils.gettext('Name'),

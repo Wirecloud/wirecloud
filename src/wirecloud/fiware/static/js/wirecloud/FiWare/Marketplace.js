@@ -95,7 +95,7 @@
 
             var response_data = JSON.parse(response.responseText);
             var offerings = response_data.resources.map((offering) => {
-                return new Wirecloud.FiWare.Offering(offering, this.catalogue);
+                return new Wirecloud.FiWare.Offering(offering, this);
             });
 
             var data = {
@@ -108,42 +108,18 @@
         });
     };
 
-    Marketplace.prototype.get_offering_info = function get_offering_info(store, offering_name, options) {
-        var subtask, url;
-
-        if (options == null) {
-            options = {};
-        }
-
-        if (options.monitor) {
-            subtask = options.monitor.nextSubtask(utils.gettext('Retrieving offering info'));
-        }
-
-        url = Wirecloud.URLs.FIWARE_OFFERING_ENTRY.evaluate({market_user: this.market_user, market_name: this.market_name, store: store, offering_id: offering_name});
-        Wirecloud.io.makeRequest(url, {
+    /**
+     *
+     */
+    Marketplace.prototype.get_offering_info = function get_offering_info(store, offering_name) {
+        var url = Wirecloud.URLs.FIWARE_OFFERING_ENTRY.evaluate({market_user: this.market_user, market_name: this.market_name, store: store, offering_id: offering_name});
+        return Wirecloud.io.makeRequest(url, {
             method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: function (response) {
-                var offering;
-                if (subtask) {
-                    subtask.finish();
-                }
-                if (typeof options.onSuccess === 'function') {
-                    offering = new Wirecloud.FiWare.Offering(JSON.parse(response.responseText), this);
-                    Wirecloud.Utils.callCallback(options.onSuccess, offering);
-                }
-            }.bind(this),
-            onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error retrieving offering info: %(errorMsg)s."), response);
-                if (subtask) {
-                    subtask.fail(msg);
-                }
-                Wirecloud.Utils.callCallback(options.onFailure, msg);
-            },
-            onComplete: function (response) {
-                Wirecloud.Utils.callCallback(options.onComplete);
-            }
-        });
+            requestHeaders: {'Accept': 'application/json'}
+        }).then((response) => {
+            var offering = new Wirecloud.FiWare.Offering(JSON.parse(response.responseText), this);
+            return Promise.resolve(offering);
+        }).toTask(utils.gettext('Retrieving offering info'));
     };
 
     Marketplace.prototype.is_purchased = function is_purchased(offering) {

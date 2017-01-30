@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,7 +30,7 @@
         var extra_context;
 
         this.mainview = options.catalogue;
-        options['class'] = 'details_interface loading';
+        options.class = 'details_interface loading';
         StyledElements.Alternative.call(this, id, options);
 
         extra_context = function (resource) {
@@ -39,7 +39,7 @@
                     var details, painter, main_description,
                         legal_description, pricing_description,
                         sla_description, offering_resource_description;
- 
+
                     details = new StyledElements.Notebook();
                     details.addEventListener('change', function (notebook, oldTab, newTab) {
                         var new_status = Wirecloud.HistoryManager.getCurrentState();

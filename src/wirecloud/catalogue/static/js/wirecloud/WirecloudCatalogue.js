@@ -152,90 +152,93 @@
         return true;
     };
 
-    WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(file, options) {
-        var url, parameters, requestHeaders;
+    /**
+     * Installs a component into this catalogue.
+     *
+     * @param {Object} options
+     *
+     * @returns {Wirecloud.Task}
+     */
+    WirecloudCatalogue.prototype.addComponent = function addComponent(options) {
+        var url, parameters, requestHeaders, contentType, body;
+
+        if (typeof options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        options = utils.merge({
+            install_embedded_resources: true
+        }, options);
+
+        if (this.name !== 'local' && options.market_endpoint !== null) {
+            throw new TypeError(utils.gettext("market_endpoint option can only be used on local catalogues"));
+        }
 
         requestHeaders = {
             'Accept': 'application/json'
         };
-
-        if (typeof options !== 'object') {
-            options = {};
-        }
 
         if (this.name === 'local') {
             url = Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION;
         } else {
             url = this.RESOURCE_COLLECTION;
 
-
             if (this.accesstoken != null) {
                 requestHeaders.Authorization = 'Bearer ' + this.accesstoken;
             }
         }
 
-        parameters = {
-            'install_embedded_resources': 'true'
-        };
+        if (options.file != null) {
+            var task_title = utils.interpolate(
+                utils.gettext('Uploading packaged component %(filename)s'),
+                {
+                    filename: options.file.name
+                }
+            );
+            contentType = 'application/octet-stream';
+            body = options.file;
 
-        if (options.force_create === true) {
-            parameters.force_create = "true";
+            parameters = {};
+
+            if (options.install_embedded_resources === true) {
+                parameters.install_embedded_resources = "true";
+            }
+
+            if (options.force_create === true) {
+                parameters.force_create = "true";
+            }
+
+        } else {
+            var task_title = utils.interpolate(
+                utils.gettext('Installing component from %(url)s'),
+                {
+                    url: options.url
+                }
+            );
+            contentType = 'application/json';
+            body = JSON.stringify({
+                url: options.url,
+                force_create: !!options.forceCreate,
+                install_embedded_resources: !!options.install_embedded_resources,
+                market_endpoint: options.market_endpoint
+            });
         }
 
-        var task_title = utils.interpolate(
-            utils.gettext('Uploading packaged component %(filename)s'),
-            {
-                filename: file.name
-            }
-        );
         return Wirecloud.io.makeRequest(url, {
             method: 'POST',
-            contentType: 'application/octet-stream',
+            contentType: contentType,
             requestHeaders: requestHeaders,
-            postBody: file,
+            postBody: body,
             parameters: parameters
-        }).then(function (response) {
-            return new Promise(function (resolve, reject) {
-                if ([201, 403, 409, 500].indexOf(response.status) === -1) {
-                    reject(utils.gettext("Unexpected response from server"));
-                    return;
-                } else if (response.status !== 201) {
-                    reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
-                    return;
-                }
-                var response_data = JSON.parse(response.responseText);
-                resolve(response_data);
-            });
-        }).toTask(task_title);
-    };
-
-    WirecloudCatalogue.prototype.addResourceFromURL = function addResourceFromURL(url, options) {
-        if (typeof options !== 'object') {
-            options = {};
-        }
-
-        Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
-            method: 'POST',
-            requestHeaders: {'Accept': 'application/json'},
-            parameters: {'url': url, force_create: !!options.forceCreate},
-            onSuccess: function () {
-                if (typeof options.onSuccess === 'function') {
-                    options.onSuccess();
-                }
-            }.bind(this),
-            onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error adding resource from URL: %(errorMsg)s."), transport);
-
-                if (typeof options.onFailure === 'function') {
-                    options.onFailure(msg);
-                }
-            },
-            onComplete: function () {
-                if (typeof options.onComplete === 'function') {
-                    options.onComplete();
-                }
+        }).then((response) => {
+            if ([201, 403, 409, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if (response.status !== 201) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
             }
-        });
+            var response_data = JSON.parse(response.responseText);
+            return Promise.resolve(response_data);
+        }).toTask(task_title);
     };
 
     /**
