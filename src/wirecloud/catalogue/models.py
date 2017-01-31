@@ -32,6 +32,7 @@ from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every, Or, Term
 from whoosh.sorting import FieldFacet, FunctionFacet
 
+from wirecloud.commons.fields import JSONField
 from wirecloud.commons.searchers import get_search_engine
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
@@ -65,7 +66,7 @@ class CatalogueResource(models.Model):
 
     popularity = models.DecimalField(_('popularity'), default=0, max_digits=2, decimal_places=1)
 
-    json_description = models.TextField(_('JSON description'))
+    json_description = JSONField(_('JSON description'))
 
     @property
     def local_uri_part(self):

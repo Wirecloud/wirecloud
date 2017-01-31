@@ -80,7 +80,7 @@ class WiringEntry(Resource):
                 old_preference = old_operator['preferences'][preference_name]
                 new_preference = operator['preferences'][preference_name]
 
-                # Check if the preference is
+                # Check if the preference is secure
                 preference_secure = False
                 if operator_preferences:
                     for pref in operator_preferences:
@@ -97,6 +97,7 @@ class WiringEntry(Resource):
 
                 if preference_secure and not can_update_secure:
                     new_preference["value"] = old_preference["value"]
+
         return True
 
     @authentication_required
@@ -164,7 +165,7 @@ class OperatorEntry(Resource):
         key = get_operator_cache_key(operator, get_current_domain(request), mode)
         cached_response = cache.get(key)
         if cached_response is None:
-            options = json.loads(operator.json_description)
+            options = operator.json_description
             js_files = options['js_files']
 
             base_url = get_absolute_reverse_url('wirecloud.showcase_media', kwargs={
