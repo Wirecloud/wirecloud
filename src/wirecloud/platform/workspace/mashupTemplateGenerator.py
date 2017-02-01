@@ -259,7 +259,7 @@ def build_json_template_from_workspace(options, workspace, user):
 
         vendor, name, version = operator['name'].split('/')
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-        operator_info = json.loads(resource.json_description)
+        operator_info = resource.json_description
         operator_params = parametrization['ioperators'].get(id_, {})
         for pref_index, preference in enumerate(operator_info['preferences']):
 

@@ -279,7 +279,7 @@ class ResourceDocumentationEntry(Resource):
     def read(self, request, vendor, name, version):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
-        resource_info = json.loads(resource.json_description)
+        resource_info = resource.json_description
         if resource_info['doc'] == '':
             raise Http404
 
