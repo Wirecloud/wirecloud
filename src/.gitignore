@@ -16,3 +16,5 @@
 .coverage
 .noseids
 nosetests.xml
+*.swp
+*.swo
