@@ -11,7 +11,9 @@ Wirecloud = {
         }
     },
     location: {
-        domain: "https://wirecloud.example.com"
+        domain: "https://wirecloud.example.com",
+        protocol: "https",
+        host: "wirecloud.example.com"
     },
     ui: {},
     URLs: {
@@ -20,7 +22,9 @@ Wirecloud = {
         PLATFORM_PREFERENCES: "/api/preferences/platform",
         PROXY: new StyledElements.Utils.Template("/cdp/%(protocol)s/%(domain)s%(path)s"),
         ROOT_URL: '/',
+        TAB_COLLECTION: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/tabs"),
         THEME_ENTRY: new StyledElements.Utils.Template("/api/theme/%(name)s"),
+        WIRING_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/wiring"),
         WORKSPACE_COLLECTION: "/api/workspaces",
         WORKSPACE_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s"),
         WORKSPACE_MERGE: new StyledElements.Utils.Template("/api/workspace/%(to_ws_id)s/merge"),

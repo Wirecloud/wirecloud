@@ -93,14 +93,14 @@
              * @memberOf Wirecloud.Workspace#
              * @type {Wirecloud.WorkspaceTab}
              */
-            initialTab: {
+            initialtab: {
                 get: function get() {return find_initial_tab.call(this);}
             },
             /**
              * @memberOf Wirecloud.Workspace#
              * @type {String}
              */
-            longDescription: {
+            longdescription: {
                 get: function () {
                     return this.contextManager.get('longdescription');
                 }
@@ -142,18 +142,14 @@
              * @type {Array.<Wirecloud.WorkspaceTab>}
              */
             tabs: {
-                get: function () {
-                    return privates.get(this).tabs.slice(0);
-                }
+                get: on_tabs_get
             },
             /**
              * @memberOf Wirecloud.Workspace#
              * @type {Object.<String, Wirecloud.WorkspaceTab>}
              */
             tabsById: {
-                get: function () {
-                    return get_tabs_by_id.call(this);
-                }
+                get: on_tabs_by_id_get
             },
             /**
              * @memberOf Wirecloud.Workspace#
@@ -174,27 +170,29 @@
              * @type {String}
              */
             url: {
-                get: function get() {return get_url.call(this);}
+                get: on_url_get
             },
             /**
              * @memberOf Wirecloud.Workspace#
              * @type {Array.<Wirecloud.Widget>}
              */
             widgets: {
-                get: function get() {return get_widgets.call(this);}
+                get: on_widgets_get
             },
             /**
              * @memberOf Wirecloud.Workspace#
              * @type {Object.<String, Wirecloud.Widget>}
              */
             widgetsById: {
-                get: function get() {return get_widgets_by_id.call(this);}
+                get: on_widgets_by_id_get
             }
         });
 
         this.contextManager.modify({
             name: data.name,
-            owner: data.owner
+            owner: data.owner,
+            description: data.description,
+            longdescription: data.longdescription
         });
 
         /* FIXME */
@@ -212,14 +210,10 @@
 
         Object.defineProperties(this, {
             operators: {
-                get: function () {
-                    return this.wiring.operators;
-                }
+                get: on_operators_get
             },
             operatorsById: {
-                get: function () {
-                    return this.wiring.operatorsById;
-                }
+                get: on_operators_by_id_get
             },
             wiring: {
                 value: new Wirecloud.Wiring(this, data.wiring)
@@ -241,32 +235,36 @@
     utils.inherit(ns.Workspace, se.ObjectWithEvents, /** @lends Wirecloud.Workspace.prototype */{
 
         /**
+         * Creates a new tab inside this workspace
+         *
+         * @param {Object} [options]
+         *
+         * @returns {Wirecloud.Task}
          */
         createTab: function createTab() {
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.TAB_COLLECTION.evaluate({
-                    workspace_id: this.id
-                });
+            var url = Wirecloud.URLs.TAB_COLLECTION.evaluate({
+                workspace_id: this.id
+            });
 
-                var content = {
-                    name: create_tabtitle.call(this)
-                };
+            var content = {
+                name: create_tabtitle.call(this)
+            };
 
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(content),
-                    onComplete: function (response) {
-                        if (response.status === 201) {
-                            var tab = _create_tab.call(this, JSON.parse(response.transport.responseText));
-                            resolve(tab);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
-            }.bind(this));
+            return Wirecloud.io.makeRequest(url, {
+                method: 'POST',
+                requestHeaders: {'Accept': 'application/json'},
+                contentType: 'application/json',
+                postBody: JSON.stringify(content)
+            }).then((response) => {
+                if ([201, 401, 403, 409, 422, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if (response.status !== 201) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
+
+                var tab = _create_tab.call(this, JSON.parse(response.responseText));
+                return Promise.resolve(tab);
+            });
         },
 
         /**
@@ -316,10 +314,6 @@
                 return this.removable;
             case "merge_workspaces":
                 return is_allowed('add_remove_iwidgets') || is_allowed('merge_workspaces');
-            case "catalogue_view_widgets":
-                return is_allowed('add_remove_iwidgets');
-            case "catalogue_view_mashups":
-                return this.isAllowed('add_remove_workspaces') || is_allowed('merge_workspaces');
             case "update_preferences":
                 return this.removable && is_allowed('change_workspace_preferences');
             case "rename":
@@ -333,40 +327,11 @@
 
         /**
          * @param {Object} options
+         *
+         * @returns {Wirecloud.Task}
          */
         merge: function merge(options) {
-            if (options == null || typeof options !== "object") {
-                throw new TypeError("options must be an object");
-            }
-
-            if (!("mashup" in options) && !("workspace" in options)) {
-                throw new TypeError('one of the following options must be provided: workspace or mashup');
-            } else if ("mashup" in options && "workspace" in options) {
-                throw new TypeError('workspace and mashup options cannot be used at the same time');
-            }
-
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({
-                    to_ws_id: this.id
-                });
-
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    contentType: 'application/json',
-                    postBody: JSON.stringify(options),
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            resolve(this);
-                            /*
-                                Wirecloud.changeActiveWorkspace(this);
-                             */
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
-            }.bind(this));
+            return Wirecloud.mergeWorkspace(this, options);
         },
 
         publish: function publish(data) {
@@ -474,7 +439,11 @@
 
     var privates = new WeakMap();
 
-    var get_tabs_by_id = function get_tabs_by_id() {
+    var on_tabs_get = function on_tabs_get() {
+        return privates.get(this).tabs.slice(0);
+    };
+
+    var on_tabs_by_id_get = function on_tabs_by_id_get() {
         var tabs = {};
 
         privates.get(this).tabs.forEach(function (tab) {
@@ -548,23 +517,35 @@
         return null;
     };
 
-    var get_url = function get_url() {
-        return document.location.protocol + '//' + document.location.host + Wirecloud.URLs.WORKSPACE_VIEW.evaluate({
+    var on_operators_get = function on_operators_get() {
+        return this.wiring.operators;
+    };
+
+    var on_operators_by_id_get = function on_operators_by_id_get() {
+        return this.wiring.operatorsById;
+    };
+
+    var on_url_get = function on_url_get() {
+        return Wirecloud.location.domain + Wirecloud.URLs.WORKSPACE_VIEW.evaluate({
             name: encodeURIComponent(this.name),
             owner: encodeURIComponent(this.owner)
         });
     };
 
-    var get_widgets = function get_widgets() {
+    var on_widgets_get = function on_widgets_get() {
         return Array.prototype.concat.apply([], privates.get(this).tabs.map(function (tab) {
             return tab.widgets;
         }));
     };
 
-    var get_widgets_by_id = function get_widgets_by_id() {
-        return utils.merge.apply(utils, privates.get(this).tabs.map(function (tab) {
+    var on_widgets_by_id_get = function on_widgets_by_id_get() {
+        var args = privates.get(this).tabs.map(function (tab) {
             return tab.widgetsById;
-        }));
+        })
+
+        // Create an empty object where store the widgets
+        args.unshift({});
+        return utils.merge.apply(utils, args);
     };
 
     var is_allowed = function is_allowed(permission) {

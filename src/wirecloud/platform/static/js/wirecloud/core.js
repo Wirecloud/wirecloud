@@ -189,7 +189,7 @@
 
                 Wirecloud.dispatchEvent('loaded');
                 var workspace = Wirecloud.workspacesByUserAndName[state.workspace_owner][state.workspace_name];
-                return Wirecloud.changeActiveWorkspace(workspace, {initialTab: state.tab, history: "replace"});
+                return Wirecloud.changeActiveWorkspace(workspace, {initialtab: state.tab, history: "replace"});
             }, (error) => {
                 var msg = gettext("Error loading WireCloud");
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
@@ -308,7 +308,7 @@
         var workspace_full_name, state;
 
         options = utils.merge({
-            initialTab: null,
+            initialtab: null,
             history: "push"
         }, options);
 
@@ -323,8 +323,8 @@
             workspace_name: workspace.name,
             view: "workspace"
         };
-        if (options.initialTab != null) {
-            state.tab = options.initialTab;
+        if (options.initialtab != null) {
+            state.tab = options.initialtab;
         }
         workspace_full_name = workspace.owner + '/' + workspace.name;
         document.title = workspace_full_name;

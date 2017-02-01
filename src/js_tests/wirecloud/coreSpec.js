@@ -150,13 +150,13 @@
                 });
             });
 
-            it("supports passing the initial tab using the initialTab option", (done) => {
+            it("supports passing the initial tab using the initialtab option", (done) => {
                 // Arrange
                 var listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
 
                 // Act
-                var task = Wirecloud.changeActiveWorkspace({id: 1}, {initialTab: "MyTab"});
+                var task = Wirecloud.changeActiveWorkspace({id: 1}, {initialtab: "MyTab"});
 
                 // Assert
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
@@ -391,7 +391,7 @@
                     locale: jasmine.createSpy("locale")
                 };
 
-                Wirecloud.ContextManager = jasmine.createSpy("ContextManager");
+                spyOn(Wirecloud, "ContextManager");
                 Wirecloud.ContextManager.prototype.get = jasmine.createSpy("get").and.callFake((name) => {
                     switch (name) {
                     case "theme":

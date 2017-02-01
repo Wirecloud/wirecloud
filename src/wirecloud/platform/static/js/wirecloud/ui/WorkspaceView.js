@@ -114,8 +114,8 @@
                             {
                                 mashup: group.meta.uri
                             }
-                        ).then(() => {
-                            button.enable();
+                        ).then((workspace) => {
+                            return Wirecloud.changeActiveWorkspace(workspace);
                         }, (error) => {
                             button.enable();
                             var dialog;
@@ -398,7 +398,7 @@
             this.appendChild(alert_msg);
             Wirecloud.dispatchEvent('viewcontextchanged');
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
-            Wirecloud.changeActiveWorkspace(nextWorkspace, {initialTab: newState.tab, history: 'ignore'});
+            Wirecloud.changeActiveWorkspace(nextWorkspace, {initialtab: newState.tab, history: 'ignore'});
         } else if (newState.tab != null) {
             target_tab = this.notebook.getTabByLabel(newState.tab);
             this.notebook.goToTab(target_tab);
