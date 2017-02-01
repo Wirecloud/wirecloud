@@ -108,22 +108,26 @@
                         button.enable();
                     });
                 } else {
-                    Wirecloud.mergeWorkspace(group.meta, {
-                        onSuccess: function () {
+                    Wirecloud.UserInterfaceManager.monitorTask(
+                        Wirecloud.mergeWorkspace(
+                            this.model,
+                            {
+                                mashup: group.meta.uri
+                            }
+                        ).then(() => {
                             button.enable();
-                        },
-                        onFailure: function (msg, details) {
+                        }, (error) => {
                             button.enable();
                             var dialog;
-                            if (details != null && 'missingDependencies' in details) {
+                            if (error.details != null && 'missingDependencies' in error.details) {
                                 // Show missing dependencies
-                                dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(null, details);
+                                dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(null, error.details);
                             } else {
-                                dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
+                                dialog = new Wirecloud.ui.MessageWindowMenu(error, Wirecloud.constants.LOGGING.ERROR_MSG);
                             }
                             dialog.show();
-                        }
-                    });
+                        })
+                    );
                 }
             }.bind(this));
         }.bind(this));

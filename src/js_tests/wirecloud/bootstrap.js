@@ -23,6 +23,8 @@ Wirecloud = {
         THEME_ENTRY: new StyledElements.Utils.Template("/api/theme/%(name)s"),
         WORKSPACE_COLLECTION: "/api/workspaces",
         WORKSPACE_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s"),
+        WORKSPACE_MERGE: new StyledElements.Utils.Template("/api/workspace/%(to_ws_id)s/merge"),
+        WORKSPACE_VIEW: new StyledElements.Utils.Template("/%(owner)s/%(name)s")
     },
     Utils: StyledElements.Utils
 };

@@ -641,6 +641,209 @@
 
         });
 
+        describe("mergeWorkspace(options)", () => {
+
+            beforeEach(() => {
+                var workspace = {
+                    id: 1,
+                    owner: "user",
+                    name: "dashboard"
+                };
+                Wirecloud.workspaceInstances = {
+                    1: workspace
+                };
+                Wirecloud.workspacesByUserAndName = {
+                    user: {dashboard: workspace}
+                };
+            });
+
+            it("throws a TypeError when not providing the target workspace parameter", () => {
+                expect(() => {
+                    Wirecloud.mergeWorkspace();
+                }).toThrowError();
+            });
+
+            it("throws a TypeError when not providing any of the workspace/mashup options", () => {
+                expect(() => {
+                    Wirecloud.mergeWorkspace({id: 1}, {});
+                }).toThrowError();
+            });
+
+            it("throws a TypeError when passing the target workspace's owner option without passing a name option", function () {
+                expect(() => {
+                    Wirecloud.mergeWorkspace({owner: "user"}, {});
+                }).toThrowError();
+            });
+
+            it("throws a TypeError when passing the target workspace's name option without passing a owner option", function () {
+                expect(() => {
+                    Wirecloud.mergeWorkspace({name: "dashboard"}, {});
+                }).toThrowError();
+            });
+
+            it("throws a TypeError when providing workspace and mashup options at the same time", () => {
+                expect(() => {
+                    Wirecloud.mergeWorkspace({id: 1}, {
+                        mashup: "Wirecloud/TestMashup/1.0",
+                        workspace: 5
+                    });
+                }).toThrowError();
+            });
+
+            it("allows merging two workspaces", (done) => {
+                spyOn(Wirecloud.URLs.WORKSPACE_MERGE, "evaluate");
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(Wirecloud.URLs.WORKSPACE_MERGE.evaluate).toHaveBeenCalledWith({
+                        to_ws_id: 1
+                    });
+                    var data = JSON.parse(options.postBody);
+                    expect(data.workspace).toBe(5);
+                    expect(Object.keys(data)).not.toEqual(jasmine.arrayContaining(["mashup"]));
+                    return new Wirecloud.Task("Merging workspace data", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                var task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then((workspace) => {
+                    expect(workspace).not.toEqual(jasmine.any(Wirecloud.Workspace));
+                    expect(workspace.url).toBe("https://wirecloud.example.com/user/dashboard");
+                    expect(workspace.id).toBe(1);
+                    done();
+                });
+            });
+
+            it("allows merging two workspaces (refering target workspace using owner/name)", (done) => {
+                spyOn(Wirecloud.URLs.WORKSPACE_MERGE, "evaluate");
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(Wirecloud.URLs.WORKSPACE_MERGE.evaluate).toHaveBeenCalledWith({
+                        to_ws_id: 1
+                    });
+                    var data = JSON.parse(options.postBody);
+                    expect(data.workspace).toBe(5);
+                    expect(Object.keys(data)).not.toEqual(jasmine.arrayContaining(["mashup"]));
+                    return new Wirecloud.Task("Merging workspace data", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                var task = Wirecloud.mergeWorkspace({owner: "user", name: "dashboard"}, {workspace: 5});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then((workspace) => {
+                    expect(workspace).not.toEqual(jasmine.any(Wirecloud.Workspace));
+                    expect(workspace.url).toBe("https://wirecloud.example.com/user/dashboard");
+                    expect(workspace.id).toBe(1);
+                    done();
+                });
+            });
+
+            it("allows merging mashups into workspaces", (done) => {
+                spyOn(Wirecloud.URLs.WORKSPACE_MERGE, "evaluate");
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(Wirecloud.URLs.WORKSPACE_MERGE.evaluate).toHaveBeenCalledWith({
+                        to_ws_id: 1
+                    });
+                    var data = JSON.parse(options.postBody);
+                    expect(data.mashup).toBe("Wirecloud/TestMashup/1.0");
+                    expect(Object.keys(data)).not.toEqual(jasmine.arrayContaining(["workspace"]));
+                    return new Wirecloud.Task("Merging workspace data", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                var task = Wirecloud.mergeWorkspace({id: 1}, {mashup: "Wirecloud/TestMashup/1.0"});
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then((workspace) => {
+                    expect(workspace).not.toEqual(jasmine.any(Wirecloud.Workspace));
+                    expect(workspace.url).toBe("https://wirecloud.example.com/user/dashboard");
+                    expect(workspace.id).toBe(1);
+                    done();
+                });
+            });
+
+            describe("calls reject on unexepected responses", () => {
+
+                var test = (status) => {
+                    return (done) => {
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status
+                                });
+                            });
+                        });
+
+                        var task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            done();
+                        });
+                    };
+                };
+
+                it("200", test(200));
+                it("201", test(201));
+                it("409", test(409));
+                it("422 (with invalid body)", test(422));
+
+            });
+
+            describe("calls reject on error responses", () => {
+
+                var test = (status, details) => {
+                    return (done) => {
+                        var description = "detailed error description";
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status,
+                                    responseText: JSON.stringify({
+                                        description: description,
+                                        details: details
+                                    })
+                                });
+                            });
+                        });
+
+                        var task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            if (details == null) {
+                                expect(error).toBe(description);
+                            } else {
+                                expect(error).toEqual({
+                                    description: description,
+                                    details: details
+                                });
+                            }
+
+                            done();
+                        });
+                    };
+                };
+
+                it("401", test(401));
+                it("403", test(403));
+                it("404", test(404));
+                it("500", test(500));
+                it("422", test(422, {missingDependencies: {}}));
+
+            });
+
+        });
+
         describe("removeWorkspace(options)", () => {
 
             it("throws an Error when not providing any of the owner, name or id options", () => {

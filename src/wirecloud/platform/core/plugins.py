@@ -332,6 +332,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'owner': {
                 'label': _('Owner'),
                 'description': _("Workspace's owner username"),
+            },
+            'description': {
+                'label': _('Description'),
+                'description': _("Short description of the workspace without formating"),
+            },
+            'longdescription': {
+                'label': _('Long description'),
+                'description': _("Detailed workspace's description. This description can contain formatting."),
             }
         }
 

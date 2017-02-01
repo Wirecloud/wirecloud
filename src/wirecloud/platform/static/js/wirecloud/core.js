@@ -64,42 +64,8 @@
         }
 
         workspace = JSON.parse(response.responseText);
-        // TODO
-        Object.defineProperty(workspace, 'url', {
-            get: function () {
-                var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
-                return document.location.protocol + '//' + document.location.host + path;
-            }
-        });
         cache_workspace(workspace);
         return Promise.resolve(workspace);
-    };
-
-    var onMergeSuccess = function onMergeSuccess(options, response) {
-        var workspace = {
-            id: Wirecloud.activeWorkspace.id,
-            owner: Wirecloud.activeWorkspace.owner,
-            name: Wirecloud.activeWorkspace.name
-        };
-        Wirecloud.changeActiveWorkspace(workspace, options);
-    };
-
-    var onMergeFailure = function onMergeFailure(options, response, e) {
-        var msg, details;
-
-        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error merging the mashup: %(errorMsg)s."), response, e);
-
-        if (typeof options.onFailure === 'function') {
-            try {
-                if (response.status === 422) {
-                    details = JSON.parse(response.responseText).details;
-                }
-            } catch (e) {}
-
-            try {
-                options.onFailure(msg, details);
-            } catch (e) {}
-        }
     };
 
     /**
@@ -499,26 +465,78 @@
         });
     };
 
-    Wirecloud.mergeWorkspace = function mergeWorkspace(resource, options) {
+    /**
+     * Removes a workspace from the WireCloud server
+     *
+     * @since 1.1
+     *
+     * @param {Object} target_workspace
+     *     Workspace where merge other workspaces or mashups
+     * @param {Object} options
+     *
+     * @returns {Wirecloud.Task}
+     *
+     * @example
+     * Wirecloud.mergeWorkspace({
+     *     mashup: "Wirecloud/TestMashup/1.0",
+     *  }).then(function () {
+     *     // Workspace merged successfully
+     * }, function (error) {
+     *     // Error merging workspace
+     * };
+     */
+    Wirecloud.mergeWorkspace = function mergeWorkspace(target_workspace, options) {
 
         if (options == null) {
             options = {};
         }
 
-        if (options.monitor) {
-            options.monitor.logSubTask(gettext("Merging mashup"));
+        if (target_workspace.id == null) {
+            if (target_workspace.owner == null || target_workspace.name == null) {
+                throw new TypeError("missing id or owner/name parameters");
+            }
+            target_workspace = this.workspacesByUserAndName[target_workspace.owner][target_workspace.name];
+        } else {
+            target_workspace = this.workspaceInstances[target_workspace.id];
         }
 
-        var active_ws_id = Wirecloud.activeWorkspace.id;
-        var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: active_ws_id});
+        if (!("mashup" in options) && !("workspace" in options)) {
+            throw new TypeError('one of the following options must be provided: workspace or mashup');
+        } else if ("mashup" in options && "workspace" in options) {
+            throw new TypeError('workspace and mashup options cannot be used at the same time');
+        }
 
-        Wirecloud.io.makeRequest(mergeURL, {
+        var url = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: target_workspace.id});
+
+        return Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
-            postBody: JSON.stringify({'mashup': resource.uri}),
-            onSuccess: onMergeSuccess.bind(this, options),
-            onFailure: onMergeFailure.bind(this, options)
+            postBody: JSON.stringify({
+                mashup: options.mashup,
+                workspace: options.workspace
+            })
+        }).then((response) => {
+            if ([204, 401, 403, 404, 422, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if (response.status === 422) {
+                try {
+                    var error = JSON.parse(response.responseText);
+                } catch (e) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                }
+                return Promise.reject(error);
+            } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+            }
+
+            var workspace = {
+                id: target_workspace.id,
+                owner: target_workspace.owner,
+                name: target_workspace.name
+            };
+            cache_workspace(workspace);
+            return Promise.resolve(workspace);
         });
     };
 
@@ -579,6 +597,11 @@
 
     };
 
+    var on_url_get = function on_url_get() {
+        var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
+        return Wirecloud.location.protocol + '://' + Wirecloud.location.host + path;
+    };
+
     var cache_workspace = function cache_workspace(workspace) {
         Wirecloud.workspaceInstances[workspace.id] = workspace;
         if (!(workspace.owner in Wirecloud.workspacesByUserAndName)) {
@@ -593,6 +616,10 @@
 
                     Wirecloud.workspacesByUserAndName[workspace.owner][workspace.name] = workspace;
                 }
+            });
+        } else {
+            Object.defineProperty(workspace, 'url', {
+                get: on_url_get
             });
         }
     };
