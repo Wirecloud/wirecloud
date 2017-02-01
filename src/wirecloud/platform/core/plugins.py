@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -243,7 +243,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     features = {
         'Wirecloud': wirecloud.platform.__version__,
         'ApplicationMashup': '1.0',
-        'StyledElements': '0.8.1',
+        'StyledElements': '0.9',
         'FullscreenWidget': '0.5',
         'DashboardManagement': '1.0',
         'ComponentManagement': '1.0',
