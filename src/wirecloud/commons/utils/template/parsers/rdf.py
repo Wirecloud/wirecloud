@@ -587,6 +587,7 @@ class RDFTemplateParser(object):
                 'description': self._get_translation_field(DCTERMS, 'description', prop, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
                 'default': self._get_field(WIRE, 'default', prop, required=False),
                 'secure': self._get_field(WIRE, 'secure', prop, required=False).lower() == 'true',
+                'multiuser': self._get_field(WIRE, 'multiuser', prop, required=False).lower() == 'true',
             })
 
         self._parse_wiring_info()

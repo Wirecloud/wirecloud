@@ -152,6 +152,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Prop1',
                     'description': 'description 1',
                     'default': 'value1',
+                    'multiuser': False,
                 },
                 {
                     'name': 'prop2',
@@ -160,6 +161,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Prop2',
                     'description': 'description 2',
                     'default': 'value2',
+                    'multiuser': False,
                 }
             ],
             'wiring': {
@@ -279,6 +281,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '__MSG_prop1_label__',
                     'description': '__MSG_prop1_description__',
                     'default': 'value1',
+                    'multiuser': False,
                 },
                 {
                     'name': 'prop2',
@@ -287,6 +290,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '__MSG_prop2_label__',
                     'description': '__MSG_prop2_description__',
                     'default': 'value2',
+                    'multiuser': False,
                 }
             ],
             'wiring': {
@@ -1146,6 +1150,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Prop1',
                     'description': 'description 1',
                     'default': 'value1',
+                    'multiuser': False,
                 },
                 {
                     'name': 'prop2',
@@ -1154,6 +1159,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Prop2',
                     'description': 'description 2',
                     'default': 'value2',
+                    'multiuser': False,
                 }
             ],
             'wiring': {
@@ -1379,6 +1385,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '',
                     'description': '',
                     'default': '',
+                    'multiuser': False,
                 },
                 {
                     'name': 'prop2',
@@ -1387,6 +1394,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '',
                     'description': '',
                     'default': '',
+                    'multiuser': False,
                 },
             ],
             'wiring': {

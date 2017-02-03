@@ -204,6 +204,7 @@ class JSONTemplateParser(object):
                 self._check_string_fields(('name', 'type'), place=prop, required=True)
                 self._check_string_fields(('label', 'description', 'default'), place=prop)
                 self._check_boolean_fields(('secure',), place=prop, default=False)
+                self._check_boolean_fields(('multiuser',), place=prop, default=False)
 
         if self._info['type'] == 'widget':
 

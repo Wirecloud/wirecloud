@@ -105,7 +105,6 @@ class ApplicationMashupTemplateParser(object):
     _parsed = False
 
     def __init__(self, template):
-
         self._info = {}
         self._translation_indexes = {}
 
@@ -490,6 +489,7 @@ class ApplicationMashupTemplateParser(object):
                 'description': prop.get('description', ''),
                 'default': prop.get('default', ''),
                 'secure': prop.get('secure', 'false').lower() == 'true',
+                'multiuser': prop.get('multiuser', 'false').lower() == 'true'
             })
 
     def _parse_preference_values(self, element):

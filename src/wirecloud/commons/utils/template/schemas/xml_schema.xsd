@@ -339,6 +339,16 @@
                         </xs:annotation>
                     </xs:attribute>
 
+                    <xs:attribute name="multiuser" use="optional" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Text that will be used to reference this
+                                variable in the user interface. This field can be
+                                translated.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+
                     <xs:attribute name="description" use="optional" type="xs:string">
                         <xs:annotation>
                             <xs:documentation>
