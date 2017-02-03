@@ -23,50 +23,52 @@ from django.db import migrations, models
 from django.db.migrations.exceptions import IrreversibleError
 import six
 
+
 def update_variables_structure(apps, schema_editor):
 
-	mutate = lambda value, userID: {"users": {userID: value}}
-	Workspace = apps.get_model("platform", "workspace")
+    mutate = lambda value, userID: {"users": {userID: value}}
+    Workspace = apps.get_model("platform", "workspace")
 
-	for workspace in Workspace.objects.select_related('creator').all():
-		owner = workspace.creator.id
+    for workspace in Workspace.objects.select_related('creator').all():
+        owner = workspace.creator.id
 
-		# Update operators
-		wiring = workspace.wiringStatus
-		for op in wiring["operators"]:
-			wiring["operators"][op]["preferences"] = {k: mutate(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
-		workspace.save()
+        # Update operators
+        wiring = workspace.wiringStatus
+        for op in wiring["operators"]:
+            wiring["operators"][op]["preferences"] = {k: mutate(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+        workspace.save()
 
-		# Update widgets
-		for tab in workspace.tab_set.all():
-			for widget in tab.iwidget_set.all():
-				widget.variables = {k: mutate(v, owner) for k, v in six.iteritems(widget.variables)}
-				widget.save()
+        # Update widgets
+        for tab in workspace.tab_set.all():
+            for widget in tab.iwidget_set.all():
+                widget.variables = {k: mutate(v, owner) for k, v in six.iteritems(widget.variables)}
+                widget.save()
+
 
 def reverse_variables_structure(apps, schema_editor):
 
-	# Check no multiuser widgets
-	CatalogueResource = apps.get_model("catalogue", "CatalogueResource")
-	
-	for component in CatalogueResource.objects.filter(type__in=(0, 2)).all():
-		for property in component.json_description["properties"]:
-			if property.get("multiuser", False):
-				uri = component.vendor + '/' + component.short_name + '/' + component.version
-				raise IrreversibleError("Component %s requires multiuser support. Uninstall it before downgrading." % uri)
+    # Check no multiuser widgets
+    CatalogueResource = apps.get_model("catalogue", "CatalogueResource")
 
-	mutate = lambda value, userID: value["users"]["%s" % userID]
-	Workspace = apps.get_model("platform", "workspace")
-	for workspace in Workspace.objects.select_related('creator').all():
-		owner = workspace.creator.id
+    for component in CatalogueResource.objects.filter(type__in=(0, 2)).all():
+        for property in component.json_description["properties"]:
+            if property.get("multiuser", False):
+                uri = component.vendor + '/' + component.short_name + '/' + component.version
+                raise IrreversibleError("Component %s requires multiuser support. Uninstall it before downgrading." % uri)
 
-		# Update operators
-		wiring = workspace.wiringStatus
-		for op in wiring["operators"]:
-			wiring["operators"][op]["preferences"] = {k: mutate(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
-		workspace.save()
+    mutate = lambda value, userID: value["users"]["%s" % userID]
+    Workspace = apps.get_model("platform", "workspace")
+    for workspace in Workspace.objects.select_related('creator').all():
+        owner = workspace.creator.id
 
-		# Update widgets
-		for tab in workspace.tab_set.all():
-			for widget in tab.iwidget_set.all():
-				widget.variables = {k: mutate(v, owner) for k, v in six.iteritems(widget.variables)}
-				widget.save()
+        # Update operators
+        wiring = workspace.wiringStatus
+        for op in wiring["operators"]:
+            wiring["operators"][op]["preferences"] = {k: mutate(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+        workspace.save()
+
+        # Update widgets
+        for tab in workspace.tab_set.all():
+            for widget in tab.iwidget_set.all():
+                widget.variables = {k: mutate(v, owner) for k, v in six.iteritems(widget.variables)}
+                widget.save()
