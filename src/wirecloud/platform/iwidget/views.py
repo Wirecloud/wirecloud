@@ -171,9 +171,6 @@ class IWidgetPreferences(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        if not request.user.is_superuser and workspace.creator != request.user:
-            msg = _('You have not enough permission for updating the preferences of the iwidget')
-            return build_error_response(request, 403, msg)
 
         iwidget = get_object_or_404(IWidget.objects.select_related('widget__resource'), pk=iwidget_id)
         if iwidget.tab_id != int(tab_id):
@@ -194,7 +191,14 @@ class IWidgetPreferences(Resource):
                 msg = _('"%s" preference is read only.') % var_name
                 return build_error_response(request, 403, msg)
 
-            iwidget.set_variable_value(var_name, new_values[var_name])
+            # Check if its multiuser
+            if not vardef.get("multiuser", False):
+                # No multiuser -> Check permisisons
+                if not request.user.is_superuser and workspace.creator != request.user:
+                    msg = _('You have not enough permission for updating the preferences of the iwidget')
+                    return build_error_response(request, 403, msg)
+
+            iwidget.set_variable_value(var_name, new_values[var_name], request.user)
 
         iwidget.save()
         return HttpResponse(status=204)
@@ -208,9 +212,6 @@ class IWidgetProperties(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        if not request.user.is_superuser and workspace.creator != request.user:
-            msg = _('You have not enough permission for updating the persistent variables of this widget')
-            return build_error_response(request, 403, msg)
 
         iwidget = get_object_or_404(IWidget, pk=iwidget_id)
         if iwidget.tab_id != int(tab_id):
@@ -225,7 +226,14 @@ class IWidgetProperties(Resource):
                 msg = _('Invalid persistent variable: "%s"') % var_name
                 return build_error_response(request, 422, msg)
 
-            iwidget.set_variable_value(var_name, new_values[var_name])
+            # Check if its multiuser
+            if not iwidget_info['variables']['properties'][var_name].get("multiuser", False):
+                # No multiuser -> Check permisisons
+                if workspace.creator != request.user:
+                    msg = _('You have not enough permission for updating the persistent variables of this widget')
+                    return build_error_response(request, 403, msg)
+
+            iwidget.set_variable_value(var_name, new_values[var_name], request.user)
 
         iwidget.save()
         return HttpResponse(status=204)

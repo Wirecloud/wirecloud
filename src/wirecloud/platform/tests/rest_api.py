@@ -1201,7 +1201,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 403)
 
         # Check if preferences changed
-        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"], "test_username")
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"]["users"]["4"], "test_username")
 
     def test_workspace_wiring_entry_patch_empty_request(self):
 
@@ -1242,7 +1242,6 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
         self.assertEqual(response.status_code, 400)
-
 
     def test_tab_collection_post_requires_authentication(self):
 
@@ -1339,7 +1338,6 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
         check_post_bad_request_syntax(self, url)
-
 
     def test_tab_entry_get_requires_permission(self):
 
@@ -1888,9 +1886,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
         with open(os.path.join(base_dir, 'test.html'), 'wb') as f:
             f.write('<html><div>á</div</html>'.encode('iso-8859-15'))
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
-        json_description = json.loads(resource.json_description)
+        json_description = resource.json_description
+
         json_description['contents']['contenttype'] = 'application/xhtml+xml'
-        resource.json_description = json.dumps(json_description)
+        resource.json_description = json_description
         resource.save()
 
         # Authenticate
@@ -1912,9 +1911,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
         with open(os.path.join(base_dir, 'test.html'), 'wb') as f:
             f.write('<html><div>á</div</html>'.encode('iso-8859-15'))
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
-        json_description = json.loads(resource.json_description)
+        json_description = resource.json_description
+
         json_description['contents']['contenttype'] = 'application/xhtml+xml'
-        resource.json_description = json.dumps(json_description)
+        resource.json_description = json_description
         resource.save()
 
         from wirecloud.platform.models import XHTML
@@ -1965,9 +1965,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
         with open(os.path.join(base_dir, 'test.html'), 'wb') as f:
             f.write(b'<html><div></div</html>')
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
-        json_description = json.loads(resource.json_description)
+        json_description = resource.json_description
+
         json_description['contents']['contenttype'] = 'application/xhtml+xml'
-        resource.json_description = json.dumps(json_description)
+        resource.json_description = json_description
         resource.save()
 
         # Authenticate
@@ -2253,7 +2254,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
             # IWidget preferences should be updated
             variables = IWidget.objects.get(pk=2).variables
-            self.assertEqual(variables['text'], 'new value')
+            self.assertEqual(variables['text']["users"]["4"], 'new value')
 
         check_cache_is_purged(self, 2, update_iwidget_preference)
 
@@ -2316,7 +2317,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_preferences_entry_post_readonly_preference(self):
 
         resource = CatalogueResource.objects.get(vendor="Wirecloud", short_name="Test", version="1.0")
-        json_description = json.loads(resource.json_description)
+        json_description = resource.json_description
+
         json_description['preferences'] = [{'secure': False, 'name': 'text', 'default': 'initial text', 'label': 'text', 'type': 'text', 'description': 'text preference', 'readonly': True}]
         resource.json_description = json.dumps(json_description)
         resource.save()
@@ -2335,12 +2337,13 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
-    def _todo_create_property(self):
+    def _todo_create_property(self, multiuser=False):
 
         # TODO
         resource = CatalogueResource.objects.get(vendor="Wirecloud", short_name="Test", version="1.0")
-        json_description = json.loads(resource.json_description)
-        json_description['properties'] = [{'secure': False, 'name': 'prop', 'default': '', 'label': '', 'type': 'text'}]
+        json_description = resource.json_description
+
+        json_description['properties'] = [{'secure': False, 'name': 'prop', 'default': '', 'label': '', 'type': 'text', 'multiuser': multiuser}]
         resource.json_description = json.dumps(json_description)
         resource.save()
         # end TODO
@@ -2364,12 +2367,29 @@ class ApplicationMashupAPI(WirecloudTestCase):
         check_post_requires_authentication(self, url, json.dumps(data), iwidget_preference_not_created)
 
     def test_iwidget_properties_entry_post_requires_permission(self):
+        self._todo_create_property()
 
         url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         data = {
             'prop': 'new value',
         }
         check_post_requires_permission(self, url, json.dumps(data))
+
+    def test_iwidget_properties_entry_post_multiuser_doesnt_require_permission(self):
+        self._todo_create_property(True)
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+        data = {
+            'prop': 'new value',
+        }
+
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        variables = IWidget.objects.get(pk=2).variables
+        self.assertEqual(variables['prop']["users"]["5"], 'new value')
 
     def test_iwidget_properties_entry_post(self):
 
@@ -2391,8 +2411,31 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
             # IWidget properties should be updated
             variables = IWidget.objects.get(pk=2).variables
-            self.assertEqual(variables['prop'], 'new value')
+
+            self.assertEqual(variables['prop']['users']['4'], 'new value')
         check_cache_is_purged(self, 2, update_iwidget_property)
+
+    def test_iwidget_properties_entry_post_multiuser(self):
+        self._todo_create_property(True)
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def update_iwidget_multiuser_property():
+            data = {
+                'prop': 'new value',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content.decode('utf-8'), '')
+
+            # IWidget properties should be updated
+            variables = IWidget.objects.get(pk=2).variables
+            self.assertEqual(variables['prop']['users']['4'], 'new value')
+        check_cache_is_purged(self, 2, update_iwidget_multiuser_property)
 
     def test_widget_properties_post_workspace_not_found(self):
 
@@ -3035,7 +3078,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
         self.assertTrue(resource.public)
         self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
 
@@ -3051,7 +3094,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 403)
 
-        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
 
     def test_resource_entry_get_requires_authentication(self):
 
@@ -3105,12 +3148,12 @@ class ResourceManagementAPI(WirecloudTestCase):
 
         response = self.client.delete(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
         self.assertFalse(resource.users.filter(username='admin').exists())
 
     def test_resource_entry_delete(self):
 
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
         resource.users.clear()
         resource.users.add(2)
         resource.public = False
@@ -3122,7 +3165,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
         response = self.client.delete(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
-        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test', version='1.0')
 
     def test_resource_entry_delete_not_found(self):
 
@@ -3749,7 +3792,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-
             # Check new workspace status_code
             workspace = Workspace.objects.get(pk=2)
             tabs = workspace.tab_set.order_by('position')[:]

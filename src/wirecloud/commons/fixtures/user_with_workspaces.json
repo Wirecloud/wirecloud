@@ -11,7 +11,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -26,7 +26,8 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
+
         }
     },
     {
@@ -41,7 +42,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -56,7 +57,7 @@
             "refused_version": null,
             "readOnly": true,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -71,7 +72,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -86,7 +87,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -101,7 +102,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":2,\"left\":12,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -116,7 +117,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -131,7 +132,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -146,7 +147,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -161,7 +162,7 @@
             "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
-            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+            "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
         }
     },
     {
@@ -287,7 +288,7 @@
             "name": "workspaceSecure",
             "public": false,
             "creator": "4",
-            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": \"\"}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": \"username\"}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": \"test_password\"}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": \"test_username\"}}}}, \"connections\": []}"
+            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"4\": \"\"}}}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": {\"users\": {\"4\": \"username\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"4\": \"test_password\"}}}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": {\"users\": {\"4\": \"test_username\"}}}}}}, \"connections\": []}"
         }
     },
     {

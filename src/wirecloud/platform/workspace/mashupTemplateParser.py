@@ -95,12 +95,14 @@ def check_mashup_dependencies(template, user):
 def map_id(endpoint_view, id_mapping):
     return id_mapping[endpoint_view['type']]["%s" % endpoint_view['id']]['id']
 
+
 def is_valid_connection(connection, id_mapping):
 
     def is_valid_endpoint(endpoint):
         return ("%s" % endpoint['id']) in id_mapping[endpoint['type']]
 
     return is_valid_endpoint(connection['source']) and is_valid_endpoint(connection['target'])
+
 
 def _remap_component_ids(id_mapping, components_description, isGlobal=False):
 
@@ -261,14 +263,17 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 read_only = pref.get('readonly')
                 if pref.get('value', None) is not None:
                     value = pref['value']
+                    if isinstance(value, dict):
+                        value = value["users"].get("%s" % workspace.creator.id, iwidget_info['variables']['preferences'][pref_name]['default'])
                 else:
                     value = iwidget_info['variables']['preferences'][pref_name]['default']
+
+                # Build multiuser structure
                 if read_only:
                     iwidget_forced_values[pref_name] = {'value': value, 'hidden': pref.get('hidden', False)}
                 else:
                     initial_variable_values[pref_name] = processor.process(value)
-
-            set_initial_values(iwidget, initial_variable_values, iwidget_info)
+            set_initial_values(iwidget, initial_variable_values, iwidget_info, workspace.creator)
             iwidget.save()
 
             if len(iwidget_forced_values) > 0:
@@ -306,6 +311,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
         for pref_id, pref in six.iteritems(operator['preferences']):
             if pref.get('readonly', False):
                 ioperator_forced_values[pref_id] = {'value': pref.get('value'), 'hidden': pref.get('hidden', False)}
+
+            workspace.wiringStatus['operators'][new_id]["preferences"][pref_id]["value"] = {'users': {"%s" % workspace.creator.id: pref["value"]}}
 
         if len(ioperator_forced_values) > 0:
             new_forced_values['ioperator'][new_id] = ioperator_forced_values

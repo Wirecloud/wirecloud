@@ -19,8 +19,6 @@
 
 from __future__ import unicode_literals
 
-import json
-
 import six
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -46,12 +44,11 @@ def get_workspace_description(workspace):
     return get_iwidgets_description(included_iwidgets)
 
 
-def get_current_operator_pref_value(operator, preference):
-
+def get_current_operator_pref_value(operator, preference, user):
     if preference['name'] in operator['preferences']:
-        return "%s" % operator['preferences'][preference['name']]['value']
+        return operator['preferences'][preference['name']]['value']
     else:
-        return preference['default']
+        return {"users": {"%s" % user.id: preference['default']}}
 
 
 def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets):
@@ -274,14 +271,14 @@ def build_json_template_from_workspace(options, workspace, user):
                         continue
                     value = None
                 elif source == 'current':
-                    value = get_current_operator_pref_value(operator, preference)
+                    value = get_current_operator_pref_value(operator, preference, user)
                 elif source == 'custom':
-                    value = ioperator_param_desc['value']
+                    value = {"users": {"%s" % user.id: ioperator_param_desc['value']}}
                 else:
                     raise Exception('Invalid preference value source: %s' % source)
 
             else:
-                value = get_current_operator_pref_value(operator, preference)
+                value = get_current_operator_pref_value(operator, preference, user)
 
             operator_data['preferences'][preference['name']] = {
                 'readonly': status != 'normal',

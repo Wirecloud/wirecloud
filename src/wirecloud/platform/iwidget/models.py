@@ -45,7 +45,7 @@ class IWidget(models.Model):
     def __str__(self):
         return str(self.pk)
 
-    def set_variable_value(self, var_name, value):
+    def set_variable_value(self, var_name, value, user):
 
         iwidget_info = self.widget.resource.get_processed_info(translate=False, process_variables=True)
 
@@ -58,7 +58,10 @@ class IWidget(models.Model):
         elif vardef['type'] == 'number':
             value = float(value)
 
-        self.variables[var_name] = value
+        if "users" in self.variables.get(var_name, ""):
+            self.variables[var_name]["users"] = {"%s" % user.id: value}
+        else:
+            self.variables[var_name] = {"users": {"%s" % user.id: value}}
 
     def save(self, *args, **kwargs):
 

@@ -261,7 +261,7 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': False, 'readonly': True, 'value': 'a'},
+                        'pref1': {'hidden': False, 'readonly': True, 'value': {"users": {"2": 'a'}}},
                     }
                 },
             },
@@ -278,7 +278,7 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'readonly': True, 'value': 'b'},
+                        'pref1': {'readonly': True, 'value': {"users": {"2": 'b'}}},
                     }
                 },
             },
@@ -296,7 +296,7 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': False, 'readonly': False, 'value': 'a'},
+                        'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'a'}}},
                     }
                 },
             },
@@ -329,7 +329,7 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': False, 'readonly': True, 'value': 'a'},
+                        'pref1': {'hidden': False, 'readonly': True, 'value': {"users": {"2": 'a'}}},
                     }
                 },
             },
@@ -428,7 +428,7 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': True, 'readonly': False, 'value': 'a'},
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
                     }
                 },
             },
@@ -445,7 +445,7 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': False, 'readonly': False, 'value': 'a'},
+                        'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'a'}}},
                     }
                 },
             },
@@ -479,7 +479,7 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'value': 'a'},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': 'a'},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'a'}}},
                     },
                 },
             },
@@ -497,8 +497,8 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': True, 'readonly': False, 'value': 'a'},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': 'b'},
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
                     },
                 },
             },
@@ -515,8 +515,8 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': True, 'readonly': False, 'value': 'b'},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': 'c'},
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
                     }
                 },
             },
@@ -525,7 +525,7 @@ class WiringTestCase(WirecloudTestCase):
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 204)
 
-    def test_operator_added(self):
+    def test_operator_added_put(self):
 
         client = Client()
         client.login(username='test', password='test')
@@ -536,14 +536,35 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': False, 'readonly': False, 'value': 'b'},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': 'c'},
+                        'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
                     }
                 },
             },
             'connections': [],
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 204)
+
+    def test_operator_added_patch(self):
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps([
+            {
+                'op': "add",
+                'path': "/operators/1",
+                'value': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
+                    },
+                },
+            }
+        ])
+        response = client.patch(self.wiring_url, data, content_type='application/json-patch+json')
         self.assertEqual(response.status_code, 204)
 
     def test_iwidget_removed(self):
@@ -1446,9 +1467,9 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         prefix = 'test_'
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus['operators']['0']['preferences'] = {
-            'prefix': {"readonly": False, "hidden": False, "value": prefix},
-            'exception_on_event': {"readonly": False, "hidden": False, "value": 'true'},
-            'test_logging': {"readonly": False, "hidden": False, "value": 'true'}
+            'prefix': {"readonly": False, "hidden": False, "value": {"users": {"2": prefix}}},
+            'exception_on_event': {"readonly": False, "hidden": False, "value": {"users": {"2": 'true'}}},
+            'test_logging': {"readonly": False, "hidden": False, "value": {"users": {"2": 'true'}}}
         }
         workspace.save()
 
@@ -1771,7 +1792,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
         # Enable operator exceptions
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus['operators']['0']['preferences']['exception_on_event'] = {"readonly": False, "hidden": False, "value": 'true'}
+        workspace.wiringStatus['operators']['0']['preferences']['exception_on_event'] = {"readonly": False, "hidden": False, "value": {"users": {"2": 'true'}}}
         workspace.save()
 
         # Check exceptions

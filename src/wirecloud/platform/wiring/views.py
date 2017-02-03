@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import jsonpatch
 
 from django.core.cache import cache
@@ -36,6 +35,16 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_op
 
 class WiringEntry(Resource):
 
+    def handleMultiuser(self, request, new_preference, old_preference):
+        new_value = new_preference["value"]
+
+        if old_preference is not None:
+            new_preference = old_preference
+        else:
+            new_preference["value"] = {"users": {}}
+
+        new_preference["value"]["users"]["%s" % request.user.id] = new_value
+
     def checkWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure=False):
         # Check read only connections
         old_read_only_connections = [connection for connection in old_wiring_status['connections'] if connection.get('readonly', False)]
@@ -50,6 +59,7 @@ class WiringEntry(Resource):
 
         # Check operator preferences
         for operator_id, operator in six.iteritems(new_wiring_status['operators']):
+            old_operator = None
             if operator_id in old_wiring_status['operators']:
                 old_operator = old_wiring_status['operators'][operator_id]
                 added_preferences = set(operator['preferences'].keys()) - set(old_operator['preferences'].keys())
@@ -71,6 +81,10 @@ class WiringEntry(Resource):
             for preference_name in added_preferences:
                 if operator['preferences'][preference_name].get('readonly', False) or operator['preferences'][preference_name].get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden preferences cannot be created using this API'))
+                # Handle multiuser
+                old_preference = old_operator['preferences'].get(preference_name, None) if old_operator else None
+                new_preference = operator['preferences'][preference_name]
+                self.handleMultiuser(request, new_preference, old_preference)
 
             for preference_name in removed_preferences:
                 if old_operator['preferences'][preference_name].get('readonly', False) or old_operator['preferences'][preference_name].get('hidden', False):
@@ -86,7 +100,7 @@ class WiringEntry(Resource):
                     for pref in operator_preferences:
                         if pref["name"] == preference_name:
                             preference_secure = pref.get("secure", False)
-                            operator_preferences.remove(pref) # Speed up search
+                            operator_preferences.remove(pref)  # Speed up search
                             break
 
                 if old_preference.get('readonly', False) != new_preference.get('readonly', False) or old_preference.get('hidden', False) != new_preference.get('hidden', False):
@@ -97,6 +111,9 @@ class WiringEntry(Resource):
 
                 if preference_secure and not can_update_secure:
                     new_preference["value"] = old_preference["value"]
+                else:
+                    # Handle multiuser
+                    self.handleMultiuser(request, new_preference, old_preference)
 
         return True
 
@@ -128,7 +145,6 @@ class WiringEntry(Resource):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         old_wiring_status = workspace.wiringStatus
-
         try:
             new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
         except jsonpatch.JsonPointerException:
