@@ -44,6 +44,7 @@ class WiringEntry(Resource):
             new_preference["value"] = {"users": {}}
 
         new_preference["value"]["users"]["%s" % request.user.id] = new_value
+        return new_preference
 
     def checkWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure=False):
         # Check read only connections
@@ -82,9 +83,9 @@ class WiringEntry(Resource):
                 if operator['preferences'][preference_name].get('readonly', False) or operator['preferences'][preference_name].get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden preferences cannot be created using this API'))
                 # Handle multiuser
-                old_preference = old_operator['preferences'].get(preference_name, None) if old_operator else None
                 new_preference = operator['preferences'][preference_name]
-                self.handleMultiuser(request, new_preference, old_preference)
+                new_preference["value"] = {"users": {"%s" % request.user.id: new_preference["value"]}}
+                operator['preferences'][preference_name] = new_preference
 
             for preference_name in removed_preferences:
                 if old_operator['preferences'][preference_name].get('readonly', False) or old_operator['preferences'][preference_name].get('hidden', False):
@@ -111,9 +112,11 @@ class WiringEntry(Resource):
 
                 if preference_secure and not can_update_secure:
                     new_preference["value"] = old_preference["value"]
-                else:
+                    operator['preferences'][preference_name] = new_preference
+                elif new_preference["value"] != old_preference["value"]:
                     # Handle multiuser
-                    self.handleMultiuser(request, new_preference, old_preference)
+                    new_preference = self.handleMultiuser(request, new_preference, old_preference)
+                    operator['preferences'][preference_name] = new_preference
 
         return True
 
@@ -155,7 +158,6 @@ class WiringEntry(Resource):
         result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
         if result is not True:
             return result
-
         workspace.wiringStatus = new_wiring_status
         workspace.save()
 
