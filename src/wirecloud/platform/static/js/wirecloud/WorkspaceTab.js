@@ -196,27 +196,29 @@
         },
 
         /**
+         * Removes this workspace tab from the server.
+         *
+         * @returns {Wirecloud.Task}
          */
         remove: function remove() {
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
-                    workspace_id: this.workspace.id,
-                    tab_id: this.id
-                });
+            var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
+                workspace_id: this.workspace.id,
+                tab_id: this.id
+            });
 
-                Wirecloud.io.makeRequest(url, {
-                    method: 'DELETE',
-                    requestHeaders: {'Accept': 'application/json'},
-                    onComplete: function (response) {
-                        if (response.status === 204) {
-                            remove_tab.call(this);
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
-            }.bind(this));
+            return Wirecloud.io.makeRequest(url, {
+                method: 'DELETE',
+                requestHeaders: {'Accept': 'application/json'}
+            }).then((response) => {
+                if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
+
+                remove_tab.call(this);
+                return Promise.resolve(this);
+            });
         },
 
         /**

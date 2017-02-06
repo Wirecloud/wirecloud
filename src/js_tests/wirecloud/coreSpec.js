@@ -330,12 +330,13 @@
 
                 it("200", test(200));
                 it("404", test(404));
+                it("422 (with invalid body)", test(422));
 
             });
 
             describe("calls reject on error responses", () => {
 
-                var test = (status) => {
+                var test = (status, details) => {
                     return (done) => {
                         var description = "detailed error description";
                         Wirecloud.workspaceInstances = {};
@@ -344,7 +345,10 @@
                             return new Wirecloud.Task("Sending request", (resolve) => {
                                 resolve({
                                     status: status,
-                                    responseText: JSON.stringify({description: description})
+                                    responseText: JSON.stringify({
+                                        description: description,
+                                        details: details
+                                    })
                                 });
                             });
                         });
@@ -353,7 +357,15 @@
 
                         expect(task).toEqual(jasmine.any(Wirecloud.Task));
                         task.catch((error) => {
-                            expect(error).toBe(description);
+                            if (details == null) {
+                                expect(error).toBe(description);
+                            } else {
+                                expect(error).toEqual({
+                                    description: description,
+                                    details: details
+                                });
+                            }
+
                             done();
                         });
                     };
@@ -362,6 +374,7 @@
                 it("401", test(401));
                 it("403", test(403));
                 it("500", test(500));
+                it("422", test(422, {missingDependencies: {}}));
 
             });
 
@@ -369,7 +382,12 @@
 
         describe("init([options])", () => {
 
+            var preferencesmanager;
+
             beforeEach(() => {
+                preferencesmanager = {
+                    addEventListener: jasmine.createSpy("addEventListener")
+                };
                 spyOn(window, "addEventListener");
                 spyOn(Wirecloud.HistoryManager, "init");
                 spyOn(Wirecloud.HistoryManager, "getCurrentState");
@@ -379,9 +397,7 @@
                 Wirecloud.ui.Theme = jasmine.createSpy("Theme");
                 Wirecloud.PreferenceManager = {
                     buildPreferences: jasmine.createSpy('buildPreferences').and.callFake(() => {
-                        return {
-                            addEventListener: jasmine.createSpy("addEventListener")
-                        };
+                        return preferencesmanager;
                     })
                 };
                 spyOn(Wirecloud, "changeActiveWorkspace").and.callFake(() => {
@@ -433,6 +449,12 @@
 
             });
 
+            afterEach(() => {
+                if ("WEBSOCKET" in Wirecloud.URLs) {
+                    delete Wirecloud.URLs.WEBSOCKET;
+                }
+            });
+
             it("should return a Task", function (done) {
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
@@ -447,11 +469,26 @@
                     expect(Wirecloud.UserInterfaceManager.init).toHaveBeenCalledWith();
                     expect(Wirecloud.HistoryManager.init).toHaveBeenCalledWith();
                     expect(Wirecloud.UserInterfaceManager.monitorTask).toHaveBeenCalledWith(task);
+
+                    // Check Wirecloud react to unload events
+                    Wirecloud.UserInterfaceManager.monitorTask.calls.reset();
+                    expect(window.addEventListener).toHaveBeenCalledWith("beforeunload", jasmine.any(Function), true);
+                    expect(() => {
+                        window.addEventListener.calls.argsFor(0)[1]();
+                    }).not.toThrow();
+                    expect(Wirecloud.UserInterfaceManager.monitorTask).toHaveBeenCalledWith(task);
+
+                    // WireCloud should reload on language change
+                    expect(() => {
+                        // But ignore other changes
+                        preferencesmanager.addEventListener.calls.argsFor(0)[1](null, {other: true});
+                    }).not.toThrow();
+
                     done();
                 });
             });
 
-            it("should when using the preventDefault option", (done) => {
+            it("should discard default operations when using the preventDefault option", (done) => {
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
                     workspace_name: "home",
@@ -466,12 +503,20 @@
                     expect(Wirecloud.HistoryManager.init).not.toHaveBeenCalledWith();
                     expect(Wirecloud.UserInterfaceManager.monitorTask).not.toHaveBeenCalled();
                     expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
+
+                    // Wirecloud should ignore beforeunload events when using the preventDefault option
+                    expect(window.addEventListener).not.toHaveBeenCalled()
+
                     done();
                 });
             });
 
             it("should handle context errors", (done) => {
+                var show_spy = jasmine.createSpy("show");
                 spyOn(Wirecloud.GlobalLogManager, "log");
+                spyOn(Wirecloud.ui, "MessageWindowMenu").and.callFake(function () {
+                    this.show = show_spy;
+                });
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
                     workspace_name: "home",
@@ -488,6 +533,38 @@
                     expect(Wirecloud.HistoryManager.init).not.toHaveBeenCalledWith();
                     expect(Wirecloud.UserInterfaceManager.monitorTask).toHaveBeenCalled();
                     expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
+                    expect(show_spy).toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it("should init live synchornization support when available", (done) => {
+                var addEventListenerSpy = jasmine.createSpy("addEventListener");
+                spyOn(window, "WebSocket").and.callFake(function () {
+                    this.addEventListener = addEventListenerSpy;
+                });
+                Wirecloud.URLs.WEBSOCKET = "/api/live";
+                Wirecloud.HistoryManager.getCurrentState.and.returnValue({
+                    workspace_owner: "wirecloud",
+                    workspace_name: "home",
+                    view: "workspace"
+                });
+
+                var task = Wirecloud.init();
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then(() => {
+                    expect(Wirecloud.UserInterfaceManager.init).toHaveBeenCalledWith();
+                    expect(Wirecloud.HistoryManager.init).toHaveBeenCalledWith();
+                    expect(Wirecloud.UserInterfaceManager.monitorTask).toHaveBeenCalledWith(task);
+
+                    expect(WebSocket).toHaveBeenCalled();
+                    expect(Wirecloud.live).not.toEqual(null);
+                    expect(() => {
+                        addEventListenerSpy.calls.argsFor(0)[1]({
+                            data: JSON.stringify({category: "workspace"})
+                        });
+                    }).not.toThrow();
                     done();
                 });
             });

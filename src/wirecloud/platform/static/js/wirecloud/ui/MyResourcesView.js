@@ -119,7 +119,7 @@
             };
 
             currentResource = this.viewsByName.details.currentEntry;
-            if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
+            if (currentResource != null && currentResource.vendor === details.vendor && currentResource.name === details.name) {
                 details = currentResource;
             }
             this.createUserCommand('showDetails', details, {history: "replace", tab: state.tab, version: parts[2]})();
@@ -195,7 +195,8 @@
     MyResourcesView.prototype.ui_commands.install = function install(resource, catalogue_source) {
         return function () {
             Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.addComponent({url: resource.description_url}).then(() => {
+                this.catalogue.addComponent({url: resource.description_url}).then(
+                    () => {
                         this.refresh_search_results();
 
                         catalogue_source.home();
@@ -275,8 +276,8 @@
                     resource_details.changeVersion(options.version);
                 }
                 this.viewsByName.details.paint(resource_details, {
-                        tab: options.tab
-                    });
+                    tab: options.tab
+                });
             };
             var viewChanged = false, dataLoaded = false;
             var onComplete = function onComplete() {
@@ -323,16 +324,14 @@
     };
 
     MyResourcesView.prototype.ui_commands.delete = function (resource) {
-        var success_callback, doRequest, msg, context;
-
-        success_callback = function (response) {
-            this.home();
-            this.refresh_search_results();
-        }.bind(this);
+        var doRequest, msg;
 
         doRequest = function () {
             Wirecloud.UserInterfaceManager.monitorTask(this.catalogue.deleteResource(resource).then(
-                success_callback,
+                () => {
+                    this.home();
+                    this.refresh_search_results();
+                },
                 logerror
             ).toTask(""));
         };

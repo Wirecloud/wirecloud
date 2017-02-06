@@ -69,12 +69,13 @@
 
         Object.defineProperties(this, /** @lends Wirecloud.Wiring# */{
             /**
+             * List of the connections handled by the current wiring
+             * configuration.
+             *
              * @type {Array.<Wirecloud.Wiring.Connection>}
              */
             connections: {
-                get: function () {
-                    return privates.get(this).connections.slice(0);
-                }
+                get: on_connections_get
             },
             /**
              * @type {Wirecloud.LogManager}
@@ -83,18 +84,22 @@
                 value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
             },
             /**
+             * List of the operators handled by the current wiring
+             * configuration.
+             *
              * @type {Array.<Wirecloud.Wiring.Operator>}
              */
             operators: {
-                get: function () {
-                    return privates.get(this).operators.slice(0);
-                }
+                get: on_operators_get
             },
             /**
+             * Operators handled by the current wiring configuration indexed by
+             * id.
+             *
              * @type {Object.<String, Wirecloud.Wiring.Operator>}
              */
             operatorsById: {
-                get: get_operators_by_id
+                get: on_operators_by_id_get
             },
             status: {
                 get: on_status_get
@@ -103,6 +108,8 @@
                 get: on_visualdescription_get
             },
             /**
+             * Workspace owning this wiring engine.
+             *
              * @type {Wirecloud.Workspace}
              */
             workspace: {
@@ -178,10 +185,18 @@
         },
 
         /**
-         * @param {Wirecloud.OperatorMeta} resource
-         * @param {Object} [data]
+         * Adds a new operator instance into the wiring status on the WireCloud
+         * server.
          *
-         * @returns {Promise}
+         * @param {Wirecloud.OperatorMeta} resource
+         *     Operator meta to instantiate
+         * @param {Object} [data]
+         *     Initial operator data
+         *
+         * @returns {Wirecloud.Task|Wirecloud.Operator}
+         *     This method returns a task except when creating volatile
+         *     operators. This method will return a {@link Wirecloud.Operator}
+         *     when creating volatile operators.
          */
         createOperator: function createOperator(resource, data) {
             var priv = privates.get(this);
@@ -216,18 +231,27 @@
                     return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
 
-                priv.operators.push(operator);
+                append_operator.call(this, operator);
                 return Promise.resolve(operator);
             });
         },
 
         /**
+         * Looks up for an operator with the given id inside the list of operators handled by this wiring engine instance.
+         *
          * @param {String} id
          *
-         * @returns {*}
+         * @returns {Wirecloud.wiring.Operator}
          */
         findOperator: function findOperator(id) {
-            return this.operatorsById[id];
+            if (id == null) {
+                throw new TypeError("Missing id parameter");
+            }
+
+            // Force string ids
+            id = String(id);
+
+            return this.operatorsById[id] || null;
         },
 
         load: function load(status) {
@@ -501,7 +525,15 @@
         return false;
     };
 
-    var get_operators_by_id = function get_operators_by_id() {
+    var on_connections_get = function on_connections_get() {
+        return privates.get(this).connections.slice(0);
+    };
+
+    var on_operators_get = function on_operators_get() {
+        return privates.get(this).operators.slice(0);
+    };
+
+    var on_operators_by_id_get = function on_operators_by_id_get() {
         var priv = privates.get(this);
 
         if (priv.freezedOperatorsById == null) {

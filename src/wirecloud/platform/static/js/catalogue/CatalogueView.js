@@ -102,7 +102,7 @@
             };
 
             currentResource = this.viewsByName.details.currentEntry;
-            if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
+            if (currentResource != null && currentResource.vendor === details.vendor && currentResource.name === details.name) {
                 details = currentResource.changeVersion(details.version);
             }
             this.createUserCommand('showDetails', details, {history: "ignore"})();
@@ -206,36 +206,23 @@
     };
 
     CatalogueView.prototype.ui_commands.delete = function (resource) {
-        var success_callback, error_callback, doRequest, msg, context;
-
-        success_callback = function () {
-            this.home();
-            this.refresh_search_results();
-        }.bind(this);
-
-        error_callback = function (msg) {
-            (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-        };
+        var doRequest, msg;
 
         doRequest = function () {
-            var monitor = Wirecloud.UserInterfaceManager.createTask(utils.gettext("Deleting component from catalogue"), 1);
-            delete_monitor = monitor.nextSubtask(utils.gettext('Requesting server'));
-
-            this.catalogue.deleteResource(resource, {
-                onSuccess: success_callback,
-                onFailure: error_callback
-            });
+            Wirecloud.UserInterfaceManager.monitorTask(
+                this.catalogue.deleteResource(resource).then(
+                    () => {
+                        this.home();
+                        this.refresh_search_results();
+                    },
+                    logerror
+                )
+            );
         };
 
         // First ask the user
         msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") component?');
-        context = {
-            vendor: resource.vendor,
-            name: resource.name,
-            version: resource.version.text
-        };
-
-        msg = utils.interpolate(msg, context, true);
+        msg = utils.interpolate(msg, resource, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu();
             dialog.setMsg(msg);

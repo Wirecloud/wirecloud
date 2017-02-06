@@ -27,6 +27,7 @@
     "use strict";
 
     var preferencesChanged = function preferencesChanged(preferences, modifiedValues) {
+        /* istanbul ignore if */
         if ('language' in modifiedValues) {
             window.location.reload();
         }
@@ -93,10 +94,16 @@
 
         Wirecloud.UserInterfaceManager.init();
 
-        window.addEventListener(
-                      "beforeunload",
-                      Wirecloud.unload.bind(this),
-                      true);
+        if (options.preventDefault !== true) {
+            window.addEventListener(
+                "beforeunload",
+                () => {
+                    Wirecloud.UserInterfaceManager.monitorTask(
+                        new Wirecloud.Task(gettext('Unloading WireCloud'), () => {})
+                    );
+                },
+                true);
+        }
 
         // Init platform context
         var contextTask = Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
@@ -208,16 +215,6 @@
         }
 
         return task;
-    };
-
-    /**
-     * Unloads the WireCloud Platform. This method is called, by default, when
-     * the unload event is captured.
-     */
-    Wirecloud.unload = function unload() {
-        Wirecloud.UserInterfaceManager.monitorTask(
-            new Wirecloud.Task(gettext('Unloading WireCloud'), () => {})
-        );
     };
 
     /**

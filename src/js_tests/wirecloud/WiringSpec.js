@@ -331,23 +331,34 @@
             });
 
             it("provide unique ids when creating volatile operators", function () {
+                expect(wiring.operators).toEqual([]);
+                expect(wiring.operatorsById).toEqual({});
+
                 var operator1 = wiring.createOperator("Wirecloud/TestOperator/1.0", {volatile: true});
                 var operator2 = wiring.createOperator("Wirecloud/TestOperator/1.0", {volatile: true});
 
                 expect(operator1.id).not.toEqual(operator2.id);
+                expect(wiring.operatorsById).toEqual({
+                    "1": operator1,
+                    "2": operator2
+                });
                 expect(wiring.operators).toEqual([operator1, operator2]);
             });
 
-            it("returns Promise instances when creating operators", function (done) {
-                // Currently, this method is used by the Wiring Editor, so the
-                // created operator is not added to the wiring status until the
-                // wiring Editor calls the load method with the new configuration.
-                var p = wiring.createOperator("Wirecloud/TestOperator/1.0");
+            it("returns Task instances when creating operators", function (done) {
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});});
+                });
 
-                expect(p).toEqual(jasmine.any(Promise));
-                p.then(function (operator) {
+                var task = wiring.createOperator("Wirecloud/TestOperator/1.0");
+
+                expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                task.then(function (operator) {
                     expect(operator).toEqual(jasmine.any(Wirecloud.wiring.Operator));
-                    expect(wiring.operators).toEqual([]);
+                    expect(wiring.operatorsById).toEqual({
+                        "1": operator
+                    });
+                    expect(wiring.operators).toEqual([operator]);
                     done();
                 });
             });
@@ -367,8 +378,12 @@
                 expect(wiring.findOperator("1")).toEqual(jasmine.any(Wirecloud.wiring.Operator));
             });
 
-            it("returns undefined for not found operators", function () {
-                expect(wiring.findOperator(200)).toBe(undefined);
+            it("allows passing numbers on the id parameter", function () {
+                expect(wiring.findOperator(1)).toEqual(jasmine.any(Wirecloud.wiring.Operator));
+            });
+
+            it("returns null for not found operators", function () {
+                expect(wiring.findOperator(200)).toBe(null);
             });
 
         });

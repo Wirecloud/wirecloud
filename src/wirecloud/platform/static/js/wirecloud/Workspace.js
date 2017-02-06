@@ -59,8 +59,10 @@
             tabs: [],
             on_livemessage: on_livemessage.bind(this),
             on_changetab: on_changetab.bind(this),
+            on_createoperator: on_createoperator.bind(this),
             on_createwidget: on_createwidget.bind(this),
             on_removetab: on_removetab.bind(this),
+            on_removeoperator: on_removeoperator.bind(this),
             on_removewidget: on_removewidget.bind(this)
         };
         privates.set(this, priv);
@@ -94,7 +96,7 @@
              * @type {Wirecloud.WorkspaceTab}
              */
             initialtab: {
-                get: function get() {return find_initial_tab.call(this);}
+                get: on_initial_tab_get
             },
             /**
              * @memberOf Wirecloud.Workspace#
@@ -220,8 +222,8 @@
             }
         });
 
-        this.wiring.addEventListener('createoperator', on_createoperator.bind(this));
-        this.wiring.addEventListener('removeoperator', on_removeoperator.bind(this));
+        this.wiring.addEventListener('createoperator', priv.on_createoperator);
+        this.wiring.addEventListener('removeoperator', priv.on_removeoperator);
 
         if (Wirecloud.live) {
             Wirecloud.live.addEventListener('workspace', priv.on_livemessage);
@@ -241,13 +243,21 @@
          *
          * @returns {Wirecloud.Task}
          */
-        createTab: function createTab() {
+        createTab: function createTab(options) {
+            if (options == null) {
+                options = {};
+            }
+
             var url = Wirecloud.URLs.TAB_COLLECTION.evaluate({
                 workspace_id: this.id
             });
 
+            if (options.name == null) {
+                options.name = create_tabtitle.call(this);
+            }
+
             var content = {
-                name: create_tabtitle.call(this)
+                name: options.name
             };
 
             return Wirecloud.io.makeRequest(url, {
@@ -268,32 +278,55 @@
         },
 
         /**
+         * Looks up an operator in this workspace.
+         *
          * @param {String} id
+         * @returns {Wirecloud.wiring.Operator}
+         *     Matching {@link Wirecloud.wiring.Operator} instance, `null` if
+         *     not found.
          */
         findOperator: function findOperator(id) {
             return this.wiring.findOperator(id);
         },
 
         /**
+         * Looks up a tab in this workspace.
+         *
          * @param {String} id
+         *     Id of the wanted tab.
+         * @returns {Wirecloud.WorkspaceTab}
+         *     Matching {@link Wirecloud.WorkspaceTab} instance, `null` if not
+         *     found.
          */
         findTab: function findTab(id) {
-            return this.tabsById[id];
-        },
-
-        /**
-         * @param {String} id
-         */
-        findWidget: function findWidget(id) {
-            var widgets = this.widgets,
-                i;
+            if (id == null) {
+                throw new TypeError("Missing id parameter");
+            }
 
             // Force string ids
             id = String(id);
 
-            for (i = 0; i < widgets.length; i++) {
-                if (widgets[i].id === id) {
-                    return widgets[i];
+            return this.tabsById[id] || null;
+        },
+
+        /**
+         * Looks up a widget insid this workspace.
+         *
+         * @param {String} id
+         * @returns {Wirecloud.Widget}
+         *     Matching {@link Wirecloud.Widget} instance, `null` if not found.
+         */
+        findWidget: function findWidget(id) {
+            if (id == null) {
+                throw new TypeError("Missing id parameter");
+            }
+
+            // Force string ids
+            id = String(id);
+
+            for (var i = 0; i < this.widgets.length; i++) {
+                if (this.widgets[i].id === id) {
+                    return this.widgets[i];
                 }
             }
 
@@ -326,6 +359,9 @@
         },
 
         /**
+         * Merges other workspaces or mashups into this workspace. See
+         * {@link Wirecloud.mergeWorkspace} for more details.
+         *
          * @param {Object} options
          *
          * @returns {Wirecloud.Task}
@@ -334,37 +370,54 @@
             return Wirecloud.mergeWorkspace(this, options);
         },
 
-        publish: function publish(data) {
-            return new Promise(function (resolve, reject) {
-                var url = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({
-                    workspace_id: this.id
-                });
+        /**
+         * Creates a packaged version of this workspace and uploads it into MyTab
+         * Resources.
+         *
+         * @param {Object} options
+         *
+         * @returns {Wirecloud.Task}
+         */
+        publish: function publish(options) {
 
-                var content = new FormData();
+            if (options == null) {
+                throw new TypeError("missing options parameter");
+            }
 
-                if (data.image) {
-                    content.append('image', data.image);
+            var url = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({
+                workspace_id: this.id
+            });
+
+            var content = new FormData();
+
+            if (options.image) {
+                content.append('image', options.image);
+                delete options.image;
+            }
+
+            content.append('json', JSON.stringify(options));
+
+            return Wirecloud.io.makeRequest(url, {
+                method: 'POST',
+                requestHeaders: {'Accept': 'application/json'},
+                postBody: content
+            }).then((response) => {
+                if ([201, 401, 403, 409, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 409, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
 
-                delete data.image;
-                content.append('json', JSON.stringify(data));
-
-                Wirecloud.io.makeRequest(url, {
-                    method: 'POST',
-                    requestHeaders: {'Accept': 'application/json'},
-                    postBody: content,
-                    onComplete: function (response) {
-                        if (response.status === 201) {
-                            Wirecloud.LocalCatalogue._includeResource(JSON.parse(response.responseText));
-                            resolve(this);
-                        } else {
-                            reject(/* TODO */);
-                        }
-                    }.bind(this)
-                });
-            }.bind(this));
+                Wirecloud.LocalCatalogue._includeResource(JSON.parse(response.responseText));
+                return Promise.resolve();
+            });
         },
 
+        /**
+         * Removes this workspace from the WireCloud server.
+         *
+         * @returns {Wirecloud.Task}
+         */
         remove: function remove() {
             return Wirecloud.removeWorkspace(this).then(function () {
                 this.dispatchEvent('remove');
@@ -398,35 +451,30 @@
                 contentType: 'application/json',
                 postBody: JSON.stringify(content)
             }).then((response) => {
-                return new Promise((resolve, reject) => {
-                    if ([204, 401, 403, 409, 500].indexOf(response.status) === -1) {
-                        return reject(utils.gettext("Unexpected response from server"));
-                    } else if ([401, 403, 409, 500].indexOf(response.status) !== -1) {
-                        return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
-                    }
+                if ([204, 401, 403, 409, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 409, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
 
-                    var old_name = this.contextManager.get('name');
-                    this.contextManager.modify({
-                        name: name
-                    });
-                    this.dispatchEvent('change', ['name'], {name: old_name});
-                    resolve(this);
+                var old_name = this.contextManager.get('name');
+                this.contextManager.modify({
+                    name: name
                 });
+                this.dispatchEvent('change', ['name'], {name: old_name});
+                return Promise.resolve(this);
             });
         },
 
         unload: function unload() {
+            var priv = privates.get(this);
             if (Wirecloud.live) {
-                var priv = privates.get(this);
                 Wirecloud.live.removeEventListener('workspace', priv.on_livemessage);
             }
-            this.wiring.removeEventListener('createoperator', on_createoperator.bind(this));
-            this.wiring.removeEventListener('removeoperator', on_removeoperator.bind(this));
+            this.wiring.removeEventListener('removeoperator', priv.on_removeoperator);
+            this.wiring.removeEventListener('createoperator', priv.on_createoperator);
 
             this.dispatchEvent('unload');
-
-            Wirecloud.GlobalLogManager.log(utils.gettext('Workspace unloaded successfully'), Wirecloud.constants.LOGGING.INFO_MSG);
-            Wirecloud.GlobalLogManager.newCycle();
 
             return this;
         }
@@ -466,44 +514,41 @@
 
         this.dispatchEvent('createtab', tab);
 
-        if (Array.isArray(data.iwidgets) && data.iwidgets.length) {
-            data.iwidgets.forEach(function (data) {
-                var resource = this.resources.findResource('widget', data.widget, true);
-                tab.createWidget(resource, utils.merge(data, {
-                    commit: false
-                }));
-            }, this);
-        }
+        data.iwidgets.forEach(function (data) {
+            var resource = this.resources.findResource('widget', data.widget, true);
+            tab.createWidget(resource, utils.merge(data, {
+                commit: false
+            }));
+        }, this);
 
         return tab;
     };
 
     var create_tabtitle = function create_tabtitle() {
-        var copy, title, titles, priv;
+        var copy, base, title, titles, priv;
 
         priv = privates.get(this);
-
         titles = priv.tabs.map(function (tab) {
             return tab.title;
         });
 
         copy = 1;
-        title = utils.interpolate(utils.gettext("Tab %(index)s"), {
+        base = title = utils.interpolate(utils.gettext("Tab %(index)s"), {
             index: priv.tabs.length + 1
         });
 
-        if (titles.indexOf(title) < 0) {
-            return title;
-        }
-
-        while (titles.indexOf(title + "(" + copy + ")") !== -1) {
+        while (titles.indexOf(title) !== -1) {
             copy += 1;
+            title = utils.interpolate(utils.gettext("%(base) (%(copy)s)"), {
+                base: base,
+                copy: copy
+            });
         }
 
-        return title + "(" + copy + ")";
+        return title;
     };
 
-    var find_initial_tab = function find_initial_tab() {
+    var on_initial_tab_get = function on_initial_tab_get() {
         var i, priv;
 
         priv = privates.get(this);

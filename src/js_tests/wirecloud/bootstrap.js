@@ -3,6 +3,9 @@ Wirecloud = {
         HTTP_STATUS_DESCRIPTIONS: {
             503: "Service unavailable"
         },
+        LOGGING: {
+            ERROR_MSG: "error"
+        },
         UNKNOWN_STATUS_CODE_DESCRIPTION: "Unknown error code"
     },
     currentTheme: {
@@ -28,6 +31,7 @@ Wirecloud = {
         WORKSPACE_COLLECTION: "/api/workspaces",
         WORKSPACE_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s"),
         WORKSPACE_MERGE: new StyledElements.Utils.Template("/api/workspace/%(to_ws_id)s/merge"),
+        WORKSPACE_PUBLISH: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/publish"),
         WORKSPACE_VIEW: new StyledElements.Utils.Template("/%(owner)s/%(name)s")
     },
     Utils: StyledElements.Utils
