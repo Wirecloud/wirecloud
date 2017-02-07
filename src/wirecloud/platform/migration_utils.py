@@ -19,14 +19,32 @@
 
 from __future__ import unicode_literals
 
-from django.db import migrations, models
 from django.db.migrations.exceptions import IrreversibleError
 import six
 
 
+def mutate_forwards_operator(preference, userID):
+    preference["value"] = {"users": {"%s" % userID: preference["value"]}}
+    return preference
+
+
+def mutate_forwards_widget(preference, userID):
+    preference = {"users": {"%s" % userID: preference}}
+    return preference
+
+
+def mutate_backwards_operator(preference, userID):
+    preference["value"] = preference["value"]["users"]["%s" % userID]
+    return preference
+
+
+def mutate_backwards_widget(preference, userID):
+    preference = preference["users"]["%s" % userID]
+    return preference
+
+
 def update_variables_structure(apps, schema_editor):
 
-    mutate = lambda value, userID: {"users": {userID: value}}
     Workspace = apps.get_model("platform", "workspace")
 
     for workspace in Workspace.objects.select_related('creator').all():
@@ -35,13 +53,13 @@ def update_variables_structure(apps, schema_editor):
         # Update operators
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
-            wiring["operators"][op]["preferences"] = {k: mutate(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+            wiring["operators"][op]["preferences"] = {k: mutate_forwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
         workspace.save()
 
         # Update widgets
         for tab in workspace.tab_set.all():
             for widget in tab.iwidget_set.all():
-                widget.variables = {k: mutate(v, owner) for k, v in six.iteritems(widget.variables)}
+                widget.variables = {k: mutate_forwards_widget(v, owner) for k, v in six.iteritems(widget.variables)}
                 widget.save()
 
 
@@ -56,7 +74,6 @@ def reverse_variables_structure(apps, schema_editor):
                 uri = component.vendor + '/' + component.short_name + '/' + component.version
                 raise IrreversibleError("Component %s requires multiuser support. Uninstall it before downgrading." % uri)
 
-    mutate = lambda value, userID: value["users"]["%s" % userID]
     Workspace = apps.get_model("platform", "workspace")
     for workspace in Workspace.objects.select_related('creator').all():
         owner = workspace.creator.id
@@ -64,11 +81,11 @@ def reverse_variables_structure(apps, schema_editor):
         # Update operators
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
-            wiring["operators"][op]["preferences"] = {k: mutate(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+            wiring["operators"][op]["preferences"] = {k: mutate_backwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
         workspace.save()
 
         # Update widgets
         for tab in workspace.tab_set.all():
             for widget in tab.iwidget_set.all():
-                widget.variables = {k: mutate(v, owner) for k, v in six.iteritems(widget.variables)}
+                widget.variables = {k: mutate_backwards_widget(v, owner) for k, v in six.iteritems(widget.variables)}
                 widget.save()
