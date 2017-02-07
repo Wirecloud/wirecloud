@@ -1183,7 +1183,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 204)
 
         # Check if preferences changed
-        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"], "helloWorld")
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"]["users"]["4"], "helloWorld")
 
     def test_workspace_wiring_entry_patch_preference_value_read_only_permission(self):
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
@@ -4239,7 +4239,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Check images has been uploaded
         test_mashup = CatalogueResource.objects.get(short_name='test-published-mashup')
         base_dir = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
-        test_mashup_info = json.loads(test_mashup.json_description)
+        test_mashup_info = test_mashup.json_description
 
         image_path = os.path.join(base_dir, test_mashup_info['image'])
         self.assertTrue(filecmp.cmp(original_catalogue_image, image_path))
@@ -4271,7 +4271,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Check long description field has been converted into a file
         test_mashup = CatalogueResource.objects.get(short_name='test-published-mashup')
         base_dir = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
-        test_mashup_info = json.loads(test_mashup.json_description)
+        test_mashup_info = test_mashup.json_description
 
         image_path = os.path.join(base_dir, test_mashup_info['longdescription'])
         with open(image_path, 'rb') as f:

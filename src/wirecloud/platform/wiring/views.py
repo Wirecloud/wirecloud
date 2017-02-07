@@ -46,6 +46,59 @@ class WiringEntry(Resource):
         new_preference["value"]["users"]["%s" % request.user.id] = new_value
         return new_preference
 
+    def checkMultiuserWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure=False):
+        if new_wiring_status["connections"] != old_wiring_status["connections"]:
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+        for operator_id, operator in six.iteritems(new_wiring_status['operators']):
+            if operator_id not in old_wiring_status['operators']:
+                return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+            old_operator = old_wiring_status['operators'][operator_id]
+            if old_operator["name"] != operator["name"] or old_operator["id"] != operator["id"]:
+                return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+            vendor, name, version = operator["name"].split("/")
+            try:
+                operator_preferences = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["preferences"]
+            except CatalogueResource.DoesNotExist:
+                operator_preferences = None
+
+            for preference_name in operator['preferences']:
+                old_preference = old_operator['preferences'][preference_name]
+                new_preference = operator['preferences'][preference_name]
+
+                if old_preference["hidden"] != new_preference["hidden"] or old_preference["readonly"] != new_preference["readonly"]:
+                    return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+                # Check if its multiuser
+                preference_secure = False
+                preference_multiuser = False
+                if operator_preferences:
+                    for pref in operator_preferences:
+                        if pref["name"] == preference_name:
+                            preference_secure = pref.get("secure", False)
+                            preference_multiuser = pref.get("multiuser", False)
+                            operator_preferences.remove(pref)  # Speed up search for next preferences
+                            break
+
+                # Variables can only be updated if multisuer
+                if not preference_multiuser:
+                    if old_preference["value"] != new_preference["value"]:
+                        return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+                    else:
+                        continue
+
+                # Update variable value
+                if preference_secure and not can_update_secure:
+                    new_preference["value"] = old_preference["value"]
+                elif new_preference["value"] != old_preference["value"]:
+                    # Handle multiuser
+                    new_preference = self.handleMultiuser(request, new_preference, old_preference)
+                operator['preferences'][preference_name] = new_preference
+
+        return True
+
     def checkWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure=False):
         # Check read only connections
         old_read_only_connections = [connection for connection in old_wiring_status['connections'] if connection.get('readonly', False)]
@@ -57,7 +110,6 @@ class WiringEntry(Resource):
         for connection in old_read_only_connections:
             if connection not in new_read_only_connections:
                 return build_error_response(request, 403, _('You are not allowed to remove or update read only connections'))
-
         # Check operator preferences
         for operator_id, operator in six.iteritems(new_wiring_status['operators']):
             old_operator = None
@@ -66,7 +118,6 @@ class WiringEntry(Resource):
                 added_preferences = set(operator['preferences'].keys()) - set(old_operator['preferences'].keys())
                 removed_preferences = set(old_operator['preferences'].keys()) - set(operator['preferences'].keys())
                 updated_preferences = set(operator['preferences'].keys()).intersection(old_operator['preferences'].keys())
-
                 vendor, name, version = operator["name"].split("/")
                 try:
                     operator_preferences = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["preferences"]
@@ -82,6 +133,7 @@ class WiringEntry(Resource):
             for preference_name in added_preferences:
                 if operator['preferences'][preference_name].get('readonly', False) or operator['preferences'][preference_name].get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden preferences cannot be created using this API'))
+
                 # Handle multiuser
                 new_preference = operator['preferences'][preference_name]
                 new_preference["value"] = {"users": {"%s" % request.user.id: new_preference["value"]}}
@@ -112,11 +164,10 @@ class WiringEntry(Resource):
 
                 if preference_secure and not can_update_secure:
                     new_preference["value"] = old_preference["value"]
-                    operator['preferences'][preference_name] = new_preference
                 elif new_preference["value"] != old_preference["value"]:
                     # Handle multiuser
                     new_preference = self.handleMultiuser(request, new_preference, old_preference)
-                    operator['preferences'][preference_name] = new_preference
+                operator['preferences'][preference_name] = new_preference
 
         return True
 
@@ -125,13 +176,17 @@ class WiringEntry(Resource):
     def update(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
-        if not request.user.is_superuser and workspace.creator != request.user:
-            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         new_wiring_status = parse_json_request(request)
         old_wiring_status = workspace.wiringStatus
 
-        result = self.checkWiring(request, new_wiring_status, old_wiring_status)
+        if workspace.creator == request.user or request.user.is_superuser:
+            result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+        elif workspace.is_available_for(request.user):
+            result = self.checkMultiuserWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+        else:
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
         if result is not True:
             return result
 
@@ -144,8 +199,6 @@ class WiringEntry(Resource):
     @consumes(('application/json-patch+json',))
     def patch(self, request, workspace_id):
         workspace = get_object_or_404(Workspace, id=workspace_id)
-        if not request.user.is_superuser and workspace.creator != request.user:
-            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         old_wiring_status = workspace.wiringStatus
         try:
@@ -155,7 +208,13 @@ class WiringEntry(Resource):
         except jsonpatch.InvalidJsonPatch:
             return build_error_response(request, 400, _('Invalid JSON patch'))
 
-        result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+        if workspace.creator == request.user or request.user.is_superuser:
+            result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+        elif workspace.is_available_for(request.user):
+            result = self.checkMultiuserWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+        else:
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
         if result is not True:
             return result
         workspace.wiringStatus = new_wiring_status

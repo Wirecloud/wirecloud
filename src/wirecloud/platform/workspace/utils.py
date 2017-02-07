@@ -163,7 +163,7 @@ def get_workspace_list(user):
     return workspaces
 
 
-def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user):
+def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, current_user, workspace_creator):
     varname = vardef['name']
     entry = {
         'type': vardef['type'],
@@ -182,11 +182,13 @@ def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_var
         entry['hidden'] = fv_entry.get('hidden', False)
 
     else:
+        # Handle multiuser variables
         value = iwidget.variables.get(varname, None)
-        if value is None or value["users"].get("%s" % user.id, None) is None:
+        variable_user = current_user if vardef.get("multiuser", False) else workspace_creator
+        if value is None or value["users"].get("%s" % variable_user.id, None) is None:
             value = parse_value_from_text(entry, vardef['default'])
         else:
-            value = value["users"].get("%s" % user.id, None)
+            value = value["users"].get("%s" % variable_user.id, None)
 
         entry['value'] = value
         entry['readonly'] = False
@@ -216,10 +218,10 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
         iwidget_info = iwidget.widget.resource.get_processed_info()
 
         for vardef in iwidget_info['preferences']:
-            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user)
+            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user, workspace.creator)
 
         for vardef in iwidget_info['properties']:
-            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user)
+            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user, workspace.creator)
 
     values = {
         'by_varid': values_by_varid,
@@ -283,7 +285,7 @@ class VariableValueCacheManager():
         return value
 
     # Get preference data
-    def get_variable_data(self, iwidget, var_name, user):
+    def get_variable_data(self, iwidget, var_name):
         values = self.get_variable_values()
         entry = values['by_varname'][iwidget.id][var_name]
 
@@ -302,7 +304,7 @@ class VariableValueCacheManager():
         }
 
     # Get the persistent property data
-    def get_property_data(self, iwidget, var_name, user):
+    def get_property_data(self, iwidget, var_name):
         values = self.get_variable_values()
         entry = values['by_varname'][iwidget.id][var_name]
 
@@ -494,13 +496,17 @@ def _get_global_workspace_data(workspaceDAO, user):
         for preference_name, preference in six.iteritems(operator.get('preferences', {})):
             vardef = operator_info['variables']['preferences'].get(preference_name)
             value = preference.get('value', None)
+
+            # Handle multiuser
+            variable_user = user if vardef is not None and vardef["multiuser"] else workspaceDAO.creator
+
             if preference_name in operator_forced_values:
                 preference['value'] = operator_forced_values[preference_name]['value']
-            elif value is None or value["users"].get("%s" % user.id, None) is None:
+            elif value is None or value["users"].get("%s" % variable_user.id, None) is None:
                 # If not defined / not defined for the current user, take the default value
                 preference['value'] = parse_value_from_text(vardef, vardef['default'])
             else:
-                preference['value'] = value["users"].get("%s" % user.id)
+                preference['value'] = value["users"].get("%s" % variable_user.id)
 
             # Secure censor
             if vardef is not None and vardef["secure"]:
@@ -568,8 +574,8 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         cache_manager = VariableValueCacheManager(workspace, user)
 
     iwidget_info = iwidget.widget.resource.get_processed_info()
-    data_ret['preferences'] = {preference['name']: cache_manager.get_variable_data(iwidget, preference['name'], user) for preference in iwidget_info['preferences']}
-    data_ret['properties'] = {property['name']: cache_manager.get_property_data(iwidget, property['name'], user) for property in iwidget_info['properties']}
+    data_ret['preferences'] = {preference['name']: cache_manager.get_variable_data(iwidget, preference['name']) for preference in iwidget_info['preferences']}
+    data_ret['properties'] = {property['name']: cache_manager.get_property_data(iwidget, property['name']) for property in iwidget_info['properties']}
 
     return data_ret
 
