@@ -128,6 +128,32 @@
         Wirecloud.addEventListener('activeworkspacechanged', function (Wirecloud, workspace) {
             this.layout.slideOut();
 
+            // Check if the workspace needs to ask some values before loading this workspace
+            if (workspace.emptyparams.length > 0) {
+                var preferences, preferenceValues, dialog;
+
+                preferenceValues = {};
+                workspace.emptyparams.forEach((emptyparam) => {
+                    if (workspace.preferences[emptyparam] != null) {
+                        preferenceValues[emptyparam] = workspace.preferences[emptyparam];
+                    }
+                });
+
+                preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, workspace, workspace.extraprefs, workspace.emptyparams);
+                preferences.addEventListener('post-commit', function () {
+                    setTimeout(function () {
+                        Wirecloud.UserInterfaceManager.monitorTask(
+                            Wirecloud.changeActiveWorkspace(workspace)
+                        );
+                    }, 0);
+                }.bind(this));
+
+                dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
+                dialog.show();
+                return;
+            }
+
+            // init new active workspace
             var state = Wirecloud.HistoryManager.getCurrentState();
             try {
                 this.loadWorkspace(workspace, {initialtab: state.tab});

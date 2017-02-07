@@ -88,9 +88,9 @@
                 return Wirecloud.changeActiveWorkspace(workspace);
             }, function (error) {
                 var dialog;
-                if ('missingDependencies' in error) {
+                if (error.details != null && 'missingDependencies' in error.details) {
                     // Show missing dependencies
-                    dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(retry.bind(null, data), error);
+                    dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(retry.bind(null, data), error.details);
                 } else {
                     dialog = new Wirecloud.ui.MessageWindowMenu(error, Wirecloud.constants.LOGGING.ERROR_MSG);
                 }

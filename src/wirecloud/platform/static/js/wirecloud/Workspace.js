@@ -85,6 +85,23 @@
                 }
             },
             /**
+             * List of required preferences in empty status.
+             *
+             * @memberOf Wirecloud.Workspace#
+             * @type {Array.<String>}
+             */
+            emptyparams: {
+                value: data.empty_params
+            },
+            /**
+             * Extra preferences
+             *
+             * @memberOf Wirecloud.Workspace#
+             */
+            extraprefs: {
+                value: data.extra_prefs
+            },
+            /**
              * @memberOf Wirecloud.Workspace#
              * @type {String}
              */
@@ -208,7 +225,9 @@
             }
         });
 
-        data.tabs.forEach(_create_tab, this);
+        if (Array.isArray(data.tabs)) {
+            data.tabs.forEach(_create_tab, this);
+        }
 
         Object.defineProperties(this, {
             operators: {

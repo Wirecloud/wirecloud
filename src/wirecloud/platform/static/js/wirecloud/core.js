@@ -542,33 +542,6 @@
 
         return new Wirecloud.Task("Processing workspace data", (resolve, reject, update) => {
             var workspace_data = JSON.parse(response.responseText);
-
-            // Check if the workspace needs to ask some values before loading this workspace
-            if (workspace_data.empty_params.length > 0) {
-                var preferences, preferenceValues, param, i, dialog;
-
-                preferenceValues = {};
-                for (i = 0; i < workspace_data.empty_params.length; i += 1) {
-                    param = workspace_data.empty_params[i];
-                    if (workspace_data.preferences[param] != null) {
-                        preferenceValues[param] = workspace_data.preferences[param];
-                    }
-                }
-
-                Wirecloud.dispatchEvent('viewcontextchanged');
-                preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, workspace_data, workspace_data.extra_prefs, workspace_data.empty_params);
-                preferences.addEventListener('post-commit', function () {
-                    setTimeout(function () {
-                        Wirecloud.changeActiveWorkspace(workspace, options);
-                    }, 0);
-                }.bind(this));
-
-                dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
-                dialog.setCancelable(false);
-                dialog.show();
-                return;
-            }
-
             var workspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
             cache_workspace(workspace);
             resolve(workspace);
