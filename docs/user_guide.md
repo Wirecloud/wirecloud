@@ -29,12 +29,20 @@ screenshot shows a workspace named "Workspace", pertaining the user
 "admin" and running in the FIWARE Lab’s instance of WireCloud, i.e. it
 is named admin/Workspace.
 
-<img src="../images/user_guide/create_workspace/empty_workspace.png" srcset="../images/user_guide/create_workspace/empty_workspace.png 2x" alt="Empty workspace"/>
+<p align="center">
+    <a href="./images/user_guide/create_workspace/empty_workspace.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/create_workspace/empty_workspace.png" alt="Empty workspace">
+    </a>
+</p>
 
 Near the workspace name there is a button that you can click on to
 expand the workspace dropdown menu:
 
-<img src="../images/user_guide/create_workspace/workspace_menu.png" srcset="../images/user_guide/create_workspace/workspace_menu.png 2x" alt="Workspace menu"/>
+<p align="center">
+    <a href="./images/user_guide/create_workspace/workspace_menu.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/create_workspace/workspace_menu.png" alt="Workspace menu">
+    </a>
+</p>
 
 Once expanded, the menu shows a list of the already created workspaces
 (see *Workspace*, *My Multimedia Workspace* and *IssueTrouble* in the
@@ -54,22 +62,38 @@ by a list of options:
 If you want to create a new workspace named "History Info", choose *New
 workspace* in the dropdown menu:
 
-<img src="../images/user_guide/create_workspace/new_workspace_entry.png" srcset="../images/user_guide/create_workspace/new_workspace_entry.png 2x" alt="Click *New workspace*"/>
+<p align="center">
+    <a href="./images/user_guide/create_workspace/new_workspace_entry.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/create_workspace/new_workspace_entry.png" alt="Click *New workspace*">
+    </a>
+</p>
 
 A dialog will pop up requiring a name for the new workspace. Type the
 desired name and click the accept button:
 
-<img src="../images/user_guide/create_workspace/new_workspace_dialog.png" srcset="../images/user_guide/create_workspace/new_workspace_dialog.png 2x" alt="Dialog for creating a new workspace"/>
+<p align="center">
+    <a href="./images/user_guide/create_workspace/new_workspace_dialog.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/create_workspace/new_workspace_dialog.png" alt="Dialog for creating a new workspace">
+    </a>
+</p>
 
 Once accepted, the name of the new workspace is shown in the upper area of
 the window:
 
-<img src="../images/user_guide/create_workspace/new_workspace.png" srcset="../images/user_guide/create_workspace/new_workspace.png 2x" alt=""History Info" workspace just after being created"/>
+<p align="center">
+    <a href="./images/user_guide/create_workspace/new_workspace.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/create_workspace/new_workspace.png" alt="'History Info' workspace just after being created">
+    </a>
+</p>
 
 The following screenshot show the "Settings" menu, where you can set
 workspace features:
 
-<img src="../images/user_guide/create_workspace/workspace_settings.png" srcset="../images/user_guide/create_workspace/workspace_settings.png 2x" alt="create_workspace/WorkspaceSettings.png"/>
+<p align="center">
+    <a href="./images/user_guide/create_workspace/workspace_settings.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/create_workspace/workspace_settings.png" alt="create_workspace/WorkspaceSettings.png">
+    </a>
+</p>
 
 Browsing the Marketplace
 ------------------------
@@ -102,7 +126,11 @@ The following figure shows a screenshot of WireCloud where you can see
 the FIWARE Lab marketplace and the different stores made available through
 it.
 
-<img src="../images/user_guide/browsing_marketplace/marketplace_with_stores.png" srcset="../images/user_guide/browsing_marketplace/marketplace_with_stores.png 2x" alt="Marketplace with several stores"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/marketplace_with_stores.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/marketplace_with_stores.png" alt="Marketplace with several stores">
+    </a>
+</p>
 
 ### Managing marketplaces
 
@@ -110,7 +138,11 @@ When looking for an offer of widgets, operators and mashups, you first
 need to choose a marketplace. Use the dropdown menu shown in the
 workspace path for this purpose.
 
-<img src="../images/user_guide/browsing_marketplace/marketplace_dropdown.png" srcset="../images/user_guide/browsing_marketplace/marketplace_dropdown.png 2x" alt="Marketplace dropdown"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/marketplace_dropdown.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/marketplace_dropdown.png" alt="Marketplace dropdown">
+    </a>
+</p>
 
 As shown in the previous screenshot, this menu allows you to choose
 among the different marketplaces you have access to. To add a new
@@ -122,25 +154,45 @@ If you have only Local marketplace available, you can add the FIWARE Lab
 marketplace using the *Add new marketplace* option as shown in the following
 screenshots:
 
-<img src="../images/user_guide/browsing_marketplace/add_new_marketplace_entry.png" srcset="../images/user_guide/browsing_marketplace/add_new_marketplace_entry.png 2x" alt="Click *Add new marketplace*"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/add_new_marketplace_entry.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/add_new_marketplace_entry.png" alt="Click *Add new marketplace*">
+    </a>
+</p>
 
-<img src="../images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png" srcset="../images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png 2x" alt="*Add new marketplace* dialog"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png" alt="*Add new marketplace* dialog">
+    </a>
+</p>
 
 WireCloud offers a built-in local catalogue called *My Resources*, which
 allows you to search among the widgets, operators and mashups currently
 available for the user. The following figure shows a screenshot of the
 *My Resources* for a user in a given instance of WireCloud.
 
-<img src="../images/user_guide/browsing_marketplace/my_resources.png" srcset="../images/user_guide/browsing_marketplace/my_resources.png 2x" alt="*My Resources* view"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/my_resources.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/my_resources.png" alt="*My Resources* view">
+    </a>
+</p>
 
 If you are a widget developer with brand new widgets to share, or you
 just have downloaded a WireCloud-compliant widget from anywhere, you can
 easily upload your new widgets to the built-in local catalogue through
 the *Upload* button available on the *My Resources* view.
 
-<img src="../images/user_guide/browsing_marketplace/upload_button.png" srcset="../images/user_guide/browsing_marketplace/upload_button.png 2x" alt="Click *Upload*"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/upload_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/upload_button.png" alt="Click *Upload*">
+    </a>
+</p>
 
-<img src="../images/user_guide/browsing_marketplace/upload_dialog.png" srcset="../images/user_guide/browsing_marketplace/upload_dialog.png 2x" alt="MAC upload dialog"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/upload_dialog.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/upload_dialog.png" alt="MAC upload dialog">
+    </a>
+</p>
 
 ### Choosing an available store
 
@@ -149,13 +201,21 @@ to surf a store you first need to choose the FIWARE Lab marketplace that
 publishes it. In the following figure, the user uses the dropdown menu
 to choose FIWARE Lab’s marketplace:
 
-<img src="../images/user_guide/browsing_marketplace/marketplace_dropdown.png" srcset="../images/user_guide/browsing_marketplace/marketplace_dropdown.png 2x" alt="Marketplace dropdown with several marketplaces"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/marketplace_dropdown.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/marketplace_dropdown.png" alt="Marketplace dropdown with several marketplaces">
+    </a>
+</p>
 
 Once in the FIWARE Lab marketplace, the store dropdown menu shows all its
 available stores (*CoNWeT*, *WStore FIWARE Lab* and *Another Store*). The
 following figure shows the options available in the stores dropdown menu:
 
-<img src="../images/user_guide/browsing_marketplace/marketplace_with_stores.png" srcset="../images/user_guide/browsing_marketplace/marketplace_with_stores.png 2x" alt="Marketplace store list dropdown"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/marketplace_with_stores.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/marketplace_with_stores.png" alt="Marketplace store list dropdown">
+    </a>
+</p>
 
 Last, but not least, you can return to surf the entire marketplace and
 see the global offer at a glance by selecting the *All stores* option.
@@ -163,17 +223,33 @@ see the global offer at a glance by selecting the *All stores* option.
 ### Publishing mashable application components into Stores
 
 1.  Go to *My Resources* view:
-    <img src="../images/user_guide/browsing_marketplace/my_resources_button.png" srcset="../images/user_guide/browsing_marketplace/my_resources_button.png 2x" alt="Click *My Resources*"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/my_resources_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/my_resources_button.png" alt="Click *My Resources*">
+    </a>
+</p>
 
 1.  Open the mashable application component details clicking on it:
-    <img src="../images/user_guide/browsing_marketplace/component_details.png" srcset="../images/user_guide/browsing_marketplace/component_details.png 2x" alt="Click on the offering for displaying the details"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/component_details.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/component_details.png" alt="Click on the offering for displaying the details">
+    </a>
+</p>
 
 1.  Click *Publish*:
-     <img src="../images/user_guide/browsing_marketplace/publish_button.png" srcset="../images/user_guide/browsing_marketplace/publish_button.png 2x" alt="Click *Publish*"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/publish_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/publish_button.png" alt="Click *Publish*">
+    </a>
+</p>
 
 1.  Check the marketplace and the Store where the mashable application
     component is going to be uploaded
-    <img src="../images/user_guide/browsing_marketplace/publish_resource_store_select.png" srcset="../images/user_guide/browsing_marketplace/publish_resource_store_select.png 2x" alt="Select the store"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/publish_resource_store_select.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/publish_resource_store_select.png" alt="Select the store">
+    </a>
+</p>
 
 1.  That's all!. Now you will be able to create new offerings at the
     selected Store using the uploaded resource. See the [WStore
@@ -189,12 +265,20 @@ workspace](#creating-a-new-workspace)" section, you should
 have a "History Info" workspace. Let's assume that we start from this
 point:
 
-<img src="../images/user_guide/create_workspace/new_workspace.png" srcset="../images/user_guide/create_workspace/new_workspace.png 2x" alt="Starting point"/>
+<p align="center">
+    <a href="./images/user_guide/create_workspace/new_workspace.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/create_workspace/new_workspace.png" alt="Starting point">
+    </a>
+</p>
 
 Go then to the Marketplace to choose among the components available in the
 catalogue those you want to use in your mashup:
 
-<img src="../images/user_guide/building_mashup/get_more_components.png" srcset="../images/user_guide/building_mashup/get_more_components.png 2x" alt="Button for searching more components"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/get_more_components.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/get_more_components.png" alt="Button for searching more components">
+    </a>
+</p>
 
 To ensure that you find the required widgets/operators for this example
 mashup, go to the FIWARE Lab marketplace and install them using the
@@ -210,21 +294,37 @@ You can also download them using the following URLs:
 Once installed, you should be able to see all the widgets/operators used
 in this example in the *My Resources* view:
 
-<img src="../images/user_guide/browsing_marketplace/my_resources.png" srcset="../images/user_guide/browsing_marketplace/my_resources.png 2x" alt="List of used components"/>
+<p align="center">
+    <a href="./images/user_guide/browsing_marketplace/my_resources.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/browsing_marketplace/my_resources.png" alt="List of used components">
+    </a>
+</p>
 
 Go to the editor view and click on the *Add components* button:
 
-<img src="../images/user_guide/building_mashup/add_widget_button.png" srcset="../images/user_guide/building_mashup/add_widget_button.png 2x" alt="Click *Add conponents*"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/add_widget_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/add_widget_button.png" alt="Click *Add conponents*">
+    </a>
+</p>
 
 Look for the *Linear Graph* widget and click on the *Add to workspace*
 button:
 
-<img src="../images/user_guide/building_mashup/add_linear_graph.png" srcset="../images/user_guide/building_mashup/add_linear_graph.png 2x" alt="Click *Add to workspace*"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/add_linear_graph.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/add_linear_graph.png" alt="Click *Add to workspace*">
+    </a>
+</p>
 
 This will add the *Linear Graph* widget into the dashboard, you can move
 and resize it until you obtain the desired layout:
 
-<img src="../images/user_guide/building_mashup/initial_linear_graph_layout.png" srcset="../images/user_guide/building_mashup/initial_linear_graph_layout.png 2x" alt="Initial *Linear Graph* layout"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/initial_linear_graph_layout.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/initial_linear_graph_layout.png" alt="Initial *Linear Graph* layout">
+    </a>
+</p>
 
 Add the *Map Viewer* widget to the dashboard following the same steps
 for adding the *Linear Graph* widget. After rearranging it you will be
@@ -233,7 +333,11 @@ the default tab. You can see the tabs used in your workspace at the
 footer bar, and you can create new tabs to better organize the
 distribution of the widgets in your mashup.
 
-<img src="../images/user_guide/building_mashup/final_layout.png" srcset="../images/user_guide/building_mashup/final_layout.png 2x" alt="Final layout"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/final_layout.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/final_layout.png" alt="Final layout">
+    </a>
+</p>
 
 ### Changing the settings of a widget
 
@@ -243,11 +347,19 @@ choice, you can change their settings. To do so, go to the upper-right
 corner of the widget and click the properties icon as shown in the
 following screenshot:
 
-<img src="../images/user_guide/building_mashup/widget_menu_button.png" srcset="../images/user_guide/building_mashup/widget_menu_button.png 2x" alt="Widget *Menu* button"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/widget_menu_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/widget_menu_button.png" alt="Widget *Menu* button">
+    </a>
+</p>
 
 You will then be presented with a dropdown menu with several options.
 
-<img src="../images/user_guide/building_mashup/widget_menu_dropdown.png" srcset="../images/user_guide/building_mashup/widget_menu_dropdown.png 2x" alt="Widget menu dropdown"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/widget_menu_dropdown.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/widget_menu_dropdown.png" alt="Widget menu dropdown">
+    </a>
+</p>
 
 -   **Rename** changes the widget name shown in workspace editor and
     wiring Editor views
@@ -273,18 +385,30 @@ customised dialog for the settings of the widget. In this example, the
 *Map Viewer* should be provided with initial location, zoom level and
 mark shadow radius to customise the visualisation.
 
-<img src="../images/user_guide/building_mashup/linear_graph_settings.png" srcset="../images/user_guide/building_mashup/linear_graph_settings.png 2x" alt="Click *Settings*"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/linear_graph_settings.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/linear_graph_settings.png" alt="Click *Settings*">
+    </a>
+</p>
 
 As we have configure the initial position and the initial zoom, we need to
 reload the widget. To do so, we click again on the properties icon and then on
 the *Reload* option:
 
-<img src="../images/user_guide/building_mashup/mapviewer_reload_entry.png" srcset="../images/user_guide/building_mashup/mapviewer_reload_entry.png 2x" alt="Reload option"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/mapviewer_reload_entry.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/mapviewer_reload_entry.png" alt="Reload option">
+    </a>
+</p>
 
 Now we have our widget centered in the new location, Santander, and using the
 configured initial zoom level.
 
-<img src="../images/user_guide/building_mashup/mapviewer_configured.png" srcset="../images/user_guide/building_mashup/mapviewer_configured.png 2x" alt="MapViewer widget after being configured"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/mapviewer_configured.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/mapviewer_configured.png" alt="MapViewer widget after being configured">
+    </a>
+</p>
 
 At this time, you have created a mashup with two individual widgets. The
 *Linear Graph* widget is empty and need to be wired with something that
@@ -292,7 +416,11 @@ provides information to draw, and the *Map Viewer* is a good option to
 show any kind of "Points of Interest" and allow the user to select them
 easily.
 
-<img src="../images/user_guide/building_mashup/workspace_mapviewer_configured.png" srcset="../images/user_guide/building_mashup/workspace_mapviewer_configured.png 2x" alt="Mashup with the map viewer configured"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/workspace_mapviewer_configured.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/workspace_mapviewer_configured.png" alt="Mashup with the map viewer configured">
+    </a>
+</p>
 
 ### Wiring widgets and operators
 
@@ -309,12 +437,20 @@ from the first one (i.e. the output or source endpoint).
 To wire the widgets and add operators to your mashup go to the Wiring
 view of the tool:
 
-<img src="../images/user_guide/building_mashup/wiring_button.png" srcset="../images/user_guide/building_mashup/wiring_button.png 2x" alt="Click *Wiring*"/>
+<p align="center">
+    <a href="./images/user_guide/building_mashup/wiring_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/building_mashup/wiring_button.png" alt="Click *Wiring*">
+    </a>
+</p>
 
 You will then be presented with an empty wiring configuration (denoted by an
 empty canvas displaying a welcome message):
 
-<img src="../images/user_guide/wiring/empty_wiring.png" srcset="../images/user_guide/wiring/empty_wiring.png 2x" alt="Emtpy wiring"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/empty_wiring.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/empty_wiring.png" alt="Emtpy wiring">
+    </a>
+</p>
 
 One of the most important characteristics that should be intrinsic to
 the design of widgets is that they must be as generic as possible. For
@@ -334,7 +470,11 @@ wiring.
 To do so, open the components side panel and search the *NGSI source* operator,
 then click on the *Create* button:
 
-<img src="../images/user_guide/wiring/create_operator_button.png" srcset="../images/user_guide/wiring/create_operator_button.png 2x" alt="Click *Create*"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/create_operator_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/create_operator_button.png" alt="Click *Create*">
+    </a>
+</p>
 
 This will create an instance of that operator and will appear in the bottom of
 the box associated with the *NGSI Source* operator. You can see that it is
@@ -344,17 +484,33 @@ removed from the wiring configuration.
 
 Now drag the operator from the operator list to the wiring canvas:
 
-<img src="../images/user_guide/wiring/add_ngsisource_sidebar.png" srcset="../images/user_guide/wiring/add_ngsisource_sidebar.png 2x" alt="Recently created operator in the sidebar"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/add_ngsisource_sidebar.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/add_ngsisource_sidebar.png" alt="Recently created operator in the sidebar">
+    </a>
+</p>
 
-<img src="../images/user_guide/wiring/add_ngsisource_drag.png" srcset="../images/user_guide/wiring/add_ngsisource_drag.png 2x" alt="Drag the *NGSI Source* operator"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/add_ngsisource_drag.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/add_ngsisource_drag.png" alt="Drag the *NGSI Source* operator">
+    </a>
+</p>
 
-<img src="../images/user_guide/wiring/add_ngsisource_finish.png" srcset="../images/user_guide/wiring/add_ngsisource_finish.png 2x" alt="*NGSI Source* added to the wiring canvas"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/add_ngsisource_finish.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/add_ngsisource_finish.png" alt="*NGSI Source* added to the wiring canvas">
+    </a>
+</p>
 
 Once added, we need to configure it so it knows what info to retrieve from the
 [Orion Context Broker] and from what instance. To do so, click on the
 **Settings** menu entry:
 
-<img src="../images/user_guide/wiring/ngsisource_settings.png" srcset="../images/user_guide/wiring/ngsisource_settings.png 2x" alt="NGSI Source Settings option"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/ngsisource_settings.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/ngsisource_settings.png" alt="NGSI Source Settings option">
+    </a>
+</p>
 
 And make sure the following configuration is used:
 
@@ -374,20 +530,32 @@ the wiring canvas, this way we will be able to connect them. This is
 accomplished in the same way we did with the *NGSI Source* operator, but using
 the *Widget* tab in the sidebar:
 
-<img src="../images/user_guide/wiring/add_mapviewer_sidebar.png" srcset="../images/user_guide/wiring/add_mapviewer_sidebar.png 2x" alt="wiring/Wiring_NGSISource_MapViewer.png"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/add_mapviewer_sidebar.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/add_mapviewer_sidebar.png" alt="NGSI Source Settings option">
+    </a>
+</p>
 
 > **NOTE**: We have created the instance of the *Map Viewer* widget in the
 > editor view, but you can also create widget instances from the wiring editor
 > using the *Create* button:
 >
-> <img src="../images/user_guide/wiring/create_widget_button.png" srcset="../images/user_guide/wiring/create_widget_button.png 2x" alt="*Create* button"/>
+> <p align="center">
+>    <a href="./images/user_guide/wiring/create_widget_button.png">
+>        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/create_widget_button.png" alt="*Create* button">
+>    </a>
+></p>
 >
 > Remember to resize and place the new widget after exiting the wiring editor.
 
 After adding the *Map Viewer* widget into the wiring canvas, you should have
 something similiar to this:
 
-<img src="../images/user_guide/wiring/wiring_after_adding_mapviewer.png" srcset="../images/user_guide/wiring/wiring_after_adding_mapviewer.png 2x" alt="Wiring diagram after adding the *Map Viewer* widget"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/wiring_after_adding_mapviewer.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/wiring_after_adding_mapviewer.png" alt="Wiring diagram after adding the *Map Viewer* widget">
+    </a>
+</p>
 
 The wiring editor comes with a recommendation system for connections.
 For example, move the pointer to the *Provide entity* endpoint. You will
@@ -395,7 +563,11 @@ see that the endpoint get highlighted, this means that te recommendation
 system is searching for compatible endpoints. In this case there are no
 compatible endpoints.
 
-<img src="../images/user_guide/wiring/missing_connection_recommendations.png" srcset="../images/user_guide/wiring/missing_connection_recommendations.png 2x" alt="Missing connection recommendations"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/missing_connection_recommendations.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/missing_connection_recommendations.png" alt="Missing connection recommendations">
+    </a>
+</p>
 
 This is because the output of the *NGSI source* cannot be connected directly
 with the *Map Viewer* widget. We can use a transform operator to convert the
@@ -403,23 +575,45 @@ event data provided by the *NGSI source* operator to the format used by the *Map
 Viewer* widget. In this example, the operator that is going to perform this
 transformation is called *NGSI Entity to PoI*:
 
-<img src="../images/user_guide/wiring/wiring_after_adding_ngsientity2poi.png" srcset="../images/user_guide/wiring/wiring_after_adding_ngsientity2poi.png 2x" alt="Wiring diagram after adding the *NGSI Entity to PoI* operator"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/wiring_after_adding_ngsientity2poi.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/wiring_after_adding_ngsientity2poi.png" alt="Wiring diagram after adding the *NGSI Entity to PoI* operator">
+    </a>
+</p>
 
 After adding the operator, we can move the pointer to the *Provide
 entity* endpoint to see that now we have a connection recommendation:
 
-<img src="../images/user_guide/wiring/endpoint_recommendation.png" srcset="../images/user_guide/wiring/endpoint_recommendation.png 2x" alt="Connection recommendation over the *Provide entity* endpoint"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/endpoint_recommendation.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/endpoint_recommendation.png" alt="Connection recommendation over the *Provide entity* endpoint">
+    </a>
+</p>
 
 So, we can connect it. To do so, push down the mouse button on the
 *Provide entity* endpoint and drag the arrow to the *Entity* endpoint:
 
-<img src="../images/user_guide/wiring/ngsientity2poi_connection_dragging.png" srcset="../images/user_guide/wiring/ngsientity2poi_connection_dragging.png 2x" alt="Dragging a connection"/>
-<img src="../images/user_guide/wiring/ngsientity2poi_connection_created.png" srcset="../images/user_guide/wiring/ngsientity2poi_connection_created.png 2x" alt="Created connection"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/ngsientity2poi_connection_dragging.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/ngsientity2poi_connection_dragging.png" alt="Dragging a connection">
+    </a>
+</p>
+
+<p align="center">
+    <a href="./images/user_guide/wiring/ngsientity2poi_connection_created.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/ngsientity2poi_connection_created.png" alt="Created connection">
+    </a>
+</p>
 
 We have to connect also the *PoI* endpoint of the *NGSI Entity To PoI* operator
 to the *Insert/Update PoI* endpoint on the *Map Viewer* widget:
 
-<img src="../images/user_guide/wiring/wiring_after_connecting_ngsientity2poin_and_mapviewer.png" srcset="../images/user_guide/wiring/wiring_after_connecting_ngsientity2poin_and_mapviewer.png 2x" alt="Wiring diagram after connecting the *NGSI entity To PoI* operator and the *Map Viewer* widget"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/wiring_after_connecting_ngsientity2poin_and_mapviewer.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/wiring_after_connecting_ngsientity2poin_and_mapviewer.png" alt="Wiring diagram after connecting the *NGSI entity To PoI* operator and the *Map Viewer* widget">
+    </a>
+</p>
+
 
 Once again, we need to configure the *NGSI Entity To PoI* operator, this is done
 in the same way as we have done with the *NGSI Source*. In this case the values
@@ -432,14 +626,22 @@ If you return to the *Editor* view, you will see that the map widget has
 been updated and is showing the PoIs obtained from the *NGSI source*
 operator.
 
-<img src="../images/user_guide/wiring/mapviewer_with_entities.png" srcset="../images/user_guide/wiring/mapviewer_with_entities.png 2x" alt="Map Viewer widget displaying shome PoIs"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/mapviewer_with_entities.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/mapviewer_with_entities.png" alt="Map Viewer widget displaying shome PoIs">
+    </a>
+</p>
 
 You can use the *Map Viewer* moving the viewport, selecting PoI's, etc.
 But in really, what we have is just the *Map Viewer* widget connected to
 a source of data, but using piping and transformation operators that is
 going to give us a great flexibility.
 
-<img src="../images/user_guide/wiring/mapviewer_entity_details.png" srcset="../images/user_guide/wiring/mapviewer_entity_details.png 2x" alt="Map Viewer widget displaying the details of an entity"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/mapviewer_entity_details.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/mapviewer_entity_details.png" alt="Map Viewer widget displaying the details of an entity">
+    </a>
+</p>
 
 
 [Orion Context Broker]: http://catalogue.fiware.org/enablers/publishsubscribe-context-broker-orion-context-broker
@@ -452,40 +654,90 @@ removed in the wiring. For example, when you make some mistake for some
 reason, you can fix it by clicking the *Remove* button that appears in the
 middle a of the connection:
 
-<img src="../images/user_guide/wiring/delete_arrow1.png" srcset="../images/user_guide/wiring/delete_arrow1.png 2x" alt="*Remove* button"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/delete_arrow1.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/delete_arrow1.png" alt="*Remove* button">
+    </a>
+</p>
 
 Sometimes what you want is to modify one of the connections. The Wiring Editor
 allows you to do this operation without having to remove the connection and
 having to create a new one. To do so, you only have to select the connection and
 drag the connection from the endpoint you want to modify:
 
-<img src="../images/user_guide/wiring/modify_connection1.png" srcset="../images/user_guide/wiring/modify_connection1.png 2x" alt="How to modify a connection"/>
-<img src="../images/user_guide/wiring/modify_connection2.png" srcset="../images/user_guide/wiring/modify_connection2.png 2x" alt="Dragging the new connection"/>
-<img src="../images/user_guide/wiring/modify_connection3.png" srcset="../images/user_guide/wiring/modify_connection3.png 2x" alt="Connection once modified"/>
-<img src="../images/user_guide/wiring/modify_connection4.png" srcset="../images/user_guide/wiring/modify_connection4.png 2x" alt="Connection once modified"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/modify_connection1.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/modify_connection1.png" alt="How to modify a connection">
+    </a>
+</p>
+
+<p align="center">
+    <a href="./images/user_guide/wiring/modify_connection2.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/modify_connection2.png" alt="Dragging the new connection">
+    </a>
+</p>
+
+<p align="center">
+    <a href="./images/user_guide/wiring/modify_connection3.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/modify_connection3.png" alt="Connection once modified">
+    </a>
+</p>
+
+<p align="center">
+    <a href="./images/user_guide/wiring/modify_connection4.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/modify_connection4.png" alt="Connection once modified">
+    </a>
+</p>
 
 Another common task is to change the shape of connections. To do so, you have to
 click on the *Customize* option of the connection:
 
-<img src="../images/user_guide/wiring/reshape_arrow_pre.png" srcset="../images/user_guide/wiring/reshape_arrow_pre.png 2x" alt="*Customize* option"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/reshape_arrow_pre.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/reshape_arrow_pre.png" alt="*Customize* option">
+    </a>
+</p>
 
 Once enabled, you only have to move the handles that appear to modify the shape
 of the connection.
 
-<img src="../images/user_guide/wiring/reshape_arrow1.png" srcset="../images/user_guide/wiring/reshape_arrow1.png 2x" alt="wiring/reshape_arrow1.png"/>
-<img src="../images/user_guide/wiring/reshape_arrow2.png" srcset="../images/user_guide/wiring/reshape_arrow2.png 2x" alt="wiring/reshape_arrow2.png"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/reshape_arrow1.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/reshape_arrow1.png" alt="wiring/reshape_arrow1.png">
+    </a>
+</p>
+
+<p align="center">
+    <a href="./images/user_guide/wiring/reshape_arrow2.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/reshape_arrow2.png" alt="wiring/reshape_arrow2.png">
+    </a>
+</p>
 
 If you want to stop customising the connection, click outside the connection or
 use the *Stop Customizing* option:
 
-<img src="../images/user_guide/wiring/reshape_arrow_stop.png" srcset="../images/user_guide/wiring/reshape_arrow_stop.png 2x" alt="*Stop Customizing* option"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/reshape_arrow_stop.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/reshape_arrow_stop.png" alt="*Stop Customizing* option">
+    </a>
+</p>
 
 You can also minimize operators with the intention of improving space
 usage. This can be accomplished using the *Collapse* option that appears
 in the component menu:
 
-<img src="../images/user_guide/wiring/minimize_option.png" srcset="../images/user_guide/wiring/minimize_option.png 2x" alt="*Collapse* option"/>
-<img src="../images/user_guide/wiring/collapsed_operators.png" srcset="../images/user_guide/wiring/collapsed_operators.png 2x" alt="Collapsed operators"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/minimize_option.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/minimize_option.png" alt="*Collapse* option">
+    </a>
+</p>
+
+<p align="center">
+    <a href="./images/user_guide/wiring/collapsed_operators.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/collapsed_operators.png" alt="Collapsed operators">
+    </a>
+</p>
+
 
 #### Cloncluding our example
 
@@ -494,15 +746,31 @@ intuition, the documentation and the contextual help offered by each
 widget/operator. Anyway, just in case you have difficulties, you can see
 the final result in the following screenshot:
 
-<img src="../images/user_guide/wiring/final_wiring.png" srcset="../images/user_guide/wiring/final_wiring.png 2x" alt="Final wiring configuration"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/final_wiring.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/final_wiring.png" alt="Final wiring configuration">
+    </a>
+</p>
 
 Now you can play with your new workspace.
 
-<img src="../images/user_guide/wiring/final_mashup.png" srcset="../images/user_guide/wiring/final_mashup.png 2x" alt="Final mashup"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/final_mashup.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/final_mashup.png" alt="Final mashup">
+    </a>
+</p>
 
-<img src="../images/user_guide/wiring/linear_graph_zoom1.png" srcset="../images/user_guide/wiring/linear_graph_zoom1.png 2x" alt="How to select an area in the linear graph widget"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/linear_graph_zoom1.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/linear_graph_zoom1.png" alt="How to select an area in the linear graph widget">
+    </a>
+</p>
 
-<img src="../images/user_guide/wiring/linear_graph_zoom2.png" srcset="../images/user_guide/wiring/linear_graph_zoom2.png 2x" alt="Final mashup linear graph with zoom"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/linear_graph_zoom2.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/linear_graph_zoom2.png" alt="Final mashup linear graph with zoom">
+    </a>
+</p>
 
 Behaviour Oriented Wiring
 -------------------------
@@ -519,13 +787,22 @@ the previous section into two behaviours:
   composed of the `NGSI Source`, `NGSI Entity To PoI` and `Map Viewer` components
   as well as the connections between those components:
 
-  <img src="../images/user_guide/behaviour_oriented_wiring/santander_behaviour1.png" srcset="../images/user_guide/behaviour_oriented_wiring/santander_behaviour1.png 2x" alt="*Show lampposts on map* behaviour (Santander example)"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/santander_behaviour1.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/santander_behaviour1.png" alt="*Show lampposts on map* behaviour (Santander example)">
+    </a>
+</p>
 
 - The second one can be called: **Show lamppost details**. This behaviour is
   composed of the `Map Viewer`, `History Module to Linear Graph` and
   `Linear Graph` components as well as the connections between those components:
 
-  <img src="../images/user_guide/behaviour_oriented_wiring/santander_behaviour2.png" srcset="../images/user_guide/behaviour_oriented_wiring/santander_behaviour2.png 2x" alt="*Show lampposts details* behaviour (Santander example)"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/santander_behaviour2.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/santander_behaviour2.png" alt="*Show lampposts details* behaviour (Santander example)">
+    </a>
+</p>
+
 
 > Take into account that components and connections can be present in more than
 > one behaviour. For example, in the previous example the *Map Viewer* widgets
@@ -552,12 +829,20 @@ feature WireCloud provides several benefits:
 Before using the Behaviour Oriented methodology, it must be enabled. To do so,
 go to the wiring editor view and click on the *List behaviours* button.
 
-<img src="../images/user_guide/behaviour_oriented_wiring/list_behaviours_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/list_behaviours_button.png 2x" alt="*List behaviours* button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/list_behaviours_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/list_behaviours_button.png" alt="*List behaviours* button">
+    </a>
+</p>
 
 This will display a side panel, currently without any behaviour. Click on the
 *Enable* button:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/enable_behaviours_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/enable_behaviours_button.png 2x" alt="*Enable* behaviour engine button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/enable_behaviours_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/enable_behaviours_button.png" alt="*Enable* behaviour engine button">
+    </a>
+</p>
 
 Once enabled, you will have a first behaviour with all the components and
 connections previously added into the wiring configuration.
@@ -565,7 +850,12 @@ connections previously added into the wiring configuration.
 > *Note:* You can always go back to not use the behaviour engine by clicking on
 > the *disable* button.
 >
-> <img src="../images/user_guide/behaviour_oriented_wiring/disable_behaviours_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/disable_behaviours_button.png 2x" alt="*Disable* behaviour engine button"/>
+> <p align="center">
+>    <a href="./images/user_guide/behaviour_oriented_wiring/disable_behaviours_button.png">
+>        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/disable_behaviours_button.png" alt="*Disable* behaviour engine button">
+>    </a>
+> </p>
+
 >
 > If you disable the behaviour engine, all components and connections will be
 > squashed into a single view.
@@ -574,7 +864,11 @@ connections previously added into the wiring configuration.
 
 ### Using the behaviour oriented wiring user interface
 
-<img src="../images/user_guide/behaviour_oriented_wiring/general_aspect.png" srcset="../images/user_guide/behaviour_oriented_wiring/general_aspect.png 2x" alt="General aspect of the behaviour oriented wiring user interface"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/general_aspect.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/general_aspect.png" alt="General aspect of the behaviour oriented wiring user interface">
+    </a>
+</p>
 
 This is the look of the wiring editor interface when the behaviour engine is
 enabled. Each of the panels in the *Behaviours* section represents a
@@ -603,14 +897,22 @@ components are only added into the active behaviour.
 If you want to use a component already involved in other behaviour, you can use
 the *Add* button of the background component you want to include:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/component_share_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/component_share_button.png 2x" alt="Component *Add* button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/component_share_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/general_aspect.png" alt="Component *Add* button">
+    </a>
+</p>
 
 The same applies to the connections, if you create a new connection, that
 connection is added only into the active behaviour. If you want to include a
 connection already available on other behaviour, you can click on the *Add*
 button of the background connection:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/connection_share_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/connection_share_button.png 2x" alt="Connection *Add* button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/connection_share_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/connection_share_button.png" alt="Connection *Add* button">
+    </a>
+</p>
 
 > **Note:** If a background connection implies background components, adding
 > that connection will also add that background components into the active
@@ -621,14 +923,27 @@ button of the background connection:
 You can create new behaviours by clicking on the *Create behaviour* button
 available on the list behaviour side panel:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/create_behaviour_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/create_behaviour_button.png 2x" alt="*Create* behaviour button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/create_behaviour_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/create_behaviour_button.png" alt="*Create* behaviour button">
+    </a>
+</p>
 
-<img src="../images/user_guide/behaviour_oriented_wiring/new_behaviour_dialog.png" srcset="../images/user_guide/behaviour_oriented_wiring/new_behaviour_dialog.png 2x" alt="*New Behaviour* dialog"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/new_behaviour_dialog.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/new_behaviour_dialog.png" alt="*New Behaviour* dialog">
+    </a>
+</p>
 
 If you want to edit the title and the description of a behaviour, you can open
 the preferences menu and click on the *Settings* option:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/behaviour_settings_option.png" srcset="../images/user_guide/behaviour_oriented_wiring/behaviour_settings_option.png 2x" alt="Behaviour *Settings* option"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/behaviour_settings_option.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/behaviour_settings_option.png" alt="Behaviour *Settings* option">
+    </a>
+</p>
+
 
 #### Removing behaviours
 
@@ -637,7 +952,11 @@ behaviour (at least one behaviour must be present in a wiring configuration when
 the behaviour engine is enabled). To do so, click on the *Remove* button of the
 behaviour you want to remove:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/remove_behaviour_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/remove_behaviour_button.png 2x" alt="*Remove* behaviour button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/remove_behaviour_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/remove_behaviour_button.png" alt="*Remove* behaviour button">
+    </a>
+</p>
 
 > **Note:** All the components not used on other behaviour will be removed from
 > the wiring configuration. Also take into account that this operation cannot be
@@ -647,7 +966,11 @@ behaviour you want to remove:
 
 To remove a component from a behaviour, click on the *Delete* button:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/remove_component.png" srcset="../images/user_guide/behaviour_oriented_wiring/remove_component.png 2x" alt="*Remove* component button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/remove_component.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/remove_component.png" alt="*Remove* component button">
+    </a>
+</p>
 
 Components are only totaly removed from the wiring configuration when they are
 not used in any of the available behaviours.
@@ -655,7 +978,11 @@ not used in any of the available behaviours.
 The same applies to connections, you can remove them from the active behaviour
 using the *Delete* button:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/remove_connection.png" srcset="../images/user_guide/behaviour_oriented_wiring/remove_connection.png 2x" alt="*Remove* connection button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/remove_connection.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/remove_connection.png" alt="*Remove* connection button">
+    </a>
+</p>
 
 Again, connections are remove from the wiring configuration when the are removed
 from all the behaviours.
@@ -670,16 +997,28 @@ behaviour list, but that order will not affet to the wiring engine.
 To change the behaviour order, you only have to click on the *Order behaviours*
 button:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png 2x" alt="*Remove* connection button"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png" alt="*Remove* connection button">
+    </a>
+</p>
 
 Once activated the ordering mode, you will be able to drag and drop the behaviour
 boxes:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png" srcset="../images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png 2x" alt="Ordering behaviours"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png" alt="Ordering behaviours">
+    </a>
+</p>
 
 Finally, click again on the *Order behaviours* button to exit the ordering mode:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png" srcset="../images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png 2x" alt="Exit the ordering mode"/>
+<p align="center">
+    <a href="./images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png" alt="Exit the ordering mode">
+    </a>
+</p>
 
 > **Note:** Anyway, you can also exit from the behaviour ordering mode by
 > closing the sidebar or by opening the seach component form inside the sidebar.
@@ -692,11 +1031,19 @@ Workspaces can be made public by means of modifying their settings as
 Follows:
 
 1.  Click on the workspace menu button and click *Share*:
-    <img src="../images/user_guide/wiring/share_workspace_entry.png" srcset="../images/user_guide/wiring/share_workspace_entry.png 2x" alt="*Share* option"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/share_workspace_entry.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/share_workspace_entry.png" alt="*Share* option">
+    </a>
+</p>
 
 2.  You will be presented with a dialog for editing the sharing configuration of
     the workspace:
-    <img src="../images/user_guide/wiring/share_workspace_dialog.png" srcset="../images/user_guide/wiring/share_workspace_dialog.png 2x" alt="Sharing settings dialog"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/share_workspace_dialog.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/share_workspace_dialog.png" alt="Sharing settings dialog">
+    </a>
+</p>
 
 After making a workspace public, you will be able to share the workspace
 URL with other users.
@@ -714,11 +1061,19 @@ You can also obtain the code you have to copy & paste into other web
 pages following those steps:
 
 1.  Click on the workspace menu button and click *Embed*:
-    <img src="../images/user_guide/wiring/embed_workspace_entry.png" srcset="../images/user_guide/wiring/embed_workspace_entry.png 2x" alt="*Embed* workspace option"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/embed_workspace_entry.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/embed_workspace_entry.png" alt="*Embed* workspace option">
+    </a>
+</p>
 
 1.  A new window showing you the code for embedding the mashup. Copy &
     paste it into you HTML document.
-    <img src="../images/user_guide/wiring/embed_workspace_dialog.png" srcset="../images/user_guide/wiring/embed_workspace_dialog.png 2x" alt="Embed workspace dialog"/>
+<p align="center">
+    <a href="./images/user_guide/wiring/embed_workspace_dialog.png">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="./images/user_guide/wiring/embed_workspace_dialog.png" alt="Embed workspace dialog">
+    </a>
+</p>
 
 Additional sources of information
 ---------------------------------
