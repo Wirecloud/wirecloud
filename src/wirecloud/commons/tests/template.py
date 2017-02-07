@@ -131,7 +131,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Preference label',
                     'description': 'Preference description',
                     'default': 'value',
-                    'value': None
+                    'value': None,
+                    'multiuser': False,
                 },
                 {
                     'name': 'pref2',
@@ -141,7 +142,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Preference label',
                     'description': 'Preference description',
                     'default': '',
-                    'value': '5'
+                    'value': '5',
+                    'multiuser': False,
                 }
             ],
             'properties': [
@@ -260,7 +262,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '__MSG_pref1_label__',
                     'description': '__MSG_pref1_description__',
                     'default': 'value',
-                    'value': None
+                    'value': None,
+                    'multiuser': False,
                 },
                 {
                     'name': 'pref2',
@@ -270,7 +273,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '__MSG_pref2_label__',
                     'description': '__MSG_pref2_description__',
                     'default': '',
-                    'value': '5'
+                    'value': '5',
+                    'multiuser': False,
                 }
             ],
             'properties': [
@@ -1129,7 +1133,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Preference label',
                     'description': 'Preference description',
                     'default': '',
-                    'value': None
+                    'value': None,
+                    'multiuser': False,
                 },
                 {
                     'name': 'pref2',
@@ -1139,7 +1144,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Preference label',
                     'description': 'Preference description',
                     'default': 'value',
-                    'value': '5'
+                    'value': '5',
+                    'multiuser': False,
                 }
             ],
             'properties': [
@@ -1332,7 +1338,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '',
                     'description': '',
                     'default': '',
-                    'value': None
+                    'value': None,
+                    'multiuser': False,
                 },
                 {
                     'name': 'pref2',
@@ -1342,7 +1349,8 @@ class TemplateUtilsTestCase(TestCase):
                     'label': '',
                     'description': '',
                     'default': '',
-                    'value': None
+                    'value': None,
+                    'multiuser': False,
                 },
             ],
             'properties': [],
