@@ -26,9 +26,21 @@
 
     "use strict";
 
-    var platform, ioperator, endpoint_name, inputs, outputs;
+    var platform, ioperator, endpoint_name, inputs, outputs, IOperatorVariable;
 
     platform = window.parent;
+
+    IOperatorVariable = function IOperatorVariable(variable) {
+        this.set = function set(value) {
+            variable.set(value);
+        };
+
+        this.get = function get() {
+            return variable.get();
+        };
+        Object.freeze(this);
+    };
+
 
     // Init resource entry (in this case an operator) so other API files can make
     // use of it
@@ -41,6 +53,15 @@
     Object.defineProperty(window.MashupPlatform.operator, 'log', {
         value: function log(msg, level) {
             ioperator.logManager.log(msg, level);
+        }
+    });
+
+    Object.defineProperty(window.MashupPlatform.operator, 'getVariable', {
+        value: function getVariable(name) {
+            var variable = ioperator.properties[name];
+            if (variable != null) {
+                return new IOperatorVariable(variable);
+            }
         }
     });
 

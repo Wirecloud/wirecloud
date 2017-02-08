@@ -26,8 +26,8 @@
 
     "use strict";
 
-    var PropertyCommiter = function PropertyCommiter(iwidget) {
-        Object.defineProperty(this, 'iwidget', {value: iwidget});
+    var PropertyCommiter = function PropertyCommiter(component) {
+        Object.defineProperty(this, 'component', {value: component});
         this.values = {};
         this.pending_values = null;
         this.timeout = null;
@@ -58,10 +58,19 @@
         this.timeout = null;
         this.pending_values = {};
 
+        if (this.component.type === "widget") {
+            commitWidgetProperties.call(this)
+        } else {
+            commitOperatorProperties.call(this)
+        }
+
+    };
+
+    var commitWidgetProperties = function commitWidgetProperties() {
         var url = Wirecloud.URLs.IWIDGET_PROPERTIES.evaluate({
-            workspace_id: this.iwidget.tab.workspace.id,
-            tab_id: this.iwidget.tab.id,
-            iwidget_id: this.iwidget.id
+            workspace_id: this.component.tab.workspace.id,
+            tab_id: this.component.tab.id,
+            iwidget_id: this.component.id
         });
         Wirecloud.io.makeRequest(url, {
             contentType: 'application/json',
@@ -78,7 +87,41 @@
                 this.timeout = setTimeout(this.commit.bind(this), 30000);
             }.bind(this)
         });
-    };
+    }
+
+    var commitOperatorProperties = function commitOperatorProperties() {
+        var url = (Wirecloud.URLs.WIRING_ENTRY.evaluate({
+            workspace_id: this.component.wiring.workspace.id,
+        }));
+
+        // Build patch request
+        var requestBody = [];
+        for (var key in this.values) {
+            var property = this.values[key];
+            requestBody.push({
+                op: "replace",
+                path: "/operators/" + this.component.id + "/properties/" + key + "/value",
+                value: property
+            });
+        }
+
+        Wirecloud.io.makeRequest(url, {
+            method: 'PATCH',
+            contentType: 'application/json-patch+json',
+            postBody: JSON.stringify(requestBody),
+            onSuccess: function () {
+                this.values = this.pending_values;
+                if (Object.keys(this.values).length > 0) {
+                    this.timeout = setTimeout(this.commit.bind(this), 1000);
+                }
+                this.pending_values = null;
+            }.bind(this),
+            onFailure: function () {
+                this.values = Wirecloud.Utils.merge(this.values, this.pending_values);
+                this.timeout = setTimeout(this.commit.bind(this), 30000);
+            }.bind(this)
+        });
+    }
 
     Wirecloud.PropertyCommiter = PropertyCommiter;
 

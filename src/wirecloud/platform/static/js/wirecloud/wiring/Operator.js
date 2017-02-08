@@ -156,6 +156,7 @@
 
         build_endpoints.call(this);
         build_prefs.call(this, data.preferences);
+        build_props.call(this, data.properties);
 
         this.logManager.log(utils.gettext("Operator created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
     };
@@ -279,7 +280,7 @@
          * @returns {Object}
          */
         toJSON: function toJSON() {
-            var name, preferences = {};
+            var name, preferences = {}, properties = {};
 
             for (name in this.preferences) {
                 preferences[name] = {
@@ -289,10 +290,19 @@
                 };
             }
 
+            for (name in this.properties) {
+                properties[name] = {
+                    hidden: this.properties[name].hidden,
+                    readonly: this.properties[name].readonly,
+                    value: this.properties[name].value
+                };
+            }
+
             return {
                 id: this.id,
                 name: this.meta.uri,
-                preferences: preferences
+                preferences: preferences,
+                properties: properties
             };
         },
 
@@ -382,6 +392,29 @@
             this.preferenceList.push(this.preferences[preference.name]);
         }, this);
     };
+
+    var build_props = function build_props(initial_values) {
+        var i, properties, prop_info;
+
+        properties = this.meta.propertyList;
+        this.propertyList = [];
+        this.properties = {};
+        this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
+        for (i = 0; i < properties.length; i++) {
+            if (initial_values != null) {
+                prop_info = initial_values[properties[i].name];
+            } else {
+                prop_info = null
+            }
+
+            if (prop_info != null) {
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, prop_info.readonly, prop_info.value);
+            } else {
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
+            }
+            this.properties[properties[i].name] = this.propertyList[i];
+        }
+    }
 
     var send_pending_event = function send_pending_event(pendingEvent) {
         this.inputs[pendingEvent.endpoint].propagate(pendingEvent.value);

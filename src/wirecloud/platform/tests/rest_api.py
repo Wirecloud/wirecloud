@@ -1054,7 +1054,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         new_wiring_status = {
-            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}},
+            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}, 'properties': {}}},
             'connections': [],
         }
 
@@ -1099,7 +1099,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = json.dumps([{
             'op': "add",
             'path': "/operators/0",
-            'value': {'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}}},
+            'value': {'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}, 'properties': {}}}},
         }])
 
         response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='application/json')
@@ -1127,7 +1127,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         new_wiring_status = {
-            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}},
+            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}, 'properties': {}}},
             'connections': [],
         }
 

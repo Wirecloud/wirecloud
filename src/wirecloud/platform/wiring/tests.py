@@ -262,7 +262,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'hidden': False, 'readonly': True, 'value': {"users": {"2": 'a'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -279,7 +280,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'readonly': True, 'value': {"users": {"2": 'b'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -297,7 +299,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'a'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -312,7 +315,8 @@ class WiringTestCase(WirecloudTestCase):
                 '1': {
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
-                    'preferences': {}
+                    'preferences': {},
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -330,7 +334,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'hidden': False, 'readonly': True, 'value': {"users": {"2": 'a'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -345,7 +350,8 @@ class WiringTestCase(WirecloudTestCase):
                 '1': {
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
-                    'preferences': {}
+                    'preferences': {},
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -361,7 +367,8 @@ class WiringTestCase(WirecloudTestCase):
                 '1': {
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
-                    'preferences': {}
+                    'preferences': {},
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -378,7 +385,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'readonly': True},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -394,7 +402,8 @@ class WiringTestCase(WirecloudTestCase):
                 '1': {
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
-                    'preferences': {}
+                    'preferences': {},
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -411,7 +420,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'hidden': True},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -429,7 +439,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -446,7 +457,8 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'a'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -462,7 +474,8 @@ class WiringTestCase(WirecloudTestCase):
                 '1': {
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
-                    'preferences': {}
+                    'preferences': {},
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -481,6 +494,7 @@ class WiringTestCase(WirecloudTestCase):
                         'pref1': {'value': 'a'},
                         'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'a'}}},
                     },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -500,6 +514,7 @@ class WiringTestCase(WirecloudTestCase):
                         'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
                         'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
                     },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -517,7 +532,8 @@ class WiringTestCase(WirecloudTestCase):
                     'preferences': {
                         'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}},
                         'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -538,7 +554,8 @@ class WiringTestCase(WirecloudTestCase):
                     'preferences': {
                         'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
                         'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
-                    }
+                    },
+                    'properties': {}
                 },
             },
             'connections': [],
@@ -561,6 +578,7 @@ class WiringTestCase(WirecloudTestCase):
                         'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
                         'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
                     },
+                    'properties': {}
                 },
             }
         ])

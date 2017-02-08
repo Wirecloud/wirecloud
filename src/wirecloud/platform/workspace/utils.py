@@ -493,6 +493,7 @@ def _get_global_workspace_data(workspaceDAO, user):
         operator_info = resource.get_processed_info(process_variables=True)
 
         operator_forced_values = forced_values['ioperator'].get(operator_id, {})
+        # Build operator preference data
         for preference_name, preference in six.iteritems(operator.get('preferences', {})):
             vardef = operator_info['variables']['preferences'].get(preference_name)
             value = preference.get('value', None)
@@ -511,6 +512,26 @@ def _get_global_workspace_data(workspaceDAO, user):
             # Secure censor
             if vardef is not None and vardef["secure"]:
                 preference['value'] = "" if preference.get('value') is None or preference.get('value') == "" else "********"
+
+        # Build operator property data
+        for property_name, property in six.iteritems(operator.get('properties', {})):
+            vardef = operator_info['variables']['properties'].get(property_name)
+            value = property.get('value', None)
+
+            # Handle multiuser
+            variable_user = user if vardef is not None and vardef["multiuser"] else workspaceDAO.creator
+
+            if property_name in operator_forced_values:
+                property['value'] = operator_forced_values[property_name]['value']
+            elif value is None or value["users"].get("%s" % variable_user.id, None) is None:
+                # If not defined / not defined for the current user, take the default value
+                property['value'] = parse_value_from_text(vardef, vardef['default'])
+            else:
+                property['value'] = value["users"].get("%s" % variable_user.id)
+
+            # Secure censor
+            if vardef is not None and vardef["secure"]:
+                property['value'] = "" if property.get('value') is None or property.get('value') == "" else "********"
 
     return json.dumps(data_ret, cls=LazyEncoder)
 
