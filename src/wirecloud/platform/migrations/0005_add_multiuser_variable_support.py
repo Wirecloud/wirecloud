@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from wirecloud.platform.migration_utils import update_variables_structure, reverse_variables_structure
+from wirecloud.platform.migration_utils import multiuser_variables_structure_forwards, multiuser_variables_structure_backwards
 
 
 class Migration(migrations.Migration):
@@ -14,5 +14,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-    	migrations.RunPython(update_variables_structure, reverse_variables_structure),
+    	migrations.RunPython(multiuser_variables_structure_forwards, multiuser_variables_structure_backwards),
     ]

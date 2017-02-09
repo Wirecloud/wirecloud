@@ -43,7 +43,7 @@ def mutate_backwards_widget(preference, userID):
     return preference
 
 
-def update_variables_structure(apps, schema_editor):
+def multiuser_variables_structure_forwards(apps, schema_editor):
 
     Workspace = apps.get_model("platform", "workspace")
 
@@ -61,9 +61,10 @@ def update_variables_structure(apps, schema_editor):
             for widget in tab.iwidget_set.all():
                 widget.variables = {k: mutate_forwards_widget(v, owner) for k, v in six.iteritems(widget.variables)}
                 widget.save()
+                pass
 
 
-def reverse_variables_structure(apps, schema_editor):
+def multiuser_variables_structure_backwards(apps, schema_editor):
 
     # Check no multiuser widgets
     CatalogueResource = apps.get_model("catalogue", "CatalogueResource")

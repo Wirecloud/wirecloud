@@ -40,7 +40,8 @@ from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFrom
 from wirecloud.platform.workspace.searchers import WorkspaceSearcher
 from wirecloud.platform.workspace.utils import get_global_workspace_data
 from wirecloud.platform.workspace.views import createEmptyWorkspace
-from wirecloud.platform.migration_utils import update_variables_structure
+from wirecloud.platform.migration_utils import multiuser_variables_structure_forwards, multiuser_variables_structure_backwards
+from django.db.migrations.exceptions import IrreversibleError
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
@@ -49,7 +50,7 @@ __test__ = False
 
 class WorkspaceMigrationsTestCase(TestCase):
 
-    tags = ('wirecloud-migrations', 'wirecloud-platform-migrations', 'wirecloud-noselenium', 'current')
+    tags = ('wirecloud-migrations', 'wirecloud-platform-migrations', 'wirecloud-noselenium')
 
     def test_add_multiuser_support_forward_empty(self):
 
@@ -57,30 +58,108 @@ class WorkspaceMigrationsTestCase(TestCase):
         apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = [
         ]
 
-        update_variables_structure(apps_mock, None)
+        multiuser_variables_structure_forwards(apps_mock, None)
 
     def test_add_multiuser_support_forward(self):
 
         widget1_mock = Mock(
             variables={"varname": "varvalue", "varname2": "varvalue2"}
         )
+        widget2_mock = Mock(
+            variables={"varname": "hello", "varname2": "world"}
+        )
+        widget3_mock = Mock(
+            variables={"varname": "varvalue", "varname2": "varvalue2"}
+        )
         tab_mock = Mock()
-        tab_mock.iwidget_set.all.return_value = [widget1_mock]
+        tab_mock.iwidget_set.all.return_value = [widget1_mock, widget2_mock]
 
-        workspace_mock = Mock()
-        workspace_mock.tab_set.all.return_value = [
-            tab_mock
-        ]
+        tab_mock2 = Mock()
+        tab_mock2.iwidget_set.all.return_value = [widget3_mock]
+
+        workspace_mock = Mock(
+            wiringStatus={"operators": {
+                "1": {"preferences": {"varname": {"value": "varvalue"}, "varname2": {"value": "varvalue2"}}},
+                "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}
+            })
+        workspace_mock.tab_set.all.return_value = [tab_mock, tab_mock2]
         workspace_mock.creator.id = "2"
 
         apps_mock = Mock()
         apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = [workspace_mock]
 
-        update_variables_structure(apps_mock, None)
+        multiuser_variables_structure_forwards(apps_mock, None)
 
         widget1_mock.save.assert_called_with()
         self.assertEqual(widget1_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
+        self.assertEqual(widget2_mock.variables, {"varname": {"users": {"2": "hello"}}, "varname2": {"users": {"2": "world"}}})
+        self.assertEqual(widget3_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
 
+        self.assertEqual(workspace_mock.wiringStatus, {"operators": 
+            {"1": {"preferences": {"varname":  {"value": {"users": {"2": "varvalue"}}}, "varname2":  {"value": {"users": {"2": "varvalue2"}}}}},
+             "2": {"preferences": {"varname":  {"value": {"users": {"2": "hello"}}}, "varname2":  {"value": {"users": {"2": "world"}}}}}}})
+
+    def test_add_multiuser_support_backward_empty(self):
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = []
+        apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = []
+
+        multiuser_variables_structure_backwards(apps_mock, None)
+
+    def test_add_multiuser_support_backward_multiuser_components(self):
+        multiuser_resource = Mock(
+            vendor="testvendor",
+            short_name="testname",
+            version="testversion")
+        multiuser_resource.json_description = {"properties": [{"multiuser": True}]}
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = []
+        apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = [multiuser_resource]
+
+        self.assertRaises(IrreversibleError, multiuser_variables_structure_backwards, apps=apps_mock, schema_editor=None)
+
+    def test_add_multiuser_support_backward(self):
+
+        widget1_mock = Mock(
+            variables={"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}}
+        )
+        widget2_mock = Mock(
+            variables={"varname": {"users": {"2": "hello"}}, "varname2": {"users": {"2": "world"}}}
+        )
+        widget3_mock = Mock(
+            variables={"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}}
+        )
+        tab_mock = Mock()
+        tab_mock.iwidget_set.all.return_value = [widget1_mock, widget2_mock]
+
+        tab_mock2 = Mock()
+        tab_mock2.iwidget_set.all.return_value = [widget3_mock]
+
+        workspace_mock = Mock(
+            wiringStatus={"operators": {
+                "1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+                "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}
+            })
+        workspace_mock.tab_set.all.return_value = [tab_mock, tab_mock2]
+        workspace_mock.creator.id = "2"
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = [workspace_mock]
+        apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = []
+
+
+        multiuser_variables_structure_backwards(apps_mock, None)
+
+        widget1_mock.save.assert_called_with()
+        self.assertEqual(widget1_mock.variables, {"varname": "varvalue", "varname2": "varvalue2"})
+        self.assertEqual(widget2_mock.variables, {"varname": "hello", "varname2": "world"})
+        self.assertEqual(widget3_mock.variables, {"varname": "varvalue", "varname2": "varvalue2"})
+
+        self.assertEqual(workspace_mock.wiringStatus, {"operators": 
+            {"1": {"preferences": {"varname":  {"value": "varvalue"}, "varname2":  {"value": "varvalue2"}}},
+             "2": {"preferences": {"varname":  {"value": "hello"}, "varname2":  {"value": "world"}}}}})
 
 class WorkspaceTestCase(WirecloudTestCase):
 
