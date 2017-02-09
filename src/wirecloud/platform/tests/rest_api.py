@@ -2375,7 +2375,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         check_post_requires_permission(self, url, json.dumps(data))
 
-    def test_iwidget_properties_entry_post_multiuser_doesnt_require_permission(self):
+    def test_iwidget_properties_entry_post_multiuser_requires_permission(self):
         self._todo_create_property(True)
 
         # Authenticate
@@ -2386,10 +2386,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'prop': 'new value',
         }
 
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-        variables = IWidget.objects.get(pk=2).variables
-        self.assertEqual(variables['prop']["users"]["5"], 'new value')
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_iwidget_properties_entry_post(self):
 
