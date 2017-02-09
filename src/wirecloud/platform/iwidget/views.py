@@ -228,8 +228,13 @@ class IWidgetProperties(Resource):
 
             # Check if its multiuser
             if not iwidget_info['variables']['properties'][var_name].get("multiuser", False):
-                # No multiuser -> Check permisisons
+                # No multiuser -> Check permissions
                 if workspace.creator != request.user:
+                    msg = _('You have not enough permission for updating the persistent variables of this widget')
+                    return build_error_response(request, 403, msg)
+            else:
+                # Multiuser -> Check permissions
+                if not workspace.is_available_for(request.user):
                     msg = _('You have not enough permission for updating the persistent variables of this widget')
                     return build_error_response(request, 403, msg)
 
