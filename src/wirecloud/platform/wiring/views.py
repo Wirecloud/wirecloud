@@ -64,7 +64,7 @@ class WiringEntry(Resource):
             except CatalogueResource.DoesNotExist:
                 operator_preferences = None
             try:
-                operator_properties = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["preferences"]
+                operator_properties = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["properties"]
             except CatalogueResource.DoesNotExist:
                 operator_properties = None
 
@@ -73,7 +73,7 @@ class WiringEntry(Resource):
                 old_preference = old_operator['preferences'][preference_name]
                 new_preference = operator['preferences'][preference_name]
 
-                if old_preference["hidden"] != new_preference["hidden"] or old_preference["readonly"] != new_preference["readonly"]:
+                if old_preference.get("hidden", False) != new_preference.get("hidden", False) or old_preference.get("readonly", False) != new_preference.get("readonly", False):
                     return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
                 # Check if its multiuser
@@ -103,11 +103,11 @@ class WiringEntry(Resource):
                 operator['preferences'][preference_name] = new_preference
 
             # Check properties
-            for property_name in operator['property']:
-                old_property = old_operator['property'][property_name]
-                new_property = operator['property'][property_name]
+            for property_name in operator['properties']:
+                old_property = old_operator['properties'][property_name]
+                new_property = operator['properties'][property_name]
 
-                if old_property["hidden"] != new_property["hidden"] or old_property["readonly"] != new_property["readonly"]:
+                if old_property.get("hidden", False) != new_property.get("hidden", False) or old_property.get("readonly", False) != new_property.get("readonly", False):
                     return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
                 # Check if its multiuser
