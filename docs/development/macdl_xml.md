@@ -177,6 +177,7 @@ following attributes:
     disallowed if the value of this attribute is true (the value of this
     variable will be usable through the Application Mashup
     cross-domain proxy). default: `false`.
+-   `multiuser`: This persisten value will store it's own value for each user with access rigths to the dashboard.
 
 
 ### The wiring element
