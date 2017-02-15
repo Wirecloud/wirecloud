@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -122,17 +122,34 @@
     };
 
     var toQueryString = function toQueryString(parameters) {
-        var key, query = '';
+        var key, query = [];
 
-        if (typeof parameters === 'string') {
-            return parameters;
+        if (parameters == null) {
+            return null;
+        } else if (typeof parameters === 'string') {
+            parameters = parameters.trim();
+            if (parameters !== '') {
+                return parameters;
+            } else {
+                return null;
+            }
+        } else /* if (typeof parameters === 'object') */ {
+            for (key in parameters) {
+                if (typeof parameters[key] === 'undefined') {
+                    continue;
+                } else if (parameters[key] === null) {
+                    query.push(encodeURIComponent(key) + '=');
+                } else {
+                    query.push(encodeURIComponent(key) + '=' + encodeURIComponent(parameters[key]));
+                }
+            }
         }
 
-        for (key in parameters) {
-            query += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(parameters[key]);
+        if (query.length > 0) {
+            return query.join('&');
+        } else {
+            return null;
         }
-
-        return query.substr(1);
     };
 
     var Request = function Request(url, options) {
@@ -167,9 +184,10 @@
             }
         });
 
-        if (this.options.parameters != null && (typeof this.options.parameters === 'string' || typeof this.options.parameters === 'object')) {
-            if (['PUT', 'POST'].indexOf(this.method) !== -1 && this.options.postBody == null) {
-                this.options.postBody = toQueryString(this.options.parameters);
+        if (['PUT', 'POST'].indexOf(this.method) !== -1 && this.options.postBody == null) {
+            var parameters = toQueryString(this.options.parameters);
+            if (parameters != null) {
+                this.options.postBody = parameters;
                 if (this.options.contentType == null) {
                     this.options.contentType = 'application/x-www-form-urlencoded';
                 }
@@ -262,12 +280,13 @@
         }
 
         // Add parameters
-        if (options.parameters != null && (typeof options.parameters === 'string' || typeof options.parameters === 'object')) {
-            if (['PUT', 'POST'].indexOf(options.method) === -1 || options.postBody != null) {
+        if (['PUT', 'POST'].indexOf(options.method) === -1 || options.postBody != null) {
+            var parameters = toQueryString(options.parameters);
+            if (parameters != null) {
                 if (url.indexOf('?') !== -1) {
-                    url += '&' + toQueryString(options.parameters);
+                    url += '&' + parameters;
                 }  else {
-                    url += '?' + toQueryString(options.parameters);
+                    url += '?' + parameters;
                 }
             }
         }

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -134,6 +134,54 @@
                         e: 1,
                         b: "c"
                     }
+                })).toBe(expected);
+            });
+
+            it("should support passing an empty parameters option (using URL instances)", function () {
+                var original = new URL("http://server:1234/path");
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {}
+                })).toBe(expected);
+            });
+
+            it("should ignore parameters with a undefined value (using URL instances)", function () {
+                var original = new URL("http://server:1234/path");
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {
+                        e: 1,
+                        b: "c",
+                        c: undefined
+                    }
+                })).toBe(expected);
+            });
+
+            it("should treat null parameters as empty parameters (using URL instances)", function () {
+                var original = new URL("http://server:1234/path");
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c&c=";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: {
+                        e: 1,
+                        b: "c",
+                        c: null
+                    }
+                })).toBe(expected);
+            });
+
+            it("should support the parameters option (empty string, using URL instances)", function () {
+                var original = new URL("http://server:1234/path");
+                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
+
+                expect(Wirecloud.io.buildProxyURL(original, {
+                    method: 'GET',
+                    parameters: " "
                 })).toBe(expected);
             });
 
