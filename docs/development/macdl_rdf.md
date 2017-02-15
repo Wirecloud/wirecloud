@@ -115,7 +115,7 @@ know in order to make it persistent.
 - **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#PlatformStateProperty`
 
 - **Properties include**: `dcterms:title`, `dcterms:description`, `wire:type`,
-  `rdfs:label`, `wire:default`, `wire:secure`,  `wire:multiuser`
+  `rdfs:label`, `wire:default`, `wire:secure`, `wire:multiuser`
 
 - **Used with**: `wire:hasPlatformStateProperty`
 
