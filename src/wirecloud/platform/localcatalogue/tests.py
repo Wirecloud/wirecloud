@@ -109,10 +109,10 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['licenseurl'], 'http://www.apache.org/licenses/LICENSE-2.0.html')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Property label', 'type': 'text', 'description': ''}])
+        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Property label', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Preference label', 'type': 'list', 'options': [{'value': '1', 'label': 'Option name'}], 'readonly': False, 'description': 'Preference description', 'value': None}])
+        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Preference label', 'type': 'list', 'options': [{'value': '1', 'label': 'Option name'}], 'readonly': False, 'description': 'Preference description', 'value': None, 'multiuser': False}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Slot label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
@@ -328,10 +328,10 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['doc'], 'doc/index.html')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Etiqueta de la propiedad', 'type': 'text', 'description': ''}])
+        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Etiqueta de la propiedad', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Etiqueta de la preferencia', 'type': 'list', 'options': [{'value': '1', 'label': 'Nombre de la opción'}], 'readonly': False, 'description': 'Descripción de la preferencia', 'value': None}])
+        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Etiqueta de la preferencia', 'type': 'list', 'options': [{'value': '1', 'label': 'Nombre de la opción'}], 'readonly': False, 'description': 'Descripción de la preferencia', 'value': None, 'multiuser': False}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Etiqueta del endpoint de entrada', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
@@ -350,10 +350,10 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['version'], '0.2')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Label', 'type': 'text', 'description': ''}])
+        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Label', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Label', 'readonly': False, 'type': 'text', 'description': 'Preference description', 'value': None}])
+        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Label', 'readonly': False, 'type': 'text', 'description': 'Preference description', 'value': None, 'multiuser': False}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
