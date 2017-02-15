@@ -437,17 +437,17 @@ def _get_global_workspace_data(workspaceDAO, user):
 
     data_ret['users'] = []
 
-    for user in workspaceDAO.users.all():
+    for u in workspaceDAO.users.all():
         try:
-            is_organization = user.organization is not None
+            is_organization = u.organization is not None
         except:
             is_organization = False
 
         data_ret['users'].append({
-            "fullname": user.get_full_name(),
-            "username": user.username,
+            "fullname": u.get_full_name(),
+            "username": u.username,
             "organization": is_organization,
-            "accesslevel": "owner" if workspaceDAO.creator == user else "read",
+            "accesslevel": "owner" if workspaceDAO.creator == u else "read",
         })
 
     # Process forced variable values
