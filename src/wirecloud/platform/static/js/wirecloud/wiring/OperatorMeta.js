@@ -43,6 +43,17 @@
 
         Wirecloud.MashableApplicationComponent.call(this, description);
 
+        // Properties
+        this.properties = {};
+        this.propertyList = [];
+        for (var i = 0; i < description.properties.length; i++) {
+            var property = new Wirecloud.PersistentVariableDef(description.properties[i].name, description.properties[i].type, description.properties[i]);
+            this.properties[property.name] = property;
+            this.propertyList.push(property);
+        }
+        Object.freeze(this.properties);
+        Object.freeze(this.propertyList);
+
         if (this.missing) {
             this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
         } else {

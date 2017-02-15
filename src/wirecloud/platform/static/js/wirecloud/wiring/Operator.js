@@ -394,26 +394,24 @@
     };
 
     var build_props = function build_props(initial_values) {
-        var i, properties, prop_info;
+        if (initial_values == null) {
+            initial_values = {};
+        }
 
-        properties = this.meta.propertyList;
+        var properties = this.meta.propertyList;
         this.propertyList = [];
         this.properties = {};
         this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
-        for (i = 0; i < properties.length; i++) {
-            if (initial_values != null) {
-                prop_info = initial_values[properties[i].name];
-            } else {
-                prop_info = null
-            }
+        properties.forEach((property, index) => {
+            var prop_info = initial_values[property.name];
 
             if (prop_info != null) {
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, prop_info.readonly, prop_info.value);
+                this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, prop_info.readonly, prop_info.value);
             } else {
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
+                this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
             }
-            this.properties[properties[i].name] = this.propertyList[i];
-        }
+            this.properties[property.name] = this.propertyList[index];
+        });
     }
 
     var send_pending_event = function send_pending_event(pendingEvent) {
@@ -428,6 +426,7 @@
         privates.get(this).meta = meta;
         build_endpoints.call(this);
         build_prefs.call(this, this.preferences);
+        build_props.call(this, this.properties);
 
         if (this.loaded) {
             on_unload.call(this);
