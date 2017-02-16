@@ -121,7 +121,7 @@ class WiringEntry(Resource):
                         if old_property["value"]["users"]["%s" % owner.id] != new_property["value"]:
                             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
                         else:
-                            operator['properties'][property_name] = old_property
+                            new_property["value"] = old_property["value"]
                     else:
                         # Handle multiuser
                         new_property = self.handleMultiuser(request, new_property, old_property)
@@ -234,7 +234,6 @@ class WiringEntry(Resource):
                     property_secure = prop.get("secure", False)
                 else:
                     property_secure = False
-
                 if old_property.get('readonly', False) != new_property.get('readonly', False) or old_property.get('hidden', False) != new_property.get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden status cannot be changed using this API'))
 
