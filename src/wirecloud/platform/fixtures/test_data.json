@@ -43,6 +43,24 @@
         }
     },
     {
+        "model": "auth.User",
+        "pk": "4",
+        "fields": {
+            "username": "test3",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [1],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
         "model": "platform.XHTML",
         "pk": "1",
         "fields": {
@@ -97,6 +115,14 @@
         "fields": {
             "user": "2",
             "workspace": "202"
+        }
+    },
+    {
+        "model": "platform.UserWorkspace",
+        "pk": "3",
+        "fields": {
+            "user": "3",
+            "workspace": "1"
         }
     },
     {
@@ -211,6 +237,24 @@
             "vendor": "Wirecloud",
             "short_name": "TestOperatorSecure",
             "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [{\"default\": \"\", \"name\": \"pref_secure\", \"secure\": true, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}, {\"default\": \"\", \"name\": \"username\", \"secure\": false, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
+            "creator": 2,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "type": 2,
+            "public": false,
+            "users": [2]
+        }
+    },
+    {
+        "pk": 4,
+        "model": "catalogue.CatalogueResource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_TestOperatorMultiuser_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "TestOperatorMultiuser",
+            "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [{\"default\": \"\",\"multiuser\": true, \"name\": \"prop1\", \"secure\": false, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
             "creator": 2,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",

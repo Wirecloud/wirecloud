@@ -492,7 +492,7 @@ class WiringTestCase(WirecloudTestCase):
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
                         'pref1': {'value': 'a'},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': 'a'},
                     },
                     'properties': {}
                 },
@@ -501,6 +501,9 @@ class WiringTestCase(WirecloudTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref1"]["value"], {"users": {"2": "a"}})
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref2"]["value"], {"users": {"2": "a"}})
 
     def test_normal_preferences_can_be_updated(self):
 
@@ -530,8 +533,8 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
+                        'pref1': {'hidden': True, 'readonly': False, 'value': 'b'},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': 'c'},
                     },
                     'properties': {}
                 },
@@ -540,6 +543,556 @@ class WiringTestCase(WirecloudTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref1"]["value"], {"users": {"2": "b"}})
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref2"]["value"], {"users": {"2": "c"}})
+
+    def test_secure_preferences_can_be_updated(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}, 'secure': True},
+                    },
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps([{
+            "op": "replace",
+            "path": "/operators/1/preferences/pref1/value",
+            "value": "helloWorld",
+        }])
+
+        response = client.patch(self.wiring_url, data, content_type='application/json-patch+json')
+        self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref1"]["value"], {"users": {"2": "helloWorld"}})
+
+    def test_normal_properties_can_be_created(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {'prop1': {'hidden': False, 'readonly': False, 'value': 'b'}}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "b"}})
+
+    def test_readonly_properties_cannot_be_created(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {'prop1': {'hidden': False, 'readonly': True, 'value': 'b'}}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_hidden_properties_cannot_be_created(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {'prop1': {'hidden': True, 'readonly': False, 'value': 'b'}}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_normal_properties_can_be_removed(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {'prop1': {'hidden': False, 'readonly': False, 'value': 'b'}}
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 204)
+
+    def test_read_properties_cannot_be_removed(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {'prop1': {'hidden': False, 'readonly': True, 'value': 'b'}}
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_hidden_properties_cannot_be_removed(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {'prop1': {'hidden': True, 'readonly': False, 'value': 'b'}}
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperator/1.0',
+                    'preferences': {},
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_multiuser_properties_can_be_updated_by_owner(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': 'b'},
+                    }
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "b"}})
+
+    def test_multiuser_properties_can_be_updated_by_allowed_users(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'default'}}},
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'prop2': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}},
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test2', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': 'default'},
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': 'b'},
+                        'prop2': {'hidden': True, 'readonly': False, 'value': 'b'},
+                    }
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "a", "3": "b"}})
+
+    def test_nonmultiuser_properties_cannot_be_updated_by_allowed_users(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop2': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test2', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop2': {'hidden': True, 'readonly': False, 'value': 'c'},
+                    }
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_preferences_cannot_be_updated_by_allowed_users(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'default'}}},
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test2', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': 'randomValue'},
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': 'b'},
+                    }
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_non_owners_cannot_remove_wiring_elements(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}},
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test2', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "b"}})
+
+    def test_non_owners_cannot_add_wiring_elements(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test2', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': 'b'},
+                    }
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(len(workspace.wiringStatus["operators"]["1"]["properties"]), 0)
+
+    def test_non_owners_cannot_modify_wiring_elements(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}},
+                    },
+                    'properties': {
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test2', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': True, 'value': 'b'},
+                    },
+                    'properties': {}
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref1"]["value"], {"users": {"2": "b"}})
+
+    def test_multiuser_properties_cannot_be_updated_by_other(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}}
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test3', password='test')
+
+        data = json.dumps({
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {},
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': 'b'},
+                    }
+                },
+            },
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "a"}})
 
     def test_operator_added_put(self):
 
@@ -552,8 +1105,8 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
+                        'pref1': {'hidden': False, 'readonly': False, 'value': 'b'},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': 'c'},
                     },
                     'properties': {}
                 },
@@ -575,8 +1128,8 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'b'}}},
-                        'pref2': {'hidden': False, 'readonly': False, 'value': {"users": {"2": 'c'}}},
+                        'pref1': {'hidden': False, 'readonly': False, 'value': 'b'},
+                        'pref2': {'hidden': False, 'readonly': False, 'value': 'c'},
                     },
                     'properties': {}
                 },
