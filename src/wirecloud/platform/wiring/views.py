@@ -24,6 +24,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 import six
+from copy import deepcopy
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
@@ -39,101 +40,92 @@ class WiringEntry(Resource):
         new_value = new_variable["value"]
 
         if old_variable is not None:
-            new_variable = old_variable
+            new_variable = deepcopy(old_variable)
         else:
             new_variable["value"] = {"users": {}}
 
         new_variable["value"]["users"]["%s" % request.user.id] = new_value
         return new_variable
 
-    def checkMultiuserWiring(self, request, new_wiring_status, old_wiring_status, can_update_secure=False):
-        if new_wiring_status["connections"] != old_wiring_status["connections"]:
+    def checkSameWiring(self, object1, object2):
+        if len(object1.keys()) != len(object2.keys()):
+            return False
+        for key in set(object1.keys()):
+            if key == "value":
+                pass
+            elif isinstance(object1[key], dict):
+                if not self.checkSameWiring(object1[key], object2[key]):
+                    return False
+            else:
+                if not object1[key] == object2[key]:
+                    return False
+
+        return True
+
+    def checkMultiuserWiring(self, request, new_wiring_status, old_wiring_status, owner, can_update_secure=False):
+        if not self.checkSameWiring(new_wiring_status, old_wiring_status):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         for operator_id, operator in six.iteritems(new_wiring_status['operators']):
-            if operator_id not in old_wiring_status['operators']:
-                return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-
             old_operator = old_wiring_status['operators'][operator_id]
-            if old_operator["name"] != operator["name"] or old_operator["id"] != operator["id"]:
-                return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
             vendor, name, version = operator["name"].split("/")
             try:
-                operator_preferences = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["preferences"]
+                resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info(process_variables=True)
+                operator_preferences = resource["variables"]["preferences"]
+                operator_properties = resource["variables"]["properties"]
             except CatalogueResource.DoesNotExist:
-                operator_preferences = None
-            try:
-                operator_properties = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["properties"]
-            except CatalogueResource.DoesNotExist:
-                operator_properties = None
+                operator_preferences = []
+                operator_properties = []
 
             # Check preferences
             for preference_name in operator['preferences']:
                 old_preference = old_operator['preferences'][preference_name]
                 new_preference = operator['preferences'][preference_name]
 
-                if old_preference.get("hidden", False) != new_preference.get("hidden", False) or old_preference.get("readonly", False) != new_preference.get("readonly", False):
-                    return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-
                 # Check if its multiuser
-                preference_secure = False
-                preference_multiuser = False
-                if operator_preferences:
-                    for pref in operator_preferences:
-                        if pref["name"] == preference_name:
-                            preference_secure = pref.get("secure", False)
-                            preference_multiuser = pref.get("multiuser", False)
-                            operator_preferences.remove(pref)  # Speed up search for next preferences
-                            break
-
-                # Variables can only be updated if multisuer
-                if not preference_multiuser:
-                    if old_preference["value"] != new_preference["value"]:
-                        return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-                    else:
-                        continue
+                if preference_name in operator_preferences:
+                    pref = operator_preferences[preference_name]
+                    preference_secure = pref.get("secure", False)
+                else:
+                    preference_secure = False
 
                 # Update variable value
-                if preference_secure and not can_update_secure:
-                    new_preference["value"] = old_preference["value"]
-                elif new_preference["value"] != old_preference["value"]:
-                    # Handle multiuser
-                    new_preference = self.handleMultiuser(request, new_preference, old_preference)
-                operator['preferences'][preference_name] = new_preference
+                if not preference_secure or can_update_secure:
+                    # Variables can only be updated if multisuer
+                    if old_preference["value"]["users"]["%s" % owner.id] != new_preference["value"]:
+                        return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+                operator['preferences'][preference_name] = old_preference
 
             # Check properties
             for property_name in operator['properties']:
                 old_property = old_operator['properties'][property_name]
                 new_property = operator['properties'][property_name]
 
-                if old_property.get("hidden", False) != new_property.get("hidden", False) or old_property.get("readonly", False) != new_property.get("readonly", False):
-                    return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-
                 # Check if its multiuser
-                property_secure = False
-                property_multiuser = False
-                if operator_properties:
-                    for pref in operator_properties:
-                        if pref["name"] == property_name:
-                            property_secure = pref.get("secure", False)
-                            property_multiuser = pref.get("multiuser", False)
-                            operator_properties.remove(pref)  # Speed up search for next properties
-                            break
-
-                # Variables can only be updated if multisuer
-                if not property_multiuser:
-                    if old_property["value"] != new_property["value"]:
-                        return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-                    else:
-                        continue
+                if property_name in operator_properties:
+                    prop = operator_properties[property_name]
+                    property_secure = prop.get("secure", False)
+                    property_multiuser = prop.get("multiuser", False)
+                else:
+                    property_secure = False
+                    property_multiuser = False
 
                 # Update variable value
                 if property_secure and not can_update_secure:
                     new_property["value"] = old_property["value"]
-                elif new_property["value"] != old_property["value"]:
-                    # Handle multiuser
-                    new_property = self.handleMultiuser(request, new_property, old_property)
+                else:
+                    # Variables can only be updated if multisuer
+                    if not property_multiuser:
+                        if old_property["value"]["users"]["%s" % owner.id] != new_property["value"]:
+                            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+                        else:
+                            operator['properties'][property_name] = old_property
+                    else:
+                        # Handle multiuser
+                        new_property = self.handleMultiuser(request, new_property, old_property)
+
                 operator['properties'][property_name] = new_property
 
         return True
@@ -149,6 +141,7 @@ class WiringEntry(Resource):
         for connection in old_read_only_connections:
             if connection not in new_read_only_connections:
                 return build_error_response(request, 403, _('You are not allowed to remove or update read only connections'))
+
         # Check operator preferences and properties
         for operator_id, operator in six.iteritems(new_wiring_status['operators']):
             old_operator = None
@@ -163,13 +156,12 @@ class WiringEntry(Resource):
                 updated_properties = set(operator['properties'].keys()).intersection(old_operator['properties'].keys())
                 vendor, name, version = operator["name"].split("/")
                 try:
-                    operator_preferences = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["preferences"]
+                    resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info(process_variables=True)
+                    operator_preferences = resource["variables"]["preferences"]
+                    operator_properties = resource["variables"]["properties"]
                 except CatalogueResource.DoesNotExist:
-                    operator_preferences = None
-                try:
-                    operator_properties = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()["preferences"]
-                except CatalogueResource.DoesNotExist:
-                    operator_properties = None
+                    operator_preferences = []
+                    operator_properties = []
             else:
                 # New operator
                 added_preferences = operator['preferences'].keys()
@@ -180,6 +172,7 @@ class WiringEntry(Resource):
                 updated_properties = ()
 
             # Handle preferences
+
             for preference_name in added_preferences:
                 if operator['preferences'][preference_name].get('readonly', False) or operator['preferences'][preference_name].get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden preferences cannot be created using this API'))
@@ -197,14 +190,12 @@ class WiringEntry(Resource):
                 old_preference = old_operator['preferences'][preference_name]
                 new_preference = operator['preferences'][preference_name]
 
-                # Check if the preference is secure
-                preference_secure = False
-                if operator_preferences:
-                    for pref in operator_preferences:
-                        if pref["name"] == preference_name:
-                            preference_secure = pref.get("secure", False)
-                            operator_preferences.remove(pref)  # Speed up search
-                            break
+                # Check if its multiuser
+                if preference_name in operator_preferences:
+                    pref = operator_preferences[preference_name]
+                    preference_secure = pref.get("secure", False)
+                else:
+                    preference_secure = False
 
                 if old_preference.get('readonly', False) != new_preference.get('readonly', False) or old_preference.get('hidden', False) != new_preference.get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden status cannot be changed using this API'))
@@ -237,14 +228,12 @@ class WiringEntry(Resource):
                 old_property = old_operator['properties'][property_name]
                 new_property = operator['properties'][property_name]
 
-                # Check if the property is secure
-                property_secure = False
-                if operator_properties:
-                    for prop in operator_properties:
-                        if prop["name"] == property_name:
-                            property_secure = prop.get("secure", False)
-                            operator_properties.remove(prop)  # Speed up search
-                            break
+                # Check if its multiuser
+                if property_name in operator_properties:
+                    prop = operator_properties[property_name]
+                    property_secure = prop.get("secure", False)
+                else:
+                    property_secure = False
 
                 if old_property.get('readonly', False) != new_property.get('readonly', False) or old_property.get('hidden', False) != new_property.get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden status cannot be changed using this API'))
@@ -271,9 +260,9 @@ class WiringEntry(Resource):
         old_wiring_status = workspace.wiringStatus
 
         if workspace.creator == request.user or request.user.is_superuser:
-            result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+            result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=False)
         elif workspace.is_available_for(request.user):
-            result = self.checkMultiuserWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+            result = self.checkMultiuserWiring(request, new_wiring_status, old_wiring_status, workspace.creator, can_update_secure=False)
         else:
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
@@ -289,8 +278,8 @@ class WiringEntry(Resource):
     @consumes(('application/json-patch+json',))
     def patch(self, request, workspace_id):
         workspace = get_object_or_404(Workspace, id=workspace_id)
-
         old_wiring_status = workspace.wiringStatus
+
         try:
             new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
         except jsonpatch.JsonPointerException:
@@ -301,7 +290,7 @@ class WiringEntry(Resource):
         if workspace.creator == request.user or request.user.is_superuser:
             result = self.checkWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
         elif workspace.is_available_for(request.user):
-            result = self.checkMultiuserWiring(request, new_wiring_status, old_wiring_status, can_update_secure=True)
+            result = self.checkMultiuserWiring(request, new_wiring_status, old_wiring_status, workspace.creator, can_update_secure=True)
         else:
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
