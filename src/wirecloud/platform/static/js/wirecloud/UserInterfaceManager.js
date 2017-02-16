@@ -163,6 +163,11 @@
                 return;
             }
 
+            if (state.tab == null) {
+                state.tab = this.notebook.visibleTab.model.name;
+                Wirecloud.HistoryManager.replaceState(state);
+            }
+
             // Handle tab changes
             this.notebook.addEventListener("changed", function (notebook, oldTab, newTab) {
                 var currentState = Wirecloud.HistoryManager.getCurrentState();
@@ -170,12 +175,8 @@
                     tab: newTab.model.name
                 });
 
-                if (currentState.tab != null) {
-                    if (currentState.tab !== newState.tab) {
-                        Wirecloud.HistoryManager.pushState(newState);
-                    }
-                } else {
-                    Wirecloud.HistoryManager.replaceState(newState);
+                if (currentState.tab !== newState.tab) {
+                    Wirecloud.HistoryManager.pushState(newState);
                 }
             });
 
