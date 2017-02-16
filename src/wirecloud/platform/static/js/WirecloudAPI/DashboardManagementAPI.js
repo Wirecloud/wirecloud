@@ -233,16 +233,20 @@
         return (new Operator(operator));
     };
 
-    var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(workspace) {
-        this(new Workspace(workspace));
-    };
-
     var createWorkspace = function createWorkspace(options) {
-        if (options != null && typeof options.onSuccess === 'function') {
-            options.onSuccess = onCreateWorkspaceSuccess.bind(options.onSuccess);
-        }
-
-        Wirecloud.createWorkspace(options);
+        Wirecloud.createWorkspace(options).then((workspace) => {
+            if (options != null && typeof options.onSuccess === 'function') {
+                try {
+                    options.onSuccess(new Workspace(workspace));
+                } catch (e) {}
+            }
+        }, (error) => {
+            if (options != null && typeof options.onFailure === 'function') {
+                try {
+                    options.onFailure("" + error);
+                } catch (e) {}
+            }
+        });
     };
 
     if ('widget' in MashupPlatform) {
