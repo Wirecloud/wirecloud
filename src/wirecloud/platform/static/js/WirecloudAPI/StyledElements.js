@@ -29,7 +29,7 @@
     // StyledElements
     var RealStyledElements = window.parent.StyledElements;
     var platform = window.parent;
-    var iwidget = platform.Wirecloud.UserInterfaceManager.views.workspace.findWidget(MashupPlatform.priv.id);
+    var iwidget = MashupPlatform.priv.resource;
 
     window.StyledElements = {
         'Accordion': window.parent.StyledElements.Accordion,
@@ -106,7 +106,7 @@
         proxy_method(this, menu, 'append');
 
         this.show = function show(refPosition) {
-            var position = iwidget.model.wrapperElement.getBoundingClientRect();
+            var position = iwidget.wrapperElement.getBoundingClientRect();
 
             refPosition = {
                 top: refPosition.top + position.top + platform.document.body.scrollTop,
@@ -165,7 +165,7 @@
         });
 
         this.show = function show(refPosition) {
-            var position = iwidget.model.wrapperElement.getBoundingClientRect();
+            var position = iwidget.wrapperElement.getBoundingClientRect();
 
             if ('getBoundingClientRect' in refPosition) {
                 refPosition = refPosition.getBoundingClientRect();
@@ -279,7 +279,7 @@
         this.options = tooltip.options;
 
         this.show = function show(refPosition) {
-            var position = iwidget.model.wrapperElement.getBoundingClientRect();
+            var position = iwidget.wrapperElement.getBoundingClientRect();
 
             if ('getBoundingClientRect' in refPosition) {
                 refPosition = refPosition.getBoundingClientRect();

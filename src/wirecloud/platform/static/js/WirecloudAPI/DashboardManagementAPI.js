@@ -26,11 +26,12 @@
 
     "use strict";
 
-    var platform, Wirecloud, resource, InputEndpoint, OutputEndpoint, resource_workspace, resource_element, counter, privates;
+    var platform, Wirecloud, resource, InputEndpoint, OutputEndpoint, resource_workspace, resource_element, counter, workspaceview, privates;
 
     platform = window.parent;
     Wirecloud = platform.Wirecloud;
     resource = MashupPlatform.priv.resource;
+    workspaceview = MashupPlatform.priv.workspaceview;
     InputEndpoint = MashupPlatform.priv.InputEndpoint;
     OutputEndpoint = MashupPlatform.priv.OutputEndpoint;
     counter = 1;
@@ -181,7 +182,7 @@
             rename: false
         }, options.permissions);
 
-        var tab = Wirecloud.activeWorkspace.view.activeTab;
+        var tab = workspaceview.activeTab;
         var layout = tab.dragboard.freeLayout;
 
         if (options.refposition != null) {

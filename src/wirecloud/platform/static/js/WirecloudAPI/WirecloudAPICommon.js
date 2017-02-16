@@ -28,6 +28,7 @@
 
     var platform = window.parent;
     var Wirecloud = platform.Wirecloud;
+    var workspaceview = MashupPlatform.priv.workspaceview;
     var resource = MashupPlatform.priv.resource;
     var componentType = resource instanceof Wirecloud.Widget ? "widget" : "operator";
     var guibuilder = new platform.StyledElements.GUIBuilder();
@@ -84,12 +85,12 @@
     Object.defineProperty(window.MashupPlatform.mashup, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.mashup.context, 'getAvailableContext', {
         value: function getAvailableContext() {
-            return Wirecloud.activeWorkspace.contextManager.getAvailableContext();
+            return workspaceview.model.contextManager.getAvailableContext();
         }
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'get', {
         value: function get(name) {
-            return Wirecloud.activeWorkspace.contextManager.get(name);
+            return workspaceview.model.contextManager.get(name);
         }
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {

@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var id, tmp, i, current;
+    var id, viewid, tmp, i, current;
 
     // Get id from the URL
     tmp = document.location.hash.substr(1);
@@ -35,17 +35,23 @@
         current = tmp[i];
         current = current.split("=", 2);
         if (current[0] === "id") {
-            id = current[1];
-            break;
+            id = decodeURIComponent(current[1]);
+        } else if (current[0] === "workspaceview") {
+            viewid = decodeURIComponent(current[1]);
         }
     }
 
     // API declaration
     Object.defineProperty(window, 'MashupPlatform', {value: {}});
 
+    var workspaceview = viewid ? Wirecloud.UserInterfaceManager.workspaceviews[viewid] : Wirecloud.activeWorkspace.view;
+
     // Temporal dict with private references. This private dict is removed in
     // WirecloudAPIClosure.js
-    MashupPlatform.priv = {id: id};
+    MashupPlatform.priv = {
+        id: id,
+        workspaceview: workspaceview
+    };
 
 
     // Endpoint facades
@@ -171,7 +177,7 @@
             throw new TypeError("connections between endpoints of the same component are not allowed");
         }
 
-        connection = Wirecloud.activeWorkspace.wiring.createConnection(output, input, {
+        connection = workspaceview.model.wiring.createConnection(output, input, {
             commit: true
         });
     };

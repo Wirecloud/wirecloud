@@ -97,7 +97,11 @@
              */
             codeurl: {
                 get: function () {
-                    return this.meta.codeurl + "#id=" + this.id;
+                    var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
+                    if ('key' in this.tab.workspace.view) {
+                        url += "&workspaceview=" + encodeURIComponent(this.tab.workspace.view.key);
+                    }
+                    return url;
                 }
             },
             /**

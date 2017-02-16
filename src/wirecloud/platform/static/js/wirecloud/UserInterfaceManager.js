@@ -29,7 +29,8 @@
     var UserInterfaceManager = {
         rootKeydownHandler: null,
         currentWindowMenu: null,
-        currentPopups: []
+        currentPopups: [],
+        workspaceviews: {}
     };
 
     var coverLayerElement = null;

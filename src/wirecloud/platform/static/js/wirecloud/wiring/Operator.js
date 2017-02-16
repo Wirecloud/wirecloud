@@ -74,7 +74,11 @@
              */
             codeurl: {
                 get: function () {
-                    return this.meta.codeurl + "#id=" + this.id;
+                    var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
+                    if ('key' in this.wiring.workspace) {
+                        url += "&workspaceview=" + encodeURIComponent(this.wiring.workspace.key);
+                    }
+                    return url;
                 }
             },
             /**

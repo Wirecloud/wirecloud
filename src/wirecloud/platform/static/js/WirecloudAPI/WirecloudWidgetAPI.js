@@ -32,7 +32,7 @@
 
     // Init resource entry (in this case a widget) so other API files can make
     // use of it
-    view = platform.Wirecloud.UserInterfaceManager.views.workspace.findWidget(MashupPlatform.priv.id);
+    view = MashupPlatform.priv.workspaceview.findWidget(MashupPlatform.priv.id);
     model = view.model;
     MashupPlatform.priv.view = view;
     MashupPlatform.priv.resource = model;
