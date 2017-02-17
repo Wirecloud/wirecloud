@@ -814,11 +814,11 @@
 
             // TODO improve this test
             var operator = wiring.operators[0];
-            callEventListener(operator, "change", ["meta"]);
+            callEventListener(operator, "change", ["meta"], {meta: {missing: false}});
 
             // TODO improve this test
             var operator = wiring.operators[1];
-            callEventListener(operator, "change", ["meta"]);
+            callEventListener(operator, "change", ["meta"], {meta: {missing: false}});
         });
 
     });

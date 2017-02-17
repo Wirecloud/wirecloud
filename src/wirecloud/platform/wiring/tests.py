@@ -1165,7 +1165,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             with wiring.component_sidebar as sidebar:
                 widget = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
                 widget.change_version("3.0")
-                self.assertEqual(widget.version, "v3.0")
+                WebDriverWait(self.driver, timeout=3).until(lambda driver: widget.version == "v3.0")
                 modal = widget.show_logs()
                 WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was upgraded to v3.0 successfully.")) == 1)
                 modal.accept()

@@ -392,6 +392,7 @@
     };
 
     var change_meta = function change_meta(meta) {
+        var old_value = privates.get(this).meta;
         privates.get(this).meta = meta;
         build_endpoints.call(this);
         build_prefs.call(this, this.preferences);
@@ -401,7 +402,7 @@
             this.load();
         }
 
-        this.dispatchEvent('change', ['meta']);
+        this.dispatchEvent('change', ['meta'], {meta: old_value});
     };
 
     // =========================================================================

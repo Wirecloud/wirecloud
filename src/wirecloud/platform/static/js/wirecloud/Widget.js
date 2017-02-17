@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -37,10 +37,10 @@
      * @constructor
      *
      * @param {Wirecloud.WorkspaceTab} tab
-     * @param {Wirecloud.WidgetMeta} resource
+     * @param {Wirecloud.WidgetMeta} meta
      * @param {Object} data
      */
-    ns.Widget = function Widget(tab, resource, data) {
+    ns.Widget = function Widget(tab, meta, data) {
         se.ObjectWithEvents.call(this, [
             'change',
             'load',
@@ -80,7 +80,7 @@
                 y: data.top,
                 z: data.zIndex
             },
-            resource: resource,
+            meta: meta,
             shape: {
                 width: data.width,
                 height: data.height
@@ -129,7 +129,7 @@
              */
             meta: {
                 get: function () {
-                    return privates.get(this).resource;
+                    return privates.get(this).meta;
                 }
             },
             /**
@@ -546,20 +546,20 @@
         },
 
         /**
-         * @param {Wirecloud.WidgetMeta} resource
+         * @param {Wirecloud.WidgetMeta} meta
          */
-        upgrade: function upgrade(resource) {
+        upgrade: function upgrade(meta) {
 
-            if (!is_valid_resource.call(this, resource)) {
-                throw new TypeError("invalid resource parameter");
+            if (!is_valid_meta.call(this, meta)) {
+                throw new TypeError("invalid meta parameter");
             }
 
             return new Promise(function (resolve, reject) {
                 var content, url;
 
-                if (this.meta.uri === resource.uri) {
+                if (this.meta.uri === meta.uri) {
                     // From/to missing
-                    change_meta.call(this, resource);
+                    change_meta.call(this, meta);
                     resolve(this);
                 } else {
                     url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
@@ -569,7 +569,7 @@
                     });
 
                     content = {
-                        widget: resource.id
+                        widget: meta.id
                     };
 
                     Wirecloud.io.makeRequest(url, {
@@ -581,23 +581,23 @@
                             var message;
 
                             if (response.status === 204) {
-                                var cmp = resource.version.compareTo(privates.get(this).resource.version);
+                                var cmp = meta.version.compareTo(privates.get(this).meta.version);
 
                                 if (cmp > 0) { // upgrade
                                     message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
                                         type: this.meta.type,
-                                        version: resource.version.text
+                                        version: meta.version.text
                                     });
                                     this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
                                 } else if (cmp < 0) { // downgrade
                                     message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
                                         type: this.meta.type,
-                                        version: resource.version.text
+                                        version: meta.version.text
                                     });
                                     this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
                                 }
 
-                                change_meta.call(this, resource);
+                                change_meta.call(this, meta);
                                 resolve(this);
                             } else {
                                 reject(/* TODO */);
@@ -663,8 +663,9 @@
         this.dispatchEvent('remove');
     };
 
-    var change_meta = function change_meta(resource) {
-        privates.get(this).resource = resource;
+    var change_meta = function change_meta(meta) {
+        var old_value = privates.get(this).meta;
+        privates.get(this).meta = meta;
         build_endpoints.call(this);
         build_prefs.call(this, this.preferences);
 
@@ -673,7 +674,7 @@
             this.load();
         }
 
-        this.dispatchEvent('change', ['meta']);
+        this.dispatchEvent('change', ['meta'], {meta: old_value});
     };
 
     var _rename = function _rename(title) {
@@ -691,8 +692,8 @@
         return title.trim();
     };
 
-    var is_valid_resource = function is_valid_resource(resource) {
-        return resource instanceof Wirecloud.WidgetMeta && resource.group_id === this.meta.group_id;
+    var is_valid_meta = function is_valid_meta(meta) {
+        return meta instanceof Wirecloud.WidgetMeta && meta.group_id === this.meta.group_id;
     };
 
     var remove_context_callbacks = function remove_context_callbacks() {

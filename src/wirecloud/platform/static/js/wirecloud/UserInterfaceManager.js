@@ -182,7 +182,7 @@
 
             // Init wiring error badge
             this._updateWiringErrors = function (entry) {
-                var errorCount = workspace.wiring.logManager.errorCount;
+                var errorCount = workspace.wiring.errorCount;
                 this.wiringButton.setBadge(errorCount ? errorCount : null, 'danger');
             }.bind(this);
 

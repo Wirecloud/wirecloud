@@ -55,6 +55,7 @@
         ]);
 
         privates.set(this, {
+            fixederrors: 0,
             freezedOperatorsById: null,
             operatorId: 1,
             operators: [],
@@ -76,6 +77,9 @@
              */
             connections: {
                 get: on_connections_get
+            },
+            errorCount: {
+                get: on_error_count_get
             },
             /**
              * @type {Wirecloud.LogManager}
@@ -287,14 +291,22 @@
             }
 
             this.logManager.newCycle();
+            priv.fixederrors = 0;
 
             for (id in status.operators) {
                 operator = status.operators[id];
 
                 if (priv.operatorsById[id] == null) {
                     append_operator.call(this, operator);
+                } else if (operator.missing) {
+                    this.logManager.log(utils.gettext("Failed to load operator."));
                 }
             }
+            this.workspace.widgets.forEach(function (widget) {
+                if (widget.loaded && widget.missing) {
+                    this.logManager.log(utils.gettext("Failed to load widget."));
+                }
+            }, this);
 
             // Init operatorId counter
             priv.operatorId = 1;
@@ -494,16 +506,6 @@
         return getEndpointOrCreateMissing(component, endpointGroup, endpointInfo.endpoint);
     };
 
-    var reconnect = function reconnect(component) {
-        privates.get(this).connections.forEach(function (connection) {
-            if (connection.source.component.is(component)) {
-                connection.updateEndpoint(getEndpointOrCreateMissing(component, 'outputs', connection.source.name));
-            } else if (connection.target.component.is(component)) {
-                connection.updateEndpoint(getEndpointOrCreateMissing(component, 'inputs', connection.target.name));
-            }
-        });
-    };
-
     var getEndpointInfo = function getEndpointInfo(endpointName) {
         var splitText = endpointName.split("/");
 
@@ -527,6 +529,11 @@
 
     var on_connections_get = function on_connections_get() {
         return privates.get(this).connections.slice(0);
+    };
+
+    var on_error_count_get = function on_error_count_get() {
+        var priv = privates.get(this);
+        return this.logManager.errorCount - priv.fixederrors;
     };
 
     var on_operators_get = function on_operators_get() {
@@ -609,11 +616,27 @@
     // EVENT HANDLERS
     // =========================================================================
 
-    var on_changecomponent = function on_changecomponent(component, changes) {
+    var on_changecomponent = function on_changecomponent(component, changes, old_values) {
 
         if (changes.indexOf('meta') !== -1) {
             component.fullDisconnect();
-            reconnect.call(this, component);
+            var priv = privates.get(this);
+            priv.connections.forEach((connection) => {
+                if (connection.source.component.is(component)) {
+                    connection.updateEndpoint(getEndpointOrCreateMissing(component, 'outputs', connection.source.name));
+                    if (old_values.meta.missing && !connection.missing) {
+                        priv.fixederrors += 1;
+                    }
+                } else if (connection.target.component.is(component)) {
+                    connection.updateEndpoint(getEndpointOrCreateMissing(component, 'inputs', connection.target.name));
+                    if (old_values.meta.missing && !connection.missing) {
+                        priv.fixederrors += 1;
+                    }
+                }
+            });
+            if (old_values.meta.missing) {
+                priv.fixederrors += 1;
+            }
         }
     };
 
@@ -654,6 +677,9 @@
         removeComponent.call(this, widget);
         widget.removeEventListener('change', priv.on_changecomponent);
         widget.removeEventListener('remove', priv.on_removewidget);
+        if (widget.missing) {
+            priv.fixederrors += 1;
+        }
     };
 
 })(Wirecloud, StyledElements, StyledElements.Utils);
