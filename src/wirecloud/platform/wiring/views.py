@@ -36,17 +36,16 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_op
 
 class WiringEntry(Resource):
 
+    # Build multiuser structure with the new value, keeping the other users values
     def handleMultiuser(self, request, new_variable, old_variable):
         new_value = new_variable["value"]
 
-        if old_variable is not None:
-            new_variable = deepcopy(old_variable)
-        else:
-            new_variable["value"] = {"users": {}}
+        new_variable = deepcopy(old_variable)
 
         new_variable["value"]["users"]["%s" % request.user.id] = new_value
         return new_variable
 
+    # Checks if two objects are the same
     def checkSameWiring(self, object1, object2):
         if len(object1.keys()) != len(object2.keys()):
             return False
@@ -205,7 +204,7 @@ class WiringEntry(Resource):
 
                 if preference_secure and not can_update_secure:
                     new_preference["value"] = old_preference["value"]
-                elif new_preference["value"] != old_preference["value"]:
+                else:
                     # Handle multiuser
                     new_preference = self.handleMultiuser(request, new_preference, old_preference)
                 operator['preferences'][preference_name] = new_preference
@@ -242,7 +241,7 @@ class WiringEntry(Resource):
 
                 if property_secure and not can_update_secure:
                     new_property["value"] = old_property["value"]
-                elif new_property["value"] != old_property["value"]:
+                else:
                     # Handle multiuser
                     new_property = self.handleMultiuser(request, new_property, old_property)
                 operator['properties'][property_name] = new_property

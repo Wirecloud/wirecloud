@@ -95,9 +95,9 @@ class WorkspaceMigrationsTestCase(TestCase):
         self.assertEqual(widget2_mock.variables, {"varname": {"users": {"2": "hello"}}, "varname2": {"users": {"2": "world"}}})
         self.assertEqual(widget3_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
 
-        self.assertEqual(workspace_mock.wiringStatus, {"operators": 
-            {"1": {"preferences": {"varname":  {"value": {"users": {"2": "varvalue"}}}, "varname2":  {"value": {"users": {"2": "varvalue2"}}}}},
-             "2": {"preferences": {"varname":  {"value": {"users": {"2": "hello"}}}, "varname2":  {"value": {"users": {"2": "world"}}}}}}})
+        self.assertEqual(workspace_mock.wiringStatus, {"operators":
+            {"1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+            "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}})
 
     def test_add_multiuser_support_backward_empty(self):
 
@@ -149,7 +149,6 @@ class WorkspaceMigrationsTestCase(TestCase):
         apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = [workspace_mock]
         apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = []
 
-
         multiuser_variables_structure_backwards(apps_mock, None)
 
         widget1_mock.save.assert_called_with()
@@ -157,9 +156,10 @@ class WorkspaceMigrationsTestCase(TestCase):
         self.assertEqual(widget2_mock.variables, {"varname": "hello", "varname2": "world"})
         self.assertEqual(widget3_mock.variables, {"varname": "varvalue", "varname2": "varvalue2"})
 
-        self.assertEqual(workspace_mock.wiringStatus, {"operators": 
-            {"1": {"preferences": {"varname":  {"value": "varvalue"}, "varname2":  {"value": "varvalue2"}}},
-             "2": {"preferences": {"varname":  {"value": "hello"}, "varname2":  {"value": "world"}}}}})
+        self.assertEqual(workspace_mock.wiringStatus, {"operators":
+            {"1": {"preferences": {"varname": {"value": "varvalue"}, "varname2": {"value": "varvalue2"}}},
+             "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}})
+
 
 class WorkspaceTestCase(WirecloudTestCase):
 
@@ -184,6 +184,29 @@ class WorkspaceTestCase(WirecloudTestCase):
         self.assertEqual(preferences['username']['value'], 'test_username')
         properties = tab['iwidgets'][0]['properties']
         self.assertEqual(properties['prop']['value'], 'test_data')
+
+    def test_get_global_workspace_data_harvest_operator_properties(self):
+        workspace = Workspace.objects.get(id=1)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'default'}}}
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'prop3': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                    }
+                },
+            },
+            'connections': [],
+        }
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        self.assertEqual(data["wiring"]["operators"]["1"]["properties"]["prop1"]["value"], "a")
+        self.assertEqual(data["wiring"]["operators"]["1"]["properties"]["prop3"]["value"], "********")
 
     def test_secure_preferences_censor(self):
         workspace = Workspace.objects.get(pk=202)
