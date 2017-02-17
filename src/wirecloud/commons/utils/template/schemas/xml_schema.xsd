@@ -339,6 +339,14 @@
                         </xs:annotation>
                     </xs:attribute>
 
+                    <xs:attribute name="multiuser" use="optional" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>
+                                If set to true, this variable will store a value for each user with access rights to the dashboard.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+
                     <xs:attribute name="description" use="optional" type="xs:string">
                         <xs:annotation>
                             <xs:documentation>

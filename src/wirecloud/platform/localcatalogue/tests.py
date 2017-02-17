@@ -20,7 +20,6 @@
 from __future__ import unicode_literals
 
 from io import BytesIO
-import json
 import os.path
 import time
 import zipfile
@@ -110,13 +109,13 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['licenseurl'], 'http://www.apache.org/licenses/LICENSE-2.0.html')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Property label', 'type': 'text', 'description': ''}])
+        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Property label', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Preference label', 'type': 'list', 'options': [{'value': '1', 'label': 'Option name'}], 'readonly': False, 'description': 'Preference description', 'value': None}])
+        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Preference label', 'type': 'list', 'options': [{'value': '1', 'label': 'Option name'}], 'readonly': False, 'description': 'Preference description', 'value': None, 'multiuser': False}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
-        self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Slot label', 'type': 'text', 'description': '','friendcode': 'test_friend_code', 'actionlabel': ''}])
+        self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Slot label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
 
         self.assertEqual(len(data['wiring']['outputs']), 1)
         self.assertEqual(data['wiring']['outputs'], [{'name': 'event', 'label': 'Event label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code'}])
@@ -127,7 +126,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
         self.assertTrue(added)
-        resource_info = json.loads(resource.json_description)
+        resource_info = resource.json_description
         self.assertEqual(resource.vendor, 'Wirecloud')
         self.assertEqual(resource.short_name, 'test')
         self.assertEqual(resource.version, '0.1')
@@ -329,13 +328,13 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['doc'], 'doc/index.html')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Etiqueta de la propiedad', 'type': 'text', 'description': ''}])
+        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Etiqueta de la propiedad', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Etiqueta de la preferencia', 'type': 'list', 'options': [{'value': '1', 'label': 'Nombre de la opción'}], 'readonly': False, 'description': 'Descripción de la preferencia', 'value': None}])
+        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Etiqueta de la preferencia', 'type': 'list', 'options': [{'value': '1', 'label': 'Nombre de la opción'}], 'readonly': False, 'description': 'Descripción de la preferencia', 'value': None, 'multiuser': False}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
-        self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Etiqueta del endpoint de entrada', 'type': 'text', 'description': '','friendcode': 'test_friend_code', 'actionlabel': ''}])
+        self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Etiqueta del endpoint de entrada', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
 
         self.assertEqual(len(data['wiring']['outputs']), 1)
         self.assertEqual(data['wiring']['outputs'], [{'name': 'event', 'label': 'Etiqueta del endpoint de salida', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code'}])
@@ -351,13 +350,13 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['version'], '0.2')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Label', 'type': 'text', 'description': ''}])
+        self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Label', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Label', 'readonly': False, 'type': 'text', 'description': 'Preference description', 'value': None}])
+        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Label', 'readonly': False, 'type': 'text', 'description': 'Preference description', 'value': None, 'multiuser': False}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
-        self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Label', 'type': 'text', 'description': '','friendcode': 'test_friend_code', 'actionlabel': ''}])
+        self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
 
         self.assertEqual(len(data['wiring']['outputs']), 1)
         self.assertEqual(data['wiring']['outputs'], [{'name': 'event', 'label': 'Label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code'}])

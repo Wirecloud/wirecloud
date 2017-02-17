@@ -226,7 +226,6 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
 
     if not deploy_only:
         resource_info.update(overrides)
-
         resource = CatalogueResource.objects.create(
             short_name=resource_info['name'],
             vendor=resource_info['vendor'],
@@ -236,7 +235,7 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
             template_uri=file_name,
             creation_date=now(),
             popularity='0.0',
-            json_description=json.dumps(resource_info)
+            json_description=resource_info
         )
 
         return resource

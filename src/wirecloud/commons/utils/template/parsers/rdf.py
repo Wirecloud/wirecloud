@@ -112,8 +112,8 @@ class RDFTemplateParser(object):
     def _add_translation_index(self, value, **kwargs):
 
         if value not in self._translation_indexes:
-            self._translation_indexes[value] = []
-            self._translation_indexes[value].append(kwargs)
+            self._translation_indexes[text_type(value)] = []
+            self._translation_indexes[text_type(value)].append(kwargs)
 
     def _get_translation_field(self, namespace, element, subject, translation_name, required=True, **kwargs):
 
@@ -203,7 +203,7 @@ class RDFTemplateParser(object):
     def _parse_extra_info(self):
 
         if self._info['type'] == 'widget' or self._info['type'] == 'operator':
-            self._parse_widget_info()
+            self._parse_component_info()
         elif self._info['type'] == 'mashup':
             self._parse_workspace_info()
 
@@ -542,7 +542,7 @@ class RDFTemplateParser(object):
         self._info['wiring']['outputs'] = outputs
         # END TODO
 
-    def _parse_widget_info(self):
+    def _parse_component_info(self):
 
         # Preference info
         self._info['preferences'] = []
@@ -561,6 +561,7 @@ class RDFTemplateParser(object):
                 'default': self._get_field(WIRE, 'default', preference, required=False),
                 'value': self._get_field(WIRE, 'value', preference, required=False, default=None),
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
+                'multiuser': self._get_field(WIRE, 'multiuser', preference, required=False).lower() == 'true'
             }
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
@@ -587,6 +588,7 @@ class RDFTemplateParser(object):
                 'description': self._get_translation_field(DCTERMS, 'description', prop, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
                 'default': self._get_field(WIRE, 'default', prop, required=False),
                 'secure': self._get_field(WIRE, 'secure', prop, required=False).lower() == 'true',
+                'multiuser': self._get_field(WIRE, 'multiuser', prop, required=False).lower() == 'true',
             })
 
         self._parse_wiring_info()

@@ -176,7 +176,7 @@ class JSONTemplateParser(object):
             self._check_connection_handles(connection)
 
     def _add_translation_index(self, value, **kwargs):
-        index = get_trans_index(value)
+        index = get_trans_index(text_type(value))
         if not index:
             return
 
@@ -187,7 +187,7 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        self._check_string_fields(('title', 'description', 'longdescription', 'email',  'homepage','doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'))
+        self._check_string_fields(('title', 'description', 'longdescription', 'email', 'homepage', 'doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'))
         self._check_contacts_fields(('authors', 'contributors'))
 
         # Normalize/check preferences and properties (only for widgets and operators)
@@ -199,11 +199,13 @@ class JSONTemplateParser(object):
                 self._check_string_fields(('label', 'description', 'default'), place=preference)
                 self._check_boolean_fields(('readonly', 'secure'), place=preference, default=False)
                 self._check_string_fields(('value',), place=preference, null=True, default=None)
+                self._check_boolean_fields(('multiuser',), place=preference, default=False)
 
             for prop in self._info['properties']:
                 self._check_string_fields(('name', 'type'), place=prop, required=True)
                 self._check_string_fields(('label', 'description', 'default'), place=prop)
                 self._check_boolean_fields(('secure',), place=prop, default=False)
+                self._check_boolean_fields(('multiuser',), place=prop, default=False)
 
         if self._info['type'] == 'widget':
 
@@ -251,7 +253,7 @@ class JSONTemplateParser(object):
                 for behaviour in self._info['wiring']['visualdescription']['behaviours']:
                     self._check_behaviour_view_fields(behaviour)
 
-        if not 'wiring' in self._info:
+        if 'wiring' not in self._info:
             self._info['wiring'] = {}
 
         self._check_array_fields(('inputs', 'outputs'), place=self._info['wiring'], required=False)

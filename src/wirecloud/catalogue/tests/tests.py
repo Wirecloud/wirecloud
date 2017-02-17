@@ -697,7 +697,7 @@ class WGTDeploymentTestCase(WirecloudTestCase):
         self.assertTrue(os.path.exists(os.path.join(widget_path, 'documentation/index.html')))
         self.assertFalse(os.path.exists(os.path.join(widget_path, 'test.html')))
         widget = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='0.1')
-        widget_info = json.loads(widget.json_description)
+        widget_info = widget.json_description
         self.assertEqual(widget.template_uri, 'Wirecloud_Test_0.1.wgt')
         self.assertEqual(widget_info['image'], 'images/catalogue.png')
 
@@ -742,7 +742,7 @@ class WGTDeploymentTestCase(WirecloudTestCase):
         self.assertTrue(os.path.exists(os.path.join(operator_path, 'doc/images/image.png')))
         self.assertTrue(os.path.exists(os.path.join(operator_path, 'doc/index.html')))
         operator = CatalogueResource.objects.get(vendor='Wirecloud', short_name='basic-operator', version='0.1')
-        operator_info = json.loads(operator.json_description)
+        operator_info = operator.json_description
         self.assertEqual(operator.template_uri, 'Wirecloud_basic-operator_0.1.wgt')
         self.assertEqual(operator_info['image'], 'images/catalogue.png')
 

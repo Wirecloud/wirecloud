@@ -28,5 +28,5 @@ from wirecloud.platform.localcatalogue.tests import *
 from wirecloud.platform.markets.tests import *
 from wirecloud.platform.wiring.tests import *
 from wirecloud.platform.widget.tests import CodeTransformationTestCase, WidgetModuleTestCase
-from wirecloud.platform.workspace.tests import WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
+from wirecloud.platform.workspace.tests import WorkspaceMigrationsTestCase, WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
 from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests

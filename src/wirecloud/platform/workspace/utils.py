@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -105,8 +105,6 @@ def decrypt_value(value):
 
 def sync_base_workspaces(user):
 
-    from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
-
     reload_showcase = False
     managers = get_workspace_managers()
 
@@ -165,7 +163,7 @@ def get_workspace_list(user):
     return workspaces
 
 
-def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid):
+def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, current_user, workspace_creator):
     varname = vardef['name']
     entry = {
         'type': vardef['type'],
@@ -184,7 +182,15 @@ def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_var
         entry['hidden'] = fv_entry.get('hidden', False)
 
     else:
-        entry['value'] = iwidget.variables.get(varname, parse_value_from_text(entry, vardef['default']))
+        # Handle multiuser variables
+        value = iwidget.variables.get(varname, None)
+        variable_user = current_user if vardef.get("multiuser", False) else workspace_creator
+        if value is None or value["users"].get("%s" % variable_user.id, None) is None:
+            value = parse_value_from_text(entry, vardef['default'])
+        else:
+            value = value["users"].get("%s" % variable_user.id, None)
+
+        entry['value'] = value
         entry['readonly'] = False
         entry['hidden'] = False
 
@@ -196,7 +202,6 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     """ populates VariableValue cached values for that user """
     values_by_varid = {}
     values_by_varname = {}
-
     if forced_values is None:
         context_values = get_context_values(workspace, user)
         preferences = get_workspace_preference_values(workspace)
@@ -204,7 +209,7 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
 
     for iwidget in IWidget.objects.filter(tab__workspace=workspace):
         # forced_values uses string keys
-        svariwidget = str(iwidget.id)
+        svariwidget = "%s" % iwidget.id
         values_by_varname[iwidget.id] = {}
 
         if iwidget.widget is None:
@@ -213,10 +218,10 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
         iwidget_info = iwidget.widget.resource.get_processed_info()
 
         for vardef in iwidget_info['preferences']:
-            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid)
+            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user, workspace.creator)
 
         for vardef in iwidget_info['properties']:
-            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid)
+            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user, workspace.creator)
 
     values = {
         'by_varid': values_by_varid,
@@ -279,12 +284,13 @@ class VariableValueCacheManager():
 
         return value
 
+    # Get preference data
     def get_variable_data(self, iwidget, var_name):
         values = self.get_variable_values()
         entry = values['by_varname'][iwidget.id][var_name]
 
         # If secure and has value, censor it
-        if entry["secure"] and entry["value"] != "":
+        if entry['secure'] and entry["value"] != "":
             value = "********"
         else:
             value = entry["value"]
@@ -295,6 +301,19 @@ class VariableValueCacheManager():
             'readonly': entry['readonly'],
             'hidden': entry['hidden'],
             'value': value,
+        }
+
+    # Get the persistent property data
+    def get_property_data(self, iwidget, var_name):
+        values = self.get_variable_values()
+        entry = values['by_varname'][iwidget.id][var_name]
+
+        return {
+            'name': var_name,
+            'value': entry['value'],
+            'readonly': entry['readonly'],
+            'secure': entry['secure'],
+            'hidden': entry['hidden'],
         }
 
 
@@ -418,17 +437,17 @@ def _get_global_workspace_data(workspaceDAO, user):
 
     data_ret['users'] = []
 
-    for user in workspaceDAO.users.all():
+    for u in workspaceDAO.users.all():
         try:
-            is_organization = user.organization is not None
+            is_organization = u.organization is not None
         except:
             is_organization = False
 
         data_ret['users'].append({
-            "fullname": user.get_full_name(),
-            "username": user.username,
+            "fullname": u.get_full_name(),
+            "username": u.username,
             "organization": is_organization,
-            "accesslevel": "owner" if workspaceDAO.creator == user else "read",
+            "accesslevel": "owner" if workspaceDAO.creator == u else "read",
         })
 
     # Process forced variable values
@@ -455,8 +474,8 @@ def _get_global_workspace_data(workspaceDAO, user):
     else:
         tabs = [createTab(_('Tab'), workspaceDAO)]
 
-    data_ret['tabs'] = [get_tab_data(tab, workspace=workspaceDAO, cache_manager=cache_manager) for tab in tabs]
-    data_ret['wiring'] = workspaceDAO.wiringStatus
+    data_ret['tabs'] = [get_tab_data(tab, workspace=workspaceDAO, cache_manager=cache_manager, user=user) for tab in tabs]
+    data_ret['wiring'] = deepcopy(workspaceDAO.wiringStatus)
     for operator_id, operator in six.iteritems(data_ret['wiring'].get('operators', {})):
         try:
             (vendor, name, version) = operator['name'].split('/')
@@ -474,14 +493,46 @@ def _get_global_workspace_data(workspaceDAO, user):
         operator_info = resource.get_processed_info(process_variables=True)
 
         operator_forced_values = forced_values['ioperator'].get(operator_id, {})
+        # Build operator preference data
         for preference_name, preference in six.iteritems(operator.get('preferences', {})):
             vardef = operator_info['variables']['preferences'].get(preference_name)
+            value = preference.get('value', None)
+
+            # Handle multiuser
+            variable_user = user if vardef is not None and vardef["multiuser"] else workspaceDAO.creator
+
             if preference_name in operator_forced_values:
                 preference['value'] = operator_forced_values[preference_name]['value']
-            elif preference.get('value') is None and vardef is not None:
+            elif value is None or value["users"].get("%s" % variable_user.id, None) is None:
+                # If not defined / not defined for the current user, take the default value
                 preference['value'] = parse_value_from_text(vardef, vardef['default'])
+            else:
+                preference['value'] = value["users"].get("%s" % variable_user.id)
+
+            # Secure censor
             if vardef is not None and vardef["secure"]:
                 preference['value'] = "" if preference.get('value') is None or preference.get('value') == "" else "********"
+
+        # Build operator property data
+        for property_name, property in six.iteritems(operator.get('properties', {})):
+            vardef = operator_info['variables']['properties'].get(property_name)
+            value = property.get('value', None)
+
+            # Handle multiuser
+            variable_user = user if vardef is not None and vardef["multiuser"] else workspaceDAO.creator
+
+            if property_name in operator_forced_values:
+                property['value'] = operator_forced_values[property_name]['value']
+            elif value is None or value["users"].get("%s" % variable_user.id, None) is None:
+                # If not defined / not defined for the current user, take the default value
+                property['value'] = parse_value_from_text(vardef, vardef['default'])
+            else:
+                property['value'] = value["users"].get("%s" % variable_user.id)
+
+            # Secure censor
+            if vardef is not None and vardef["secure"]:
+                property['value'] = "" if property.get('value') is None or property.get('value') == "" else "********"
+
     return json.dumps(data_ret, cls=LazyEncoder)
 
 
@@ -509,7 +560,7 @@ def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
         'name': tab.name,
         'visible': tab.visible,
         'preferences': get_tab_preference_values(tab),
-        'iwidgets': [get_iwidget_data(widget, workspace, cache_manager) for widget in tab.iwidget_set.order_by('id')]
+        'iwidgets': [get_iwidget_data(widget, workspace, cache_manager, user) for widget in tab.iwidget_set.order_by('id')]
     }
 
 
@@ -545,7 +596,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
     iwidget_info = iwidget.widget.resource.get_processed_info()
     data_ret['preferences'] = {preference['name']: cache_manager.get_variable_data(iwidget, preference['name']) for preference in iwidget_info['preferences']}
-    data_ret['properties'] = {property['name']: cache_manager.get_variable_data(iwidget, property['name']) for property in iwidget_info['properties']}
+    data_ret['properties'] = {property['name']: cache_manager.get_property_data(iwidget, property['name']) for property in iwidget_info['properties']}
 
     return data_ret
 

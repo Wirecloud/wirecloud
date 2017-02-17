@@ -115,7 +115,7 @@ know in order to make it persistent.
 - **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#PlatformStateProperty`
 
 - **Properties include**: `dcterms:title`, `dcterms:description`, `wire:type`,
-  `rdfs:label`, `wire:default`, `wire:secure`
+  `rdfs:label`, `wire:default`, `wire:secure`, `wire:multiuser`
 
 - **Used with**: `wire:hasPlatformStateProperty`
 
@@ -295,6 +295,15 @@ This property states the widget configuration element default value.
 
 This property states whether or not a widget configuration element is
 secure.
+
+- **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#value`
+- **Range**: `rdfs:Literal`
+
+
+#### The `wire:multiuser` property
+
+This property states whether or not a component persistent variable is
+multiuser. Multiuser persistent variables store a value for each user with access rights to the dashboard.
 
 - **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#value`
 - **Range**: `rdfs:Literal`

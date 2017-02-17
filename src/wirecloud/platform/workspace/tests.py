@@ -26,9 +26,9 @@ import rdflib
 import json
 
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from mock import Mock, create_autospec
 import six
+from unittest import TestCase
 
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
@@ -40,10 +40,125 @@ from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFrom
 from wirecloud.platform.workspace.searchers import WorkspaceSearcher
 from wirecloud.platform.workspace.utils import get_global_workspace_data
 from wirecloud.platform.workspace.views import createEmptyWorkspace
+from wirecloud.platform.migration_utils import multiuser_variables_structure_forwards, multiuser_variables_structure_backwards
+from django.db.migrations.exceptions import IrreversibleError
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
 __test__ = False
+
+
+class WorkspaceMigrationsTestCase(TestCase):
+
+    tags = ('wirecloud-migrations', 'wirecloud-platform-migrations', 'wirecloud-noselenium')
+
+    def test_add_multiuser_support_forward_empty(self):
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = [
+        ]
+
+        multiuser_variables_structure_forwards(apps_mock, None)
+
+    def test_add_multiuser_support_forward(self):
+
+        widget1_mock = Mock(
+            variables={"varname": "varvalue", "varname2": "varvalue2"}
+        )
+        widget2_mock = Mock(
+            variables={"varname": "hello", "varname2": "world"}
+        )
+        widget3_mock = Mock(
+            variables={"varname": "varvalue", "varname2": "varvalue2"}
+        )
+        tab_mock = Mock()
+        tab_mock.iwidget_set.all.return_value = [widget1_mock, widget2_mock]
+
+        tab_mock2 = Mock()
+        tab_mock2.iwidget_set.all.return_value = [widget3_mock]
+
+        workspace_mock = Mock(
+            wiringStatus={"operators": {
+                "1": {"preferences": {"varname": {"value": "varvalue"}, "varname2": {"value": "varvalue2"}}},
+                "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}
+            })
+        workspace_mock.tab_set.all.return_value = [tab_mock, tab_mock2]
+        workspace_mock.creator.id = "2"
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = [workspace_mock]
+
+        multiuser_variables_structure_forwards(apps_mock, None)
+
+        widget1_mock.save.assert_called_with()
+        self.assertEqual(widget1_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
+        self.assertEqual(widget2_mock.variables, {"varname": {"users": {"2": "hello"}}, "varname2": {"users": {"2": "world"}}})
+        self.assertEqual(widget3_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
+
+        self.assertEqual(workspace_mock.wiringStatus, {"operators":
+            {"1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+            "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}})
+
+    def test_add_multiuser_support_backward_empty(self):
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = []
+        apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = []
+
+        multiuser_variables_structure_backwards(apps_mock, None)
+
+    def test_add_multiuser_support_backward_multiuser_components(self):
+        multiuser_resource = Mock(
+            vendor="testvendor",
+            short_name="testname",
+            version="testversion")
+        multiuser_resource.json_description = {"properties": [{"multiuser": True}]}
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = []
+        apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = [multiuser_resource]
+
+        self.assertRaises(IrreversibleError, multiuser_variables_structure_backwards, apps=apps_mock, schema_editor=None)
+
+    def test_add_multiuser_support_backward(self):
+
+        widget1_mock = Mock(
+            variables={"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}}
+        )
+        widget2_mock = Mock(
+            variables={"varname": {"users": {"2": "hello"}}, "varname2": {"users": {"2": "world"}}}
+        )
+        widget3_mock = Mock(
+            variables={"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}}
+        )
+        tab_mock = Mock()
+        tab_mock.iwidget_set.all.return_value = [widget1_mock, widget2_mock]
+
+        tab_mock2 = Mock()
+        tab_mock2.iwidget_set.all.return_value = [widget3_mock]
+
+        workspace_mock = Mock(
+            wiringStatus={"operators": {
+                "1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+                "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}
+            })
+        workspace_mock.tab_set.all.return_value = [tab_mock, tab_mock2]
+        workspace_mock.creator.id = "2"
+
+        apps_mock = Mock()
+        apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = [workspace_mock]
+        apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = []
+
+        multiuser_variables_structure_backwards(apps_mock, None)
+
+        widget1_mock.save.assert_called_with()
+        self.assertEqual(widget1_mock.variables, {"varname": "varvalue", "varname2": "varvalue2"})
+        self.assertEqual(widget2_mock.variables, {"varname": "hello", "varname2": "world"})
+        self.assertEqual(widget3_mock.variables, {"varname": "varvalue", "varname2": "varvalue2"})
+
+        self.assertEqual(workspace_mock.wiringStatus, {"operators":
+            {"1": {"preferences": {"varname": {"value": "varvalue"}, "varname2": {"value": "varvalue2"}}},
+             "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}})
 
 
 class WorkspaceTestCase(WirecloudTestCase):
@@ -70,7 +185,30 @@ class WorkspaceTestCase(WirecloudTestCase):
         properties = tab['iwidgets'][0]['properties']
         self.assertEqual(properties['prop']['value'], 'test_data')
 
-    def test_secure_preferences_censor (self):
+    def test_get_global_workspace_data_harvest_operator_properties(self):
+        workspace = Workspace.objects.get(id=1)
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'default'}}}
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'prop3': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                    }
+                },
+            },
+            'connections': [],
+        }
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        self.assertEqual(data["wiring"]["operators"]["1"]["properties"]["prop1"]["value"], "a")
+        self.assertEqual(data["wiring"]["operators"]["1"]["properties"]["prop3"]["value"], "********")
+
+    def test_secure_preferences_censor(self):
         workspace = Workspace.objects.get(pk=202)
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 1)
@@ -131,7 +269,6 @@ class WorkspaceCacheTestCase(WirecloudTestCase):
 
         self.user = User.objects.get(username='test')
         self.workspace = Workspace.objects.get(pk=1)
-
         # Fill cache
         self.initial_info = get_global_workspace_data(self.workspace, self.user)
 
@@ -142,7 +279,7 @@ class WorkspaceCacheTestCase(WirecloudTestCase):
     def test_updating_preferences_invalidates_cache(self):
 
         iwidget = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1)
-        iwidget.set_variable_value('username', 'new_username')
+        iwidget.set_variable_value('username', 'new_username', self.user)
         iwidget.save()
 
         workspace_info = get_global_workspace_data(self.workspace, self.user)
@@ -159,7 +296,7 @@ class WorkspaceCacheTestCase(WirecloudTestCase):
     def test_updating_properties_invalidates_cache(self):
 
         iwidget = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1)
-        iwidget.set_variable_value('prop', 'new_data')
+        iwidget.set_variable_value('prop', 'new_data', self.user)
         iwidget.save()
 
         workspace_info = get_global_workspace_data(self.workspace, self.user)
@@ -174,7 +311,6 @@ class WorkspaceCacheTestCase(WirecloudTestCase):
         self.assertEqual(properties['prop']['value'], 'new_data')
 
     def test_widget_instantiation_invalidates_cache(self):
-
         tab = self.workspace.tab_set.get(pk=1)
         iwidget_data = {
             'widget': 'Test/Test Widget/1.0.0',
@@ -272,10 +408,10 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         # password variables must be encrypted
         iwidget = IWidget.objects.get(pk=1)
-        iwidget.set_variable_value('password', 'test_password')
+        iwidget.set_variable_value('password', 'test_password', self.user)
         iwidget.save()
         iwidget = IWidget.objects.get(pk=2)
-        iwidget.set_variable_value('password', 'test_password')
+        iwidget.set_variable_value('password', 'test_password', self.user)
         iwidget.save()
 
     def assertXPathText(self, root_element, xpath, content):
@@ -319,16 +455,16 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'name', 'TestOperator')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'version', '1.0')
         self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue', 4)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'value', 'value1')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'value', "{u'users': {u'2': u'value1'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'value', "{u'users': {u'2': u'value2'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', 'value3')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', "{u'users': {u'2': u'value3'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'value', 'value4')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'value', "{u'users': {u'2': u'value4'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
 
@@ -336,19 +472,18 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'name', 'TestOperator')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'version', '1.0')
         self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue', 4)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'value', 'value1')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'value', "{u'users': {u'2': u'value1'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'value', "{u'users': {u'2': u'value2'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'value', 'value3')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'value', "{u'users': {u'2': u'value3'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'value', '')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'value', "{u'users': {u'2': u''}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
-
 
     def get_rdf_element(self, graph, base, ns, predicate):
         element = None
@@ -403,17 +538,17 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
                 if six.text_type(name) == 'pref_with_val':
                     pref_with_val_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value1')
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', "{u'users': {u'2': u'value1'}}")
                 elif six.text_type(name) == 'readonly_pref':
                     readonly_pref_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value2')
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', "{u'users': {u'2': u'value2'}}")
                 elif six.text_type(name) == 'hidden_pref':
                     hidden_pref_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value3')
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', "{u'users': {u'2': u'value3'}}")
                 elif six.text_type(name) == 'empty_pref':
                     empty_pref_found = True
                     content = six.text_type(self.get_rdf_element(graph, preference, self.WIRE, 'value'))
-                    self.assertIn(content, ('', 'value4'))
+                    self.assertIn(content, ("{u'users': {u'2': u''}}", "{u'users': {u'2': u'value4'}}"))
                 else:
                     self.fail()
 
@@ -578,27 +713,27 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="boolean"]', 'hidden', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="boolean"]', 'value', 'false')
 
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'value', 'new_value1')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'value', "{u'users': {u'2': u'new_value1'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'value', 'new_value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'value', "{u'users': {u'2': u'new_value2'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', 'new_value3')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', "{u'users': {u'2': u'new_value3'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'true')
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'value', '')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'value', "{u'users': {u'2': u''}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
 
         self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 0)
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'value', "{u'users': {u'2': u'value2'}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
         self.assertXPathMissingAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'value')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'true')
-        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'value', '')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'value', "{u'users': {u'2': u''}}")
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
 
@@ -783,7 +918,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                         self.fail()
 
                 self.assertTrue(username_count == 1 and password_count == 1 and boolean_count == 1 and list_count == 0)
-
 
     def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {

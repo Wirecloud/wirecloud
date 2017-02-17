@@ -54,7 +54,7 @@ def process_widget_code(request, resource):
 
     mode = request.GET.get('mode', 'classic')
     theme = request.GET.get('theme', get_active_theme_name())
-    widget_info = json.loads(resource.json_description)
+    widget_info = resource.json_description
 
     # check if the xhtml code has been cached
     if widget_info['contents']['cacheable'] is True:

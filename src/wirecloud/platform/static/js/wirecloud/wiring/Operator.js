@@ -156,6 +156,7 @@
 
         build_endpoints.call(this);
         build_prefs.call(this, data.preferences);
+        build_props.call(this, data.properties);
 
         this.logManager.log(utils.gettext("Operator created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
     };
@@ -279,7 +280,7 @@
          * @returns {Object}
          */
         toJSON: function toJSON() {
-            var name, preferences = {};
+            var name, preferences = {}, properties = {};
 
             for (name in this.preferences) {
                 preferences[name] = {
@@ -289,10 +290,19 @@
                 };
             }
 
+            for (name in this.properties) {
+                properties[name] = {
+                    hidden: this.properties[name].hidden,
+                    readonly: this.properties[name].readonly,
+                    value: this.properties[name].value
+                };
+            }
+
             return {
                 id: this.id,
                 name: this.meta.uri,
-                preferences: preferences
+                preferences: preferences,
+                properties: properties
             };
         },
 
@@ -383,6 +393,27 @@
         }, this);
     };
 
+    var build_props = function build_props(initial_values) {
+        if (initial_values == null) {
+            initial_values = {};
+        }
+
+        var properties = this.meta.propertyList;
+        this.propertyList = [];
+        this.properties = {};
+        this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
+        properties.forEach((property, index) => {
+            var prop_info = initial_values[property.name];
+
+            if (prop_info != null) {
+                this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, prop_info.readonly, prop_info.value);
+            } else {
+                this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
+            }
+            this.properties[property.name] = this.propertyList[index];
+        });
+    }
+
     var send_pending_event = function send_pending_event(pendingEvent) {
         this.inputs[pendingEvent.endpoint].propagate(pendingEvent.value);
     };
@@ -396,6 +427,7 @@
         privates.get(this).meta = meta;
         build_endpoints.call(this);
         build_prefs.call(this, this.preferences);
+        build_props.call(this, this.properties);
 
         if (this.loaded) {
             on_unload.call(this);
