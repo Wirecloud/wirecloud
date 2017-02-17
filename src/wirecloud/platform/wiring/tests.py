@@ -920,7 +920,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "b"}})
 
-    def test_non_existent_oeprators_can_be_created_by_owner(self):
+    def test_missing_operators_are_maintained_on_owner_requests(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1006,7 +1006,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "a", "3": "b"}})
 
-    def test_multiuser_secure_properties_can_be_updated_by_owner_patch(self):
+    def test_multiuser_secure_properties_can_be_updated_by_owner_patches(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1040,7 +1040,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"2": "c"}})
 
-    def test_multiuser_secure_properties_can_be_updated_by_allowed_users_patch(self):
+    def test_multiuser_secure_properties_can_be_updated_by_allowed_user_patches(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1074,7 +1074,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"3": "c"}})
 
-    def test_multiuser_secure_properties_cannot_be_updated_by_owner_put(self):
+    def test_multiuser_secure_properties_are_not_updated_by_owner_puts(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1113,7 +1113,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"2": "a", "3": "a"}})
 
-    def test_multiuser_secure_properties_cannot_be_updated_by_allowed_users_put(self):
+    def test_multiuser_secure_properties_are_not_updated_by_allowed_user_puts(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1152,7 +1152,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"2": "a", "3": "a"}})
 
-    def test_multiuser_secure_preferences_not_updated_by_owner_put(self):
+    def test_multiuser_secure_preferences_are_not_updated_by_owner_puts(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1191,7 +1191,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref2"]["value"], {"users": {"2": "a"}})
 
-    def test_multiuser_secure_preferences_not_updated_by_allowed_users_put(self):
+    def test_multiuser_secure_preferences_are_not_updated_by_allowed_user_puts(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1230,7 +1230,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref2"]["value"], {"users": {"2": "a"}})
 
-    def test_nonexistent_operator_properties_cannot_be_updated_by_allowed_users(self):
+    def test_missing_operator_properties_cannot_be_updated_by_allowed_users(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1364,7 +1364,7 @@ class WiringTestCase(WirecloudTestCase):
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "a", "3": "a"}})
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop2"]["value"], {"users": {"2": "b"}})
 
-    def test_save_wiring_nonexistent_operator_by_allowed_users(self):
+    def test_save_wiring_with_missing_operator_by_allowed_users(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1409,7 +1409,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "a"}})
 
-    def test_nonmultiuser_properties_cannot_be_updated_by_allowed_users(self):
+    def test_normal_properties_cannot_be_updated_by_allowed_users(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1602,7 +1602,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref2"]["value"], {"users": {"2": "b"}})
 
-    def test_multiuser_properties_cannot_be_updated_by_other_put(self):
+    def test_unauthorized_users_cannot_update_wiring_with_puts(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1641,7 +1641,7 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "a"}})
 
-    def test_multiuser_properties_cannot_be_updated_by_other_patch(self):
+    def test_unauthorized_users_cannot_update_wiring_with_patches(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
         workspace.wiringStatus = {
@@ -1697,7 +1697,7 @@ class WiringTestCase(WirecloudTestCase):
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 204)
 
-    def test_operator_added_patch_owner(self):
+    def test_operator_added_patch_by_owner(self):
         client = Client()
         client.login(username='test', password='test')
 
@@ -1719,7 +1719,7 @@ class WiringTestCase(WirecloudTestCase):
         response = client.patch(self.wiring_url, data, content_type='application/json-patch+json')
         self.assertEqual(response.status_code, 204)
 
-    def test_operator_added_patch_allowed(self):
+    def test_operator_added_patch_by_allowed_user(self):
         client = Client()
         client.login(username='test2', password='test')
 
@@ -1741,7 +1741,7 @@ class WiringTestCase(WirecloudTestCase):
         response = client.patch(self.wiring_url, data, content_type='application/json-patch+json')
         self.assertEqual(response.status_code, 403)
 
-    def test_operator_added_patch_other(self):
+    def test_operator_added_patch_unauthorized_user(self):
         client = Client()
         client.login(username='test3', password='test')
 
