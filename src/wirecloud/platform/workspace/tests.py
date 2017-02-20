@@ -26,6 +26,11 @@ import rdflib
 import json
 
 from django.contrib.auth.models import User
+try:
+    from django.db.migrations.exceptions import IrreversibleError
+except:
+    # Django 1.8 doesn't support IrreversibleError
+    IrreversibleError = Exception
 from mock import Mock, create_autospec
 import six
 from unittest import TestCase
@@ -41,7 +46,6 @@ from wirecloud.platform.workspace.searchers import WorkspaceSearcher
 from wirecloud.platform.workspace.utils import get_global_workspace_data
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 from wirecloud.platform.migration_utils import multiuser_variables_structure_forwards, multiuser_variables_structure_backwards
-from django.db.migrations.exceptions import IrreversibleError
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
@@ -96,8 +100,8 @@ class WorkspaceMigrationsTestCase(TestCase):
         self.assertEqual(widget3_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
 
         self.assertEqual(workspace_mock.wiringStatus, {"operators":
-            {"1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
-            "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}})
+            {"1": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+            "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}})
 
     def test_add_multiuser_support_backward_empty(self):
 
@@ -139,8 +143,8 @@ class WorkspaceMigrationsTestCase(TestCase):
 
         workspace_mock = Mock(
             wiringStatus={"operators": {
-                "1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
-                "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}
+                "1": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+                "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}
             })
         workspace_mock.tab_set.all.return_value = [tab_mock, tab_mock2]
         workspace_mock.creator.id = "2"
