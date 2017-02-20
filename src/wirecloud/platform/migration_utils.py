@@ -19,7 +19,6 @@
 
 from __future__ import unicode_literals
 
-from django.db.migrations.exceptions import IrreversibleError
 import six
 
 
@@ -54,6 +53,7 @@ def multiuser_variables_structure_forwards(apps, schema_editor):
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
             wiring["operators"][op]["preferences"] = {k: mutate_forwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+            wiring["operators"][op]["properties"] = {} # Create properties structure
         workspace.save()
 
         # Update widgets
@@ -72,7 +72,7 @@ def multiuser_variables_structure_backwards(apps, schema_editor):
         for property in component.json_description["properties"]:
             if property.get("multiuser", False):
                 uri = component.vendor + '/' + component.short_name + '/' + component.version
-                raise IrreversibleError("Component %s requires multiuser support. Uninstall it before downgrading." % uri)
+                raise Exception("Component %s requires multiuser support. Uninstall it before downgrading." % uri)
 
     Workspace = apps.get_model("platform", "workspace")
     for workspace in Workspace.objects.select_related('creator').all():
@@ -82,6 +82,9 @@ def multiuser_variables_structure_backwards(apps, schema_editor):
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
             wiring["operators"][op]["preferences"] = {k: mutate_backwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+            # Remove operator properties
+            if 'properties' in wiring["operators"][op]:
+                del wiring["operators"][op]['properties']
         workspace.save()
 
         # Update widgets

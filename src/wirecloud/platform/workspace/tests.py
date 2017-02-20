@@ -41,7 +41,6 @@ from wirecloud.platform.workspace.searchers import WorkspaceSearcher
 from wirecloud.platform.workspace.utils import get_global_workspace_data
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 from wirecloud.platform.migration_utils import multiuser_variables_structure_forwards, multiuser_variables_structure_backwards
-from django.db.migrations.exceptions import IrreversibleError
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
@@ -96,8 +95,8 @@ class WorkspaceMigrationsTestCase(TestCase):
         self.assertEqual(widget3_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
 
         self.assertEqual(workspace_mock.wiringStatus, {"operators":
-            {"1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
-            "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}})
+            {"1": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+            "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}})
 
     def test_add_multiuser_support_backward_empty(self):
 
@@ -118,7 +117,7 @@ class WorkspaceMigrationsTestCase(TestCase):
         apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = []
         apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = [multiuser_resource]
 
-        self.assertRaises(IrreversibleError, multiuser_variables_structure_backwards, apps=apps_mock, schema_editor=None)
+        self.assertRaises(Exception, multiuser_variables_structure_backwards, apps=apps_mock, schema_editor=None)
 
     def test_add_multiuser_support_backward(self):
 
@@ -139,8 +138,8 @@ class WorkspaceMigrationsTestCase(TestCase):
 
         workspace_mock = Mock(
             wiringStatus={"operators": {
-                "1": {"preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
-                "2": {"preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}
+                "1": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+                "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}
             })
         workspace_mock.tab_set.all.return_value = [tab_mock, tab_mock2]
         workspace_mock.creator.id = "2"
