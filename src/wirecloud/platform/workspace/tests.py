@@ -26,6 +26,11 @@ import rdflib
 import json
 
 from django.contrib.auth.models import User
+try:
+    from django.db.migrations.exceptions import IrreversibleError
+except:
+    # Django 1.8 doesn't support IrreversibleError
+    IrreversibleError = Exception
 from mock import Mock, create_autospec
 import six
 from unittest import TestCase
@@ -117,7 +122,7 @@ class WorkspaceMigrationsTestCase(TestCase):
         apps_mock.get_model("platform", "workspace").objects.select_related('creator').all.return_value = []
         apps_mock.get_model("catalogue", "CatalogueResource").objects.filter(type__in=(0, 2)).all.return_value = [multiuser_resource]
 
-        self.assertRaises(Exception, multiuser_variables_structure_backwards, apps=apps_mock, schema_editor=None)
+        self.assertRaises(IrreversibleError, multiuser_variables_structure_backwards, apps=apps_mock, schema_editor=None)
 
     def test_add_multiuser_support_backward(self):
 

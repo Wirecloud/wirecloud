@@ -19,6 +19,12 @@
 
 from __future__ import unicode_literals
 
+try:
+    from django.db.migrations.exceptions import IrreversibleError
+except:
+    # Django 1.8 doesn't support IrreversibleError
+    IrreversibleError = Exception
+
 import six
 
 
@@ -72,7 +78,7 @@ def multiuser_variables_structure_backwards(apps, schema_editor):
         for property in component.json_description["properties"]:
             if property.get("multiuser", False):
                 uri = component.vendor + '/' + component.short_name + '/' + component.version
-                raise Exception("Component %s requires multiuser support. Uninstall it before downgrading." % uri)
+                raise IrreversibleError("Component %s requires multiuser support. Uninstall it before downgrading." % uri)
 
     Workspace = apps.get_model("platform", "workspace")
     for workspace in Workspace.objects.select_related('creator').all():
