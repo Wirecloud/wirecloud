@@ -418,8 +418,8 @@ class ApplicationMashupTemplateParser(object):
         xhtml_element = self._xpath(CODE_XPATH, self._doc)[0]
         self._info['contents'] = {
             'src': text_type(xhtml_element.get('src')),
-            'contenttype': xhtml_element.get('contenttype', 'text/html'),
-            'charset': xhtml_element.get('charset', 'utf-8'),
+            'contenttype': text_type(xhtml_element.get('contenttype', 'text/html')),
+            'charset': text_type(xhtml_element.get('charset', 'utf-8')),
             'useplatformstyle': xhtml_element.get('useplatformstyle', 'false').lower() == 'true',
             'cacheable': xhtml_element.get('cacheable', 'true').lower() == 'true'
         }
@@ -566,7 +566,6 @@ class ApplicationMashupTemplateParser(object):
                         'readonly': prop.get('readonly', 'false').lower() == 'true',
                         'value': text_type(prop_value) if prop_value is not None else None,
                     }
-
                 for pref in self._xpath(PREFERENCE_VALUE_XPATH, widget):
                     pref_value = pref.get('value')
                     widget_info['preferences'][text_type(pref.get('name'))] = {
