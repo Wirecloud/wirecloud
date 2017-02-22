@@ -150,9 +150,9 @@ class WiringEntry(Resource):
                 removed_preferences = set(old_operator['preferences'].keys()) - set(operator['preferences'].keys())
                 updated_preferences = set(operator['preferences'].keys()).intersection(old_operator['preferences'].keys())
 
-                added_properties = set(operator['properties'].keys()) - set(old_operator['properties'].keys())
-                removed_properties = set(old_operator['properties'].keys()) - set(operator['properties'].keys())
-                updated_properties = set(operator['properties'].keys()).intersection(old_operator['properties'].keys())
+                added_properties = set(operator.get('properties', {}).keys()) - set(old_operator['properties'].keys())
+                removed_properties = set(old_operator['properties'].keys()) - set(operator.get('properties', {}).keys())
+                updated_properties = set(operator.get('properties', {}).keys()).intersection(old_operator['properties'].keys())
                 vendor, name, version = operator["name"].split("/")
                 try:
                     resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info(process_variables=True)
