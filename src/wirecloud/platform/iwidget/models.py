@@ -56,7 +56,7 @@ class IWidget(models.Model):
             value = encrypt_value(value)
         elif vardef['type'] == 'boolean':
             if isinstance(value, text_type):
-                value.strip().lower() == "true"
+                value = value.strip().lower() == "true"
             else:
                 value = bool(value)
 
