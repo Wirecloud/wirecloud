@@ -2663,9 +2663,9 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         prefix = 'test_'
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus['operators']['0']['preferences'] = {
-            'prefix': {"readonly": False, "hidden": False, "value": {"users": {"2": prefix}}},
-            'exception_on_event': {"readonly": False, "hidden": False, "value": {"users": {"2": 'true'}}},
-            'test_logging': {"readonly": False, "hidden": False, "value": {"users": {"2": 'true'}}}
+            'prefix': {"readonly": False, "hidden": False, "value": {"users": {"4": prefix}}},
+            'exception_on_event': {"readonly": False, "hidden": False, "value": {"users": {"4": 'true'}}},
+            'test_logging': {"readonly": False, "hidden": False, "value": {"users": {"4": 'true'}}}
         }
         workspace.save()
 
@@ -2944,7 +2944,6 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             menu_dropdown.close()
 
     def check_input_endpoint_exceptions(self):
-
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
         iwidgets = self.widgets
@@ -2980,15 +2979,16 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             modal.accept()
 
     def test_input_endpoint_exceptions(self):
+        user = User.objects.get(pk=4)
 
         # Enable widget exceptions
         iwidget = IWidget.objects.get(pk=2)
-        iwidget.set_variable_value("boolean", 'true')
+        iwidget.set_variable_value("boolean", 'true', user)
         iwidget.save()
 
         # Enable operator exceptions
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus['operators']['0']['preferences']['exception_on_event'] = {"readonly": False, "hidden": False, "value": {"users": {"2": 'true'}}}
+        workspace.wiringStatus['operators']['0']['preferences']['exception_on_event'] = {"readonly": False, "hidden": False, "value": {"users": {"4": 'true'}}}
         workspace.save()
 
         # Check exceptions
