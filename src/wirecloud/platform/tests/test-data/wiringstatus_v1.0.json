@@ -19,7 +19,8 @@
                     "hidden": false,
                     "value": false
                 }
-            }
+            },
+            "properties": {}
         }
     },
     "connections": [

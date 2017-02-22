@@ -47,6 +47,7 @@
                     "value": false
                 }
             },
+            "properties": {},
             "name": "Wirecloud/TestOperator/1.0"
         }
     },

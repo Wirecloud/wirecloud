@@ -484,13 +484,9 @@ def _get_global_workspace_data(workspaceDAO, user):
 
         try:
             resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-            if not resource.is_available_for(workspaceDAO.creator):
-                # The operator used by this instance is missing
-                continue
+            operator_info = resource.get_processed_info(process_variables=True)
         except CatalogueResource.DoesNotExist:
             continue
-
-        operator_info = resource.get_processed_info(process_variables=True)
 
         operator_forced_values = forced_values['ioperator'].get(operator_id, {})
         # Build operator preference data
