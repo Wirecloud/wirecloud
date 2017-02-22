@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -188,7 +188,7 @@ class FiWarePlugin(WirecloudPlugin):
     def get_scripts(self, view):
 
         common = (
-            'js/NGSI/NGSI.js',
+            'js/NGSI/NGSI.min.js',
             'js/NGSI/eventsource.js',
             'js/NGSI/NGSIManager.js',
             'js/ObjectStorage/OpenStackManager.js',

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -24,18 +24,11 @@
     "use strict";
 
     var key, manager = window.parent.NGSIManager, NGSIAPI = {};
+    var component = MashupPlatform.priv.resource;
 
-    if (MashupPlatform.operator != null) {
-        NGSIAPI.Connection = function Connection(url, options) {
-            manager.Connection.call(this, 'operator', MashupPlatform.operator.id, url, options);
-        };
-    } else if (MashupPlatform.widget != null) {
-        NGSIAPI.Connection = function Connection(url, options) {
-            manager.Connection.call(this, 'widget', MashupPlatform.widget.id, url, options);
-        };
-    } else {
-        throw new Error('Unknown resource type');
-    }
+    NGSIAPI.Connection = function Connection(url, options) {
+        manager.Connection.call(this, component, url, options);
+    };
     NGSIAPI.Connection.prototype = window.parent.NGSIManager.Connection.prototype;
 
     NGSIAPI.ProxyConnectionError = window.parent.NGSIManager.NGSI.ProxyConnectionError;

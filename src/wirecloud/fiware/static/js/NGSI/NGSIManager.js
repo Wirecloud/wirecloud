@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,106 +26,81 @@
 
     "use strict";
 
-    var register_widget_proxy, register_operator_proxy, unload_widget, unload_operator,
-        proxiesByWidget, proxiesByOperator, proxy_connections, make_request, Manager,
-        proxy_base_url;
+    var proxiesByComponent = {
+        "widget": {},
+        "operator": {}
+    };
+    var proxy_connections = {};
+    var Manager = {};
 
-    proxiesByWidget = {};
-    proxiesByOperator = {};
-    proxy_connections = {};
-    Manager = {};
-
-    proxy_base_url = Wirecloud.location.domain + Wirecloud.URLs.PROXY.evaluate({protocol: 'x', domain: 'x', path: 'x'});
     // TODO
+    var proxy_base_url = Wirecloud.location.domain + Wirecloud.URLs.PROXY.evaluate({protocol: 'x', domain: 'x', path: 'x'});
     proxy_base_url = proxy_base_url.slice(0, -"/x/xx".length);
 
-    register_widget_proxy = function register_widget_proxy(id, proxy) {
-        if (!(id in proxiesByWidget)) {
-            proxiesByWidget[id] = [];
-            Wirecloud.activeWorkspace.findWidget(id).addEventListener('unload', unload_widget);
-        }
-
-        proxiesByWidget[id].push(proxy);
-    };
-
-    unload_widget = function unload_widget(iwidget) {
-        var i, proxies;
-
-        proxies = proxiesByWidget[iwidget.id];
-        for (i = 0; i < proxies.length; i += 1) {
+    var unload_component = function unload_component(component) {
+        var proxies = proxiesByComponent[component.meta.type][component.id];
+        proxies.forEach((proxy) => {
+            var proxy_info = proxy_connections[proxy.url];
+            proxy_info.usages -= 1;
+            if (proxy_info.usages === 0) {
+                proxy_info.proxy.close();
+                delete proxy_connections[proxy.url];
+            }
             try {
-                proxies[i].close();
+                proxy.close();
             } catch (e) {}
-        }
+        });
         proxies.length = 0;
 
-        iwidget.removeEventListener('unload', unload_widget);
-        delete proxiesByWidget[iwidget.id];
+        component.removeEventListener('unload', unload_component);
+        delete proxiesByComponent[component.meta.type][component.id];
+
+        // Search unused proxy connections
     };
 
-    register_operator_proxy = function register_operator_proxy(id, proxy) {
+    var register_component_proxy = function register_component_proxy(component, proxy) {
+        var id = component.id;
+        var type = component.meta.type;
 
-        var operator;
-
-        if (!(id in proxiesByOperator)) {
-            operator = Wirecloud.activeWorkspace.wiring.operatorsById[id];
-            proxiesByOperator[id] = [];
-            operator.addEventListener('unload', unload_operator);
+        if (!(id in proxiesByComponent[type])) {
+            proxiesByComponent[type][id] = [];
+            component.addEventListener('unload', unload_component);
         }
 
-        proxiesByOperator[id].push(proxy);
+        proxiesByComponent[type][id].push(proxy);
     };
 
-    unload_operator = function unload_operator(operator) {
-        var i, proxies;
+    var make_request = function make_request(url, options) {
+        return Wirecloud.io.makeRequest(url, options).then(
+            (response) => {
+                var details, via_header;
 
-        proxies = proxiesByOperator[operator.id];
-        for (i = 0; i < proxies.length; i += 1) {
-            try {
-                proxies[i].close();
-            } catch (e) {}
-        }
-        proxies.length = 0;
-
-        operator.removeEventListener('unload', unload_operator);
-        delete proxiesByOperator[operator.id];
-    };
-
-    make_request = function make_request(url, options) {
-        var onFailure = options.onFailure;
-        options.onFailure = function (response) {
-            var error_details, details, via_header;
-
-            error_details = response;
-            if (response.request.url.startsWith(proxy_base_url)) {
-                via_header = response.getHeader('Via');
-                if (response.status === 0) {
-                    error_details = new NGSI.ConnectionError(utils.gettext("Error connecting to the WireCloud's proxy"));
-                } else if (via_header == null) {
-                    // Error coming directly from WireCloud's proxy
-                    switch (response.status) {
-                    case 403:
-                        error_details = new NGSI.ConnectionError(utils.gettext("You aren't allowed to use the WireCloud's proxy. Have you signed off from WireCloud?"));
-                        break;
-                    case 502:
-                    case 504:
-                        details = JSON.parse(response.responseText);
-                        error_details = new NGSI.ConnectionError(details.description);
-                        break;
-                    default:
-                        error_details = new NGSI.ConnectionError(utils.gettext("Unexpected response from WireCloud's proxy"));
+                if (response.request.url.startsWith(proxy_base_url)) {
+                    via_header = response.getHeader('Via');
+                    if (response.status === 0) {
+                        return Promise.reject(new NGSI.ConnectionError(utils.gettext("Error connecting to the WireCloud's proxy")));
+                    } else if (via_header == null) {
+                        // Error coming directly from WireCloud's proxy
+                        switch (response.status) {
+                        case 403:
+                            return Promise.reject(new NGSI.ConnectionError(utils.gettext("You aren't allowed to use the WireCloud's proxy. Have you signed off from WireCloud?")));
+                        case 502:
+                        case 504:
+                            details = JSON.parse(response.responseText);
+                            return Promise.reject(new NGSI.ConnectionError(details.description));
+                        default:
+                            return Promise.reject(new NGSI.ConnectionError(utils.gettext("Unexpected response from WireCloud's proxy")));
+                        }
                     }
                 }
-            }
-            onFailure(error_details);
-        };
 
-        return Wirecloud.io.makeRequest(url, options);
+                return Promise.resolve(response);
+            }
+        );
     };
 
     // Overload NGSI connection constructor
-    Manager.Connection = function Connection(type, id, url, options) {
-        var wrapped_proxy;
+    Manager.Connection = function Connection(component, url, options) {
 
         if (options == null) {
             options = {};
@@ -136,20 +111,9 @@
         }
 
         if (options.ngsi_proxy_url != null) {
-            if (!(options.ngsi_proxy_url in proxy_connections)) {
-                proxy_connections[options.ngsi_proxy_url] = new NGSI.ProxyConnection(options.ngsi_proxy_url, options.requestFunction);
-            }
-
-            wrapped_proxy = new WirecloudResourceProxy(proxy_connections[options.ngsi_proxy_url], this);
+            var wrapped_proxy = new WirecloudResourceProxy(options.ngsi_proxy_url, this, options.requestFunction);
             options.ngsi_proxy_connection = wrapped_proxy;
-            switch (type) {
-            case "operator":
-                register_operator_proxy(id, wrapped_proxy);
-                break;
-            case "widget":
-                register_widget_proxy(id, wrapped_proxy);
-                break;
-            }
+            register_component_proxy(component, wrapped_proxy);
             delete options.ngsi_proxy_url;
         }
 
@@ -157,93 +121,114 @@
             if (options.request_headers == null) {
                 options.request_headers = {};
             }
-            options.request_headers['X-FI-WARE-OAuth-Token'] = 'true';
-            options.request_headers['X-FI-WARE-OAuth-Header-Name'] = 'X-Auth-Token';
+            options.request_headers['X-FIWARE-OAuth-Token'] = 'true';
+            options.request_headers['X-FIWARE-OAuth-Header-Name'] = 'X-Auth-Token';
         }
 
         NGSI.Connection.call(this, url, options);
     };
     Manager.Connection.prototype = NGSI.Connection.prototype;
 
-    var WirecloudResourceProxy = function WirecloudResourceProxy(real_proxy, connection) {
-        Object.defineProperty(this, 'real_proxy', {value: real_proxy});
-        Object.defineProperty(this, 'connection', {value: connection});
-        Object.defineProperty(this, 'connected', {get: function () { return this.real_proxy.connected; }});
-        Object.defineProperty(this, 'connecting', {get: function () { return this.real_proxy.connecting; }});
-        Object.defineProperty(this, 'url', {get: function () { return this.real_proxy.url; }});
-        this.callbacks = [];
+    var privates = new WeakMap();
+
+    var on_connected_get = function on_connected_get() {
+        return privates.get(this).real_proxy.connected;
     };
-    WirecloudResourceProxy.prototype = new NGSI.ProxyConnection();
+
+    var on_connecting_get = function on_connecting_get() {
+        return privates.get(this).real_proxy.connecting;
+    };
+
+    var on_url_get = function on_url_get() {
+        return privates.get(this).real_proxy.url;
+    };
+
+    var WirecloudResourceProxy = function WirecloudResourceProxy(url, connection, requestFunction) {
+        url = new URL(url);
+        if (url.pathname[url.pathname.length - 1] !== '/') {
+            url.pathname += '/';
+        }
+
+        if (!(url in proxy_connections)) {
+            proxy_connections[url] = {
+                proxy: new NGSI.ProxyConnection(url, requestFunction),
+                usages: 0
+            };
+        }
+        var real_proxy = proxy_connections[url].proxy;
+        proxy_connections[url].usages += 1;
+        privates.set(this, {
+            callbacks: [],
+            real_proxy: real_proxy
+        });
+        Object.defineProperties(this, {
+            connection: {value: connection},
+            connected: {get: on_connected_get},
+            connecting: {get: on_connecting_get},
+            url: {get: on_url_get}
+        });
+    };
+    utils.inherit(WirecloudResourceProxy, NGSI.ProxyConnection);
 
     WirecloudResourceProxy.prototype.connect = function connect(options) {
-        this.real_proxy.connect(options);
+        return privates.get(this).real_proxy.connect(options);
     };
 
-    WirecloudResourceProxy.prototype.request_callback = function request_callback(onNotify, onSuccess, onFailure) {
-        var old_on_success = onSuccess;
-        onSuccess = function (data) {
-            this.callbacks.push(data.callback_id);
-            if (typeof old_on_success === 'function') {
-                old_on_success(data);
-            }
-        }.bind(this);
-        this.real_proxy.request_callback(onNotify, onSuccess, onFailure);
+    WirecloudResourceProxy.prototype.requestCallback = function requestCallback(onNotify) {
+        var priv = privates.get(this);
+        return priv.real_proxy.requestCallback(onNotify).then((data) => {
+            priv.callbacks.push(data.callback_id);
+            return Promise.resolve(data);
+        });
     };
 
-    WirecloudResourceProxy.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
-        if (this.callbacks.indexOf(callback_id) === -1) {
+    WirecloudResourceProxy.prototype.closeCallback = function closeCallback(callback_id) {
+        var priv = privates.get(this);
+        if (priv.callbacks.indexOf(callback_id) === -1) {
             throw new TypeError('unhandled callback: ' + callback_id);
         }
-        var old_on_success = onSuccess;
-        onSuccess = function (data) {
-            var index = this.callbacks.indexOf(callback_id);
-            if (index != -1) {
-                this.callbacks.splice(index, 1);
+        return priv.real_proxy.closeCallback(callback_id).then(() => {
+            var index = priv.callbacks.indexOf(callback_id);
+            if (index !== -1) {
+                priv.callbacks.splice(index, 1);
             }
-            if (typeof old_on_success === 'function') {
-                old_on_success(data);
-            }
-        }.bind(this);
-        this.real_proxy.close_callback(callback_id, onSuccess, onFailure);
+        });
     };
 
-    WirecloudResourceProxy.prototype.associate_subscription_id_to_callback = function associate_subscription_id_to_callback(callback_id, subscription_id) {
-        this.real_proxy.associate_subscription_id_to_callback(callback_id, subscription_id);
+    WirecloudResourceProxy.prototype.associateSubscriptionId = function associateSubscriptionId(callback_id, subscription_id) {
+        privates.get(this).real_proxy.associateSubscriptionId(callback_id, subscription_id);
+        return this;
     };
 
-    WirecloudResourceProxy.prototype.close_callback_by_subscriptionId = function close_callback_by_subscriptionId(subscription_id, onSuccess, onFailure) {
-        var callback_id;
+    WirecloudResourceProxy.prototype.closeSubscriptionCallback = function closeSubscriptionCallback(subscription_id) {
+        var priv = privates.get(this);
 
-        if (subscription_id in this.real_proxy.callbacks_by_subscriptionId) {
-            callback_id = this.real_proxy.callbacks_by_subscriptionId[subscription_id].callback_id;
-            if (this.callbacks.indexOf(callback_id) !== -1) {
-                var old_on_success = onSuccess;
-                onSuccess = function (data) {
-                    var index = this.callbacks.indexOf(callback_id);
-                    if (index != -1) {
-                        this.callbacks.splice(index, 1);
+        if (subscription_id in priv.real_proxy.subscriptionCallbacks) {
+            var callback_id = priv.real_proxy.subscriptionCallbacks[subscription_id];
+            if (priv.callbacks.indexOf(callback_id) !== -1) {
+                return priv.real_proxy.closeSubscriptionCallback(subscription_id).then(() => {
+                    var index = priv.callbacks.indexOf(callback_id);
+                    if (index !== -1) {
+                        priv.callbacks.splice(index, 1);
                     }
-                    if (typeof old_on_success === 'function') {
-                        old_on_success(data);
-                    }
-                }.bind(this);
-                this.real_proxy.close_callback_by_subscriptionId(subscription_id, onSuccess, onFailure);
-                return;
+                });
             }
         }
-        if (typeof onSuccess === 'function') {
-            onSuccess();
-        }
+
+        return Promise.resolve();
     };
 
     WirecloudResourceProxy.prototype.close = function close() {
-        var i;
+        var priv = privates.get(this);
+        var callbackSubscriptions = priv.real_proxy.callbackSubscriptions;
 
-        for (i = 0; i < this.callbacks.length; i++) {
-            if (this.real_proxy.callbacks[this.callbacks[i]].subscription_id != null) {
-                this.connection.cancelSubscription(this.real_proxy.callbacks[this.callbacks[i]].subscription_id);
+        priv.callbacks.forEach((callback) => {
+            this.closeCallback(callback);
+            if (callbackSubscriptions[callback] != null) {
+                this.connection.cancelSubscription(callbackSubscriptions[callback]);
             }
-        }
+        });
+        priv.callbacks = [];
     };
 
     Manager.NGSI = NGSI;

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of ngsijs.
  *
@@ -41,11 +41,17 @@
 
     "use strict";
 
+    /**
+     * @namespace
+     * @name NGSI
+     */
     var NGSI;
+
+    var privates = new WeakMap();
 
     /* Detect Node.js */
     /* istanbul ignore if */
-    if ((typeof require == 'function') && typeof exports != null) {
+    if ((typeof require === 'function') && typeof exports != null) {
         NGSI = exports;
     } else {
         NGSI = {};
@@ -62,7 +68,21 @@
         SUBSCRIBE_CONTEXT: 'v1/subscribeContext',
         UPDATE_CONTEXT_SUBSCRIPTION: 'v1/updateContextSubscription',
         UNSUBSCRIBE_CONTEXT: 'v1/unsubscribeContext',
-        CONTEXT_TYPES: 'v1/contextTypes'
+        CONTEXT_TYPES: 'v1/contextTypes',
+
+        v2: {
+            BATCH_QUERY_OP: 'v2/op/query',
+            BATCH_UPDATE_OP: 'v2/op/update',
+            ENTITY_ATTRS_COLLECTION: 'v2/entities/%(entityId)s/attrs',
+            ENTITY_ATTR_ENTRY: 'v2/entities/%(entityId)s/attrs/%(attribute)s',
+            ENTITY_ATTR_VALUE_ENTRY: 'v2/entities/%(entityId)s/attrs/%(attribute)s/value',
+            ENTITY_COLLECTION: 'v2/entities',
+            ENTITY_ENTRY: 'v2/entities/%(entityId)s',
+            SUBSCRIPTION_COLLECTION: 'v2/subscriptions',
+            SUBSCRIPTION_ENTRY: 'v2/subscriptions/%(subscriptionId)s',
+            TYPE_COLLECTION: 'v2/types',
+            TYPE_ENTRY: 'v2/types/%(typeId)s'
+        }
     };
 
     NGSI.proxy_endpoints = {
@@ -71,6 +91,13 @@
     };
 
     /* Request utility functions */
+
+    var interpolate = function interpolate(pattern, attributes) {
+        return pattern.replace(/%\(\w+\)s/g,
+            function (match) {
+                return String(attributes[match.slice(2, -2)]);
+            });
+    };
 
     var makeJSONRequest = function makeJSONRequest(url, payload, parse_func, callbacks, parameters) {
         var body = null, contentType = null, requestHeaders;
@@ -88,14 +115,28 @@
             contentType: contentType,
             requestHeaders: requestHeaders,
             parameters: parameters,
-            postBody: body,
-            onSuccess: function (response) {
-                if (typeof callbacks.onSuccess === 'function') {
+            postBody: body
+        }).then(
+            function (response) {
+                var error;
+
+                if (response.status !== 200) {
+                    if (typeof callbacks.onFailure === 'function') {
+                        if (response instanceof NGSI.ConnectionError) {
+                            error = response;
+                        } else if ([0, 502, 504].indexOf(response.status) !== -1) {
+                            error = new NGSI.ConnectionError('Connection Error');
+                        } else {
+                            error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
+                        }
+                        callbacks.onFailure(error);
+                    }
+                } else if (typeof callbacks.onSuccess === 'function') {
                     var data;
                     try {
                         try {
                             data = JSON.parse(response.responseText);
-                        } catch (error) {
+                        } catch (e1) {
                             throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
                         }
                         data = parse_func(data, callbacks);
@@ -103,32 +144,78 @@
                         if (typeof callbacks.onFailure === 'function') {
                             callbacks.onFailure(e);
                         }
+                        if (typeof callbacks.onComplete === 'function') {
+                            callbacks.onComplete();
+                        }
                         return;
                     }
 
                     callbacks.onSuccess.apply(null, data);
                 }
-            },
-            onFailure: function (response) {
-                var error;
-
-                if (typeof callbacks.onFailure === 'function') {
-                    if (response instanceof NGSI.ConnectionError) {
-                        error = response;
-                    } else if ([0, 502, 504].indexOf(response.status) !== -1) {
-                        error = new NGSI.ConnectionError('Connection Error');
-                    } else {
-                        error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
-                    }
-                    callbacks.onFailure(error);
+                if (typeof callbacks.onComplete === 'function') {
+                    callbacks.onComplete();
                 }
             },
-            onComplete: function (response) {
+            function (error) {
+                if (typeof callbacks.onFailure === 'function') {
+                    // Allow to customize error details by "backends"
+                    if (!(error instanceof NGSI.ConnectionError)) {
+                        error = new NGSI.ConnectionError();
+                    }
+                    try {
+                        callbacks.onFailure(error);
+                    } catch (e) {}
+                }
                 if (typeof callbacks.onComplete === 'function') {
                     callbacks.onComplete();
                 }
             }
-        });
+        );
+    };
+
+    var deleteHeader = function deleteHeader(headerName, requestHeaders) {
+        var headerNameLow = headerName.trim().toLowerCase();
+        var keys = Object.keys(requestHeaders);
+        var index = keys.map(function (headerName) {
+            return headerName.trim().toLowerCase();
+        }).indexOf(headerNameLow);
+        if (index !== -1) {
+            delete requestHeaders[keys[index]];
+        }
+    };
+
+    var makeJSONRequest2 = function makeJSONRequest2(url, options) {
+        if (options.postBody != null) {
+            options.contentType = 'application/json';
+            options.postBody = JSON.stringify(options.postBody);
+        }
+
+        var requestHeaders = JSON.parse(JSON.stringify(this.request_headers));
+        requestHeaders.Accept = 'application/json';
+
+        for (var headerName in options.requestHeaders) {
+            if (options.requestHeaders[headerName] != null) {
+                deleteHeader(headerName, requestHeaders);
+                requestHeaders[headerName] = options.requestHeaders[headerName];
+            }
+        }
+        options.requestHeaders = requestHeaders;
+
+        return this.makeRequest(url, options).then(
+            function (response) {
+                if ([0, 502, 504].indexOf(response.status) !== -1) {
+                    return Promise.reject(new NGSI.ConnectionError());
+                }
+                return Promise.resolve(response);
+            },
+            function (error) {
+                // Allow to customize error details by "backends"
+                if (!(error instanceof NGSI.ConnectionError)) {
+                    error = new NGSI.ConnectionError();
+                }
+                return Promise.reject(error);
+            }
+        );
     };
 
     var ngsi_build_entity_id_element_json = function ngsi_build_entity_id_element_json(entity) {
@@ -160,7 +247,7 @@
                 vertice = scope.value.polygon.vertices[i];
                 result.polygon.vertices.push({
                     latitude: "" + vertice.latitude,
-                    longuitude: "" + vertice.longuitude
+                    longitude: "" + vertice.longitude
                 });
             }
 
@@ -287,7 +374,7 @@
 
     var ngsi_build_update_context_request = function ngsi_build_update_context_request(updateAction, update) {
         var body, i, j, contextElement, attributeListElement, attributes,
-            attribute, attributeElement, contextValue;
+            attribute, attributeElement, value;
 
         body = {
             contextElements: [],
@@ -315,20 +402,15 @@
                     }
 
                     if (updateAction !== 'DELETE') {
-                        if (attribute.contextValue == null) {
-                            contextValue = 'emptycontent';
-                        } else if (typeof attribute.contextValue === 'string') {
-                            contextValue = attribute.contextValue;
-                            if (contextValue.trim() === '') {
-                                attributeElement.valuecontextValue = 'emptycontent';
-                            }
-                        } else if (typeof attribute.contextValue === 'number' || typeof attribute.contextValue === 'boolean') {
-                            contextValue = "" + attribute.contextValue;
+                        if (attribute.value != null) {
+                            value = attribute.value;
+                        } else if (attribute.contextValue != null) {
+                            value = attribute.contextValue;
                         } else {
-                            contextValue = attribute.contextValue;
+                            value = null;
                         }
 
-                        attributeElement.value = contextValue;
+                        attributeElement.value = value;
                     }
 
                     if (Array.isArray(attribute.metadata) && attribute.metadata.length > 0) {
@@ -455,6 +537,19 @@
         };
     };
 
+    var ngsi_build_replace_entity_request = function ngsi_build_replace_entity_request(entity, options, parameters) {
+        if (entity.type != null) {
+            parameters.type = entity.type;
+            delete entity.type;
+        }
+
+        if (options.keyValues === true) {
+            parameters.options = "keyValues";
+        }
+        delete entity.id;
+        return entity;
+    };
+
     /* Response parsers */
 
     var parse_register_context_response =  function parse_register_context_response(data) {
@@ -538,7 +633,7 @@
     };
 
     var parse_context_response_list_json = function parse_context_response_list_json(elements, update_response, options) {
-        var contextResponse, entry, flat, i, j, contextValue, data,
+        var contextResponse, entry, flat, i, j, value, data,
             attribute_info, attribute_entry, status_info, error_data;
 
         flat = !!options.flat;
@@ -549,7 +644,7 @@
         }
         error_data = [];
         if (update_response) {
-            contextValue = "";
+            value = "";
         }
 
         for (i = 0; i < elements.length; i += 1) {
@@ -581,21 +676,18 @@
                 for (j = 0; j < contextResponse.attributes.length; j += 1) {
                     attribute_info = contextResponse.attributes[j];
                     if (!update_response) {
-                        contextValue = attribute_info.value;
-                        if (contextValue === 'emptycontent') {
-                            contextValue = '';
-                        }
+                        value = attribute_info.value;
                     }
 
                     if (flat) {
-                        entry[attribute_info.name] = contextValue;
+                        entry[attribute_info.name] = value;
                     } else {
                         attribute_entry = {
                             name: attribute_info.name,
                             type: attribute_info.type
                         };
                         if (!update_response) {
-                            attribute_entry.contextValue = contextValue;
+                            attribute_entry.value = value;
                         }
                         if (attribute_info.metadatas != null) {
                             attribute_entry.metadata = attribute_info.metadatas;
@@ -661,9 +753,17 @@
     };
 
     var parse_type_info_response = function parse_type_info_response(data) {
-        var status_info = process_status_info_json(data);
+        var status_info;
 
-        if (status_info.code != 200) {
+        if (typeof data !== 'object' || Array.isArray(data)) {
+            throw new NGSI.InvalidResponseError('The server returned an invalid json structure');
+        }
+
+        status_info = process_status_info_json(data);
+
+        if (status_info.code === 404) {
+            throw new NGSI.NotFoundError(data);
+        } else if (status_info.code !== 200) {
             throw new NGSI.InvalidResponseError('Unexpected error code');
         }
 
@@ -830,18 +930,51 @@
             options.offset = 0;
         }
 
-        if (options.details != null) {
-            if (typeof options.details !== 'boolean') {
-                throw new TypeError('invalid value for the details option');
-            }
-            if (options.details) {
-                parameters.details = 'on';
+        if (default_details != null) {
+            if (options.details != null) {
+                if (typeof options.details !== 'boolean') {
+                    throw new TypeError('invalid value for the details option');
+                }
+                if (options.details) {
+                    parameters.details = 'on';
+                } else {
+                    parameters.details = 'off';
+                }
             } else {
-                parameters.details = 'off';
+                parameters.details = default_details;
+                options.details = default_details === 'on';
             }
+        }
+
+        return parameters;
+    };
+
+    var parse_pagination_options2 = function parse_pagination_options2(options, optionsparams) {
+        var parameters = {};
+
+        if (options.limit != null) {
+            if (typeof options.limit !== 'number' || !Number.isInteger(options.limit) || options.limit < 1) {
+                throw new TypeError('invalid value for the limit option');
+            }
+            parameters.limit = options.limit;
         } else {
-            parameters.details = default_details;
-            options.details = default_details === 'on';
+            options.limit = 20;
+        }
+
+        if (options.offset != null) {
+            if (typeof options.offset !== 'number' || !Number.isInteger(options.offset) || options.offset < 0) {
+                throw new TypeError('invalid value for the offset option');
+            }
+            parameters.offset = options.offset;
+        } else {
+            options.offset = 0;
+        }
+
+        if (options.count != null) {
+            if (typeof options.count !== 'boolean') {
+                throw new TypeError('invalid value for the count option');
+            }
+            optionsparams.push('count');
         }
 
         return parameters;
@@ -855,102 +988,102 @@
         };
     };
 
-    var onInitFailure = function onInitFailure(error) {
-        var i;
-
-        this.connected = false;
-        this.connecting = false;
-
-        if (!(error instanceof Error)) {
-            // Error response
-            if ([0, 502, 504].indexOf(error.status) !== -1) {
-                error = new NGSI.ConnectionError();
-            } else {
-                error = new NGSI.InvalidResponseError('Unexpected error code: ' + error.status);
-            }
-        }
-
-        for (i = 0; i < this.onerror_callbacks.length; i += 1) {
-            try {
-                this.onerror_callbacks[i](error);
-            } catch (e) {}
-        }
-        this.onload_callbacks = [];
-        this.onerror_callbacks = [];
-
-    };
-
     var init = function init() {
-        this.connecting = true;
-
-        this.makeRequest(this.url + NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, {
-            method: 'POST',
-            onSuccess: function (response) {
-                if (response.status !== 201) {
-                    onInitFailure.call(this, response);
-                } else {
-                    this.source_url = response.getHeader('Location');
-                    if (this.source_url == null) {
-                        onInitFailure.call(this, new NGSI.InvalidResponseError('Missing Location Header'));
-                    } else {
-                        connect_to_eventsource.call(this);
-                    }
+        return this.makeRequest(this.url + NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, {
+            method: 'POST'
+        }).then(
+            function (response) {
+                if ([0, 502, 504].indexOf(response.status) !== -1) {
+                    privates.get(this).promise = null;
+                    return Promise.reject(new NGSI.ConnectionError());
+                } else if (response.status !== 201) {
+                    privates.get(this).promise = null;
+                    return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
                 }
+
+                var priv = privates.get(this);
+                priv.source_url = response.getHeader('Location');
+                if (priv.source_url == null) {
+                    return Promise.reject(new NGSI.InvalidResponseError('Missing Location Header'));
+                }
+                return connect_to_eventsource.call(this);
             }.bind(this),
-            onFailure: onInitFailure.bind(this)
-        });
+            function (error) {
+                privates.get(this).promise = null;
+
+                // Allow to customize error details by "backends"
+                if (!(error instanceof NGSI.ConnectionError)) {
+                    error = new NGSI.ConnectionError();
+                }
+                return Promise.reject(error);
+            }.bind(this)
+        );
     };
 
     var connect_to_eventsource = function connect_to_eventsource() {
-        var source, closeTimeout;
-        var _wait_event_source_init = null;
-        var wait_event_source_init = function wait_event_source_init(e) {
-            var data, i;
+        return new Promise(function (resolve, reject) {
+            var closeTimeout;
+            var _wait_event_source_init = null;
+            var priv = privates.get(this);
+            var wait_event_source_init = function wait_event_source_init(e) {
+                var data = JSON.parse(e.data);
 
-            data = JSON.parse(e.data);
+                clearTimeout(closeTimeout);
 
-            clearTimeout(closeTimeout);
-            source.removeEventListener('init', _wait_event_source_init, true);
-            this.connected = true;
-            this.connecting = false;
-            this.connection_id = data.id;
+                priv.promise = null;
+                priv.connection_id = data.id;
 
-            for (i = 0; i < this.onload_callbacks.length; i += 1) {
-                try {
-                    this.onload_callbacks[i]();
-                } catch (exception) {}
-            }
-            this.onload_callbacks = [];
-            this.onerror_callbacks = [];
+                priv.source.removeEventListener('init', _wait_event_source_init, true);
+                priv.source.addEventListener('notification', function (e) {
+                    var data = JSON.parse(e.data);
+                    priv.callbacks[data.callback_id].method(data.payload, data.headers);
+                }.bind(this), true);
 
-            source.addEventListener('close', function () {
-                this.connected = false;
-            }.bind(this), true);
-            source.addEventListener('notification', function (e) {
-                var data;
+                resolve();
+            };
 
-                data = JSON.parse(e.data);
-                this.callbacks[data.callback_id].method(data.payload);
-            }.bind(this), true);
-        };
+            _wait_event_source_init = wait_event_source_init.bind(this);
+            priv.source = new EventSource(priv.source_url);
+            priv.source.addEventListener('init', _wait_event_source_init, true);
 
-        _wait_event_source_init = wait_event_source_init.bind(this);
-        source = new EventSource(this.source_url);
-        source.addEventListener('init', _wait_event_source_init, true);
+            closeTimeout = setTimeout(function () {
+                priv.promise = null;
+                priv.source.close();
+                priv.source = null;
+                reject(new NGSI.ConnectionError("Connection timeout"));
+            }.bind(this), 30000);
+        }.bind(this));
+    };
 
-        closeTimeout = setTimeout(function () {
-            var i, error = new NGSI.ConnectionError("Connection timeout");
+    var on_callback_subscriptions_get = function on_callback_subscriptions_get() {
+        var mapping = {};
+        var callbacks = privates.get(this).callbacks;
+        for (var key in callbacks) {
+            mapping[key] = callbacks[key].subscription;
+        }
+        return mapping;
+    };
 
-            for (i = 0; i < this.onerror_callbacks.length; i += 1) {
-                try {
-                    this.onerror_callbacks[i](error);
-                } catch (e) {}
-            }
-            this.onload_callbacks = [];
-            this.onerror_callbacks = [];
+    var on_connected_get = function on_connected_get() {
+        var priv = privates.get(this);
+        return priv.source != null && priv.connection_id != null
+    };
 
-            source.close();
-        }.bind(this), 30000);
+    var on_connecting_get = function on_connecting_get() {
+        return privates.get(this).promise !== null;
+    };
+
+    var on_connection_id_get = function on_connection_id_get() {
+        return privates.get(this).connection_id;
+    };
+
+    var on_subscription_callbacks_get = function on_subscription_callbacks_get() {
+        var mapping = {};
+        var subscriptions = privates.get(this).callbacksBySubscriptionId;
+        for (var key in subscriptions) {
+            mapping[key] = subscriptions[key].callback_id;
+        }
+        return mapping;
     };
 
     NGSI.ProxyConnection = function ProxyConnection(url, makeRequest /* TODO */) {
@@ -960,127 +1093,230 @@
             this.url += '/';
         }
 
-        this.connected = false;
-        this.connecting = false;
         this.makeRequest = makeRequest;
-        this.callbacks = {};
-        this.callbacks_by_subscriptionId = {};
-        this.onload_callbacks = [];
-        this.onerror_callbacks = [];
-    };
+        privates.set(this, {
+            callbacks: {},
+            callbacksBySubscriptionId: {},
+            connected: false,
+            connection_id: null,
+            promise: null,
+            source: null
+        });
 
-    NGSI.ProxyConnection.prototype.connect = function connect(options) {
-        if (options == null) {
-            options = {};
-        }
-
-        if (this.connected === false) {
-            if (typeof options.onSuccess === 'function') {
-                this.onload_callbacks.push(options.onSuccess);
-            }
-
-            if (typeof options.onFailure === 'function') {
-                this.onerror_callbacks.push(options.onFailure);
-            }
-        }
-
-        if (this.connected === false && this.connecting === false) {
-            init.call(this);
-        } else if (this.connected === true && typeof options.onSuccess === 'function') {
-            options.onSuccess();
-        }
-    };
-
-    NGSI.ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
-        if (typeof callback !== 'function') {
-            throw new TypeError('callback parameter must be a function');
-        }
-
-        var wrappedOnSuccess = function () {
-            this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION, {
-                contentType: 'application/json',
-                postBody: JSON.stringify({connection_id: this.connection_id}),
-                onSuccess: function (response) {
-                    var data = JSON.parse(response.responseText);
-                    this.callbacks[data.callback_id] = {
-                        callback_id: data.callback_id,
-                        method: callback,
-                        subscription_id: null
-                    };
-                    onSuccess(data);
-                }.bind(this),
-                onFailure: function (response) {
-                    var error;
-                    if (response.status === 0) {
-                        error = new NGSI.ConnectionError();
-                    } else {
-                        error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
-                    }
-                    if (typeof onFailure === 'function') {
-                        onFailure(error);
-                    }
-                }
-            });
-        }.bind(this);
-
-        if (this.connected === false) {
-            this.connect({
-                onSuccess: wrappedOnSuccess,
-                onFailure: function (e) {
-                    if (typeof onFailure === 'function') {
-                        onFailure(e);
-                    }
-                }
-            });
-        } else {
-            wrappedOnSuccess();
-        }
-    };
-
-    NGSI.ProxyConnection.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
-        this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
-            method: 'DELETE',
-            onSuccess: function (response) {
-                this.purge_callback(callback_id);
-
-                if (typeof onSuccess === 'function') {
-                    onSuccess();
-                }
-            }.bind(this),
-            onFailure: function (response) {
-                if (typeof onFailure === 'function') {
-                    onFailure();
-                }
+        Object.defineProperties(this, {
+            callbackSubscriptions: {
+                get: on_callback_subscriptions_get
+            },
+            connected: {
+                get: on_connected_get
+            },
+            connecting: {
+                get: on_connecting_get
+            },
+            connection_id: {
+                get: on_connection_id_get
+            },
+            subscriptionCallbacks: {
+                get: on_subscription_callbacks_get
             }
         });
     };
 
-    NGSI.ProxyConnection.prototype.associate_subscription_id_to_callback = function associate_subscription_id_to_callback(callback_id, subscription_id) {
-        if (callback_id in this.callbacks && this.callbacks[callback_id].subscription_id === null) {
-            this.callbacks_by_subscriptionId[subscription_id] = this.callbacks[callback_id];
-            this.callbacks[callback_id].subscription_id = subscription_id;
+    /**
+     * Stablishes the connection with the ngsi proxy.
+     *
+     * @returns {Promise}
+     */
+    NGSI.ProxyConnection.prototype.connect = function connect() {
+        if (this.connected === true) {
+            return Promise.resolve();
         }
+
+        var priv = privates.get(this);
+        if (priv.promise === null) {
+            priv.promise = init.call(this);
+        }
+
+        return priv.promise;
     };
 
-    NGSI.ProxyConnection.prototype.close_callback_by_subscriptionId = function close_callback_by_subscriptionId(subscription_id, onSuccess, onFailure) {
-        if (subscription_id in this.callbacks_by_subscriptionId) {
-            this.close_callback(this.callbacks_by_subscriptionId[subscription_id].callback_id, onSuccess, onFailure);
-        } else {
-            if (typeof onSuccess === 'function') {
-                onSuccess();
+    /**
+     * Requests a new callback endpoint
+     *
+     * @param {Function} listener
+     *     function that will be called when a notification arrives through the
+     *     ngsi-proxy callback endpoint.
+     * @returns {Promise}
+     */
+    NGSI.ProxyConnection.prototype.requestCallback = function requestCallback(callback) {
+        if (typeof callback !== 'function') {
+            throw new TypeError('callback parameter must be a function');
+        }
+
+        return this.connect().then(function () {
+            return this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: JSON.stringify({connection_id: this.connection_id})
+            }).then(
+                function (response) {
+                    if ([200, 201].indexOf(response.status) === -1) {
+                        return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                    }
+                    var data = JSON.parse(response.responseText);
+                    var priv = privates.get(this);
+                    priv.callbacks[data.callback_id] = {
+                        callback_id: data.callback_id,
+                        method: callback,
+                        subscription: null
+                    };
+                    return Promise.resolve(data);
+                }.bind(this),
+                function (error) {
+                    // Allow to customize error details by "backends"
+                    if (!(error instanceof NGSI.ConnectionError)) {
+                        error = new NGSI.ConnectionError();
+                    }
+                    return Promise.reject(error);
+                }
+            );
+        }.bind(this));
+    };
+
+    /**
+     * Closes the connection with the ngsi-proxy. All the callback endpoints
+     * will be removed.
+     *
+     * @returns {Promise}
+     */
+    NGSI.ProxyConnection.prototype.close = function close() {
+        if (this.connected === false) {
+            return Promise.resolve();
+        }
+
+        var priv = privates.get(this);
+        return this.makeRequest(priv.source_url, {
+            method: 'DELETE'
+        }).then(
+            function (response) {
+                if (response.status !== 204) {
+                    return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                }
+                priv.source.close();
+                priv.source = null;
+                priv.connection_id = null;
+                priv.callbacks = {};
+                priv.callbacksBySubscriptionId = {};
+            }.bind(this),
+            function (error) {
+                // Allow to customize error details by "backends"
+                if (!(error instanceof NGSI.ConnectionError)) {
+                    error = new NGSI.ConnectionError();
+                }
+                return Promise.reject(error);
             }
+        );
+    };
+
+    /**
+     * Deletes a callback from the ngsi-proxy server
+     *
+     * @param {String} callback
+     *     id of the callback to delete
+     * @returns {Promise}
+     */
+    NGSI.ProxyConnection.prototype.closeCallback = function closeCallback(callback_id) {
+        return this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
+            method: 'DELETE'
+        }).then(
+            function (response) {
+                if (response.status !== 204) {
+                    return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                }
+                this.purgeCallback(callback_id);
+            }.bind(this),
+            function (error) {
+                // Allow to customize error details by "backends"
+                if (!(error instanceof NGSI.ConnectionError)) {
+                    error = new NGSI.ConnectionError();
+                }
+                return Promise.reject(error);
+            }
+        );
+    };
+
+    /**
+     * Associates a callback with a the indicated NGSI subscription. If the
+     * callback is currently not managed by this proxy connection, the
+     * association is ignored.
+     *
+     * @param {String} callback
+     *     id of the callback to associate
+     * @param {String} subscription
+     *     id of the subscription to associate
+     * @returns {NGSI.ProxyConnection}
+     */
+    NGSI.ProxyConnection.prototype.associateSubscriptionId = function associateSubscriptionId(callback, subscription) {
+        var priv = privates.get(this);
+
+        if (!(callback in priv.callbacks)) {
+            return this;
+        }
+
+        if (priv.callbacks[callback].subscription != null) {
+            throw new TypeError("Already associated callback");
+        }
+
+        priv.callbacksBySubscriptionId[subscription] = priv.callbacks[callback];
+        priv.callbacks[callback].subscription = subscription;
+
+        return this;
+    };
+
+    /**
+     * Closes the callback associated with the indicated subscription. If the
+     * subscription is currently not managed by this proxy connection, the
+     * operation is ignored.
+     *
+     * @param {String} subscription
+     *     id of the subscription to close
+     * @returns {Promise}
+     */
+    NGSI.ProxyConnection.prototype.closeSubscriptionCallback = function closeSubscriptionCallback(subscription) {
+        var priv = privates.get(this);
+
+        if (subscription in priv.callbacksBySubscriptionId) {
+            return this.closeCallback(priv.callbacksBySubscriptionId[subscription].callback_id);
+        } else {
+            return Promise.resolve();
         }
     };
 
-    NGSI.ProxyConnection.prototype.purge_callback = function purge_callback(callback_id) {
-        if (this.callbacks[callback_id].subscription_id != null) {
-            delete this.callbacks_by_subscriptionId[this.callbacks[callback_id].subscription_id];
+    /**
+     * Removes the callback from this proxy connection.
+     */
+    NGSI.ProxyConnection.prototype.purgeCallback = function purgeCallback(callback) {
+        var priv = privates.get(this);
+
+        if (callback in priv.callbacks) {
+            var subscription = priv.callbacks[callback].subscription;
+            if (subscription != null) {
+                delete priv.callbacksBySubscriptionId[subscription];
+            }
+            delete priv.callbacks[callback];
         }
-        delete this.callbacks[callback_id];
     };
 
     /* NGSI Connection Error */
 
+    /**
+     * Error raised if there are problems connecting to the context broker
+     * server. Browsers doesn't provide details about the connection problem due
+     * security concerns, so this exception doesn't provide those details.
+     *
+     * @class
+     * @name NGSI.ConnectionError
+     */
     NGSI.ConnectionError = function ConnectionError(message) {
         this.name = 'ConnectionError';
         this.message = message || 'Connection Error';
@@ -1088,6 +1324,13 @@
     NGSI.ConnectionError.prototype = new Error();
     NGSI.ConnectionError.prototype.constructor = NGSI.ConnectionError;
 
+    /**
+     * Error raised if the context broker server detected some problems with the
+     * data provided in the request.
+     *
+     * @class
+     * @name NGSI.InvalidRequestError
+     */
     NGSI.InvalidRequestError = function InvalidRequestError(code, message, details) {
         this.name = 'InvalidRequest';
         this.code = code;
@@ -1097,12 +1340,28 @@
     NGSI.InvalidRequestError.prototype = new Error();
     NGSI.InvalidRequestError.prototype.constructor = NGSI.InvalidRequestError;
 
+    /**
+     * Exception raised when the server returns an unexpected response. This
+     * usually means that the server doesn't conform to the FIWARE NGSI
+     * Specification or that the server doesn't use a version supported by this
+     * library.
+     *
+     * @class
+     * @name NGSI.InvalidResponseError
+     */
     NGSI.InvalidResponseError = function InvalidResponseError(message) {
         this.name = 'InvalidResponse';
         this.message = message || '';
     };
     NGSI.InvalidResponseError.prototype = new Error();
     NGSI.InvalidResponseError.prototype.constructor = NGSI.InvalidResponseError;
+
+    NGSI.NotFoundError = function NotFoundError(details) {
+        this.name = 'NotFound';
+        this.details = details || '';
+    };
+    NGSI.NotFoundError.prototype = new Error();
+    NGSI.NotFoundError.prototype.constructor = NGSI.NotFoundError;
 
     NGSI.ProxyConnectionError = function ProxyConnectionError(cause) {
         this.name = 'ProxyConnectionError';
@@ -1111,7 +1370,28 @@
     NGSI.ProxyConnectionError.prototype = new Error();
     NGSI.ProxyConnectionError.prototype.constructor = NGSI.ProxyConnectionError;
 
-    /* NGSI Connection */
+    /**
+     * Creates a new NGSI Connection.
+     *
+     * @name NGSI.Connection
+     * @class
+     *
+     * @param {String|URL} url URL of the context broker
+     * @param {Object} options
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * var connection = new NGSI.Connection("https://orion.example.com");
+     *
+     * @example <caption>Using the FIWARE Lab's instance</caption>
+     *
+     * var connection = new NGSI.Connection("http://orion.lab.fiware.org", {
+     *     requestHeaders: {
+     *         "X-Auth-Token": token
+     *     }
+     * });
+     *
+     **/
     NGSI.Connection = function NGSIConnection(url, options) {
         this.url = "" + url;
 
@@ -1129,6 +1409,16 @@
             this.request_headers = {};
         }
 
+        if (options.service != null) {
+            deleteHeader("FIWARE-Service", this.request_headers);
+            this.request_headers["FIWARE-Service"] = options.service;
+        }
+
+        if (options.servicepath != null) {
+            deleteHeader("FIWARE-ServicePath", this.request_headers);
+            this.request_headers["FIWARE-ServicePath"] = options.servicepath;
+        }
+
         if (typeof options.requestFunction === 'function') {
             this.makeRequest = options.requestFunction;
         }
@@ -1138,6 +1428,9 @@
         } else if (typeof options.ngsi_proxy_url === 'string') {
             this.ngsi_proxy = new NGSI.ProxyConnection(options.ngsi_proxy_url, this.makeRequest);
         }
+
+        Object.defineProperty(this, "v1", {value: this});
+        Object.defineProperty(this, "v2", {value: new NGSI.Connection.V2(this)});
     };
 
     NGSI.Connection.prototype.createRegistration = function createRegistration(entities, attributes, duration, providingApplication, callbacks) {
@@ -1240,12 +1533,12 @@
                 options.onNotify(data);
             };
 
-            this.ngsi_proxy.request_callback(onNotify, function (proxy_callback) {
+            this.ngsi_proxy.requestCallback(onNotify).then(function (proxy_callback) {
                 var payload = ngsi_build_subscribe_update_context_availability_request(entities, attributeNames, duration, restriction, null, proxy_callback.url);
 
                 var oldOnFailure = options.onFailure;
                 options.onFailure = function () {
-                    this.ngsi_proxy.close_callback(proxy_callback.callback_id);
+                    this.ngsi_proxy.closeCallback(proxy_callback.callback_id);
                     if (typeof oldOnFailure === 'function') {
                         oldOnFailure.apply(this, arguments);
                     }
@@ -1253,7 +1546,7 @@
 
                 var oldOnSuccess = options.onSuccess;
                 options.onSuccess = function (data) {
-                    this.ngsi_proxy.associate_subscription_id_to_callback(proxy_callback.callback_id, data.subscriptionId);
+                    this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, data.subscriptionId);
                     if (typeof oldOnSuccess === 'function') {
                         oldOnSuccess(data);
                     }
@@ -1406,12 +1699,12 @@
                 options.onNotify(data);
             };
 
-            this.ngsi_proxy.request_callback(onNotify, function (proxy_callback) {
+            this.ngsi_proxy.requestCallback(onNotify).then(function (proxy_callback) {
                 var payload = ngsi_build_subscribe_update_context_request(null, entities, attributeNames, duration, throttling, cond, proxy_callback.url);
 
                 var oldOnFailure = options.onFailure;
                 options.onFailure = function () {
-                    this.ngsi_proxy.close_callback(proxy_callback.callback_id);
+                    this.ngsi_proxy.closeCallback(proxy_callback.callback_id);
                     if (typeof oldOnFailure === 'function') {
                         oldOnFailure.apply(this, arguments);
                     }
@@ -1419,7 +1712,7 @@
 
                 var oldOnSuccess = options.onSuccess;
                 options.onSuccess = function (data) {
-                    this.ngsi_proxy.associate_subscription_id_to_callback(proxy_callback.callback_id, data.subscriptionId);
+                    this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, data.subscriptionId);
                     if (typeof oldOnSuccess === 'function') {
                         oldOnSuccess(data);
                     }
@@ -1473,11 +1766,10 @@
         if (this.ngsi_proxy) {
             var old_success_callback = options.onSuccess;
             options.onSuccess = function (data) {
-                var onSuccess = old_success_callback;
-                if (onSuccess != null) {
-                    onSuccess = onSuccess.bind(null, data);
+                this.ngsi_proxy.closeSubscriptionCallback(data.subscriptionId);
+                if (typeof old_success_callback === "function") {
+                    old_success_callback(data);
                 }
-                this.ngsi_proxy.close_callback_by_subscriptionId(data.subscriptionId, onSuccess, options.onFailure);
             }.bind(this);
         }
         var payload = ngsi_build_unsubscribe_context_request(subId);
@@ -1501,6 +1793,2252 @@
         var url = this.url + NGSI.endpoints.CONTEXT_TYPES + '/' + encodeURIComponent(type);
         makeJSONRequest.call(this, url, null, parse_type_info_response, options);
     };
+
+    NGSI.Connection.V2 = function V2(connection) {
+        privates.set(this, connection);
+    };
+
+    /**
+     * Retrieves the available entities using pagination.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection.v2#listEntities
+     * @method
+     *
+     * @param {Object} [options] Object with extra options:
+     * - `attrs` (`String`): Comma-separated list of attribute names whose data
+     *   are to be included in the response. The attributes are retrieved in the
+     *   order specified by this parameter. If this parameter is not included,
+     *   the attributes are retrieved in arbitrary order.
+     * - `correlator` (`String`): Transaction id
+     * - `count` (`Boolean`; default: `false`): Request total count
+     * - `id` (`String`): A comma-separated list of entity ids to retrieve
+     * - `idPattern` (`String`): A correctly formated regular expression.
+     *   Retrieve entities whose ID matches the regular expression. Incompatible
+     *   with the `id` option
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of entities you want to receive from the server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given number of
+     *   elements at the beginning
+     * - `metadata` (`String`): A comma-separated list of metadata names to
+     *   include in the response
+     * - `mq` (`String`): A query expression for attribute metadata, composed of
+     *   a list of statements separated by semicolons (`;`)
+     * - `orderBy` (`String`): Criteria for ordering results
+     * - `q` (`String`): A query expression, composed of a list of statements
+     *   separated by semicolons (`;`)
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): A comma-separated list of entity types to retrieve
+     * - `typePattern` (`String`): A correctly formated regular expression.
+     *   Retrieve entities whose type matches the regular expression.
+     *   Incompatible with the `type` option.
+     * - `unique` (`Boolean`): Represent entities as an array of non-repeated
+     *   attribute values.
+     * - `values` (`Boolean`): Represent entities as an array of attribute
+     *   values
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 entities from the Context Broker</caption>
+     *
+     * connection.listEntities().then(
+     *     (response) => {
+     *         // Entities retrieved successfully
+     *         // response.correlator transaction id associated with the server response
+     *         // response.limit contains the used page size
+     *         // response.results is an array with the retrieved entities
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving entities
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve second page from the Context Broker requesting pagination details</caption>
+     *
+     * connection.listEntities({offset: 20, count: true}).then(
+     *     (response) => {
+     *         // Entities retrieved successfully
+     *         // response.results is an array with the retrieved entities
+     *         // response.correlator transaction id associated with the server response
+     *         // response.count contains the number of entities
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving entities
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     */
+    NGSI.Connection.V2.prototype.listEntities = function listEntities(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (options.id != null && options.idPattern != null) {
+            throw new TypeError('id and idPattern options cannot be used at the same time');
+        }
+
+        if (options.type != null && options.typePattern != null) {
+            throw new TypeError('type and typePattern options cannot be used at the same time');
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + NGSI.endpoints.v2.ENTITY_COLLECTION;
+        var optionsparams = [];
+        var parameters = parse_pagination_options2(options, optionsparams);
+
+        if (options.keyValues === true) {
+            optionsparams.push("keyValues");
+        }
+        if (options.values === true) {
+            optionsparams.push("values");
+        }
+        if (options.unique === true) {
+            optionsparams.push("unique");
+        }
+        if (optionsparams.length !== 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        parameters.attrs = options.attrs;
+        parameters.id = options.id;
+        parameters.idPattern = options.idPattern;
+        parameters.orderBy = options.orderBy;
+        parameters.metadata = options.metadata;
+        parameters.mq = options.mq;
+        parameters.q = options.q;
+        parameters.type = options.type;
+        parameters.typePattern = options.typePattern;
+        parameters.georel = options.georel;
+        parameters.geometry = options.geometry;
+        parameters.coords = options.coords;
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+            }
+
+            var result = {
+                results: data,
+                limit: options.limit,
+                offset: options.offset,
+                correlator: response.getHeader("Fiware-correlator")
+            };
+            if (options.count === true) {
+                result.count = parseInt(response.getHeader("Fiware-Total-Count"), 10);
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Creates a new entity.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#createEntity
+     * @method
+     *
+     * @param {Object}
+     *     entity values to be used for creating the new entity
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.createEntity({
+     *     "id": "Spain-Road-A62",
+     *     "type": "Road",
+     *     "name": {"value": "A-62"},
+     *     "alternateName": {"value": "E-80"},
+     *     "description": {"value": "Autovía de Castilla"},
+     *     "roadClass": {"value": "motorway"},
+     *     "length": {"value": 355},
+     *     "refRoadSegment": {
+     *         "value": [
+     *             "Spain-RoadSegment-A62-0-355-forwards",
+     *             "Spain-RoadSegment-A62-0-355-backwards"
+     *         ]
+     *      },
+     *     "responsible": {"value": "Ministerio de Fomento - Gobierno de España"}
+     * }).then(
+     *     (response) => {
+     *         // Entity created successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error creating the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Using the keyValues option</caption>
+     *
+     * connection.createEntity({
+     *     "id": "Spain-Road-A62",
+     *     "type": "Road",
+     *     "name": "A-62",
+     *     "alternateName": "E-80",
+     *     "description": "Autovía de Castilla",
+     *     "roadClass": "motorway",
+     *     "length": 355,
+     *     "refRoadSegment": [
+     *         "Spain-RoadSegment-A62-0-355-forwards",
+     *         "Spain-RoadSegment-A62-0-355-backwards"
+     *     ],
+     *     "responsible": "Ministerio de Fomento - Gobierno de España"
+     * }, {keyValues: true}).then(
+     *     (response) => {
+     *         // Entity created successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error creating the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.createEntity = function createEntity(entity, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var parameters = {};
+
+        if (options.keyValues === true) {
+            parameters.options = "keyValues";
+        }
+
+        var url = connection.url + NGSI.endpoints.v2.ENTITY_COLLECTION;
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            postBody: entity,
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 201) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                entity: entity,
+                location: response.getHeader('Location')
+            });
+        });
+    };
+
+    /**
+     * Gets all the details of an entity.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#getEntity
+     * @method
+     *
+     * @param {String|Object} options
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.getEntity("Spain-Road-A62").then(
+     *     (response) => {
+     *         // Entity details retrieved successfully
+     *         // response.entity entity details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve a typed entity and using the keyValues option</caption>
+     *
+     * connection.v2.getEntity({
+     *     id: "Spain-Road-A62",
+     *     type: "Road",
+     *     keyValues: true
+     * }).then(
+     *     (response) => {
+     *         // Entity details retrieved successfully
+     *         // response.entity entity details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.getEntity = function getEntity(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)});
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        if (options.keyValues === true) {
+            parameters.options = "keyValues";
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                entity: data
+            });
+        });
+    };
+
+    /**
+     * Gets all the attributes of an entity.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#getEntityAttributes
+     * @method
+     *
+     * @param {String|Object} options
+     *     String with the id of the entity to query or an object with extra
+     *     options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.getEntityAttributes("Spain-Road-A62").then(
+     *     (response) => {
+     *         // Entity attributes retrieved successfully
+     *         // response.attributes entity attributes
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving the attributes of the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve a typed entity and using the keyValues option</caption>
+     *
+     * connection.v2.getEntityAttributes({
+     *     id: "Spain-Road-A62",
+     *     type: "Road",
+     *     keyValues: true
+     * }).then(
+     *     (response) => {
+     *         // Entity attributes retrieved successfully
+     *         // response.attributes entity attributes
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving the attributes of the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.getEntityAttributes = function getEntityAttributes(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(options.id)});
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        if (options.keyValues === true) {
+            parameters.options = "keyValues";
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                attributes: data,
+                correlator: response.getHeader("Fiware-correlator")
+            });
+        });
+    };
+
+    /**
+     * Updates or appends attributes to an entity.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#appendEntityAttributes
+     * @method
+     *
+     * @param {Object} changes
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): transaction id
+     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     *     - `strict` (`Boolean`; default: `false`): Force strict append semantics
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Append or update the temperature attribute</caption>
+     *
+     * connection.v2.appendEntityAttributes({
+     *     "id": "Bcn-Welt",
+     *     "temperature": {
+     *         "value": 31.5
+     *     }
+     * }).then(
+     *     (response) => {
+     *         // Attributes appended successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error appending the attributes to the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Append the temperature attribute</caption>
+     *
+     * connection.v2.appendEntityAttributes({
+     *     "id": "Bcn-Welt",
+     *     "temperature": 31.5
+     * }, {
+     *     strict: true,
+     *     keyValues: true
+     * }).then(
+     *     (response) => {
+     *         // Attributes appended successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error appending the attributes to the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.appendEntityAttributes = function appendEntityAttributes(changes, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(changes.id)});
+        var parameters = {};
+        var optionsparams = [];
+
+        // Remove id from the payload
+        delete changes.id;
+        if (changes.type != null) {
+            parameters.type = changes.type;
+            delete changes.type;
+        }
+
+        if (options.strict === true) {
+            optionsparams.push("append");
+        }
+
+        if (options.keyValues === true) {
+            optionsparams.push("keyValues");
+        }
+
+        if (optionsparams.length > 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            parameters: parameters,
+            postBody: changes,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * Updates attributes of an entity.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#updateEntityAttributes
+     * @method
+     *
+     * @param {Object} changes
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic attribute update</caption>
+     *
+     * connection.v2.appendEntityAttributes({
+     *     "id": "sensor",
+     *     "temperature": {
+     *         "value": 31.5
+     *     },
+     *     "humidity": {
+     *         "value": 50.2
+     *     }
+     * }).then(
+     *     (response) => {
+     *         // Attributes updated successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Update some attributes using the keyValues option</caption>
+     *
+     * connection.v2.updateEntityAttributes({
+     *     "id": "sensor",
+     *     "temperature": 31.5
+     *     "humidity": 50.2
+     * }, {
+     *     keyValues: true
+     * }).then(
+     *     (response) => {
+     *         // Attributes updated successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.updateEntityAttributes = function updateEntityAttributes(changes, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (changes == null) {
+            throw new TypeError("missing changes parameter");
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(changes.id)});
+        var parameters = {};
+
+        // Remove id from the payload
+        delete changes.id;
+        if (changes.type != null) {
+            parameters.type = changes.type;
+            delete changes.type;
+        }
+
+        if (options.keyValues === true) {
+            parameters.options = "keyValues";
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PATCH",
+            parameters: parameters,
+            postBody: changes,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * Replaces all the attributes associated with a entity.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#replaceEntityAttributes
+     * @method
+     *
+     * @param {Object} entity
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.replaceEntityAttributes({
+     *     "id": "Spain-Road-A62",
+     *     "type": "Road",
+     *     "name": {"value": "A-62"},
+     *     "alternateName": {"value": "E-80"},
+     *     "description": {"value": "Autovía de Castilla"},
+     *     "roadClass": {"value": "motorway"},
+     *     "length": {"value": 355},
+     *     "refRoadSegment": {
+     *         "value": [
+     *             "Spain-RoadSegment-A62-0-355-forwards",
+     *             "Spain-RoadSegment-A62-0-355-backwards"
+     *         ]
+     *      },
+     *     "responsible": {"value": "Ministerio de Fomento - Gobierno de España"}
+     * }).then(
+     *     (response) => {
+     *         // Entity attributes replaced successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error replacing the attributes of the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Using the keyValues option</caption>
+     *
+     * connection.v2.replaceEntityAttributes({
+     *     "id": "Spain-Road-A62",
+     *     "type": "Road",
+     *     "name": "A-62",
+     *     "alternateName": "E-80",
+     *     "description": "Autovía de Castilla",
+     *     "roadClass": "motorway",
+     *     "length": 355,
+     *     "refRoadSegment": [
+     *         "Spain-RoadSegment-A62-0-355-forwards",
+     *         "Spain-RoadSegment-A62-0-355-backwards"
+     *     ],
+     *     "responsible": "Ministerio de Fomento - Gobierno de España"
+     * }, {keyValues: true}).then(
+     *     (response) => {
+     *         // Entity attributes replaced successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error replacing the attributes of the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.replaceEntityAttributes = function replaceEntityAttributes(entity, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(entity.id)});
+        var parameters = {};
+        var payload = ngsi_build_replace_entity_request(entity, options, parameters);
+        return makeJSONRequest2.call(connection, url, {
+            method: "PUT",
+            postBody: payload,
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                entity: entity,
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * Removes an entity from the orion context broker server.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection.v2#deleteEntity
+     * @method
+     *
+     * @param {String|Object} options
+     *     String with the entity id to remove or an object providing options
+     *     - `correlator` (`String`): Transaction id
+     *     - `id` (`String`): Id of the entity to remove
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Remove entity by Id</caption>
+     *
+     * connection.v2.deleteEntity("Spain-Road-A62").then(
+     *     (response) => {
+     *         // Entity deleted successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error deleting the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Remove entity by Id and type</caption>
+     *
+     * connection.v2.deleteEntity({
+     *     id: "Spain-Road-A62",
+     *     type: "Road"
+     *  }).then(
+     *     (response) => {
+     *         // Entity deleted successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error deleting the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     */
+    NGSI.Connection.V2.prototype.deleteEntity = function deleteEntity(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)});
+
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * Gets the details about an entity attribute.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#getEntityAttribute
+     * @method
+     *
+     * @param {Object} options
+     *     Object with options:
+     *     - `attribute` (`String`): Name of the attribute to query
+     *     - `correlator` (`String`): Transaction id
+     *     - `id` (`String`): Id of the entity to query
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.getEntityAttribute({
+     *     id: "Bcn_Welt",
+     *     attribute: "temperature"
+     * }).then(
+     *     (response) => {
+     *         // Entity details retrieved successfully
+     *         // response.entity entity details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Get entity attribute using the type option</caption>
+     *
+     * connection.v2.getEntityAttribute({
+     *     id: "Bcn_Welt",
+     *     type: "Room",
+     *     attribute: "temperature"
+     * }).then(
+     *     (response) => {
+     *         // Entity details retrieved successfully
+     *         // response.entity entity details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.getEntityAttribute = function getEntityAttribute(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(
+            NGSI.endpoints.v2.ENTITY_ATTR_ENTRY, {
+                entityId: encodeURIComponent(options.id),
+                attribute: encodeURIComponent(options.attribute)
+            }
+        );
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                attribute: data
+            });
+        });
+    };
+
+    /**
+     * Update the details about an entity attribute.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#replaceEntityAttribute
+     * @method
+     *
+     * @param {Object} changes
+     *     Object with the new values for the attribute
+     * @param {Object} [options]
+     *     Object with options:
+     *     - `attribute` (`String`): Name of the attribute to modify
+     *     - `correlator` (`String`): Transaction id
+     *     - `id` (`String`): Id of the entity to modify
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.replaceEntityAttribute({
+     *     value: 25,
+     *     metadata: {
+     *         "unitCode": {
+     *             "value": "CEL"
+     *         }
+     *     }
+     * }, {
+     *     id: "Bcn_Welt",
+     *     attribute: "temperature"
+     * }).then(
+     *     (response) => {
+     *         // Entity attribute replaced successfully
+     *         // response.attribute attribute details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error replacing entity attribute
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Simple usage</caption>
+     *
+     * connection.v2.replaceEntityAttribute({
+     *     id: "Bcn_Welt",
+     *     attribute: "temperature"
+     *     value: 25,
+     *     metadata: {
+     *         "unitCode": {
+     *             "value": "CEL"
+     *         }
+     *     }
+     * }).then(
+     *     (response) => {
+     *         // Entity attribute replaced successfully
+     *         // response.attribute attribute details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error replacing entity attribute
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *         // Entity details retrieved successfully
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.replaceEntityAttribute = function replaceEntityAttribute(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        }
+
+        var data = {
+            value: options.value,
+            metadata: options.metadata
+        };
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(
+            NGSI.endpoints.v2.ENTITY_ATTR_ENTRY, {
+                entityId: encodeURIComponent(options.id),
+                attribute: encodeURIComponent(options.attribute)
+            }
+        );
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PUT",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                attribute: data
+            });
+        });
+    };
+
+    /**
+     * Removes a single attribute from an entity stored in the orion context
+     * broker server.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection.v2#deleteEntityAttribute
+     * @method
+     *
+     * @param {Object} options
+     *     Object providing information about the attribute to remove and any
+     *     extra options
+     *     - `attribute` (`String`): Name of the attribute to delete
+     *     - `correlator` (`String`): Transaction id
+     *     - `id` (`String`): Id of the entity to modify
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Remove an attribute from an entity</caption>
+     *
+     * connection.v2.deleteEntityAttribute({
+     *     id: "Bcn_Welt",
+     *     attribute: "temperature"
+     * }).then(
+     *     (response) => {
+     *         // Entity attribute deleted successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error deleting the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Remove an attribute from an entity indicating the entity type</caption>
+     *
+     * connection.v2.deleteEntityAttribute({
+     *     id: "Bcn_Welt",
+     *     type: "Room",
+     *     attribute: "temperature"
+     *  }).then(
+     *     (response) => {
+     *         // Entity attribute deleted successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error deleting the entity
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     */
+    NGSI.Connection.V2.prototype.deleteEntityAttribute = function deleteEntityAttribute(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(
+            NGSI.endpoints.v2.ENTITY_ATTR_ENTRY, {
+                entityId: encodeURIComponent(options.id),
+                attribute: encodeURIComponent(options.attribute)
+            }
+        );
+
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * Gets the value of an entity attribute.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#getEntityAttributeValue
+     * @method
+     *
+     * @param {Object} options
+     *     Object with extra options:
+     *     - `attribute` (`String`): Name of the attribute to query
+     *     - `correlator` (`String`): Transaction id
+     *     - `id` (`String`): Id of the entity to query
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.getEntityAttributeValue({
+     *     id: "Bcn_Welt",
+     *     attribute: "temperature"
+     * }).then(
+     *     (response) => {
+     *         // Entity value retrieved successfully
+     *         // response.value entity value
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving attribute value
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Get attribute value from a typed entity</caption>
+     *
+     * connection.v2.getEntityAttributeValue({
+     *     id: "Bcn_Welt",
+     *     type: "Room",
+     *     attribute: "temperature"
+     * }).then(
+     *     (response) => {
+     *         // Entity value retrieved successfully
+     *         // response.value entity value
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving attribute value
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.getEntityAttributeValue = function getEntityAttributeValue(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(
+            NGSI.endpoints.v2.ENTITY_ATTR_VALUE_ENTRY, {
+                entityId: encodeURIComponent(options.id),
+                attribute: encodeURIComponent(options.attribute)
+            }
+        );
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                // See bug telefonicaid/fiware-orion#2696
+                "Accept": "application/json, text/plain",
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                value: data
+            });
+        });
+    };
+
+    /**
+     * Updates the value of an entity attribute.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#replaceEntityAttributeValue
+     * @method
+     *
+     * @param {Object} options
+     *     Object with options:
+     *     - `attribute` (`String`): Name of the attribute to query
+     *     - `correlator` (`String`): Transaction id
+     *     - `id` (`String`): Id of the entity to query
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     *     - `value` (`String`|`Boolean`|`Number`|`Object`|`Array`) new value
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.replaceEntityAttributeValue({
+     *     id: "Bcn_Welt",
+     *     attribute: "temperature",
+     *     value: 21
+     * }).then(
+     *     (response) => {
+     *         // Entity value replaced successfully
+     *         // response.value entity value
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error replacing attribute value
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Get attribute value from a typed entity</caption>
+     *
+     * connection.v2.replaceEntityAttributeValue({
+     *     id: "Bcn_Welt",
+     *     type: "Room",
+     *     attribute: "temperature",
+     *     value: 21
+     * }).then(
+     *     (response) => {
+     *         // Entity value replaced successfully
+     *         // response.value entity value
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error replacing attribute value
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.replaceEntityAttributeValue = function replaceEntityAttributeValue(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        } else if (typeof options.value === "undefined") {
+            throw new TypeError("missing value option");
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(
+            NGSI.endpoints.v2.ENTITY_ATTR_VALUE_ENTRY, {
+                entityId: encodeURIComponent(options.id),
+                attribute: encodeURIComponent(options.attribute)
+            }
+        );
+        var parameters = {};
+        if (options.type != null) {
+            parameters.type = options.type;
+        }
+
+        // See bug telefonicaid/fiware-orion#2696
+        return makeJSONRequest2.call(connection, url, {
+            method: "PUT",
+            parameters: parameters,
+            postBody: options.value,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                value: options.value
+            });
+        });
+    };
+
+    /**
+     * Retrieves the available types (using pagination).
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#listTypes
+     * @method
+     *
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `count` (`Boolean`; default: `false`): request total count
+     *     - `limit` (`Number`; default: `20`): This option allow you to specify
+     *       the maximum number of subscriptions you want to receive from the
+     *       server
+     *     - `offset` (`Number`; default: `0`): Allows you to skip a given
+     *       number of elements at the beginning
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 subscriptions from the Context Broker</caption>
+     *
+     * connection.listTypes().then(
+     *     (response) => {
+     *         // Types retrieved successfully
+     *         // response.results is an array with the retrieved subscriptions
+     *     }, (error) => {
+     *         // Error retrieving available types
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve second page from the Context Broker requesting pagination details</caption>
+     *
+     * connection.v2.listTypes({offset: 20, count: true}).then(
+     *     (response) => {
+     *         // Types retrieved successfully
+     *         // response.correlator transaction id associated with the server response
+     *         // response.limit contains the used page size
+     *         // response.results is an array with the retrieved subscriptions
+     *         // response.count contains the number of available subscriptions
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving available types
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.listTypes = function listTypes(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + NGSI.endpoints.v2.TYPE_COLLECTION;
+        var optionsparams = [];
+        var parameters = parse_pagination_options2(options, optionsparams);
+        if (options.values === true) {
+            optionsparams.push("values");
+        }
+        if (optionsparams.length !== 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            var result = {
+                correlator: response.getHeader('Fiware-correlator'),
+                limit: options.limit,
+                offset: options.offset,
+                results: JSON.parse(response.responseText),
+            };
+            if (options.count === true) {
+                result.count = parseInt(response.getHeader("Fiware-Total-Count"), 10);
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Gets all the details about an entity type.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#getType
+     * @method
+     *
+     * @param {String|Object} options
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.getType("Room").then(
+     *     (response) => {
+     *         // Type details retrieved successfully
+     *         // response.type type details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving type
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.getType = function getType(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.TYPE_ENTRY, {typeId: encodeURIComponent(options.id)});
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                type: data
+            });
+        });
+    };
+
+    /**
+     * Retrieves the available subscriptions (using pagination).
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#listSubscriptions
+     * @method
+     *
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `count` (`Boolean`; default: `false`): request total count
+     *     - `limit` (`Number`; default: `20`): This option allow you to specify
+     *       the maximum number of subscriptions you want to receive from the
+     *       server
+     *     - `offset` (`Number`; default: `0`): Allows you to skip a given
+     *       number of elements at the beginning
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 subscriptions from the Context Broker</caption>
+     *
+     * connection.listSubscriptions().then(
+     *     (response) => {
+     *         // Subscriptions retrieved successfully
+     *         // response.results is an array with the retrieved subscriptions
+     *     }, (error) => {
+     *         // Error retrieving subscriptions
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve second page from the Context Broker requesting pagination details</caption>
+     *
+     * connection.v2.listSubscriptions({offset: 20, details: true}).then(
+     *     (response) => {
+     *         // Subscriptions retrieved successfully
+     *         // response.correlator transaction id associated with the server response
+     *         // response.limit contains the used page size
+     *         // response.results is an array with the retrieved subscriptions
+     *         // response.count contains the number of available subscriptions
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving subscriptions
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.listSubscriptions = function listSubscriptions(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + NGSI.endpoints.v2.SUBSCRIPTION_COLLECTION;
+        var optionsparams = [];
+        var parameters = parse_pagination_options2(options, optionsparams);
+
+        if (optionsparams.length !== 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            var result = {
+                correlator: response.getHeader('Fiware-correlator'),
+                limit: options.limit,
+                offset: options.offset,
+                results: JSON.parse(response.responseText),
+            };
+            if (options.count === true) {
+                result.count = parseInt(response.getHeader("Fiware-Total-Count"), 10);
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Creates a new subscription.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#createSubscription
+     * @method
+     *
+     * @param {Object}
+     *     subscription values to be used for creating it
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.createSubscription({
+     *    "description": "One subscription to rule them all",
+     *    "subject": {
+     *        "entities": [
+     *            {
+     *                "idPattern": ".*",
+     *                "type": "Room"
+     *            }
+     *        ],
+     *        "condition": {
+     *            "attrs": [
+     *                "temperature"
+     *            ],
+     *            "expression": {
+     *                "q": "temperature>40"
+     *            }
+     *        }
+     *    },
+     *    "notification": {
+     *        "http": {
+     *            "url": "http://localhost:1234"
+     *        },
+     *        "attrs": [
+     *            "temperature",
+     *            "humidity"
+     *        ]
+     *    },
+     *    "expires": "2016-04-05T14:00:00.00Z",
+     *    "throttling": 5
+     * }).then(
+     *     (response) => {
+     *         // Subscription created successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error creating the subscription
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Creating a subscription using a callback</caption>
+     *
+     * connection.createSubscription({
+     *    "description": "One subscription to rule them all",
+     *    "subject": {
+     *        "entities": [
+     *            {
+     *                "idPattern": ".*",
+     *                "type": "Room"
+     *            }
+     *        ],
+     *        "condition": {
+     *            "attrs": [
+     *                "temperature"
+     *            ],
+     *            "expression": {
+     *                "q": "temperature>40"
+     *            }
+     *        }
+     *    },
+     *    "notification": {
+     *        "callback": function () {
+     *        },
+     *        "attrs": [
+     *            "temperature",
+     *            "humidity"
+     *        ]
+     *    },
+     *    "expires": "2016-04-05T14:00:00.00Z",
+     *    "throttling": 5
+     * }).then(
+     *     (response) => {
+     *         // Subscription created successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error creating the subscription
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.createSubscription = function createSubscription(subscription, options) {
+        var p, proxy_callback;
+        var connection = privates.get(this);
+
+        if (options == null) {
+            options = {};
+        }
+
+        if (typeof subscription !== 'object') {
+            throw new TypeError('invalid subscription parameter');
+        }
+
+        if ('callback' in subscription.notification) {
+            if (typeof subscription.notification.callback !== "function") {
+                throw new TypeError('invalid callback configuration');
+            }
+
+            var onNotify = function onNotify(payload, headers) {
+                var notification = JSON.parse(payload);
+                notification.attrsformat = headers['ngsiv2-attrsformat'];
+                this(notification);
+            }.bind(subscription.notification.callback);
+
+            p = connection.ngsi_proxy.requestCallback(onNotify).then(
+                function (response) {
+                    proxy_callback = response;
+                    delete subscription.notification.callback;
+                    subscription.notification.http = {
+                        url: proxy_callback.url
+                    };
+                }
+            );
+        } else {
+            p = Promise.resolve();
+        }
+
+        var url = connection.url + NGSI.endpoints.v2.SUBSCRIPTION_COLLECTION;
+        return p.then(function () {
+            return makeJSONRequest2.call(connection, url, {
+                method: "POST",
+                postBody: subscription,
+                requestHeaders: {
+                    "FIWARE-Correlator": options.correlator,
+                    "FIWARE-Service": options.service,
+                    "FIWARE-ServicePath": options.servicepath
+                }
+            });
+        }).then(function (response) {
+            if (response.status !== 201) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            var subscription_url = response.getHeader('Location');
+            var subscription_id = subscription_url.split('/').pop();
+            subscription.id = subscription_id;
+
+            if (proxy_callback) {
+                this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, subscription_id);
+            }
+
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                subscription: subscription,
+                location: subscription_url
+            });
+        }.bind(connection), function (error) {
+            if (proxy_callback) {
+                this.ngsi_proxy.closeCallback(proxy_callback.callback_id);
+            }
+            return Promise.reject(error);
+        }.bind(connection));
+    };
+
+    /**
+     * Gets all the details of a subscription.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#getSubscription
+     * @method
+     *
+     * @param {String|Object} options
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.getSubscription("abcdef").then(
+     *     (response) => {
+     *         // Subscription details retrieved successfully
+     *         // response.subscription subscription details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving subscription
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.getSubscription = function getSubscription(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(options.id)});
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator'),
+                subscription: data
+            });
+        });
+    };
+
+    /**
+     * Updates a subscription.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#updateSubscription
+     * @method
+     *
+     * @param {Object} changes
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Update subscription expiration time</caption>
+     *
+     * connection.v2.updateSubscription({
+     *     "id": "abcdef",
+     *     "expires": "2016-04-05T14:00:00.00Z"
+     * }).then(
+     *     (response) => {
+     *         // Subscription updated successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error updating subscription
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Use a custom service path for the update operation</caption>
+     *
+     * connection.v2.updateSubscription({
+     *     "id": "abcdef",
+     *     "expires": "2016-04-05T14:00:00.00Z"
+     * }, {
+     *     servicepath: "/Spain/Madrid"
+     * }).then(
+     *     (response) => {
+     *         // Subscription updated successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error updating subscription
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.updateSubscription = function updateSubscription(changes, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(changes.id)});
+
+        // Remove id from the payload
+        delete changes.id;
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PATCH",
+            postBody: changes,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * Removes a subscription from the orion context broker server.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection.v2#deleteSubscription
+     * @method
+     *
+     * @param {String|Object} options
+     *     String with the id of the subscription to remove or an object with
+     *     options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `id` (`String`): Id of the subscription to remove
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example
+     *
+     * connection.v2.deleteSubscription("57f7787a5f817988e4eb3dda").then(
+     *     (response) => {
+     *         // Subscription deleted successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error deleting subscription
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     */
+    NGSI.Connection.V2.prototype.deleteSubscription = function deleteSubscription(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(options.id)});
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * This operation allows to create, update and/or delete several entities
+     * in a single batch operation.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection#batchUpdate
+     * @method
+     *
+     * @param {Object} changes
+     * @param {Object} [options]
+     *     Object with extra options:
+     *     - `correlator` (`String`): Transaction id
+     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     *     - `service` (`String`): Service/tenant to use in this operation
+     *     - `servicepath` (`String`): Service path to use in this operation
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.v2.batchUpdate({
+     *    "actionType": "APPEND",
+     *    "entities": [
+     *        {
+     *            "type": "Room",
+     *            "id": "Bcn-Welt",
+     *            "temperature": {
+     *                "value": 21.7
+     *            },
+     *            "humidity": {
+     *                "value": 60
+     *            }
+     *        },
+     *        {
+     *            "type": "Room",
+     *            "id": "Mad_Aud",
+     *            "temperature": {
+     *                "value": 22.9
+     *            },
+     *            "humidity": {
+     *                "value": 85
+     *            }
+     *        }
+     *    ]
+     * }).then(
+     *     (response) => {
+     *         // Attributes appended successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error appending attributes to the entities
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.batchUpdate = function batchUpdate(changes, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (changes == null) {
+            throw new TypeError("missing changes parameter");
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + interpolate(NGSI.endpoints.v2.BATCH_UPDATE_OP);
+        var parameters = {};
+
+        if (options.keyValues === true) {
+            parameters.options = "keyValues";
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            parameters: parameters,
+            postBody: changes,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                correlator: response.getHeader('Fiware-correlator')
+            });
+        });
+    };
+
+    /**
+     * This operation allows to make several entity queries at once.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.0
+     *
+     * @name NGSI.Connection.v2#batchQuery
+     * @method
+     *
+     * @param {Object} [options] Object with extra options:
+     * - `correlator` (`String`): Transaction id
+     * - `count` (`Boolean`; default: `false`): Request total count
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of entities you want to receive from the server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given number of
+     *   elements at the beginning
+     * - `orderBy` (`String`): Criteria for ordering results
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `unique` (`Boolean`): Represent entities as an array of non-repeated
+     *   attribute values.
+     * - `values` (`Boolean`): Represent entities as an array of attribute
+     *   values
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 entities from the Context Broker</caption>
+     *
+     * connection.batchQuery({
+     *    "entities": [
+     *        {
+     *            "idPattern": ".*",
+     *            "type": "myFooType"
+     *        },
+     *        {
+     *            "id": "myBar",
+     *            "type": "myBarType"
+     *        }
+     *    ],
+     *    "attributes": [
+     *        "temperature",
+     *        "humidity"
+     *    ]
+     * }).then(
+     *     (response) => {
+     *         // Entities retrieved successfully
+     *         // response.correlator transaction id associated with the server response
+     *         // response.limit contains the used page size
+     *         // response.results is an array with the retrieved entities
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving entities
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.batchQuery = function batchQuery(query, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (query == null) {
+            throw new TypeError("missing query parameter");
+        }
+
+        var connection = privates.get(this);
+        var url = connection.url + NGSI.endpoints.v2.BATCH_QUERY_OP;
+        var optionsparams = [];
+        var parameters = parse_pagination_options2(options, optionsparams);
+
+        if (options.keyValues === true) {
+            optionsparams.push("keyValues");
+        }
+        if (options.values === true) {
+            optionsparams.push("values");
+        }
+        if (options.unique === true) {
+            optionsparams.push("unique");
+        }
+        if (optionsparams.length > 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        parameters.orderBy = options.orderBy;
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            parameters: parameters,
+            postBody: query,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+            }
+
+            var result = {
+                results: data,
+                limit: options.limit,
+                offset: options.offset,
+                correlator: response.getHeader("Fiware-correlator")
+            };
+            if (options.count === true) {
+                result.count = parseInt(response.getHeader("Fiware-Total-Count"), 10);
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
 
     /* istanbul ignore else */
     if (typeof window !== 'undefined') {
