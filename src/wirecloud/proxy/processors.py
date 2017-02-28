@@ -101,8 +101,8 @@ def process_secure_data(text, request, component_id, component_type):
 
         action = options.get('action', 'data')
         if action == 'data':
-            substr = options.get('substr', '')
             var_ref = options.get('var_ref', '')
+            substr = options.get('substr', '{' + var_ref + '}')
             check_empty_params(substr=substr, var_ref=var_ref)
 
             value = get_variable_value_by_ref(var_ref, request['user'], cache_manager, component_id, component_type)
@@ -120,6 +120,26 @@ def process_secure_data(text, request, component_id, component_type):
             new_body = request['data'].read().replace(substr, value)
             request['headers']['content-length'] = "%s" % len(new_body)
             request['data'] = BytesIO(new_body)
+
+        elif action == 'header':
+            var_ref = options.get('var_ref', '')
+            substr = options.get('substr', '{' + var_ref + '}')
+            header = options.get('header', '').lower()
+            check_empty_params(substr=substr, var_ref=var_ref, header=header)
+
+            value = get_variable_value_by_ref(var_ref, request['user'], cache_manager, component_id, component_type)
+            check_invalid_refs(var_ref=value)
+
+            encoding = options.get('encoding', 'none')
+            substr = substr.encode('utf8')
+            if encoding == 'url':
+                value = urlquote(value).encode('utf8')
+            elif encoding == 'base64':
+                value = base64.b64encode(value.encode('utf8'))[:-1]
+            else:
+                value = value.encode('utf8')
+
+            request['headers'][header] = request['headers'][header].replace(substr, value)
 
         elif action == 'basic_auth':
 

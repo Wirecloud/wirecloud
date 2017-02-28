@@ -552,6 +552,35 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'username=|username|&password=dGVzdF9wYXNzd29yZA=')
 
+    def test_secure_data_default_substr(self):
+        user = User.objects.get(username='test')
+        iwidget = IWidget.objects.get(pk=1)
+        iwidget.set_variable_value('password', 'test_password', user)
+        iwidget.save()
+        self.assertNotEqual(iwidget.variables['password'], 'test_password')
+
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+        pass_ref = 'password'
+        user_ref = 'username'
+        secure_data_header = 'action=data, var_ref=' + pass_ref
+        secure_data_header += '&action=data, var_ref=' + user_ref
+        response = self.client.post(self.basic_url,
+                                    'username={username}&password={password}',
+                                    content_type='application/x-www-form-urlencoded',
+                                    HTTP_HOST='localhost',
+                                    HTTP_REFERER='http://localhost/test/workspace',
+                                    HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header,
+                                    HTTP_WIRECLOUD_COMPONENT_TYPE="widget",
+                                    HTTP_WIRECLOUD_COMPONENT_ID="1")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.read_response(response), b'username=test_username&password=test_password')
+
     def check_invalid_ref(self, invalid_ref):
 
         secure_data_header = 'action=data, substr=|password|, var_ref=' + invalid_ref
@@ -643,5 +672,132 @@ class ProxySecureDataTests(ProxyTestsBase):
                                     HTTP_HOST='localhost',
                                     HTTP_REFERER='http://localhost/test/workspace',
                                     HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+
+        self.assertEqual(response.status_code, 422)
+
+    def test_secure_data_header(self):
+        pass_ref = 'pref_secure'
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'headers': kwargs['headers'], 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        replaceHeader = "words {password}"
+        secure_data_header = 'action=header, header=headername, substr={password}, var_ref=' + pass_ref
+
+        response = self.client.post(self.basic_url,
+                                    'username=|username|&password=|password|',
+                                    content_type='application/x-www-form-urlencoded',
+                                    HTTP_HEADERNAME=replaceHeader,
+                                    HTTP_HOST='localhost',
+                                    HTTP_REFERER='http://localhost/test/workspaceSecure',
+                                    HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header,
+                                    HTTP_WIRECLOUD_COMPONENT_TYPE="operator",
+                                    HTTP_WIRECLOUD_COMPONENT_ID="2")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.get_response_headers(response)["headername"], "words test_password")
+        self.assertEqual(self.read_response(response), b'username=|username|&password=|password|')
+
+    def test_secure_data_header_concatenated(self):
+        pass_ref = 'pref_secure'
+        user_ref = 'username'
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'headers': kwargs['headers'], 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        replaceHeader = "words {username}:{password}"
+        secure_data_header = 'action=header, header=headername, substr={password}, var_ref=' + pass_ref + '&action=header, header=headername, substr={username}, var_ref=' + user_ref
+
+        response = self.client.post(self.basic_url,
+                                    'username=|username|&password=|password|',
+                                    content_type='application/x-www-form-urlencoded',
+                                    HTTP_HEADERNAME=replaceHeader,
+                                    HTTP_HOST='localhost',
+                                    HTTP_REFERER='http://localhost/test/workspaceSecure',
+                                    HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header,
+                                    HTTP_WIRECLOUD_COMPONENT_TYPE="operator",
+                                    HTTP_WIRECLOUD_COMPONENT_ID="2")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.get_response_headers(response)["headername"], "words test_username:test_password")
+        self.assertEqual(self.read_response(response), b'username=|username|&password=|password|')
+
+    def test_secure_data_header_default_substr(self):
+        pass_ref = 'pref_secure'
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'headers': kwargs['headers'], 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        replaceHeader = "words {pref_secure}"
+        secure_data_header = 'action=header, header=Headername, var_ref=' + pass_ref
+
+        response = self.client.post(self.basic_url,
+                                    'username=|username|&password=|password|',
+                                    content_type='application/x-www-form-urlencoded',
+                                    HTTP_HEADERNAME=replaceHeader,
+                                    HTTP_HOST='localhost',
+                                    HTTP_REFERER='http://localhost/test/workspaceSecure',
+                                    HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header,
+                                    HTTP_WIRECLOUD_COMPONENT_TYPE="operator",
+                                    HTTP_WIRECLOUD_COMPONENT_ID="2")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.get_response_headers(response)["headername"], "words test_password")
+        self.assertEqual(self.read_response(response), b'username=|username|&password=|password|')
+
+    def test_secure_data_header_missing_parameters(self):
+        pass_ref = 'pref_secure'
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'headers': kwargs['headers'], 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        replaceHeader = "words {pass_ref}"
+        secure_data_header = 'action=header, var_ref=' + pass_ref
+
+        response = self.client.post(self.basic_url,
+                                    'username=|username|&password=|password|',
+                                    content_type='application/x-www-form-urlencoded',
+                                    HTTP_HEADERNAME=replaceHeader,
+                                    HTTP_HOST='localhost',
+                                    HTTP_REFERER='http://localhost/test/workspaceSecure',
+                                    HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header,
+                                    HTTP_WIRECLOUD_COMPONENT_TYPE="operator",
+                                    HTTP_WIRECLOUD_COMPONENT_ID="2")
+
+        self.assertEqual(response.status_code, 422)
+
+    def test_secure_data_header_empty_parameters(self):
+        pass_ref = 'pref_secure'
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'headers': kwargs['headers'], 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        replaceHeader = "words {pass_ref}"
+        secure_data_header = 'action=header, header='', var_ref=' + pass_ref
+
+        response = self.client.post(self.basic_url,
+                                    'username=|username|&password=|password|',
+                                    content_type='application/x-www-form-urlencoded',
+                                    HTTP_HEADERNAME=replaceHeader,
+                                    HTTP_HOST='localhost',
+                                    HTTP_REFERER='http://localhost/test/workspaceSecure',
+                                    HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header,
+                                    HTTP_WIRECLOUD_COMPONENT_TYPE="operator",
+                                    HTTP_WIRECLOUD_COMPONENT_ID="2")
 
         self.assertEqual(response.status_code, 422)
