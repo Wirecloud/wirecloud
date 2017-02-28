@@ -188,6 +188,9 @@ class WiringEntry(Resource):
             for preference_name in updated_preferences:
                 old_preference = old_operator['preferences'][preference_name]
                 new_preference = operator['preferences'][preference_name]
+                # Using patch means no change at all on non-modified preferences
+                if old_preference == new_preference:
+                    continue
 
                 # Check if its multiuser
                 if preference_name in operator_preferences:

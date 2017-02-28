@@ -1184,6 +1184,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Check if preferences changed
         self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"]["users"]["4"], "helloWorld")
+        # Other preferences should not be modified
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"]["users"]["4"], "test_username")
 
     def test_workspace_wiring_entry_patch_preference_value_read_only_permission(self):
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
