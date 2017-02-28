@@ -101,8 +101,8 @@ def process_secure_data(text, request, component_id, component_type):
 
         action = options.get('action', 'data')
         if action == 'data':
-            substr = options.get('substr', '')
             var_ref = options.get('var_ref', '')
+            substr = options.get('substr', '{' + var_ref + '}')
             check_empty_params(substr=substr, var_ref=var_ref)
 
             value = get_variable_value_by_ref(var_ref, request['user'], cache_manager, component_id, component_type)
