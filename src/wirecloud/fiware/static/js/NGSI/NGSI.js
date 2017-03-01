@@ -35,7 +35,7 @@
  *
  */
 
-/* global EventSource, exports */
+/* global EventSource, exports, require */
 
 (function () {
 
@@ -53,8 +53,10 @@
     /* istanbul ignore if */
     if ((typeof require === 'function') && typeof exports != null) {
         NGSI = exports;
+        var URL = require('whatwg-url').URL;
     } else {
         NGSI = {};
+        var URL = window.URL;
     }
 
     NGSI.endpoints = {
@@ -762,7 +764,10 @@
         status_info = process_status_info_json(data);
 
         if (status_info.code === 404) {
-            throw new NGSI.NotFoundError(data);
+            throw new NGSI.NotFoundError({
+                details: data,
+                message: status_info.reasonPhrase
+            });
         } else if (status_info.code !== 200) {
             throw new NGSI.InvalidResponseError('Unexpected error code');
         }
@@ -980,6 +985,14 @@
         return parameters;
     };
 
+    var parse_error_response = function parse_error_response(response) {
+        if (response.getHeader('Content-Type') !== 'application/json') {
+            throw new TypeError("Unexpected response mimetype");
+        }
+
+        return JSON.parse(response.responseText);
+    };
+
     NGSI.parseNotifyContextRequest = function parseNotifyContextRequest(data, options) {
         return {
             elements: parse_context_response_list_json(data.contextResponses, false, options)[0],
@@ -989,7 +1002,7 @@
     };
 
     var init = function init() {
-        return this.makeRequest(this.url + NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, {
+        return this.makeRequest(new URL(NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, this.url), {
             method: 'POST'
         }).then(
             function (response) {
@@ -1087,10 +1100,19 @@
     };
 
     NGSI.ProxyConnection = function ProxyConnection(url, makeRequest /* TODO */) {
-        this.url = "" + url;
 
-        if (this.url[this.url.length - 1] !== '/') {
-            this.url += '/';
+        try {
+            url = new URL(url);
+        } catch (e) {
+            throw new TypeError("invalid url parameter");
+        }
+
+        if (url.protocol !== "http:" && url.protocol !== "https:") {
+            throw new TypeError("unsupported protocol: " + url.protocol.substr(0, url.protocol.length - 1));
+        }
+
+        if (url.pathname[url.pathname.length - 1] !== '/') {
+            url.pathname += '/';
         }
 
         this.makeRequest = makeRequest;
@@ -1118,6 +1140,9 @@
             },
             subscriptionCallbacks: {
                 get: on_subscription_callbacks_get
+            },
+            url: {
+                value: url
             }
         });
     };
@@ -1315,7 +1340,9 @@
      * security concerns, so this exception doesn't provide those details.
      *
      * @class
+     * @extends Error
      * @name NGSI.ConnectionError
+     * @summary Exception raised for connection problems.
      */
     NGSI.ConnectionError = function ConnectionError(message) {
         this.name = 'ConnectionError';
@@ -1329,7 +1356,10 @@
      * data provided in the request.
      *
      * @class
+     * @extends Error
      * @name NGSI.InvalidRequestError
+     * @summary Exception raised when the context broker server reject the
+     * request.
      */
     NGSI.InvalidRequestError = function InvalidRequestError(code, message, details) {
         this.name = 'InvalidRequest';
@@ -1347,18 +1377,24 @@
      * library.
      *
      * @class
+     * @extends Error
      * @name NGSI.InvalidResponseError
+     * @summary Exception raised when detecting invalid responses from the
+     * server.
      */
-    NGSI.InvalidResponseError = function InvalidResponseError(message) {
+    NGSI.InvalidResponseError = function InvalidResponseError(message, correlator) {
         this.name = 'InvalidResponse';
         this.message = message || '';
+        this.correlator = correlator;
     };
     NGSI.InvalidResponseError.prototype = new Error();
     NGSI.InvalidResponseError.prototype.constructor = NGSI.InvalidResponseError;
 
-    NGSI.NotFoundError = function NotFoundError(details) {
+    NGSI.NotFoundError = function NotFoundError(options) {
         this.name = 'NotFound';
-        this.details = details || '';
+        this.message = options.message || '';
+        this.details = options.details || '';
+        this.correlator = options.correlator || null;
     };
     NGSI.NotFoundError.prototype = new Error();
     NGSI.NotFoundError.prototype.constructor = NGSI.NotFoundError;
@@ -1375,6 +1411,7 @@
      *
      * @name NGSI.Connection
      * @class
+     * @summary A context broker connection.
      *
      * @param {String|URL} url URL of the context broker
      * @param {Object} options
@@ -1393,10 +1430,19 @@
      *
      **/
     NGSI.Connection = function NGSIConnection(url, options) {
-        this.url = "" + url;
 
-        if (this.url[this.url.length - 1] !== '/') {
-            this.url += '/';
+        try {
+            url = new URL(url);
+        } catch (e) {
+            throw new TypeError("invalid url parameter");
+        }
+
+        if (url.protocol !== "http:" && url.protocol !== "https:") {
+            throw new TypeError("unsupported protocol: " + url.protocol.substr(0, url.protocol.length - 1));
+        }
+
+        if (url.pathname[url.pathname.length - 1] !== '/') {
+            url.pathname += '/';
         }
 
         if (options == null) {
@@ -1429,10 +1475,67 @@
             this.ngsi_proxy = new NGSI.ProxyConnection(options.ngsi_proxy_url, this.makeRequest);
         }
 
-        Object.defineProperty(this, "v1", {value: this});
-        Object.defineProperty(this, "v2", {value: new NGSI.Connection.V2(this)});
+        Object.defineProperties(this, {
+            url: {value: url},
+            v1: {value: this},
+            v2: {value: new NGSI.Connection.V2(this)}
+        });
     };
 
+    /**
+     * Registers context information (entities and attributes) into the NGSI
+     * server.
+     *
+     * @name NGSI.Connection@v1.createRegistration
+     * @memberof NGSI.Connection
+     * @method "v1.createRegistration"
+     *
+     * @param {Array} entities
+     *
+     * the list of entities that are going to be registered
+     *
+     * @param {Array} attributes
+     *
+     * the list of attributes that are going to be assigned to
+     * the entities
+     *
+     * @param {String} duration
+     *
+     * time interval during which the registration will be active, using as
+     * reference the current time. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {String} providingApplication
+     *
+     * the URI of the application to which this registration will belongs to
+     *
+     * @param {Object} [callbacks]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     *
+     * @example
+     *
+     * connection.v1.createRegistration([
+     *         {type: 'Technician', id: 'entity1'}
+     *     ], [
+     *         {name: 'attr1', type: 'string'},
+     *         {name: 'attr2'},
+     *         {name: 'attr3', type: 'number'}
+     *     ],
+     *     'PT24H',
+     *     'http://app.example.com/',
+     *     {
+     *         onSuccess: function (data) {
+     *             //data.subscriptionId
+     *         }
+     *     }
+     * );
+     *
+     */
     NGSI.Connection.prototype.createRegistration = function createRegistration(entities, attributes, duration, providingApplication, callbacks) {
         if (!Array.isArray(entities) || entities.length === 0) {
             throw new TypeError('entities parameter must be a non-empty array');
@@ -1449,11 +1552,62 @@
         }
 
         var payload = ngsi_build_register_context_request(entities, attributes, duration, providingApplication);
-        var url = this.url + NGSI.endpoints.REGISTER_CONTEXT;
+        var url = new URL(NGSI.endpoints.REGISTER_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_register_context_response, callbacks);
     };
 
+    /**
+     * Updates an existing registration.
+     *
+     * @name NGSI.Connection#v1.updateRegistration
+     * @memberof NGSI.Connection
+     * @method "v1.updateRegistration"
+     *
+     * @param {String} regId
+     *
+     * id of the registration to update
+     *
+     * @param {Array} entities
+     *
+     * list of entities to update
+     *
+     * @param {Array} attributes
+     *
+     * list of attributes to associate with this registration
+     *
+     * @param {String} duration
+     *
+     * time interval during which the registration will be active, using as
+     * reference the current time. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {String} providingApplication
+     *
+     * URL identifing the source of the context information
+     *
+     * @param {Object} [callbacks]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.updateRegistration("167",
+     *     [
+     *         {type: 'Technician', id: 'entity1'}
+     *     ],
+     *     [
+     *         {name: 'attr1', type: 'string'},
+     *         {name: 'attr2'}
+     *     ],
+     *     'PT24H',
+     *     'http://app.example.com/'
+     * );
+     *
+     */
     NGSI.Connection.prototype.updateRegistration = function updateRegistration(regId, entities, attributes, duration, providingApplication, callbacks) {
         if (!Array.isArray(entities) || entities.length === 0) {
             throw new TypeError('entities parameter must be a non-empty array');
@@ -1470,11 +1624,37 @@
         }
 
         var payload = ngsi_build_register_context_request(entities, attributes, duration, providingApplication, regId);
-        var url = this.url + NGSI.endpoints.REGISTER_CONTEXT;
+        var url = new URL(NGSI.endpoints.REGISTER_CONTEXT, this.url);
 
-        makeJSONRequest.call(this, url, payload, parse_register_context_response, callbacks);
+        return makeJSONRequest.call(this, url, payload, parse_register_context_response, callbacks);
     };
 
+    /**
+     * Cancels an existing registration by marking it as expired.
+     *
+     * @name NGSI.Connection#v1.updateRegistration
+     * @memberof NGSI.Connection
+     * @method "v1.updateRegistration"
+     *
+     * @param {String} regId
+     *
+     * id of the registration to cancelRegistration
+     *
+     * @param {Object} [callbacks]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.cancelRegistration("167", {
+     *     onSuccess: function () {
+     *         // Registration cancelled successfully
+     *     }
+     * });
+     */
     NGSI.Connection.prototype.cancelRegistration = function cancelRegistration(regId, callbacks) {
         if (regId == null) {
             throw new TypeError('regId parameter cannot be null');
@@ -1482,6 +1662,43 @@
         this.updateRegistration(regId, [{id: 'canceled registration'}], [], 'PT0H', 'http://canceled.registration.com', callbacks);
     };
 
+    /**
+     * Discovers context information registrations on the NGSI server.
+     *
+     * @name NGSI.Connection#v1.discoverAvailability
+     * @memberof NGSI.Connection
+     * @method "v1.discoverAvailability"
+     *
+     * @param {Array} entities
+     *
+     * the list of **Entities** that are going to be queried
+     *
+     * @param {?Array} attributeNames
+     *
+     * list of attribute names to query. Use `null` for retrieving all the attributes
+     *
+     * @param {Object} [callbacks]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.discoverAvailability([
+     *         {type: 'Technician', id: 'entity1'},
+     *         {type: 'Van', id: '.*', isPattern: true},
+     *     ],
+     *     null,
+     *     {
+     *         onSuccess: function (registrations) {
+     *             ...
+     *         }
+     *     }
+     * );
+     *
+     */
     NGSI.Connection.prototype.discoverAvailability = function discoverAvailability(entities, attributeNames, callbacks) {
 
         if (!Array.isArray(entities) || entities.length === 0) {
@@ -1499,11 +1716,45 @@
         }
 
         var payload = ngsi_build_discover_context_availability_request(entities, attributeNames);
-        var url = this.url + NGSI.endpoints.DISCOVER_CONTEXT_AVAILABILITY;
+        var url = new URL(NGSI.endpoints.DISCOVER_CONTEXT_AVAILABILITY, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_discover_context_availability_response, callbacks);
     };
 
+    /**
+     * Creates a subscription about context availability.
+     *
+     * @name NGSI.Connection#v1.createAvailabilitySubscription
+     * @memberof NGSI.Connection
+     * @method "v1.createAvailabilitySubscription"
+     *
+     * @param {Array} entities
+     *
+     * the list of **Entities** that are going to be queried
+     *
+     * @param {?Array} attributeNames
+     *
+     * list of attribute names to query. Use `null` for retrieving all the attributes
+     *
+     * @param {?String} duration
+     *
+     * time interval during which the registration will be active, using as
+     * reference the current time. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {Object} restriction
+     *
+     *
+     * @param {Object} [options]
+     *
+     * - `onNotify`: URL of the service or callback function to be used for
+     *   notifying updates in the context availability
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     */
     NGSI.Connection.prototype.createAvailabilitySubscription = function createAvailabilitySubscription(entities, attributeNames, duration, restriction, options) {
 
         if (!Array.isArray(entities) || entities.length === 0) {
@@ -1524,7 +1775,7 @@
             throw new TypeError('A ngsi-proxy is needed for using local onNotify callbacks');
         }
 
-        var url = this.url + NGSI.endpoints.SUBSCRIBE_CONTEXT_AVAILABILITY;
+        var url = new URL(NGSI.endpoints.SUBSCRIBE_CONTEXT_AVAILABILITY, this.url);
         if (typeof options.onNotify === 'function' && this.ngsi_proxy != null) {
 
             var onNotify = function onNotify(payload) {
@@ -1564,6 +1815,41 @@
         }
     };
 
+    /**
+     * Updates an existing context availability subscription.
+     *
+     * @name NGSI.Connection#v1.updateAvailabilitySubscription
+     * @memberof NGSI.Connection
+     * @method "v1.updateAvailabilitySubscription"
+     *
+     * @param {String} subId
+     *
+     * id of the subscription to update
+     *
+     * @param {Array} entities
+     *
+     * the list of **Entities** that are going to be queried
+     *
+     * @param {?Array} attributeNames
+     *
+     * list of attribute names to query. Use `null` for retrieving all the attributes
+     *
+     * @param {?String} duration
+     *
+     * time interval during which the registration will be active, using as
+     * reference the current time. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {Object} restriction
+     *
+     * @param {Object} [callbacks]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     */
     NGSI.Connection.prototype.updateAvailabilitySubscription = function updateAvailabilitySubscription(subId, entities, attributeNames, duration, restriction, callbacks) {
         if (subId == null) {
             throw new TypeError('subId parameter cannot be null');
@@ -1582,11 +1868,29 @@
         }
 
         var payload = ngsi_build_subscribe_update_context_availability_request(entities, attributeNames, duration, restriction, subId);
-        var url = this.url + NGSI.endpoints.UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION;
+        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, callbacks);
     };
 
+    /**
+     * Cancels an existing context availability subscription.
+     *
+     * @name NGSI.Connection#v1.cancelAvailabilitySubscription
+     * @memberof NGSI.Connection
+     * @method "v1.cancelAvailabilitySubscription"
+     *
+     * @param {String} subId
+     *
+     * id of the subscription to cancel
+     *
+     * @param {Object} [callbacks]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     */
     NGSI.Connection.prototype.cancelAvailabilitySubscription = function cancelAvailabilitySubscription(subId, callbacks) {
         if (subId == null) {
             throw new TypeError('subId parameter cannot be null');
@@ -1597,22 +1901,67 @@
         }
 
         var payload = ngsi_build_unsubscribe_context_availability_request(subId);
-        var url = this.url + NGSI.endpoints.UNSUBSCRIBE_CONTEXT_AVAILABILITY;
+        var url = new URL(NGSI.endpoints.UNSUBSCRIBE_CONTEXT_AVAILABILITY, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_unsubscribe_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.query = function query(entities, attrNames, options) {
+    /**
+     * Query for context information. That information is returned using pagination
+     * (see supported options), so its very recommended the use of the `details`
+     * option.
+     *
+     * @name NGSI.Connection#v1.query
+     * @memberof NGSI.Connection
+     * @method "v1.query"
+     *
+     * @param {Array} Entities
+     *
+     * list of **Entities** to query
+     *
+     * @param {?Array} attributeNames
+     *
+     * list of attribute names to query. Use `null` for retrieving all the attributes
+     *
+     * @param {Object} options
+     *
+     * - `details` (`Boolean`; default: `false`): Request total count
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of entities you want to receive from the server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given number of
+     *   elements at the beginning
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     * connection.v1.query([
+     *         {type: 'Technician', id: '.*', isPattern: true}
+     *     ],
+     *     null,
+     *     {
+     *         limit: 100,
+     *         offset: 200,
+     *         details: true
+     *         onSuccess: function (data, details) {
+     *             ...
+     *         }
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.prototype.query = function query(entities, attributesName, options) {
         var url, parameters, payload;
 
         if (!Array.isArray(entities) || entities.length === 0) {
             throw new TypeError('entities parameter must be a non-empty array');
         }
 
-        if (attrNames != null && !Array.isArray(attrNames)) {
-            throw new TypeError('attrNames must be null or an array');
-        } else if (attrNames == null) {
-            attrNames = [];
+        if (attributesName != null && !Array.isArray(attributesName)) {
+            throw new TypeError('attributesName must be null or an array');
+        } else if (attributesName == null) {
+            attributesName = [];
         }
 
         if (options == null) {
@@ -1621,11 +1970,47 @@
 
         parameters = parse_pagination_options(options, 'off');
 
-        url = this.url + NGSI.endpoints.QUERY_CONTEXT;
-        payload = ngsi_build_query_context_request(entities, attrNames, options.restriction);
+        url = new URL(NGSI.endpoints.QUERY_CONTEXT, this.url);
+        payload = ngsi_build_query_context_request(entities, attributesName, options.restriction);
         makeJSONRequest.call(this, url, payload, parse_query_context_response, options, parameters);
     };
 
+    /**
+     * Updates entity attributes
+     *
+     * @name NGSI.Connection#v1.updateAttributes
+     * @memberof NGSI.Connection
+     * @method "v1.updateAttributes"
+     *
+     * @param {Array} update
+     *
+     *   attribute changes
+     *
+     * @param {Object} [options]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.updateAttributes([
+     *         {
+     *             'entity': {type: 'Technician', id: 'entity1'},
+     *             'attributes': [
+     *                 {name: 'mobile_phone', type: 'string', contextValue: '0034223456789'},
+     *                 {name: 'attr2', contextValue: 'value'},
+     *                 {name: 'attr3', contextValue: 5}
+     *             ]
+     *         }
+     *     ], {
+     *         onSuccess: function (data) {
+     *         }
+     *     }
+     * );
+     *
+     */
     NGSI.Connection.prototype.updateAttributes = function updateAttributes(update, callbacks) {
         if (!Array.isArray(update) || update.length === 0) {
             throw new TypeError('update parameter must be a non-empty array');
@@ -1636,11 +2021,46 @@
         }
 
         var payload = ngsi_build_update_context_request('UPDATE', update);
-        var url = this.url + NGSI.endpoints.UPDATE_CONTEXT;
+        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_response, callbacks);
     };
 
+    /**
+     * Adds or updates entity attributes. This operation will create attributes
+     * and entities.
+     *
+     * @name NGSI.Connection#v1.addAttributes
+     * @memberof NGSI.Connection
+     * @method "v1.addAttributes"
+     *
+     * @param {Array} toAdd
+     *
+     * attribute additions
+     *
+     * @param {Object} [options]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.addAttributes([
+     *         {
+     *             'entity': {type: 'Technician', id: 'entity1'},
+     *             'attributes': [
+     *                 {'name': 'new_attribute', 'type': 'string', 'contextValue': 'value'}
+     *             ]
+     *         }
+     *     ], {
+     *         onSuccess: function (data, partial_errors) {
+     *         }
+     *     }
+     * );
+     *
+     */
     NGSI.Connection.prototype.addAttributes = function addAttributes(toAdd, callbacks) {
         if (!Array.isArray(toAdd) || toAdd.length === 0) {
             throw new TypeError('toAdd parameter must be a non-empty array');
@@ -1651,11 +2071,59 @@
         }
 
         var payload = ngsi_build_update_context_request('APPEND', toAdd);
-        var url = this.url + NGSI.endpoints.UPDATE_CONTEXT;
+        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_response, callbacks);
     };
 
+    /**
+     * Deletes attributes form entities. This method also removes entities from
+     * the context broker server.
+     *
+     * @name NGSI.Connection#v1.deleteAttributes
+     * @memberof NGSI.Connection
+     * @method "v1.deleteAttributes"
+     *
+     * @param {Array} toDelete
+     *
+     * attributes to remove
+     *
+     * @param {Object} [callbacks]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example <caption>Removing the `position` attribute from the `Madrid` entity</caption>
+     *
+     * connection.v1.deleteAttributes([
+     *         {
+     *             'entity': {type: 'City', id: 'Madrid'},
+     *             'attributes': {
+     *                 'name': 'position',
+     *                 'type': 'coords'
+     *             }
+     *         }
+     *     ], {
+     *         onSuccess: function (data, partial_errors) {
+     *         }
+     *     }
+     * );
+     *
+     * @example <caption>Removing `Madrid` from the context broker</caption>**
+     *
+     * connection.v1.deleteAttributes([
+     *         {
+     *             'entity': {type: 'City', id: 'Madrid'}
+     *         }
+     *     ], {
+     *         onSuccess: function (data, partial_errors) {
+     *         }
+     *     }
+     * );
+     *
+     */
     NGSI.Connection.prototype.deleteAttributes = function deleteAttributes(toDelete, callbacks) {
         if (!Array.isArray(toDelete) || toDelete.length === 0) {
             throw new TypeError('toDelete parameter must be a non-empty array');
@@ -1666,11 +2134,73 @@
         }
 
         var payload = ngsi_build_update_context_request('DELETE', toDelete);
-        var url = this.url + NGSI.endpoints.UPDATE_CONTEXT;
+        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_response, callbacks);
     };
 
+    /**
+     * Creates a context information subscription.
+     *
+     * @name NGSI.Connection#v1.createSubscription
+     * @memberof NGSI.Connection
+     * @method "v1.createSubscription"
+     *
+     * @param {Array} entities
+     *
+     * the list of **Entities** that are going to be queried
+     *
+     * @param {?Array} attributeNames
+     *
+     * list of attribute names to query. Use `null` for retrieving all the attributes
+     *
+     * @param {?String} duration
+     *
+     * time interval during which the registration will be active, using as
+     * reference the current time. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {?String} throttling
+     *
+     * minimal period of time in seconds which must elapse between two
+     * consecutive notifications. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {Array} cond
+     *
+     * declare the condition or conditions that will trigger notifications.
+     *
+     * @param {Object} [options]
+     *
+     * - `onNotify`: URL of the service or callback function to be used for
+     *   notifying updates in the context availability
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.createSubscription([
+     *         {type: 'Technician', id: 'tech*', isPattern: true},
+     *         {type: 'Van', id: 'van1'},
+     *     ],
+     *     null,
+     *     'PT24H',
+     *     null,
+     *     [{type: 'ONCHANGE', condValues: ['position']}],
+     *     {
+     *         onNotify: function (data) {
+     *             // called when a notification arrives
+     *         },
+     *         onSuccess: function (data) {
+     *             // subscription created successfully
+     *             // data.subscriptionId contains the id associated with the created subscription
+     *         }
+     *     }
+     * );
+     *
+     */
     NGSI.Connection.prototype.createSubscription = function createSubscription(entities, attributeNames, duration, throttling, cond, options) {
         if (!Array.isArray(entities) || entities.length === 0) {
             throw new TypeError('entities parameter must be a non-empty array');
@@ -1690,7 +2220,7 @@
             throw new TypeError('A ngsi-proxy is needed for using local onNotify callbacks');
         }
 
-        var url = this.url + NGSI.endpoints.SUBSCRIBE_CONTEXT;
+        var url = new URL(NGSI.endpoints.SUBSCRIBE_CONTEXT, this.url);
         if (typeof options.onNotify === 'function' && this.ngsi_proxy != null) {
 
             var onNotify = function onNotify(payload) {
@@ -1739,6 +2269,55 @@
         }
     };
 
+    /**
+     * Updates a context subcription.
+     *
+     * @name NGSI.Connection#v1.updateSubscription
+     * @memberof NGSI.Connection
+     * @method "v1.updateSubscription"
+     *
+     * @param {String} subId
+     *
+     * id of the subscription to update
+     *
+     * @param {?String} duration
+     *
+     * time interval during which the registration will be active, using as
+     * reference the current time. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {?String} throttling
+     *
+     * minimal period of time in seconds which must elapse between two
+     * consecutive notifications. String following the format defined at
+     * http://books.xmlschemata.org/relaxng/ch19-77073.html.
+     *
+     * @param {?Object} cond
+     *
+     * declare the condition or conditions that will trigger notifications. Pass
+     * `null` for not modifying current conditions.
+     *
+     * @param {Object} [options]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.updateSubscription(
+     *     'sub1',
+     *     'PT20H',
+     *     null,
+     *     null,
+     *     {
+     *         onSuccess: function (response_data) {
+     *             // subscription updated successfully
+     *         }
+     *     }
+     * );
+     */
     NGSI.Connection.prototype.updateSubscription = function updateSubscription(subId, duration, throttling, cond, options) {
         if (subId == null) {
             throw new TypeError('subId parameter cannot be null');
@@ -1749,11 +2328,41 @@
         }
 
         var payload = ngsi_build_subscribe_update_context_request(subId, null, null, duration, throttling, cond);
-        var url = this.url + NGSI.endpoints.UPDATE_CONTEXT_SUBSCRIPTION;
+        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT_SUBSCRIPTION, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_subscription_response, options);
     };
 
+    /**
+     * Cancels a context subscription
+     *
+     * @name NGSI.Connection#v1.cancelSubscription
+     * @memberof NGSI.Connection
+     * @method "v1.cancelSubscription"
+     *
+     * @param {String} subId
+     *
+     * id of the context subscription to cancel
+     *
+     * @param {Object} [options]
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.cancelSubscription('sub1',
+     *     {
+     *         onSuccess: function (data) {
+     *             // Subscription canceled successfully
+     *             // data.subscriptionId should be equal to 'sub1'
+     *         }
+     *     }
+     * );
+     *
+     */
     NGSI.Connection.prototype.cancelSubscription = function cancelSubscription(subId, options) {
         if (subId == null) {
             throw new TypeError('subId parameter cannot be null');
@@ -1773,24 +2382,88 @@
             }.bind(this);
         }
         var payload = ngsi_build_unsubscribe_context_request(subId);
-        var url = this.url + NGSI.endpoints.UNSUBSCRIBE_CONTEXT;
+        var url = new URL(NGSI.endpoints.UNSUBSCRIBE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_unsubscribe_context_response, options);
     };
 
+    /**
+     * Gets info about about the used context types. This information is
+     * currently composed of the type name and the attributes used with that
+     * type (the attribute set returned by this operation is the union of the
+     * attributes used in each of the entities belonging to that type).
+     *
+     * @name NGSI.Connection
+     * @memberof NGSI.Connection
+     * @method "v1.getAvailableTypes"
+     *
+     * @param {Object} [options]
+     *
+     * - `details` (`Boolean`; default: `true`): Request total count
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of entities you want to receive from the server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given number of
+     *   elements at the beginning
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.getAvailableTypes({
+     *     onSuccess: function (types, details) {
+     *         // The types parameter contains the information
+     *         // about the available types, see next slide for
+     *         // more info
+     *     }
+     * });
+     *
+     */
     NGSI.Connection.prototype.getAvailableTypes = function getAvailableTypes(options) {
-        var url = this.url + NGSI.endpoints.CONTEXT_TYPES;
+        var url = new URL(NGSI.endpoints.CONTEXT_TYPES, this.url);
         var parameters = parse_pagination_options(options, 'on');
         makeJSONRequest.call(this, url, null, parse_available_types_response, options, parameters);
     };
 
+    /**
+     * Gets info about about a concrete entity type. This information is
+     * currently composed of the type name and the attributes used with that
+     * type (the attribute set returned by this operation is the union of the
+     * attributes used in each of the entities belonging to that type).
+     *
+     * @name NGSI.Connection#v1.getTypeInfo
+     * @memberof NGSI.Connection
+     * @method "v1.getTypeInfo"
+     *
+     * @param {String} type
+     *
+     * Name of the type to query about
+     *
+     * @param {Object} options
+     *
+     * - `onSuccess`: callback called if the request finishes successfully
+     * - `onFailure`: callback called if the request finishes with errors
+     * - `onComplete`: callback called regardless of whether the request is
+     *   successful or not
+     *
+     * @example
+     *
+     * connection.v1.getTypeInfo("Room", {
+     *     onSuccess: function (type_info) {
+     *         // The type_info parameter contains the information
+     *         // about the Room type, see next slide for more info
+     *     }
+     * });
+     *
+     */
     NGSI.Connection.prototype.getTypeInfo = function getTypeInfo(type, options) {
 
         if (type == null) {
             throw new TypeError("Invalid type parameter");
         }
 
-        var url = this.url + NGSI.endpoints.CONTEXT_TYPES + '/' + encodeURIComponent(type);
+        var url = new URL(NGSI.endpoints.CONTEXT_TYPES + '/' + encodeURIComponent(type), this.url);
         makeJSONRequest.call(this, url, null, parse_type_info_response, options);
     };
 
@@ -1805,10 +2478,14 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection.v2#listEntities
-     * @method
+     * @name NGSI.Connection#v2.listEntities
+     * @method "v2.listEntities"
+     * @memberof NGSI.Connection
      *
-     * @param {Object} [options] Object with extra options:
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
      * - `attrs` (`String`): Comma-separated list of attribute names whose data
      *   are to be included in the response. The attributes are retrieved in the
      *   order specified by this parameter. If this parameter is not included,
@@ -1840,11 +2517,12 @@
      *   attribute values.
      * - `values` (`Boolean`): Represent entities as an array of attribute
      *   values
+     *
      * @returns {Promise}
      *
      * @example <caption>Retrieve first 20 entities from the Context Broker</caption>
      *
-     * connection.listEntities().then(
+     * connection.v2.listEntities().then(
      *     (response) => {
      *         // Entities retrieved successfully
      *         // response.correlator transaction id associated with the server response
@@ -1860,7 +2538,7 @@
      *
      * @example <caption>Retrieve second page from the Context Broker requesting pagination details</caption>
      *
-     * connection.listEntities({offset: 20, count: true}).then(
+     * connection.v2.listEntities({offset: 20, count: true}).then(
      *     (response) => {
      *         // Entities retrieved successfully
      *         // response.results is an array with the retrieved entities
@@ -1888,7 +2566,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + NGSI.endpoints.v2.ENTITY_COLLECTION;
+        var url = new URL(NGSI.endpoints.v2.ENTITY_COLLECTION, connection.url);
         var optionsparams = [];
         var parameters = parse_pagination_options2(options, optionsparams);
 
@@ -1927,21 +2605,23 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
+
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
 
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator));
             }
 
             var result = {
                 results: data,
                 limit: options.limit,
                 offset: options.offset,
-                correlator: response.getHeader("Fiware-correlator")
+                correlator: correlator
             };
             if (options.count === true) {
                 result.count = parseInt(response.getHeader("Fiware-Total-Count"), 10);
@@ -1958,22 +2638,28 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#createEntity
-     * @method
+     * @name NGSI.Connection#v2.createEntity
+     * @method "v2.createEntity"
+     * @memberof NGSI.Connection
      *
      * @param {Object}
-     *     entity values to be used for creating the new entity
+     *
+     * entity values to be used for creating the new entity
+     *
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.createEntity({
+     * connection.v2.createEntity({
      *     "id": "Spain-Road-A62",
      *     "type": "Road",
      *     "name": {"value": "A-62"},
@@ -2001,7 +2687,7 @@
      *
      * @example <caption>Using the keyValues option</caption>
      *
-     * connection.createEntity({
+     * connection.v2.createEntity({
      *     "id": "Spain-Road-A62",
      *     "type": "Road",
      *     "name": "A-62",
@@ -2038,7 +2724,7 @@
             parameters.options = "keyValues";
         }
 
-        var url = connection.url + NGSI.endpoints.v2.ENTITY_COLLECTION;
+        var url = new URL(NGSI.endpoints.v2.ENTITY_COLLECTION, connection.url);
         return makeJSONRequest2.call(connection, url, {
             method: "POST",
             postBody: entity,
@@ -2049,11 +2735,12 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 201) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 entity: entity,
                 location: response.getHeader('Location')
             });
@@ -2067,20 +2754,26 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#getEntity
-     * @method
+     * @name NGSI.Connection#v2.getEntity
+     * @method "v2.getEntity"
+     * @memberof NGSI.Connection
      *
      * @param {String|Object} options
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.getEntity("Spain-Road-A62").then(
+     * connection.v2.getEntity("Spain-Road-A62").then(
      *     (response) => {
      *         // Entity details retrieved successfully
      *         // response.entity entity details
@@ -2123,7 +2816,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)}), connection.url);
         var parameters = {};
         if (options.type != null) {
             parameters.type = options.type;
@@ -2142,16 +2835,17 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator);
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 entity: data
             });
         });
@@ -2164,21 +2858,27 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#getEntityAttributes
-     * @method
+     * @name NGSI.Connection#v2.getEntityAttributes
+     * @method "v2.getEntityAttributes"
+     * @memberof NGSI.Connection
      *
      * @param {String|Object} options
-     *     String with the id of the entity to query or an object with extra
-     *     options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * String with the id of the entity to query or an object with extra
+     * options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.getEntityAttributes("Spain-Road-A62").then(
+     * connection.v2.getEntityAttributes("Spain-Road-A62").then(
      *     (response) => {
      *         // Entity attributes retrieved successfully
      *         // response.attributes entity attributes
@@ -2221,7 +2921,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(options.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(options.id)}), connection.url);
         var parameters = {};
         if (options.type != null) {
             parameters.type = options.type;
@@ -2240,17 +2940,18 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator);
             }
             return Promise.resolve({
                 attributes: data,
-                correlator: response.getHeader("Fiware-correlator")
+                correlator: correlator
             });
         });
     };
@@ -2262,17 +2963,24 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#appendEntityAttributes
-     * @method
+     * @name NGSI.Connection#v2.appendEntityAttributes
+     * @method "v2.appendEntityAttributes"
+     * @memberof NGSI.Connection
      *
      * @param {Object} changes
+     *
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): transaction id
-     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
-     *     - `strict` (`Boolean`; default: `false`): Force strict append semantics
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): transaction id
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `strict` (`Boolean`; default: `false`): Force strict append semantics
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Append or update the temperature attribute</caption>
@@ -2319,7 +3027,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(changes.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(changes.id)}), connection.url);
         var parameters = {};
         var optionsparams = [];
 
@@ -2352,11 +3060,12 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator
             });
         });
     };
@@ -2368,21 +3077,29 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#updateEntityAttributes
-     * @method
+     * @name NGSI.Connection#v2.updateEntityAttributes
+     * @method "v2.updateEntityAttributes"
+     * @memberof NGSI.Connection
      *
      * @param {Object} changes
+     *
+     * New values for the attributes, including the `id` and the `type` values
+     * for searching the entity to update.
+     *
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic attribute update</caption>
      *
-     * connection.v2.appendEntityAttributes({
+     * connection.v2.updateEntityAttributes({
      *     "id": "sensor",
      *     "temperature": {
      *         "value": 31.5
@@ -2431,7 +3148,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(changes.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(changes.id)}), connection.url);
         var parameters = {};
 
         // Remove id from the payload
@@ -2455,11 +3172,12 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator
             });
         });
     };
@@ -2471,21 +3189,29 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#replaceEntityAttributes
-     * @method
+     * @name NGSI.Connection#v2.replaceEntityAttributes
+     * @method "v2.replaceEntityAttributes"
+     * @memberof NGSI.Connection
      *
      * @param {Object} entity
+     *
+     * New values for the attributes, including the `id` and the `type` values
+     * for searching the entity to update.
+     *
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.replaceEntityAttributes({
+     * connection.v2.replaceEntityAttributes({
      *     "id": "Spain-Road-A62",
      *     "type": "Road",
      *     "name": {"value": "A-62"},
@@ -2544,7 +3270,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(entity.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.ENTITY_ATTRS_COLLECTION, {entityId: encodeURIComponent(entity.id)}), connection.url);
         var parameters = {};
         var payload = ngsi_build_replace_entity_request(entity, options, parameters);
         return makeJSONRequest2.call(connection, url, {
@@ -2557,12 +3283,13 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                entity: entity,
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator,
+                entity: entity
             });
         });
     };
@@ -2574,15 +3301,21 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection.v2#deleteEntity
-     * @method
+     * @name NGSI.Connection#v2.deleteEntity
+     * @method "v2.deleteEntity"
+     * @memberof NGSI.Connection
      *
      * @param {String|Object} options
-     *     String with the entity id to remove or an object providing options
-     *     - `correlator` (`String`): Transaction id
-     *     - `id` (`String`): Id of the entity to remove
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * String with the entity id to remove or an object providing options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the entity to remove
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Remove entity by Id</caption>
@@ -2626,7 +3359,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)}), connection.url);
 
         var parameters = {};
         if (options.type != null) {
@@ -2642,11 +3375,19 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
-            if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status === 404) {
+                try {
+                    var error = parse_error_response(response);
+                } catch (e) {
+                    return Promise.reject(new NGSI.InvalidResponseError(null, correlator));
+                }
+                return Promise.reject(new NGSI.NotFoundError({message: error.description, correlator: correlator}));
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator
             });
         });
     };
@@ -2658,21 +3399,27 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#getEntityAttribute
-     * @method
+     * @name NGSI.Connection#v2.getEntityAttribute
+     * @method "v2.getEntityAttribute"
+     * @memberof NGSI.Connection
      *
      * @param {Object} options
-     *     Object with options:
-     *     - `attribute` (`String`): Name of the attribute to query
-     *     - `correlator` (`String`): Transaction id
-     *     - `id` (`String`): Id of the entity to query
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with options:
+     *
+     * - `attribute` (`String`): Name of the attribute to query
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the entity to query
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.getEntityAttribute({
+     * connection.v2.getEntityAttribute({
      *     id: "Bcn_Welt",
      *     attribute: "temperature"
      * }).then(
@@ -2738,16 +3485,17 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status), correlator);
             }
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator);
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 attribute: data
             });
         });
@@ -2760,43 +3508,28 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#replaceEntityAttribute
-     * @method
+     * @name NGSI.Connection#v2.replaceEntityAttribute
+     * @method "v2.replaceEntityAttribute"
+     * @memberof NGSI.Connection
      *
      * @param {Object} changes
-     *     Object with the new values for the attribute
+     *
+     * Object with the new values for the attribute
+     *
      * @param {Object} [options]
-     *     Object with options:
-     *     - `attribute` (`String`): Name of the attribute to modify
-     *     - `correlator` (`String`): Transaction id
-     *     - `id` (`String`): Id of the entity to modify
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with options (those options can also be passed inside the changes
+     * parameter):
+     *
+     * - `attribute` (`String`): Name of the attribute to modify
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the entity to modify
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
-     *
-     * @example <caption>Basic usage</caption>
-     *
-     * connection.replaceEntityAttribute({
-     *     value: 25,
-     *     metadata: {
-     *         "unitCode": {
-     *             "value": "CEL"
-     *         }
-     *     }
-     * }, {
-     *     id: "Bcn_Welt",
-     *     attribute: "temperature"
-     * }).then(
-     *     (response) => {
-     *         // Entity attribute replaced successfully
-     *         // response.attribute attribute details
-     *         // response.correlator transaction id associated with the server response
-     *     }, (error) => {
-     *         // Error replacing entity attribute
-     *         // If the error was reported by Orion, error.correlator will be
-     *         // filled with the associated transaction id
-     *     }
-     * );
      *
      * @example <caption>Simple usage</caption>
      *
@@ -2822,10 +3555,46 @@
      *     }
      * );
      *
+     * @example <caption>Partial update</caption>
+     *
+     * connection.v2.getEntityAttribute({
+     *     id: "Bcn_Welt",
+     *     attribute: "temperature"
+     * }).then((response) => {
+     *     var changes = response.attribute;
+     *     changes.metadata.unitCode = {
+     *         "value": "FAR"
+     *     };
+     *     return connection.v2.replaceEntityAttribute(changes, {
+     *         id: "Bcn_Welt",
+     *         attribute: "temperature"
+     *     });
+     * }).then(
+     *     (response) => {
+     *         // Entity attribute replaced successfully
+     *         // response.attribute attribute details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error replacing entity attribute
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
      */
-    NGSI.Connection.V2.prototype.replaceEntityAttribute = function replaceEntityAttribute(options) {
+    NGSI.Connection.V2.prototype.replaceEntityAttribute = function replaceEntityAttribute(changes, options) {
+        if (changes == null) {
+            throw new TypeError("missing changes parameter");
+        }
+
         if (options == null) {
-            throw new TypeError("missing options parameter");
+            options = {
+                attribute: changes.attribute,
+                correlator: changes.correlator,
+                id: changes.id,
+                service: changes.service,
+                servicepath: changes.servicepath,
+                type: changes.type
+            };
         }
 
         if (options.id == null) {
@@ -2835,8 +3604,8 @@
         }
 
         var data = {
-            value: options.value,
-            metadata: options.metadata
+            value: changes.value,
+            metadata: changes.metadata
         };
         var connection = privates.get(this);
         var url = connection.url + interpolate(
@@ -2853,17 +3622,19 @@
         return makeJSONRequest2.call(connection, url, {
             method: "PUT",
             parameters: parameters,
+            postBody: data,
             requestHeaders: {
                 "FIWARE-Correlator": options.correlator,
                 "FIWARE-Service": options.service,
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 attribute: data
             });
         });
@@ -2877,17 +3648,23 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection.v2#deleteEntityAttribute
-     * @method
+     * @name NGSI.Connection#v2.deleteEntityAttribute
+     * @method "v2.deleteEntityAttribute"
+     * @memberof NGSI.Connection
      *
      * @param {Object} options
-     *     Object providing information about the attribute to remove and any
-     *     extra options
-     *     - `attribute` (`String`): Name of the attribute to delete
-     *     - `correlator` (`String`): Transaction id
-     *     - `id` (`String`): Id of the entity to modify
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object providing information about the attribute to remove and any
+     * extra options:
+     *
+     * - `attribute` (`String`): Name of the attribute to delete
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the entity to modify
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Remove an attribute from an entity</caption>
@@ -2956,11 +3733,19 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
-            if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status === 404) {
+                try {
+                    var error = parse_error_response(response);
+                } catch (e) {
+                    return Promise.reject(new NGSI.InvalidResponseError(null, correlator));
+                }
+                return Promise.reject(new NGSI.NotFoundError({message: error.description, correlator: correlator}));
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator
             });
         });
     };
@@ -2972,21 +3757,27 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#getEntityAttributeValue
-     * @method
+     * @name NGSI.Connection#v2.getEntityAttributeValue
+     * @method "v2.getEntityAttributeValue"
+     * @memberof NGSI.Connection
      *
      * @param {Object} options
-     *     Object with extra options:
-     *     - `attribute` (`String`): Name of the attribute to query
-     *     - `correlator` (`String`): Transaction id
-     *     - `id` (`String`): Id of the entity to query
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `attribute` (`String`): Name of the attribute to query
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the entity to query
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.getEntityAttributeValue({
+     * connection.v2.getEntityAttributeValue({
      *     id: "Bcn_Welt",
      *     attribute: "temperature"
      * }).then(
@@ -3054,16 +3845,17 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator);
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 value: data
             });
         });
@@ -3076,22 +3868,28 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#replaceEntityAttributeValue
-     * @method
+     * @name NGSI.Connection#v2.replaceEntityAttributeValue
+     * @method "v2.replaceEntityAttributeValue"
+     * @memberof NGSI.Connection
      *
      * @param {Object} options
-     *     Object with options:
-     *     - `attribute` (`String`): Name of the attribute to query
-     *     - `correlator` (`String`): Transaction id
-     *     - `id` (`String`): Id of the entity to query
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
-     *     - `value` (`String`|`Boolean`|`Number`|`Object`|`Array`) new value
+     *
+     * Object with options:
+     *
+     * - `attribute` (`String`): Name of the attribute to query
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the entity to query
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     * - `value` (`String`|`Boolean`|`Number`|`Object`|`Array`) new value
+     * - `type` (`String`): Entity type, to avoid ambiguity in case there are
+     *   several entities with the same entity id.
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.replaceEntityAttributeValue({
+     * connection.v2.replaceEntityAttributeValue({
      *     id: "Bcn_Welt",
      *     attribute: "temperature",
      *     value: 21
@@ -3163,11 +3961,12 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 value: options.value
             });
         });
@@ -3180,25 +3979,29 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#listTypes
-     * @method
+     * @name NGSI.Connection#v2.listTypes
+     * @method "v2.listTypes"
+     * @memberof NGSI.Connection
      *
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `count` (`Boolean`; default: `false`): request total count
-     *     - `limit` (`Number`; default: `20`): This option allow you to specify
-     *       the maximum number of subscriptions you want to receive from the
-     *       server
-     *     - `offset` (`Number`; default: `0`): Allows you to skip a given
-     *       number of elements at the beginning
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `count` (`Boolean`; default: `false`): request total count
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of subscriptions you want to receive from the
+     *   server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given
+     *   number of elements at the beginning
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Retrieve first 20 subscriptions from the Context Broker</caption>
      *
-     * connection.listTypes().then(
+     * connection.v2.listTypes().then(
      *     (response) => {
      *         // Types retrieved successfully
      *         // response.results is an array with the retrieved subscriptions
@@ -3233,7 +4036,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + NGSI.endpoints.v2.TYPE_COLLECTION;
+        var url = new URL(NGSI.endpoints.v2.TYPE_COLLECTION, connection.url);
         var optionsparams = [];
         var parameters = parse_pagination_options2(options, optionsparams);
         if (options.values === true) {
@@ -3252,12 +4055,13 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
 
             var result = {
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 limit: options.limit,
                 offset: options.offset,
                 results: JSON.parse(response.responseText),
@@ -3277,19 +4081,23 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#getType
-     * @method
+     * @name NGSI.Connection#v2.getType
+     * @method "v2.getType"
+     * @memberof NGSI.Connection
      *
      * @param {String|Object} options
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.getType("Room").then(
+     * connection.v2.getType("Room").then(
      *     (response) => {
      *         // Type details retrieved successfully
      *         // response.type type details
@@ -3314,7 +4122,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.TYPE_ENTRY, {typeId: encodeURIComponent(options.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.TYPE_ENTRY, {typeId: encodeURIComponent(options.id)}), connection.url);
 
         return makeJSONRequest2.call(connection, url, {
             method: "GET",
@@ -3324,16 +4132,17 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator);
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 type: data
             });
         });
@@ -3346,25 +4155,29 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#listSubscriptions
-     * @method
+     * @name NGSI.Connection#v2.listSubscriptions
+     * @method "v2.listSubscriptions"
+     * @memberof NGSI.Connection
      *
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `count` (`Boolean`; default: `false`): request total count
-     *     - `limit` (`Number`; default: `20`): This option allow you to specify
-     *       the maximum number of subscriptions you want to receive from the
-     *       server
-     *     - `offset` (`Number`; default: `0`): Allows you to skip a given
-     *       number of elements at the beginning
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `count` (`Boolean`; default: `false`): request total count
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of subscriptions you want to receive from the
+     *   server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given
+     *   number of elements at the beginning
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Retrieve first 20 subscriptions from the Context Broker</caption>
      *
-     * connection.listSubscriptions().then(
+     * connection.v2.listSubscriptions().then(
      *     (response) => {
      *         // Subscriptions retrieved successfully
      *         // response.results is an array with the retrieved subscriptions
@@ -3399,7 +4212,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + NGSI.endpoints.v2.SUBSCRIPTION_COLLECTION;
+        var url = new URL(NGSI.endpoints.v2.SUBSCRIPTION_COLLECTION, connection.url);
         var optionsparams = [];
         var parameters = parse_pagination_options2(options, optionsparams);
 
@@ -3416,12 +4229,13 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
 
             var result = {
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 limit: options.limit,
                 offset: options.offset,
                 results: JSON.parse(response.responseText),
@@ -3441,21 +4255,27 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#createSubscription
-     * @method
+     * @name NGSI.Connection#v2.createSubscription
+     * @method "v2.createSubscription"
+     * @memberof NGSI.Connection
      *
      * @param {Object}
-     *     subscription values to be used for creating it
+     *
+     * subscription values to be used for creating it
+     *
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.createSubscription({
+     * connection.v2.createSubscription({
      *    "description": "One subscription to rule them all",
      *    "subject": {
      *        "entities": [
@@ -3497,7 +4317,7 @@
      *
      * @example <caption>Creating a subscription using a callback</caption>
      *
-     * connection.createSubscription({
+     * connection.v2.createSubscription({
      *    "description": "One subscription to rule them all",
      *    "subject": {
      *        "entities": [
@@ -3573,7 +4393,7 @@
             p = Promise.resolve();
         }
 
-        var url = connection.url + NGSI.endpoints.v2.SUBSCRIPTION_COLLECTION;
+        var url = new URL(NGSI.endpoints.v2.SUBSCRIPTION_COLLECTION, connection.url);
         return p.then(function () {
             return makeJSONRequest2.call(connection, url, {
                 method: "POST",
@@ -3585,8 +4405,9 @@
                 }
             });
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 201) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
 
             var subscription_url = response.getHeader('Location');
@@ -3598,7 +4419,7 @@
             }
 
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 subscription: subscription,
                 location: subscription_url
             });
@@ -3617,19 +4438,23 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#getSubscription
-     * @method
+     * @name NGSI.Connection#v2.getSubscription
+     * @method "v2.getSubscription"
+     * @memberof NGSI.Connection
      *
      * @param {String|Object} options
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
      *
-     * connection.getSubscription("abcdef").then(
+     * connection.v2.getSubscription("abcdef").then(
      *     (response) => {
      *         // Subscription details retrieved successfully
      *         // response.subscription subscription details
@@ -3654,7 +4479,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(options.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(options.id)}), connection.url);
 
         return makeJSONRequest2.call(connection, url, {
             method: "GET",
@@ -3664,16 +4489,17 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator);
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator'),
+                correlator: correlator,
                 subscription: data
             });
         });
@@ -3686,15 +4512,19 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#updateSubscription
-     * @method
+     * @name NGSI.Connection#v2.updateSubscription
+     * @method "v2.updateSubscription"
+     * @memberof NGSI.Connection
      *
      * @param {Object} changes
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Update subscription expiration time</caption>
@@ -3738,7 +4568,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(changes.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(changes.id)}), connection.url);
 
         // Remove id from the payload
         delete changes.id;
@@ -3752,11 +4582,12 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator
             });
         });
     };
@@ -3768,16 +4599,20 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection.v2#deleteSubscription
-     * @method
+     * @name NGSI.Connection#v2.deleteSubscription
+     * @method "v2.deleteSubscription"
+     * @memberof NGSI.Connection
      *
      * @param {String|Object} options
-     *     String with the id of the subscription to remove or an object with
-     *     options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `id` (`String`): Id of the subscription to remove
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * String with the id of the subscription to remove or an object with
+     * options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the subscription to remove
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example
@@ -3805,7 +4640,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(options.id)});
+        var url = new URL(interpolate(NGSI.endpoints.v2.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(options.id)}), connection.url);
 
         return makeJSONRequest2.call(connection, url, {
             method: "DELETE",
@@ -3815,11 +4650,19 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
-            if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status === 404) {
+                try {
+                    var error = parse_error_response(response);
+                } catch (e) {
+                    return Promise.reject(new NGSI.InvalidResponseError(null, correlator));
+                }
+                return Promise.reject(new NGSI.NotFoundError({message: error.description, correlator: correlator}));
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator
             });
         });
     };
@@ -3832,16 +4675,20 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection#batchUpdate
-     * @method
+     * @name NGSI.Connection#v2.batchUpdate
+     * @method "v2.batchUpdate"
+     * @memberof NGSI.Connection
      *
      * @param {Object} changes
      * @param {Object} [options]
-     *     Object with extra options:
-     *     - `correlator` (`String`): Transaction id
-     *     - `keyValues` (`Boolean`; default: `false`): Use flat attributes
-     *     - `service` (`String`): Service/tenant to use in this operation
-     *     - `servicepath` (`String`): Service path to use in this operation
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
      * @returns {Promise}
      *
      * @example <caption>Basic usage</caption>
@@ -3892,7 +4739,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(NGSI.endpoints.v2.BATCH_UPDATE_OP);
+        var url = new URL(interpolate(NGSI.endpoints.v2.BATCH_UPDATE_OP), connection.url);
         var parameters = {};
 
         if (options.keyValues === true) {
@@ -3909,11 +4756,12 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 204) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
             return Promise.resolve({
-                correlator: response.getHeader('Fiware-correlator')
+                correlator: correlator
             });
         });
     };
@@ -3925,10 +4773,14 @@
      *
      * @since 1.0
      *
-     * @name NGSI.Connection.v2#batchQuery
-     * @method
+     * @memberof NGSI.Connection
+     * @method "v2.batchQuery"
+     * @memberof NGSI.Connection
      *
-     * @param {Object} [options] Object with extra options:
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
      * - `correlator` (`String`): Transaction id
      * - `count` (`Boolean`; default: `false`): Request total count
      * - `limit` (`Number`; default: `20`): This option allow you to specify
@@ -3942,11 +4794,12 @@
      *   attribute values.
      * - `values` (`Boolean`): Represent entities as an array of attribute
      *   values
+     *
      * @returns {Promise}
      *
      * @example <caption>Retrieve first 20 entities from the Context Broker</caption>
      *
-     * connection.batchQuery({
+     * connection.v2.batchQuery({
      *    "entities": [
      *        {
      *            "idPattern": ".*",
@@ -3986,7 +4839,7 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + NGSI.endpoints.v2.BATCH_QUERY_OP;
+        var url = new URL(NGSI.endpoints.v2.BATCH_QUERY_OP, connection.url);
         var optionsparams = [];
         var parameters = parse_pagination_options2(options, optionsparams);
 
@@ -4015,21 +4868,22 @@
                 "FIWARE-ServicePath": options.servicepath
             }
         }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
             if (response.status !== 200) {
-                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
 
             try {
                 var data = JSON.parse(response.responseText);
             } catch (e) {
-                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator));
             }
 
             var result = {
-                results: data,
+                correlator: correlator,
                 limit: options.limit,
                 offset: options.offset,
-                correlator: response.getHeader("Fiware-correlator")
+                results: data
             };
             if (options.count === true) {
                 result.count = parseInt(response.getHeader("Fiware-Total-Count"), 10);
