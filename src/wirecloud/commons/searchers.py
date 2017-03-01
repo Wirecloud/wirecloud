@@ -59,7 +59,7 @@ class IndexManager(object):
         return self._index_cached
 
     def get_dirname(self):
-        dirname = getattr(settings, 'WIRECLOUD_INDEX_DIR', None)
+        dirname = getattr(settings, 'WIRECLOUD_INDEX_DIR', 'index')
 
         if dirname is None:
             raise AttributeError('"dirname" has not been provided.')
