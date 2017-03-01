@@ -41,7 +41,8 @@
             'contextloaded': new StyledElements.Event(Wirecloud),
             'loaded': new StyledElements.Event(Wirecloud),
             'activeworkspacechanged': new StyledElements.Event(Wirecloud),
-            'viewcontextchanged': new StyledElements.Event(Wirecloud)
+            'viewcontextchanged': new StyledElements.Event(Wirecloud),
+            'unload': new StyledElements.Event(Wirecloud)
         }
     });
     Object.freeze(Wirecloud.events);
