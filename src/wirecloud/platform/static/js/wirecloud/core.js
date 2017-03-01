@@ -101,6 +101,7 @@
                     Wirecloud.UserInterfaceManager.monitorTask(
                         new Wirecloud.Task(gettext('Unloading WireCloud'), () => {})
                     );
+                    Wirecloud.dispatchEvent('unload');
                 },
                 true);
         }
