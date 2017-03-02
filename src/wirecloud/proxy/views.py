@@ -67,20 +67,19 @@ class Proxy():
     # set the timeout to 60 seconds
     socket.setdefaulttimeout(60)
 
-    def do_request(self, request, url, method, workspace):
+    def do_request(self, request, url, method, request_data):
 
         url = iri_to_uri(url)
 
-        request_data = {
+        request_data.update({
             "method": method,
             "url": url,
             "data": None,
             "headers": {},
             "cookies": SimpleCookie(),
             "user": request.user,
-            "workspace": workspace,
             "original-request": request,
-        }
+        })
 
         # Request creation
         proto, host, cgi, param, query = urlparse(url)[:5]
@@ -98,7 +97,7 @@ class Proxy():
                 # Only take into account request body if the request has a
                 # Content-Length header (we don't support chunked requests)
                 request_data['data'] = request
-                request_data['headers']['content-length'] = header[1]
+                request_data['headers']['content-length'] = "%s" % header[1]
                 request_data['data'].len = int(header[1])
 
             elif header_name == 'cookie' or header_name == 'http_cookie':
@@ -229,6 +228,14 @@ def proxy_request(request, protocol, domain, path):
         else:
             raise Exception()
 
+        component_type = request.META.get("HTTP_WIRECLOUD_COMPONENT_TYPE")
+        if component_type is not None:
+            del request.META["HTTP_WIRECLOUD_COMPONENT_TYPE"]
+
+        component_id = request.META.get("HTTP_WIRECLOUD_COMPONENT_ID")
+        if component_id is not None:
+            del request.META["HTTP_WIRECLOUD_COMPONENT_ID"]
+
     except:
         return build_error_response(request, 403, _("Invalid request"))
 
@@ -237,7 +244,11 @@ def proxy_request(request, protocol, domain, path):
         url += '?' + request.GET.urlencode()
 
     try:
-        response = WIRECLOUD_PROXY.do_request(request, url, request_method, workspace)
+        response = WIRECLOUD_PROXY.do_request(request, url, request_method, {
+            "workspace": workspace,
+            "component_type": component_type,
+            "component_id": component_id
+        })
     except Exception as e:
         log_error(request, sys.exc_info())
         msg = _("Error processing proxy request: %s") % e

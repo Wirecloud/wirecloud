@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -33,31 +33,22 @@ from wirecloud.proxy.utils import ValidationError
 
 
 WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
-WIRECLOUD_COMPONENT_TYPE_HEADER = 'wirecloud-component-type'
-WIRECLOUD_COMPONENT_ID_HEADER = 'wirecloud-component-id'
 
 VAR_REF_RE = re.compile(r'^((?P<constant>c)/)?(?P<var_name>.+)$', re.S)
 
 
 def get_variable_value_by_ref(ref, user, cache_manager, component_id, component_type="widget"):
     result = VAR_REF_RE.match(ref)
-    try:
-        # Get widget variables
-        if component_type == "widget":
-            if result.group('constant') == 'c':
-                return result.group('var_name')
-            else:
-                return cache_manager.get_variable_value_from_varname(component_id, result.group('var_name'))
-        # Get operator variables
-        elif component_type == "operator":
-            return cache_manager.workspace.wiringStatus["operators"][component_id]["preferences"][result.group('var_name')]["value"]["users"]["%s" % user.id]
+    if result.group('constant') == 'c':
+        return result.group('var_name')
 
-        else:
-            raise ValidationError()
-    except (IWidget.DoesNotExist, KeyError):
-        return None
+    try:
+        if component_type == "widget":
+            return cache_manager.get_variable_value_from_varname(component_id, result.group('var_name'))
+        else: # if component_type == "operator":
+            return cache_manager.workspace.wiringStatus["operators"][component_id]["preferences"][result.group('var_name')]["value"]["users"]["%s" % user.id]
     except:
-        raise ValidationError('Invalid variable reference: %s' % ref)
+        return None
 
 
 def check_empty_params(**kargs):
@@ -113,7 +104,7 @@ def process_secure_data(text, request, component_id, component_type):
             if encoding == 'url':
                 value = urlquote(value).encode('utf8')
             elif encoding == 'base64':
-                value = base64.b64encode(value.encode('utf8'))[:-1]
+                value = base64.b64encode(value.encode('utf8'))
             else:
                 value = value.encode('utf8')
 
@@ -135,7 +126,7 @@ def process_secure_data(text, request, component_id, component_type):
             if encoding == 'url':
                 value = urlquote(value).encode('utf8')
             elif encoding == 'base64':
-                value = base64.b64encode(value.encode('utf8'))[:-1]
+                value = base64.b64encode(value.encode('utf8'))
             else:
                 value = value.encode('utf8')
 
@@ -151,7 +142,7 @@ def process_secure_data(text, request, component_id, component_type):
             password_value = get_variable_value_by_ref(password_ref, request['user'], cache_manager, component_id, component_type)
             check_invalid_refs(user_ref=user_value, password_ref=password_value)
 
-            token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]
+            token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))
             request['headers']['Authorization'] = 'Basic ' + token.decode('ascii')
         else:
             raise ValidationError('Unsupported action: %s' % action)
@@ -163,7 +154,5 @@ class SecureDataProcessor(object):
         # Process secure data from the X-WireCloud-Secure-Data header
         if WIRECLOUD_SECURE_DATA_HEADER in request['headers']:
             secure_data_value = request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
-            component_type = request['headers'].get(WIRECLOUD_COMPONENT_TYPE_HEADER, "widget")
-            component_id = request['headers'].get(WIRECLOUD_COMPONENT_ID_HEADER, "")
-            process_secure_data(secure_data_value, request, component_id, component_type)
+            process_secure_data(secure_data_value, request, request['component_id'], request['component_type'])
             del request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
