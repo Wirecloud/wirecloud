@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -44,14 +44,7 @@ def get_workspace_description(workspace):
     return get_iwidgets_description(included_iwidgets)
 
 
-def get_current_operator_pref_value(operator, preference, user):
-    if preference['name'] in operator['preferences']:
-        return operator['preferences'][preference['name']]['value']
-    else:
-        return {"users": {"%s" % user.id: preference['default']}}
-
-
-def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets):
+def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets, cache_manager):
 
     widget = iwidget.widget
     widget_description = widget.resource.get_template().get_resource_info()
@@ -59,8 +52,6 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
     iwidget_params = {}
     if iwidget_id in parametrization:
         iwidget_params = parametrization[iwidget_id]
-
-    cache_manager = VariableValueCacheManager(workspace, workspace.creator)
 
     # input and output endpoints
     for output_endpoint in widget_description['wiring']['outputs']:
@@ -97,14 +88,14 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
                     continue
                 value = None
             elif source == 'current':
-                value = cache_manager.get_variable_value_from_varname(iwidget, pref['name'])
+                value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, pref['name'])
             elif source == 'custom':
                 value = iwidget_param_desc['value']
             else:
                 raise Exception('Invalid preference value source: %s' % source)
 
         else:
-            value = cache_manager.get_variable_value_from_varname(iwidget, pref['name'])
+            value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, pref['name'])
 
         preferences[pref['name']] = {
             'readonly': status != 'normal',
@@ -135,13 +126,13 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
                 else:
                     value = None
             elif source == 'current':
-                value = cache_manager.get_variable_value_from_varname(iwidget, prop['name'])
+                value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, prop['name'])
             elif source == 'custom':
                 value = iwidget_param_desc['value']
             else:
                 raise Exception('Invalid property value source: %s' % source)
         else:
-            value = cache_manager.get_variable_value_from_varname(iwidget, prop['name'])
+            value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, prop['name'])
 
         properties[prop['name']] = {
             'readonly': status != 'normal',
@@ -205,6 +196,8 @@ def build_json_template_from_workspace(options, workspace, user):
     if 'ioperators' not in parametrization:
         parametrization['ioperators'] = {}
 
+    cache_manager = VariableValueCacheManager(workspace, workspace.creator)
+
     # Workspace preferences
     options['preferences'] = {}
     for preference in workspace.workspacepreference_set.all():
@@ -225,7 +218,7 @@ def build_json_template_from_workspace(options, workspace, user):
 
         resources = []
         for iwidget in tab.iwidget_set.select_related('widget__resource').all():
-            resource_info = process_iwidget(workspace, iwidget, options['wiring'], parametrization['iwidgets'], readOnlyWidgets)
+            resource_info = process_iwidget(workspace, iwidget, options['wiring'], parametrization['iwidgets'], readOnlyWidgets, cache_manager)
             resources.append(resource_info)
             if options['embedmacs']:
                 options['embedded'].add('/'.join((resource_info['vendor'], resource_info['name'], resource_info['version'])))
@@ -248,7 +241,7 @@ def build_json_template_from_workspace(options, workspace, user):
 
     options['wiring']['version'] = '2.0'
     options['wiring']['operators'] = {}
-    for id_, operator in six.iteritems(wiring_status['operators']):
+    for operator_id, operator in six.iteritems(wiring_status['operators']):
         operator_data = {
             'name': operator['name'],
             'preferences': {},
@@ -257,7 +250,7 @@ def build_json_template_from_workspace(options, workspace, user):
         vendor, name, version = operator['name'].split('/')
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
         operator_info = resource.json_description
-        operator_params = parametrization['ioperators'].get(id_, {})
+        operator_params = parametrization['ioperators'].get(operator_id, {})
         for pref_index, preference in enumerate(operator_info['preferences']):
 
             status = 'normal'
@@ -271,14 +264,14 @@ def build_json_template_from_workspace(options, workspace, user):
                         continue
                     value = None
                 elif source == 'current':
-                    value = get_current_operator_pref_value(operator, preference, user)
+                    value = cache_manager.get_variable_value_from_varname("operator", operator_id, preference['name'])
                 elif source == 'custom':
-                    value = {"users": {"%s" % user.id: ioperator_param_desc['value']}}
+                    value = ioperator_param_desc['value']
                 else:
                     raise Exception('Invalid preference value source: %s' % source)
 
             else:
-                value = get_current_operator_pref_value(operator, preference, user)
+                value = cache_manager.get_variable_value_from_varname("operator", operator_id, preference['name'])
 
             operator_data['preferences'][preference['name']] = {
                 'readonly': status != 'normal',
@@ -287,7 +280,7 @@ def build_json_template_from_workspace(options, workspace, user):
             if value is not None:
                 operator_data['preferences'][preference['name']]['value'] = value
 
-        options['wiring']['operators'][id_] = operator_data
+        options['wiring']['operators'][operator_id] = operator_data
         if options['embedmacs']:
             options['embedded'].add(operator['name'])
 

@@ -269,20 +269,14 @@ class VariableValueCacheManager():
 
         return self.values
 
-    def get_variable_value_from_varname(self, iwidget, var_name):
+    def get_variable_value_from_varname(self, component_type, component_id, var_name):
 
-        if isinstance(iwidget, IWidget):
-            iwidget_id = iwidget.id
-        elif 'id' in iwidget:
-            iwidget_id = iwidget.id
-        else:
-            iwidget_id = int(iwidget)
-
-        values = self.get_variable_values()
-        entry = values['by_varname'][iwidget_id][var_name]
-        value = self._process_entry(entry)
-
-        return value
+        if component_type == "widget":
+            values = self.get_variable_values()
+            entry = values['by_varname'][component_id][var_name]
+            return self._process_entry(entry)
+        else: # if component_type == "operator":
+            return self.workspace.wiringStatus["operators"][component_id]["preferences"][var_name]["value"]["users"]["%s" % self.user.id]
 
     # Get preference data
     def get_variable_data(self, iwidget, var_name):

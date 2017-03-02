@@ -43,10 +43,7 @@ def get_variable_value_by_ref(ref, user, cache_manager, component_id, component_
         return result.group('var_name')
 
     try:
-        if component_type == "widget":
-            return cache_manager.get_variable_value_from_varname(component_id, result.group('var_name'))
-        else: # if component_type == "operator":
-            return cache_manager.workspace.wiringStatus["operators"][component_id]["preferences"][result.group('var_name')]["value"]["users"]["%s" % user.id]
+        return cache_manager.get_variable_value_from_varname(component_type, component_id, result.group('var_name'))
     except:
         return None
 
