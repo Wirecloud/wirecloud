@@ -122,13 +122,10 @@ def process_secure_data(text, request, component_id, component_type):
             check_invalid_refs(var_ref=value)
 
             encoding = options.get('encoding', 'none')
-            substr = substr.encode('utf8')
             if encoding == 'url':
-                value = urlquote(value).encode('utf8')
+                value = urlquote(value)
             elif encoding == 'base64':
-                value = base64.b64encode(value.encode('utf8'))
-            else:
-                value = value.encode('utf8')
+                value = base64.b64encode(value.encode('utf8')).decode('utf8')
 
             request['headers'][header] = request['headers'][header].replace(substr, value)
 

@@ -452,7 +452,7 @@ class ProxySecureDataTests(ProxyTestsBase):
 
     def setUp(self):
 
-        super(ProxyTestsBase, self).setUp()
+        super(ProxySecureDataTests, self).setUp()
 
         user = User.objects.get(username='test')
         iwidget = IWidget.objects.get(pk=3)
@@ -468,7 +468,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         return {
             'status_code': 200,
             'content': json.dumps({
-                'body': kwargs['data'].read(),
+                'body': kwargs['data'].read().decode('utf-8'),
                 'headers': kwargs['headers']
             })
         }
