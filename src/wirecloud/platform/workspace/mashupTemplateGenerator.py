@@ -88,14 +88,14 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
                     continue
                 value = None
             elif source == 'current':
-                value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, pref['name'])
+                value = cache_manager.get_variable_value_from_varname("iwidget", iwidget.id, pref['name'])
             elif source == 'custom':
                 value = iwidget_param_desc['value']
             else:
                 raise Exception('Invalid preference value source: %s' % source)
 
         else:
-            value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, pref['name'])
+            value = cache_manager.get_variable_value_from_varname("iwidget", iwidget.id, pref['name'])
 
         preferences[pref['name']] = {
             'readonly': status != 'normal',
@@ -126,13 +126,13 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
                 else:
                     value = None
             elif source == 'current':
-                value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, prop['name'])
+                value = cache_manager.get_variable_value_from_varname("iwidget", iwidget.id, prop['name'])
             elif source == 'custom':
                 value = iwidget_param_desc['value']
             else:
                 raise Exception('Invalid property value source: %s' % source)
         else:
-            value = cache_manager.get_variable_value_from_varname("widget", iwidget.id, prop['name'])
+            value = cache_manager.get_variable_value_from_varname("iwidget", iwidget.id, prop['name'])
 
         properties[prop['name']] = {
             'readonly': status != 'normal',
@@ -264,14 +264,14 @@ def build_json_template_from_workspace(options, workspace, user):
                         continue
                     value = None
                 elif source == 'current':
-                    value = cache_manager.get_variable_value_from_varname("operator", operator_id, preference['name'])
+                    value = cache_manager.get_variable_value_from_varname("ioperator", operator_id, preference['name'])
                 elif source == 'custom':
                     value = ioperator_param_desc['value']
                 else:
                     raise Exception('Invalid preference value source: %s' % source)
 
             else:
-                value = cache_manager.get_variable_value_from_varname("operator", operator_id, preference['name'])
+                value = cache_manager.get_variable_value_from_varname("ioperator", operator_id, preference['name'])
 
             operator_data['preferences'][preference['name']] = {
                 'readonly': status != 'normal',

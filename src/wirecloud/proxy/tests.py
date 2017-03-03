@@ -32,6 +32,7 @@ from django.contrib.auth.models import User
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
 from wirecloud.platform.models import IWidget
 from wirecloud.platform.plugins import clear_cache
+from wirecloud.platform.workspace.utils import encrypt_value
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -460,6 +461,8 @@ class ProxySecureDataTests(ProxyTestsBase):
         iwidget.save()
         self.assertNotEqual(iwidget.variables['password'], 'test_password')
 
+        iwidget.tab.workspace.wiringStatus['operators']["2"]['preferences']['pref_secure']['value']['users']['2'] = encrypt_value("test_password")
+        iwidget.tab.workspace.save()
         self.client.login(username='test', password='test')
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_response)

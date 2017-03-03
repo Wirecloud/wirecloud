@@ -163,14 +163,14 @@ def get_workspace_list(user):
     return workspaces
 
 
-def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, current_user, workspace_creator):
+def _process_variable(component_type, component_id, vardef, value, forced_values, values_by_varname, current_user, workspace_creator):
     varname = vardef['name']
     entry = {
         'type': vardef['type'],
         'secure': vardef['secure'],
     }
-    if svariwidget in forced_values['iwidget'] and varname in forced_values['iwidget'][svariwidget]:
-        fv_entry = forced_values['iwidget'][svariwidget][varname]
+    if component_id in forced_values[component_type] and varname in forced_values[component_type][component_id]:
+        fv_entry = forced_values[component_type][component_id][varname]
 
         entry['value'] = fv_entry['value']
         if vardef['secure']:
@@ -183,7 +183,6 @@ def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_var
 
     else:
         # Handle multiuser variables
-        value = iwidget.variables.get(varname, None)
         variable_user = current_user if vardef.get("multiuser", False) else workspace_creator
         if value is None or value["users"].get("%s" % variable_user.id, None) is None:
             value = parse_value_from_text(entry, vardef['default'])
@@ -194,14 +193,15 @@ def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_var
         entry['readonly'] = False
         entry['hidden'] = False
 
-    values_by_varname[iwidget.id][varname] = entry
-    values_by_varid["%s/%s" % (iwidget.id, varname)] = entry
+    values_by_varname[component_type][component_id][varname] = entry
 
 
 def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     """ populates VariableValue cached values for that user """
-    values_by_varid = {}
-    values_by_varname = {}
+    values_by_varname = {
+        "ioperator": {},
+        "iwidget": {},
+    }
     if forced_values is None:
         context_values = get_context_values(workspace, user)
         preferences = get_workspace_preference_values(workspace)
@@ -210,7 +210,7 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     for iwidget in IWidget.objects.filter(tab__workspace=workspace):
         # forced_values uses string keys
         svariwidget = "%s" % iwidget.id
-        values_by_varname[iwidget.id] = {}
+        values_by_varname["iwidget"][svariwidget] = {}
 
         if iwidget.widget is None:
             continue
@@ -218,18 +218,33 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
         iwidget_info = iwidget.widget.resource.get_processed_info()
 
         for vardef in iwidget_info['preferences']:
-            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user, workspace.creator)
+            value = iwidget.variables.get(vardef['name'], None)
+            _process_variable("iwidget", svariwidget, vardef, value, forced_values, values_by_varname, user, workspace.creator)
 
         for vardef in iwidget_info['properties']:
-            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid, user, workspace.creator)
+            value = iwidget.variables.get(vardef['name'], None)
+            _process_variable("iwidget", svariwidget, vardef, value, forced_values, values_by_varname, user, workspace.creator)
 
-    values = {
-        'by_varid': values_by_varid,
-        'by_varname': values_by_varname,
-    }
-    cache.set(key, values)
+    for operator_id, operator in six.iteritems(workspace.wiringStatus.get('operators', {})):
 
-    return values
+        values_by_varname["ioperator"][operator_id] = {}
+        vendor, name, version = operator['name'].split('/')
+        try:
+            operator_info = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()
+        except CatalogueResource.DoesNotExist:
+            continue
+
+        for vardef in operator_info['preferences']:
+            value = operator["preferences"].get(vardef['name'], {}).get("value")
+            _process_variable("ioperator", operator_id, vardef, value, forced_values, values_by_varname, user, workspace.creator)
+
+        for vardef in operator_info['properties']:
+            value = operator["properties"].get(vardef['name'], {}).get("value")
+            _process_variable("ioperator", operator_id, vardef, value, forced_values, values_by_varname, user, workspace.creator)
+
+    cache.set(key, values_by_varname)
+
+    return values_by_varname
 
 
 def _variable_values_cache_key(workspace, user):
@@ -270,18 +285,14 @@ class VariableValueCacheManager():
         return self.values
 
     def get_variable_value_from_varname(self, component_type, component_id, var_name):
-
-        if component_type == "widget":
-            values = self.get_variable_values()
-            entry = values['by_varname'][component_id][var_name]
-            return self._process_entry(entry)
-        else: # if component_type == "operator":
-            return self.workspace.wiringStatus["operators"][component_id]["preferences"][var_name]["value"]["users"]["%s" % self.user.id]
+        values = self.get_variable_values()
+        entry = values[component_type]["%s" % component_id][var_name]
+        return self._process_entry(entry)
 
     # Get preference data
     def get_variable_data(self, iwidget, var_name):
         values = self.get_variable_values()
-        entry = values['by_varname'][iwidget.id][var_name]
+        entry = values['iwidget']["%s" % iwidget.id][var_name]
 
         # If secure and has value, censor it
         if entry['secure'] and entry["value"] != "":
@@ -300,7 +311,7 @@ class VariableValueCacheManager():
     # Get the persistent property data
     def get_property_data(self, iwidget, var_name):
         values = self.get_variable_values()
-        entry = values['by_varname'][iwidget.id][var_name]
+        entry = values['iwidget']["%s" % iwidget.id][var_name]
 
         return {
             'name': var_name,

@@ -31,14 +31,18 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, get_current_domain, consumes, parse_json_request
 from wirecloud.platform.models import Workspace
+from wirecloud.platform.workspace.utils import encrypt_value
 from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_operator_cache_key
 
 
 class WiringEntry(Resource):
 
     # Build multiuser structure with the new value, keeping the other users values
-    def handleMultiuser(self, request, new_variable, old_variable):
-        new_value = new_variable["value"]
+    def handleMultiuser(self, request, secure, new_variable, old_variable):
+        if secure:
+            new_value = encrypt_value(new_variable["value"])
+        else:
+            new_value = new_variable["value"]
 
         new_variable = deepcopy(old_variable)
 
@@ -82,16 +86,14 @@ class WiringEntry(Resource):
                 old_preference = old_operator['preferences'][preference_name]
                 new_preference = operator['preferences'][preference_name]
 
-                # Check if its multiuser
                 if preference_name in operator_preferences:
                     pref = operator_preferences[preference_name]
                     preference_secure = pref.get("secure", False)
                 else:
                     preference_secure = False
 
-                # Update variable value
-                if not preference_secure or can_update_secure:
-                    # Variables can only be updated if multisuer
+                # Only multiuser variables can can be updated
+                if preference_secure and not can_update_secure:
                     if old_preference["value"]["users"]["%s" % owner.id] != new_preference["value"]:
                         return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
@@ -123,7 +125,7 @@ class WiringEntry(Resource):
                             new_property["value"] = old_property["value"]
                     else:
                         # Handle multiuser
-                        new_property = self.handleMultiuser(request, new_property, old_property)
+                        new_property = self.handleMultiuser(request, property_secure, new_property, old_property)
 
                 operator['properties'][property_name] = new_property
 
@@ -171,14 +173,17 @@ class WiringEntry(Resource):
                 updated_properties = ()
 
             # Handle preferences
-
             for preference_name in added_preferences:
                 if operator['preferences'][preference_name].get('readonly', False) or operator['preferences'][preference_name].get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden preferences cannot be created using this API'))
 
                 # Handle multiuser
                 new_preference = operator['preferences'][preference_name]
-                new_preference["value"] = {"users": {"%s" % request.user.id: new_preference["value"]}}
+                if secure:
+                    new_value = encrypt_value(new_preference["value"])
+                else:
+                    new_value = new_preference["value"]
+                new_preference["value"] = {"users": {"%s" % request.user.id: new_value}}
                 operator['preferences'][preference_name] = new_preference
 
             for preference_name in removed_preferences:
@@ -209,7 +214,7 @@ class WiringEntry(Resource):
                     new_preference["value"] = old_preference["value"]
                 else:
                     # Handle multiuser
-                    new_preference = self.handleMultiuser(request, new_preference, old_preference)
+                    new_preference = self.handleMultiuser(request, preference_secure, new_preference, old_preference)
                 operator['preferences'][preference_name] = new_preference
 
             # Handle properties
@@ -246,7 +251,7 @@ class WiringEntry(Resource):
                     new_property["value"] = old_property["value"]
                 else:
                     # Handle multiuser
-                    new_property = self.handleMultiuser(request, new_property, old_property)
+                    new_property = self.handleMultiuser(request, property_secure, new_property, old_property)
                 operator['properties'][property_name] = new_property
 
         return True

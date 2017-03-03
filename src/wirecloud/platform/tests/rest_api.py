@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -35,6 +35,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 from wirecloud.platform.models import IWidget, Tab, Workspace, UserWorkspace, WorkspacePreference
 from wirecloud.platform.widget import utils as localcatalogue
+from wirecloud.platform.workspace.utils import encrypt_value
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -1166,6 +1167,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.patch(url, data, content_type='application/json-patch+json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 404)
 
+    @uses_extra_resources(('Wirecloud_TestOperatorSecure_1.0.zip',), shared=True)
     def test_workspace_wiring_entry_patch_preference_value(self):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
@@ -1183,7 +1185,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 204)
 
         # Check if preferences changed
-        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"]["users"]["4"], "helloWorld")
+        self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["pref_secure"]["value"]["users"]["4"], encrypt_value("helloWorld"))
         # Other preferences should not be modified
         self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"]["users"]["4"], "test_username")
 
