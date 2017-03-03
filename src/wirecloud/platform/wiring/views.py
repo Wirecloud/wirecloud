@@ -93,7 +93,7 @@ class WiringEntry(Resource):
                     preference_secure = False
 
                 # Only multiuser variables can can be updated
-                if preference_secure and not can_update_secure:
+                if not preference_secure or can_update_secure:
                     if old_preference["value"]["users"]["%s" % owner.id] != new_preference["value"]:
                         return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
@@ -155,14 +155,6 @@ class WiringEntry(Resource):
                 added_properties = set(operator.get('properties', {}).keys()) - set(old_operator['properties'].keys())
                 removed_properties = set(old_operator['properties'].keys()) - set(operator.get('properties', {}).keys())
                 updated_properties = set(operator.get('properties', {}).keys()).intersection(old_operator['properties'].keys())
-                vendor, name, version = operator["name"].split("/")
-                try:
-                    resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info(process_variables=True)
-                    operator_preferences = resource["variables"]["preferences"]
-                    operator_properties = resource["variables"]["properties"]
-                except CatalogueResource.DoesNotExist:
-                    operator_preferences = []
-                    operator_properties = []
             else:
                 # New operator
                 added_preferences = operator['preferences'].keys()
@@ -172,6 +164,15 @@ class WiringEntry(Resource):
                 removed_properties = ()
                 updated_properties = ()
 
+            try:
+                vendor, name, version = operator["name"].split("/")
+                resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info(process_variables=True)
+                operator_preferences = resource["variables"]["preferences"]
+                operator_properties = resource["variables"]["properties"]
+            except CatalogueResource.DoesNotExist:
+                operator_preferences = {}
+                operator_properties = {}
+
             # Handle preferences
             for preference_name in added_preferences:
                 if operator['preferences'][preference_name].get('readonly', False) or operator['preferences'][preference_name].get('hidden', False):
@@ -179,7 +180,8 @@ class WiringEntry(Resource):
 
                 # Handle multiuser
                 new_preference = operator['preferences'][preference_name]
-                if secure:
+                preference_secure = operator_preferences.get(preference_name, {}).get("secure", False)
+                if preference_secure:
                     new_value = encrypt_value(new_preference["value"])
                 else:
                     new_value = new_preference["value"]
@@ -198,11 +200,7 @@ class WiringEntry(Resource):
                     continue
 
                 # Check if its multiuser
-                if preference_name in operator_preferences:
-                    pref = operator_preferences[preference_name]
-                    preference_secure = pref.get("secure", False)
-                else:
-                    preference_secure = False
+                preference_secure = operator_preferences.get(preference_name, {}).get("secure", False)
 
                 if old_preference.get('readonly', False) != new_preference.get('readonly', False) or old_preference.get('hidden', False) != new_preference.get('hidden', False):
                     return build_error_response(request, 403, _('Read only and hidden status cannot be changed using this API'))

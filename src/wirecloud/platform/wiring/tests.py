@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,6 +38,7 @@ from wirecloud.commons.utils.remote import FormModalTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 from wirecloud.platform import plugins
 from wirecloud.platform.models import CatalogueResource, IWidget, Workspace
+from wirecloud.platform.workspace.utils import encrypt_value
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -1038,7 +1039,7 @@ class WiringTestCase(WirecloudTestCase):
         response = client.patch(self.wiring_url, data, content_type='application/json-patch+json')
         self.assertEqual(response.status_code, 204)
         workspace = Workspace.objects.get(id=self.workspace_id)
-        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"2": "c"}})
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"2": encrypt_value("c")}})
 
     def test_multiuser_secure_properties_can_be_updated_by_allowed_user_patches(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
@@ -1072,7 +1073,7 @@ class WiringTestCase(WirecloudTestCase):
         response = client.patch(self.wiring_url, data, content_type='application/json-patch+json')
         self.assertEqual(response.status_code, 204)
         workspace = Workspace.objects.get(id=self.workspace_id)
-        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"3": "c"}})
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop3"]["value"], {"users": {"3": encrypt_value("c")}})
 
     def test_multiuser_secure_properties_are_not_updated_by_owner_puts(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
