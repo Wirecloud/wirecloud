@@ -30,11 +30,11 @@
     var Wirecloud = platform.Wirecloud;
 
     /**
-     * Install a component
+     * Installs a component
      *
      * @since 1.0
      *
-     * @param {String} componentURL
+     * @param {String} url
      *      The URL where the component is located.
      *
      * @returns {Wirecloud.Task}
@@ -44,7 +44,7 @@
     };
 
     /**
-     * Uninstall a component.
+     * Uninstalls a component.
      *
      * @since 1.0
      *
@@ -52,17 +52,22 @@
      *      The vendor of the component
      * @param {String} name
      *      The  name of the component
-     * @param {String} version
+     * @param {String} [version]
      *      The version of the component. If undefined all versions will be uninstalled.
+     *
+     * @returns {Promise}
      */
     var uninstall = function uninstall(vendor, name, version) {
-        return new Promise(function (fulfill, reject) {
-            var options = {
-                onSuccess: function () { fulfill(true); },
-                onFailure: function () { reject(false); },
-            };
+        if (vendor == null) {
+            throw new TypeError("missing vendor parameter");
+        }
 
-            var component;
+        if (name == null) {
+            throw new TypeError("missing name parameter");
+        }
+
+        return new Promise(function (resolve, reject) {
+            var component, options = {};
 
             if (version) {
                 component = Wirecloud.LocalCatalogue.getResource(vendor, name, version);
@@ -71,15 +76,19 @@
                 options.allVersions = true;
             }
             if (component) {
-                Wirecloud.LocalCatalogue.uninstallResource(component, options);
-            } else { // If the component does not exist, its already uninstalled
-                fulfill(true);
+                Wirecloud.LocalCatalogue.uninstallResource(component, options).then(
+                    resolve.bind(null, undefined),
+                    reject
+                );
+            } else {
+                // Do nothing if the component is already uninstalled
+                resolve();
             }
         });
     };
 
     /**
-     * Returns if any version of a component is installed
+     * Checks if the component is currently installed.
      *
      * @since 1.0
      *
@@ -87,38 +96,26 @@
      *      The vendor of the component
      * @param {String} name
      *      The  name of the component
-     * @return {boolean} isInstalled
-     *      If any version of the component is installed
-     */
-    var isAnyInstalled = function isAnyInstalled(vendor, name) {
-        var mac = [vendor, name].join('/');
-        return Wirecloud.LocalCatalogue.resourceVersions[mac].length > 0;
-    };
-
-    /**
-     * Returns if a version of a component is installed
+     * @param {String} [version]
+     *      Version of the component to check
      *
-     * @since 1.0
-     *
-     * @param {String} vendor
-     *      The vendor of the component
-     * @param {String} name
-     *      The  name of the component
-     * @param {String} version
-     *      The version of the component.
-     * @return {boolean} isInstalled
-     *      If the component is installed
+     * @returns {boolean}
+     *      `true` if the component is installed
      */
     var isInstalled = function isInstalled(vendor, name, version) {
-        return Wirecloud.LocalCatalogue.resourceExistsId([vendor, name, version].join('/'));
+        if (version !== null) {
+            return Wirecloud.LocalCatalogue.resourceExistsId([vendor, name, version].join('/'));
+        } else {
+            var mac = [vendor, name].join('/');
+            return Wirecloud.LocalCatalogue.resourceVersions[mac].length > 0;
+        }
     };
 
     MashupPlatform.components = {};
     Object.defineProperties(MashupPlatform.components, {
         install: {value: install},
         uninstall: {value: uninstall},
-        isInstalled: {value: isInstalled},
-        isAnyInstalled: {value: isAnyInstalled},
+        isInstalled: {value: isInstalled}
     });
 
 })();
