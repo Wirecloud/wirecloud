@@ -185,6 +185,21 @@
                 privates.get(this).connections.push(connection);
             }
 
+            // Create the conection on the server
+            var requestContent = [{
+                op: "add",
+                path: "/connections/-",
+                value: connection
+            }];
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                workspace_id: this.workspace.id,
+            }), {
+                method: 'PATCH',
+                contentType: 'application/json-patch+json',
+                requestHeaders: {'Accept': 'application/json'},
+                postBody: JSON.stringify(requestContent)
+            })
+
             return connection;
         },
 
