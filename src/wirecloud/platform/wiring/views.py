@@ -232,6 +232,9 @@ class WiringEntry(Resource):
             for property_name in updated_properties:
                 old_property = old_operator['properties'][property_name]
                 new_property = operator['properties'][property_name]
+                # Using patch means no change at all on non-modified properties
+                if old_property == new_property:
+                    continue
 
                 # Check if its multiuser
                 if property_name in operator_properties:
