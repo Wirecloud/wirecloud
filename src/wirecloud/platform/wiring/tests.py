@@ -877,6 +877,46 @@ class WiringTestCase(WirecloudTestCase):
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 403)
 
+    def test_properties_can_be_updated_patch(self):
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.public = False
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorMultiuser/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'default'}}}
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'prop2': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}}
+                    }
+                },
+            },
+            'connections': [],
+        }
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = json.dumps([
+            {
+                'op': "replace",
+                'path': "/operators/1/properties/prop1/value",
+                'value': "c"
+            }
+        ])
+
+        response = client.patch(self.wiring_url, data, content_type='application/json-patch+json')
+
+        self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop1"]["value"], {"users": {"2": "c"}})
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["properties"]["prop2"]["value"], {"users": {"2": "b"}})
+        self.assertEqual(workspace.wiringStatus["operators"]["1"]["preferences"]["pref1"]["value"], {"users": {"2": "default"}})
+
     def test_multiuser_properties_can_be_updated_by_owner(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.public = False
