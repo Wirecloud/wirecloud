@@ -173,34 +173,41 @@
          * @returns {Wirecloud.Wiring.Connection}
          */
         createConnection: function createConnection(source, target, options) {
-            options = utils.merge({
-                commit: false
-            }, options);
 
             var connection = new Wirecloud.wiring.Connection(this, source, target, options);
 
-            if (options.commit) {
-                connection.addEventListener('remove', privates.get(this).on_removeconnection);
-                connection.establish();
-                privates.get(this).connections.push(connection);
-            }
+            connection.addEventListener('remove', privates.get(this).on_removeconnection);
+            connection.establish();
+            privates.get(this).connections.push(connection);
 
             // Create the conection on the server
-            var requestContent = [{
-                op: "add",
-                path: "/connections/-",
-                value: connection
-            }];
-            Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
-                workspace_id: this.workspace.id,
-            }), {
-                method: 'PATCH',
-                contentType: 'application/json-patch+json',
-                requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify(requestContent)
-            })
+            if (!connection.volatile) {
+                var requestContent = [{
+                    op: "add",
+                    path: "/connections/-",
+                    value: connection
+                }];
+                return Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                    workspace_id: this.workspace.id,
+                }), {
+                    method: 'PATCH',
+                    contentType: 'application/json-patch+json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(requestContent)
+                }).then((response) => {
+                    if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                        return Promise.reject(utils.gettext("Unexpected response from server"));
+                    } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                        return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                    }
 
-            return connection;
+                    return Promise.resolve(connection);
+                });
+            } else {
+                return new Wirecloud.Task("Creating connection", (resolve) => {
+                    resolve(connection);
+                });
+            }
         },
 
         /**
