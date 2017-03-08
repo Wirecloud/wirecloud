@@ -217,11 +217,11 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
 
         iwidget_info = iwidget.widget.resource.get_processed_info()
 
-        for vardef in iwidget_info['preferences']:
+        for vardef in iwidget_info.get('preferences', {}):
             value = iwidget.variables.get(vardef['name'], None)
             _process_variable("iwidget", svariwidget, vardef, value, forced_values, values_by_varname, user, workspace.creator)
 
-        for vardef in iwidget_info['properties']:
+        for vardef in iwidget_info.get('properties', {}):
             value = iwidget.variables.get(vardef['name'], None)
             _process_variable("iwidget", svariwidget, vardef, value, forced_values, values_by_varname, user, workspace.creator)
 
@@ -233,13 +233,12 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
             operator_info = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version).get_processed_info()
         except CatalogueResource.DoesNotExist:
             continue
-
-        for vardef in operator_info['preferences']:
-            value = operator["preferences"].get(vardef['name'], {}).get("value")
+        for vardef in operator_info.get('preferences', {}):
+            value = operator.get("preferences", {}).get(vardef['name'], {}).get("value")
             _process_variable("ioperator", operator_id, vardef, value, forced_values, values_by_varname, user, workspace.creator)
 
-        for vardef in operator_info['properties']:
-            value = operator["properties"].get(vardef['name'], {}).get("value")
+        for vardef in operator_info.get('properties', {}):
+            value = operator.get("properties", {}).get(vardef['name'], {}).get("value")
             _process_variable("ioperator", operator_id, vardef, value, forced_values, values_by_varname, user, workspace.creator)
 
     cache.set(key, values_by_varname)
