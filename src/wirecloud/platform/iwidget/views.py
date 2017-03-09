@@ -203,6 +203,28 @@ class IWidgetPreferences(Resource):
         iwidget.save()
         return HttpResponse(status=204)
 
+    @authentication_required
+    def read(self, request, workspace_id, tab_id, iwidget_id):
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
+
+        iwidget = get_object_or_404(IWidget, pk=iwidget_id)
+        if iwidget.tab_id != int(tab_id):
+            raise Http404
+
+        if iwidget.widget is None:
+            return HttpResponse(json.dumps({}), content_type='application/json; charset=UTF-8')
+
+        iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
+
+        cache_manager = VariableValueCacheManager(workspace, request.user)
+        prefs = iwidget_info['variables']['preferences']
+
+        data = {}
+        for var in prefs:
+            data[var] = cache_manager.get_variable_data("iwidget", iwidget_id, var)
+
+        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
+
 
 class IWidgetProperties(Resource):
 
@@ -242,3 +264,25 @@ class IWidgetProperties(Resource):
 
         iwidget.save()
         return HttpResponse(status=204)
+
+    @authentication_required
+    def read(self, request, workspace_id, tab_id, iwidget_id):
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
+
+        iwidget = get_object_or_404(IWidget, pk=iwidget_id)
+        if iwidget.tab_id != int(tab_id):
+            raise Http404
+
+        if iwidget.widget is None:
+            return HttpResponse(json.dumps({}), content_type='application/json; charset=UTF-8')
+
+        iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
+
+        cache_manager = VariableValueCacheManager(workspace, request.user)
+        props = iwidget_info['variables']['properties']
+
+        data = {}
+        for var in props:
+            data[var] = cache_manager.get_variable_data("iwidget", iwidget_id, var)
+
+        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')

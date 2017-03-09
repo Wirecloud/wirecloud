@@ -91,11 +91,11 @@ urlpatterns = (
         name='wirecloud.iwidget_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences$',
-        iwidget_views.IWidgetPreferences(permitted_methods=('POST',)),
+        iwidget_views.IWidgetPreferences(permitted_methods=('POST', 'GET',)),
         name='wirecloud.iwidget_preferences'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/properties$',
-        iwidget_views.IWidgetProperties(permitted_methods=('POST',)),
+        iwidget_views.IWidgetProperties(permitted_methods=('POST','GET',)),
         name='wirecloud.iwidget_properties'
     ),
 
