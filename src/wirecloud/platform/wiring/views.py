@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import jsonpatch
 
 from django.core.cache import cache
@@ -31,7 +32,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, get_current_domain, consumes, parse_json_request
 from wirecloud.platform.models import Workspace
-from wirecloud.platform.workspace.utils import encrypt_value
+from wirecloud.platform.workspace.utils import encrypt_value, VariableValueCacheManager
 from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_operator_cache_key
 
 
@@ -345,3 +346,20 @@ class OperatorEntry(Resource):
             cache.set(key, cached_response, cache_timeout)
 
         return cached_response.get_response()
+
+class OperatorVariablesEntry(Resource):
+
+    def read(self, request, workspace_id, operator_id):
+
+        workspace = get_object_or_404(Workspace, id=workspace_id)
+
+        if not workspace.is_available_for(request.user):
+            return build_error_response(request, 403, _("You don't have permission to access this workspace"))
+
+        cache_manager = VariableValueCacheManager(workspace, request.user)
+        variables = cache_manager.get_variable_values()["ioperator"][operator_id]
+        data = {}
+        for var in variables:
+            data[var] = cache_manager.get_variable_data("ioperator", operator_id, var)
+
+        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')

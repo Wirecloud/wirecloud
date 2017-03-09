@@ -429,16 +429,40 @@
     var change_meta = function change_meta(meta) {
         var old_value = privates.get(this).meta;
         privates.get(this).meta = meta;
-        build_endpoints.call(this);
-        build_prefs.call(this, this.preferences);
-        build_props.call(this, this.properties);
 
-        if (this.loaded) {
-            on_unload.call(this);
-            this.load();
-        }
+        Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_VARIABLES_ENTRY.evaluate({
+            workspace_id: this.wiring.workspace.id,
+            operator_id: this.id
+        }), {
+            method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
+        }).then((response) => {
+            if (response.status === 200) {
+                this.preferences = {};
+                this.properties =  {};
+                var preference_keys = Object.keys(this.meta.preferences);
+                var property_keys = Object.keys(this.meta.properties);
+                var new_values = JSON.parse(response.responseText);
 
-        this.dispatchEvent('change', ['meta'], {meta: old_value});
+                preference_keys.forEach((key) => {
+                    this.preferences[key] = new_values[key];
+                });
+                property_keys.forEach((key) => {
+                    this.properties[key] = new_values[key];
+                });
+
+                build_endpoints.call(this);
+                build_prefs.call(this, this.preferences);
+                build_props.call(this, this.properties);
+
+                if (this.loaded) {
+                    on_unload.call(this);
+                    this.load();
+                }
+
+                this.dispatchEvent('change', ['meta'], {meta: old_value});
+            }
+        });
     };
 
     // =========================================================================
