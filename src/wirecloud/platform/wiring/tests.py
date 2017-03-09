@@ -2470,6 +2470,8 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
             draggable_widget.change_version("3.0")
 
+            WebDriverWait(self.driver, timeout=1).until(lambda driver: len(wiring.find_connections(extra_class="missing")) == 1)
+
             connection = wiring.find_connections(extra_class="missing")[0]
             connection.remove()
 
