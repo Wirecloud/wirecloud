@@ -38,11 +38,6 @@
         this.resourceVersions[meta.group_id].push(meta);
         this.resources[meta.uri] = meta;
 
-        if (!(meta.type in this.resourcesByType)) {
-            this.resourcesByType[meta.type] = {};
-        }
-        this.resourcesByType[meta.type][meta.uri] = meta;
-
         delete this.missingComponents[meta.uri];
     };
 
@@ -77,7 +72,6 @@
 
         this.resources = {};
         this.resourceVersions = {};
-        this.resourcesByType = {};
         this.missingComponents = {};
 
         for (resource_id in resources) {
@@ -126,14 +120,6 @@
             .toTask("Requesting workspace components");
     };
 
-    WorkspaceCatalogue.prototype.getAvailableResourcesByType = function getAvailableResourcesByType(type) {
-        if (type in this.resourcesByType) {
-            return this.resourcesByType[type];
-        } else {
-            return {};
-        }
-    };
-
     WorkspaceCatalogue.prototype.remove = function remove(resource) {
         var index, new_meta;
 
@@ -145,7 +131,6 @@
 
         if (resource != null) {
             delete this.resources[resource.uri];
-            delete this.resourcesByType[resource.type][resource.uri];
             index = this.resourceVersions[resource.group_id].indexOf(resource);
             this.resourceVersions[resource.group_id].splice(index, 1);
 

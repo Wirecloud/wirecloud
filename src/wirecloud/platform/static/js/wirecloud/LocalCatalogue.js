@@ -30,11 +30,11 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var unload_affected_components = function unload_affected_components(resource, result) {
+    var unload_affected_components = function unload_affected_components(component, result) {
         var task_title;
-        switch (resource.type) {
+        switch (component.type) {
         case 'widget':
-            task_title = utils.gettext('Unloading affected operators');
+            task_title = utils.gettext('Unloading affected widgets');
             break;
         case 'operator':
             task_title = utils.gettext('Unloading affected operators');
@@ -44,55 +44,53 @@
         }
 
         return new Wirecloud.Task(task_title, function (resolve, reject, update) {
-            switch (resource.type) {
-            case 'widget':
-                result.affectedVersions.forEach(function (version) {
-                    var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
+            for (var workspaceid in Wirecloud.workspaceInstances) {
+                var workspace = Wirecloud.workspaceInstances[workspaceid];
+                if (!(workspace instanceof Wirecloud.Workspace)) {
+                    continue;
+                }
+                result.affectedVersions.forEach((version) => {
+                    var list;
+                    var new_meta = workspace.resources.remove(component.group_id + '/' + version);
                     if (new_meta != null) {
-                        Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
-                            if (widget.meta.uri === new_meta.uri) {
-                                widget.upgrade(new_meta);
+                        if (component.type === "widget") {
+                            list = workspace.widgets;
+                        } else /* if component.type === "operator") */ {
+                            list = workspace.wiring.operators;
+                        }
+                        list.forEach(function (component) {
+                            if (component.meta.uri === new_meta.uri) {
+                                component.upgrade(new_meta);
                             }
                         });
                     }
                 });
-                break;
-            case 'operator':
-                result.affectedVersions.forEach(function (version) {
-                    var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
-                    if (new_meta != null) {
-                        Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
-                            if (operator.meta.uri === new_meta.uri) {
-                                operator.upgrade(new_meta);
-                            }
-                        });
-                    }
-                });
-                break;
             }
             resolve(result);
         });
     };
 
-    var purge_component_info = function purge_component_info(resource, result) {
+    var purge_component_info = function purge_component_info(component, result) {
         var task_title = utils.interpolate(
             utils.gettext("Purging %(componenttype)s info"),
             {
-                componenttype: resource.type
+                componenttype: component.type
             }
         );
 
         return new Wirecloud.Task(task_title, function (resolve, reject) {
             result.affectedVersions.forEach(function (version) {
-                var resource_full_id, index;
+                var component_full_id, index;
                 try {
-                    resource_full_id = resource.group_id + '/' + version;
-                    resource = this.resources[resource_full_id];
-                    delete this.resources[resource_full_id];
-                    delete this.resourcesByType[resource.type][resource_full_id];
+                    component_full_id = component.group_id + '/' + version;
+                    component = this.resources[component_full_id];
+                    delete this.resources[component_full_id];
 
-                    index = this.resourceVersions[resource.group_id].indexOf(resource);
-                    this.resourceVersions[resource.group_id].splice(index, 1);
+                    index = this.resourceVersions[component.group_id].indexOf(component);
+                    this.resourceVersions[component.group_id].splice(index, 1);
+                    if (this.resourceVersions[component.group_id].length === 0) {
+                        delete this.resourceVersions[component.group_id];
+                    }
                 } catch (e) {}
             }, this);
             resolve(result);
@@ -105,10 +103,16 @@
 
     var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local', permissions: {'delete': false}});
 
+    /**
+     * Clears the component cache and init it with then
+     */
     LocalCatalogue.reload = function reload() {
         var request;
 
-        if (Wirecloud.contextManager.get('username') !== 'anonymous') {
+        this.resources = {};
+        this.resourceVersions = {};
+
+        if (Wirecloud.contextManager.get('isanonymous') === false) {
             request = Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
                 method: 'GET',
                 requestHeaders: {'Accept': 'application/json'}
@@ -123,10 +127,6 @@
             var resources, resource_id, msg;
 
             resources = JSON.parse(response.responseText);
-
-            this.resources = {};
-            this.resourceVersions = {};
-            this.resourcesByType = {};
 
             for (resource_id in resources) {
                 try {
@@ -143,6 +143,21 @@
         });
     };
 
+    /**
+     * Makes unavaliable a component for the logged user
+     *
+     * @param {Wirecloud.MashableApplicationComponent} component
+     *
+     * component to uninstall
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `allversions`: uninstall all versions of the component
+     *
+     * @returns {Wirecloud.Task}
+     */
     LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
         var url, msg;
 
@@ -170,34 +185,43 @@
             method: 'DELETE',
             requestHeaders: {'Accept': 'application/json'}
         }).then(function (response) {
-            return new Promise(function (resolve, reject) {
-                var result;
-                if (response.status !== 200) {
-                    reject(new Error("Unexpected response from server"));
-                }
+            if (response.status !== 200) {
+                return Promise.reject(new Error("Unexpected response from server"));
+            }
 
-                try {
-                    result = JSON.parse(response.responseText);
-                    if (result.affectedVersions == null) {
-                        result.affectedVersions = [resource.version];
-                    }
-                } catch (e) {
-                    reject(e);
-                    return;
+            try {
+                var result = JSON.parse(response.responseText);
+                if (result.affectedVersions == null) {
+                    result.affectedVersions = [resource.version];
                 }
-                resolve(result);
-            });
+            } catch (e) {
+                return Promise.reject(e);
+            }
+            return Promise.resolve(result);
         }).then(unload_affected_components.bind(this, resource))
         .then(purge_component_info.bind(this, resource))
         .toTask(msg);
     };
 
+    /**
+     * Removes this component from the server, making it unavaliable for all the users.
+     *
+     * @returns {Wirecloud.Task}
+     */
     LocalCatalogue.deleteResource = function deleteResource(resource, options) {
         return Wirecloud.WirecloudCatalogue.prototype.deleteResource.call(this, resource, options)
             .then(unload_affected_components.bind(this, resource))
             .then(purge_component_info.bind(this, resource));
     };
 
+    /**
+     * Installs a component making it available for the logged user.
+     *
+     * @param {Object} options
+     * - `install_embedded_resources` (boolean, default: false)
+     *
+     * @returns {Wirecloud.Task}
+     */
     LocalCatalogue.addComponent = function addComponent(options) {
         var task = Wirecloud.WirecloudCatalogue.prototype.addComponent.call(this, options);
         task.then((response_data) => {
@@ -216,14 +240,6 @@
             return Promise.resolve(response_data);
         });
         return task;
-    };
-
-    LocalCatalogue.getAvailableResourcesByType = function getAvailableResourcesByType(type) {
-        if (type in this.resourcesByType) {
-            return this.resourcesByType[type];
-        } else {
-            return {};
-        }
     };
 
     LocalCatalogue._includeResource = function _includeResource(resource_data) {
@@ -257,7 +273,14 @@
             break;
         case 'mashup':
             resource = new Wirecloud.MashableApplicationComponent(resource_data);
+            break;
+        default:
+            var msg = utils.interpolate(utils.gettext("Invalid component type: %(type)s"), {
+                type: resource_data.type
+            });
+            throw new TypeError(msg);
         }
+
         if (Wirecloud.activeWorkspace != null) {
             Wirecloud.activeWorkspace.resources.restore(resource);
         }
@@ -268,16 +291,19 @@
 
         this.resourceVersions[resource_id].push(resource);
         this.resources[resource_full_id] = resource;
-
-        if (!(resource_data.type in this.resourcesByType)) {
-            this.resourcesByType[resource_data.type] = {};
-        }
-        this.resourcesByType[resource_data.type][resource_full_id] = resource;
     };
 
-    LocalCatalogue.hasAlternativeVersion = function hasAlternativeVersion(mac) {
-        var versions = this.resourceVersions[mac.group_id];
-        return versions != null && (versions.length > 1 || versions.length === 1 && !versions[0].is(mac));
+    /**
+     * Checks if there is other alternative versions for the given component.
+     *
+     * @param {Wirecloud.MashableApplicationComponent} component
+     *    The component to search for an alternative versions
+     *
+     * @returns {Boolean}
+     */
+    LocalCatalogue.hasAlternativeVersion = function hasAlternativeVersion(component) {
+        var versions = this.resourceVersions[component.group_id];
+        return versions != null && (versions.length > 1 || versions.length === 1 && !versions[0].is(component));
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {

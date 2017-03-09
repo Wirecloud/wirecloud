@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -173,6 +173,7 @@ module.exports = function (grunt) {
                     },
                     files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/**/*Spec.js']),
                     preprocessors: {
+                        "wirecloud/catalogue/static/js/wirecloud/**/*.js": ['coverage'],
                         "wirecloud/commons/static/js/wirecloud/**/*.js": ['coverage'],
                         "wirecloud/platform/static/js/wirecloud/**/*.js": ['coverage']
                     }

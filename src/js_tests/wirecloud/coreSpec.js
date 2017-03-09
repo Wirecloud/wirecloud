@@ -410,6 +410,8 @@
                 spyOn(Wirecloud, "ContextManager");
                 Wirecloud.ContextManager.prototype.get = jasmine.createSpy("get").and.callFake((name) => {
                     switch (name) {
+                    case "isanonymous":
+                        return false;
                     case "theme":
                         return "wirecloud.defaulttheme";
                     case "username":

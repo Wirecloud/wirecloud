@@ -282,7 +282,7 @@
                 try {
                     result = JSON.parse(response.responseText);
                     if (result.affectedVersions == null) {
-                        result.affectedVersions = [resource.version];
+                        result.affectedVersions = [resource.version.text];
                     }
                 } catch (e) {
                     reject(e);

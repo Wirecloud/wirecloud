@@ -21,6 +21,8 @@ Wirecloud = {
     ui: {},
     URLs: {
         LOCAL_RESOURCE_COLLECTION: "/api/resources",
+        LOCAL_RESOURCE_ENTRY: new StyledElements.Utils.Template("/api/resource/%(vendor)s/%(name)s/%(version)s"),
+        LOCAL_UNVERSIONED_RESOURCE_ENTRY: new StyledElements.Utils.Template("/api/resource/%(vendor)s/%(name)s"),
         PLATFORM_CONTEXT_COLLECTION: "/api/context",
         PLATFORM_PREFERENCES: "/api/preferences/platform",
         PROXY: new StyledElements.Utils.Template("/cdp/%(protocol)s/%(domain)s%(path)s"),
