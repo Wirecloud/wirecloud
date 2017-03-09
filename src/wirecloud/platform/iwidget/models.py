@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -35,7 +35,6 @@ class IWidget(models.Model):
     tab = models.ForeignKey('platform.Tab', on_delete=models.CASCADE, verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     positions = JSONField(blank=True)
-    refused_version = models.CharField(_('Refused Version'), max_length=150, blank=True, null=True)
     readOnly = models.BooleanField(_('Read Only'), default=False)
     variables = JSONField(blank=True)
 

@@ -571,7 +571,6 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'title': iwidget.name,
         'tab': iwidget.tab.id,
         'layout': iwidget.layout,
-        'refused_version': iwidget.refused_version,
         'widget': iwidget.widget_uri,
         'top': iwidget.positions['widget']['top'],
         'left': iwidget.positions['widget']['left'],

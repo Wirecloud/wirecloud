@@ -8,7 +8,6 @@
             "layout": 0,
             "name": "Test 1",
             "tab": 101,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -23,7 +22,6 @@
             "layout": 0,
             "name": "Test 2",
             "tab": 101,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -39,7 +37,6 @@
             "layout": 0,
             "name": "Test 1",
             "tab": 102,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -54,7 +51,6 @@
             "layout": 0,
             "name": "Test 2",
             "tab": 103,
-            "refused_version": null,
             "readOnly": true,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -69,7 +65,6 @@
             "layout": 0,
             "name": "Test 1",
             "tab": 104,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -84,7 +79,6 @@
             "layout": 0,
             "name": "Test 2",
             "tab": 104,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -99,7 +93,6 @@
             "layout": 0,
             "name": "Test (1)",
             "tab": 105,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":2,\"left\":12,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -114,7 +107,6 @@
             "layout": 0,
             "name": "Test (2)",
             "tab": 105,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -129,7 +121,6 @@
             "layout": 0,
             "name": "Test (3)",
             "tab": 105,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -144,7 +135,6 @@
             "layout": 0,
             "name": "Test 1",
             "tab": 106,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
@@ -159,7 +149,6 @@
             "layout": 0,
             "name": "Test 2",
             "tab": 106,
-            "refused_version": null,
             "readOnly": false,
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": {\"users\": {\"4\": \"default\"}}, \"text\": {\"users\": {\"4\": \"initial text\"}}, \"boolean\": {\"users\": {\"4\": false}}, \"password\": {\"users\": {\"4\": \"default\"}}, \"number\": {\"users\": {\"4\": 2}}}"
