@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2016 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2017 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -37,8 +37,8 @@ import time
 from six.moves.urllib.parse import urljoin
 
 from django.conf import settings
-from social.backends.oauth import BaseOAuth2
-from social.apps.django_app.default.models import UserSocialAuth
+from social_core.backends.oauth import BaseOAuth2
+from social_django.models import UserSocialAuth
 
 from wirecloud.fiware import FIWARE_LAB_IDM_SERVER
 from wirecloud.platform.models import Organization

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -32,7 +32,7 @@ from wirecloud.proxy.utils import ValidationError
 
 if IDM_SUPPORT_ENABLED:
 
-    from social.apps.django_app.utils import load_strategy
+    from social_django.utils import load_strategy
 
     STRATEGY = load_strategy()
 

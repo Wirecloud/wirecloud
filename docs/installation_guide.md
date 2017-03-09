@@ -754,10 +754,10 @@ After this, you can run the NGSI proxy issuing the following command:
 Create a new Application using the IdM server to use (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more info.
 
 1. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`
-2. Install the `python-social-auth` module (e.g. `pip install "python-social-auth<0.3,>=0.2.2"`)
+2. Install the `social-auth-app-django` module (e.g. `pip install "social-auth-app-django"`)
 3. Edit `settings.py`:
     - Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
-    - Add `social.apps.django_app.default` to `INSTALLED_APPS`
+    - Add `social_django` to `INSTALLED_APPS`
     - Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` to `AUTHENTICATION_BACKENDS`. example:
 
         ```python
@@ -783,7 +783,7 @@ Create a new Application using the IdM server to use (for example: `https://acco
           `url(r'^login/?$', django_auth.login, name="login"),`
         - Add:
           `url(r'^login/?$', wc_fiware.login, name="login"),`
-    - Add `python-social-auth` url endpoints at the end of the pattern list: `url('', include('social.apps.django_app.urls', namespace='social')),`
+    - Add `social-auth-app-django` url endpoints at the end of the pattern list: `url('', include('social_django.urls', namespace='social')),`
 
 5. [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`.
    This theme is the one used by the FIWARE Lab's Mashup portal.

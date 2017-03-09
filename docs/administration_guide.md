@@ -155,6 +155,15 @@ $ wirecloud-admin --version
 > **NOTE:** It is strongly recommended to perform a full database backup before
 > starting to migrate WireCloud to a new version.
 
+## From 1.0.x to 1.1.x
+
+IdM integration has migrated from `python-social-auth` to
+`social-auth-app-django` (see this [link][MIGRATING_TO_SOCIAL] for more info
+about this change)
+
+[MIGRATING_TO_SOCIAL]: https://github.com/omab/python-social-auth/blob/master/MIGRATING_TO_SOCIAL.md
+
+
 ## From 0.9.x to 1.0.x
 
 > **NOTE**: Support for Django 1.6 and Django 1.7 were removed in this version.

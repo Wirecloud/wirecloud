@@ -33,11 +33,10 @@ from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_
 from wirecloud.fiware.storeclient import UnexpectedResponse
 
 try:
-    from social.apps.django_app.utils import BACKENDS
-    from social.backends.utils import get_backend
+    from social_django.utils import BACKENDS, get_backend
     FIWARE_SOCIAL_AUTH_BACKEND = get_backend(BACKENDS, 'fiware')
 
-    IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social.apps.django_app.default' in settings.INSTALLED_APPS
+    IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_django' in settings.INSTALLED_APPS
 except:
     IDM_SUPPORT_ENABLED = False
 
