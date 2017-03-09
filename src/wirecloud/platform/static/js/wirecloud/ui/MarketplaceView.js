@@ -85,6 +85,7 @@
                 }
                 this.viewsByName[market_key] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: view_element}});
                 this.viewsByName[market_key].key = market_key;
+                Wirecloud.UserInterfaceManager.workspaceviews[market_key] = this.viewsByName[market_key];
             }
             this.viewList.push(this.viewsByName[market_key]);
 
@@ -184,11 +185,14 @@
         };
 
         if (this.loading === false && this.error === false && this.alternatives.getCurrentAlternative() !== this.emptyAlternative) {
-            subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();
-            if (subview.view_name != null) {
-                data.subview = subview.view_name;
-                if ('buildStateData' in subview) {
-                    subview.buildStateData(data);
+            // TODO
+            if (this.alternatives.getCurrentAlternative().alternatives != null) {
+                subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();
+                if (subview.view_name != null) {
+                    data.subview = subview.view_name;
+                    if ('buildStateData' in subview) {
+                        subview.buildStateData(data);
+                    }
                 }
             }
             data.market = this.alternatives.getCurrentAlternative().market_id;
@@ -232,13 +236,16 @@
             }
 
             breadcrum.push(current_alternative.getLabel());
-            subalternative = current_alternative.alternatives.getCurrentAlternative();
+            // TODO
+            if (current_alternative.alternatives != null) {
+                subalternative = current_alternative.alternatives.getCurrentAlternative();
 
-            if (subalternative.view_name === 'details' && subalternative.currentEntry != null) {
-                breadcrum.push({
-                    label: subalternative.currentEntry.title,
-                    'class': 'resource_title'
-                });
+                if (subalternative.view_name === 'details' && subalternative.currentEntry != null) {
+                    breadcrum.push({
+                        label: subalternative.currentEntry.title,
+                        'class': 'resource_title'
+                    });
+                }
             }
             return breadcrum;
         }
@@ -369,6 +376,7 @@
 
     var remove_market = function remove_market(market_view) {
         return new Promise(function (alt, resolve) {
+            delete Wirecloud.UserInterfaceManager.workspaceviews[market_view.key];
             this.alternatives.removeAlternative(alt, {onComplete: resolve});
         }.bind(this, market_view));
     };

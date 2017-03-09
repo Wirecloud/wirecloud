@@ -197,6 +197,7 @@ class FiWarePlugin(WirecloudPlugin):
             return common + (
                 "js/wirecloud/FiWare.js",
                 "js/wirecloud/FiWare/FiWareCatalogueView.js",
+                "js/wirecloud/FiWare/BusinessAPIEcosystemView.js",
                 "js/wirecloud/FiWare/Marketplace.js",
                 "js/wirecloud/FiWare/Offering.js",
                 "js/wirecloud/FiWare/ui/OfferingDetailsView.js",
