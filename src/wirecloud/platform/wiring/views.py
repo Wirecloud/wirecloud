@@ -21,7 +21,7 @@ import json
 import jsonpatch
 
 from django.core.cache import cache
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 import six
@@ -349,6 +349,7 @@ class OperatorEntry(Resource):
 
 class OperatorVariablesEntry(Resource):
 
+    @authentication_required
     def read(self, request, workspace_id, operator_id):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
@@ -357,7 +358,10 @@ class OperatorVariablesEntry(Resource):
             return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
         cache_manager = VariableValueCacheManager(workspace, request.user)
-        variables = cache_manager.get_variable_values()["ioperator"][operator_id]
+        try:
+            variables = cache_manager.get_variable_values()["ioperator"][operator_id]
+        except:
+            raise Http404
         data = {}
         for var in variables:
             data[var] = cache_manager.get_variable_data("ioperator", operator_id, var)

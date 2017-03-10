@@ -207,6 +207,10 @@ class IWidgetPreferences(Resource):
     def read(self, request, workspace_id, tab_id, iwidget_id):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
 
+        if not workspace.is_available_for(request.user):
+            msg = _("You don't have permission to access this workspace")
+            return build_error_response(request, 403, msg)
+
         iwidget = get_object_or_404(IWidget, pk=iwidget_id)
         if iwidget.tab_id != int(tab_id):
             raise Http404
@@ -268,6 +272,10 @@ class IWidgetProperties(Resource):
     @authentication_required
     def read(self, request, workspace_id, tab_id, iwidget_id):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
+
+        if not workspace.is_available_for(request.user):
+            msg = _("You don't have permission to access this workspace")
+            return build_error_response(request, 403, msg)
 
         iwidget = get_object_or_404(IWidget, pk=iwidget_id)
         if iwidget.tab_id != int(tab_id):
