@@ -178,6 +178,25 @@
         return alt;
     };
 
+    /**
+     * Removes an alternative from this Alternatives instance
+     *
+     * @param {Number|StyledElements.Alternative} Alternative to remove. Must
+     * belong to this instance of Alternatives.
+     *
+     * @param {Object} [options]
+     *
+     * Optional object with extra options:
+     * - `effect`: effect to use in case of requiring switching to another
+     *   alternative
+     * - `onComplete`: callback to call on completion (deprecated, use the
+     *   returned promise)
+     *
+     * @returns {Promise}
+     *     A promise tracking the progress of visually removing the alternative.
+     *     The alternative itself is removed immediatelly from the list of
+     *     available alternatives.
+     */
     Alternatives.prototype.removeAlternative = function removeAlternative(alternative, options) {
         var index, id, priv;
 
@@ -199,7 +218,7 @@
             if (!alternative) {
                 // Do nothing
                 utils.callCallback(options.onComplete);
-                return this;
+                return Promise.resolve();
             }
         }
 
@@ -207,15 +226,13 @@
         index = priv.alternativeList.indexOf(alternative);
         priv.alternativeList.splice(index, 1);
 
-        priv.transitionsQueue.addCommand({
+        return priv.transitionsQueue.addCommand({
             effect: options.effect,
             index: index,
             type: "remove",
             onComplete: options.onComplete,
             outAlternative: alternative
         });
-
-        return this;
     };
 
     Alternatives.prototype.clear = function clear() {
@@ -249,8 +266,15 @@
      * @param {Number|StyledElements.Alternative} Alternative to show. Must belong
      * to this instance of Alternatives.
      *
-     * @returns {StyledElements.Alternatives}
-     *      The instance on which the member is called.
+     * @param {Object} [options]
+     *
+     * Optional object with extra options:
+     * - `effect`: effect to use in the transition
+     * - `onComplete`: callback to call on completion (deprecated, use the
+     *   returned promise)
+     *
+     * @returns {Promise}
+     *     A promise tracking the progress of the alternative switch.
      */
     Alternatives.prototype.showAlternative = function showAlternative(alternative, options) {
         var priv, command = {};
@@ -278,9 +302,7 @@
         command.onComplete = options.onComplete;
         command.effect = options.effect;
 
-        priv.transitionsQueue.addCommand(command);
-
-        return this;
+        return priv.transitionsQueue.addCommand(command);
     };
 
     // =========================================================================

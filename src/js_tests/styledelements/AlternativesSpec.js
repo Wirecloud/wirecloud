@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -139,58 +139,80 @@
                 alt3 = element.createAlternative();
             });
 
-            it("does nothing if alternative is null", function () {
+            it("does nothing if alternative is null", function (done) {
                 var listener = jasmine.createSpy("listener", function listener() {
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
                     expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
                 });
-                expect(element.removeAlternative(null, {onComplete: listener})).toBe(element);
+                var p = element.removeAlternative(null, {onComplete: listener});
 
-                expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
-                expect(listener).toHaveBeenCalled();
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(() => {
+                    expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
+                    // Old behaviour, now deprecated in favour of promises
+                    expect(listener).toHaveBeenCalled();
+                    done();
+                });
             });
 
-            it("does nothing if alternative is not found", function () {
-                var listener = function listener() {
+            it("does nothing if alternative is not found", function (done) {
+                var listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
                     expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
-                };
+                });
 
-                expect(element.removeAlternative("myalt4", {onComplete: listener})).toBe(element);
+                var p = element.removeAlternative("myalt4", {onComplete: listener});
 
-                expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(() => {
+                    expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
+                    // Old behaviour, now deprecated in favour of promises
+                    expect(listener).toHaveBeenCalled();
+                    done();
+                });
             });
 
             it("should allow to remove alternatives by id", function (done) {
-                var listener = function listener() {
-                    expect(element.alternativeList).toEqual([alt1, alt3]);
+                var listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
-                    done();
-                };
+                });
 
-                expect(element.removeAlternative(alt2.getId(), {onComplete: listener})).toBe(element);
+                var p = element.removeAlternative(alt2.getId(), {onComplete: listener});
+
                 expect(element.alternativeList).toEqual([alt1, alt3]);
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(() => {
+                    // Old behaviour, now deprecated in favour of promises
+                    expect(listener).toHaveBeenCalled();
+                    done();
+                });
             });
 
             it("should allow to remove alternatives using Alternative instances", function (done) {
-                var listener = function listener() {
+                var listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
-                    done();
-                };
-                expect(element.removeAlternative(alt2, {onComplete: listener})).toBe(element);
+                });
+                var p = element.removeAlternative(alt2, {onComplete: listener});
 
                 expect(element.alternativeList).toEqual([alt1, alt3]);
+                p.then(() => {
+                    // Old behaviour, now deprecated in favour of promises
+                    expect(listener).toHaveBeenCalled();
+                    done();
+                });
             });
 
             it("should raise an exception if the passed alternative is not owned by the alternatives element", function () {
                 var other_alternatives = new StyledElements.Alternatives();
                 var other_alt = other_alternatives.createAlternative();
-                expect(function () {element.removeAlternative(other_alt);}).toThrow(jasmine.any(TypeError));
+                expect(() => {
+                    element.removeAlternative(other_alt);
+                }).toThrow(jasmine.any(TypeError));
 
                 expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
                 expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
@@ -199,36 +221,43 @@
             });
 
             it("should allow to remove the active alternative", function (done) {
-                var listener = function listener() {
+                var listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(element.wrapperElement.children[0]).toBe(alt2.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
-                    done();
-                };
+                });
 
                 expect(element.visibleAlt).toBe(alt1);
 
-                expect(element.removeAlternative(alt1, {onComplete: listener})).toBe(element);
+                var p = element.removeAlternative(alt1, {onComplete: listener});
 
                 expect(element.alternativeList).toEqual([alt2, alt3]);
+
+                p.then(() => {
+                    // Old behaviour, now deprecated in favour of promises
+                    expect(listener).toHaveBeenCalled();
+                    done();
+                });
             });
 
             it("should allow removing the active alternative when the active alternative is the right most alternative", function (done) {
 
-                var listener = function () {
+                var listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
-                    done();
-                };
+                });
 
-                element.showAlternative(alt3, {
-                    onComplete: function () {
-                        expect(element.visibleAlt).toBe(alt3);
+                element.showAlternative(alt3).then(() => {
+                    expect(element.visibleAlt).toBe(alt3);
 
-                        expect(element.removeAlternative(alt3, {onComplete: listener})).toBe(element);
-                        expect(element.alternativeList).toEqual([alt1, alt2]);
-                    }
+                    var p = element.removeAlternative(alt3, {onComplete: listener});
+                    expect(element.alternativeList).toEqual([alt1, alt2]);
+                    p.then(() => {
+                        // Old behaviour, now deprecated in favour of promises
+                        expect(listener).toHaveBeenCalled();
+                        done();
+                    });
                 });
             });
 
@@ -309,31 +338,44 @@
                 expect(function () {element.showAlternative(other_alt);}).toThrow(jasmine.any(TypeError));
             });
 
-            it("does nothing if the passed alternative is the visible alternative", function () {
-                expect(element.showAlternative(alt1)).toBe(element);
-                expect(element.visibleAlt).toBe(alt1);
+            it("does nothing if the passed alternative is the visible alternative", function (done) {
+                var p = element.showAlternative(alt1);
+
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(() => {
+                    expect(element.visibleAlt).toBe(alt1);
+                    done();
+                });
             });
 
             it("should call the onComplete listener", function (done) {
-                expect(element.showAlternative(alt3, {
-                    onComplete: function (element) {
-                        expect(element.visibleAlt).toBe(alt3);
-                        done();
-                    }
-                })).toBe(element);
+                var listener = jasmine.createSpy("listener");
+
+                var p = element.showAlternative(alt3, {
+                    onComplete: listener
+                });
+
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(() => {
+                    expect(element.visibleAlt).toBe(alt3);
+                    done();
+                });
             });
 
             it("should allow to use alternative ids", function (done) {
-                var listener = function listener(_element, _alt1, _alt2) {
+                var listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.visibleAlt).toBe(alt2);
-                    expect(_element).toBe(element);
-                    expect(_alt1).toBe(alt1);
-                    expect(_alt2).toBe(alt2);
-                    expect(element.visibleAlt).toBe(alt2);
-                    done();
-                };
+                });
 
-                expect(element.showAlternative(alt2.getId(), {onComplete: listener})).toBe(element);
+                var p = element.showAlternative(alt2.getId(), {
+                    onComplete: listener
+                });
+
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(() => {
+                    expect(listener).toHaveBeenCalledWith(element, alt1, alt2);
+                    done();
+                });
             });
 
             it("should allow to use the effect option (horizontal slide)", function (done) {
