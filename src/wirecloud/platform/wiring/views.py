@@ -358,10 +358,20 @@ class OperatorVariablesEntry(Resource):
             return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
         cache_manager = VariableValueCacheManager(workspace, request.user)
+
         try:
-            variables = cache_manager.get_variable_values()["ioperator"][operator_id]
+            vendor, name, version = workspace.wiringStatus["operators"][operator_id]["name"].split("/")
         except:
             raise Http404
+
+        # Check if operator resource exists
+        try:
+            CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+        except:
+            return HttpResponse(json.dumps({}), content_type='application/json; charset=UTF-8')
+
+        variables = cache_manager.get_variable_values()["ioperator"][operator_id]
+
         data = {}
         for var in variables:
             data[var] = cache_manager.get_variable_data("ioperator", operator_id, var)
