@@ -51,22 +51,34 @@
             beforeEach(function () {
                 context = {context: true};
                 callback = jasmine.createSpy('callback').and.callFake(function (context, command) {
-                    return new Promise(function (resolve, reject) {
-                        setTimeout(function () {
-                            resolve(command);
-                        }, 200);
-                    });
+                    if (command === "skip") {
+                        return false;
+                    } else {
+                        return new Promise(function (resolve, reject) {
+                            setTimeout(function () {
+                                resolve(command);
+                            }, 200);
+                        });
+                    }
                 });
 
                 queue = new CommandQueue(context, callback);
             });
 
-            it("ignore undefined commands", function () {
+            it("ignore calls without a command parameter", function (done) {
+                var p = queue.addCommand();
+
                 expect(queue.running).toBe(false);
-                queue.addCommand(undefined);
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(done);
+            });
+
+            it("ignore undefined commands", function (done) {
+                var p = queue.addCommand(undefined);
+
                 expect(queue.running).toBe(false);
-                queue.addCommand();
-                expect(queue.running).toBe(false);
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(done);
             });
 
             it("supports adding commands to empty queues", function (done) {
@@ -82,17 +94,48 @@
             });
 
             it("supports adding several commands", function (done) {
+                var listener = jasmine.createSpy();
+
                 expect(queue.running).toBe(false);
                 queue.addCommand(1);
                 queue.addCommand(2);
-                queue.addCommand(3);
+                var p = queue.addCommand(3);
+
+                expect(p).toEqual(jasmine.any(Promise));
                 expect(queue.running).toBe(true);
+
+                p.then(listener);
 
                 setTimeout(function () {
                     expect(queue.running).toBe(false);
+                    expect(listener).toHaveBeenCalled();
                     expect(callback.calls.count()).toBe(3);
                     expect(callback.calls.argsFor(0)).toEqual([context, 1]);
                     expect(callback.calls.argsFor(1)).toEqual([context, 2]);
+                    expect(callback.calls.argsFor(2)).toEqual([context, 3]);
+                    done();
+                }, 620);
+            });
+
+            it("supports skiping a command", function (done) {
+                var listener = jasmine.createSpy();
+
+                expect(queue.running).toBe(false);
+                queue.addCommand(1);
+                var p = queue.addCommand("skip");
+                queue.addCommand(3);
+
+                expect(p).toEqual(jasmine.any(Promise));
+                expect(queue.running).toBe(true);
+
+                p.then(listener);
+
+                setTimeout(function () {
+                    expect(queue.running).toBe(false);
+                    expect(listener).toHaveBeenCalled();
+                    expect(callback.calls.count()).toBe(3);
+                    expect(callback.calls.argsFor(0)).toEqual([context, 1]);
+                    expect(callback.calls.argsFor(1)).toEqual([context, "skip"]);
                     expect(callback.calls.argsFor(2)).toEqual([context, 3]);
                     done();
                 }, 620);
