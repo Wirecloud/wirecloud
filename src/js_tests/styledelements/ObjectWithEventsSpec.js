@@ -66,7 +66,7 @@
             });
         });
 
-        describe("dispatchEvent(eventType [, ...args])", function () {
+        describe("dispatchEvent(eventType[, ...args])", function () {
 
             it("should throw error if the eventType does not exist", function () {
                 var eventTarget = new StyledElements.ObjectWithEvents(['click']);
@@ -76,7 +76,7 @@
                 }).toThrow(jasmine.any(Error));
             });
 
-            it("should add an eventListener while the event is dispatching", function () {
+            it("should allow adding an event listeners while the event is dispatching", function () {
                 var eventTarget = new StyledElements.ObjectWithEvents(['click']);
                 var eventListener1 = function (element) {
                     eventTarget.addEventListener('click', eventListener2);
@@ -89,7 +89,7 @@
                 expect(eventListener2).toHaveBeenCalledWith(eventTarget);
             });
 
-            it("should remove an eventListener while the event is dispatching", function () {
+            it("should allow removing event listeners while the event is dispatching", function () {
                 var eventTarget = new StyledElements.ObjectWithEvents(['click']);
                 var eventListener1 = function (element) {
                     eventTarget.removeEventListener('click', eventListener2);
@@ -107,7 +107,7 @@
                 expect(eventListener3).toHaveBeenCalledWith(eventTarget);
             });
 
-            it("should call all eventListener list despite an eventListener throws error", function () {
+            it("should call all eventListener list despite whether an event listener thrown an error", function () {
                 var eventTarget = new StyledElements.ObjectWithEvents(['click']);
                 var eventListener1 = function (element) {
                     throw Error();

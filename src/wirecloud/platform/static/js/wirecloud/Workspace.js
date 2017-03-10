@@ -390,7 +390,7 @@
         },
 
         /**
-         * Creates a packaged version of this workspace and uploads it into MyTab
+         * Creates a packaged version of this workspace and uploads it into My
          * Resources.
          *
          * @param {Object} options
