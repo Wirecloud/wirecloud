@@ -19,6 +19,7 @@
 
 import json
 import jsonpatch
+import re
 
 from django.core.cache import cache
 from django.http import Http404, HttpResponse
@@ -79,8 +80,10 @@ class WiringEntry(Resource):
                 operator_preferences = resource["variables"]["preferences"]
                 operator_properties = resource["variables"]["properties"]
             except CatalogueResource.DoesNotExist:
-                operator_preferences = []
-                operator_properties = []
+                # Missing operator variables can't be updated
+                operator['properties'] = old_operator["properties"]
+                operator['preferences'] = old_operator["preferences"]
+                continue
 
             # Check preferences
             for preference_name in operator['preferences']:
@@ -171,8 +174,10 @@ class WiringEntry(Resource):
                 operator_preferences = resource["variables"]["preferences"]
                 operator_properties = resource["variables"]["properties"]
             except CatalogueResource.DoesNotExist:
-                operator_preferences = {}
-                operator_properties = {}
+                # Missing operator variables can't be updated
+                operator['properties'] = old_operator["properties"]
+                operator['preferences'] = old_operator["preferences"]
+                continue
 
             # Handle preferences
             for preference_name in added_preferences:
@@ -288,8 +293,30 @@ class WiringEntry(Resource):
         workspace = get_object_or_404(Workspace, id=workspace_id)
         old_wiring_status = workspace.wiringStatus
 
+        req = parse_json_request(request)
+
+        # Cant explicitly update missing operator preferences / properties
+        # Check if its modifying directly a preference / property
+        regex = re.compile(r'^/?operators/(?P<operator_id>[0-9]+)/(preferences/|properties/)', re.S)
+        for p in req:
+            if p["op"] is "test":
+                continue
+            result = regex.match(p["path"])
+            if result is not None:
+
+                try:
+                    vendor, name, version = workspace.wiringStatus["operators"][result.group("operator_id")]["name"].split("/")
+                except:
+                    raise Http404
+
+                # If the operator is missing -> 403
+                try:
+                    CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+                except:
+                    return build_error_response(request, 403, _('Missing operators variables cannot be updated'))
+
         try:
-            new_wiring_status = jsonpatch.apply_patch(old_wiring_status, parse_json_request(request))
+            new_wiring_status = jsonpatch.apply_patch(old_wiring_status, req)
         except jsonpatch.JsonPointerException:
             return build_error_response(request, 422, _('Failed to apply patch'))
         except jsonpatch.InvalidJsonPatch:

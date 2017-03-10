@@ -1189,6 +1189,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Other preferences should not be modified
         self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"]["users"]["4"], "test_username")
 
+    def test_workspace_wiring_entry_patch_preference_value_missing_operator_permission(self):
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 203})
+
+        data = [{
+            "op": "replace",
+            "path": "/operators/1/preferences/pref_secure/value",
+            "value": 'helloWorld',
+        }]
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+        response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
+
+        self.assertEqual(response.status_code, 403)
+
     def test_workspace_wiring_entry_patch_preference_value_read_only_permission(self):
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
 
