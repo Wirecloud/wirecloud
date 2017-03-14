@@ -176,7 +176,10 @@ class IWidgetPreferences(Resource):
         if iwidget.tab_id != int(tab_id):
             raise Http404
 
-        iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
+        try:
+            iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
+        except:
+            return build_error_response(request, 403, _('Missing widget variables cannot be updated'))
 
         new_values = parse_json_request(request)
 
@@ -218,7 +221,10 @@ class IWidgetPreferences(Resource):
         if iwidget.widget is None:
             return HttpResponse(json.dumps({}), content_type='application/json; charset=UTF-8')
 
-        iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
+        try:
+            iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
+        except:
+            return build_error_response(request, 403, _('Missing widget variables cannot be updated'))
 
         cache_manager = VariableValueCacheManager(workspace, request.user)
         prefs = iwidget_info['variables']['preferences']
