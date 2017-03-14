@@ -383,11 +383,20 @@
         this.preferenceList = [];
         this.preferences = {};
 
+        // Build preferences with set values
         for (preference_name in initial_values) {
             operator_pref_info = initial_values[preference_name];
-            this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            // Prefs are undefined if operator is missing
+            if (operator_pref_info == null) {
+                // the operator is missing
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], true, true, "");
+            } else {
+                // Create prefs
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            }
         }
 
+        // Build preferences with default values
         this.meta.preferenceList.forEach(function (preference) {
             if (!(preference.name in this.preferences)) {
                 this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
@@ -412,7 +421,14 @@
             if (prop_info != null) {
                 this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, prop_info.readonly, prop_info.value);
             } else {
-                this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
+                // Check if operator missing or property has no set value
+                if (property.name in initial_values) {
+                    // The operator is missing
+                    this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, true, "");
+                } else {
+                    // Set default value
+                    this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
+                }
             }
             this.properties[property.name] = this.propertyList[index];
         });

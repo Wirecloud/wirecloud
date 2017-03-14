@@ -628,9 +628,17 @@
         this.preferenceList = [];
         this.preferences = {};
 
+        // Build preferences with set values
         for (preference_name in initial_values) {
             operator_pref_info = initial_values[preference_name];
-            this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            // If the widget is missing, preferences are undefined
+            if (operator_pref_info == null) {
+                // missing widget
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], true, true, "");
+            } else {
+                // Create prefs with set values
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            }
         }
 
         this.meta.preferenceList.forEach(function (preference) {
@@ -654,7 +662,14 @@
             if (prop_info != null) {
                 this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, prop_info.readonly, prop_info.value);
             } else {
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
+                // Check wether widget is missing or property has no set value
+                if (properties[i].name in initial_values) {
+                    // The widget is missing
+                    this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, true, "");
+                } else {
+                    // Set default property value
+                    this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
+                }
             }
             this.properties[properties[i].name] = this.propertyList[i];
         }
