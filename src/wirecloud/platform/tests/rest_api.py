@@ -1279,6 +1279,19 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         expectedResult = {
+            'pref_secure': {
+                'hidden': False,
+                'name': 'pref_secure',
+                'readonly': False,
+                'secure': True,
+                'value': '********'
+            },
+            'username': {'hidden': False,
+                'name': 'username',
+                'readonly': False,
+                'secure': False,
+                'value': 'test_username'
+            }
         }
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
