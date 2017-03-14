@@ -299,8 +299,12 @@ class WiringEntry(Resource):
         # Check if its modifying directly a preference / property
         regex = re.compile(r'^/?operators/(?P<operator_id>[0-9]+)/(preferences/|properties/)', re.S)
         for p in req:
-            if p["op"] is "test":
-                continue
+            try:
+                if p["op"] is "test":
+                    continue
+            except:
+                return build_error_response(request, 400, _('Invalid JSON patch'))
+
             result = regex.match(p["path"])
             if result is not None:
 
