@@ -43,7 +43,7 @@ except:
 
 def auth_fiware_token(auth_type, token):
 
-    from social.apps.django_app.default.models import UserSocialAuth
+    from social_django.models import UserSocialAuth
     user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
     return UserSocialAuth.objects.get(provider='fiware', uid=user_data['username']).user
 

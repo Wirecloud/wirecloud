@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -34,8 +34,7 @@ ALLOWED_ORIGINS = [portal['url'] for portal in getattr(settings, 'FIWARE_PORTALS
 @require_GET
 def oauth_discovery(request):
 
-    from social.apps.django_app.utils import BACKENDS
-    from social.backends.utils import get_backend
+    from social_django.utils import BACKENDS, get_backend
     fiware_auth_backend = get_backend(BACKENDS, 'fiware')
 
     endpoints = {

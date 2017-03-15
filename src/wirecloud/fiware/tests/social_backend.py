@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015-2016 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2015-2017 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -86,19 +86,17 @@ class TestSocialAuthBackend(WirecloudTestCase):
     USER_DATA_NO_LAST_NAME = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo", "first_name": "Demo", "last_name": ""}
 
     def setUp(self):
-        self.social = MagicMock()
+        self.social_core = MagicMock()
+        self.social_django = MagicMock()
         modules = {
-            'social': self.social,
-            'social.backends': self.social.backends,
-            'social.backends.oauth': self.social.backends.oauth,
-            'social.backends.utils': self.social.backends.utils,
-            'social.apps': self.social.apps,
-            'social.apps.django_app': self.social.apps.django_app,
-            'social.apps.django_app.default': self.social.apps.django_app.default,
-            'social.apps.django_app.default.models': self.social.apps.django_app.default.models,
-            'social.apps.django_app.utils': self.social.apps.django_app.utils,
+            'social_core': self.social_core,
+            'social_core.backends': self.social_core.backends,
+            'social_core.backends.oauth': self.social_core.backends.oauth,
+            'social_django': self.social_django,
+            'social_django.utils': self.social_django.utils,
+            'social_django.models': self.social_django.models,
         }
-        self.social.backends.oauth.BaseOAuth2 = BasicClass
+        self.social_core.backends.oauth.BaseOAuth2 = BasicClass
 
         self.module_patcher = patch.dict('sys.modules', modules)
         self.module_patcher.start()
@@ -187,7 +185,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
         def get_social_auth(provider, uid):
             if provider == 'fiware' and uid == 'demo':
                 return auth_user_mock
-        self.social.apps.django_app.default.models.UserSocialAuth.objects.get.side_effect = get_social_auth
+        self.social_django.models.UserSocialAuth.objects.get.side_effect = get_social_auth
 
         with patch('wirecloud.fiware.plugins.FIWARE_SOCIAL_AUTH_BACKEND', create=True) as backend_mock:
             backend_mock._user_data.return_value = self.USER_DATA
@@ -201,7 +199,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
         user = Mock()
         response = None
 
-        UserSocialAuth = self.social.apps.django_app.default.models.UserSocialAuth
+        UserSocialAuth = self.social_django.models.UserSocialAuth
 
         self.create_organizations(strategy, backend, user, response)
 
@@ -212,7 +210,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
 
         from wirecloud.fiware.views import oauth_discovery
 
-        backend = self.social.backends.utils.get_backend()
+        backend = self.social_django.utils.get_backend()
         backend.AUTHORIZATION_URL = "https://auth.example.com"
         backend.ACCESS_TOKEN_URL = "https://token.example.com"
 
@@ -267,7 +265,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
         user = Mock()
         response = deepcopy(self.NEW_RESPONSE)
 
-        UserSocialAuth = self.social.apps.django_app.default.models.UserSocialAuth
+        UserSocialAuth = self.social_django.models.UserSocialAuth
         UserSocialAuth.DoesNotExist = Exception
         select_related_mock = Mock()
         select_related_mock.get.side_effect = UserSocialAuth.DoesNotExist
@@ -285,7 +283,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
         response = deepcopy(self.NEW_RESPONSE)
 
         org_social = Mock()
-        UserSocialAuth = self.social.apps.django_app.default.models.UserSocialAuth
+        UserSocialAuth = self.social_django.models.UserSocialAuth
         UserSocialAuth.objects.select_related().get.return_value = org_social
 
         self.create_organizations(strategy, backend, user, response)
