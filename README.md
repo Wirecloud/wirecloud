@@ -12,7 +12,6 @@ WireCloud
 [![Docker Status](https://img.shields.io/docker/pulls/fiware/wirecloud.svg)](https://hub.docker.com/r/fiware/wirecloud/)
 [![Support Status](https://img.shields.io/badge/support-sof-yellowgreen.svg)](http://stackoverflow.com/questions/tagged/fiware-wirecloud)  
 [![WireCloud version](https://img.shields.io/pypi/v/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
-[![WireCloud downloads](https://img.shields.io/pypi/dm/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
 [![WireCloud continuous integration](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-1.0.x-python2.7-django1.8-selenium/badge/icon)](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-1.0.x-python2.7-django1.8-selenium/)
 [![WireCloud Coverage Status](https://coveralls.io/repos/Wirecloud/wirecloud/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/Wirecloud/wirecloud?branch=HEAD)
 
