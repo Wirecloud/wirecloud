@@ -262,7 +262,7 @@
         }, options);
 
         if (!(url instanceof URL)) {
-            url = new URL(url, Wirecloud.location.domain + Wirecloud.URLs.ROOT_URL);
+            url = new URL(url, Wirecloud.location.base);
         }
 
         forceProxy = !!options.forceProxy;
@@ -273,8 +273,10 @@
         hash = url.hash;
         url.hash = '';
         if (forceProxy || (options.supportsAccessControl !== true && url.origin !== Wirecloud.location.domain)) {
-            url = Wirecloud.location.domain +
-                Wirecloud.URLs.PROXY.evaluate({protocol: url.protocol.slice(0, -1), domain: url.host, path: url.pathname}) + url.search;
+            url = new URL(
+                Wirecloud.URLs.PROXY.evaluate({protocol: url.protocol.slice(0, -1), domain: url.host, path: url.pathname}) + url.search,
+                Wirecloud.location.base
+            ).toString();
         } else {
             url = url.toString();
         }

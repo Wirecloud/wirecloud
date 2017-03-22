@@ -34,8 +34,8 @@
     var Manager = {};
 
     // TODO
-    var proxy_base_url = Wirecloud.location.domain + Wirecloud.URLs.PROXY.evaluate({protocol: 'x', domain: 'x', path: 'x'});
-    proxy_base_url = proxy_base_url.slice(0, -"/x/xx".length);
+    var proxy_base_url = new URL(Wirecloud.URLs.PROXY.evaluate({protocol: 'x', domain: 'x', path: 'x'}, Wirecloud.location.base);
+    proxy_base_url = proxy_base_url.toString().slice(0, -"/x/xx".length);
 
     var unload_component = function unload_component(component) {
         var proxies = proxiesByComponent[component.meta.type][component.id];

@@ -14,9 +14,10 @@ Wirecloud = {
         }
     },
     location: {
+        base: "https://wirecloud.example.com/",
         domain: "https://wirecloud.example.com",
-        protocol: "https",
-        host: "wirecloud.example.com"
+        host: "wirecloud.example.com",
+        protocol: "https"
     },
     ui: {},
     URLs: {

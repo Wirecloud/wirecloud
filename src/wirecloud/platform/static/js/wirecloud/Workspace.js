@@ -590,10 +590,13 @@
     };
 
     var on_url_get = function on_url_get() {
-        return Wirecloud.location.domain + Wirecloud.URLs.WORKSPACE_VIEW.evaluate({
-            name: encodeURIComponent(this.name),
-            owner: encodeURIComponent(this.owner)
-        });
+        return new URL(
+            Wirecloud.URLs.WORKSPACE_VIEW.evaluate({
+                name: encodeURIComponent(this.name),
+                owner: encodeURIComponent(this.owner)
+            }),
+            Wirecloud.location.base
+        );
     };
 
     var on_widgets_get = function on_widgets_get() {

@@ -178,7 +178,8 @@
                 expect(workspace.initialtab).toBe(null);
                 expect(workspace.widgets).toEqual([]);
                 expect(workspace.widgetsById).toEqual({});
-                expect(workspace.url).toBe("https://wirecloud.example.com/user/empty");
+                expect(workspace.url).toEqual(jasmine.any(URL));
+                expect(workspace.url.toString()).toBe("https://wirecloud.example.com/user/empty");
                 expect(workspace.operators).toEqual([]);
                 expect(workspace.operatorsById).toEqual({});
                 expect(workspace.wiring).toEqual(jasmine.any(Wirecloud.Wiring));
@@ -212,7 +213,8 @@
                     "1": jasmine.any(Wirecloud.Widget),
                     "3": jasmine.any(Wirecloud.Widget)
                 });
-                expect(workspace.url).toBe("https://wirecloud.example.com/user/empty");
+                expect(workspace.url).toEqual(jasmine.any(URL));
+                expect(workspace.url.toString()).toBe("https://wirecloud.example.com/user/empty");
                 expect(workspace.operators).toEqual([]);
                 expect(workspace.operatorsById).toEqual({});
                 expect(workspace.wiring).toEqual(jasmine.any(Wirecloud.Wiring));
