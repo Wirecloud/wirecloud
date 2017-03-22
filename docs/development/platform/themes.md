@@ -5,11 +5,13 @@ This section describe how to create new themes for WireCloud.
 
 ## Basic themes
 
-If you do not require a full customised theme, you can create a new theme by
+If you do not require a full customised theme, you can create a new one by
 changing some of the values (colours, default sizes, etc.) used by another
-theme.
+theme. This means you only have to change the set of SCSS variables used by the
+original theme.
 
-For doing that you have to create a new folder with the following structure:
+However, to do so, you have to previously create a new folder with the following
+structure:
 
 ```
 mytheme
@@ -24,20 +26,21 @@ It can be an empty file, if you want to use the default settings, but MUST exist
 See the [Theme settings](#theme-settings) section for a full list and
 description of the available settings variables.
 
-By default, all the themes will extend from `wirecloud.defaulttheme`, if you
-want to extend another theme, e.g. the `wirecloud.fiwarelabtheme` theme, you
-will have to add the following content into the `__init__.py` file:
+By default, all themes will extend from `wirecloud.defaulttheme`. Should you
+want to extend from another theme, e.g. from the `wirecloud.fiwarelabtheme` one,
+add the following content into the `__init__.py` file:
 
 ```python
 parent = "wirecloud.fiwarelabtheme"
 ```
 
 The `_variables.scss` file is the one that is going to allow us to change the
-values used by the theme.
+values used by the theme. The list of available variables is described
+later in the [Available SCSS Variables](#available-scss-variables) section.
 
-For example, you can use this `_variables.scss` example file for changing the
-primary color used by the primary buttons, the highlighted menu items, ... and
-to use plain buttons:
+For example, you can use this `_variables.scss` example file to change the
+primary colour used by the primary buttons, the highlighted menu items, ... and
+to use plain buttons.
 
 ```SCSS
 $brand-primary: rgb(107, 21, 161);
@@ -52,9 +55,9 @@ $button-gradients: false;
 ```
 
 The `_variables.scss` file must be written using the [SCSS (Sassy CSS) syntax]
-and is used for defining the base constants to be used by the theme. This file
-must always import the `_defaults.scss` file (using the `@import 'defaults'`
-line) to load the default values for the other constants.
+and is used for overwriting the values for the variables used by the theme.
+This file must always import the `_defaults.scss` file (using the
+`@import 'defaults'` line) to load the default values for the variables.
 
 [SCSS (Sassy CSS) syntax]: http://sass-lang.com/guide
 
@@ -593,7 +596,7 @@ This is the list of context variables provided to the Django template engine:
 
 ## Available SCSS files
 
-- `_variables.scss`: File defining the values of the constants used in the other
+- `_variables.scss`: File defining the values of the variables used in the other
   SCSS files.
 - `modals/base.scss`: contains the style used on all the modals used by
   WireCloud.
@@ -625,7 +628,7 @@ This is the list of context variables provided to the Django template engine:
 - `logos/header.png`: Image in `image/png` used in the header. *This file is
   used only when the theme is configured as the main theme.*
 
-### Available SCSS constants
+### Available SCSS variables
 
 Base colours:
 
@@ -640,7 +643,7 @@ Base colours:
   potentially negative may happen
 
 
-Misc constants:
+Misc variables:
 
 - `button-gradients`: `true` for styling buttons using gradients, `false` for
   plain colour buttons. `true` by default.
