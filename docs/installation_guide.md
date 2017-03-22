@@ -221,7 +221,7 @@ To get the latest development version of the code, you can choose between two op
 - Go to the WireCloud repository on GitHub, switch to the `1.0.x` branch (or select a specific 1.0.x tag, e.g. `1.0.0`) and click on the *Download ZIP* button to download the repository as a zip file, or just click on this [link](https://github.com/Wirecloud/wirecloud/zipball/1.0.x). Unzip it.
 - Or use a [GIT](http://git-scm.com/) client to get the latest development version via Git:
 
-        $ git clone git://github.com/Wirecloud/wirecloud.git
+        $ git clone https://github.com/Wirecloud/wirecloud.git
         $ cd wirecloud
         $ git checkout 1.0.x
 
