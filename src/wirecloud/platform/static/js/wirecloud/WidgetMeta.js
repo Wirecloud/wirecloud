@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -38,7 +38,7 @@
         Wirecloud.MashableApplicationComponent.call(this, data);
 
         if (this.missing) {
-            this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, window.location)).href;
+            this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, Wirecloud.location.base)).href;
             this.codecontenttype = "application/xhtml+xml";
         } else {
             this.codeurl = data.contents.src;
