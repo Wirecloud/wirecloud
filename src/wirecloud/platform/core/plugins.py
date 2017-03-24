@@ -20,7 +20,7 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
-from hashlib import sha1
+from hashlib import md5, sha1
 import json
 
 from django.conf import settings
@@ -263,6 +263,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Full name'),
                 'description': _('Full name of the logged user'),
             },
+            'avatar': {
+                'label': _('Avatar'),
+                'description': _('URL of the avatar'),
+            },
             'isanonymous': {
                 'label': _('Is Anonymous'),
                 'description': _('Boolean. Designates whether current user is logged in the system.'),
@@ -314,6 +318,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'orientation': 'landscape',
             'username': username,
             'fullname': fullname,
+            'avatar': 'https://www.gravatar.com/avatar/' + md5(user.email.strip().lower().encode('utf8')).hexdigest() + '?s=25',
             'isanonymous': user.is_anonymous(),
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
@@ -569,6 +574,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wirecloud/workspace/visibility_option",
                 "wirecloud/workspace/widget",
                 "wirecloud/modals/upgrade_downgrade_component",
+                "wirecloud/user_menu",
             ]
         else:
             return {}

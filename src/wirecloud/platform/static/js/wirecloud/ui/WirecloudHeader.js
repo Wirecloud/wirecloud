@@ -22,13 +22,13 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var WirecloudHeader = function WirecloudHeader() {
-        var menu_wrapper;
+    var builder = new StyledElements.GUIBuilder();
 
+    var WirecloudHeader = function WirecloudHeader() {
         this.wrapperElement = document.getElementById('wirecloud_header');
         this.app_bar = this.wrapperElement.querySelector('.wirecloud_app_bar');
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
@@ -54,13 +54,6 @@
         this.toolbar.className = 'btn-group wc-toolbar';
         this.app_bar.appendChild(this.toolbar);
 
-        menu_wrapper = document.createElement('div');
-        menu_wrapper.className = 'menu_wrapper';
-        this.menu = document.createElement('div');
-        this.menu.className = 'menu';
-        menu_wrapper.appendChild(this.menu);
-        this.wrapperElement.insertBefore(menu_wrapper, this.wrapperElement.firstChild);
-
         this.currentView = null;
         Wirecloud.addEventListener("contextloaded", this._initUserMenu.bind(this));
         Wirecloud.addEventListener("viewcontextchanged", this.refresh.bind(this));
@@ -69,13 +62,10 @@
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
         var user_name, user_menu, wrapper, login_button, item;
 
-        user_name = Wirecloud.contextManager.get('username');
-        if (user_name === 'anonymous') {
+        wrapper = document.querySelector('#wc-user-menu');
+        if (Wirecloud.contextManager.get('isanonymous')) {
             this.menu.innerHTML = '';
 
-            wrapper = document.createElement('div');
-            wrapper.className = 'user_menu_wrapper';
-            this.menu.appendChild(wrapper);
 
             login_button = new StyledElements.Button({
                 text: utils.gettext('Sign in')
@@ -90,17 +80,20 @@
             });
             login_button.insertInto(wrapper);
         } else {
+            user_name = Wirecloud.contextManager.get('username');
+            var avatar = document.createElement('img');
+            avatar.className = "avatar";
+            avatar.src = Wirecloud.contextManager.get('avatar');
 
-            wrapper = document.createElement('div');
-            wrapper.className = 'user_menu_wrapper';
-            this.menu.appendChild(wrapper);
-
-            this.user_button = new StyledElements.PopupButton({
-                'class': 'btn-success user',
-                'text': user_name
-            });
-            this.user_button.insertInto(wrapper);
-
+            var template = Wirecloud.currentTheme.templates['wirecloud/user_menu'];
+            builder.parse(template, {
+                username: user_name,
+                avatar: avatar,
+                usermenu: (options) => {
+                    this.user_button = new StyledElements.PopupButton(options);
+                    return this.user_button;
+                }
+            }).appendTo(wrapper);
 
             user_menu = this.user_button.getPopupMenu();
             item = new StyledElements.MenuItem(utils.gettext('Settings'), function () {
@@ -248,4 +241,4 @@
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);
