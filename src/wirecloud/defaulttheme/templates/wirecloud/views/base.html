@@ -39,13 +39,25 @@
   </div>
 </div>
 
-{% block header %}
-{% include "wirecloud/views/header.html" %}
-{% endblock %}
-
 <div id="unsupported-browser-msg" class="alert alert-error" style="display: none; text-align: left;">
     <h4>{% trans "Your browser seems to lack some required features" %}</h4>
     <p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a href="https://www.mozilla.org/firefox">Firefox</a> or <a href="www.google.com/chrome">Google Chrome</a> as these are the browsers currently supported by WireCloud.{% endblocktrans %}</p>
+</div>
+
+<div class="se-vertical-layout">
+
+    <div class="se-container se-vl-north-container">
+{% block header %}
+{% include "wirecloud/views/header.html" %}
+{% endblock %}
+    </div>
+
+    <div class="se-container se-vl-center-container" id="wc-body">
+    </div>
+
+    <div class="se-container se-vl-south-container">
+    </div>
+
 </div>
 
 <!-- JavaScript code -->

@@ -17,6 +17,7 @@
             </a>
             {% endif %}
         </div><nav class="collapse">
+            <div id="wc-user-menu" class="user-menu nav pull-right"></div>
             <ul class="nav navbar-nav">
                 {% for portal in FIWARE_PORTALS %}{% if portal.display != False %}<li {% ifinternalurl portal.url %}class="active"{% endifinternalurl %}>
                 <a href="{{ portal.url }}">{{ portal.name }}</a>

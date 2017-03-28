@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,11 +26,12 @@
 
     "use strict";
 
+    var builder = new StyledElements.GUIBuilder();
+
     var WirecloudHeader = function WirecloudHeader() {
         this.wrapperElement = document.getElementById('wirecloud_header');
         this.app_bar = this.wrapperElement.querySelector('.wirecloud_app_bar');
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
-        this.oil_header = this.wrapperElement.querySelector('.fiware-header nav.collapse');
 
         this.backButton = new StyledElements.Button({
             class: 'btn-large wc-back-button',
@@ -61,87 +62,15 @@
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
-        var user_menu, wrapper, login_button, item;
+        var user_name, user_menu, wrapper, login_button, item;
 
-        var username = Wirecloud.contextManager.get('username');
-        var full_name = Wirecloud.contextManager.get('fullname').trim();
-
-        wrapper = document.createElement('div');
-        wrapper.className = 'user-menu nav pull-right';
-        this.oil_header.insertBefore(wrapper, this.oil_header.firstChild);
-
-        var anchor = document.createElement('a');
-        anchor.setAttribute('href', Wirecloud.constants.FIWARE_IDM_SERVER + '/user/edit/' + username);
-        anchor.setAttribute('target', '_blank');
-        wrapper.appendChild(anchor);
-        var img = document.createElement('img');
-        img.setAttribute('src', Wirecloud.currentTheme.get_static_url('images/user.png'));
-        anchor.appendChild(img);
-        anchor.appendChild(document.createTextNode(' '));
-        var username_element = document.createElement('span');
-        username_element.className = 'name';
-        if (full_name === '') {
-            full_name = username;
-        }
-        username_element.textContent = full_name;
-        anchor.appendChild(username_element);
-
-        this.user_button = new StyledElements.PopupButton({
-            'class': 'arrow-down-settings fa fa-angle-double-down',
-            'plain': true,
-            'menuOptions': {
-                'position': ['bottom-right']
-            }
-        });
-        this.user_button.insertInto(wrapper);
-
-        user_menu = this.user_button.getPopupMenu();
-        item = new StyledElements.MenuItem(utils.gettext('Settings'), function () {
-            var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
-            dialog.show();
-        });
-        item.addIconClass('fa fa-gear');
-        user_menu.append(item);
-        item.setDisabled(username === 'anonymous');
-
-        if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
-            item = new StyledElements.MenuItem(utils.gettext('Django Admin panel'), function () {
-                window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
-            });
-            item.addIconClass('fa fa-tasks');
-            user_menu.append(item);
-        }
-
-        if (Wirecloud.contextManager.get('issuperuser') === true) {
-            item = new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
-                var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
-
-                var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
-                typeahead.bind(dialog.form.fieldInterfaces['username'].inputElement);
-
-                dialog.executeOperation = function (data) {
-                    Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {
-                        method: 'POST',
-                        contentType: 'application/json',
-                        postBody: JSON.stringify({username: data.username}),
-                        onSuccess: function () {
-                            document.location.assign(Wirecloud.URLs.ROOT_URL);
-                        }
-                    });
-                }.bind(this);
-
-                dialog.show();
-            });
-            item.addIconClass('fa fa-exchange');
-            user_menu.append(item);
-        }
-
-        item = new Wirecloud.ui.TutorialSubMenu();
-        user_menu.append(item);
-        item.setDisabled(username === 'anonymous');
-        user_menu.append(new StyledElements.Separator());
-        if (username === 'anonymous') {
-            item = new StyledElements.MenuItem(utils.gettext('Sign in'), function () {
+        wrapper = document.querySelector('#wc-user-menu');
+        if (wrapper == null) {
+            return;
+        } else if (Wirecloud.contextManager.get('isanonymous')) {
+            login_button = document.createElement('a');
+            login_button.textContent = utils.gettext('Sign in');
+            login_button.addEventListener('click', function () {
                 var login_url = Wirecloud.URLs.LOGIN_VIEW;
                 var next_url = window.location.pathname + window.location.search + window.location.hash;
                 if (next_url != '/') {
@@ -149,16 +78,73 @@
                 }
                 window.location = login_url;
             });
-            item.addIconClass('fa fa-sign-in');
-            user_menu.append(item);
+            wrapper.appendChild(login_button);
         } else {
+            user_name = Wirecloud.contextManager.get('username');
+            var avatar = document.createElement('img');
+            avatar.className = "avatar";
+            avatar.src = Wirecloud.contextManager.get('avatar');
+
+            var template = Wirecloud.currentTheme.templates['wirecloud/user_menu'];
+            builder.parse(template, {
+                username: user_name,
+                avatar: avatar,
+                usermenu: (options) => {
+                    this.user_button = new StyledElements.PopupButton(options);
+                    return this.user_button;
+                }
+            }).appendTo(wrapper);
+
+            user_menu = this.user_button.getPopupMenu();
+            item = new StyledElements.MenuItem(utils.gettext('Settings'), function () {
+                var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
+                dialog.show();
+            });
+            item.addIconClass('fa fa-gear');
+            user_menu.append(item);
+
+            if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
+                item = new StyledElements.MenuItem(utils.gettext('Django Admin panel'), function () {
+                    window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
+                });
+                item.addIconClass('fa fa-tasks');
+                user_menu.append(item);
+            }
+
+            if (Wirecloud.contextManager.get('issuperuser') === true) {
+                item = new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
+                    var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
+
+                    var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
+                    typeahead.bind(dialog.form.fieldInterfaces['username'].inputElement);
+
+                    dialog.executeOperation = function (data) {
+                        Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {
+                            method: 'POST',
+                            contentType: 'application/json',
+                            postBody: JSON.stringify({username: data.username}),
+                            onSuccess: function () {
+                                document.location.assign(Wirecloud.URLs.ROOT_URL);
+                            }
+                        });
+                    }.bind(this);
+
+                    dialog.show();
+                });
+                item.addIconClass('fa fa-exchange');
+                user_menu.append(item);
+            }
+
+            item = new Wirecloud.ui.TutorialSubMenu();
+            user_menu.append(item);
+            user_menu.append(new StyledElements.Separator());
             item = new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout);
             item.addIconClass('fa fa-sign-out');
             user_menu.append(item);
-        }
 
-        if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL) {
-            this._notifyWorkspaceLoaded();
+            if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL) {
+                this._notifyWorkspaceLoaded();
+            }
         }
     };
 

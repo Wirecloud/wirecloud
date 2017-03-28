@@ -209,15 +209,6 @@ a:hover {
 }
 
 .fiware-header .user-menu {
-    margin-top: 10px;
-}
-
-.fiware-header .user-menu > a > img {
-    width: 24px;
-    height: auto;
-    vertical-align: middle;
-    border: 0;
-    -ms-interpolation-mode: bicubic;
 }
 
 .fiware-header .user-menu > a:hover, .fiware-header .user-menu > a:focus {
@@ -409,9 +400,22 @@ footer a:hover {
     color: #60C1CF;
 }
 
-#wirecloud_header > .menu_wrapper > .menu > .user_menu_wrapper {
+#wc-user-menu {
     display: inline-block;
-    margin: 0 1ex;
+    margin-top: 10px;
+
+    & > span {
+        margin-left: 4px;
+    }
+
+    & > img {
+        width: 24px;
+        height: auto;
+        vertical-align: middle;
+        border: 0;
+        border-radius: 2px;
+        -ms-interpolation-mode: bicubic;
+    }
 }
 
 #wirecloud_header > .menu_wrapper > .menu > span.selected {

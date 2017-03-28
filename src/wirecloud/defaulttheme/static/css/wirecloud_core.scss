@@ -108,31 +108,24 @@ body {
     vertical-align: top;
 }
 
-#wirecloud_header .user_menu_wrapper > .se-btn {
-    margin: 0;
-    vertical-align: baseline;
-    height: 20px;
-}
+#wc-user-menu {
+    display: inline-block;
+    width: 30ex;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 1ex;
 
-#wirecloud_header .user_menu_wrapper > .se-btn {
-    color: #FFF;
-    font-size: 12px;
-    margin: 0;
-    padding: 0px 0.75ex;
-    border-width: 0px 0px 1px 0px;
-    border-style: solid;
-    border-color: transparent;
-    background-color: #41768D;
-    border-radius: 0;
-    background-image: none;
-    text-shadow: none;
-    box-shadow: none;
-}
+    & > * {
+        vertical-align: middle;
+    }
 
-#wirecloud_header .user_menu_wrapper > .se-btn.open > div {
-    background: white;
-    border-color: #BEBEBE;
-    color: #41768D;
+    & > .avatar {
+        border-radius: 2px;
+    }
+
+    & > span {
+        margin: 0px 3px;
+    }
 }
 
 #wirecloud_header > .menu_wrapper > .menu > span {
@@ -142,12 +135,6 @@ body {
     color: #444;
     display: inline-block;
     position: relative;
-}
-
-#wirecloud_header > .menu_wrapper > .menu > .user_menu_wrapper {
-    display: inline-block;
-    width: 30ex;
-    margin: 0 1ex;
 }
 
 #wirecloud_header > .menu_wrapper > .menu > .selected {

@@ -676,9 +676,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.check_public_workspace()
 
-        sign_in_button = self.driver.find_element_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
+        sign_in_button = self.driver.find_element_by_css_selector('#wc-user-menu .se-btn, #wc-user-menu .arrow-down-settings')
         if sign_in_button.text != 'Sign in':
-            # Oiltheme
+            # fiwarelabtheme
             sign_in_button.click()
             popup_menu_element = self.wait_element_visible('.se-popup-menu')
             popup_menu = PopupMenuTester(self, popup_menu_element)
@@ -937,7 +937,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='emptyuser')
 
-        self.driver.find_element_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings').click()
+        self.driver.find_element_by_css_selector('#wc-user-menu .se-btn, #wc-user-menu .arrow-down-settings').click()
         popup_menu_element = self.wait_element_visible('.se-popup-menu')
         popup_menu = PopupMenuTester(self, popup_menu_element)
         popup_menu.click_entry(('Tutorials', 'Basic concepts'))

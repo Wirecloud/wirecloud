@@ -96,12 +96,14 @@
         }, false);
 
         // TODO refactor
-        this.mainLayout = new StyledElements.VerticalLayout();
-        this.mainLayout.north.appendChild(document.getElementById('wirecloud_header'));
-
+        if (document.querySelector('.plain_content') != null) {
+            if ('WirecloudHeader' in Wirecloud.ui) {
+                this.header = new Wirecloud.ui.WirecloudHeader(this);
+            }
+            return;
+        }
         this.alternatives = new StyledElements.Alternatives({class: 'wc-body'});
-        this.mainLayout.center.appendChild(this.alternatives);
-        this.mainLayout.insertInto(document.body);
+        this.alternatives.appendTo(document.querySelector("#wc-body"));
 
         /* TODO| FIXME */
         if ('WirecloudHeader' in Wirecloud.ui) {
@@ -192,12 +194,6 @@
 
             Wirecloud.GlobalLogManager.log(utils.gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
         }.bind(this.views.workspace));
-
-        // Handle initial content
-        var plain_content = document.querySelector('.plain_content');
-        if (plain_content != null) {
-            this.views.initial.appendChild(plain_content);
-        }
 
         // Add some event listeners
         utils.onFullscreenChange(document.body, on_fullscreen_change.bind(this));
@@ -351,8 +347,6 @@
     };
 
     var resizeUI = function resizeUI() {
-        this.mainLayout.repaint();
-
         // Recalculate menu positions
         if (this.currentWindowMenu) {
             this.currentWindowMenu.calculatePosition();

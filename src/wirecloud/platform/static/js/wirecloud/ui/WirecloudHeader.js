@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -63,13 +63,11 @@
         var user_name, user_menu, wrapper, login_button, item;
 
         wrapper = document.querySelector('#wc-user-menu');
-        if (Wirecloud.contextManager.get('isanonymous')) {
-            this.menu.innerHTML = '';
-
-
-            login_button = new StyledElements.Button({
-                text: utils.gettext('Sign in')
-            });
+        if (wrapper == null) {
+            return;
+        } else if (Wirecloud.contextManager.get('isanonymous')) {
+            login_button = document.createElement('a');
+            login_button.textContent = utils.gettext('Sign in');
             login_button.addEventListener('click', function () {
                 var login_url = Wirecloud.URLs.LOGIN_VIEW;
                 var next_url = window.location.pathname + window.location.search + window.location.hash;
@@ -78,7 +76,7 @@
                 }
                 window.location = login_url;
             });
-            login_button.insertInto(wrapper);
+            wrapper.appendChild(login_button);
         } else {
             user_name = Wirecloud.contextManager.get('username');
             var avatar = document.createElement('img');

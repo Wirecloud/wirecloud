@@ -398,7 +398,7 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def check_login_behaviour(self):
 
-        sign_in_button = self.wait_element_visible('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
+        sign_in_button = self.wait_element_visible('#wc-user-menu .se-btn, #wc-user-menu .arrow-down-settings')
 
         if sign_in_button.text != 'Sign in':
             # fiwarelabtheme
