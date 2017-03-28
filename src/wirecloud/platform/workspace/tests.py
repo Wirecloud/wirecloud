@@ -201,7 +201,7 @@ class WorkspaceTestCase(WirecloudTestCase):
                     },
                     'properties': {
                         'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
-                        'prop3': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'prop3': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'ImN5EbVtQ1ffc6BZp3rkNg=='}}},
                     }
                 },
             },
