@@ -1262,12 +1262,12 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
         self.assertEqual(response.status_code, 400)
 
-    def test_operator_variables_entry_get_requieres_authentication(self):
+    def test_operator_variables_entry_get_requires_authentication(self):
         url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 2})
 
         check_get_requires_authentication(self, url)
 
-    def test_operator_variables_entry_get_requieres_permission(self):
+    def test_operator_variables_entry_get_requires_permission(self):
         url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 2})
 
         check_get_requires_permission(self, url)
@@ -2410,12 +2410,12 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
-    def test_iwidget_preferences_entry_get_requieres_authentication(self):
+    def test_iwidget_preferences_entry_get_requires_authentication(self):
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
 
         check_get_requires_authentication(self, url)
 
-    def test_iwidget_preferences_entry_get_requieres_permission(self):
+    def test_iwidget_preferences_entry_get_requires_permission(self):
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
 
         check_get_requires_permission(self, url)
@@ -2617,12 +2617,12 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
-    def test_iwidget_properties_entry_get_requieres_authentication(self):
+    def test_iwidget_properties_entry_get_requires_authentication(self):
         url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 6, 'tab_id': 106, 'iwidget_id': 111})
 
         check_get_requires_authentication(self, url)
 
-    def test_iwidget_properties_entry_get_requieres_permission(self):
+    def test_iwidget_properties_entry_get_requires_permission(self):
         url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 6, 'tab_id': 106, 'iwidget_id': 111})
 
         check_get_requires_permission(self, url)
