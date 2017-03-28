@@ -511,7 +511,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
             # Secure censor
             if vardef is not None and vardef["secure"]:
-                preference['value'] = "" if preference.get('value') is None or preference.get('value') == "" else "********"
+                preference['value'] = "" if preference.get('value') is None or decrypt_value(preference.get('value')) == "" else "********"
 
         # Build operator property data
         for property_name, property in six.iteritems(operator.get('properties', {})):
@@ -531,7 +531,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
             # Secure censor
             if vardef is not None and vardef["secure"]:
-                property['value'] = "" if property.get('value') is None or property.get('value') == "" else "********"
+                property['value'] = "" if property.get('value') is None or decrypt_value(property.get('value')) == "" else "********"
 
     return json.dumps(data_ret, cls=LazyEncoder)
 
