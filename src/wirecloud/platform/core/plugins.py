@@ -309,16 +309,18 @@ class WirecloudCorePlugin(WirecloudPlugin):
         if user.is_authenticated():
             username = user.username
             fullname = user.get_full_name()
+            avatar = 'https://www.gravatar.com/avatar/' + md5(user.email.strip().lower().encode('utf8')).hexdigest() + '?s=25'
         else:
             username = 'anonymous'
             fullname = _('Anonymous')
+            avatar = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?s=25'
 
         return {
             'language': get_language(),
             'orientation': 'landscape',
             'username': username,
             'fullname': fullname,
-            'avatar': 'https://www.gravatar.com/avatar/' + md5(user.email.strip().lower().encode('utf8')).hexdigest() + '?s=25',
+            'avatar': avatar,
             'isanonymous': user.is_anonymous(),
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
