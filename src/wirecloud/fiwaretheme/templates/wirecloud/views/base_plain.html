@@ -23,12 +23,20 @@
     {% block basejs %}
         <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
         {% compress js %}
+        <script type="text/javascript" src="{% static "js/lib/moment-with-locales.min.js" %}"></script>
         {% wirecloud_bootstrap "classic" %}
         {% extra_javascripts "classic" %}
         {% endcompress %}
     {% endblock %}
 
     {% block js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Wirecloud.init({
+                preventDefault: true
+            });
+        }, true);
+    </script>
     {% endblock %}
 </head>
 
@@ -37,7 +45,7 @@
         <div class="menu_wrapper"><div class="menu"><div id="wc-user-menu"></div></div></div>
 
         <div class="logo_wrapper">
-            <img src="{% static "images/logos/header.png" %}" alt="WireCloud" />
+            <img src="{% theme_static "images/logos/header.png" %}" alt="WireCloud" />
             <div>
                 <div>
                     <h2 class="fiware_title"><span>FI</span>WARE</h2>
@@ -46,7 +54,7 @@
             </div>
         </div>
 
-        <div class="wirecloud_app_bar"><div class="btn-group wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum se-add-on">{% block path %}{% endblock %}</span></div></div>
+        <div class="wirecloud_app_bar"><div class="se-input-group se-input-group-lg wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum se-add-on">{% block path %}{% endblock %}</span></div></div>
 
     </div>
 
