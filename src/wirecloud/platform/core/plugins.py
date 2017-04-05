@@ -152,6 +152,7 @@ BASE_CSS = (
     'css/base/slide.scss',
     'css/base/code.scss',
     'css/base/z-depth.scss',
+    'css/base/navigation.scss',
 )
 
 

@@ -181,13 +181,23 @@ $input-padding-vertical:   $padding-vertical-base !default;
 
 /* Navigation */
 
+$navbar-height:                 50px !default;
+$navbar-margin-bottom:          0px !default;
+
+$navbar-padding-vertical:       7.5px !default;
+$navbar-padding-horizontal:     (($navbar-height - $line-height-base) / 2) !default;
+
 $nav-tabs-border-color:       #DDD !default;
 $nav-tabs-active-link-hover-border-color: $nav-tabs-border-color !default;
 $nav-tabs-active-link-hover-bg: $nav-tabs-border-color !default;
 
-$nav-link-padding-vertical:   10px !default;
-$nav-link-padding-horizontal: 15px !default;
+$nav-link-padding-vertical:     10px !default;
+$nav-link-padding-horizontal:   15px !default;
 $nav-link-hover-bg:             $gray-lighter !default;
+
+$nav-link-default-text:         darken($brand-default, 60%) !default;
+$nav-link-default-active-text:  white !default;
+$nav-link-default-active-bg:    rgba(12, 184, 182, 0.21) !default;
 
 $nav-disabled-link-color:       $gray-light !default;
 $nav-disabled-link-hover-color: $gray-light !default;
