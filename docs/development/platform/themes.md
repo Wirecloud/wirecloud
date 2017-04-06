@@ -593,6 +593,15 @@ This is the list of context variables provided to the Django template engine:
 {% endblock %}
 ```
 
+### Template: `wirecloud/views/footer.html`
+
+Html to display in the footer section of the theme.
+
+**Example usage**:
+
+```html+django
+<footer>My custom footer. Copyright © 2017 My company.</footer>
+```
 
 ## Available SCSS files
 

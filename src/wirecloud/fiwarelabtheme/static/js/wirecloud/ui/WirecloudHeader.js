@@ -250,18 +250,7 @@
     };
 
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
-        var msg, environment, cookie_banner, expiration_date;
-
-        this.footer = document.createElement('footer');
-
-        msg = '<div class="container-fluid"><div class="footer-content"><div class="cred">2016 © <a href="http://fiware.org/" target="_blank">FIWARE</a>. The use of FIWARE %(environment)s services is subject to the acceptance of the <a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE_LAB_Terms_and_Conditions" target="_blank">Terms and Conditions</a>, <a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE_Privacy_Policy" target="_blank">Privacy Policy</a> and <a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE" target="_blank">Cookies Policy</a>.</div></div></div>';
-        if (Wirecloud.constants.FIWARE_IDM_SERVER === 'https://account.lab.fiware.org') {
-            environment = 'Lab';
-        } else {
-            environment = 'Testbed';
-        }
-        msg = interpolate(msg, {environment: environment}, true);
-        this.footer.innerHTML = msg;
+        var cookie_banner, expiration_date;
 
         if (readCookie(fiware_cookie_policy_cookie) !== 'on') {
             cookie_banner = document.createElement('div');
@@ -279,8 +268,6 @@
             expiration_date.setTime(expiration_date.getTime() + (fiware_cookie_policy_days * 24 * 60 * 60 * 1000));
             document.cookie = fiware_cookie_policy_cookie + "=on; expires=" + expiration_date.toGMTString() + "; path=/";
         }
-
-        Wirecloud.UserInterfaceManager.mainLayout.south.appendChild(this.footer);
     };
 
     WirecloudHeader.prototype.refresh = function refresh() {
