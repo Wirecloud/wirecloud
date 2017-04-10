@@ -1,5 +1,3 @@
-@import 'variables';
-
 @font-face {
   font-family: 'Comfortaa';
   font-style: normal;
@@ -119,10 +117,6 @@ body {
 
 .parametrizable_input > * {
     display: inline-block;
-}
-
-.clearfloats {
-    clear: both;
 }
 
 .powered-by-wirecloud {
