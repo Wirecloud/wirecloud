@@ -607,6 +607,7 @@ Html to display in the footer section of the theme.
 
 - `_variables.scss`: File defining the values of the variables used in the other
   SCSS files.
+- `header.scss`: style to use for the header.
 - `modals/base.scss`: contains the style used on all the modals used by
   WireCloud.
 - `modals/logs.scss`: contains the style used on the log modals.

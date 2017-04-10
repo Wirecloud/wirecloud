@@ -182,6 +182,7 @@ CATALOGUE_CSS = (
 
 PLATFORM_CORE_CSS = (
     'css/wirecloud_core.scss',
+    'css/header.scss',
     'css/icons.css',
     'css/modals/base.scss',
     'css/modals/logs.scss',
