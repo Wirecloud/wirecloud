@@ -577,6 +577,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wirecloud/workspace/visibility_option",
                 "wirecloud/workspace/widget",
                 "wirecloud/modals/upgrade_downgrade_component",
+                "wirecloud/signin",
                 "wirecloud/user_menu",
             ]
         else:

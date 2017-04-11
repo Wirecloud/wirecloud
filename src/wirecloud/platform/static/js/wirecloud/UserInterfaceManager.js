@@ -347,6 +347,7 @@
     };
 
     var resizeUI = function resizeUI() {
+        this.alternatives.repaint();
         // Recalculate menu positions
         if (this.currentWindowMenu) {
             this.currentWindowMenu.calculatePosition();

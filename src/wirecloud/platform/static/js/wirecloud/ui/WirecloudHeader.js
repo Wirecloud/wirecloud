@@ -60,23 +60,31 @@
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
-        var user_name, user_menu, wrapper, login_button, item;
+        var user_name, user_menu, wrapper, item;
 
         wrapper = document.querySelector('#wc-user-menu');
         if (wrapper == null) {
             return;
         } else if (Wirecloud.contextManager.get('isanonymous')) {
-            login_button = document.createElement('a');
-            login_button.textContent = utils.gettext('Sign in');
-            login_button.addEventListener('click', function () {
-                var login_url = Wirecloud.URLs.LOGIN_VIEW;
-                var next_url = window.location.pathname + window.location.search + window.location.hash;
-                if (next_url != '/') {
-                    login_url += '?next=' + encodeURIComponent(next_url);
+            var template = Wirecloud.currentTheme.templates['wirecloud/signin'];
+            builder.parse(template, {
+                username: user_name,
+                avatar: avatar,
+                usermenu: (options) => {
+                    this.user_button = new StyledElements.PopupButton(options);
+                    return this.user_button;
                 }
-                window.location = login_url;
+            }).appendTo(wrapper);
+            document.querySelectorAll(".wc-signin-button").forEach((button) => {
+                button.addEventListener('click', () => {
+                    var login_url = Wirecloud.URLs.LOGIN_VIEW;
+                    var next_url = window.location.pathname + window.location.search + window.location.hash;
+                    if (next_url !== '/') {
+                        login_url += '?next=' + encodeURIComponent(next_url);
+                    }
+                    window.location = login_url;
+                });
             });
-            wrapper.appendChild(login_button);
         } else {
             user_name = Wirecloud.contextManager.get('username');
             var avatar = document.createElement('img');
