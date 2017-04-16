@@ -126,6 +126,34 @@
         }
     },
     {
+        "pk": 10,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 1",
+            "tab": 106,
+            "refused_version": null,
+            "readOnly": false,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 2",
+            "tab": 106,
+            "refused_version": null,
+            "readOnly": false,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
+        }
+    },
+    {
         "pk": 101,
         "model": "platform.tab",
         "fields": {
@@ -176,6 +204,16 @@
         }
     },
     {
+        "pk": 106,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "Tab",
+            "workspace": 6,
+            "position": 0
+        }
+    },
+    {
         "pk": 2,
         "model": "platform.workspace",
         "fields": {
@@ -216,6 +254,17 @@
             "forcedValues": "",
             "wiringStatus": "{\"connections\": [], \"operators\": {}, \"version\": \"2.0\", \"visualdescription\": {\"connections\": [], \"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}}}",
             "name": "WiringTests",
+            "groups": [],
+            "creator": 4
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.workspace",
+        "fields": {
+            "forcedValues": "",
+            "wiringStatus": "{\"connections\": [{\"source\": {\"type\": \"widget\", \"id\": 10, \"endpoint\": \"outputendpoint\"}, \"readonly\": false, \"target\": {\"type\": \"widget\", \"id\": 11, \"endpoint\": \"inputendpoint\"}}, {\"source\": {\"type\": \"widget\", \"id\": 11, \"endpoint\": \"outputendpoint\"}, \"readonly\": false, \"target\": {\"type\": \"operator\", \"id\": 0, \"endpoint\": \"input\"}}, {\"source\": {\"type\": \"operator\", \"id\": 0, \"endpoint\": \"output\"}, \"readonly\": false, \"target\": {\"type\": \"widget\", \"id\": 10, \"endpoint\": \"inputendpoint\"}}], \"operators\": {\"0\": {\"preferences\": {}, \"name\": \"Wirecloud/TestOperator/1.0\", \"id\": \"0\"}}, \"version\": \"2.0\", \"visualdescription\": {\"connections\": [{\"sourcename\": \"widget/10/outputendpoint\", \"targethandle\": \"auto\", \"targetname\": \"widget/11/inputendpoint\", \"sourcehandle\": \"auto\"}, {\"sourcename\": \"widget/11/outputendpoint\", \"targethandle\": \"auto\", \"targetname\": \"operator/0/input\", \"sourcehandle\": \"auto\"}, {\"sourcename\": \"operator/0/output\", \"targethandle\": \"auto\", \"targetname\": \"widget/10/inputendpoint\", \"sourcehandle\": \"auto\"}], \"behaviours\": [{\"title\": \"Test 1\", \"components\": {\"operator\": {\"0\": {}}, \"widget\": {\"11\": {}}}, \"connections\": [{\"sourcename\": \"widget/11/outputendpoint\", \"targetname\": \"operator/0/input\"}]}, {\"title\": \"Test 2\", \"components\": {\"operator\": {\"0\": {}}, \"widget\": {\"10\": {}, \"11\": {}}}, \"connections\": [{\"sourcename\": \"widget/11/outputendpoint\", \"targetname\": \"operator/0/input\"}, {\"sourcename\": \"operator/0/output\", \"targetname\": \"widget/10/inputendpoint\"}, {\"sourcename\": \"widget/10/outputendpoint\", \"targetname\": \"widget/11/inputendpoint\"}]}], \"components\": {\"operator\": {\"0\": {\"position\": {\"y\": 20, \"x\": 440}, \"collapsed\": false, \"endpoints\": {\"source\": [\"output\"], \"target\": [\"input\"]}}}, \"widget\": {\"10\": {\"position\": {\"y\": 280, \"x\": 260}, \"name\": \"Wirecloud/Test/1.0\", \"endpoints\": {\"source\": [\"outputendpoint\"], \"target\": [\"inputendpoint\"]}}, \"11\": {\"position\": {\"y\": 10, \"x\": 60}, \"name\": \"Wirecloud/Test/1.0\", \"endpoints\": {\"source\": [\"outputendpoint\"], \"target\": [\"inputendpoint\"]}}}}}}",
+            "name": "WorkspaceBehaviours",
             "groups": [],
             "creator": 4
         }
@@ -262,6 +311,17 @@
             "manager": "",
             "user": 4,
             "workspace": 5
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.userworkspace",
+        "fields": {
+            "active": false,
+            "reason_ref": "",
+            "manager": "",
+            "user": 4,
+            "workspace": 6
         }
     }
 ]

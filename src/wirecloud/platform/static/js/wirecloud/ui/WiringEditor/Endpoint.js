@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -274,14 +274,17 @@
             },
 
             /**
-             * [TODO: hasEditableConnection description]
-             *
+             * @param {Connection} connection
              * @returns {Boolean}
-             *      [TODO: description]
              */
-            hasEditableConnection: function hasEditableConnection() {
-                return this.connections.some(function (connection) {
-                    return connection.editable;
+            hasConnection: function hasConnection(connection) {
+
+                if (!(connection instanceof ns.Connection)) {
+                    return false;
+                }
+
+                return this.connections.some(function (connectionSaved) {
+                    return connectionSaved.equals(connection);
                 });
             },
 
