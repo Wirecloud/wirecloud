@@ -551,7 +551,7 @@ connections previously added into the wiring configuration.
 ![General aspect of the behaviour oriented wiring user interface](images/user_guide/behaviour_oriented_wiring/general_aspect.png)
 
 This is the look of the wiring editor interface when the behaviour engine is
-enabled. Each of the panels in the *Identified behaviours* section represents a
+enabled. Each of the panels in the *Behaviours* section represents a
 behaviour and displays the name and the description of the represented
 behaviour.
 

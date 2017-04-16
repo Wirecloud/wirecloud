@@ -44,7 +44,7 @@
         border: solid 1px $panel-default-border-color;
         box-shadow: $panel-box-shadow-inset;
         background-color: $panel-bg;
-        overflow-y: auto;
+        overflow-y: scroll;
 
         .section {
             position: relative;
@@ -56,7 +56,7 @@
 .wiring-sidebar > .panel-behaviours {
 
     & > .panel-heading .panel-title {
-        width: $behaviour-title-width;
+        width: 90%;
     }
 
     &.disabled {
@@ -65,6 +65,13 @@
 }
 
 .wiring-sidebar > .panel-components {
+
+    & > .panel-body {
+        top: 80px;
+    }
+}
+
+.wiring-sidebar > .panel-behaviours:not(.disabled) {
 
     & > .panel-body {
         top: 80px;
