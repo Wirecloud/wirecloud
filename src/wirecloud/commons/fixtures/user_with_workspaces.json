@@ -277,7 +277,7 @@
             "name": "workspaceSecure",
             "public": false,
             "creator": "4",
-            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"4\": \"\"}}}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": {\"users\": {\"4\": \"username\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"4\": \"test_password\"}}}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": {\"users\": {\"4\": \"test_username\"}}}}}}, \"connections\": []}"
+            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"4\": \"\"}}}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": {\"users\": {\"4\": \"username\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"4\": \"r16Ts7Ekgd4EuYggazdIqQ==\"}}}, \"username\": {\"secure\": false, \"readonly\": true, \"hidden\": false, \"value\": {\"users\": {\"4\": \"test_username\"}}}}}}, \"connections\": []}"
         }
     },
     {
