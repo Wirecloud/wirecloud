@@ -84,8 +84,9 @@ class WorkspaceMigrationsTestCase(TestCase):
         workspace_mock = Mock(
             wiringStatus={"operators": {
                 "1": {"preferences": {"varname": {"value": "varvalue"}, "varname2": {"value": "varvalue2"}}},
-                "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}
-            })
+                "2": {"preferences": {"varname": {"value": "hello"}, "wrongvar1": {}}},
+                "3": {},
+            }})
         workspace_mock.tab_set.all.return_value = [tab_mock, tab_mock2]
         workspace_mock.creator.id = "2"
 
@@ -101,7 +102,9 @@ class WorkspaceMigrationsTestCase(TestCase):
 
         self.assertEqual(workspace_mock.wiringStatus, {"operators":
             {"1": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
-            "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "varname2": {"value": {"users": {"2": "world"}}}}}}})
+            "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "wrongvar1": {"value": {"users": {"2": ""}}}}},
+            "3":{"properties":{}, "preferences": {}}
+            }})
 
     def test_add_multiuser_support_backward_empty(self):
 
