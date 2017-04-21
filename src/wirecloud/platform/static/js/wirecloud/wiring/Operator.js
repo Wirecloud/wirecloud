@@ -169,6 +169,7 @@
         id: "",
         name: "",
         preferences: {},
+        properties: {},
         volatile: false
     };
 
