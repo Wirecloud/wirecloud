@@ -29,7 +29,7 @@ import six
 
 
 def mutate_forwards_operator(preference, userID):
-    preference["value"] = {"users": {"%s" % userID: preference["value"]}}
+    preference["value"] = {"users": {"%s" % userID: preference.get("value", "")}}
     return preference
 
 
@@ -58,7 +58,7 @@ def multiuser_variables_structure_forwards(apps, schema_editor):
         # Update operators
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
-            wiring["operators"][op]["preferences"] = {k: mutate_forwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+            wiring["operators"][op]["preferences"] = {k: mutate_forwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op].get("preferences", {}))}
             wiring["operators"][op]["properties"] = {} # Create properties structure
         workspace.save()
 
