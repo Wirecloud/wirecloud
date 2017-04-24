@@ -305,6 +305,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             'id': new_id,
             'name': operator['name'],
             'preferences': operator['preferences'],
+            'properties': {}
         }
 
         ioperator_forced_values = {}
