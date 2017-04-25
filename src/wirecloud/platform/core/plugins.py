@@ -162,7 +162,6 @@ WORKSPACE_CSS = (
     'css/workspace/dragboard.scss',
     'css/workspace/dragboard_cursor.scss',
     'css/workspace/operator.scss',
-    'css/workspace/tab.scss',
     'css/workspace/widget.scss',
     'css/workspace/modals/share.scss',
     'css/workspace/modals/upload.scss',

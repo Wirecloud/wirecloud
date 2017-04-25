@@ -16,3 +16,16 @@
         padding-bottom: ($margin-vertical-base / 2);
     }
 }
+
+.wc-workspace-tab-content {
+    padding-left: 0px;
+    padding-right: 0px;
+    overflow-x: visible;
+    overflow-y: auto;
+
+    &.dragging {
+        cursor: -webkit-grabbing;
+        cursor: -moz-grabbing;
+        cursor: grabbing;
+    }
+}
