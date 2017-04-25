@@ -60,16 +60,11 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
-    background: $body-bg;
-    color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
-    text-rendering: optimizeLegibility;
 }
 
 a:hover {
     color: #60C1CF;
 }
-
-
 
 footer {
     font-size: 12px;

@@ -10,6 +10,7 @@ body {
     font-family: $font-family-base;
     @include font-styled("base", "normal");
     color: contrast-text-color($body-bg);
+    text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6 {
