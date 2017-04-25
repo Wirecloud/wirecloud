@@ -49,6 +49,7 @@ from wirecloud.commons.utils.http import authentication_required, build_error_re
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.version import Version
+from wirecloud.catalogue.search_indexes import searchCatalogueResource
 
 
 @require_GET
@@ -123,7 +124,7 @@ class ResourceCollection(Resource):
             return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])
 
         if filters['scope']:
-            filters['scope'] = set(filters['scope'].split(','))
+            filters['scope'] = filters['scope'].split(',')
             for scope in filters['scope']:
                 if scope not in ['mashup', 'operator', 'widget']:
                     return build_error_response(request, 400, _('Scope value not supported: %s') % scope)
@@ -131,7 +132,7 @@ class ResourceCollection(Resource):
         if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
 
-        response_json = search(querytext, request, **filters)
+        response_json = searchCatalogueResource(request, filters["scope"], querytext, pagenum=filters['pagenum'], maxresults=filters['maxresults'])
 
         return HttpResponse(json.dumps(response_json, sort_keys=True), content_type='application/json')
 
