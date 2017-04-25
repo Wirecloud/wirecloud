@@ -49,7 +49,7 @@ from wirecloud.commons.utils.http import authentication_required, build_error_re
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.version import Version
-from wirecloud.catalogue.search_indexes import searchCatalogueResource
+from wirecloud.commons.search_indexes import get_search_engine, is_available
 
 
 @require_GET
@@ -132,7 +132,7 @@ class ResourceCollection(Resource):
         if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
 
-        response_json = searchCatalogueResource(request, filters["scope"], querytext, pagenum=filters['pagenum'], maxresults=filters['maxresults'])
+        response_json = get_search_engine("catalogueresource")(request, filters["scope"], querytext, pagenum=filters['pagenum'], maxresults=filters['maxresults'])
 
         return HttpResponse(json.dumps(response_json, sort_keys=True), content_type='application/json')
 

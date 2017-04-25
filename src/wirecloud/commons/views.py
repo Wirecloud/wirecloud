@@ -27,8 +27,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.searchers import get_search_engine, is_available
+from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes, parse_json_request, produces
-from wirecloud.commons.search_indexes import searchUser
+from wirecloud.commons.search_indexes import get_search_engine, is_available
 
 
 extra_formatters = {
@@ -85,7 +86,7 @@ class ResourceSearch(Resource):
             message = _('Invalid maxresults value: %s' % request.GET['maxresults'])
             return build_error_response(request, 422, message)
 
-        result = searchUser(querytext, pagenum=pagenum, maxresults=maxresults)
+        result = get_search_engine("user")(querytext, pagenum=pagenum, maxresults=maxresults)
 
         return HttpResponse(json.dumps(result, sort_keys=True), status=200, content_type='application/json; charset=utf-8')
 

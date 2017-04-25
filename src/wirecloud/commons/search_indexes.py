@@ -40,6 +40,28 @@ class SearchQuerySet(HaystackSearchQuerySet):
         return super(SearchQuerySet, self)._clone(klass)
 
 
+_available_search_engines = None
+
+
+def get_available_search_engines():
+    global _available_search_engines
+
+    if _available_search_engines is None:
+        from wirecloud.catalogue.search_indexes import searchCatalogueResource
+
+        _available_search_engines = {"group": searchGroup, "user": searchUser, "catalogueresource": searchCatalogueResource}
+
+    return _available_search_engines
+
+
+def is_available(indexname):
+    return indexname in get_available_search_engines()
+
+
+def get_search_engine(indexname):
+    return get_available_search_engines().get(indexname)
+
+
 # Clean search results
 def buildSearchResults(sqs, pagenum, maxresults, clean):
     # Take current page
