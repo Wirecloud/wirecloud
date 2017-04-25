@@ -29,6 +29,8 @@ from haystack import indexes
 from haystack.query import SearchQuerySet as HaystackSearchQuerySet
 from haystack import connections
 
+from wirecloud.platform.models import Workspace
+
 
 # Binds Haystack SearchQuerySet to the custom GroupedSearchQuerySets
 class SearchQuerySet(HaystackSearchQuerySet):
@@ -48,8 +50,9 @@ def get_available_search_engines():
 
     if _available_search_engines is None:
         from wirecloud.catalogue.search_indexes import searchCatalogueResource
+        from wirecloud.platform.search_indexes import searchWorkspace
 
-        _available_search_engines = {"group": searchGroup, "user": searchUser, "catalogueresource": searchCatalogueResource}
+        _available_search_engines = {"group": searchGroup, "user": searchUser, "catalogueresource": searchCatalogueResource, "workspace": searchWorkspace}
 
     return _available_search_engines
 
@@ -121,7 +124,7 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 # Search for users
-def searchUser(querytext, pagenum, maxresults):
+def searchUser(request, querytext, pagenum, maxresults):
     sqs = SearchQuerySet().models(User).all().filter(text__contains=querytext) #añadir set_limits
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
 
@@ -149,6 +152,6 @@ class GroupIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 # Search for groups
-def searchGroup(querytext, pagenum, maxresults):
+def searchGroup(request, querytext, pagenum, maxresults):
     sqs = SearchQuerySet().models(group).all().filter(text__contains=querytext) #añadir set_limits
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
