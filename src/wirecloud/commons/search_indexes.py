@@ -30,6 +30,7 @@ from haystack.query import SearchQuerySet as HaystackSearchQuerySet
 from haystack import connections
 
 
+# Binds Haystack SearchQuerySet to the custom GroupedSearchQuerySets
 class SearchQuerySet(HaystackSearchQuerySet):
 
     def _clone(self, klass=None):
@@ -37,6 +38,38 @@ class SearchQuerySet(HaystackSearchQuerySet):
             klass = connections[self.query._using].queryset
 
         return super(SearchQuerySet, self)._clone(klass)
+
+
+# Clean search results
+def buildSearchResults(sqs, pagenum, maxresults, clean):
+    # Take current page
+    sqs.query.set_limits(low=(pagenum - 1) * maxresults, high=pagenum * maxresults - 1)
+    res = sqs.query.get_results()
+    total = len(res)
+
+    results = [clean(result) for result in res]
+
+    # Build response data
+    return prepare_search_response(results, total, pagenum, maxresults)
+
+
+# Build response structure
+def prepare_search_response(hits, total, pagenum, maxresults):
+    search_result = {}
+    search_result['total'] = total
+
+    search_result['pagecount'] = search_result['total'] // maxresults
+    if (search_result['total'] % maxresults) != 0:
+        search_result['pagecount'] += 1
+
+    search_result['pagenum'] = pagenum
+    start = (pagenum - 1) * maxresults
+
+    search_result['offset'] = start
+    search_result['results'] = hits
+    search_result['pagelen'] = len(search_result['results'])
+
+    return search_result
 
 
 class UserIndex(indexes.SearchIndex, indexes.Indexable):
@@ -59,11 +92,16 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
             is_organization = False
 
         self.prepared_data['fullname'] = '%s' % (object.get_full_name())
-        self.prepared_data['username'] = '%s' % object.username
         self.prepared_data['organization'] = '%s' % is_organization
         self.prepared_data['text'] = '%s %s' % (object.get_full_name(), object.username)
 
         return self.prepared_data
+
+
+# Search for users
+def searchUser(querytext, pagenum, maxresults):
+    sqs = SearchQuerySet().models(User).all().filter(text__contains=querytext) #añadir set_limits
+    return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
 
 
 def cleanResults(result):
@@ -72,47 +110,23 @@ def cleanResults(result):
     return res;
 
 
-def searchUser(querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(User).all().filter(text__contains=querytext) #añadir set_limits
+class GroupIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True)
+
+    name = indexes.CharField(model_attr='name')
+
+    def get_model(self):
+        return Group
+
+    def prepare(self, object):
+        self.prepared_data = super(UserIndex, self).prepare(object)
+
+        self.prepared_data['text'] = object.name
+
+        return self.prepared_data
+
+
+# Search for groups
+def searchGroup(querytext, pagenum, maxresults):
+    sqs = SearchQuerySet().models(group).all().filter(text__contains=querytext) #añadir set_limits
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
-
-
-def groupSearchResults(sqs, groupfield):
-    result = []
-    last = None
-    for item in sqs:
-        if item.get_stored_fields()[groupfield] == last:
-            result.append(item)
-        last = item.get_stored_fields()[groupfield]
-
-    return result
-
-
-def buildSearchResults(sqs, pagenum, maxresults, clean):
-    # Take current page
-    sqs.query.set_limits(low=(pagenum - 1) * maxresults, high=pagenum * maxresults - 1)
-    res = sqs.query.get_results()
-    total = len(res)
-
-    results = [clean(result) for result in res]
-
-    # Build response data
-    return prepare_search_response(results, total, pagenum, maxresults)
-
-
-def prepare_search_response(hits, total, pagenum, maxresults):
-    search_result = {}
-    search_result['total'] = total
-
-    search_result['pagecount'] = search_result['total'] // maxresults
-    if (search_result['total'] % maxresults) != 0:
-        search_result['pagecount'] += 1
-
-    search_result['pagenum'] = pagenum
-    start = (pagenum - 1) * maxresults
-
-    search_result['offset'] = start
-    search_result['results'] = hits
-    search_result['pagelen'] = len(search_result['results'])
-
-    return search_result

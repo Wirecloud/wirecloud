@@ -27,7 +27,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.search_indexes import buildSearchResults, groupSearchResults, SearchQuerySet
+from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 
 from haystack import indexes
 
