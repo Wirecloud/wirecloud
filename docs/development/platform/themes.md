@@ -230,8 +230,7 @@ in the *My Resources* view for uploading new components.
 
 #### Available components
 
-- `uploadfilebutton`: button for opening the upload dialog using the browser
-  interface.
+- `uploadfilebutton`: button for opening the browser dialog for selecting files.
 
 **Example usage**:
 
@@ -245,7 +244,7 @@ in the *My Resources* view for uploading new components.
         </div>
         <div class="wc-upload-mac-title">{% trans "Drag files here" %}</div>
         <div class="wc-upload-mac-or">{% trans "- or -" %}</div>
-        <div class="wc-upload-mac-button"><t:upload_wgt_button/></div>
+        <div class="wc-upload-mac-button"><t:uploadfilebutton/></div>
     </div>
 </s:styledgui>
 ```
