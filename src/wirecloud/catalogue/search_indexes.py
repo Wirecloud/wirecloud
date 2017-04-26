@@ -90,13 +90,14 @@ def searchCatalogueResource(request, scope, querytext, pagenum, maxresults):
 
     # Filter resource type
     q = None
-    for s in scope:
-        if q is None:
-            q = Q(type=s)
-        else:
-            q |= Q(type=s)
+    if scope is not None:
+        for s in scope:
+            if q is None:
+                q = Q(type=s)
+            else:
+                q |= Q(type=s)
 
-    sqs = sqs.filter(q)
+        sqs = sqs.filter(q)
 
     # Filter available only
     q = Q(public=True) | Q(users=request.user.username) | Q(groups=request.user.groups.name)
