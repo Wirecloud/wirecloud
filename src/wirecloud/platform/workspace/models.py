@@ -24,7 +24,6 @@ import time
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.db.models.signals import post_delete
-from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
@@ -131,14 +130,3 @@ class Tab(models.Model):
         super(Tab, self).save(*args, **kwargs)
 
         self.workspace.save()
-
-
-# Signals
-
-
-@receiver(post_delete, sender=Tab)
-def update_catalogue_index(sender, instance, **kwargs):
-    try:
-        instance.workspace.save()
-    except Workspace.DoesNotExist:
-        pass

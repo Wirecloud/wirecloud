@@ -19,7 +19,6 @@
 
 from __future__ import unicode_literals
 
-import operator
 import random
 from six.moves.urllib.parse import urlparse, urljoin
 
@@ -28,15 +27,11 @@ from django.core.cache import cache
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from whoosh.qparser import MultifieldParser
-from whoosh.query import And, Every, Or, Term
-from whoosh.sorting import FieldFacet, FunctionFacet
 
 from wirecloud.commons.fields import JSONField
 from wirecloud.commons.searchers import get_search_engine
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
-from wirecloud.commons.utils.version import Version
 
 
 @python_2_unicode_compatible
@@ -185,6 +180,7 @@ def add_absolute_urls(results, request=None):
         hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
         hit['image'] = "" if hit['image'] == '' else urljoin(base_url, hit['image'])
         hit['smartphoneimage'] = "" if hit['image'] == '' else urljoin(base_url, hit['smartphoneimage'])
+<<<<<<< df89ebcba0cd3295fe9bd31281ca0504eb51ca34
 
 
 def add_other_versions(searcher, results, user, staff):
@@ -277,3 +273,5 @@ def suggest(request, prefix='', limit=30):
 def order_by_version(searcher, docnum):
 
     return Version(searcher.stored_fields(docnum)['version'], reverse=True)
+=======
+>>>>>>> Cleanup

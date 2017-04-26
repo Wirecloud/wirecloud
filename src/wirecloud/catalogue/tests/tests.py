@@ -403,57 +403,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
 
-class CatalogueSuggestionTestCase(WirecloudTestCase):
-
-    fixtures = ('catalogue_search_data',)
-    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-suggestions', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
-
-    @classmethod
-    def setUpClass(cls):
-
-        super(CatalogueSuggestionTestCase, cls).setUpClass()
-        cls.base_url = reverse('wirecloud_catalogue.resource_suggestion')
-
-    def setUp(self):
-
-        super(CatalogueSuggestionTestCase, self).setUp()
-        self.client = Client()
-        self.client.login(username='admin', password='admin')
-
-    def test_basic_suggestion(self):
-
-        response = self.client.get(self.base_url)
-        self.assertEqual(response.status_code, 200)
-        result_json = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(result_json['terms']), 30)
-
-    def test_suggestion_limit(self):
-
-        response = self.client.get(self.base_url + '?limit=20')
-        self.assertEqual(response.status_code, 200)
-        result_json = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(result_json['terms']), 20)
-
-    def test_suggestions_invalid_prefix(self):
-
-        response = self.client.get(self.base_url + '?p=double+prefix')
-        self.assertEqual(response.status_code, 422)
-
-    def test_suggestions_invalid_limit(self):
-
-        response = self.client.get(self.base_url + '?limit=fail')
-        self.assertEqual(response.status_code, 422)
-
-    def test_basic_suggestion_using_prefix(self):
-
-        response = self.client.get(self.base_url + '?p=wire')
-        self.assertEqual(response.status_code, 200)
-        result_json = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(result_json['terms']), 8)
-        for term in result_json['terms']:
-            self.assertTrue(term.startswith('wire'))
-
-
 class CatalogueAPITestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_test_data',)
