@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -263,7 +263,7 @@ def render_workspace_view(request, owner, name):
         # Ensure user has a session
         request.session[settings.LANGUAGE_COOKIE_NAME] = request.session.get(settings.LANGUAGE_COOKIE_NAME, None)
 
-    return render_wirecloud(request)
+    return render_wirecloud(request, title=workspace.name, description=workspace.description)
 
 
 def get_default_view(request):
@@ -294,7 +294,7 @@ def remove_query_parameter(request, parameter):
     )))
 
 
-def render_wirecloud(request, view_type=None):
+def render_wirecloud(request, view_type=None, title=None, description=None):
 
     if view_type is None:
         if 'mode' in request.GET:
@@ -307,6 +307,8 @@ def render_wirecloud(request, view_type=None):
         return remove_query_parameter(request, 'theme')
 
     context = {
+        'title': title,
+        'description': description,
         'THEME': theme,
         'VIEW_MODE': view_type,
         'WIRECLOUD_VERSION_HASH': get_version_hash()
@@ -322,4 +324,4 @@ def render_wirecloud(request, view_type=None):
             return remove_query_parameter(request, 'mode')
         else:
             view_type = get_default_view(request)
-            return render_wirecloud(request, view_type)
+            return render_wirecloud(request, view_type, title, description)

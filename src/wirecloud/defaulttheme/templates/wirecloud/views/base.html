@@ -1,10 +1,15 @@
 {% load compress i18n wirecloudtags %}{% load static from staticfiles %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
       xml:lang="{{ LANGUAGE_CODE }}"
       lang="{{ LANGUAGE_CODE }}">
 <head>
-    <title>{% block title %}{% trans "WireCloud Platform" %}{% endblock %}</title>
+    <title>{{ title }}</title>
+    <meta property="og:title" content="{{ title }}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:description" content="{{ description }}"/>
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 
     {% block meta %}
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
