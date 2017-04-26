@@ -5,32 +5,23 @@
 # See http://wiki.apache.org/Whoosh/FieldCollapsing for the Whoosh feature documentation
 from __future__ import absolute_import
 
-import logging
+import warnings
 
 from django.conf import settings
 from django.db.models.loading import get_model
 from django.utils.encoding import force_text
-from haystack.backends import EmptyResults
 from haystack.backends.whoosh_backend import WhooshEngine as OriginalWhooshEngine, WhooshSearchBackend, WhooshSearchQuery
-from haystack.constants import DJANGO_CT, DJANGO_ID, ID
+from haystack.exceptions import SearchBackendError
+from haystack.constants import DJANGO_CT, DJANGO_ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
-from haystack.utils import get_identifier, get_model_ct
+from haystack.utils import get_model_ct
 from whoosh.query import And, Or, Term
-from whoosh.sorting import FieldFacet, FunctionFacet
-from whoosh.searching import ResultsPage
+from whoosh.sorting import FieldFacet
 
-
-
-
-from wirecloud.commons.utils.version import Version
-
-# Since there's no chance of this being portable (yet!) we'll import explicitly
-# rather than using the generic imports:
 
 def build_order_param(order):
     order_by_list = []
-
 
     for order_by in order:
         if order_by.startswith('-'):
@@ -129,7 +120,7 @@ class GroupedSearchResult(object):
                         additional_fields[string_key] = index.fields[string_key].convert(value)
 
                 result = SearchResult(app_label, model_name, raw_result[DJANGO_ID], 1, **additional_fields)
-                yield result   
+                yield result
 
 
 class GroupedSearchQuerySet(SearchQuerySet):
@@ -313,7 +304,7 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
                 procesed_page = []
                 for result in raw_page:
                     query = And([self.parser.parse('%s:(%s)' % (collapse_field, result[collapse_field])), parsed_query])
-            
+
                     results = searcher.search(query, limit=collapse_limit, **search_kwargs)
 
                     procesed_page.append(results)
@@ -351,7 +342,7 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
 
     def _process_results(self, raw_results, result_class=None, collapse_field=None, **kwargs):
         if GroupedSearchResult is not result_class:
-            return super(GroupedWhooshSearchBackend, self)._process_results(raw_results, result_class=result_class, **kwargs)        
+            return super(GroupedWhooshSearchBackend, self)._process_results(raw_results, result_class=result_class, **kwargs)
 
         res = {}
         res['results'] = results = []
@@ -359,7 +350,7 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
         res['matches'] = 0
 
         for group in raw_results:
-            len+=1
+            len += 1
             results.append(result_class(collapse_field, group))
 
         return res
@@ -369,6 +360,3 @@ class WhooshEngine(OriginalWhooshEngine):
     backend = GroupedWhooshSearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
-
-def order_by_version(searcher, docnum):
-    return Version(searcher.stored_fields(docnum)['version'], reverse=False)

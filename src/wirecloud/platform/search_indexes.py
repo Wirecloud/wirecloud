@@ -20,16 +20,14 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
-import os
-import time
 
-from django.conf import settings
 from django.db.models import Q
 
 from wirecloud.platform.models import Workspace
 from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 
 from haystack import indexes
+
 
 class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
@@ -81,4 +79,4 @@ def searchWorkspace(request, querytext, pagenum, maxresults):
 def cleanResults(result):
     res = result.get_stored_fields()
     del res["text"]
-    return res;
+    return res

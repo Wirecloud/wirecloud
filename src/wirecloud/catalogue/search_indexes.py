@@ -19,11 +19,6 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
-import os
-import time
-
-from django.conf import settings
 from django.db.models import Q
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -31,15 +26,15 @@ from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 
 from haystack import indexes
 
+
 class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
-
     vendor_name = indexes.CharField()
     vendor = indexes.CharField(model_attr='vendor')
     name = indexes.CharField(model_attr="short_name")
     version = indexes.CharField(model_attr='version')
-    template_uri = indexes.CharField(model_attr="template_uri")    
+    template_uri = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
     creation_date = indexes.CharField(model_attr="creation_date")
     public = indexes.CharField(model_attr="public")
@@ -78,27 +73,21 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
         types = ["widget", "mashup", "operator"]
 
         self.prepared_data["type"] = types[object.type]
-
         self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
         self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
 
         self.prepared_data['vendor_name'] = '%s/%s' % (object.vendor, object.short_name)
-        #self.prepared_data['creation_date'] = object.creation_date.utcnow()
         self.prepared_data['title'] = resource_info['title']
         self.prepared_data['description'] = resource_info['description']
-        #self.prepared_data['wiring'] = endpoint_descriptions
         self.prepared_data['image'] = resource_info['image']
         self.prepared_data['smartphoneimage'] = resource_info['smartphoneimage']
-
-        #self.prepared_data['input_friendcodes'] = ' '.join(set(input_friendcodes))
-        #self.prepared_data['output_friendcodes'] = ' '.join(set(output_friendcodes))
 
         return self.prepared_data
 
 
 def searchCatalogueResource(request, scope, querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(CatalogueResource).filter(text=querytext).group_by('vendor_name', order_by='-version')
-       
+    sqs = SearchQuerySet().models(CatalogueResource).filter(text__contains=querytext).group_by('vendor_name', order_by='-version')
+
     # Filter resource type
     q = None
     for s in scope:
@@ -134,6 +123,4 @@ def cleanResults(document):
     del res["users"]
     del res["groups"]
     del res["text"]
-    return res;
-
-    # ('vendor', 'name', 'version', 'type', 'title', 'description', 'wiring')
+    return res

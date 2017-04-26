@@ -19,17 +19,10 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
-import os
-import time
-
-from django.conf import settings
 from django.contrib.auth.models import Group, User
 from haystack import indexes
 from haystack.query import SearchQuerySet as HaystackSearchQuerySet
 from haystack import connections
-
-from wirecloud.platform.models import Workspace
 
 
 # Binds Haystack SearchQuerySet to the custom GroupedSearchQuerySets
@@ -125,14 +118,14 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
 # Search for users
 def searchUser(request, querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(User).all().filter(text__contains=querytext) #añadir set_limits
+    sqs = SearchQuerySet().models(User).all().filter(text__contains=querytext)
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
 
 
 def cleanResults(result):
     res = result.get_stored_fields()
     del res["text"]
-    return res;
+    return res
 
 
 class GroupIndex(indexes.SearchIndex, indexes.Indexable):
@@ -153,5 +146,5 @@ class GroupIndex(indexes.SearchIndex, indexes.Indexable):
 
 # Search for groups
 def searchGroup(request, querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(group).all().filter(text__contains=querytext) #añadir set_limits
+    sqs = SearchQuerySet().models(Group).all().filter(text__contains=querytext)
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)

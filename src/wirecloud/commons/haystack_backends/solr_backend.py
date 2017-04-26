@@ -14,12 +14,9 @@ from haystack.constants import DJANGO_CT, DJANGO_ID, ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
 
-# Since there's no chance of this being portable (yet!) we'll import explicitly
-# rather than using the generic imports:
 
 def build_order_param(order):
     order_by_list = []
-
 
     for order_by in order:
         if order_by.startswith('-'):
