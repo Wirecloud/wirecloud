@@ -35,9 +35,12 @@ from django.contrib.staticfiles import finders
 from django.core import management
 from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
+from django.test import override_settings
 from django.test.client import Client
 from django.utils import translation
+from django.core.management import call_command
 import mock
+import haystack
 from six import text_type
 
 from wirecloud.platform.localcatalogue.utils import fix_dev_version, install_resource
@@ -304,10 +307,6 @@ def prepare_temporal_resource_directories(cls):
 
     cls.tmp_dir = mkdtemp()
 
-    # Whoosh indexes
-    cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
-    settings.WIRECLOUD_INDEX_DIR = os.path.join(cls.tmp_dir, 'whoosh_indexes')
-
     # catalogue deployer
     cls.old_catalogue_deployer = catalogue.wgt_deployer
     cls.catalogue_tmp_dir_backup = os.path.join(cls.tmp_dir, 'catalogue_backup')
@@ -339,6 +338,18 @@ def prepare_temporal_resource_directories(cls):
     else:
         os.mkdir(cls.catalogue_tmp_dir_backup)
 
+
+
+TEST_INDEX = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
+        'INDEX_NAME': 'test_index',
+        'PATH': os.path.join(os.path.dirname(__file__), 'test_whoosh_indexes')
+    },
+}
+
+
+@override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
 
 class WirecloudTestCase(TransactionTestCase):
 
@@ -391,9 +402,6 @@ class WirecloudTestCase(TransactionTestCase):
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
-        # Restore old index dir
-        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
-
         # Clear cache
         from django.core.cache import cache
         cache.clear()
@@ -404,6 +412,9 @@ class WirecloudTestCase(TransactionTestCase):
         super(WirecloudTestCase, cls).tearDownClass()
 
     def setUp(self):
+
+        haystack.connections.reload('default')
+        call_command('rebuild_index', interactive=False, verbosity=0)
 
         # deployers
         restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
@@ -427,12 +438,7 @@ class WirecloudTestCase(TransactionTestCase):
             management.call_command('populate', verbosity=0, interactive=False)
 
     def tearDown(self):
-
-        from django.conf import settings
-
-        for searcher in get_available_search_engines():
-            searcher.clear_cache()
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+        call_command('clear_index', interactive=False, verbosity=0)
 
     def changeLanguage(self, new_language):
 
@@ -573,9 +579,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         catalogue.wgt_deployer = cls.old_catalogue_deployer
         showcase.wgt_deployer = cls.old_deployer
 
-        # Restore old index dir
-        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
-
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
@@ -599,12 +602,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         management.call_command('populate', verbosity=0, interactive=False)
 
     def tearDown(self):
-
-        from django.conf import settings
-
-        for searcher in get_available_search_engines():
-            searcher.clear_cache()
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
         LiveServerTestCase.tearDown(self)
         WirecloudRemoteTestCase.tearDown(self)
