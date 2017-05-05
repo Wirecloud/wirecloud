@@ -60,10 +60,17 @@ def get_search_engine(indexname):
 
 # Clean search results
 def buildSearchResults(sqs, pagenum, maxresults, clean):
-    # Take current page
-    sqs.query.set_limits(low=(pagenum - 1) * maxresults, high=pagenum * maxresults - 1)
+    # Count how many docs there are
+    total = sqs._clone().count()
+
+    #If the selected page is out of bounds, get the last page
+    if pagenum > total // maxresults:
+        pagenum = total // maxresults
+        if (total % maxresults) != 0:
+            pagenum += 1
+
+    sqs.query.set_limits(low=(pagenum - 1) * maxresults, high=pagenum * maxresults)
     res = sqs.query.get_results()
-    total = len(res)
 
     results = [clean(result) for result in res]
 
@@ -72,20 +79,23 @@ def buildSearchResults(sqs, pagenum, maxresults, clean):
 
 
 # Build response structure
-def prepare_search_response(hits, total, pagenum, maxresults):
+def prepare_search_response(search_results, hits, pagenum, maxresults):
     search_result = {}
-    search_result['total'] = total
+    search_result['total'] = hits
 
     search_result['pagecount'] = search_result['total'] // maxresults
     if (search_result['total'] % maxresults) != 0:
         search_result['pagecount'] += 1
 
+    if pagenum > search_result['pagecount']:
+        pagenum = max(1, search_result['pagecount'])
+
     search_result['pagenum'] = pagenum
     start = (pagenum - 1) * maxresults
 
     search_result['offset'] = start
-    search_result['results'] = hits
-    search_result['pagelen'] = len(search_result['results'])
+    search_result['results'] = search_results
+    search_result['pagelen'] = len(search_results)
 
     return search_result
 

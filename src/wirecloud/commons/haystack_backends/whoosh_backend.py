@@ -64,6 +64,12 @@ class GroupedSearchQuery(WhooshSearchQuery):
 
         return super(GroupedSearchQuery, self).post_process_facets(results)
 
+    def get_count(self):
+        if self.grouping_field is not None:
+            return len(self.get_results())
+        else:
+            return super(GroupedSearchQuery, self).get_count()
+
     def get_total_document_count(self):
         """Return the total number of matching documents rather than document groups
         If the query has not been run, this will execute the query and store the results.
@@ -79,6 +85,7 @@ class GroupedSearchQuery(WhooshSearchQuery):
         if self.grouping_field is not None:
             res["collapse"] = self.grouping_field
             res["collapse_limit"] = 5
+            self.result_class = GroupedSearchResult
             res['result_class'] = GroupedSearchResult
 
         if self.group_order_by is not None:
@@ -291,6 +298,7 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
 
             # Because as of Whoosh 2.5.1, it will return the wrong page of
             # results if you request something too high. :(
+            grouped_results = None
             if raw_page.pagenum < page_num:
                 return {
                     'results': [],
@@ -301,18 +309,15 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
                 search_kwargs = {
                     'sortedby': collapse_order
                 }
-                procesed_page = []
+                grouped_results = []
                 for result in raw_page:
-                    query = And([self.parser.parse('%s:(%s)' % (collapse_field, result[collapse_field])), parsed_query])
-
+                    #query = And([self.parser.parse('%s:(%s)' % (collapse_field, result[collapse_field])), parsed_query])
+                    query = And([Term(collapse_field, result[collapse_field]), parsed_query])
                     results = searcher.search(query, limit=collapse_limit, **search_kwargs)
 
-                    procesed_page.append(results)
+                    grouped_results.append(results)
 
-            else:
-                procesed_page = raw_page
-
-            results = self._process_results(procesed_page, collapse_field=collapse_field, result_class=result_class)
+            results = self._process_results(raw_page, result_class=result_class, collapse_field=collapse_field, grouped_results=grouped_results)
             searcher.close()
 
             return results
@@ -340,19 +345,22 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
 
         return res
 
-    def _process_results(self, raw_results, result_class=None, collapse_field=None, **kwargs):
+    def _process_results(self, raw_results, result_class=None, collapse_field=None, grouped_results=None, **kwargs):
         if GroupedSearchResult is not result_class:
             return super(GroupedWhooshSearchBackend, self)._process_results(raw_results, result_class=result_class, **kwargs)
 
         res = {}
         res['results'] = results = []
-        res['len'] = len = 0
-        res['matches'] = 0
+        matches = 0
+        hits = 0
 
-        for group in raw_results:
-            len += 1
+        for group in grouped_results:
+            hits += 1
+            matches += len(group)
             results.append(result_class(collapse_field, group))
 
+        res["hits"] = hits
+        res['matches'] = matches
         return res
 
 
