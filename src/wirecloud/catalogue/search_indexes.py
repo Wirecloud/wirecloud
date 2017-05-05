@@ -107,7 +107,10 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
         sqs = sqs.filter(q)
 
     # Filter available only
-    q = Q(public=True) | Q(users=request.user.username) | Q(groups=request.user.groups.name)
+    if not staff:
+        q = Q(public=True) | Q(users=request.user.username) | Q(groups=request.user.groups.name)
+    else:
+        q = Q(public=True) | Q(public=False) # Without this filter it does not work (?)
     sqs = sqs.filter(q)
 
     # Build response data
