@@ -30,17 +30,20 @@ from haystack import indexes
 class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
-    vendor_name = indexes.CharField()
+
+    vendor_name = indexes.MultiValueField()
+
     vendor = indexes.CharField(model_attr='vendor')
-    name = indexes.CharField(model_attr="short_name")
+    name = indexes.EdgeNgramField(model_attr="short_name")
     version = indexes.CharField(model_attr='version')
     template_uri = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
     creation_date = indexes.CharField(model_attr="creation_date")
     public = indexes.CharField(model_attr="public")
 
-    title = indexes.CharField()
-    description = indexes.CharField()
+    title = indexes.EdgeNgramField()
+
+    description = indexes.EdgeNgramField()
     wiring = indexes.CharField()
     image = indexes.CharField()
     smartphoneimage = indexes.CharField()
@@ -69,7 +72,6 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
             endpoint_descriptions += endpoint['description'] + ' '
             output_friendcodes.extend(endpoint['friendcode'].split(' '))
 
-        self.prepared_data["text"] = '%s %s %s %s' % (object.vendor, object.short_name, object.version, object.type)
         types = ["widget", "mashup", "operator"]
 
         self.prepared_data["type"] = types[object.type]
@@ -85,8 +87,13 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
         return self.prepared_data
 
 
-def searchCatalogueResource(request, scope, querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(CatalogueResource).filter(text__contains=querytext).group_by('vendor_name', order_by='-version')
+def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
+    sqs = SearchQuerySet().models(CatalogueResource)
+
+    q = Q(name=querytext) | Q(version=querytext) | Q(type__contains=querytext) | Q(title=querytext) | Q(description=querytext)
+    sqs = sqs.filter(q)
+
+    sqs = sqs.order_by(orderby).group_by('vendor_name', order_by='-version')
 
     # Filter resource type
     q = None
