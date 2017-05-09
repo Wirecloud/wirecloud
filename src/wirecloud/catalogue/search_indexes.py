@@ -31,7 +31,11 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
 
-    vendor_name = indexes.MultiValueField()
+    from wirecloud.commons.haystack_backends.solr_backend import GroupedSolrSearchBackend
+    if isinstance(SearchQuerySet().query.backend, GroupedSolrSearchBackend):
+        vendor_name = indexes.CharField()
+    else:
+        vendor_name = indexes.MultiValueField()
 
     vendor = indexes.CharField(model_attr='vendor')
     name = indexes.EdgeNgramField(model_attr="short_name")
