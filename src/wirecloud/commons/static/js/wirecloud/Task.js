@@ -159,6 +159,7 @@
                 reject(e);
                 return;
             }
+            next = resolve;
         } else {
             result = this.value;
         }

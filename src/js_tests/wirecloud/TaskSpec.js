@@ -217,6 +217,23 @@
                     );
                 });
 
+                it("catch without return value continue the chain", function (done) {
+                    var task = new Wirecloud.Task("task", function (resolve, reject) {
+                        reject("error");
+                    });
+                    task.then(
+                        null,
+                        function (error) {
+                            expect(error).toBe("error");
+                        }
+                    ).then(
+                        function (value) {
+                            expect(value).toBe(undefined);
+                            done();
+                        }
+                    );
+                });
+
                 it("Task can be returned in a Promise's then callback", function () {
                     var success_value = "success value";
                     var build_task = function build_task() {
