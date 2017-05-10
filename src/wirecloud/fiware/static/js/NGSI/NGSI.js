@@ -1003,6 +1003,7 @@
 
     var init = function init() {
         return this.makeRequest(new URL(NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, this.url), {
+            supportsAccessControl: true,  // required for using CORS on WireCloud
             method: 'POST'
         }).then(
             function (response) {
@@ -1180,6 +1181,7 @@
 
         return this.connect().then(function () {
             return this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION, {
+                supportsAccessControl: true,  // required for using CORS on WireCloud
                 method: 'POST',
                 contentType: 'application/json',
                 postBody: JSON.stringify({connection_id: this.connection_id})
@@ -1221,6 +1223,7 @@
 
         var priv = privates.get(this);
         return this.makeRequest(priv.source_url, {
+            supportsAccessControl: true,  // required for using CORS on WireCloud
             method: 'DELETE'
         }).then(
             function (response) {
@@ -1252,6 +1255,7 @@
      */
     NGSI.ProxyConnection.prototype.closeCallback = function closeCallback(callback_id) {
         return this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
+            supportsAccessControl: true,  // required for using CORS on WireCloud
             method: 'DELETE'
         }).then(
             function (response) {
@@ -2543,7 +2547,8 @@
      *         // Entities retrieved successfully
      *         // response.results is an array with the retrieved entities
      *         // response.correlator transaction id associated with the server response
-     *         // response.count contains the number of entities
+     *         // response.count contains the total number of entities selected
+     *         //   by this query
      *         // response.offset contains the offset used in the request
      *     }, (error) => {
      *         // Error retrieving entities
