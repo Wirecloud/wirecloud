@@ -157,6 +157,11 @@ $ wirecloud-admin --version
 
 ## From 1.0.x to 1.1.x
 
+NGSI bindings (ngsijs) have been updated to `v1.0.2`. This allows WireCloud to
+directly use CORS requests when connecting to a `ngsi-proxy`. The downside is
+that WireCloud is unable to detect the used ngsi-proxy version, so we had to
+drop support for `ngsi-proxy` `v1.0.0` and below.
+
 IdM integration has migrated from `python-social-auth` to
 `social-auth-app-django` (see this [link][MIGRATING_TO_SOCIAL] for more info
 about this change)
