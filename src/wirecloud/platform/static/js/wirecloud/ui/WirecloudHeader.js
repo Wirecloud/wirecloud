@@ -69,11 +69,7 @@
             var template = Wirecloud.currentTheme.templates['wirecloud/signin'];
             builder.parse(template, {
                 username: user_name,
-                avatar: avatar,
-                usermenu: (options) => {
-                    this.user_button = new StyledElements.PopupButton(options);
-                    return this.user_button;
-                }
+                avatar: avatar
             }).appendTo(wrapper);
             document.querySelectorAll(".wc-signin-button").forEach((button) => {
                 button.addEventListener('click', () => {

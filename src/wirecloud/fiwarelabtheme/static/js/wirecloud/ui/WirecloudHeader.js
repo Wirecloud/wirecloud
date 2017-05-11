@@ -62,23 +62,27 @@
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
-        var user_name, user_menu, wrapper, login_button, item;
+        var user_name, user_menu, wrapper, item;
 
         wrapper = document.querySelector('#wc-user-menu');
         if (wrapper == null) {
             return;
         } else if (Wirecloud.contextManager.get('isanonymous')) {
-            login_button = document.createElement('a');
-            login_button.textContent = utils.gettext('Sign in');
-            login_button.addEventListener('click', function () {
-                var login_url = Wirecloud.URLs.LOGIN_VIEW;
-                var next_url = window.location.pathname + window.location.search + window.location.hash;
-                if (next_url != '/') {
-                    login_url += '?next=' + encodeURIComponent(next_url);
-                }
-                window.location = login_url;
+            var template = Wirecloud.currentTheme.templates['wirecloud/signin'];
+            builder.parse(template, {
+                username: user_name,
+                avatar: avatar
+            }).appendTo(wrapper);
+            document.querySelectorAll(".wc-signin-button").forEach((button) => {
+                button.addEventListener('click', () => {
+                    var login_url = Wirecloud.URLs.LOGIN_VIEW;
+                    var next_url = window.location.pathname + window.location.search + window.location.hash;
+                    if (next_url !== '/') {
+                        login_url += '?next=' + encodeURIComponent(next_url);
+                    }
+                    window.location = login_url;
+                });
             });
-            wrapper.appendChild(login_button);
         } else {
             user_name = Wirecloud.contextManager.get('username');
             var avatar = document.createElement('img');
@@ -116,7 +120,7 @@
                     var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
 
                     var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
-                    typeahead.bind(dialog.form.fieldInterfaces['username'].inputElement);
+                    typeahead.bind(dialog.form.fieldInterfaces.username.inputElement);
 
                     dialog.executeOperation = function (data) {
                         Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {
@@ -159,14 +163,14 @@
         breadcrum_part.textContent = breadcrum_entry.label;
         breadcrum_part.className = breadcrum_levels[i];
         if ('class' in breadcrum_entry) {
-            breadcrum_part.classList.add(breadcrum_entry['class']);
+            breadcrum_part.classList.add(breadcrum_entry.class);
         }
 
         this.breadcrum.appendChild(breadcrum_part);
     };
 
     WirecloudHeader.prototype._paintBreadcrumb = function _paintBreadcrumb(newView) {
-        var i, breadcrum, breadcrum_entry;
+        var i, breadcrum;
 
         this.breadcrum.innerHTML = '';
 
