@@ -149,7 +149,7 @@ class GroupIndex(indexes.SearchIndex, indexes.Indexable):
         return Group
 
     def prepare(self, object):
-        self.prepared_data = super(UserIndex, self).prepare(object)
+        self.prepared_data = super(GroupIndex, self).prepare(object)
 
         self.prepared_data['text'] = object.name
 
