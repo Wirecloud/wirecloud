@@ -23,6 +23,7 @@ from django.db.models import Q
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
+from wirecloud.commons.utils.version import Version
 
 from haystack import indexes
 
@@ -37,17 +38,19 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
     else:
         vendor_name = indexes.MultiValueField()
 
-    vendor = indexes.CharField(model_attr='vendor')
+    vendor = indexes.EdgeNgramField(model_attr='vendor')
     name = indexes.EdgeNgramField(model_attr="short_name")
     version = indexes.CharField(model_attr='version')
+    version_sortable = indexes.CharField()
     template_uri = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
     creation_date = indexes.CharField(model_attr="creation_date")
     public = indexes.CharField(model_attr="public")
 
     title = indexes.EdgeNgramField()
+    endpoint_descriptions = indexes.EdgeNgramField()
 
-    description = indexes.EdgeNgramField()
+    description = indexes.NgramField()
     wiring = indexes.CharField()
     image = indexes.CharField()
     smartphoneimage = indexes.CharField()
@@ -75,12 +78,15 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
         for endpoint in resource_info['wiring']['outputs']:
             endpoint_descriptions += endpoint['description'] + ' '
             output_friendcodes.extend(endpoint['friendcode'].split(' '))
+        self.prepared_data["endpoint_descriptions"] = endpoint_descriptions
 
         types = ["widget", "mashup", "operator"]
 
         self.prepared_data["type"] = types[object.type]
         self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
         self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
+
+        self.prepared_data["version_sortable"] = buildVersionSortable(object.version);
 
         self.prepared_data['vendor_name'] = '%s/%s' % (object.vendor, object.short_name)
         self.prepared_data['title'] = resource_info['title']
@@ -90,15 +96,48 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
         return self.prepared_data
 
+def buildVersionSortable(version, length=5):
+    result = "";
+
+    ver = Version(version)
+
+    # Version number
+    for v in ver.version:
+
+        prefix = ""
+        count = len(str(v))
+
+        for t in range (0, length - count):
+            prefix += "0"
+
+        result += prefix + "%d." % v
+
+    # Prerelease
+    prerelease = ver.prerelease
+    if prerelease is not None:
+        # prerelease letter
+        result+= prerelease[0]
+
+        #prerelease number
+        prefix = ""
+        count = len(str(prerelease[1]))
+
+        for t in range (0, length - count):
+            prefix += "0"
+
+        result += prefix + "%d." % prerelease[1]
+
+    return result;
+
 
 def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
     sqs = SearchQuerySet().models(CatalogueResource)
 
     if len(querytext) > 0:
-        q = Q(name=querytext) | Q(version=querytext) | Q(type__contains=querytext) | Q(title=querytext) | Q(description=querytext)
+        q = Q(name=querytext) | Q(vendor=querytext) | Q(version=querytext) | Q(type__contains=querytext) | Q(title=querytext) | Q(description=querytext) | Q(endpoint_descriptions=querytext)
         sqs = sqs.filter(q)
 
-    sqs = sqs.order_by(orderby).group_by('vendor_name', order_by='-version')
+    sqs = sqs.order_by(orderby).group_by('vendor_name', order_by='-version_sortable')
 
     # Filter resource type
     q = None
@@ -133,7 +172,7 @@ def cleanResults(document):
         others.append(results[i].version)
 
     res["pk"] = results[0].pk
-    res["uri"] = "%s/%s/%s" % (results[0].vendor, results[0].short_name, results[0].version)
+    res["uri"] = "%s/%s/%s" % (results[0].vendor, results[0].name, results[0].version)
     res["others"] = others
 
     del res["users"]
