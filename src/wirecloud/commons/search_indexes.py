@@ -64,7 +64,9 @@ def buildSearchResults(sqs, pagenum, maxresults, clean):
     total = sqs._clone().count()
 
     #If the selected page is out of bounds, get the last page
-    if pagenum > total // maxresults:
+    if total == 0:
+        pagenum = 1
+    elif pagenum > total // maxresults:
         pagenum = total // maxresults
         if (total % maxresults) != 0:
             pagenum += 1
