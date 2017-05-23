@@ -344,13 +344,12 @@ TEST_INDEX = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
         'INDEX_NAME': 'test_index',
-        'PATH': os.path.join(os.path.dirname(__file__), 'test_whoosh_indexes')
+        'PATH': 'tobefilled'
     },
 }
 
 
 @override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
-
 class WirecloudTestCase(TransactionTestCase):
 
     base_resources = ()
@@ -384,6 +383,9 @@ class WirecloudTestCase(TransactionTestCase):
         prepare_temporal_resource_directories(cls)
 
         super(WirecloudTestCase, cls).setUpClass()
+
+        settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        haystack.connections.reload('default')
 
     @classmethod
     def tearDownClass(cls):
@@ -433,12 +435,13 @@ class WirecloudTestCase(TransactionTestCase):
         # Restore English as the default language
         self.changeLanguage('en')
 
-        # Populate initial db
-        if self.populate:
-            management.call_command('populate', verbosity=0, interactive=False)
+        super(WirecloudTestCase, self).setUp()
 
     def tearDown(self):
+
         call_command('clear_index', interactive=False, verbosity=0)
+
+        super(WirecloudTestCase, self).tearDown()
 
     def changeLanguage(self, new_language):
 
