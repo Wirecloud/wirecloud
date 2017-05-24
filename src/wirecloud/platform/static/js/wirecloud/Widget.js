@@ -343,7 +343,7 @@
         },
 
         is: function is(component) {
-            return this.meta.type == component.meta.type && this.id == component.id;
+            return this.meta.type === component.meta.type && this.id === component.id;
         },
 
         /**
@@ -689,15 +689,19 @@
         var old_value = privates.get(this).meta;
         privates.get(this).meta = meta;
 
-        Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
-            workspace_id: this.tab.workspace.id,
-            tab_id: this.tab.id,
-            iwidget_id: this.id
-        }), {
-            method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-        }).then((response) => {
-            build_prefs.call(this, this.preferences);
+        Promise.all([
+            // Request preferences
+            Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
+                workspace_id: this.tab.workspace.id,
+                tab_id: this.tab.id,
+                iwidget_id: this.id
+            }), {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+            }).then((response) => {
+                build_prefs.call(this, this.preferences);
+            }),
+            // Request properties
             Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PROPERTIES.evaluate({
                 workspace_id: this.tab.workspace.id,
                 tab_id: this.tab.id,
@@ -707,15 +711,16 @@
                 requestHeaders: {'Accept': 'application/json'},
             }).then((response) => {
                 build_props.call(this, this.properties);
-                build_endpoints.call(this);
+            })
+        ]).then(() => {
+            build_endpoints.call(this);
 
-                if (this.loaded) {
-                    on_unload.call(this);
-                    this.load();
-                }
+            if (this.loaded) {
+                on_unload.call(this);
+                this.load();
+            }
 
-                this.dispatchEvent('change', ['meta'], {meta: old_value});
-            });
+            this.dispatchEvent('change', ['meta'], {meta: old_value});;
         });
     };
 
