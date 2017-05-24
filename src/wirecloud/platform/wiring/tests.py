@@ -556,7 +556,7 @@ class WiringTestCase(WirecloudTestCase):
                     'id': '1',
                     'name': 'Wirecloud/TestOperator/1.0',
                     'preferences': {
-                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}, 'secure': True},
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
                     },
                     'properties': {}
                 },
@@ -1312,7 +1312,24 @@ class WiringTestCase(WirecloudTestCase):
             'connections': [],
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 204)
+
+        self.assertEqual(workspace.wiringStatus, {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestRandomOperator/1.0',
+                    'preferences': {
+                        'pref1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'default'}}},
+                    },
+                    'properties': {
+                        'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
+                        'prop2': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'b'}}},
+                    }
+                },
+            },
+            'connections': [],
+        })
 
     def test_save_wiring_by_owner(self):
         workspace = Workspace.objects.get(id=self.workspace_id)

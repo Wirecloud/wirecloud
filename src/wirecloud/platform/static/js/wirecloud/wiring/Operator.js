@@ -384,11 +384,20 @@
         this.preferenceList = [];
         this.preferences = {};
 
+        // Build preferences with set values
         for (preference_name in initial_values) {
             operator_pref_info = initial_values[preference_name];
-            this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            // Prefs are undefined if operator is missing
+            if (operator_pref_info == null) {
+                // the operator is missing
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], true, true, "");
+            } else {
+                // Create prefs
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            }
         }
 
+        // Build preferences with default values
         this.meta.preferenceList.forEach(function (preference) {
             if (!(preference.name in this.preferences)) {
                 this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
@@ -413,7 +422,14 @@
             if (prop_info != null) {
                 this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, prop_info.readonly, prop_info.value);
             } else {
-                this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
+                // Check if operator missing or property has no set value
+                if (property.name in initial_values) {
+                    // The operator is missing
+                    this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, true, "");
+                } else {
+                    // Set default value
+                    this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
+                }
             }
             this.properties[property.name] = this.propertyList[index];
         });
@@ -430,16 +446,40 @@
     var change_meta = function change_meta(meta) {
         var old_value = privates.get(this).meta;
         privates.get(this).meta = meta;
-        build_endpoints.call(this);
-        build_prefs.call(this, this.preferences);
-        build_props.call(this, this.properties);
 
-        if (this.loaded) {
-            on_unload.call(this);
-            this.load();
-        }
+        Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_VARIABLES_ENTRY.evaluate({
+            workspace_id: this.wiring.workspace.id,
+            operator_id: this.id
+        }), {
+            method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
+        }).then((response) => {
+            if (response.status === 200) {
+                this.preferences = {};
+                this.properties =  {};
+                var preference_keys = Object.keys(this.meta.preferences);
+                var property_keys = Object.keys(this.meta.properties);
+                var new_values = JSON.parse(response.responseText);
 
-        this.dispatchEvent('change', ['meta'], {meta: old_value});
+                preference_keys.forEach((key) => {
+                    this.preferences[key] = new_values[key];
+                });
+                property_keys.forEach((key) => {
+                    this.properties[key] = new_values[key];
+                });
+
+                build_endpoints.call(this);
+                build_prefs.call(this, this.preferences);
+                build_props.call(this, this.properties);
+
+                if (this.loaded) {
+                    on_unload.call(this);
+                    this.load();
+                }
+
+                this.dispatchEvent('change', ['meta'], {meta: old_value});
+            }
+        });
     };
 
     // =========================================================================

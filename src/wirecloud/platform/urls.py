@@ -91,11 +91,11 @@ urlpatterns = (
         name='wirecloud.iwidget_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences$',
-        iwidget_views.IWidgetPreferences(permitted_methods=('POST',)),
+        iwidget_views.IWidgetPreferences(permitted_methods=('POST', 'GET',)),
         name='wirecloud.iwidget_preferences'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/properties$',
-        iwidget_views.IWidgetProperties(permitted_methods=('POST',)),
+        iwidget_views.IWidgetProperties(permitted_methods=('POST','GET',)),
         name='wirecloud.iwidget_properties'
     ),
 
@@ -171,6 +171,11 @@ urlpatterns = (
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT', 'PATCH')),
         name='wirecloud.workspace_wiring'
+    ),
+
+    url(r'^api/workspace/(?P<workspace_id>\d+)/operators/(?P<operator_id>\d+)/?$',
+        wiring_views.OperatorVariablesEntry(permitted_methods=('GET',)),
+        name='wirecloud.operator_variables'
     ),
 
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',

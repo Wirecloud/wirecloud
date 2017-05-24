@@ -187,6 +187,7 @@
 
         build_endpoints.call(this);
         build_prefs.call(this, data.preferences);
+        build_props.call(this, data.properties);
 
         Object.defineProperties(this, {
             /**
@@ -224,22 +225,6 @@
                 }
             }
         });
-
-        var i, properties, prop_info;
-
-        properties = this.meta.propertyList;
-        this.propertyList = [];
-        this.properties = {};
-        this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
-        for (i = 0; i < properties.length; i++) {
-            prop_info = data.properties[properties[i].name];
-            if (prop_info != null) {
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, prop_info.readonly, prop_info.value);
-            } else {
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
-            }
-            this.properties[properties[i].name] = this.propertyList[i];
-        }
 
         this.callbacks = {
             'iwidget': [],
@@ -358,7 +343,7 @@
         },
 
         is: function is(component) {
-            return this.meta.type == component.meta.type && this.id == component.id;
+            return this.meta.type === component.meta.type && this.id === component.id;
         },
 
         /**
@@ -643,9 +628,17 @@
         this.preferenceList = [];
         this.preferences = {};
 
+        // Build preferences with set values
         for (preference_name in initial_values) {
             operator_pref_info = initial_values[preference_name];
-            this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            // If the widget is missing, preferences are undefined
+            if (operator_pref_info == null) {
+                // missing widget
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], true, true, "");
+            } else {
+                // Create prefs with set values
+                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+            }
         }
 
         this.meta.preferenceList.forEach(function (preference) {
@@ -656,6 +649,31 @@
             this.preferenceList.push(this.preferences[preference.name]);
         }, this);
     };
+
+    var build_props = function build_props(initial_values) {
+        var i, properties, prop_info;
+
+        properties = this.meta.propertyList;
+        this.propertyList = [];
+        this.properties = {};
+        this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
+        for (i = 0; i < properties.length; i++) {
+            prop_info = initial_values[properties[i].name];
+            if (prop_info != null) {
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, prop_info.readonly, prop_info.value);
+            } else {
+                // Check wether widget is missing or property has no set value
+                if (properties[i].name in initial_values) {
+                    // The widget is missing
+                    this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, true, "");
+                } else {
+                    // Set default property value
+                    this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
+                }
+            }
+            this.properties[properties[i].name] = this.propertyList[i];
+        }
+    }
 
     var _remove = function _remove() {
         this.fullDisconnect();
@@ -670,15 +688,40 @@
     var change_meta = function change_meta(meta) {
         var old_value = privates.get(this).meta;
         privates.get(this).meta = meta;
-        build_endpoints.call(this);
-        build_prefs.call(this, this.preferences);
 
-        if (this.loaded) {
-            on_unload.call(this);
-            this.load();
-        }
+        Promise.all([
+            // Request preferences
+            Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
+                workspace_id: this.tab.workspace.id,
+                tab_id: this.tab.id,
+                iwidget_id: this.id
+            }), {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+            }).then((response) => {
+                build_prefs.call(this, this.preferences);
+            }),
+            // Request properties
+            Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PROPERTIES.evaluate({
+                workspace_id: this.tab.workspace.id,
+                tab_id: this.tab.id,
+                iwidget_id: this.id
+            }), {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+            }).then((response) => {
+                build_props.call(this, this.properties);
+            })
+        ]).then(() => {
+            build_endpoints.call(this);
 
-        this.dispatchEvent('change', ['meta'], {meta: old_value});
+            if (this.loaded) {
+                on_unload.call(this);
+                this.load();
+            }
+
+            this.dispatchEvent('change', ['meta'], {meta: old_value});;
+        });
     };
 
     var _rename = function _rename(title) {

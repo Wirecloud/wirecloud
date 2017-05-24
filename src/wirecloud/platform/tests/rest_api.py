@@ -1189,6 +1189,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Other preferences should not be modified
         self.assertEqual(Workspace.objects.get(pk=202).wiringStatus["operators"]["2"]["preferences"]["username"]["value"]["users"]["4"], "test_username")
 
+    def test_workspace_wiring_entry_patch_preference_value_missing_operator_permission(self):
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 203})
+
+        data = [{
+            "op": "replace",
+            "path": "/operators/1/preferences/pref_secure/value",
+            "value": 'helloWorld',
+        }]
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+        response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
+
+        self.assertEqual(response.status_code, 403)
+
     def test_workspace_wiring_entry_patch_preference_value_read_only_permission(self):
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 202})
 
@@ -1246,6 +1261,60 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.patch(url, json.dumps(data), content_type='application/json-patch+json; charset=UTF-8')
         self.assertEqual(response.status_code, 400)
+
+    def test_operator_variables_entry_get_requires_authentication(self):
+        url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 2})
+
+        check_get_requires_authentication(self, url)
+
+    def test_operator_variables_entry_get_requires_permission(self):
+        url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 2})
+
+        check_get_requires_permission(self, url)
+
+    def test_operator_variables_entry_get(self):
+        url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        expectedResult = {
+            'pref_secure': {
+                'hidden': False,
+                'name': 'pref_secure',
+                'readonly': False,
+                'secure': True,
+                'value': '********'
+            },
+            'username': {'hidden': False,
+                'name': 'username',
+                'readonly': False,
+                'secure': False,
+                'value': 'test_username'
+            }
+        }
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expectedResult)
+
+    def test_operator_variables_entry_get_workspace_not_found(self):
+        url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 404, 'operator_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_operator_variables_entry_get_operator_not_found(self):
+        url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
 
     def test_tab_collection_post_requires_authentication(self):
 
@@ -2341,6 +2410,60 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_iwidget_preferences_entry_get_requires_authentication(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        check_get_requires_authentication(self, url)
+
+    def test_iwidget_preferences_entry_get_requires_permission(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        check_get_requires_permission(self, url)
+
+    def test_iwidget_preferences_entry_get(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        expectedResult = {
+            "boolean": {"readonly": False, "hidden": False, "name": "boolean", "value": False, "secure": False},
+            "text": {"readonly": False, "hidden": False, "name": "text", "value": "initial text", "secure": False},
+            "password": {"readonly": False, "hidden": False, "name": "password", "value": "default", "secure": False},
+            "list": {"readonly": False, "hidden": False, "name": "list", "value": "default", "secure": False},
+            "number": {"readonly": False, "hidden": False, "name": "number", "value": 2, "secure": False}
+        }
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expectedResult)
+
+    def test_iwidget_preferences_entry_get_workspace_not_found(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_iwidget_preferences_entry_get_tab_not_found(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 404, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_iwidget_preferences_entry_get_iwidget_not_found(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
     def _todo_create_property(self, multiuser=False):
 
         # TODO
@@ -2493,6 +2616,57 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 422)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
+
+    def test_iwidget_properties_entry_get_requires_authentication(self):
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 6, 'tab_id': 106, 'iwidget_id': 111})
+
+        check_get_requires_authentication(self, url)
+
+    def test_iwidget_properties_entry_get_requires_permission(self):
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 6, 'tab_id': 106, 'iwidget_id': 111})
+
+        check_get_requires_permission(self, url)
+
+    def test_iwidget_properties_entry_get(self):
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 6, 'tab_id': 106, 'iwidget_id': 111})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        expectedResult = {
+            'prop': {'readonly': False, 'secure': False, 'hidden': False, 'value': 'default', 'name': 'prop'},
+            'prop2': {'readonly': False, 'secure': False, 'hidden': False, 'value': 'default2', 'name': 'prop2'}
+        }
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expectedResult)
+
+    def test_iwidget_properties_entry_get_workspace_not_found(self):
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 404, 'tab_id': 106, 'iwidget_id': 111})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_iwidget_properties_entry_get_tab_not_found(self):
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 6, 'tab_id': 404, 'iwidget_id': 111})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_iwidget_properties_entry_get_iwidget_not_found(self):
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 6, 'tab_id': 106, 'iwidget_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
 
     def test_iwidget_entry_delete_requires_authentication(self):
 

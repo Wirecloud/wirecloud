@@ -288,10 +288,10 @@ class VariableValueCacheManager():
         entry = values[component_type]["%s" % component_id][var_name]
         return self._process_entry(entry)
 
-    # Get preference data
-    def get_variable_data(self, iwidget, var_name):
+    # Get variable data
+    def get_variable_data(self, component_type, component_id, var_name):
         values = self.get_variable_values()
-        entry = values['iwidget']["%s" % iwidget.id][var_name]
+        entry = values[component_type]["%s" % component_id][var_name]
 
         # If secure and has value, censor it
         if entry['secure'] and entry["value"] != "":
@@ -305,19 +305,6 @@ class VariableValueCacheManager():
             'readonly': entry['readonly'],
             'hidden': entry['hidden'],
             'value': value,
-        }
-
-    # Get the persistent property data
-    def get_property_data(self, iwidget, var_name):
-        values = self.get_variable_values()
-        entry = values['iwidget']["%s" % iwidget.id][var_name]
-
-        return {
-            'name': var_name,
-            'value': entry['value'],
-            'readonly': entry['readonly'],
-            'secure': entry['secure'],
-            'hidden': entry['hidden'],
         }
 
 
@@ -489,7 +476,11 @@ def _get_global_workspace_data(workspaceDAO, user):
         try:
             resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
             operator_info = resource.get_processed_info(process_variables=True)
+            if not resource.is_available_for(user):
+                raise CatalogueResource.DoesNotExist
         except CatalogueResource.DoesNotExist:
+            operator["preferences"] = {}
+            operator["properties"] = {}
             continue
 
         operator_forced_values = forced_values['ioperator'].get(operator_id, {})
@@ -594,8 +585,8 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         cache_manager = VariableValueCacheManager(workspace, user)
 
     iwidget_info = iwidget.widget.resource.get_processed_info()
-    data_ret['preferences'] = {preference['name']: cache_manager.get_variable_data(iwidget, preference['name']) for preference in iwidget_info['preferences']}
-    data_ret['properties'] = {property['name']: cache_manager.get_property_data(iwidget, property['name']) for property in iwidget_info['properties']}
+    data_ret['preferences'] = {preference['name']: cache_manager.get_variable_data("iwidget", iwidget.id, preference['name']) for preference in iwidget_info['preferences']}
+    data_ret['properties'] = {property['name']: cache_manager.get_variable_data("iwidget", iwidget.id, property['name']) for property in iwidget_info['properties']}
 
     return data_ret
 
