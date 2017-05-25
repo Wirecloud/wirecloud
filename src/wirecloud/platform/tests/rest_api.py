@@ -397,7 +397,7 @@ def check_get_request(self, url, *args, **kwargs):
 
 class ApplicationMashupAPI(WirecloudTestCase):
 
-    fixtures = ('selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
 
     def setUp(self):
