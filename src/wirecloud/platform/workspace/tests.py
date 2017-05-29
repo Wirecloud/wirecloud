@@ -43,7 +43,7 @@ from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.platform.workspace.searchers import WorkspaceSearcher
-from wirecloud.platform.workspace.utils import get_global_workspace_data
+from wirecloud.platform.workspace.utils import get_global_workspace_data, encrypt_value
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 from wirecloud.platform.migration_utils import multiuser_variables_structure_forwards, multiuser_variables_structure_backwards
 
@@ -204,7 +204,7 @@ class WorkspaceTestCase(WirecloudTestCase):
                     },
                     'properties': {
                         'prop1': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'a'}}},
-                        'prop3': {'hidden': True, 'readonly': False, 'value': {"users": {"2": 'ImN5EbVtQ1ffc6BZp3rkNg=='}}},
+                        'prop3': {'hidden': True, 'readonly': False, 'value': {"users": {"2": encrypt_value("test_password")}}},
                     }
                 },
             },
@@ -217,6 +217,26 @@ class WorkspaceTestCase(WirecloudTestCase):
 
     def test_secure_preferences_censor(self):
         workspace = Workspace.objects.get(pk=202)
+
+        workspace.wiringStatus = {
+            'operators': {
+                '1': {
+                    'id': '1',
+                    'name': 'Wirecloud/TestOperatorSecure/1.0',
+                    'preferences': {
+                        'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": ''}}}
+                    },
+                },
+                '2': {
+                    'id': '2',
+                    'name': 'Wirecloud/TestOperatorSecure/1.0',
+                    'preferences': {
+                        'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": encrypt_value("test_password")}}}
+                    },
+                },
+            },
+            'connections': [],
+        }
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 1)
 
