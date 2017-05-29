@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2008-2016 Universidad Politécnica de Madrid
+# Copyright 2008-2017 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -37,7 +37,7 @@ class PlatformPreference(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=250)
-    value = models.CharField(_('Value'), max_length=250)
+    value = models.TextField(_('Value'))
 
     class Meta:
         app_label = 'platform'
@@ -53,7 +53,7 @@ class WorkspacePreference(models.Model):
     workspace = models.ForeignKey('platform.Workspace', on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
-    value = models.CharField(_('Value'), max_length=250)
+    value = models.TextField(_('Value'))
 
     class Meta:
         app_label = 'platform'
@@ -69,7 +69,7 @@ class TabPreference(models.Model):
     tab = models.ForeignKey('platform.Tab', on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
-    value = models.CharField(_('Value'), max_length=250)
+    value = models.TextField(_('Value'))
 
     class Meta:
         app_label = 'platform'
