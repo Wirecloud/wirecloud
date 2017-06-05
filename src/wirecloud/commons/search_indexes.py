@@ -59,7 +59,7 @@ def get_search_engine(indexname):
 
 
 # Clean search results
-def buildSearchResults(sqs, pagenum, maxresults, clean):
+def buildSearchResults(sqs, pagenum, maxresults, clean, request=None):
     # Count how many docs there are
     total = sqs._clone().count()
 
@@ -74,7 +74,7 @@ def buildSearchResults(sqs, pagenum, maxresults, clean):
     sqs.query.set_limits(low=(pagenum - 1) * maxresults, high=pagenum * maxresults)
     res = sqs.query.get_results()
 
-    results = [clean(result) for result in res]
+    results = [clean(result, request) for result in res]
 
     # Build response data
     return prepare_search_response(results, total, pagenum, maxresults)

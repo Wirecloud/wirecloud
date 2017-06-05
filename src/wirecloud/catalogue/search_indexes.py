@@ -19,11 +19,14 @@
 
 from __future__ import unicode_literals
 
+from six.moves.urllib.parse import urlparse, urljoin
+
 from django.db.models import Q
 
-from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource, get_template_url
 from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 from wirecloud.commons.utils.version import Version
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 from haystack import indexes
 
@@ -159,10 +162,10 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
     sqs = sqs.filter(q)
 
     # Build response data
-    return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
+    return buildSearchResults(sqs, pagenum, maxresults, cleanResults, request)
 
 
-def cleanResults(document):
+def cleanResults(document, request):
     results = document.documents
 
     res = results[0].get_stored_fields()
@@ -173,13 +176,22 @@ def cleanResults(document):
         others.append(results[i].version)
 
     res["pk"] = results[0].pk
-    res["uri"] = "%s/%s/%s" % (results[0].vendor, results[0].name, results[0].version)
     res["others"] = others
+
+    add_absolute_urls(res, request)
 
     del res["users"]
     del res["groups"]
     del res["text"]
     return res
+
+def add_absolute_urls(hit, request=None):
+
+    base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
+    hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
+    hit['image'] = "" if hit['image'] == '' else urljoin(base_url, hit['image'])
+    hit['smartphoneimage'] = "" if hit['image'] == '' else urljoin(base_url, hit['smartphoneimage'])
+
 
 from django.dispatch import receiver
 from django.db.models.signals import m2m_changed
