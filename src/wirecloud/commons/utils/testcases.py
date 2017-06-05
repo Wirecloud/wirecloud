@@ -565,6 +565,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()
 
+        settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        haystack.connections.reload('default')
+
     @classmethod
     def tearDownClass(cls):
 
@@ -590,6 +593,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     def setUp(self):
 
+        haystack.connections.reload('default')
+        call_command('rebuild_index', interactive=False, verbosity=0)
+
         from django.core.cache import cache
 
         restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
@@ -605,6 +611,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         management.call_command('populate', verbosity=0, interactive=False)
 
     def tearDown(self):
+
+        call_command('clear_index', interactive=False, verbosity=0)
 
         LiveServerTestCase.tearDown(self)
         WirecloudRemoteTestCase.tearDown(self)
