@@ -134,13 +134,6 @@ class CatalogueResource(models.Model):
         # Remove cache for this resource
         self.invalidate_cache()
 
-        # Remove document from search indexes
-        try:
-            with get_search_engine('resource').get_batch_writer() as writer:
-                writer.delete_by_term('pk', '%s' % old_id)
-        except:
-            pass  # ignore errors
-
         # Remove id attribute definetly
         self.id = None
 

@@ -87,7 +87,6 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
         self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
 
         self.prepared_data["version_sortable"] = buildVersionSortable(object.version);
-
         self.prepared_data['vendor_name'] = '%s/%s' % (object.vendor, object.short_name)
         self.prepared_data['title'] = resource_info['title']
         self.prepared_data['description'] = resource_info['description']
@@ -131,7 +130,9 @@ def buildVersionSortable(version, length=5):
 
 
 def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
-    sqs = SearchQuerySet().models(CatalogueResource)
+    sqs = SearchQuerySet().models(CatalogueResource).all()
+
+    #import ipdb; ipdb.sset_trace()
 
     if len(querytext) > 0:
         q = Q(name=querytext) | Q(vendor=querytext) | Q(version=querytext) | Q(type__contains=querytext) | Q(title=querytext) | Q(description=querytext) | Q(endpoint_descriptions=querytext)
@@ -179,3 +180,9 @@ def cleanResults(document):
     del res["groups"]
     del res["text"]
     return res
+
+from django.dispatch import receiver
+from django.db.models.signals import m2m_changed
+@receiver(m2m_changed, sender=CatalogueResource.users.through)
+def reindex_catalogue(sender, **kwargs):
+    CatalogueResourceIndex().update_object(kwargs['instance'])
