@@ -135,8 +135,6 @@ def buildVersionSortable(version, length=5):
 def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
     sqs = SearchQuerySet().models(CatalogueResource).all()
 
-    #import ipdb; ipdb.sset_trace()
-
     if len(querytext) > 0:
         q = Q(name=querytext) | Q(vendor=querytext) | Q(version=querytext) | Q(type__contains=querytext) | Q(title=querytext) | Q(description=querytext) | Q(endpoint_descriptions=querytext)
         sqs = sqs.filter(q)

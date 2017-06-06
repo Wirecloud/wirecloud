@@ -297,45 +297,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
                 self.assertEqual(result['image'], '')
                 self.assertEqual(result['smartphoneimage'], '')
 
-    def test_basic_search_letter_typo_correction(self):
-
-        self.client.login(username='myuser', password='admin')
-
-        # Search using a word with a incorrect letter: wercloud (full word: wirecloud)
-        result = self.client.get(self.base_url + '?q=wercloud')
-        result_json = json.loads(result.content.decode('utf-8'))
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['corrected_q'], 'wirecloud')
-        self.assertEqual(result_json['pagelen'], len(self.WIRECLOUD_RESULTS))
-        self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.WIRECLOUD_RESULTS)
-
-    def test_basic_search_unicode_letter(self):
-
-        self.client.login(username='myuser', password='admin')
-
-        # Search using a word with a incorrect letter: wercloud (full word: wirecloud)
-        result = self.client.get(self.base_url + '?q=wírecloud')
-        result_json = json.loads(result.content.decode('utf-8'))
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['corrected_q'], 'wirecloud')
-        self.assertEqual(result_json['pagelen'], len(self.WIRECLOUD_RESULTS))
-        self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.WIRECLOUD_RESULTS)
-
-    def test_basic_search_missing_letter_correction(self):
-
-        self.client.login(username='myuser', password='admin')
-
-        # Search using a word with a missing letter: mashble (full word: mashable)
-        result = self.client.get(self.base_url + '?q=mashble')
-        result_json = json.loads(result.content.decode('utf-8'))
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['corrected_q'], 'mashable')
-        self.assertEqual(result_json['pagelen'], len(self.MASHABLE_RESULTS))
-        self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.MASHABLE_RESULTS)
-
     def test_basic_search_partial_word_correction(self):
 
         self.client.login(username='myuser', password='admin')
