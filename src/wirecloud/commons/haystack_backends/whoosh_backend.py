@@ -242,15 +242,35 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
         else:
             model_choices = []
 
-        parsed_query = self.parser.parse(query_string)
+        narrow_searcher = None
 
-        if len(model_choices) > 0:
-            narrow_queries = [Term(DJANGO_CT, rm) for rm in model_choices]
-            parsed_query = And([parsed_query, Or(narrow_queries)])
+        if narrow_queries is not None:
+            # Potentially expensive? I don't see another way to do it in Whoosh...
+            narrow_searcher = self.index.searcher()
+
+            for nq in narrow_queries:
+                recent_narrowed_results = narrow_searcher.search(self.parser.parse(force_text(nq)),
+                                                                 limit=None)
+
+                if len(recent_narrowed_results) <= 0:
+                    return {
+                        'results': [],
+                        'hits': 0,
+                    }
+
+                if narrowed_results:
+                    narrowed_results.filter(recent_narrowed_results)
+                else:
+                   narrowed_results = recent_narrowed_results
 
         self.index = self.index.refresh()
 
         if self.index.doc_count():
+            parsed_query = self.parser.parse(query_string)
+            if len(model_choices) > 0:
+                narrow_model = [Term(DJANGO_CT, rm) for rm in model_choices]
+                parsed_query = And([Or(narrow_model), parsed_query])
+
             searcher = self.index.searcher()
 
             # In the event of an invalid/stopworded query, recover gracefully.
@@ -319,6 +339,9 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
 
             results = self._process_results(raw_page, result_class=result_class, collapse_field=collapse_field, grouped_results=grouped_results)
             searcher.close()
+
+            if hasattr(narrow_searcher, 'close'):
+                narrow_searcher.close()
 
             return results
         else:
