@@ -83,8 +83,8 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
         types = ["widget", "mashup", "operator"]
 
         self.prepared_data["type"] = types[object.type]
-        self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
-        self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
+        self.prepared_data["users"] = ', '.join(map(str, object.users.all().values_list('id', flat=True)))
+        self.prepared_data["groups"] = ', '.join(map(str, object.groups.all().values_list('id', flat=True)))
 
         self.prepared_data["version_sortable"] = buildVersionSortable(object.version);
         self.prepared_data['vendor_name'] = '%s/%s' % (object.vendor, object.short_name)
@@ -151,7 +151,11 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
 
     # Filter available only
     if not staff:
-        q = Q(public=True) | Q(users=request.user.username) | Q(groups=request.user.groups.name)
+        user_group_query = Q()
+        for group in request.user.groups.values_list('id', flat=True):
+            user_group_query |= Q(groups=group)
+        q = Q(public=True) | Q(users=request.user.id) | user_group_query
+
     else:
         q = Q(public=True) | Q(public=False) # Without this filter it does not work (?)
     sqs = sqs.filter(q)
