@@ -35,11 +35,8 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
 
-    from wirecloud.commons.haystack_backends.solr_backend import GroupedSolrSearchBackend
-    if isinstance(SearchQuerySet().query.backend, GroupedSolrSearchBackend):
-        vendor_name = indexes.CharField()
-    else:
-        vendor_name = indexes.MultiValueField()
+    group_field = indexes.FacetField(facet_for="vendor_name")
+    vendor_name = indexes.CharField()
 
     vendor = indexes.EdgeNgramField(model_attr='vendor')
     name = indexes.EdgeNgramField(model_attr="short_name")
@@ -139,7 +136,7 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
         q = Q(name=querytext) | Q(vendor=querytext) | Q(version=querytext) | Q(type__contains=querytext) | Q(title=querytext) | Q(description=querytext) | Q(endpoint_descriptions=querytext)
         sqs = sqs.filter(q)
 
-    sqs = sqs.order_by(orderby).group_by('vendor_name', order_by='-version_sortable')
+    sqs = sqs.order_by(orderby).group_by("group_field", order_by='-version_sortable')
 
     # Filter resource type
     q = None
