@@ -150,8 +150,15 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
         user_group_query = Q()
         for group in request.user.groups.values_list('id', flat=True):
             user_group_query |= Q(groups=group)
-        q = Q(public=True) | Q(users=request.user.id) | user_group_query
 
+        q = Q(public=True) | Q(users=request.user.id)
+
+        groups = request.user.groups.values_list('id', flat=True)
+        if len(groups) > 0:
+            for group in groups:
+                user_group_query |= Q(groups=group)
+
+            q |= user_group_query
     else:
         q = Q(public=True) | Q(public=False)  # Without this filter it does not work (?)
     sqs = sqs.filter(q)
