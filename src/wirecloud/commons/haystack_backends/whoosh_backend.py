@@ -20,18 +20,6 @@ from whoosh.query import And, Or, Term
 from whoosh.sorting import FieldFacet
 
 
-def build_order_param(order):
-    order_by_list = []
-
-    for order_by in order:
-        if order_by.startswith('-'):
-            order_by_list.append('%s desc' % order_by[1:])
-        else:
-            order_by_list.append('%s asc' % order_by)
-
-    return ", ".join(order_by_list)
-
-
 class GroupedSearchQuery(WhooshSearchQuery):
 
     def __init__(self, *args, **kwargs):
@@ -261,7 +249,7 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
                 if narrowed_results:
                     narrowed_results.filter(recent_narrowed_results)
                 else:
-                   narrowed_results = recent_narrowed_results
+                    narrowed_results = recent_narrowed_results
 
         self.index = self.index.refresh()
 
@@ -331,8 +319,7 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
                 }
                 grouped_results = []
                 for result in raw_page:
-                    #query = And([self.parser.parse('%s:(%s)' % (collapse_field, result[collapse_field])), parsed_query])
-                    query = And([Term(collapse_field, result[collapse_field]), parsed_query])
+                    query = And([self.parser.parse('%s:(%s)' % (collapse_field, result[collapse_field])), parsed_query])
                     results = searcher.search(query, limit=collapse_limit, **search_kwargs)
 
                     grouped_results.append(results)

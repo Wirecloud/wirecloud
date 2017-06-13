@@ -19,16 +19,15 @@
 
 from __future__ import unicode_literals
 
-from six.moves.urllib.parse import urlparse, urljoin
-
 from django.db.models import Q
+from django.dispatch import receiver
+from django.db.models.signals import m2m_changed
+from six.moves.urllib.parse import urljoin
+from haystack import indexes
 
 from wirecloud.catalogue.models import CatalogueResource, get_template_url
 from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 from wirecloud.commons.utils.version import Version
-from wirecloud.commons.utils.http import get_absolute_reverse_url
-
-from haystack import indexes
 
 
 class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
@@ -86,7 +85,7 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
         self.prepared_data["users"] = ', '.join(map(str, object.users.all().values_list('id', flat=True)))
         self.prepared_data["groups"] = ', '.join(map(str, object.groups.all().values_list('id', flat=True)))
 
-        self.prepared_data["version_sortable"] = buildVersionSortable(object.version);
+        self.prepared_data["version_sortable"] = buildVersionSortable(object.version)
         self.prepared_data['vendor_name'] = '%s/%s' % (object.vendor, object.short_name)
         self.prepared_data['title'] = resource_info['title']
         self.prepared_data['description'] = resource_info['description']
@@ -95,8 +94,9 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
         return self.prepared_data
 
+
 def buildVersionSortable(version, length=5):
-    result = "";
+    result = ""
 
     ver = Version(version)
 
@@ -106,7 +106,7 @@ def buildVersionSortable(version, length=5):
         prefix = ""
         count = len(str(v))
 
-        for t in range (0, length - count):
+        for t in range(0, length - count):
             prefix += "0"
 
         result += prefix + "%d." % v
@@ -115,18 +115,18 @@ def buildVersionSortable(version, length=5):
     prerelease = ver.prerelease
     if prerelease is not None:
         # prerelease letter
-        result+= prerelease[0]
+        result += prerelease[0]
 
-        #prerelease number
+        # prerelease number
         prefix = ""
         count = len(str(prerelease[1]))
 
-        for t in range (0, length - count):
+        for t in range(0, length - count):
             prefix += "0"
 
         result += prefix + "%d." % prerelease[1]
 
-    return result;
+    return result
 
 
 def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
@@ -139,16 +139,12 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
     sqs = sqs.order_by(orderby).group_by("group_field", order_by='-version_sortable')
 
     # Filter resource type
-    q = None
+    q = Q()
     if scope is not None:
         for s in scope:
-            if q is None:
-                q = Q(type=s)
-            else:
-                q |= Q(type=s)
+            q |= Q(type=s)
 
         sqs = sqs.filter(q)
-
     # Filter available only
     if not staff:
         user_group_query = Q()
@@ -157,7 +153,7 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
         q = Q(public=True) | Q(users=request.user.id) | user_group_query
 
     else:
-        q = Q(public=True) | Q(public=False) # Without this filter it does not work (?)
+        q = Q(public=True) | Q(public=False)  # Without this filter it does not work (?)
     sqs = sqs.filter(q)
 
     # Build response data
@@ -184,6 +180,7 @@ def cleanResults(document, request):
     del res["text"]
     return res
 
+
 def add_absolute_urls(hit, request=None):
 
     base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
@@ -192,8 +189,6 @@ def add_absolute_urls(hit, request=None):
     hit['smartphoneimage'] = "" if hit['image'] == '' else urljoin(base_url, hit['smartphoneimage'])
 
 
-from django.dispatch import receiver
-from django.db.models.signals import m2m_changed
 @receiver(m2m_changed, sender=CatalogueResource.users.through)
 def reindex_catalogue(sender, **kwargs):
     CatalogueResourceIndex().update_object(kwargs['instance'])
