@@ -185,8 +185,8 @@ def add_absolute_urls(hit, request=None):
 
     base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
     hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
-    hit['image'] = "" if hit['image'] == '' else urljoin(base_url, hit['image'])
-    hit['smartphoneimage'] = "" if hit['image'] == '' else urljoin(base_url, hit['smartphoneimage'])
+    hit['image'] = "" if not hit['image'] or hit['image'] == '' else urljoin(base_url, hit['image'])
+    hit['smartphoneimage'] = "" if not hit['smartphoneimage'] or hit['smartphoneimage'] == '' else urljoin(base_url, hit['smartphoneimage'])
 
 
 @receiver(m2m_changed, sender=CatalogueResource.users.through)
