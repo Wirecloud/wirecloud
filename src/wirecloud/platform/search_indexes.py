@@ -55,10 +55,9 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
         else:
             lastmodified = "%s" % datetime.utcfromtimestamp(object.creation_date / 1e3)
 
-        self.prepared_data["text"] = "%s %s" % (object.creator, object.name)
-
+        self.prepared_data["text"] = "%s %s" % (object.creator.username, object.name)
         self.prepared_data["lastmodified"] = lastmodified
-        self.prepared_data["owner"] = object.creator
+        self.prepared_data["owner"] = object.creator.username
         self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
         self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
         self.prepared_data["shared"] = object.is_shared()
