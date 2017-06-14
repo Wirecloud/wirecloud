@@ -53,18 +53,13 @@ Example usage:
 	$ python manage.py createsuperuser
 
 
-### resetsearchindexes
+### rebuild_index
 
-Rebuilds whoosh indexes used by the search engine of WireCloud. Some commonly used options are:
-
-- **noinput**
-  Do NOT prompt the user for input of any kind.
-- **indexes**=INDEXES
-  Comma separated list of indexes to reset. Current available indexes: user, group and resource. All by default.
+Rebuilds Haystack indexes used by the search engine of WireCloud.
 
 Example usage:
 
-	$ python manage.py resetsearchindexes --noinput --indexes=user,group
+	$ python manage.py rebuild_index
 
 
 ## Creating WireCloud backups and restoring them

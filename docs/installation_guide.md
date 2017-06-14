@@ -30,6 +30,7 @@ step, as they will be installed throughout the documentation:**
     - user-agents
     - regex
     - markdown
+    - haystack 2.4.1+
     - whoosh 2.7.2+
     - pycrypto
     - pyScss 1.3.4+
@@ -442,6 +443,76 @@ running the following command:
 ```
 $ python manage.py populate
 ```
+
+
+## Search indexes configuration
+
+Wirecloud uses Haystack to handle the search indexes.
+
+Currently, Solr, ElasticSearch2 and Whoosh are supported. Whoosh is enabled by default.
+
+To modify the search engine configuration, it is necessary to modify the `HAYSTACK_CONNECTIONS`
+configuration setting in the instance `settings.py` file (e.g.
+`/opt/wirecloud_instance/wirecloud_instance/settings.py`).
+
+
+### Whoosh configuration
+
+```python
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
+        'PATH': path.join(path.dirname(__file__), 'whoosh_index'),
+    },
+}
+```
+
+Where `PATH` is the location where Whoosh will store the indexes.
+
+### ElasticSearch2 configuration
+
+```python
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+    },
+}
+```
+
+The only thing that remains is installing the python library for ElasticSearch:
+
+    $ pip install elasticsearch==2.4.1
+
+and configuring the `URL` parameter to point to the ElasticSearch2 server.
+
+
+### Solr cofiguration
+
+
+```python
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr'
+    },
+}
+```
+
+The only thing that remains is installing the python library for Solr:
+
+    $ pip install pysolr
+
+and configuring the `URL` parameter to point to the Solr server.
+
+
+
+## Search index population
+
+If you're using Solr an extra step is needed. You should run `python manage.py build_solr_schema` first, drop the XML output in your Solr’s schema.xml file and restart your Solr server.
+
+In order to populate the index for the first time run the `python manage.py rebuild_index` command.
 
 
 ## Extra options
