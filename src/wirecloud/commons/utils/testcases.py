@@ -521,6 +521,7 @@ def uses_extra_workspace(owner, file_name, shared=False, public=False, users=(),
     return wrap
 
 
+@override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     fixtures = ('selenium_test_data',)
