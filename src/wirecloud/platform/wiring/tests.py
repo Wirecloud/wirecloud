@@ -2641,18 +2641,6 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 self.assertIsNotNone(alert)
                 self.assertTrue(alert.has_class('alert-error'))
 
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
-    def test_search_components_by_keywords_suggestions(self):
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                groups = sidebar.find_component_groups('widget', keywords="aip")
-                self.assertEqual(len(groups), 1)
-                alert = sidebar.alert
-                self.assertIsNotNone(alert)
-                self.assertTrue(alert.has_class('alert-info'))
-
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_check_component_sidebar(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
