@@ -76,7 +76,7 @@ def searchWorkspace(request, querytext, pagenum, maxresults):
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
 
 
-def cleanResults(result):
+def cleanResults(result, request):
     res = result.get_stored_fields()
     del res["text"]
     return res
