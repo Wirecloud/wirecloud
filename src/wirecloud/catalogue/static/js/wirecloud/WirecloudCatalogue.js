@@ -231,7 +231,7 @@
             postBody: body,
             parameters: parameters
         }).then((response) => {
-            if ([201, 403, 409, 500].indexOf(response.status) === -1) {
+            if ([201, 400, 403, 409, 500].indexOf(response.status) === -1) {
                 return Promise.reject(utils.gettext("Unexpected response from server"));
             } else if (response.status !== 201) {
                 return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
