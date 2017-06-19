@@ -243,6 +243,8 @@
 
         model.addEventListener('load', function (model) {
 
+            this.wrapperElement.classList.add('in');
+
             model.wrapperElement.contentDocument.defaultView.addEventListener('keydown', function (event) {
                 if (event.keyCode === 27) { // escape
                     Wirecloud.UserInterfaceManager.handleEscapeEvent();

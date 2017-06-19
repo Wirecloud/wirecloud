@@ -103,7 +103,8 @@
                 }
             } else {
                 this.component.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
-                this.component.load();
+                // We have to call the load on the associated WidgetView
+                this.component.tab.workspace.view.findWidget(this.component.id).load();
             }
         }
     };
