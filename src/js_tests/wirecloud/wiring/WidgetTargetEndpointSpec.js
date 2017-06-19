@@ -27,8 +27,22 @@
     "use strict";
 
     var loaded = false;
+    var WIDGET_VIEW = {
+        load: jasmine.createSpy('load')
+    };
     var WIDGET = {
         id: "1",
+        tab: {
+            workspace: {
+                view: {
+                    findWidget: jasmine.createSpy().and.callFake(function (id) {
+                        if (id === "1") {
+                            return WIDGET_VIEW;
+                        }
+                    })
+                }
+            }
+        },
         load: jasmine.createSpy('load'),
         logManager: {
             formatException: jasmine.createSpy('formatException'),
@@ -55,6 +69,7 @@
             WIDGET.load.calls.reset();
             WIDGET.logManager.log.calls.reset();
             WIDGET.pending_events.push.calls.reset();
+            WIDGET_VIEW.load.calls.reset();
         });
 
         describe("new WidgetTargetEndpoint(widgetModel, [endpointDesc])", function () {
@@ -178,7 +193,9 @@
                 var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 endpoint.propagate("test");
                 expect(WIDGET.pending_events.push.calls.count()).toBe(1);
-                expect(WIDGET.load.calls.count()).toBe(1);
+                expect(WIDGET_VIEW.load.calls.count()).toBe(1);
+                // No direct call to widget.load should be made
+                expect(WIDGET.load.calls.count()).toBe(0);
             });
 
             it("should call endpoint listener", function () {
@@ -195,6 +212,7 @@
                 expect(endpoint.callback).toHaveBeenCalledWith("test");
                 expect(WIDGET.pending_events.push.calls.count()).toBe(0);
                 expect(WIDGET.load.calls.count()).toBe(0);
+                expect(WIDGET_VIEW.load.calls.count()).toBe(0);
             });
 
             it("should propagate EndpointValueError errors", function () {
