@@ -327,13 +327,15 @@
         var doRequest, msg;
 
         doRequest = function () {
-            Wirecloud.UserInterfaceManager.monitorTask(this.catalogue.deleteResource(resource).then(
-                () => {
-                    this.home();
-                    this.refresh_search_results();
-                },
-                logerror
-            ).toTask(""));
+            Wirecloud.UserInterfaceManager.monitorTask(
+                this.catalogue.deleteResource(resource).then(
+                    () => {
+                        this.home();
+                        this.refresh_search_results();
+                    },
+                    logerror
+                )
+            );
         };
 
         // First ask the user
@@ -360,7 +362,7 @@
                 this.catalogue.deleteResource(resource, {allversions: true}).then(
                     success_callback,
                     logerror
-                ).toTask("")
+                )
             );
         };
 

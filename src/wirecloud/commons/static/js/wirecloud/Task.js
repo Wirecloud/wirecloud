@@ -188,6 +188,7 @@
      * @returns {Wirecloud.Task}
      */
     Task.prototype.toTask = function toTask(title) {
+        title = title != null ? title : this.title;
         var task = new Task(title, (resolve, reject, update) => {
             this.addEventListener("progress", function (task, progress) {
                 update(progress);
@@ -268,12 +269,23 @@
      * @returns {Wirecloud.Task}
      */
     TaskContinuation.prototype.toTask = function toTask(title) {
+        var current_task;
+
+        if (title == null) {
+            // Search root task
+            current_task = privates.get(this);
+            while (current_task.parent != null) {
+                current_task = privates.get(current_task.parent);
+            }
+            title = current_task.title;
+        }
         var task = new Task(title, function (resolve, reject, update) {
             this.then(resolve, reject);
         }.bind(this));
 
-        var current_task = this;
+        // loop all the sequence up
         var priv = privates.get(task);
+        current_task = this;
         while (current_task != null) {
             current_task.addEventListener("nexttask", (tc, newtask) => {
                 var index = priv.subtasks.indexOf(tc);
@@ -366,5 +378,6 @@
     };
 
     Wirecloud.Task = Task;
+    Wirecloud.TaskContinuation = TaskContinuation;
 
 })(Wirecloud.Utils);

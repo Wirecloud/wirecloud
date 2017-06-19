@@ -586,6 +586,44 @@
                 });
                 var task = initial_task.then(build_promise).then(build_task).then(build_promise).toTask("sequence task").on("progress", listener);
 
+                expect(task.title).toEqual("sequence task");
+
+                task.then(function (value) {
+                    expect(value).toBe(success_value);
+                    expect(task.subtasks).toEqual([
+                        jasmine.any(Wirecloud.Task),
+                        jasmine.any(Wirecloud.Task),
+                        jasmine.any(Wirecloud.Task),
+                        jasmine.any(Wirecloud.Task)
+                    ]);
+                    expect(task.progress).toBe(100);
+                    expect(listener.calls.allArgs()).toEqual([
+                        [task, 75], // 3 of 4 completed steps
+                        [task, 100] // 4 of 4 completed steps
+                    ]);
+                    done();
+                });
+            });
+
+            it("Task sequences can be created without using the title parameter", (done) => {
+                var success_value = "success value";
+                var build_promise = function (value) {
+                    return Promise.resolve(value);
+                };
+                var build_task = function (value) {
+                    return new Wirecloud.Task("task", function (fulfill) {
+                        fulfill(value);
+                    });
+                };
+                var listener = jasmine.createSpy("listener");
+
+                var initial_task = new Wirecloud.Task("initial task", function (fulfill, reject, update) {
+                    fulfill(success_value);
+                });
+                var task = initial_task.then(build_promise).then(build_task).then(build_promise).toTask().on("progress", listener);
+
+                expect(task.title).toEqual(initial_task.title);
+
                 task.then(function (value) {
                     expect(value).toBe(success_value);
                     expect(task.subtasks).toEqual([

@@ -298,6 +298,9 @@
         element.classList.add("in");
         element.classList.add("fade");
 
+        if (task instanceof Wirecloud.TaskContinuation) {
+            task = task.toTask();
+        }
         task.addEventListener('progress', updateTaskProgress);
         task.addEventListener('fail', notifyPlatformReady);
         task.addEventListener('finish', notifyPlatformReady);
