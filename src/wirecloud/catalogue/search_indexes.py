@@ -138,25 +138,29 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
 
     sqs = sqs.order_by(orderby).group_by("group_field", order_by='-version_sortable')
 
+    q = None
     # Filter resource type
-    q = Q()
     if scope is not None:
         for s in scope:
-            q |= Q(type=s)
-
+            if q is None:
+                q = Q(type=s)
+            else:
+                q |= Q(type=s)
         sqs = sqs.filter(q)
+
     # Filter available only
     if not staff:
-        user_group_query = Q()
-        for group in request.user.groups.values_list('id', flat=True):
-            user_group_query |= Q(groups=group)
-
         q = Q(public=True) | Q(users=request.user.id)
 
+        # Add group filters
         groups = request.user.groups.values_list('id', flat=True)
         if len(groups) > 0:
+            user_group_query = None
             for group in groups:
-                user_group_query |= Q(groups=group)
+                if user_group_query is None:
+                    user_group_query = Q(groups=group)
+                else:
+                    user_group_query |= Q(groups=group)
 
             q |= user_group_query
     else:
