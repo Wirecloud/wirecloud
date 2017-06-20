@@ -22,14 +22,19 @@ from __future__ import unicode_literals
 from copy import deepcopy
 from hashlib import md5, sha1
 import json
+import os
 
 from django.conf import settings
 from django.utils.translation import get_language, ugettext_lazy as _
 
+from wirecloud.commons.utils.wgt import WgtFile
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
-from wirecloud.platform.themes import get_active_theme_name
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user
+from wirecloud.platform.models import CatalogueResource, Workspace
 from wirecloud.platform.plugins import build_url_template, get_active_features_info, WirecloudPlugin
+from wirecloud.platform.themes import get_active_theme_name
+from wirecloud.platform.workspace.utils import create_workspace
 
 
 WIRING_EDITOR_FILES = (
@@ -232,6 +237,11 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_pagination.scss',
     'css/styledelements/styled_thumbnail.scss',
 )
+
+
+BASE_PATH = os.path.dirname(__file__)
+WORKSPACE_BROWSER = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.1.wgt')
+INITIAL_HOME_DASHBOARD_FILE = os.path.join(BASE_PATH, 'initial', 'initial_home_dashboard.wgt')
 
 
 def get_version_hash():
@@ -662,3 +672,19 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_proxy_processors(self):
         return ('wirecloud.proxy.processors.SecureDataProcessor',)
+
+    def populate(self, wirecloud_user, log):
+        if not CatalogueResource.objects.filter(vendor="WireCloud", short_name="workspace-browser", version="0.1.1").exists():
+            updated = True
+            log('Installing the workspace-browser widget... ', 1, ending='')
+            install_resource_to_user(wirecloud_user, file_contents=WgtFile(WORKSPACE_BROWSER))
+            log('DONE', 1)
+
+        if not Workspace.objects.filter(creator__username="wirecloud", name="home").exists():
+            updated = True
+            log('Creating a initial version of the wirecloud/home workspace... ', 1, ending='')
+            with open(INITIAL_HOME_DASHBOARD_FILE, 'rb') as f:
+                workspace = create_workspace(wirecloud_user, f)
+                workspace.public = True
+                workspace.save()
+            log('DONE', 1)

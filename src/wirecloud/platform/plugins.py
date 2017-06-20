@@ -490,3 +490,6 @@ class WirecloudPlugin(object):
 
     def get_api_auth_backends(self):
         return {}
+
+    def populate(self, wirecloud_user, log):
+        return False

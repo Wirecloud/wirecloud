@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,21 +20,13 @@
 from __future__ import unicode_literals
 
 import locale
-import os
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from django.db.transaction import atomic
-from django.utils.translation import override, ugettext as _
+from django.utils.translation import override
 
-from wirecloud.commons.utils.wgt import WgtFile
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user
-from wirecloud.platform.models import CatalogueResource, Workspace
-from wirecloud.platform.workspace.utils import create_workspace
-
-BASE_PATH = os.path.dirname(__file__)
-WORKSPACE_BROWSER = os.path.join(BASE_PATH, 'WireCloud_workspace-browser_0.1.1.wgt')
-INITIAL_HOME_DASHBOARD_FILE = os.path.join(BASE_PATH, 'initial_home_dashboard.wgt')
+from wirecloud.platform.plugins import get_plugins
 
 
 class Command(BaseCommand):
@@ -51,20 +43,9 @@ class Command(BaseCommand):
                 updated = True
                 self.log('Creating a wirecloud user... DONE', 1)
 
-            if not CatalogueResource.objects.filter(vendor="WireCloud", short_name="workspace-browser", version="0.1.1").exists():
-                updated = True
-                self.log('Installing the workspace-browser widget... ', 1, ending='')
-                install_resource_to_user(wirecloud_user, file_contents=WgtFile(WORKSPACE_BROWSER))
-                self.log('DONE', 1)
-
-            if not Workspace.objects.filter(creator__username="wirecloud", name="home").exists():
-                updated = True
-                self.log('Creating a initial version of the wirecloud/home workspace... ', 1, ending='')
-                with open(INITIAL_HOME_DASHBOARD_FILE, 'rb') as f:
-                    workspace = create_workspace(wirecloud_user, f)
-                    workspace.public = True
-                    workspace.save()
-                self.log('DONE', 1)
+            for plugin in get_plugins():
+                result = plugin.populate(wirecloud_user, self.log)
+                updated = updated or result
 
         if not updated:
             self.log('Already up-to-date.', 1)

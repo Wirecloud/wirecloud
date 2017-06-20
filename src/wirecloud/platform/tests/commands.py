@@ -22,19 +22,32 @@ import sys
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.test import override_settings
 from mock import Mock, patch, DEFAULT
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.platform.plugins import clear_cache
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
 __test__ = False
 
 
+@override_settings(WIRECLOUD_PLUGINS=())
 @patch('wirecloud.platform.management.commands.populate.locale.getdefaultlocale', return_value=("en_US",))
 class PopuplateCommandTestCase(WirecloudTestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-populate', 'wirecloud-noselenium')
+
+    @classmethod
+    def setUpClass(cls):
+        clear_cache()
+        super(PopuplateCommandTestCase, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super(PopuplateCommandTestCase, cls).tearDownClass()
+        clear_cache()
 
     def setUp(self):
 
