@@ -99,10 +99,10 @@ def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode
     extra_api_js_files = [get_absolute_static_url(url, request=request, versioned=True) for url in get_operator_api_extensions(mode, requirements)]
     api_js = get_operator_api_files(request) + extra_api_js_files + [api_closure_url]
 
-    t = loader.get_template('wirecloud/operator_xhtml.html')
+    template = loader.get_template('wirecloud/operator_xhtml.html')
     context = {'base_url': base_url, 'js_files': api_js + js_files}
 
-    xhtml = t.render(context)
+    xhtml = template.render(context)
 
     return xhtml
 
