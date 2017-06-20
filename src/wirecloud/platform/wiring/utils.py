@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from io import BytesIO
 
 from django.conf import settings
-from django.template import loader, Context, Template
+from django.template import loader, Template
 from lxml import etree
 
 from wirecloud.commons.utils.http import get_absolute_static_url, get_current_domain
@@ -83,7 +83,7 @@ def get_operator_api_files(request):
         <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPICommon.js" %}"></script>
         {% endcompress %}'''
 
-        result = Template(code).render(Context({}))
+        result = Template(code).render({})
         doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
 
         files = [script.get('src') for script in doc.getroot()]
@@ -100,9 +100,9 @@ def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode
     api_js = get_operator_api_files(request) + extra_api_js_files + [api_closure_url]
 
     t = loader.get_template('wirecloud/operator_xhtml.html')
-    c = Context({'base_url': base_url, 'js_files': api_js + js_files})
+    context = {'base_url': base_url, 'js_files': api_js + js_files}
 
-    xhtml = t.render(c)
+    xhtml = t.render(context)
 
     return xhtml
 
