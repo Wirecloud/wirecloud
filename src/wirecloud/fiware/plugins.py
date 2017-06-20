@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from django.conf import settings
 from django.conf.urls import include, url
 from django.utils.translation import ugettext_lazy as _
@@ -24,8 +26,11 @@ from django.views.decorators.cache import cache_page
 import requests
 
 from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.core.plugins import get_version_hash
+from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
 from wirecloud.platform.markets.utils import MarketManager
+from wirecloud.platform.models import CatalogueResource
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 import wirecloud.fiware
@@ -41,11 +46,19 @@ except:
     IDM_SUPPORT_ENABLED = False
 
 
+BASE_PATH = os.path.dirname(__file__)
+BAE_BROWSER_WIDGET = os.path.join(BASE_PATH, 'initial', 'CoNWeT_bae-browser_0.1.1.wgt')
+BAE_DETAILS_WIDGET = os.path.join(BASE_PATH, 'initial', 'CoNWeT_bae-details_0.1.1.wgt')
+BAE_SEARCH_FILTERS_WIDGET = os.path.join(BASE_PATH, 'initial', 'CoNWeT_bae-search-filters_0.1.1.wgt')
+BAE_MASHUP = os.path.join(BASE_PATH, 'initial', 'CoNWeT_bae-marketplace_0.1.1.wgt')
+
+
 def auth_fiware_token(auth_type, token):
 
     from social_django.models import UserSocialAuth
     user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
     return UserSocialAuth.objects.get(provider='fiware', uid=user_data['username']).user
+
 
 class FIWAREBAEManager(MarketManager):
 
@@ -337,3 +350,32 @@ class FiWarePlugin(WirecloudPlugin):
             }
         else:
             return {}
+
+    def populate(self, wirecloud_user, log):
+        updated = False
+
+        if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-browser", version="0.1.1", public=True).exists():
+            updated = True
+            log('Installing bae-browser widget... ', 1, ending='')
+            install_resource_to_all_users(file_contents=WgtFile(BAE_BROWSER_WIDGET))
+            log('DONE', 1)
+
+        if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-details", version="0.1.1", public=True).exists():
+            updated = True
+            log('Installing bae-details widget... ', 1, ending='')
+            install_resource_to_all_users(file_contents=WgtFile(BAE_DETAILS_WIDGET))
+            log('DONE', 1)
+
+        if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-search-filters", version="0.1.1", public=True).exists():
+            updated = True
+            log('Installing bae-search-filters widget... ', 1, ending='')
+            install_resource_to_all_users(file_contents=WgtFile(BAE_SEARCH_FILTERS_WIDGET))
+            log('DONE', 1)
+
+        if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-marketplace", version="0.1.1", public=True).exists():
+            updated = True
+            log('Installing bae-marketplace mashup... ', 1, ending='')
+            install_resource_to_all_users(file_contents=WgtFile(BAE_MASHUP))
+            log('DONE', 1)
+
+        return updated
