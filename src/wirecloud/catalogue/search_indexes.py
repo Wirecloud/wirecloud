@@ -196,6 +196,8 @@ def cleanResults(document, request):
     del res["users"]
     del res["groups"]
     del res["text"]
+    del res["group_field"]
+    del res["version_sortable"]
     return res
 
 
