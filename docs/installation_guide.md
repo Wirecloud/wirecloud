@@ -17,7 +17,7 @@ step, as they will be installed throughout the documentation:**
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
 - Python 2.7 or python 3.4+. In any case, the following python packages must be
   installed:
-    - Django 1.8-1.10
+    - Django 1.8-1.11
     - lxml 2.3.0+
     - django-appconf 1.0.1+
     - django_compressor 2.0+
