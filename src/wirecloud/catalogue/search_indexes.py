@@ -28,6 +28,10 @@ from haystack import indexes
 from wirecloud.catalogue.models import CatalogueResource, get_template_url
 from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 from wirecloud.commons.utils.version import Version
+from wirecloud.commons.haystack_queryparser import ParseSQ
+
+
+CONTENT_FIELDS = ["name", "vendor", "version", "type", "title", "description", "endpoint_descriptions"]
 
 
 class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
@@ -133,8 +137,11 @@ def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=
     sqs = SearchQuerySet().models(CatalogueResource).all()
 
     if len(querytext) > 0:
-        q = Q(name=querytext) | Q(vendor=querytext) | Q(version=querytext) | Q(type__contains=querytext) | Q(title=querytext) | Q(description=querytext) | Q(endpoint_descriptions=querytext)
-        sqs = sqs.filter(q)
+        parser = ParseSQ()
+        query = parser.parse(querytext, CONTENT_FIELDS)
+        # If there's any query
+        if len(query) > 0:
+            sqs = sqs.filter(query)
 
     sqs = sqs.order_by(orderby).group_by("group_field", order_by='-version_sortable')
 

@@ -22,11 +22,14 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db.models import Q
+from haystack import indexes
 
 from wirecloud.platform.models import Workspace
 from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
+from wirecloud.commons.haystack_queryparser import ParseSQ
 
-from haystack import indexes
+
+CONTENT_FIELDS = ["owner", "name"]
 
 
 class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
@@ -55,7 +58,6 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
         else:
             lastmodified = "%s" % datetime.utcfromtimestamp(object.creation_date / 1e3)
 
-        self.prepared_data["text"] = "%s %s" % (object.creator.username, object.name)
         self.prepared_data["lastmodified"] = lastmodified
         self.prepared_data["owner"] = object.creator.username
         self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
@@ -66,7 +68,14 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 def searchWorkspace(request, querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(Workspace).filter(text__contains=querytext)
+    sqs = SearchQuerySet().models(Workspace).all()
+
+    if len(querytext) > 0:
+        parser = ParseSQ()
+        query = parser.parse(querytext, CONTENT_FIELDS)
+        # If there's any query
+        if len(query) > 0:
+            sqs = sqs.filter(query)
 
     q = Q(public=True) | Q(users=request.user.username) | Q(groups=request.user.groups.name)
     sqs = sqs.filter(q)

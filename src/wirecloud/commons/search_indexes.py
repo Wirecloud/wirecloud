@@ -24,6 +24,8 @@ from haystack import indexes
 from haystack.query import SearchQuerySet as HaystackSearchQuerySet
 from haystack import connections
 
+from wirecloud.commons.haystack_queryparser import ParseSQ
+
 
 # Binds Haystack SearchQuerySet to the custom GroupedSearchQuerySets
 class SearchQuerySet(HaystackSearchQuerySet):
@@ -102,6 +104,9 @@ def prepare_search_response(search_results, hits, pagenum, maxresults):
     return search_result
 
 
+USER_CONTENT_FIELDS = ["fullname", "username"]
+
+
 class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
@@ -130,7 +135,14 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
 # Search for users
 def searchUser(request, querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(User).all().filter(text__contains=querytext)
+    sqs = SearchQuerySet().models(User).all()
+    if len(querytext) > 0:
+        parser = ParseSQ()
+        query = parser.parse(querytext, USER_CONTENT_FIELDS)
+        # If there's any query
+        if len(query) > 0:
+            sqs = sqs.filter(query)
+
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
 
 
@@ -138,6 +150,9 @@ def cleanResults(result, request):
     res = result.get_stored_fields()
     del res["text"]
     return res
+
+
+GROUP_CONTENT_FIELDS = ["name"]
 
 
 class GroupIndex(indexes.SearchIndex, indexes.Indexable):
@@ -148,15 +163,15 @@ class GroupIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         return Group
 
-    def prepare(self, object):
-        self.prepared_data = super(GroupIndex, self).prepare(object)
-
-        self.prepared_data['text'] = object.name
-
-        return self.prepared_data
-
 
 # Search for groups
 def searchGroup(request, querytext, pagenum, maxresults):
-    sqs = SearchQuerySet().models(Group).all().filter(text__contains=querytext)
+    sqs = SearchQuerySet().models(Group).all()
+    if len(querytext) > 0:
+        parser = ParseSQ()
+        query = parser.parse(querytext, GROUP_CONTENT_FIELDS)
+        # If there's any query
+        if len(query) > 0:
+            sqs = sqs.filter(query)
+
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
