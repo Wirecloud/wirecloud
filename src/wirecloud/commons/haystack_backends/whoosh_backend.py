@@ -16,6 +16,8 @@ from haystack.constants import DJANGO_CT, DJANGO_ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
 from haystack.utils import get_model_ct
+from haystack import indexes
+from haystack.fields import FacetMultiValueField
 from whoosh.query import And, Or, Term
 from whoosh.sorting import FieldFacet
 
@@ -378,3 +380,6 @@ class WhooshEngine(OriginalWhooshEngine):
     backend = GroupedWhooshSearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
+
+
+indexes.GroupField = FacetMultiValueField

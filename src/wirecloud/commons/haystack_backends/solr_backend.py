@@ -13,6 +13,8 @@ from haystack.backends.solr_backend import SolrEngine as OriginalSolrEngine, Sol
 from haystack.constants import DJANGO_CT, DJANGO_ID, ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
+from haystack import indexes
+from haystack.fields import FacetField
 
 
 def build_order_param(order):
@@ -210,3 +212,6 @@ class SolrEngine(OriginalSolrEngine):
     backend = GroupedSolrSearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
+
+
+indexes.GroupField = FacetField

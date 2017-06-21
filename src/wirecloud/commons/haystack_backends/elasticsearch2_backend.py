@@ -5,6 +5,8 @@ from haystack.backends.elasticsearch2_backend import Elasticsearch2SearchEngine 
 from haystack.constants import DJANGO_CT, DJANGO_ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
+from haystack import indexes
+from haystack.fields import FacetMultiValueField
 
 
 class GroupedSearchQuery(Elasticsearch2SearchQuery):
@@ -185,3 +187,6 @@ class Elasticsearch2SearchEngine(OriginalElasticsearch2SearchEngine):
     backend = GroupedElasticsearch2SearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
+
+
+indexes.GroupField = FacetMultiValueField

@@ -34,7 +34,7 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
 
-    group_field = indexes.FacetField(facet_for="vendor_name")
+    group_field = indexes.GroupField(facet_for="vendor_name")
     vendor_name = indexes.CharField()
 
     vendor = indexes.EdgeNgramField(model_attr='vendor')
