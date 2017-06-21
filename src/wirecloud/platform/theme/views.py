@@ -20,7 +20,7 @@
 import json
 
 from django.http import Http404, HttpResponse
-from django.template import RequestContext, TemplateDoesNotExist
+from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -56,7 +56,6 @@ class ThemeEntry(Resource):
     @method_decorator(cache_page(60 * 60 * 24 * 365))
     def read(self, request, name):
 
-        context = RequestContext(request)
         try:
             theme_info = get_theme_metadata(name)
         except ValueError:
@@ -75,6 +74,6 @@ class ThemeEntry(Resource):
                 template = get_template("%s:%s" % (name, template_file))
             except TemplateDoesNotExist:
                 template = get_template(template_file)
-            desc["templates"][template_id] = template.render(context)
+            desc["templates"][template_id] = template.render({})
 
         return HttpResponse(json.dumps(desc, cls=LazyEncoder, sort_keys=True), 'application/json')
