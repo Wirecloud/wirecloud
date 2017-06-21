@@ -321,7 +321,7 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
                 }
                 grouped_results = []
                 for result in raw_page:
-                    query = And([self.parser.parse('%s:(%s)' % (collapse_field, result[collapse_field])), parsed_query])
+                    query = And([Term(collapse_field, result[collapse_field]), parsed_query])
                     results = searcher.search(query, limit=collapse_limit, **search_kwargs)
 
                     grouped_results.append(results)
