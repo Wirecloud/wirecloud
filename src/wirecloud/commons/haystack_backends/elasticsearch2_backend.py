@@ -37,6 +37,7 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
                 order_by = order_by[1:]
             self.group_order_sense = order_sense
 
+        self.end_offset = 100
         self.group_order_by = order_by
 
     def post_process_facets(self, results):
@@ -64,19 +65,17 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
 
     def build_params(self, *args, **kwargs):
         res = super(GroupedSearchQuery, self).build_params(*args, **kwargs)
-
         if self.grouping_field is not None:
-
             aux = {"items": {"top_hits": {"size": 5}}}
 
             if self.group_order_by:
                 aux["items"]["top_hits"]["sort"] = [{self.group_order_by: {"order": self.group_order_sense}}]
-
             aggregation = {
                 "aggs": {
                     "items": {
                         "terms": {
-                            "field": self.grouping_field
+                            "field": self.grouping_field,
+                            "size": self.end_offset
                         },
                         "aggs": aux
                     }
