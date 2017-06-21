@@ -24,7 +24,7 @@ from io import BytesIO
 from django.core.cache import cache
 from django.conf import settings
 from django.db.models import Q
-from django.template import Template
+from django.template import Context, Template
 from lxml import etree
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -126,7 +126,7 @@ def get_widget_platform_style(theme):
 
         code += '{% endcompress %}'
 
-        result = Template(code).render({})
+        result = Template(code).render(Context())
         doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
 
         files = [link.get('href') for link in doc.getroot()]
@@ -150,7 +150,7 @@ def get_widget_api_files(request):
         <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPICommon.js" %}"></script>
         {% endcompress %}'''
 
-        result = Template(code).render({})
+        result = Template(code).render(Context())
         doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
 
         files = [script.get('src') for script in doc.getroot()]

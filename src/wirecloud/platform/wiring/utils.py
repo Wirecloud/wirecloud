@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from io import BytesIO
 
 from django.conf import settings
-from django.template import loader, Template
+from django.template import Context, loader, Template
 from lxml import etree
 
 from wirecloud.commons.utils.http import get_absolute_static_url, get_current_domain
@@ -83,7 +83,7 @@ def get_operator_api_files(request):
         <script type="text/javascript" src="{% static "js/WirecloudAPI/WirecloudAPICommon.js" %}"></script>
         {% endcompress %}'''
 
-        result = Template(code).render({})
+        result = Template(code).render(Context())
         doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
 
         files = [script.get('src') for script in doc.getroot()]
