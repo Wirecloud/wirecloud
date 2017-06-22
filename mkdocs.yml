@@ -25,6 +25,7 @@ pages:
     - 'Platform Development':
         - 'Creating new themes': 'development/platform/themes.md'
         - 'Translating': 'development/platform/translation.md'
+        - 'Testing': 'development/platform/testing.md'
 
 markdown_extensions:
     - markdown_github.headerid
