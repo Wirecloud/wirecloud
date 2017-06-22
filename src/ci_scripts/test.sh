@@ -58,7 +58,9 @@ python manage.py migrate --noinput
 python manage.py collectstatic -v 0 --noinput
 
 # Pass the tests
-${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --liveserver=${IP_ADDR}:28081 --noinput --with-xunit --nologcapture -v 2 ${TESTS}
+DJANGO_LIVE_TEST_SERVER_ADDRESS="${IP_ADDR}:28081"    # Used by Django 1.8-1.10
+DJANGO_LIVE_TEST_SERVER_HOST="${IP_ADDR}"             # Custom env variable used on Django 1.11
+${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --noinput --with-xunit --nologcapture -v 2 ${TESTS}
 
 mv .coverage ../virtenv/lib/python${PY_VERSION}/site-packages; cd ../virtenv/lib/python${PY_VERSION}/site-packages; ${WORKSPACE}/virtenv/bin/coverage xml; mv coverage.xml ${WORKSPACE}; cd ${WORKSPACE}
 sed -i 's/<source>.*<\/source>/<source>src<\/source>/' coverage.xml

@@ -513,6 +513,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt', 'Wirecloud_test-mashup_1.0.wgt')
     __test__ = False
 
+    # Only affecting Django 1.11+
+    host = os.environ.get('DJANGO_LIVE_TEST_SERVER_HOST', 'localhost')
+
     @classmethod
     def setUpClass(cls):
 
