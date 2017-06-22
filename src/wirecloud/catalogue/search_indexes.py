@@ -42,7 +42,7 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
     vendor_name = indexes.CharField()
 
     vendor = indexes.EdgeNgramField(model_attr='vendor')
-    name = indexes.EdgeNgramField(model_attr="short_name")
+    name = indexes.EdgeNgramField(model_attr="short_name", boost=1.5)
     version = indexes.CharField(model_attr='version')
     version_sortable = indexes.CharField()
     template_uri = indexes.CharField(model_attr="template_uri")
@@ -50,7 +50,7 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
     creation_date = indexes.CharField(model_attr="creation_date")
     public = indexes.CharField(model_attr="public")
 
-    title = indexes.EdgeNgramField()
+    title = indexes.EdgeNgramField(boost=1.5)
     endpoint_descriptions = indexes.EdgeNgramField()
 
     description = indexes.NgramField()
