@@ -202,6 +202,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             'inheritable': False,
             'label': param.get('label'),
             'type': param.get('type'),
+            'required': param.get('required')
         })
 
     for tab_entry in mashup_description['tabs']:

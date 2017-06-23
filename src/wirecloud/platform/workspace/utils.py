@@ -395,7 +395,7 @@ def process_forced_values(workspace, user, concept_values, preferences):
     param_values = {}
     empty_params = []
     for param in forced_values['extra_prefs']:
-        if param['name'] in preferences:
+        if param['name'] in preferences and (param['required'] is False or preferences[param['name']]['value'].strip() != ''):
             param_values[param['name']] = preferences[param['name']]['value']
         else:
             empty_params.append(param['name'])

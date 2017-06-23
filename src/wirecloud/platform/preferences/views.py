@@ -159,6 +159,7 @@ def update_workspace_preferences(workspace, preferences_json, invalidate_cache=T
             preference = currentPreferences[name]
         else:
             preference = WorkspacePreference(workspace=workspace, name=name)
+            changes = pref_changes = True
 
         if isinstance(preference_data, dict):
             if 'value' in preference_data and preference.value != preference_data['value']:
