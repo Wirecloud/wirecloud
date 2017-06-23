@@ -51,7 +51,7 @@ def read_json_fixtures(filename):
 
 class TemplateUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-template', 'wirecloud-noselenium')
+    tags = ('wirecloud-template', 'wirecloud-parsers-writers', 'wirecloud-noselenium')
     maxDiff = None
 
     @classmethod
@@ -163,7 +163,7 @@ class TemplateUtilsTestCase(TestCase):
                     'label': 'Prop2',
                     'description': 'description 2',
                     'default': 'value2',
-                    'multiuser': False,
+                    'multiuser': True,
                 }
             ],
             'wiring': {

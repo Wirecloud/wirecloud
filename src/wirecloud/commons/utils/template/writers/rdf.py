@@ -541,6 +541,9 @@ def build_rdf_graph(template_info):
             if prop.get('secure'):
                 graph.add((prop_node, WIRE['secure'], rdflib.Literal(prop.get('secure'))))
 
+            if prop.get('multiuser', False) is True:
+                graph.add((prop_node, WIRE['multiuser'], rdflib.Literal('true')))
+
     # Code
     if template_info['type'] == 'widget':
 

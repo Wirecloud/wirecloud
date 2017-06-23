@@ -255,7 +255,7 @@ def build_xml_document(options):
             for prop in options['properties']:
                 prop_element = etree.SubElement(properties_element, 'variable', name=prop['name'])
                 addAttributes(prop, prop_element, ('type', 'label', 'description', 'description', 'default'))
-                addAttribute(prop, prop_element, 'secure', default='false', type='boolean')
+                addAttributes(prop, prop_element, ('secure', 'multiuser'), default='false', type='boolean')
 
     if options['type'] == 'mashup':
         write_mashup_tree(template, resources, options)

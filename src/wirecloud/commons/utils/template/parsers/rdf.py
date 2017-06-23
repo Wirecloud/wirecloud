@@ -561,7 +561,7 @@ class RDFTemplateParser(object):
                 'default': self._get_field(WIRE, 'default', preference, required=False),
                 'value': self._get_field(WIRE, 'value', preference, required=False, default=None),
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
-                'multiuser': self._get_field(WIRE, 'multiuser', preference, required=False).lower() == 'true'
+                'multiuser': False,
             }
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
