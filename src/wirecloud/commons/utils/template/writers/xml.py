@@ -90,6 +90,10 @@ def write_mashup_tree(doc, resources, options):
             pref_element = etree.SubElement(preferences, 'preference', name=pref['name'])
             addAttributes(pref, pref_element, ('type', 'label', 'description', 'default'))
             addAttribute(pref, pref_element, 'readonly', default='false', type='boolean')
+            addAttribute(pref, pref_element, 'required', default='true', type='boolean')
+
+            if pref['value'] is not None:
+                pref_element.set('value', pref['value'])
 
     # Embedded resources
     if len(options['embedded']) > 0:

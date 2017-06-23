@@ -562,6 +562,7 @@ class RDFTemplateParser(object):
                 'value': self._get_field(WIRE, 'value', preference, required=False, default=None),
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
                 'multiuser': False,
+                'required': self._get_field(WIRE, 'required', preference, required=False).lower() == 'true',
             }
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
@@ -665,10 +666,16 @@ class RDFTemplateParser(object):
         ordered_params = sorted(self._graph.objects(self._rootURI, WIRE_M['hasMashupParam']), key=lambda raw_param: possible_int(self._get_field(WIRE, 'index', raw_param, required=False)))
         self._info['params'] = []
         for param in ordered_params:
+            var_name = self._get_field(DCTERMS, 'title', param, required=True)
             self._info['params'].append({
-                'name': self._get_field(DCTERMS, 'title', param),
-                'label': self._get_field(RDFS, 'label', param),
+                'name': var_name,
+                'label': self._get_translation_field(RDFS, 'label', param, var_name + '_label', required=True, type='vdef', variable=var_name, field='label'),
                 'type': self._get_field(WIRE, 'type', param),
+                'description': self._get_translation_field(RDFS, 'description', param, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
+                'readonly': self._get_field(WIRE, 'readonly', param, required=False).lower() == 'true',
+                'default': self._get_field(WIRE, 'default', param, required=False),
+                'value': self._get_field(WIRE, 'value', param, required=False, default=None),
+                'required': self._get_field(WIRE, 'required', param, required=False, default="true").lower() == 'true',
             })
 
         self._info['embedded'] = []

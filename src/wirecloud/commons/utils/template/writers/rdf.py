@@ -167,6 +167,20 @@ def write_mashup_params(graph, resource_uri, template_info):
             graph.add((param_node, WIRE['index'], rdflib.Literal(str(param_index))))
             graph.add((param_node, RDFS['label'], rdflib.Literal(param['label'])))
             graph.add((param_node, WIRE['type'], rdflib.Literal(param['type'])))
+            graph.add((param_node, RDFS['description'], rdflib.Literal(param['description'])))
+
+            if param.get('readonly', False) is True:
+                graph.add((param_node, WIRE['readonly'], rdflib.Literal('true')))
+
+            if param.get('default') not in (None, ''):
+                graph.add((param_node, WIRE['default'], rdflib.Literal(param.get('default'))))
+
+            if param.get('value'):
+                graph.add((param_node, WIRE['value'], rdflib.Literal(param['value'])))
+
+            if param.get('required', True) is False:
+                graph.add((param_node, WIRE['required'], rdflib.Literal('false')))
+
             graph.add((resource_uri, WIRE_M['hasMashupParam'], param_node))
 
 
@@ -514,6 +528,9 @@ def build_rdf_graph(template_info):
 
             if pref.get('secure'):
                 graph.add((pref_node, WIRE['secure'], rdflib.Literal(pref.get('secure'))))
+
+            if pref.get('required', False) is True:
+                graph.add((pref_node, WIRE['required'], rdflib.Literal('true')))
 
             if pref.get('options'):
                 for option_index, option in enumerate(pref['options']):

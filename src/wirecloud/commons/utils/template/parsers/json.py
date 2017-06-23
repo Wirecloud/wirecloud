@@ -200,6 +200,7 @@ class JSONTemplateParser(object):
                 self._check_boolean_fields(('readonly', 'secure'), place=preference, default=False)
                 self._check_string_fields(('value',), place=preference, null=True, default=None)
                 preference['multiuser'] = False
+                self._check_boolean_fields('required', place=preference, default=False)
 
             for prop in self._info['properties']:
                 self._check_string_fields(('name', 'type'), place=prop, required=True)
@@ -222,6 +223,13 @@ class JSONTemplateParser(object):
         elif self._info['type'] == 'mashup':
 
             self._check_array_fields(('params', 'embedded'))
+            for preference in self._info['params']:
+                self._check_string_fields(('name', 'type'), place=preference, required=True)
+                self._check_string_fields(('label', 'description', 'default'), place=preference)
+                self._check_boolean_fields('readonly', place=preference, default=False)
+                self._check_string_fields(('value',), place=preference, null=True, default=None)
+                self._check_boolean_fields('required', place=preference, default=True)
+
             for component in self._info['embedded']:
                 if isinstance(component, dict):
                     self._check_string_fields(('vendor', 'name', 'version', 'src'), place=component, required=True)
@@ -292,6 +300,15 @@ class JSONTemplateParser(object):
                 self._check_string_fields(('label', 'description', 'friendcode'), place=output_endpoint)
                 self._add_translation_index(output_endpoint['label'], type='outputendpoint', variable=output_endpoint['name'], field='label')
                 self._add_translation_index(output_endpoint['description'], type='outputendpoint', variable=output_endpoint['name'], field='description')
+        else:
+
+            for preference in self._info['params']:
+                self._add_translation_index(preference['label'], type='vdef', variable=preference['name'], field='label')
+                self._add_translation_index(preference['description'], type='vdef', variable=preference['name'], field='description')
+
+                if preference['type'] == 'list':
+                    for option_index, option in enumerate(preference['options']):
+                        self._add_translation_index(option['label'], type='upo', variable=preference['name'], option=option_index)
 
         # Requirements
         self._check_array_fields(('requirements',))

@@ -246,10 +246,24 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="value" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    Initial value. If not specified, the default value will be used as the initial value.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="readonly" use="optional" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
                     Whether this preference can be modified.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="required" use="optional" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    If false, this field is allowed to be empty/blank. Default is true.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -258,13 +272,6 @@
     <xs:complexType name="Preference">
         <xs:complexContent>
             <xs:extension base="macd:MashupPreference">
-                <xs:attribute name="value" type="xs:string">
-                    <xs:annotation>
-                        <xs:documentation>
-                            Initial value. If not specified, the default value will be used as the initial value.
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
                 <xs:attribute name="secure" type="xs:boolean" use="optional">
                     <xs:annotation>
                         <xs:documentation>

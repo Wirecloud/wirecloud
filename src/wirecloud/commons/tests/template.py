@@ -133,6 +133,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': 'value',
                     'value': None,
                     'multiuser': False,
+                    'required': False,
                 },
                 {
                     'name': 'pref2',
@@ -144,6 +145,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': '',
                     'value': '5',
                     'multiuser': False,
+                    'required': False,
                 }
             ],
             'properties': [
@@ -264,6 +266,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': 'value',
                     'value': None,
                     'multiuser': False,
+                    'required': False,
                 },
                 {
                     'name': 'pref2',
@@ -275,6 +278,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': '',
                     'value': '5',
                     'multiuser': False,
+                    'required': False,
                 }
             ],
             'properties': [
@@ -937,8 +941,26 @@ class TemplateUtilsTestCase(TestCase):
                 {'type': 'feature', 'name': 'PubSub'}
             ],
             'params': [
-                {'name': 'param1', 'label': 'Param 1', 'type': 'text'},
-                {'name': 'param2', 'label': 'Param 2', 'type': 'password'}
+                {
+                    'name': 'param1',
+                    'label': 'Param 1',
+                    'type': 'text',
+                    'default': '',
+                    'description': 'param 1 description',
+                    'readonly': True,
+                    'required': True,
+                    'value': 'param 1 value',
+                },
+                {
+                    'name': 'param2',
+                    'label': 'Param 2',
+                    'type': 'password',
+                    'default': '',
+                    'description': 'param 2 description',
+                    'readonly': False,
+                    'required': False,
+                    'value': None,
+                }
             ],
             'preferences': {
                 'columns': '8'
@@ -1135,6 +1157,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': '',
                     'value': None,
                     'multiuser': False,
+                    'required': False,
                 },
                 {
                     'name': 'pref2',
@@ -1146,6 +1169,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': 'value',
                     'value': '5',
                     'multiuser': False,
+                    'required': False,
                 }
             ],
             'properties': [
@@ -1340,6 +1364,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': '',
                     'value': None,
                     'multiuser': False,
+                    'required': False,
                 },
                 {
                     'name': 'pref2',
@@ -1351,6 +1376,7 @@ class TemplateUtilsTestCase(TestCase):
                     'default': '',
                     'value': None,
                     'multiuser': False,
+                    'required': False,
                 },
             ],
             'properties': [],
@@ -1585,6 +1611,9 @@ class TemplateUtilsTestCase(TestCase):
         self.assertEqual(processed_info, self.minimal_endpoint_info)
 
     def test_json_parser_minimal_preference_info(self):
+
+        # Check that a component description providing the minimal info for a
+        # preference is parsed as expected
 
         json_description = read_template('minimal_preference_info.json')
         template = TemplateParser(json_description)

@@ -462,7 +462,8 @@ class ApplicationMashupTemplateParser(object):
                 'default': text_type(preference.get('default', '')),
                 'value': preference.get('value'),
                 'secure': preference.get('secure', 'false').lower() == 'true',
-                'multiuser': False
+                'multiuser': False,
+                'required': preference.get('required', 'false').lower() == 'true',
             }
 
             if preference_info['type'] == 'list':
@@ -511,9 +512,14 @@ class ApplicationMashupTemplateParser(object):
         self._info['params'] = []
         for param in self._xpath(PARAM_XPATH, self._doc):
             self._info['params'].append({
-                'name': param.get('name'),
-                'label': param.get('label'),
-                'type': param.get('type'),
+                'name': text_type(param.get('name')),
+                'type': text_type(param.get('type')),
+                'label': text_type(param.get('label', '')),
+                'description': text_type(param.get('description', '')),
+                'readonly': param.get('readonly', 'false').lower() == 'true',
+                'default': text_type(param.get('default', '')),
+                'value': param.get('value'),
+                'required': param.get('required', 'true').lower() == 'true',
             })
 
         self._info['embedded'] = []
