@@ -103,7 +103,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['version'], '0.1')
         self.assertEqual(data['description'], 'Test Widget description')
         self.assertEqual(data['image'], 'images/catalogue.png')
-        self.assertEqual(data['smartphoneimage'], 'images/catalogue_iphone.png')
+        self.assertEqual(data['smartphoneimage'], 'images/catalogue_smartphone.png')
         self.assertEqual(data['doc'], 'doc/index.html')
         self.assertEqual(data['license'], 'Apache License 2.0')
         self.assertEqual(data['licenseurl'], 'http://www.apache.org/licenses/LICENSE-2.0.html')
@@ -112,7 +112,21 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Property label', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Preference label', 'type': 'list', 'options': [{'value': '1', 'label': 'Option name'}], 'readonly': False, 'description': 'Preference description', 'value': None, 'multiuser': False}])
+        self.assertEqual(data['preferences'], [
+            {
+                'default': 'value',
+                'secure': False,
+                'name': 'pref',
+                'label': 'Preference label',
+                'type': 'list',
+                'options': [{'value': '1', 'label': 'Option name'}],
+                'readonly': False,
+                'description': 'Preference description',
+                'value': None,
+                'multiuser': False,
+                'required': False,
+            }
+        ])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Slot label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
@@ -137,7 +151,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_basic_widget_creation(self):
 
-        file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        file_contents = self.build_simple_wgt('template1.xml', other_files=('doc/index.html',))
         added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
         self.assertTrue(added)
@@ -145,7 +159,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_basic_widget_creation_from_rdf(self):
 
-        file_contents = self.build_simple_wgt('template1.rdf', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        file_contents = self.build_simple_wgt('template1.rdf', other_files=('doc/index.html',))
         added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
         self.assertTrue(added)
@@ -194,7 +208,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         client.login(username='test', password='test')
         widget_code_path = {'vendor': 'Wirecloud', 'name': 'test', 'version': '0.1', 'file_path': 'index.html'}
 
-        file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        file_contents = self.build_simple_wgt('template1.xml', other_files=('doc/index.html',))
         added, resource = install_resource_to_user(self.user, file_contents=file_contents)
         self.assertTrue(added)
         resource_pk = resource.pk
@@ -211,7 +225,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, pk=resource_pk)
 
         # Use a different xhtml code
-        file_contents = self.build_simple_wgt('template1.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        file_contents = self.build_simple_wgt('template1.xml', b'code', other_files=('doc/index.html',))
         resource = install_resource_to_user(self.user, file_contents=file_contents)
 
         response = client.get(reverse('wirecloud.showcase_media', kwargs=widget_code_path) + '?entrypoint=true')
@@ -226,7 +240,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_install_resource_to_group(self):
 
-        wgt_file = self.build_simple_wgt('template1.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        wgt_file = self.build_simple_wgt('template1.xml', b'code', other_files=('doc/index.html',))
 
         added, resource = install_resource_to_group(self.group, file_contents=wgt_file)
         self.assertTrue(added)
@@ -263,7 +277,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_install_resource_to_all_users(self):
 
-        wgt_file = self.build_simple_wgt('template1.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        wgt_file = self.build_simple_wgt('template1.xml', b'code', other_files=('doc/index.html',))
 
         added, resource = install_resource_to_all_users(file_contents=wgt_file)
         self.assertTrue(added)
@@ -273,7 +287,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_fix_dev_version(self):
 
-        wgt_file = self.build_simple_wgt('template11.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        wgt_file = self.build_simple_wgt('template11.xml', b'code', other_files=('doc/index.html',))
         original_template = wgt_file.get_template()
         original_version = TemplateParser(original_template).get_resource_info()['version']
 
@@ -311,7 +325,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_template_translations(self):
 
-        file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        file_contents = self.build_simple_wgt('template1.xml', other_files=('doc/index.html',))
 
         added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
@@ -324,14 +338,28 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['title'], 'Widget de prueba')
         self.assertEqual(data['description'], 'Descripción del Widget de pruebas')
         self.assertEqual(data['image'], 'images/catalogue.png')
-        self.assertEqual(data['smartphoneimage'], 'images/catalogue_iphone.png')
+        self.assertEqual(data['smartphoneimage'], 'images/catalogue_smartphone.png')
         self.assertEqual(data['doc'], 'doc/index.html')
 
         self.assertEqual(len(data['properties']), 1)
         self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Etiqueta de la propiedad', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Etiqueta de la preferencia', 'type': 'list', 'options': [{'value': '1', 'label': 'Nombre de la opción'}], 'readonly': False, 'description': 'Descripción de la preferencia', 'value': None, 'multiuser': False}])
+        self.assertEqual(data['preferences'], [
+            {
+                'default': 'value',
+                'secure': False,
+                'name': 'pref',
+                'label': 'Etiqueta de la preferencia',
+                'type': 'list',
+                'options': [{'value': '1', 'label': 'Nombre de la opción'}],
+                'readonly': False,
+                'description': 'Descripción de la preferencia',
+                'value': None,
+                'multiuser': False,
+                'required': False,
+            }
+        ])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Etiqueta del endpoint de entrada', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])
@@ -353,7 +381,20 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['properties'], [{'default': '', 'secure': False, 'name': 'prop', 'label': 'Label', 'type': 'text', 'description': '', 'multiuser': False}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{'default': 'value', 'secure': False, 'name': 'pref', 'label': 'Label', 'readonly': False, 'type': 'text', 'description': 'Preference description', 'value': None, 'multiuser': False}])
+        self.assertEqual(data['preferences'], [
+            {
+                'default': 'value',
+                'secure': False,
+                'name': 'pref',
+                'label': 'Label',
+                'type': 'text',
+                'readonly': False,
+                'description': 'Preference description',
+                'value': None,
+                'multiuser': False,
+                'required': False,
+            }
+        ])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{'name': 'slot', 'label': 'Label', 'type': 'text', 'description': '', 'friendcode': 'test_friend_code', 'actionlabel': ''}])

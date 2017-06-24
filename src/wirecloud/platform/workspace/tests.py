@@ -1177,9 +1177,26 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
     def check_workspace_with_params(self, workspace):
 
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-        self.assertEqual(workspace_data['extra_prefs'], [{'name': 'param', 'type': 'text', 'inheritable': False, 'label': 'Parameter'}])
+        self.assertEqual(workspace_data['extra_prefs'], [
+            {
+                'name': 'param',
+                'type': 'text',
+                'inheritable': False,
+                'label': 'Parameter',
+                'description': 'Parameter description',
+                'required': True,
+            },
+            {
+                'name': 'optional_param',
+                'type': 'number',
+                'inheritable': False,
+                'label': 'Optional Parameter',
+                'description': 'Parameter description',
+                'required': False,
+            },
+        ])
 
-        update_workspace_preferences(workspace, {'param': {'value': 'world'}})
+        update_workspace_preferences(workspace, {'param': {'value': 'world'}, 'optional_param': {'value': ''}})
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         iwidget1 = None

@@ -15,7 +15,7 @@
 		<usdl-core:versionInfo>0.1</usdl-core:versionInfo>
 		<dcterms:creator rdf:resource="http://creatoruri/"/>
 		<wire:hasImageUri rdf:resource="images/catalogue.png"/>
-		<wire:hasiPhoneImageUri rdf:resource="images/catalogue_iphone.png"/>
+		<wire:hasiPhoneImageUri rdf:resource="images/catalogue_smartphone.png"/>
 		<usdl-core:exposes rdf:resource="test.html"/>
 		<usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
@@ -66,7 +66,7 @@
 		<dcterms:title>ImageURI</dcterms:title>
 	</foaf:Image>
 
-	<foaf:Image rdf:about="images/catalogue_iphone.png">
+	<foaf:Image rdf:about="images/catalogue_smartphone.png">
 		<dcterms:title>iPhoneImageURI</dcterms:title>
 	</foaf:Image>
 </rdf:RDF>

@@ -167,7 +167,7 @@ def write_mashup_params(graph, resource_uri, template_info):
             graph.add((param_node, WIRE['index'], rdflib.Literal(str(param_index))))
             graph.add((param_node, RDFS['label'], rdflib.Literal(param['label'])))
             graph.add((param_node, WIRE['type'], rdflib.Literal(param['type'])))
-            graph.add((param_node, RDFS['description'], rdflib.Literal(param['description'])))
+            graph.add((param_node, DCTERMS['description'], rdflib.Literal(param['description'])))
 
             if param.get('readonly', False) is True:
                 graph.add((param_node, WIRE['readonly'], rdflib.Literal('true')))

@@ -26,7 +26,7 @@
 	dcterms:creator <http://creatoruri/> ;
 	usdl-core:versionInfo "0.1" ;
 	wire:hasImageUri <images/catalogue.png> ;
-	wire:hasiPhoneImageUri <images/catalogue_iphone.png> ;
+	wire:hasiPhoneImageUri <images/catalogue_smartphone.png> ;
 	usdl-core:exposes <test.html> ;
 	usdl-core:hasProvider <http://vendoruri/> ;
 	vcard:addr _:b1 ;

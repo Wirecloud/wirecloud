@@ -3,7 +3,7 @@
     <details>
         <email>test@example.com</email>
         <image>images/catalogue.png</image>
-        <smartphoneimage>images/catalogue_iphone.png</smartphoneimage>
+        <smartphoneimage>images/catalogue_smartphone.png</smartphoneimage>
         <description>__MSG_description__</description>
         <authors>admin</authors>
     </details>

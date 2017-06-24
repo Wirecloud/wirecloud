@@ -28,9 +28,22 @@
 
         <wire-m:hasMashupParam>
             <wire-m:MashupParam>
+                <wire:index>0</wire:index>
                 <dcterms:title>param</dcterms:title>
                 <wire:type>text</wire:type>
                 <rdfs:label>Parameter</rdfs:label>
+                <dcterms:description>Parameter description</dcterms:description>
+            </wire-m:MashupParam>
+        </wire-m:hasMashupParam>
+
+        <wire-m:hasMashupParam>
+            <wire-m:MashupParam>
+                <wire:index>1</wire:index>
+                <dcterms:title>optional_param</dcterms:title>
+                <wire:type>number</wire:type>
+                <rdfs:label>Optional Parameter</rdfs:label>
+                <dcterms:description>Parameter description</dcterms:description>
+                <wire:required>Parameter description</wire:required>
             </wire-m:MashupParam>
         </wire-m:hasMashupParam>
 

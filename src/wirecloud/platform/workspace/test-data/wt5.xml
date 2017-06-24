@@ -54,7 +54,8 @@
         </wiring>
     </structure>
     <preferences>
-        <preference name="param" type="text" label="Parameter"/>
+        <preference name="param" type="text" label="Parameter" description="Parameter description" />
+        <preference name="optional_param" type="number" label="Optional Parameter" description="Parameter description" required="false"/>
     </preferences>
     <wiring/>
 </mashup>
