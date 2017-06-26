@@ -48,6 +48,7 @@
         Object.defineProperty(this, 'type', {value: type});
         Object.defineProperty(this, 'label', {value: options.label});
         Object.defineProperty(this, 'description', {value: options.description});
+        Object.defineProperty(this, 'required', {value: options.required});
         Object.defineProperty(this, 'options', {value: options});
 
         var default_value = '';

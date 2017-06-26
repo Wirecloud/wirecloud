@@ -61,7 +61,7 @@
             'defaultValue': this.meta.default,
             'initiallyDisabled': this.readonly,
             'initialValue': this.value,
-            'required': false
+            'required': this.meta.required
         });
 
         if (type === 'select') {
