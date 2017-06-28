@@ -476,7 +476,8 @@ def _get_global_workspace_data(workspaceDAO, user):
         try:
             resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
             operator_info = resource.get_processed_info(process_variables=True)
-            if not resource.is_available_for(user):
+            # Check if the resource is available, if not, variables should not be retrieved
+            if not resource.is_available_for(workspaceDAO.creator):
                 raise CatalogueResource.DoesNotExist
         except CatalogueResource.DoesNotExist:
             operator["preferences"] = {}

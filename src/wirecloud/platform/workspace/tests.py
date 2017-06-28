@@ -25,7 +25,7 @@ import os
 import rdflib
 import json
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 try:
     from django.db.migrations.exceptions import IrreversibleError
 except:
@@ -168,6 +168,46 @@ class WorkspaceMigrationsTestCase(TestCase):
              "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}})
 
 
+def check_secure_preferences(self, workspace, user):
+    workspace.wiringStatus = {
+        'operators': {
+            '1': {
+                'id': '1',
+                'name': 'Wirecloud/TestOperatorSecure/1.0',
+                'preferences': {
+                    'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": ''}}}
+                },
+            },
+            '2': {
+                'id': '2',
+                'name': 'Wirecloud/TestOperatorSecure/1.0',
+                'preferences': {
+                    'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": encrypt_value("test_password")}}}
+                },
+            },
+        },
+        'connections': [],
+    }
+    data = json.loads(get_global_workspace_data(workspace, user).get_data())
+    self.assertEqual(len(data['tabs']), 1)
+
+    tab = data['tabs'][0]
+    preferences = tab['iwidgets'][0]['preferences']
+    self.assertEqual(preferences['password']['value'], '')
+    self.assertEqual(preferences['password']['secure'], True)
+
+    tab = data['tabs'][0]
+    preferences = tab['iwidgets'][1]['preferences']
+    self.assertEqual(preferences['password']['value'], '********')
+    self.assertEqual(preferences['password']['secure'], True)
+
+    self.assertEqual(data["wiring"]["operators"]["1"]["preferences"]["pref_secure"]['secure'], True)
+    self.assertEqual(data["wiring"]["operators"]["1"]["preferences"]["pref_secure"]["value"], "")
+
+    self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]['secure'], True)
+    self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]["value"], "********")
+
+
 class WorkspaceTestCase(WirecloudTestCase):
 
     fixtures = ('test_data',)
@@ -217,44 +257,19 @@ class WorkspaceTestCase(WirecloudTestCase):
 
     def test_secure_preferences_censor(self):
         workspace = Workspace.objects.get(pk=202)
+        check_secure_preferences(self, workspace, self.user)
 
-        workspace.wiringStatus = {
-            'operators': {
-                '1': {
-                    'id': '1',
-                    'name': 'Wirecloud/TestOperatorSecure/1.0',
-                    'preferences': {
-                        'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": ''}}}
-                    },
-                },
-                '2': {
-                    'id': '2',
-                    'name': 'Wirecloud/TestOperatorSecure/1.0',
-                    'preferences': {
-                        'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": encrypt_value("test_password")}}}
-                    },
-                },
-            },
-            'connections': [],
-        }
-        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-        self.assertEqual(len(data['tabs']), 1)
+    def test_get_public_workspace_as_anonymous(self):
+        workspace = Workspace.objects.get(pk=202)
+        workspace.public = True
+        user = AnonymousUser()
+        check_secure_preferences(self, workspace, user)
 
-        tab = data['tabs'][0]
-        preferences = tab['iwidgets'][0]['preferences']
-        self.assertEqual(preferences['password']['value'], '')
-        self.assertEqual(preferences['password']['secure'], True)
-
-        tab = data['tabs'][0]
-        preferences = tab['iwidgets'][1]['preferences']
-        self.assertEqual(preferences['password']['value'], '********')
-        self.assertEqual(preferences['password']['secure'], True)
-
-        self.assertEqual(data["wiring"]["operators"]["1"]["preferences"]["pref_secure"]['secure'], True)
-        self.assertEqual(data["wiring"]["operators"]["1"]["preferences"]["pref_secure"]["value"], "")
-
-        self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]['secure'], True)
-        self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]["value"], "********")
+    def test_get_public_workspace_as_user(self):
+        workspace = Workspace.objects.get(pk=202)
+        workspace.public = True
+        user = User.objects.get(pk=4)
+        check_secure_preferences(self, workspace, user)
 
     def test_create_empty_workspace(self):
 
