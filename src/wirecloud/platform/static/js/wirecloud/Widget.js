@@ -48,7 +48,12 @@
             'unload'
         ]);
 
+        if (data == null) {
+            throw new TypeError("invalid data parameter");
+        }
+
         data = utils.merge({
+            title: meta.title,
             preferences: {},
             properties: {}
         }, data);
@@ -57,21 +62,19 @@
         this.prefCallback = null;
 
         this.permissions = Wirecloud.Utils.merge({
-            'close': true,
-            'configure': true,
-            'move': true,
-            'rename': true,
-            'resize': true,
-            'minimize': true,
-            'upgrade': true
+            close: true,
+            configure: true,
+            move: true,
+            rename: true,
+            resize: true,
+            minimize: true,
+            upgrade: true
         }, data.permissions);
 
+        // TODO
         if (data.readonly) {
             this.permissions.close = false;
-            this.permissions.move = false;
-            this.permissions.resize = false;
             this.permissions.upgrade = false;
-            this.permissions.minimize = false;
         }
 
         privates.set(this, {
@@ -339,7 +342,7 @@
         },
 
         hasPreferences: function hasPreferences() {
-            return !!this.preferenceList.length;
+            return this.meta.hasPreferences();
         },
 
         is: function is(component) {
@@ -353,18 +356,15 @@
          */
         isAllowed: function isAllowed(name) {
 
-            if (this.tab.workspace.restricted) {
-                return false;
-            }
-
-            switch (name) {
-            case "close":
-                return this.permissions.close && this.tab.workspace.isAllowed('add_remove_iwidgets');
-            case "move":
-            case "resize":
-                return this.permissions[name] && !this.tab.workspace.restricted && this.tab.workspace.isAllowed('edit_layout');
-            case "minimize":
-                return this.permissions.minimize && this.tab.workspace.isAllowed('edit_layout');
+            if (!this.volatile) {
+                switch (name) {
+                case "close":
+                    return this.permissions.close && this.tab.workspace.isAllowed('add_remove_iwidgets');
+                case "move":
+                case "resize":
+                case "minimize":
+                    return this.permissions[name] && this.tab.workspace.isAllowed('edit_layout');
+                }
             }
 
             if (!(name in this.permissions)) {

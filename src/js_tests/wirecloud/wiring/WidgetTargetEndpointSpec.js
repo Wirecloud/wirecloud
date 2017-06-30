@@ -30,6 +30,7 @@
     var WIDGET_VIEW = {
         load: jasmine.createSpy('load')
     };
+    Object.freeze(WIDGET_VIEW);
     var WIDGET = {
         id: "1",
         tab: {
