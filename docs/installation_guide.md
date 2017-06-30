@@ -73,7 +73,7 @@ Before installing WireCloud, you will need to have some basic dependencies insta
 
 This guide assumes you system's package list is up to date. Otherwise, run the following command:
 
-	$ apt-get update
+    $ apt-get update
 
 before installing software in Debian/Ubuntu:
 

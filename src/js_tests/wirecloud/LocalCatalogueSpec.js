@@ -74,7 +74,7 @@
                 );
             });
 
-            it("should works when installing embedded components", (done) => {
+            it("should support installing embedded components", (done) => {
                 spyOn(Wirecloud.WirecloudCatalogue.prototype, 'addComponent').and.callFake(function (options) {
 
                     expect(options.install_embedded_resources).toBe(true);
