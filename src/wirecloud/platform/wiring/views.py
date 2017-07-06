@@ -98,7 +98,7 @@ class WiringEntry(Resource):
 
                 # Only multiuser variables can can be updated
                 if not preference_secure or can_update_secure:
-                    if old_preference["value"]["users"]["%s" % owner.id] != new_preference["value"]:
+                    if old_preference != new_preference and old_preference["value"]["users"]["%s" % owner.id] != new_preference["value"]:
                         return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
                 operator['preferences'][preference_name] = old_preference
@@ -121,14 +121,26 @@ class WiringEntry(Resource):
                 if property_secure and not can_update_secure:
                     new_property["value"] = old_property["value"]
                 else:
+                    if new_property.get('readonly', False) and new_property.get('value') != old_property.get('value'):
+                        return build_error_response(request, 403, _('Read only properties cannot be updated'))
                     # Variables can only be updated if multisuer
                     if not property_multiuser:
-                        if old_property["value"]["users"]["%s" % owner.id] != new_property["value"]:
+                        if old_property != new_property and old_property["value"]["users"]["%s" % owner.id] != new_property["value"]:
                             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
                         else:
                             new_property["value"] = old_property["value"]
                     else:
                         # Handle multiuser
+                        try:
+                            if new_property["value"].get("users", None) != None:
+                                value = new_property["value"]["users"].get(request.user.id, None)
+                                if value is not None:
+                                    new_property["value"] = value
+                                else:
+                                    new_property = old_property
+                                    continue
+                        except:
+                            pass
                         new_property = self.handleMultiuser(request, property_secure, new_property, old_property)
 
                 operator['properties'][property_name] = new_property
