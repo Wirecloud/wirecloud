@@ -65,7 +65,7 @@ def buildSearchResults(sqs, pagenum, maxresults, clean, request=None):
     # Count how many docs there are
     total = sqs._clone().count()
 
-    #If the selected page is out of bounds, get the last page
+    # If the selected page is out of bounds, get the last page
     if total == 0:
         pagenum = 1
     elif pagenum > total // maxresults:
@@ -111,7 +111,7 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
 
-    fullname = indexes.CharField()
+    fullname = indexes.NgramField()
     username = indexes.NgramField(model_attr='username')
     organization = indexes.CharField()
 
