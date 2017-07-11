@@ -273,7 +273,7 @@ Debian/Ubuntu:
     $ adduser --system --group --shell /bin/bash wirecloud
 
 Remember to use this user for creating new instances, for running the
-`manage.py` script and for running the wirecloud instance (e.g. when using
+`manage.py` script and for running the WireCloud instance (e.g. when using
 Apache).
 
 New instances of WireCloud can be created using the `wirecloud-admin`'s
@@ -975,7 +975,7 @@ You can use this template as starting point:
 </VirtualHost>
 ```
 
-Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
+Assuming that your WireCloud instance is available at `/opt/wirecloud_instance`
 and you created a `wirecloud` user on the system, then we have the following values:
 
 - `${path_to_wirecloud_instance}` = `/opt/wirecloud_instance`
@@ -1075,7 +1075,7 @@ You can use this template as starting point:
 </VirtualHost>
 ```
 
-Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
+Assuming that your WireCloud instance is available at `/opt/wirecloud_instance`
 and you created a `wirecloud` user on the system, then we have the following values:
 
 - `${path_to_wirecloud_instance}` = `/opt/wirecloud_instance`
