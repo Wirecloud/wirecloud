@@ -34,7 +34,6 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.views import serve_catalogue_media
-from wirecloud.commons.searchers import get_search_engine
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 
 
@@ -114,13 +113,13 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='emptyuser', password='admin')
 
-        response = self.client.get(self.base_url + '?orderby=-creation_date')
+        response = self.client.get(self.base_url + '?orderby=-name')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['pagelen'], 8)
 
-        response = self.client.get(self.base_url + '?orderby=creation_date')
+        response = self.client.get(self.base_url + '?orderby=name')
         self.assertEqual(response.status_code, 200)
         result2_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result2_json['pagelen'], 8)
@@ -136,8 +135,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['total'], 11)
         self.assertEqual(result_json['pagecount'], 3)
-        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
-        self.assertEqual(n, 3)
 
     def test_basic_search_with_pagination(self):
 
@@ -175,8 +172,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertGreater(result_json['total'], 10)
         self.assertGreater(result_json['pagecount'], 2)
-        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
-        self.assertEqual(n, 9)
 
         # Paginated response returning less than maxresults results
         response = self.client.get(self.base_url + '?staff=true&pagenum=3&maxresults=5')
@@ -185,6 +180,21 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         # Requesting a page beyond pagecount
         response = self.client.get(self.base_url + '?staff=true&pagenum=5&maxresults=5')
         self.check_last_page(response)
+
+    def test_search_field_collapsing(self):
+        self.client.login(username='admin', password='admin')
+
+        # Less hits than the maxresults parameter
+        response = self.client.get(self.base_url + '?q=test&staff=true&maxresults=15')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagecount'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['pagelen'], 6)
+        self.assertEqual(result_json['total'], result_json['pagelen'])
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 11)
 
     def test_basic_search_with_querytext(self):
 
@@ -198,21 +208,21 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
-        result = self.client.get(self.base_url + '?q=mashable+application')
+        result = self.client.get(self.base_url + '?q=mashable+application&orderby=name')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 2)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['version'], "1.0")
-        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(result_json['results'][0]['version'], "2.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 2)
 
-        result = self.client.get(self.base_url + '?q=mashable')
+        result = self.client.get(self.base_url + '?q=mashable&orderby=name')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 3)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['version'], "1.5.5")
-        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(result_json['results'][0]['version'], "2.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 2)
         self.assertEqual(result_json['results'][1]['version'], "1.0")
         self.assertEqual(len(result_json['results'][1]['others']), 0)
 
