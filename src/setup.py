@@ -181,7 +181,7 @@ setup(
         'user-agents',
         'regex',
         'markdown',
-        'haystack>=2.4.1',
+        'django-haystack>=2.6.0',
         'whoosh>=2.7.2',
         'pycrypto',
         'pyScss>=1.3.4,<2.0',
