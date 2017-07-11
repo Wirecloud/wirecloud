@@ -35,7 +35,6 @@ from django.contrib.staticfiles import finders
 from django.core import management
 from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
-from django.test import override_settings
 from django.test.client import Client
 from django.utils import translation
 from django.core.management import call_command
@@ -47,7 +46,6 @@ from wirecloud.platform.localcatalogue.utils import fix_dev_version, install_res
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.platform.workspace.utils import create_workspace
 from wirecloud.catalogue import utils as catalogue
-from wirecloud.commons.searchers import get_available_search_engines
 from wirecloud.commons.utils.http import REASON_PHRASES
 from wirecloud.commons.utils.remote import WirecloudRemoteTestCase, FieldTester
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
@@ -303,8 +301,6 @@ class FakeNetwork(object):
 
 def prepare_temporal_resource_directories(cls):
 
-    from django.conf import settings
-
     cls.tmp_dir = mkdtemp()
 
     # catalogue deployer
@@ -339,17 +335,13 @@ def prepare_temporal_resource_directories(cls):
         os.mkdir(cls.catalogue_tmp_dir_backup)
 
 
-
-TEST_INDEX = {
+DEFAULT_TEST_HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
-        'INDEX_NAME': 'test_index',
-        'PATH': 'tobefilled'
-    },
+        'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine'
+    }
 }
 
 
-@override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
 class WirecloudTestCase(TransactionTestCase):
 
     base_resources = ()
@@ -384,7 +376,18 @@ class WirecloudTestCase(TransactionTestCase):
 
         super(WirecloudTestCase, cls).setUpClass()
 
-        settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        # Try to load test settings, else load default test settings
+        try:
+            settings.HAYSTACK_CONNECTIONS = settings.TEST_HAYSTACK_CONNECTIONS
+            # Update whoosh index dir if not set by user
+            if settings.TEST_HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.TEST_HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+                settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        except:
+            settings.HAYSTACK_CONNECTIONS = DEFAULT_TEST_HAYSTACK_CONNECTIONS
+            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+
+        # Reload the connection
+        haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
         haystack.connections.reload('default')
 
     @classmethod
@@ -521,7 +524,6 @@ def uses_extra_workspace(owner, file_name, shared=False, public=False, users=(),
     return wrap
 
 
-@override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     fixtures = ('selenium_test_data',)
@@ -566,7 +568,18 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()
 
-        settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        # Try to load test settings, else load default test settings
+        try:
+            settings.HAYSTACK_CONNECTIONS = settings.TEST_HAYSTACK_CONNECTIONS
+            # Update whoosh index dir if not set by user
+            if settings.TEST_HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.TEST_HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+                settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        except:
+            settings.HAYSTACK_CONNECTIONS = DEFAULT_TEST_HAYSTACK_CONNECTIONS
+            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+
+        # Reload the connection
+        haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
         haystack.connections.reload('default')
 
     @classmethod
