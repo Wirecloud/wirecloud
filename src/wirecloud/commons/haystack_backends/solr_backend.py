@@ -7,7 +7,6 @@ from __future__ import absolute_import
 
 import logging
 
-from django.db.models.loading import get_model
 from haystack.backends import EmptyResults
 from haystack.backends.solr_backend import SolrEngine as OriginalSolrEngine, SolrSearchBackend, SolrSearchQuery
 from haystack.constants import DJANGO_CT, DJANGO_ID, ID
@@ -15,6 +14,7 @@ from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
 from haystack import indexes
 from haystack.fields import FacetField
+from haystack.utils.app_loading import haystack_get_model
 
 
 def build_order_param(order):
@@ -109,7 +109,7 @@ class GroupedSearchResult(object):
         for raw_result in doclist:
             app_label, model_name = raw_result[DJANGO_CT].split('.')
             additional_fields = {}
-            model = get_model(app_label, model_name)
+            model = haystack_get_model(app_label, model_name)
 
             if model and model in indexed_models:
                 for key, value in raw_result.items():

@@ -8,7 +8,6 @@ from __future__ import absolute_import
 import warnings
 
 from django.conf import settings
-from django.db.models.loading import get_model
 from django.utils.encoding import force_text
 from haystack.backends.whoosh_backend import WhooshEngine as OriginalWhooshEngine, WhooshSearchBackend, WhooshSearchQuery
 from haystack.exceptions import SearchBackendError
@@ -18,6 +17,7 @@ from haystack.query import SearchQuerySet
 from haystack.utils import get_model_ct
 from haystack import indexes
 from haystack.fields import FacetMultiValueField
+from haystack.utils.app_loading import haystack_get_model
 from whoosh.query import And, Or, Term
 from whoosh.sorting import FieldFacet
 
@@ -107,7 +107,7 @@ class GroupedSearchResult(object):
         for raw_result in doclist:
             app_label, model_name = raw_result[DJANGO_CT].split('.')
             additional_fields = {}
-            model = get_model(app_label, model_name)
+            model = haystack_get_model(app_label, model_name)
 
             if model and model in indexed_models:
                 for key, value in raw_result.items():

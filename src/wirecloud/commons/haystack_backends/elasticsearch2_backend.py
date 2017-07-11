@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 
-from django.db.models.loading import get_model
 from haystack.backends.elasticsearch2_backend import Elasticsearch2SearchEngine as OriginalElasticsearch2SearchEngine, Elasticsearch2SearchBackend, Elasticsearch2SearchQuery
 from haystack.constants import DJANGO_CT, DJANGO_ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
 from haystack import indexes
 from haystack.fields import FacetMultiValueField
+from haystack.utils.app_loading import haystack_get_model
 
 
 class GroupedSearchQuery(Elasticsearch2SearchQuery):
@@ -111,7 +111,8 @@ class GroupedSearchResult(object):
             raw_result = raw_result["_source"]
             app_label, model_name = raw_result[DJANGO_CT].split('.')
             additional_fields = {}
-            model = get_model(app_label, model_name)
+
+            model = haystack_get_model(app_label, model_name)
 
             if model and model in indexed_models:
                 for key, value in raw_result.items():
