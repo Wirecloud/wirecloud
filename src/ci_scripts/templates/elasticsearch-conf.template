@@ -1,6 +1,6 @@
 import os
 
-HAYSTACK_CONNECTIONS = {
+TEST_HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
         'URL': os.environ['INDEX_URI'],
