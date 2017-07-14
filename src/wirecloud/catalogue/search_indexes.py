@@ -47,7 +47,7 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
     version_sortable = indexes.CharField()
     template_uri = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
-    creation_date = indexes.CharField(model_attr="creation_date")
+    creation_date = indexes.DateTimeField(model_attr="creation_date")
     public = indexes.CharField(model_attr="public")
 
     title = indexes.EdgeNgramField(boost=1.5)
@@ -190,7 +190,7 @@ def cleanResults(document, request):
 
     res["pk"] = results[0].pk
     res["others"] = others
-
+    res["creation_date"] = res["creation_date"].strftime("%Y-%m-%dT%H:%M:%SZ")
     add_absolute_urls(res, request)
 
     del res["users"]
