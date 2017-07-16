@@ -40,7 +40,7 @@ msgstr "Eliminando todas las versiones de %(title)s (%(group_id)s)"
 
 #: static/js/wirecloud/WirecloudCatalogue.js:280
 msgid "Deleting %(title)s (%(uri)s)"
-msgstr "Borrando %(title)s (%(url)s)"
+msgstr "Borrando %(title)s (%(uri)s)"
 
 #: static/js/wirecloud/ui/ResourcePainter.js:122
 msgid "Home page"
