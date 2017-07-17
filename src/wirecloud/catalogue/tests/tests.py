@@ -19,7 +19,6 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
 import json
 import os
 
@@ -320,7 +319,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(set([component['uri'] for component in result_json['results']]), self.MASHABLE_RESULTS)
 
-
     def test_advanced_search_prefix(self):
 
         self.client.login(username='myuser', password='admin')
@@ -333,7 +331,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(set([component['uri'] for component in result_json['results']]), self.WIRECLOUD_RESULTS)
 
-
     def test_advanced_search_phrase_with_prefix(self):
 
         self.client.login(username='myuser', password='admin')
@@ -343,7 +340,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result = self.client.get(self.base_url + '?q=weather+inter')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
-        #self.assertNotIn('corrected_q', result_json)
         self.assertEqual(result_json['pagelen'], 1)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['results'][0]['version'], "1.5.5")
