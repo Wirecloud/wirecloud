@@ -25,10 +25,7 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
         clone.group_order_sense = self.group_order_sense
         return clone
 
-    def add_group_by(self, field_name, order_by=None):
-        self.grouping_field = field_name
-
-        # Get order sense
+    def parse_sort_field(self, order_by):
         if order_by and len(order_by) > 1:
             order_sense = "asc"
             if order_by[0] == "-":
@@ -37,10 +34,18 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
             elif order_by[0] == "+":
                 order_sense = "asc"
                 order_by = order_by[1:]
-            self.group_order_sense = order_sense
+            return (order_by, order_sense)
+        return None
+
+    def add_group_by(self, field_name, order_by=None):
+        self.grouping_field = field_name
+
+        # Get order sense
+        result = self.parse_sort_field(order_by)
+        self.group_order_by = result[0]
+        self.group_order_sense = result[1]
 
         self.end_offset = 100
-        self.group_order_by = order_by
 
     def post_process_facets(self, results):
         # FIXME: remove this hack once https://github.com/toastdriven/django-haystack/issues/750 lands
@@ -67,8 +72,12 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
 
     def build_params(self, *args, **kwargs):
         res = super(GroupedSearchQuery, self).build_params(*args, **kwargs)
+        parsed_order = self.parse_sort_field(self.order_by[0])
         if self.grouping_field is not None:
-            aux = {"items": {"top_hits": {"size": 5}}}
+            aux = {
+                "items": {"top_hits": {"size": 5}},
+                "max_order": {"max": {"field": parsed_order[0]}}
+            }
 
             if self.group_order_by:
                 aux["items"]["top_hits"]["sort"] = [{self.group_order_by: {"order": self.group_order_sense}}]
@@ -77,7 +86,10 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
                     "items": {
                         "terms": {
                             "field": self.grouping_field,
-                            "size": self.end_offset
+                            "size": self.end_offset,
+                            "order": {
+                                "max_order": parsed_order[1]
+                            }
                         },
                         "aggs": aux
                     }
@@ -163,6 +175,7 @@ class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
         res = super(GroupedElasticsearch2SearchBackend, self).build_search_kwargs(*args, **kwargs)
 
         res.update(group_kwargs)
+        res["query"]["filtered"]["query"]["query_string"]["analyzer"] = "standard"
 
         return res
 
