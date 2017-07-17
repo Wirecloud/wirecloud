@@ -29,8 +29,6 @@ DATABASES = {
     }
 }
 
-HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',

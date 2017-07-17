@@ -117,6 +117,8 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         }
     ]
 
+    settings['HAYSTACK_SIGNAL_PROCESSOR'] = 'haystack.signals.RealtimeSignalProcessor'
+
     settings['MIDDLEWARE_CLASSES'] = (
         'wirecloud.commons.middleware.URLMiddleware',
     )
