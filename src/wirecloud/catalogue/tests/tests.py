@@ -208,7 +208,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
-        result = self.client.get(self.base_url + '?q=mashable+application&orderby=name')
+        result = self.client.get(self.base_url + '?q=mashable+application&orderby=creation_date')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 2)
@@ -216,7 +216,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "2.5")
         self.assertEqual(len(result_json['results'][0]['others']), 2)
 
-        result = self.client.get(self.base_url + '?q=mashable')
+        result = self.client.get(self.base_url + '?q=mashable&orderby=-creation_date')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 3)
