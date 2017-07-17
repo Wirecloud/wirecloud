@@ -187,9 +187,13 @@ class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
             return super(GroupedElasticsearch2SearchBackend, self)._process_results(raw_results,
                                                                                     result_class=result_class,
                                                                                     **kwargs)
-
         res = {}
         res['results'] = results = []
+        if raw_results == {}:
+            res["matches"] = 0
+            res["hits"] = 0
+            return res
+
         res["matches"] = raw_results["hits"]["total"]
         groups = raw_results["aggregations"]["items"]["buckets"][self.start_offset:]
         res["hits"] = len(groups)
