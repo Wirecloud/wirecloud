@@ -316,7 +316,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result = self.client.get(self.base_url + '?q=ashabl')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
-        #self.assertEqual(result_json['corrected_q'], 'mashable')
         self.assertEqual(result_json['pagelen'], len(self.MASHABLE_RESULTS))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(set([component['uri'] for component in result_json['results']]), self.MASHABLE_RESULTS)
