@@ -79,7 +79,7 @@
             "short_name": "Test",
             "json_description": "{\"name\": \"Test\", \"vendor\": \"Wirecloud\", \"version\": \"1.5\", \"type\": \"widget\", \"title\": \"Incredible Test\", \"description\": \"This widget contains keywords like term mashable application component.\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test-data\", \"actionlabel\": \"\", \"name\": \"inputendpoint\", \"label\": \"Input\", \"type\": \"text\", \"description\": \"input type text\"}], \"outputs\": [{\"friendcode\": \"test-data\", \"description\": \"output digit\", \"type\": \"text\", \"name\": \"outputendpoint\", \"label\": \"Output\"}]}, \"contents\": {\"src\": \"test.html\"}}",
             "creator": 80,
-            "creation_date": "2011-05-13T11:24:03Z",
+            "creation_date": "2011-05-12T11:24:03Z",
             "version": "1.5",
             "type": 0,
             "public": true,
