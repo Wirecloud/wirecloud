@@ -171,6 +171,8 @@ class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
 
     def build_search_kwargs(self, *args, **kwargs):
         group_kwargs = [(i, kwargs.pop(i)) for i in kwargs.keys() if i.startswith("aggs")]
+        self.start_offset = kwargs["start_offset"]
+        self.end_offset = kwargs["end_offset"]
 
         res = super(GroupedElasticsearch2SearchBackend, self).build_search_kwargs(*args, **kwargs)
 
@@ -189,7 +191,7 @@ class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
         res = {}
         res['results'] = results = []
         res["matches"] = raw_results["hits"]["total"]
-        groups = raw_results["aggregations"]["items"]["buckets"]
+        groups = raw_results["aggregations"]["items"]["buckets"][self.start_offset:]
         res["hits"] = len(groups)
 
         for group in groups:
