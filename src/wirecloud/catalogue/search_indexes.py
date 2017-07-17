@@ -50,7 +50,7 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
     creation_date = indexes.DateTimeField(model_attr="creation_date")
     public = indexes.CharField(model_attr="public")
 
-    title = indexes.EdgeNgramField(boost=1.5)
+    title = indexes.NgramField(boost=1.5)
     endpoint_descriptions = indexes.EdgeNgramField()
 
     description = indexes.NgramField()

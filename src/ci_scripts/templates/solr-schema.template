@@ -99,7 +99,7 @@
     
     <field name="output_friendcodes" type="text_en" indexed="true" stored="true" multiValued="true" />
     
-    <field name="creation_date" type="text_en" indexed="true" stored="true" multiValued="false" />
+    <field name="creation_date" type="date" indexed="true" stored="true" multiValued="false" />
     
     <field name="template_uri" type="text_en" indexed="true" stored="true" multiValued="false" />
     
@@ -113,7 +113,7 @@
     
     <field name="group_field" type="string" indexed="true" stored="true" multiValued="false" />
     
-    <field name="title" type="edge_ngram" indexed="true" stored="true" multiValued="false" />
+    <field name="title" type="ngram" indexed="true" stored="true" multiValued="false" />
     
     <field name="wiring" type="text_en" indexed="true" stored="true" multiValued="false" />
     
