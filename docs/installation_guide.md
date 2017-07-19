@@ -476,10 +476,12 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
         'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'haystack',
+        'INDEX_NAME': 'wirecloud',
     },
 }
 ```
+
+Where `URL` is the URL of the ElasticSearch2 server.
 
 The only thing that remains is installing the python library for ElasticSearch:
 
@@ -495,10 +497,12 @@ and configuring the `URL` parameter to point to the ElasticSearch2 server.
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr'
+        'URL': 'http://127.0.0.1:8983/solr/wirecloud_core'
     },
 }
 ```
+
+Where `URL` is the URL of the Solr instance's core.
 
 The only thing that remains is installing the python library for Solr:
 
