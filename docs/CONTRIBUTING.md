@@ -76,16 +76,60 @@ case to convince the project's developers of the merits of this feature. Please
 provide as much detail and context as possible.
 
 
-## Code guidelines
+## Contributing code
 
-### HTML
+If you're ready to take the plunge & contribute back some code/docs, the process
+should look like:
+
+- Fork the project on GitHub into your own account.
+- Clone your copy of WireCloud.
+- Make a new branch in git & commit your changes there.
+- Push your new branch up to GitHub.
+- Again, ensure there isn't already an issue or pull request out there on it.
+  If there is & you feel you have a better fix, please take note of the issue
+  number & mention it in your pull request.
+- Create a new pull request (based on your branch), including what the
+  problem/feature is, versions of your software & referencing any related
+  issues/pull requests.
+
+In order to be merged into WireCloud, contributions should follow the following
+recommendation as much as possible:
+
+- A solid patch that:
+    - is clear.
+    - works across all supported versions of Python/Django (take a look to the
+        [documentation about testing](development/platform/testing.md))
+    - follows the [Code guidelines](#code-guidelines).
+    - comments included as needed.
+- A test case that demonstrates the previous flaw that now passes with the
+  included patch.
+- If it adds/changes a public API, it must also include documentation for those
+  changes.
+
+### Code guidelines
+
+#### Python
+
+- Follow the [PEP 8 style rules](https://www.python.org/dev/peps/pep-0008/)
+- Use [`flake8`](http://flake8.pycqa.org/en/latest/) (or alternatively, `pep8`
+  and `pyflakes` in combination)
+
+#### JavaScript
+
+- Four spaces for indentation, never tabs.
+- strict mode.
+- "Attractive".
+- Use [`eslint`](http://eslint.org/) (there is a `.eslintrc` file on the source
+  code of WireCloud ;-).
+
+#### HTML
 
 - Four spaces for indentation, never tabs.
 - Double quotes only, never single quotes.
 - Always use proper indentation.
 - Use tags and elements appropriate for an XHTML5 doctype (e.g., self-closing tags).
 
-### CSS
+#### SCSS
 
 - Multiple-line approach (one property and value per line).
 - Always a space after a property's colon (e.g., `display: block;` and not `display:block;`).
@@ -96,10 +140,3 @@ provide as much detail and context as possible.
 - Avoid inheritance and over nesting—use single, explicit classes whenever possible.
 - When feasible, default color palettes should comply with [WCAG color contrast guidelines](http://www.w3.org/TR/WCAG20/#visual-audio-contrast).
 - Except in rare cases, don't remove default `:focus` styles (via e.g. `outline: none;`) without providing alternative styles. See [this A11Y Project post](http://a11yproject.com/posts/never-remove-css-outlines/) for more details.
-
-### JS
-
-- Four spaces for indentation, never tabs.
-- strict mode.
-- "Attractive".
-- Use eslint (there is a `.eslintrc` file on the source code of WireCloud ;-).

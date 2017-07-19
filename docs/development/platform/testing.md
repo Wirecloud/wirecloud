@@ -7,9 +7,27 @@ $ pip install django-nose "mock>=1.0,<2.0"
 
 ## Unit tests
 
+Server unit tests are executed:
+
 ```
 python manage.py test -v 2 --noinput --nologcapture -a tags="wirecloud-noselenium"
 ```
+
+These unit tests use mocks for replacing several external services although
+there are some systems used and configured by Django using the configuration
+provided in the `settings.py` file. For example, django uses the database
+configuration provided in this file when running the tests.
+
+
+There are also unit tests for the JavaScript code that is executed in the client
+side. You can tun those tests by executing the following command:
+
+```
+$ grunt kamra
+```
+
+> **Note**: JavaScript unit tests are work in progress, do not expect a great
+> code coverage.
 
 ## Integration tests
 
