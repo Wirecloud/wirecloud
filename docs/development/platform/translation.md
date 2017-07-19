@@ -9,8 +9,8 @@ following commands:
 
     $ cd ${wirecloud_repo_path}/src
     $ cd ${module}
-    $ django-admin.py makemessages -l ${locale}
-    $ django-admin.py makemessages -l ${locale} -d djangojs
+    $ django-admin makemessages -l ${locale}
+    $ django-admin makemessages -l ${locale} -d djangojs
 
 Where:
 
@@ -30,22 +30,22 @@ Where:
 After running these command, you will be able to edit the `django.po` and
 `djangojs.po` files located at
 `${wirecloud_repo_path}/${module}/locale/${locale}/LC_MESSAGES/`. Those files
-can be edited manually or any generic PO file editor.
+can be edited manually or by using a generic PO file editor.
 
 Once you feel comfortable with your translated message catalogue, you can
-compile it for testing purporses by running the following code (for each
+compile it for testing purporses by running the following commands (for each
 module):
 
     $ cd ${wirecloud_repo_path}/src
     $ cd ${module}
-    $ django-admin.py compilemessages
+    $ django-admin compilemessages
 
-After compiling messages, you can test it by running WireCloud. As we're
+After compiling messages, you can test them by running WireCloud. As we're
 developing, the recommended way is by executing the runserver command:
 
     $ python manage.py runserver --insecure
 
 You have several choices for contributing your translations. First, if you feel
 comfortable sending github pull request, this is the preffered way, followed by
-sending directly the patches/commits by email (wirecloud at conwet dot com).
-Another option is sending the full po files by email.
+sending directly the patches/commits by email to wirecloud at conwet dot com.
+Another option is sending the full `po` files by email.
