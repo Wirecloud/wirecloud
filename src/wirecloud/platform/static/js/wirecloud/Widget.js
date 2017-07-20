@@ -356,6 +356,10 @@
          */
         isAllowed: function isAllowed(name) {
 
+            if (!(name in this.permissions)) {
+                throw new TypeError("invalid name parameter");
+            }
+
             if (!this.volatile) {
                 switch (name) {
                 case "close":
@@ -364,14 +368,12 @@
                 case "resize":
                 case "minimize":
                     return this.permissions[name] && this.tab.workspace.isAllowed('edit_layout');
+                default:
+                    return !this.tab.workspace.restricted && this.permissions[name];
                 }
+            } else {
+                return this.permissions[name];
             }
-
-            if (!(name in this.permissions)) {
-                throw new TypeError("invalid name parameter");
-            }
-
-            return this.permissions[name];
         },
 
         /**

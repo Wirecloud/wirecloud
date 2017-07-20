@@ -29,7 +29,7 @@
     var WORKSPACE_TAB = {
         workspace: {
             isAllowed: jasmine.createSpy('isAllowed').and.callFake(() => {
-                return false;
+                return true;
             }),
             restricted: false,
             view: {}
@@ -124,7 +124,7 @@
                 expect(widget.missing).toBe(false);
                 expect(widget.title).toBe(EMPTY_WIDGET_META.title);
                 expect(widget.volatile).toBe(false);
-                expect(new URL(widget.codeurl).toEqual(jasmine.any(URL));
+                expect(new URL(widget.codeurl)).toEqual(jasmine.any(URL));
             });
 
             it("allow to instantiate widgets from persistence", () => {
@@ -152,7 +152,7 @@
                 expect(widget.missing).toBe(false);
                 expect(widget.title).toBe(EMPTY_WIDGET_META.title);
                 expect(widget.volatile).toBe(true);
-                expect(widget.codeurl).toEqual(jasmine.any(URL));
+                expect(new URL(widget.codeurl)).toEqual(jasmine.any(URL));
             });
 
         });
@@ -201,6 +201,19 @@
                     expect(widget.isAllowed("close")).toBe(false);
                 });
 
+                it("normal widget on shared workspace", () => {
+                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                        id: "1",
+                        permissions: {
+                            // This should contain a false value as this user is
+                            // not able to edit shared dashboards
+                            // Anyway, this should no affect the result
+                            close: true
+                        }
+                    });
+                    expect(widget.isAllowed("close")).toBe(false);
+                });
+
                 it("volatile widget on shared workspace", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
@@ -224,6 +237,51 @@
                         volatile: true
                     });
                     expect(widget.isAllowed("move")).toBe(true);
+                });
+
+            });
+
+            describe("rename", () => {
+
+                it("normal widget on unlocked workspace", () => {
+                    var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                        id: "1",
+                        permissions: {
+                            rename: true
+                        }
+                    });
+                    expect(widget.isAllowed("rename")).toBe(true);
+                });
+
+                it("normal widget on locked workspace", () => {
+                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                        id: "1",
+                        permissions: {
+                            rename: true
+                        }
+                    });
+                    expect(widget.isAllowed("rename")).toBe(false);
+                });
+
+                it("normal widget on shared workspace", () => {
+                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                        id: "1",
+                        permissions: {
+                            // This should contain a false value as this user is
+                            // not able to edit shared dashboards
+                            // Anyway, this should no affect the result
+                            close: true
+                        }
+                    });
+                    expect(widget.isAllowed("rename")).toBe(false);
+                });
+
+                it("volatile widget on shared workspace", () => {
+                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                        id: "1/1",
+                        volatile: true
+                    });
+                    expect(widget.isAllowed("rename")).toBe(true);
                 });
 
             });
