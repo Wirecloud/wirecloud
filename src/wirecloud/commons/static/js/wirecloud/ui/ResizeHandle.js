@@ -167,10 +167,11 @@
             document.body.insertBefore(dragboardCover, document.body.firstChild);
 
             if (handleElement.ownerDocument === document) {
-                dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
                 dragboardCover.style.height = dragboard.scrollHeight + "px";
                 scrollStart = dragboard.scrollTop;
                 scrollDelta = 0;
+
+                dragboard.insertBefore(dragboardCover, dragboard.firstChild);
                 dragboard.addEventListener("scroll", scroll, true);
             } else {
                 dragboardCover.style.height = document.body.scrollHeight + "px";
