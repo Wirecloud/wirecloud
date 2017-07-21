@@ -105,6 +105,18 @@
 
     var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local', permissions: {'delete': false}});
 
+    Wirecloud.addEventListener('loaded', () => {
+        if (Wirecloud.live) {
+            Wirecloud.live.addEventListener("component", function (live, data) {
+                if (data.action === 'uninstall' && data.component in this.resources) {
+                    var component = this.resources[data.component];
+                    var p = unload_affected_components(component, {affectedVersions: [component.version.text]});
+                    p.then(purge_component_info.bind(this, component));
+                }
+            }.bind(LocalCatalogue));
+        }
+    });
+
     /**
      * Clears the component cache and init it with then
      */
