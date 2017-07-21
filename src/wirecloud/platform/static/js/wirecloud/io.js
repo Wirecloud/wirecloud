@@ -67,9 +67,13 @@
         }
     };
 
-    var onReadyStateChange = function onReadyStateChange(handler) {
+    var onReadyStateChange = function onReadyStateChange(handler, error) {
         var response = new Response(this);
-        handler(response);
+        if (error) {
+            handler(new io.ConnectionError(this));
+        } else {
+            handler(response);
+        }
 
         try {
             if (('on' + response.status) in this.options) {
@@ -237,7 +241,7 @@
                 onReadyStateChange.call(this, resolve);
             }.bind(this));
             this.transport.addEventListener("error", function () {
-                onReadyStateChange.call(this, reject);
+                onReadyStateChange.call(this, reject, true);
             }.bind(this));
         }.bind(this));
 
@@ -248,6 +252,28 @@
     utils.inherit(Request, Wirecloud.Task);
 
     var io = {};
+
+    /**
+     * Error raised if there are problems connecting to the server. Browsers
+     * doesn't provide details about the connection problem due security
+     * concerns, so this exception doesn't provide those details.
+     *
+     * @class
+     * @extends Error
+     * @name Wirecloud.io.ConnectionError
+     * @summary Exception raised for connection problems.
+     */
+    io.ConnectionError = function ConnectionError() {
+        this.name = 'ConnectionError';
+        this.message = 'Connection Error';
+    };
+
+    io.ConnectionError.prototype = new Error();
+    io.ConnectionError.prototype.constructor = io.ConnectionError;
+
+    io.ConnectionError.prototype.toString = function toString() {
+        return this.message;
+    };
 
     io.buildProxyURL = function buildProxyURL(url, options) {
         var forceProxy, hash;
