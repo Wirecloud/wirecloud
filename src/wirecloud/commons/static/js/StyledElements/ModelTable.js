@@ -67,7 +67,7 @@
             var resizeHandler = document.createElement("div");
             resizeHandler.className = "se-model-table-resize";
             cell.appendChild(resizeHandler);
-            Wirecloud.ui.ResizeHandle(cell, resizeHandler, null, onStartResize, onResize.bind(this), emptyFunction, function () {
+            new Wirecloud.ui.ResizeHandle(cell, resizeHandler, null, onStartResize, onResize.bind(this), emptyFunction, function () {
                 return true;
             });
 
