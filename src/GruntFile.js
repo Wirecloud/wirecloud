@@ -85,7 +85,8 @@ var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/DefaultInputInterfaceFactory.js',
     'wirecloud/commons/static/js/StyledElements/Form.js',
     'wirecloud/commons/static/js/StyledElements/PaginationInterface.js',
-    'wirecloud/commons/static/js/StyledElements/Popover.js'
+    'wirecloud/commons/static/js/StyledElements/Popover.js',
+    'wirecloud/commons/static/js/StyledElements/SwitchButton.js'
 ];
 
 var wc_dependencies = [

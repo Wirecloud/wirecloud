@@ -140,6 +140,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/OffCanvasLayout.js',
     'js/StyledElements/Alert.js',
     'js/StyledElements/Typeahead.js',
+    'js/StyledElements/SwitchButton.js',
 )
 
 
