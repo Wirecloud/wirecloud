@@ -2434,7 +2434,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             "number": {"readonly": False, "hidden": False, "name": "number", "value": 2, "secure": False}
         }
 
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = check_get_request(self, url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
         response_data = json.loads(response.content.decode('utf-8'))
@@ -2638,7 +2638,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'prop2': {'readonly': False, 'secure': False, 'hidden': False, 'value': 'default2', 'name': 'prop2'}
         }
 
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = check_get_request(self, url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
         response_data = json.loads(response.content.decode('utf-8'))

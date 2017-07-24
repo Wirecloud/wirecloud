@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -230,10 +230,9 @@ class IWidgetPreferences(Resource):
         prefs = iwidget_info['variables']['preferences']
 
         data = {}
-        for var in prefs:
-            data[var] = cache_manager.get_variable_data("iwidget", iwidget_id, var)
+        data = {var: cache_manager.get_variable_data("iwidget", iwidget_id, var) for var in prefs}
 
-        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')
 
 
 class IWidgetProperties(Resource):
@@ -296,7 +295,6 @@ class IWidgetProperties(Resource):
         props = iwidget_info['variables']['properties']
 
         data = {}
-        for var in props:
-            data[var] = cache_manager.get_variable_data("iwidget", iwidget_id, var)
+        data = {var: cache_manager.get_variable_data("iwidget", iwidget_id, var) for var in props}
 
-        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')
