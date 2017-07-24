@@ -2440,6 +2440,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data, expectedResult)
 
+    def test_iwidget_preferences_entry_get_cache(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make initial request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        etag = response['ETag']
+
+        # There are no changes in the workspaces, so next requests so return a 304 error code
+        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=etag)
+        self.assertEqual(response.status_code, 304)
+
     def test_iwidget_preferences_entry_get_workspace_not_found(self):
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})
 
@@ -2643,6 +2658,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data, expectedResult)
+
+    def test_iwidget_properties_entry_get_cache(self):
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make initial request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        etag = response['ETag']
+
+        # There are no changes in the workspaces, so next requests so return a 304 error code
+        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=etag)
+        self.assertEqual(response.status_code, 304)
 
     def test_iwidget_properties_entry_get_workspace_not_found(self):
         url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 404, 'tab_id': 106, 'iwidget_id': 111})
