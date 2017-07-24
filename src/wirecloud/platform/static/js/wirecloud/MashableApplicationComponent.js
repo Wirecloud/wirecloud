@@ -88,7 +88,7 @@
         this.preferences = {};
         this.preferenceList = [];
         for (i = 0; i < desc.preferences.length; i++) {
-            preference = new Wirecloud.UserPrefDef(desc.preferences[i].name, desc.preferences[i].type, desc.preferences[i]);
+            preference = new Wirecloud.UserPrefDef(desc.preferences[i]);
             this.preferences[preference.name] = preference;
             this.preferenceList.push(preference);
         }

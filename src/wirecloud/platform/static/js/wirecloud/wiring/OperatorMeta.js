@@ -47,7 +47,7 @@
         this.properties = {};
         this.propertyList = [];
         for (var i = 0; i < description.properties.length; i++) {
-            var property = new Wirecloud.PersistentVariableDef(description.properties[i].name, description.properties[i].type, description.properties[i]);
+            var property = new Wirecloud.PersistentVariableDef(description.properties[i]);
             this.properties[property.name] = property;
             this.propertyList.push(property);
         }

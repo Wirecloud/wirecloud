@@ -50,7 +50,7 @@
         this.properties = {};
         this.propertyList = [];
         for (i = 0; i < data.properties.length; i++) {
-            property = new Wirecloud.PersistentVariableDef(data.properties[i].name, data.properties[i].type, data.properties[i]);
+            property = new Wirecloud.PersistentVariableDef(data.properties[i]);
             this.properties[property.name] = property;
             this.propertyList.push(property);
         }
@@ -58,7 +58,6 @@
         Object.freeze(this.propertyList);
 
         Object.defineProperties(this, {
-            "id": {value: this.uri},
             "default_width": {value: data.widget_width},
             "default_height": {value: data.widget_height},
         });

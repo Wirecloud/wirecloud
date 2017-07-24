@@ -155,7 +155,7 @@
                 }
 
                 var content = utils.merge(options, {
-                    widget: resource.id
+                    widget: resource.uri
                 });
 
                 Wirecloud.io.makeRequest(url, {

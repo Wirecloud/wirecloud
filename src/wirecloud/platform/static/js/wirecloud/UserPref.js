@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,19 +29,18 @@
     /**
      * @author aarranz
      */
-    var UserPref = function UserPref(pref_def, readonly, hidden, currentValue) {
-        Object.defineProperty(this, 'meta', {value: pref_def});
+    var UserPref = function UserPref(meta, readonly, hidden, currentValue) {
+        if (meta == null || !(meta instanceof Wirecloud.UserPrefDef)) {
+            throw new TypeError("invalid meta parameter");
+        }
+
+        Object.defineProperty(this, 'meta', {value: meta});
         Object.defineProperty(this, 'readonly', {value: !!readonly});
         Object.defineProperty(this, 'hidden', {value: !!hidden});
 
-        if (pref_def == null) {
-            this.value = currentValue;
-            return;
-        }
-
-        if (pref_def.type === 'boolean' && typeof currentValue === 'string') {
+        if (meta.type === 'boolean' && typeof currentValue === 'string') {
             this.value = currentValue.trim().toLowerCase() === 'true';
-        } else if (pref_def.type === 'number' && typeof currentValue === 'string') {
+        } else if (meta.type === 'number' && typeof currentValue === 'string') {
             this.value = Number(currentValue);
         } else {
             this.value = currentValue;
@@ -49,14 +48,9 @@
     };
 
     UserPref.prototype.getInterfaceDescription = function getInterfaceDescription() {
-        var desc, type;
+        var type = this.meta.type;
 
-        type = this.meta.type;
-        if (type === 'list') {
-            type = 'select';
-        }
-
-        desc = Wirecloud.Utils.merge(this.meta.options, {
+        var desc = Wirecloud.Utils.merge(this.meta.options, {
             'type': type,
             'defaultValue': this.meta.default,
             'initiallyDisabled': this.readonly,
@@ -65,7 +59,7 @@
         });
 
         if (type === 'select') {
-            desc.initialEntries = this.meta.options.options;
+            desc.initialEntries = this.meta.options;
             desc.required = true;
         }
 

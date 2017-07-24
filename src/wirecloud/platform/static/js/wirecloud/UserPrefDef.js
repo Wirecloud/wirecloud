@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,27 +29,28 @@
     /**
      * @author aarranz
      */
-    var UserPrefDef = function UserPrefDef(name, type, options) {
+    var UserPrefDef = function UserPrefDef(options) {
+
+        if (options == null || typeof options !== "object") {
+            throw new TypeError('Invalid options parameter');
+        }
 
         if (options.default != null && typeof options.default !== "string") {
             throw new TypeError('Invalid default option');
         }
 
-        if (type === 'list') {
-            type = 'select';
+        if (options.type === 'list') {
+            options.type = 'select';
         }
 
-        // the value option is only used on the server side
-        if ('value' in options) {
-            delete options.value;
-        }
-
-        Object.defineProperty(this, 'name', {value: name});
-        Object.defineProperty(this, 'type', {value: type});
-        Object.defineProperty(this, 'label', {value: options.label});
-        Object.defineProperty(this, 'description', {value: options.description});
-        Object.defineProperty(this, 'required', {value: options.required});
-        Object.defineProperty(this, 'options', {value: options});
+        Object.defineProperties(this, {
+            name: {value: options.name},
+            type: {value: options.type},
+            label: {value: options.label},
+            description: {value: options.description},
+            required: {value: options.required},
+            options: {value: options}
+        });
 
         var default_value = '';
         if (options.type === 'boolean') {
