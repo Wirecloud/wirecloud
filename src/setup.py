@@ -26,10 +26,13 @@ from distutils.command.build import build as distutils_build
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install as setuptools_install
 from setuptools.command.sdist import sdist as setuptools_sdist
+from shutil import copyfile
 
 import wirecloud.platform
 from wirecloud.commons.utils.git import get_git_info
 
+
+VERSION_METADATA_FILE = 'wirecloud/platform/__init__.py'
 
 class bcolors:
     HEADER = '\033[95m'
@@ -52,7 +55,7 @@ def add_git_metadata(base_dir):
 
     GIT_REVISION, RELEASE_DATE, GIT_DIRTY = get_git_info()
 
-    with open(os.path.join(base_dir, 'wirecloud/platform/__init__.py'), "a") as f:
+    with open(os.path.join(base_dir, VERSION_METADATA_FILE), "a") as f:
         f.write('__git_hash__ = "%s"\n__git_dirty__ = %s\n__release_date__ = "%s"\n' % (GIT_REVISION, GIT_DIRTY, RELEASE_DATE))
 
 
@@ -60,10 +63,12 @@ class build_wirecloud(build_py):
 
     def run(self):
 
-        add_git_metadata(self.build_lib)
-
         # distutils uses old-style classes, so no super()
         build_py.run(self)
+
+        # Use a fresh version of the python file
+        copyfile(VERSION_METADATA_FILE, os.path.join(self.build_lib, VERSION_METADATA_FILE))
+        add_git_metadata(self.build_lib)
 
 
 class build(distutils_build):
