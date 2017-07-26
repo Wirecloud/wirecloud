@@ -177,7 +177,7 @@ urlpatterns = (
         name='wirecloud.workspace_wiring'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/operators/(?P<operator_id>\d+)/?$',
+    url(r'^api/workspace/(?P<workspace_id>\d+)/operators/(?P<operator_id>\d+)/variables?$',
         wiring_views.OperatorVariablesEntry(permitted_methods=('GET',)),
         name='wirecloud.operator_variables'
     ),
