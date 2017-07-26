@@ -28,7 +28,7 @@ from setuptools.command.install import install as setuptools_install
 from setuptools.command.sdist import sdist as setuptools_sdist
 
 import wirecloud.platform
-from wirecloud.common.utils.git import get_git_info
+from wirecloud.commons.utils.git import get_git_info
 
 
 class bcolors:
