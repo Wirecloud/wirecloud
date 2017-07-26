@@ -1084,6 +1084,48 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
 
 + Response 204
 
+### Get instantiated widget preferences [GET /api/workspace/{workspace_id}/tab/{tab_id}/iwidget/{iwidget_id}/preferences]
+
+> *new in WireCloud 1.1 / FIWARE Application Mashup RESTful Specification v2.2*
+
+**Used status codes**: 200, 304, 401, 403
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+    + iwidget_id: 101 (number) - ID of the instantiated widget
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "first_preference_name":
+                {
+                    "readonly": False,
+                    "hidden": False,
+                    "name": "boolean",
+                    "value": False,
+                    "secure": False
+                },
+                "second_preference_nanme":
+                {
+                    "readonly": False,
+                    "hidden": False,
+                    "name": "text",
+                    "value": "initial text",
+                    "secure": False
+                }
+            }
+
+
 ### Update instantiated widget preferences [POST /api/workspace/{workspace_id}/tab/{tab_id}/iwidget/{iwidget_id}/preferences]
 
 **Used status codes**: 204, 400, 401, 403, 404, 413, 415
@@ -1109,6 +1151,73 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
 
 + Response 204
 
+### Get instantiated widget properties [GET /api/workspace/{workspace_id}/tab/{tab_id}/iwidget/{iwidget_id}/properties]
+
+> *new in WireCloud 1.1 / FIWARE Application Mashup RESTful Specification v2.2*
+
+**Used status codes**: 200, 304, 401, 403
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+    + iwidget_id: 101 (number) - ID of the instantiated widget
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "first_property_name":
+                {
+                    "readonly": False,
+                    "hidden": False,
+                    "name": "boolean",
+                    "value": False,
+                    "secure": False
+                },
+                "second_property_nanme":
+                {
+                    "readonly": False,
+                    "hidden": False,
+                    "name": "text",
+                    "value": "initial text",
+                    "secure": False
+                }
+            }
+
+
+### Update instantiated widget properties [POST /api/workspace/{workspace_id}/tab/{tab_id}/iwidget/{iwidget_id}/properties]
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 415
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+    + iwidget_id: 101 (number) - ID of the instantiated widget
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            {
+                "property_name": "new_value"
+            }
+
++ Response 204
+
 ### Remove instantiated widget [DELETE]
 
 **Used status codes**: 204, 401, 403, 404
@@ -1122,6 +1231,47 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
 
 + Response 204
 
+## Operator variables [/api/workspace/{workspace_id}/operators/{operator_id}]
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + operator_id: 101 (number) - ID of the operator
+
+### Get operator variables [GET]
+
+> *new in WireCloud 1.1 / FIWARE Application Mashup RESTful Specification v2.2*
+
+**Used status codes**: 200, 304, 401, 403
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                'username':
+                {
+                    'hidden': False,
+                    'name': 'username',
+                    'readonly': False,
+                    'secure': False,
+                    'value': 'test_username'
+                },
+                'password':
+                {
+                    'hidden': False,
+                    'name': 'password',
+                    'readonly': False,
+                    'secure': True,
+                    'value': '********'
+                },
+            }
 
 # Group Managing resources
 
