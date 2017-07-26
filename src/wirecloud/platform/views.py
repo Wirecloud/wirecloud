@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
 import gettext as gettext_module
 import importlib
 import json
@@ -42,6 +43,7 @@ import six
 
 from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.http import build_error_response
+import wirecloud.platform
 from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.plugins import get_active_features_info, get_plugins
 from wirecloud.platform.models import Workspace
@@ -49,6 +51,7 @@ from wirecloud.platform.themes import get_active_theme_name, get_available_theme
 from wirecloud.platform.workspace.utils import get_workspace_list
 
 LANGUAGE_QUERY_PARAMETER = 'language'
+START_TIME = datetime.now()
 
 
 @cache_page(60 * 60 * 24, key_prefix='wirecloud-features-%s' % get_version_hash())
@@ -58,6 +61,25 @@ def feature_collection(request):
 
     response = HttpResponse(json.dumps(features, sort_keys=True), content_type='application/json; charset=UTF-8')
     return patch_cache_headers(response)
+
+
+@require_safe
+def version_entry(request):
+    td = datetime.now() - START_TIME
+    info = {
+        "version": wirecloud.platform.__version__,
+        "uptime": "%d d, %d h, %d m, %d s" % (td.days, td.seconds // 3600, (td.seconds // 60) % 60, td.seconds % 60),
+        "version_hash": get_version_hash(),
+        "doc": "http://fiware.github.io/apps.Wirecloud/restapi/v2.2/",
+    }
+
+    # git hash and release_date is only available on released versions
+    if hasattr("__git_hash__", wirecloud.platform):
+        info["git_hash"] = wirecloud.platform.__git_hash__
+        info["git_dirty"] = wirecloud.platform.__git_dirty__
+        info["release_date"] = wirecloud.platform.__release_date__
+
+    return HttpResponse(json.dumps(info), content_type='application/json; charset=UTF-8')
 
 
 def resolve_url(to, *args, **kwargs):  # pragma: no cover

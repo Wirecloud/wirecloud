@@ -42,6 +42,10 @@ urlpatterns = (
         views.feature_collection,
         name='wirecloud.features'),
 
+    url(r'^api/version$',
+        views.version_entry,
+        name='wirecloud.version'),
+
     # i18n
     url(r'^api/i18n/', include('django.conf.urls.i18n')),
     url(r'^api/i18n/js_catalogue$',

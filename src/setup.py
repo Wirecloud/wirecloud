@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,7 +23,9 @@ from distutils.command.install import INSTALL_SCHEMES
 import os
 import re
 from setuptools import setup
+import subprocess
 from distutils.command.build import build as distutils_build
+from setuptools.command.build_py import build_py
 from setuptools.command.install import install as setuptools_install
 from setuptools.command.sdist import sdist as setuptools_sdist
 
@@ -46,6 +48,78 @@ class bcolors:
         self.ENDC = ''
 
 
+def git_version():
+    def _minimal_ext_cmd(cmd):
+        # construct minimal environment
+        env = {}
+        for k in ['SYSTEMROOT', 'PATH', 'HOME']:
+            v = os.environ.get(k)
+            if v is not None:
+                env[k] = v
+        # LANGUAGE is used on win32
+        env['LANGUAGE'] = 'C'
+        env['LANG'] = 'C'
+        env['LC_ALL'] = 'C'
+        out = subprocess.Popen(cmd, stdout = subprocess.PIPE, env=env).communicate()[0]
+        return out
+
+    import ipdb; ipdb.sset_trace()
+    # Check if this working copy is dirty
+    try:
+        out = _minimal_ext_cmd(['git', 'status', '--porcelain'])
+        GIT_DIRTY = out.strip().decode('ascii').strip() != ""
+    except OSError:
+        GIT_DIRTY = True
+
+    # Get current commit hash
+    try:
+        out = _minimal_ext_cmd(['git', 'rev-parse', 'HEAD'])
+        GIT_REVISION = out.strip().decode('ascii')
+    except OSError:
+        GIT_REVISION = "Unknown"
+
+    # Check if HEAD points to a release commit
+    IS_RELEASE = False
+    release_tag = 'v' + wirecloud.platform.__version__
+    try:
+        out = _minimal_ext_cmd(['git', 'tag', '-l', '--points-at', 'HEAD'])
+        tags = out.strip().decode('ascii').splitlines()
+        IS_RELEASE = release_tag in tags
+    except OSError:
+        pass
+
+
+    # Provide a release date if this is a released version
+    RELEASE_DATE = "Unknown"
+    if IS_RELEASE and not GIT_DIRTY:
+        try:
+            out = _minimal_ext_cmd(['git', 'log', '-1', '--date=short', '--pretty=format:%cd'])
+            RELEASE_DATE = out.strip().decode('ascii')
+        except OSError:
+            pass
+
+
+    return GIT_REVISION, RELEASE_DATE, GIT_DIRTY
+
+
+def add_git_metadata(base_dir):
+
+    GIT_REVISION, RELEASE_DATE, GIT_DIRTY = git_version()
+
+    with open(os.path.join(base_dir, 'wirecloud/platform/__init__.py'), "a") as f:
+        f.write('__git_hash__ = "%s"\n__git_dirty__ = %s\n__release_date__ = "%s"\n' % (GIT_REVISION, GIT_DIRTY, RELEASE_DATE))
+
+
+class build_wirecloud(build_py):
+
+    def run(self):
+
+        add_git_metadata(self.build_lib)
+
+        # distutils uses old-style classes, so no super()
+        build_py.run(self)
+
+
 class build(distutils_build):
 
     """Customized setuptools build command - compile po files before creating the distribution package."""
@@ -55,7 +129,17 @@ class build(distutils_build):
 
 class sdist(setuptools_sdist):
 
-    """Customized setuptools sdist command - compile po files before creating the distribution package."""
+    """
+    Customized setuptools sdist command
+
+    - compile po files before creating the distribution package.
+    - add git metadata into wirecloud/platform/__init__.py
+    """
+
+    def make_release_tree(self, base_dir, files):
+        setuptools_sdist.make_release_tree(self, base_dir, files)
+
+        add_git_metadata(base_dir)
 
     sub_commands = [('compiletranslations', None)] + setuptools_sdist.sub_commands
 
@@ -97,14 +181,14 @@ class compiletranslations(Command):
 
 class install(setuptools_install):
 
-    """Customized setuptools install command - prints info about the license of Wirecloud after installing it."""
+    """Customized setuptools install command - prints info about the license of WireCloud after installing it."""
     def run(self):
         setuptools_install.run(self)
 
         print('')
         print(bcolors.HEADER + 'License' + bcolors.ENDC)
         print('')
-        print("Wirecloud is licensed under a AGPLv3+ license with a classpath-like exception \n" +
+        print("WireCloud is licensed under a AGPLv3+ license with a classpath-like exception \n" +
               "that allows widgets/operators and mashups to be licensed under any propietary or \n" +
               "open source license.")
         print('')
@@ -180,6 +264,7 @@ setup(
     ),
     cmdclass={
         'build': build,
+        'build_py': build_wirecloud,
         'install': install,
         'sdist': sdist,
         'compiletranslations': compiletranslations
