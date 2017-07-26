@@ -1294,7 +1294,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             }
         }
 
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = check_get_request(self, url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
         response_data = json.loads(response.content.decode('utf-8'))

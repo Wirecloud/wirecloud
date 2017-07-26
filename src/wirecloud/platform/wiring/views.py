@@ -419,4 +419,4 @@ class OperatorVariablesEntry(Resource):
         for var in variables:
             data[var] = cache_manager.get_variable_data("ioperator", operator_id, var)
 
-        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')
