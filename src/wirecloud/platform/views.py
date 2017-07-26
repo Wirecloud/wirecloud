@@ -42,6 +42,7 @@ from user_agents import parse as ua_parse
 import six
 
 from wirecloud.commons.utils.cache import patch_cache_headers
+from wirecloud.commons.utils.git import get_git_info
 from wirecloud.commons.utils.http import build_error_response
 import wirecloud.platform
 from wirecloud.platform.core.plugins import get_version_hash
@@ -65,19 +66,21 @@ def feature_collection(request):
 
 @require_safe
 def version_entry(request):
+    # git hash and release_date is only available on released versions
+    # but we can retrieve it using get_git_info
+    if not hasattr(wirecloud.platform, "__git_hash__"):
+        wirecloud.platform.__git_hash__, wirecloud.platform.__release_date__, wirecloud.platform.__git_dirty__ = get_git_info()
+
     td = datetime.now() - START_TIME
     info = {
         "version": wirecloud.platform.__version__,
         "uptime": "%d d, %d h, %d m, %d s" % (td.days, td.seconds // 3600, (td.seconds // 60) % 60, td.seconds % 60),
         "version_hash": get_version_hash(),
         "doc": "http://fiware.github.io/apps.Wirecloud/restapi/v2.2/",
+        "git_hash": wirecloud.platform.__git_hash__,
+        "git_dirty": wirecloud.platform.__git_dirty__,
+        "release_date": wirecloud.platform.__release_date__,
     }
-
-    # git hash and release_date is only available on released versions
-    if hasattr("__git_hash__", wirecloud.platform):
-        info["git_hash"] = wirecloud.platform.__git_hash__
-        info["git_dirty"] = wirecloud.platform.__git_dirty__
-        info["release_date"] = wirecloud.platform.__release_date__
 
     return HttpResponse(json.dumps(info), content_type='application/json; charset=UTF-8')
 
