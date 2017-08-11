@@ -48,16 +48,22 @@
             'unload'
         ]);
 
-        data = utils.merge({}, ns.Operator.JSON_TEMPLATE, data);
+        if (data == null) {
+            throw new TypeError("invalid data parameter");
+        }
+
+        data = utils.merge({}, ns.Operator.JSON_TEMPLATE, {
+            title: meta.title
+        }, data);
 
         this.pending_events = [];
         this.prefCallback = null;
 
         this.permissions = utils.merge({
-            'close': true,
-            'configure': true,
-            'rename': true,
-            'upgrade': true
+            close: true,
+            configure: true,
+            rename: true,
+            upgrade: true
         }, data.permissions);
 
         privates.set(this, {
@@ -134,7 +140,7 @@
              */
             title: {
                 get: function () {
-                    return this.meta.title;
+                    return this.contextManager.get('title');
                 }
             },
             /**
@@ -153,6 +159,14 @@
             }
         });
 
+        this.contextManager = new Wirecloud.ContextManager(this, {
+            'title': {
+                label: utils.gettext("Title"),
+                description: utils.gettext("Widget's title"),
+                value: data.title
+            }
+        });
+
         this.wrapperElement = document.createElement('iframe');
         this.wrapperElement.className = "wc-operator wc-operator-content";
         this.wrapperElement.setAttribute('type', "application/xhtml+xml");
@@ -167,7 +181,6 @@
 
     ns.Operator.JSON_TEMPLATE = {
         id: "",
-        name: "",
         preferences: {},
         properties: {},
         volatile: false
@@ -198,7 +211,7 @@
         },
 
         hasPreferences: function hasPreferences() {
-            return !!this.preferenceList.length;
+            return this.meta.hasPreferences();
         },
 
         is: function is(component) {
@@ -216,7 +229,16 @@
                 throw new TypeError("invalid name parameter");
             }
 
-            return this.permissions[name];
+            if (!this.volatile) {
+                switch (name) {
+                case "close":
+                    return this.permissions.close && this.wiring.workspace.isAllowed('edit_wiring');
+                default:
+                    return !this.wiring.workspace.restricted && this.permissions[name];
+                }
+            } else {
+                return this.permissions[name];
+            }
         },
 
         /**
@@ -246,16 +268,14 @@
          * @returns {Promise}
          */
         remove: function remove() {
-            return new Promise(function (resolve, reject) {
-                this.fullDisconnect();
+            this.fullDisconnect();
 
-                if (this.loaded) {
-                    on_unload.call(this);
-                }
+            if (this.loaded) {
+                on_unload.call(this);
+            }
 
-                this.dispatchEvent('remove');
-                resolve(this);
-            }.bind(this));
+            this.dispatchEvent('remove');
+            return Promise.resolve(this);
         },
 
         /**
@@ -317,40 +337,34 @@
          * @param {Wirecloud.wiring.OperatorMeta} meta
          */
         upgrade: function upgrade(meta) {
+            var message;
 
             if (!is_valid_meta.call(this, meta)) {
                 throw new TypeError("invalid meta parameter");
             }
 
-            return new Promise(function (resolve, reject) {
-                var message;
+            if (this.meta.uri === meta.uri) {
+                // From/to missing
+                return change_meta.call(this, meta);
+            } else {
+                var cmp = meta.version.compareTo(privates.get(this).meta.version);
 
-                if (this.meta.uri === meta.uri) {
-                    // From/to missing
-                    change_meta.call(this, meta);
-                    resolve(this);
-                } else {
-                    switch (meta.version.compareTo(privates.get(this).meta.version)) {
-                    case 1: // upgrade
-                        message = utils.interpolate(utils.gettext("The %(type)s was upgraded to v%(version)s successfully."), {
-                            type: this.meta.type,
-                            version: meta.version.text
-                        });
-                        this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
-                        break;
-                    case -1: // downgrade
-                        message = utils.interpolate(utils.gettext("The %(type)s was downgraded to v%(version)s successfully."), {
-                            type: this.meta.type,
-                            version: meta.version.text
-                        });
-                        this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
-                        break;
-                    }
-
-                    change_meta.call(this, meta);
-                    resolve(this);
+                if (cmp > 0) { // upgrade
+                    message = utils.gettext("The %(type)s was upgraded to v%(version)s successfully.");
+                } else if (cmp < 0) { // downgrade
+                    message = utils.gettext("The %(type)s was downgraded to v%(version)s successfully.");
+                } else { // same version
+                    // From/to a -dev version
+                    message = utils.gettext("The %(type)s was replaced using v%(version)s successfully.");
                 }
-            }.bind(this));
+                message = utils.interpolate(message, {
+                    type: this.meta.type,
+                    version: meta.version.text
+                });
+                return change_meta.call(this, meta).then(() => {
+                    this.logManager.log(message, Wirecloud.constants.LOGGING.INFO_MSG);
+                });
+            }
         }
 
     });
@@ -379,59 +393,37 @@
     };
 
     var build_prefs = function build_prefs(initial_values) {
-        var preference_name, operator_pref_info;
-
         this.preferenceList = [];
         this.preferences = {};
 
-        // Build preferences with set values
-        for (preference_name in initial_values) {
-            operator_pref_info = initial_values[preference_name];
-            // Prefs are undefined if operator is missing
-            if (operator_pref_info == null) {
-                // the operator is missing
-                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], true, true, "");
-            } else {
-                // Create prefs
-                this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
-            }
-        }
-
         // Build preferences with default values
-        this.meta.preferenceList.forEach(function (preference) {
-            if (!(preference.name in this.preferences)) {
+        this.meta.preferenceList.forEach((preference) => {
+            if (preference.name in initial_values) {
+                // Use the settings from persistence
+                var pref_data = initial_values[preference.name];
+                this.preferences[preference.name] = new Wirecloud.UserPref(preference, pref_data.readonly, pref_data.hidden, pref_data.value);
+            } else {
+                // Use the default settings for this preference
                 this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
             }
-
-            this.preferenceList.push(this.preferences[preference.name]);
-        }, this);
+        });
     };
 
     var build_props = function build_props(initial_values) {
-        if (initial_values == null) {
-            initial_values = {};
-        }
-
-        var properties = this.meta.propertyList;
         this.propertyList = [];
         this.properties = {};
         this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
-        properties.forEach((property, index) => {
-            var prop_info = initial_values[property.name];
-
-            if (prop_info != null) {
-                this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, prop_info.readonly, prop_info.value);
+        this.meta.propertyList.forEach((property) => {
+            if (property.name in initial_values) {
+                // Use the settings from persistence
+                var prop_data = initial_values[property.name];
+                this.properties[property.name] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, prop_data.readonly, prop_data.value);
             } else {
-                // Check if operator missing or property has no set value
-                if (property.name in initial_values) {
-                    // The operator is missing
-                    this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, true, "");
-                } else {
-                    // Set default value
-                    this.propertyList[index] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
-                }
+                // Use the default settings for this property
+                this.properties[property.name] = new Wirecloud.PersistentVariable(property, this.propertyCommiter, false, property.default);
             }
-            this.properties[property.name] = this.propertyList[index];
+
+            this.propertyList.push(this.properties[property.name]);
         });
     }
 
@@ -444,41 +436,44 @@
     };
 
     var change_meta = function change_meta(meta) {
+        var sync_values;
+
         var old_value = privates.get(this).meta;
         privates.get(this).meta = meta;
 
-        Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_VARIABLES_ENTRY.evaluate({
-            workspace_id: this.wiring.workspace.id,
-            operator_id: this.id
-        }), {
-            method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-        }).then((response) => {
-            if (response.status === 200) {
-                this.preferences = {};
-                this.properties =  {};
-                var preference_keys = Object.keys(this.meta.preferences);
-                var property_keys = Object.keys(this.meta.properties);
-                var new_values = JSON.parse(response.responseText);
-
-                preference_keys.forEach((key) => {
-                    this.preferences[key] = new_values[key];
-                });
-                property_keys.forEach((key) => {
-                    this.properties[key] = new_values[key];
-                });
-
-                build_endpoints.call(this);
-                build_prefs.call(this, this.preferences);
-                build_props.call(this, this.properties);
-
-                if (this.loaded) {
-                    on_unload.call(this);
-                    this.load();
+        if (!meta.missing) {
+            sync_values = Wirecloud.io.makeRequest(Wirecloud.URLs.OPERATOR_VARIABLES_ENTRY.evaluate({
+                workspace_id: this.wiring.workspace.id,
+                operator_id: this.id
+            }), {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+            }).then((response) => {
+                if (response.status !== 200) {
+                    return Promise.reject("Unexpected response from server");
                 }
+                try {
+                    return JSON.parse(response.responseText);
+                } catch (e) {
+                    return Promise.reject("Unexpected response from server");
+                }
+            });
+        } else {
+            sync_values = Promise.resolve({preferences: {}, properties: {}});
+        }
 
-                this.dispatchEvent('change', ['meta'], {meta: old_value});
+        return sync_values.then((values) => {
+
+            build_endpoints.call(this);
+            build_prefs.call(this, values.preferences);
+            build_props.call(this, values.properties);
+
+            if (this.loaded) {
+                on_unload.call(this);
+                this.load();
             }
+
+            this.dispatchEvent('change', ['meta'], {meta: old_value});
         });
     };
 
