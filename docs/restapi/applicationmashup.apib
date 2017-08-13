@@ -717,7 +717,7 @@ Workspace attributes that can be modified:
                 {
                     "op": "replace",
                     "path": "/operators/1/preferences/preferenceName/value",
-                    "value": 'newPreferenceValue',
+                    "value": "newPreferenceValue",
                 },
                 {
                     "op": "add",
@@ -1107,21 +1107,19 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
     + Body
 
             {
-                "first_preference_name":
-                {
-                    "readonly": False,
-                    "hidden": False,
+                "first_preference_name": {
+                    "readonly": false,
+                    "hidden": false,
                     "name": "boolean",
-                    "value": False,
-                    "secure": False
+                    "value": false,
+                    "secure": false
                 },
-                "second_preference_nanme":
-                {
-                    "readonly": False,
-                    "hidden": False,
+                "second_preference_nanme": {
+                    "readonly": false,
+                    "hidden": false,
                     "name": "text",
                     "value": "initial text",
-                    "secure": False
+                    "secure": false
                 }
             }
 
@@ -1174,21 +1172,20 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
     + Body
 
             {
-                "first_property_name":
-                {
-                    "readonly": False,
-                    "hidden": False,
+                "first_property_name": {
+                    "readonly": false,
+                    "hidden": false,
                     "name": "boolean",
-                    "value": False,
-                    "secure": False
+                    "value": false,
+                    "secure": false
                 },
                 "second_property_nanme":
                 {
-                    "readonly": False,
-                    "hidden": False,
+                    "readonly": false,
+                    "hidden": false,
                     "name": "text",
                     "value": "initial text",
-                    "secure": False
+                    "secure": false
                 }
             }
 
@@ -1255,22 +1252,24 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
     + Body
 
             {
-                'username':
-                {
-                    'hidden': False,
-                    'name': 'username',
-                    'readonly': False,
-                    'secure': False,
-                    'value': 'test_username'
-                },
-                'password':
-                {
-                    'hidden': False,
-                    'name': 'password',
-                    'readonly': False,
-                    'secure': True,
-                    'value': '********'
-                },
+                "preferences": {
+                    "username":
+                    {
+                        "hidden": false,
+                        "name": "username",
+                        "readonly": false,
+                        "secure": false,
+                        "value": "test_username"
+                    },
+                    "password":
+                    {
+                        "hidden": false,
+                        "name": "password",
+                        "readonly": false,
+                        "secure": true,
+                        "value": "********"
+                    }
+                }
             }
 
 # Group Managing resources
