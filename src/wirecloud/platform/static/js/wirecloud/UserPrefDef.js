@@ -49,7 +49,7 @@
             label: {value: options.label},
             description: {value: options.description},
             required: {value: options.required},
-            options: {value: options}
+            options: {value: options.options}
         });
 
         var default_value = '';

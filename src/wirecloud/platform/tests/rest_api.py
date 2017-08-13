@@ -1272,6 +1272,24 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         check_get_requires_permission(self, url)
 
+    def test_operator_variables_entry_get_missing_operator(self):
+        url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        expectedResult = {
+            'preferences': {},
+            'properties': {}
+        }
+
+        response = check_get_request(self, url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expectedResult)
+
+    @uses_extra_resources(('Wirecloud_TestOperatorSecure_1.0.zip',), shared=True)
     def test_operator_variables_entry_get(self):
         url = reverse('wirecloud.operator_variables', kwargs={'workspace_id': 202, 'operator_id': 2})
 
@@ -1279,19 +1297,22 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         expectedResult = {
-            'pref_secure': {
-                'hidden': False,
-                'name': 'pref_secure',
-                'readonly': False,
-                'secure': True,
-                'value': '********'
+            'preferences': {
+                'pref_secure': {
+                    'hidden': False,
+                    'name': 'pref_secure',
+                    'readonly': False,
+                    'secure': True,
+                    'value': '********'
+                },
+                'username': {'hidden': False,
+                    'name': 'username',
+                    'readonly': False,
+                    'secure': False,
+                    'value': 'test_username'
+                }
             },
-            'username': {'hidden': False,
-                'name': 'username',
-                'readonly': False,
-                'secure': False,
-                'value': 'test_username'
-            }
+            'properties': {}
         }
 
         response = check_get_request(self, url, HTTP_ACCEPT='application/json')

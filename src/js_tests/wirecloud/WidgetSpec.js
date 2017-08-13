@@ -168,6 +168,7 @@
                 expect(widget.preferences.pref.readonly).toBe(false);
                 expect(widget.preferences.pref.hidden).toBe(false);
                 expect(widget.preferences.pref.value).toEqual("other");
+                expect(widget.preferenceList).toEqual([widget.preferences.pref]);
             });
 
             it("allow to instantiate widgets from persistence", () => {

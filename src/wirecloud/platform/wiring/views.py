@@ -132,7 +132,7 @@ class WiringEntry(Resource):
                     else:
                         # Handle multiuser
                         try:
-                            if new_property["value"].get("users", None) != None:
+                            if new_property["value"].get("users", None) is not None:
                                 value = new_property["value"]["users"].get(request.user.id, None)
                                 if value is not None:
                                     new_property["value"] = value
@@ -390,6 +390,7 @@ class OperatorEntry(Resource):
 
         return cached_response.get_response()
 
+
 class OperatorVariablesEntry(Resource):
 
     @authentication_required
@@ -403,20 +404,29 @@ class OperatorVariablesEntry(Resource):
         cache_manager = VariableValueCacheManager(workspace, request.user)
 
         try:
-            vendor, name, version = workspace.wiringStatus["operators"][operator_id]["name"].split("/")
+            operator = workspace.wiringStatus["operators"][operator_id]
+            vendor, name, version = operator["name"].split("/")
         except:
             raise Http404
 
         # Check if operator resource exists
         try:
-            CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-        except:
-            return HttpResponse(json.dumps({}), content_type='application/json; charset=UTF-8')
+            resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+            # Check if the resource is available, if not, variables should not be retrieved
+            if not resource.is_available_for(workspace.creator):
+                raise CatalogueResource.DoesNotExist
+        except CatalogueResource.DoesNotExist:
+            return HttpResponse(json.dumps({"preferences": {}, "properties": {}}), content_type='application/json; charset=UTF-8')
 
-        variables = cache_manager.get_variable_values()["ioperator"][operator_id]
+        data = {
+            "preferences": {},
+            "properties": {},
+        }
 
-        data = {}
-        for var in variables:
-            data[var] = cache_manager.get_variable_data("ioperator", operator_id, var)
+        for preference_name, preference in six.iteritems(operator.get('preferences', {})):
+            data["preferences"][preference_name] = cache_manager.get_variable_data("ioperator", operator_id, preference_name)
+
+        for property_name, prop in six.iteritems(operator.get('properties', {})):
+            data["properties"][property_name] = cache_manager.get_variable_data("ioperator", operator_id, property_name)
 
         return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')

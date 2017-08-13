@@ -39,7 +39,7 @@
             if (this._current_ioperator.preferences[key].value !== new_values[key]) {
 
                 // Censor preference
-                if (this._current_ioperator.preferences[key].meta.options.secure && new_values[key] !== "") {
+                if (this._current_ioperator.preferences[key].meta.secure && new_values[key] !== "") {
                     this._current_ioperator.preferences[key].value = "********";
                 } else {
                     this._current_ioperator.preferences[key].value = new_values[key];
@@ -77,7 +77,7 @@
             try {
                 // Censor secure preferences
                 for (var varName in new_values) {
-                    if (this._current_ioperator.preferences[varName].meta.options.secure && this._current_ioperator.preferences[varName].value !== "") {
+                    if (this._current_ioperator.preferences[varName].meta.secure && this._current_ioperator.preferences[varName].value !== "") {
                         new_values[varName] = "********";
                     }
                 }

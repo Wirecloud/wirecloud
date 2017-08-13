@@ -50,13 +50,15 @@
     UserPref.prototype.getInterfaceDescription = function getInterfaceDescription() {
         var type = this.meta.type;
 
-        var desc = Wirecloud.Utils.merge(this.meta.options, {
-            'type': type,
-            'defaultValue': this.meta.default,
-            'initiallyDisabled': this.readonly,
-            'initialValue': this.value,
-            'required': this.meta.required
-        });
+        var desc = {
+            type: type,
+            label: this.meta.label,
+            description: this.meta.description,
+            defaultValue: this.meta.default,
+            initiallyDisabled: this.readonly,
+            initialValue: this.value,
+            required: this.meta.required
+        };
 
         if (type === 'select') {
             desc.initialEntries = this.meta.options;

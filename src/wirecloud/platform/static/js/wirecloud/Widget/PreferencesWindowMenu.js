@@ -39,7 +39,7 @@
             newValue = new_values[varName];
 
             if (newValue !== oldValue) {
-                if (this.widgetModel.preferences[varName].meta.options.secure && newValue !== "") {
+                if (this.widgetModel.preferences[varName].meta.secure && newValue !== "") {
                     this.widgetModel.preferences[varName].value = "********";
                 } else {
                     this.widgetModel.preferences[varName].value = newValue;
@@ -72,7 +72,7 @@
             try {
                 // Censor secure preferences
                 for (var varName in new_values) {
-                    if (this.widgetModel.preferences[varName].meta.options.secure && this.widgetModel.preferences[varName].value !== "") {
+                    if (this.widgetModel.preferences[varName].meta.secure && this.widgetModel.preferences[varName].value !== "") {
                         new_values[varName] = "********";
                     }
                 }

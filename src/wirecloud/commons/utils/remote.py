@@ -1301,6 +1301,12 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         the cache before reloading the browser
         """
         self.driver.execute_script("location.reload()")
+        self.wait_wirecloud_unload()
+
+    def wait_wirecloud_unload(self, timeout=15):
+
+        loading_window = self.wait_element_visible('#loading-window')
+        WebDriverWait(self.driver, timeout).until(EC.staleness_of(loading_window))
 
     def wait_wirecloud_ready(self, start_timeout=10, timeout=10):
 

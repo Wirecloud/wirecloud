@@ -406,6 +406,8 @@
                 // Use the default settings for this preference
                 this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
             }
+
+            this.preferenceList.push(this.preferences[preference.name]);
         });
     };
 

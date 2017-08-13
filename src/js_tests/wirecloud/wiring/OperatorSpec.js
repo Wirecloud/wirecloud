@@ -122,6 +122,7 @@
                 expect(operator.preferences.pref.readonly).toBe(false);
                 expect(operator.preferences.pref.hidden).toBe(false);
                 expect(operator.preferences.pref.value).toEqual("other");
+                expect(operator.preferenceList).toEqual([operator.preferences.pref]);
             });
 
             it("allow to instantiate operators from persistence", () => {
