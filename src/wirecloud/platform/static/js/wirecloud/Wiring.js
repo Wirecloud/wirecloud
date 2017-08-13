@@ -192,7 +192,7 @@
          * Adds a new operator instance into the wiring status on the WireCloud
          * server.
          *
-         * @param {Wirecloud.OperatorMeta} resource
+         * @param {Wirecloud.OperatorMeta} meta
          *     Operator meta to instantiate
          * @param {Object} [data]
          *     Initial operator data
@@ -202,7 +202,7 @@
          *     operators. This method will return a {@link Wirecloud.Operator}
          *     when creating volatile operators.
          */
-        createOperator: function createOperator(resource, data) {
+        createOperator: function createOperator(meta, data) {
             var priv = privates.get(this);
 
             data = utils.merge({
@@ -210,7 +210,7 @@
                 volatile: false
             }, data);
 
-            var operator = create_operator.call(this, resource, data);
+            var operator = create_operator.call(this, meta, data);
 
             if (data.volatile) {
                 return append_operator.call(this, operator);
@@ -346,14 +346,12 @@
                 contentType: 'application/json',
                 postBody: JSON.stringify(this)
             }).then(function (response) {
-                return new Promise(function (resolve, reject) {
-                    if (response.status === 204) {
-                        resolve();
-                    } else {
-                        // TODO
-                        reject(new Error("Unexpected error response"));
-                    }
-                });
+                if (response.status === 204) {
+                    return Promise.resolve();
+                } else {
+                    // TODO
+                    return Promise.reject(new Error("Unexpected error response"));
+                }
             });
         },
 
@@ -599,11 +597,11 @@
         return operator;
     };
 
-    var create_operator = function create_operator(resource, data) {
+    var create_operator = function create_operator(meta, data) {
         var operator, priv;
 
         priv = privates.get(this);
-        operator = new Wirecloud.wiring.Operator(this, resource, data);
+        operator = new Wirecloud.wiring.Operator(this, meta, data);
 
         if (Number(operator.id) >= priv.operatorId) {
             priv.operatorId = Number(operator.id) + 1;
