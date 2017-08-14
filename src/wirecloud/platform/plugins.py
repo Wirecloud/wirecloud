@@ -425,8 +425,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_a
             unicode_kwargs.update(defaults)
             return (prefix_norm + result) % unicode_kwargs
 
-    raise NoReverseMatch("Reverse for '%s' with keyword arguments '%s' not "
-            "found." % (viewname, kwargs))
+    raise NoReverseMatch("Reverse for '%s' with keyword arguments '%s' not found." % (viewname, kwargs))
 
 
 class WirecloudPlugin(object):

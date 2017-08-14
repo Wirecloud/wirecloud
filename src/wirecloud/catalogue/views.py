@@ -58,7 +58,7 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
 
     response = build_downloadfile_response(request, file_path, base_dir)
     if response.status_code == 302:
-        response['Location'] = reverse('wirecloud_catalogue.media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
+        response['Location'] = reverse('wirecloud_catalogue.media', kwargs={"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
 
     return response
 

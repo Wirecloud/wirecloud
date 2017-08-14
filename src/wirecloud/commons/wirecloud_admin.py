@@ -22,8 +22,6 @@ from __future__ import unicode_literals
 import os
 import sys
 
-import django
-
 import wirecloud.platform
 
 
@@ -83,9 +81,11 @@ class CommandLineUtility(object):
         if stderr is None:
             stderr = sys.stderr
 
-        parser = CommandParser(None,
+        parser = CommandParser(
+            None,
             usage="%(prog)s subcommand [options] [args]",
-            add_help=False)
+            add_help=False
+        )
         parser.add_argument('--version', action='store_true', help="show program's version number and exit")
         parser.add_argument('-h', '--help', action='store_true', help="show this help message and exit")
 
@@ -98,7 +98,6 @@ class CommandLineUtility(object):
             subcommand = argv[1]
         else:
             subcommand = 'help'  # Display help if no arguments were given.
-
 
         if options.help:
 

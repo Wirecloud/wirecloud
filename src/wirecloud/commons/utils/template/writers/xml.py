@@ -99,11 +99,13 @@ def write_mashup_tree(doc, resources, options):
     if len(options['embedded']) > 0:
         embedded_element = etree.SubElement(doc, 'embedded')
         for resource in options['embedded']:
-            etree.SubElement(embedded_element, 'resource',
-                    vendor=resource['vendor'],
-                    name=resource['name'],
-                    version=resource['version'],
-                    src=resource['src'])
+            etree.SubElement(
+                embedded_element, 'resource',
+                vendor=resource['vendor'],
+                name=resource['name'],
+                version=resource['version'],
+                src=resource['src']
+            )
 
     # Tabs & resources
     for tab_index, tab in enumerate(options['tabs']):

@@ -40,6 +40,7 @@ def django_finder(glob):
             if fnmatch.fnmatchcase(fullpath, glob):
                 yield path, storage
 
+
 scss.config.IMAGES_ROOT = django_finder
 
 

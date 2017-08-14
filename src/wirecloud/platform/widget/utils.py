@@ -43,6 +43,7 @@ def get_html_widget_error_response(request, mimetype, status_code, context):
     from django.shortcuts import render
     return render(request, 'wirecloud/widget_error.html', context, status=status_code, content_type=mimetype)
 
+
 WIDGET_ERROR_FORMATTERS.update({
     'text/html; charset=utf-8': get_html_widget_error_response,
     'application/xhtml+xml; charset=utf-8': get_html_widget_error_response,

@@ -113,7 +113,7 @@ class MarketplaceTestCase(WirecloudTestCase):
 
     def test_marketplace_get_all_offerings_from_store_bad_usdl_content(self):
 
-        self.network._servers['http']['repository.example.com'].add_response('GET', '/CoNWeT/service2.rdf', {'content': 'invalid content'});
+        self.network._servers['http']['repository.example.com'].add_response('GET', '/CoNWeT/service2.rdf', {'content': 'invalid content'})
         result = self.market_adaptor.get_all_services_from_store('Store 2')
         result['resources'] = list(result['resources'])
         expected_result = json.loads(self.read_response_file('results', 'test_marketplace_get_all_offerings_from_store_bad_usdl_content.json'))
@@ -133,7 +133,7 @@ class MarketplaceTestCase(WirecloudTestCase):
             }
         build_invalid_usdl_response.counter = 0
 
-        self.network._servers['http']['repository.example.com'].add_response('GET', '/CoNWeT/service2.rdf', build_invalid_usdl_response);
+        self.network._servers['http']['repository.example.com'].add_response('GET', '/CoNWeT/service2.rdf', build_invalid_usdl_response)
         result1 = self.market_adaptor.get_all_services_from_store('Store 2')
         result2 = self.market_adaptor.get_all_services_from_store('Store 2')
         self.assertEqual(result1, result2)

@@ -23,7 +23,7 @@ import sys
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import override_settings
-from mock import Mock, patch, DEFAULT
+from mock import patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.plugins import clear_cache
@@ -136,4 +136,3 @@ class PopuplateCommandTestCase(WirecloudTestCase):
 
         getdefaultlocale_mock.side_effect = TypeError
         self.check_populate_command_empty_db_quiet()
-

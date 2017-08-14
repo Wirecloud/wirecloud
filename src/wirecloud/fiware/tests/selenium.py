@@ -21,7 +21,6 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from wirecloud.commons.utils import expected_conditions as WEC
@@ -408,9 +407,10 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.check_offering_install(offering_name, resources)
 
-    @uses_extra_resources((
-        'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
-        'responses/static/CoNWeT__Youtube Browser Widget__3.0__CoNWeT_youtube-browser_3.0.wgt',
+    @uses_extra_resources(
+        (
+            'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
+            'responses/static/CoNWeT__Youtube Browser Widget__3.0__CoNWeT_youtube-browser_3.0.wgt',
         ),
         public=False,
         users=('user_with_markets',))
@@ -492,8 +492,9 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_install_individual_resource_from_store_offering(self):
         self.check_install_individual_resource_from_store_offering(False)
 
-    @uses_extra_resources((
-        'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
+    @uses_extra_resources(
+        (
+            'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
         ),
         public=False,
         users=('user_with_markets',))

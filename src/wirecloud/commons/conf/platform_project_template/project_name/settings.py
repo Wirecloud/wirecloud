@@ -97,7 +97,7 @@ ROOT_URLCONF = '{{ project_name }}.urls'
 WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 
 INSTALLED_APPS += (
-    #'django.contrib.sites',
+    # 'django.contrib.sites',
     'wirecloud.oauth2provider',
     'wirecloud.fiware',
 )
@@ -124,12 +124,12 @@ CACHES = {
     }
 }
 
-# Wirecloud autodiscover Wirecloud plugins by default. Uncomment this for settings
+# WireCloud autodiscover Wirecloud plugins by default. Uncomment this for settings
 # the list of plugins manually.
 #
-#WIRECLOUD_PLUGINS = (
-#    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
-#    'wirecloud.fiware.plugins.FiWarePlugin',
-#)
+# WIRECLOUD_PLUGINS = (
+#     'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
+#     'wirecloud.fiware.plugins.FiWarePlugin',
+# )
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']

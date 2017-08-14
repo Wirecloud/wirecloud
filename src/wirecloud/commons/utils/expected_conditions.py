@@ -52,10 +52,11 @@ class element_be_clickable(object):
                 return False
 
             position = element.location
-            top_element = driver.execute_script('return document.elementFromPoint(arguments[0], arguments[1]);',
-                    position['x'] + (element.size['width'] / 2),
-                    position['y'] + (element.size['height'] / 2)
-                )
+            top_element = driver.execute_script(
+                'return document.elementFromPoint(arguments[0], arguments[1]);',
+                position['x'] + (element.size['width'] / 2),
+                position['y'] + (element.size['height'] / 2)
+            )
 
             if top_element is None:
                 return False

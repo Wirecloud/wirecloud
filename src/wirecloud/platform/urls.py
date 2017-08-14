@@ -59,14 +59,12 @@ urlpatterns = (
 
     url(r'^showcase/media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.+)$',
         widget_views.serve_showcase_media,
-        name='wirecloud.showcase_media'
-    ),
+        name='wirecloud.showcase_media'),
 
     # Search service
     url(r'^api/search$',
         ResourceSearch(permitted_methods=('GET',)),
-        name='wirecloud.search_service'
-    ),
+        name='wirecloud.search_service'),
 
     # Widgets
     url(r'^api/resources/?$',
@@ -88,114 +86,90 @@ urlpatterns = (
     # IWidgets
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidgets/?$',
         iwidget_views.IWidgetCollection(permitted_methods=('GET', 'POST', 'PUT',)),
-        name='wirecloud.iwidget_collection'
-    ),
+        name='wirecloud.iwidget_collection'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/?$',
         iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
-        name='wirecloud.iwidget_entry'
-    ),
+        name='wirecloud.iwidget_entry'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences$',
         iwidget_views.IWidgetPreferences(permitted_methods=('POST', 'GET',)),
-        name='wirecloud.iwidget_preferences'
-    ),
+        name='wirecloud.iwidget_preferences'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/properties$',
-        iwidget_views.IWidgetProperties(permitted_methods=('POST','GET',)),
-        name='wirecloud.iwidget_properties'
-    ),
+        iwidget_views.IWidgetProperties(permitted_methods=('POST', 'GET',)),
+        name='wirecloud.iwidget_properties'),
 
     # Preferences
     url(r'^api/preferences/platform/?$',
         preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'POST')),
-        name='wirecloud.platform_preferences'
-    ),
+        name='wirecloud.platform_preferences'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/preferences/?$',
         preferences_views.WorkspacePreferencesCollection(permitted_methods=('GET', 'POST')),
-        name='wirecloud.workspace_preferences'
-    ),
+        name='wirecloud.workspace_preferences'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/preferences/?$',
         preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'POST')),
-        name='wirecloud.tab_preferences'
-    ),
+        name='wirecloud.tab_preferences'),
 
     url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html$',
         wiring_views.OperatorEntry(permitted_methods=('GET',)),
-        name='wirecloud.operator_code_entry'
-    ),
+        name='wirecloud.operator_code_entry'),
 
     url(r'^api/markets/?$',
         market_views.MarketCollection(permitted_methods=('GET', 'POST')),
-        name='wirecloud.market_collection'
-    ),
+        name='wirecloud.market_collection'),
     url(r'^api/market/(?P<market>[\w -]+)/?$',
         market_views.MarketEntry(permitted_methods=('DELETE',)),
-        name='wirecloud.market_entry'
-    ),
+        name='wirecloud.market_entry'),
     url(r'^api/market/(?P<user>[^/]+)/(?P<market>[\w -]+)/?$',
         market_views.MarketEntry(permitted_methods=('DELETE',)),
-        name='wirecloud.market_entry'
-    ),
+        name='wirecloud.market_entry'),
     url(r'^api/markets/publish/?$',
         market_views.PublishService(),
-        name='wirecloud.publish_on_other_marketplace'
-    ),
+        name='wirecloud.publish_on_other_marketplace'),
 
     # Themes
     url(r'^api/theme/(?P<name>[^/]+)/?$',
         theme_views.ThemeEntry(permitted_methods=('GET',)),
-        name='wirecloud.theme_entry'
-    ),
+        name='wirecloud.theme_entry'),
 
     # Workspace
     url(r'^api/workspaces/?$',
         workspace_views.WorkspaceCollection(permitted_methods=('GET', 'POST', )),
-        name='wirecloud.workspace_collection'
-    ),
+        name='wirecloud.workspace_collection'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/?$',
         workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
-        name='wirecloud.workspace_entry'
-    ),
+        name='wirecloud.workspace_entry'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/?$',
         workspace_views.TabCollection(permitted_methods=('POST',)),
-        name='wirecloud.tab_collection'
-    ),
+        name='wirecloud.tab_collection'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/order/?$',
         workspace_views.TabOrderService(),
-        name='wirecloud.tab_order'
-    ),
+        name='wirecloud.tab_order'),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
         workspace_views.TabEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
-        name='wirecloud.tab_entry'
-    ),
+        name='wirecloud.tab_entry'),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/resources$',
         localcatalogue_views.WorkspaceResourceCollection(permitted_methods=('GET',)),
-        name='wirecloud.workspace_resource_collection'
-    ),
+        name='wirecloud.workspace_resource_collection'),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT', 'PATCH')),
-        name='wirecloud.workspace_wiring'
-    ),
+        name='wirecloud.workspace_wiring'),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/operators/(?P<operator_id>\d+)/variables$',
         wiring_views.OperatorVariablesEntry(permitted_methods=('GET',)),
-        name='wirecloud.operator_variables'
-    ),
+        name='wirecloud.operator_variables'),
 
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
         workspace_views.MashupMergeService(),
-        name='wirecloud.workspace_merge'
-    ),
+        name='wirecloud.workspace_merge'),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/publish/?$',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),
-        name='wirecloud.workspace_publish'
-    ),
+        name='wirecloud.workspace_publish'),
 
     url(r'api/admin/switchuser$',
         SwitchUserService(),
-        name='wirecloud.switch_user_service'
-    ),
+        name='wirecloud.switch_user_service'),
 
     url('^oauth2/default_redirect_uri$',
         TemplateView.as_view(template_name='wirecloud/oauth2/default_redirect_uri.html'),

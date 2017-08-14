@@ -111,6 +111,7 @@ def install_resource_to_all_users(**kwargs):
 
     return added, resource
 
+
 def fix_dev_version(wgt_file, user):
 
     template_contents = wgt_file.get_template()

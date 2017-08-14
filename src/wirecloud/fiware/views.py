@@ -74,7 +74,7 @@ def logout(request):
         # Force not redirect by using next_page=None
         response = wirecloud_logout(request, next_page=None)
         response['Access-Control-Allow-Origin'] = origin
-        response['Access-Control-Allow-Credentials'] =  'true'
+        response['Access-Control-Allow-Credentials'] = 'true'
         return response
     else:
         return wirecloud_logout(request)

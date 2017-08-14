@@ -64,6 +64,7 @@ def remove_widget_from_wiring_status(id, status):
 
     return status
 
+
 def get_operator_cache_key(operator, domain, mode):
     return '_operator_xhtml/%s/%s/%s?mode=%s' % (operator.cache_version, domain, operator.id, mode)
 

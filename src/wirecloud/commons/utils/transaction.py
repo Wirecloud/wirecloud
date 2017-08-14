@@ -20,6 +20,7 @@
 from django.http import HttpResponse
 from django.db.transaction import atomic, set_rollback
 
+
 def commit_on_http_success(func, using=None):
 
     def wrapped_func(*args, **kwargs):

@@ -28,6 +28,7 @@ class TenantProfile(models.Model):
     user = models.OneToOneField(User, related_name='tenantprofile_4CaaSt')
     id_4CaaSt = models.CharField(max_length=255, blank=False, null=False)
 
+
 class Profile4CaaSt(models.Model):
 
     user_workspace = models.OneToOneField(UserWorkspace)

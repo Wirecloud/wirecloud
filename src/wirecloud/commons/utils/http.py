@@ -235,7 +235,6 @@ def authentication_required(func):
         except HttpBadCredentials as e:
             return build_auth_error_response(request, e.message, e.error_info)
 
-
         return func(self, request, *args, **kwargs)
 
     return wrapper
@@ -285,6 +284,8 @@ def consumes(mime_types):
 
 
 _servername = None
+
+
 def get_current_domain(request=None):
     from django.conf import settings
     from django.contrib.sites.shortcuts import get_current_site

@@ -116,6 +116,7 @@ def remove_tenant(request):
 
     return HttpResponse(status=204)
 
+
 def _parse_ac_request(request):
 
     fileURL = None
@@ -172,6 +173,7 @@ def _parse_ac_request(request):
 
     return id_4CaaSt, file_contents, fileURL
 
+
 @require_POST
 @commit_on_http_success
 def deploy_tenant_ac(request):
@@ -201,6 +203,7 @@ def deploy_tenant_ac(request):
         buildWorkspaceFromTemplate(resource.get_template(), user, True)
 
     return HttpResponse(status=204)
+
 
 @require_POST
 @commit_on_http_success

@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase

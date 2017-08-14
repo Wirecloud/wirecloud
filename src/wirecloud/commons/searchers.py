@@ -374,4 +374,5 @@ def remove(self, global_docnum):
             return
     raise KeyError(global_docnum)
 
+
 Collector.remove = remove

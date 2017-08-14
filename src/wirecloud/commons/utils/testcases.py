@@ -653,4 +653,5 @@ def wirecloud_selenium_test_case(klass_instance, browsers=None):
 
     return klass_instance
 
+
 wirecloud_selenium_test_case.__test__ = False

@@ -28,7 +28,7 @@ from django.core.cache import cache
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from whoosh.qparser import MultifieldParser, QueryParser
+from whoosh.qparser import MultifieldParser
 from whoosh.query import And, Every, Or, Term
 from whoosh.sorting import FieldFacet, FunctionFacet
 
@@ -192,8 +192,7 @@ def add_other_versions(searcher, results, user, staff):
     allow_q = []
 
     if not staff:
-        allow_q = [Or([Term('public', 't'), Term('users', user.username.lower())] +
-            [Term('groups', group.name.lower()) for group in user.groups.all()])]
+        allow_q = [Or([Term('public', 't'), Term('users', user.username.lower())] + [Term('groups', group.name.lower()) for group in user.groups.all()])]
 
     for result in results:
         user_q = And([Term('vendor_name', '%s/%s' % (result['vendor'], result['name']))] + allow_q)
@@ -206,8 +205,7 @@ def add_other_versions(searcher, results, user, staff):
 def build_search_kwargs(user_q, request, types, staff, orderby):
 
     if not staff:
-        user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] +
-            [Term('groups', group.name) for group in request.user.groups.all()])])
+        user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] + [Term('groups', group.name) for group in request.user.groups.all()])])
 
     if types and len(types) > 0:
         user_q = And([user_q, Or([Term('type', resource_type) for resource_type in types])])

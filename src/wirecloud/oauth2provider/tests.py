@@ -63,7 +63,7 @@ class Oauth2TestCase(WirecloudTestCase):
         # Make an authenticated request
         url = reverse(endpoint)
 
-        return  self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
+        return self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
 
     def check_token_is_valid(self, token):
 

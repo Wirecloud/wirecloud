@@ -9,10 +9,10 @@ from wirecloud.platform.migration_utils import multiuser_variables_structure_for
 class Migration(migrations.Migration):
 
     dependencies = [
-    	('catalogue', '0002_alter_json_description'),
+        ('catalogue', '0002_alter_json_description'),
         ('platform', '0004_auto_20160915_0024'),
     ]
 
     operations = [
-    	migrations.RunPython(multiuser_variables_structure_forwards, multiuser_variables_structure_backwards),
+        migrations.RunPython(multiuser_variables_structure_forwards, multiuser_variables_structure_backwards),
     ]

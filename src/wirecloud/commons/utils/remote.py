@@ -23,7 +23,7 @@ import shutil
 import sys
 import time
 
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -1440,7 +1440,6 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def remove_workspace(self):
-        old_title = self.get_current_workspace_name()
         self.open_menu().click_entry('Remove')
 
         modal = ModalTester(self, self.wait_element_visible(".wc-alert-modal"))
@@ -1715,7 +1714,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
             elif len(version_list) > 1:
                 action = 'Delete all versions'
 
-            time.sleep(1); # Work around some problems dealing with the cache
+            time.sleep(1)  # Work around some problems dealing with the cache
             resource.advanced_operation(action)
 
             modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-alert-modal"))
@@ -1753,7 +1752,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
                 self.testcase.assertRaises(NoSuchElementException, resource.advanced_operation, action)
                 return
             else:
-                time.sleep(1); # Work around some problems dealing with the cache
+                time.sleep(1)  # Work around some problems dealing with the cache
                 resource.advanced_operation(action)
                 if should_disappear_from_listings:
                     WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.get_subview() == 'search')

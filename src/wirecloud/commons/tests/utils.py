@@ -134,6 +134,7 @@ class HTMLCleanupTestCase(TestCase):
         expected_code = '<h1>v1.0.2</h1><p>v1.0.2 change list</p><h1>v1.0.1</h1><p>v1.0.1 change list</p>'
         self.assertEqual(filter_changelog(initial_code, Version('1.0.0.1')), expected_code)
 
+
 class GeneralUtilsTestCase(TestCase):
 
     tags = ('wirecloud-utils', 'wirecloud-general-utils', 'wirecloud-noselenium')
@@ -361,25 +362,26 @@ class WGTTestCase(TestCase):
         with self.assertRaises(ValueError):
             self.build_simple_wgt(other_files=('/invalid3.html',))
 
-    @patch('wirecloud.commons.utils.wgt.open', create = True)
+    @patch('wirecloud.commons.utils.wgt.open', create=True)
     def test_update_config_using_string_content(self, open_mock):
         wgt_file = self.build_simple_wgt()
         old_file = wgt_file.get_underlying_file()
         new_contents = 'new config.xml contents á'
-        with patch('wirecloud.commons.utils.wgt.zipfile.ZipFile.writestr', autospec = True) as zip_write_mock:
+        with patch('wirecloud.commons.utils.wgt.zipfile.ZipFile.writestr', autospec=True) as zip_write_mock:
             wgt_file.update_config(new_contents)
             self.assertNotEqual(wgt_file.get_underlying_file(), old_file)
             zip_write_mock.assert_any_call(ANY, ANY, new_contents.encode('utf-8'))
 
-    @patch('wirecloud.commons.utils.wgt.open', create = True)
+    @patch('wirecloud.commons.utils.wgt.open', create=True)
     def test_update_config_using_bytes_content(self, open_mock):
         wgt_file = self.build_simple_wgt()
         old_file = wgt_file.get_underlying_file()
         new_contents = 'new config.xml contents á'.encode('utf-8')
-        with patch('wirecloud.commons.utils.wgt.zipfile.ZipFile.writestr', autospec = True) as zip_write_mock:
+        with patch('wirecloud.commons.utils.wgt.zipfile.ZipFile.writestr', autospec=True) as zip_write_mock:
             wgt_file.update_config(new_contents)
             self.assertNotEqual(wgt_file.get_underlying_file(), old_file)
             zip_write_mock.assert_any_call(ANY, ANY, new_contents)
+
 
 class HTTPUtilsTestCase(TestCase):
 

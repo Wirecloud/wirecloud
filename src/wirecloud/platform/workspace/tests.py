@@ -100,11 +100,17 @@ class WorkspaceMigrationsTestCase(TestCase):
         self.assertEqual(widget2_mock.variables, {"varname": {"users": {"2": "hello"}}, "varname2": {"users": {"2": "world"}}})
         self.assertEqual(widget3_mock.variables, {"varname": {"users": {"2": "varvalue"}}, "varname2": {"users": {"2": "varvalue2"}}})
 
-        self.assertEqual(workspace_mock.wiringStatus, {"operators":
-            {"1": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
-            "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "wrongvar1": {"value": {"users": {"2": ""}}}}},
-            "3":{"properties":{}, "preferences": {}}
-            }})
+        self.assertEqual(
+            workspace_mock.wiringStatus,
+            {
+                "operators":
+                    {
+                        "1": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "varvalue"}}}, "varname2": {"value": {"users": {"2": "varvalue2"}}}}},
+                        "2": {"properties": {}, "preferences": {"varname": {"value": {"users": {"2": "hello"}}}, "wrongvar1": {"value": {"users": {"2": ""}}}}},
+                        "3": {"properties": {}, "preferences": {}}
+                    }
+            }
+        )
 
     def test_add_multiuser_support_backward_empty(self):
 
@@ -163,9 +169,14 @@ class WorkspaceMigrationsTestCase(TestCase):
         self.assertEqual(widget2_mock.variables, {"varname": "hello", "varname2": "world"})
         self.assertEqual(widget3_mock.variables, {"varname": "varvalue", "varname2": "varvalue2"})
 
-        self.assertEqual(workspace_mock.wiringStatus, {"operators":
-            {"1": {"preferences": {"varname": {"value": "varvalue"}, "varname2": {"value": "varvalue2"}}},
-             "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}})
+        self.assertEqual(
+            workspace_mock.wiringStatus,
+            {
+                "operators": {
+                    "1": {"preferences": {"varname": {"value": "varvalue"}, "varname2": {"value": "varvalue2"}}},
+                    "2": {"preferences": {"varname": {"value": "hello"}, "varname2": {"value": "world"}}}}
+            }
+        )
 
 
 def check_secure_preferences(self, workspace, user):
@@ -175,14 +186,14 @@ def check_secure_preferences(self, workspace, user):
                 'id': '1',
                 'name': 'Wirecloud/TestOperatorSecure/1.0',
                 'preferences': {
-                    'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": ''}}}
+                    'pref_secure': {'hidden': True, 'secure': True, 'readonly': False, 'value': {"users": {"2": ''}}}
                 },
             },
             '2': {
                 'id': '2',
                 'name': 'Wirecloud/TestOperatorSecure/1.0',
                 'preferences': {
-                    'pref_secure': {'hidden': True, 'secure':True, 'readonly': False, 'value': {"users": {"2": encrypt_value("test_password")}}}
+                    'pref_secure': {'hidden': True, 'secure': True, 'readonly': False, 'value': {"users": {"2": encrypt_value("test_password")}}}
                 },
             },
         },

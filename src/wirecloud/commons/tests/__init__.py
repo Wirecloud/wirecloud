@@ -4,3 +4,11 @@ from wirecloud.commons.tests.commands import ResetSearchIndexesCommandTestCase
 from wirecloud.commons.tests.searchers import SearchAPITestCase
 from wirecloud.commons.tests.template import TemplateUtilsTestCase
 from wirecloud.commons.tests.utils import GeneralUtilsTestCase, HTMLCleanupTestCase, WGTTestCase, HTTPUtilsTestCase
+
+__all__ = (
+    "BaseAdminCommandTestCase", "ConvertCommandTestCase",
+    "StartprojectCommandTestCase", "BasicViewTestCase",
+    "ResetSearchIndexesCommandTestCase", "SearchAPITestCase",
+    "TemplateUtilsTestCase", "GeneralUtilsTestCase",
+    "HTMLCleanupTestCase", "WGTTestCase", "HTTPUtilsTestCase"
+)

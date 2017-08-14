@@ -55,4 +55,4 @@ def undeploy_operators_on_resource_deletion(sender, instance, **kwargs):
         showcase_utils.wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
     except:
         # TODO log this error
-        pass # ignore errors
+        pass  # ignore errors

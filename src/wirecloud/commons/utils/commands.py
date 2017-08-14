@@ -42,13 +42,19 @@ class BaseCommand(object):
 
     # Metadata about this command.
     option_list = (
-        make_option('-v', '--verbosity', action='store', dest='verbosity', default='1',
+        make_option(
+            '-v', '--verbosity', action='store', dest='verbosity', default='1',
             type='choice', choices=['0', '1', '2', '3'],
-            help='Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output'),
-        make_option('--pythonpath',
-            help='A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".'),
-        make_option('--traceback', action='store_true',
-            help='Print traceback on exception'),
+            help='Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output'
+        ),
+        make_option(
+            '--pythonpath',
+            help='A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".'
+        ),
+        make_option(
+            '--traceback', action='store_true',
+            help='Print traceback on exception'
+        ),
     )
     help = ''
     args = ''

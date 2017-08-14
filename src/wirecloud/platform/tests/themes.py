@@ -75,7 +75,8 @@ def import_module_tester(module):
     else:
         raise ImportError("No module named '%s'" % module.split('.', 1)[0])
 
-get_available_themes_mock = Mock(return_value = (DEFAULT_THEME, "customtheme", "custommodtheme", "customroottheme"))
+
+get_available_themes_mock = Mock(return_value=(DEFAULT_THEME, "customtheme", "custommodtheme", "customroottheme"))
 
 
 @patch.multiple('wirecloud.platform.themes', import_module=import_module_tester, get_available_themes=get_available_themes_mock)

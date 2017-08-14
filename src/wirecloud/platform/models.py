@@ -1,11 +1,11 @@
-from wirecloud.platform.core.models import *
-from wirecloud.platform.context.models import *
-from wirecloud.platform.iwidget.models import *
-from wirecloud.platform.markets.models import *
-from wirecloud.platform.preferences.models import *
-from wirecloud.platform.widget.models import *
-from wirecloud.platform.wiring.models import *
-from wirecloud.platform.workspace.models import *
+from wirecloud.platform.core.models import *  # noqa
+from wirecloud.platform.context.models import *  # noqa
+from wirecloud.platform.iwidget.models import *  # noqa
+from wirecloud.platform.markets.models import *  # noqa
+from wirecloud.platform.preferences.models import *  # noqa
+from wirecloud.platform.widget.models import *  # noqa
+from wirecloud.platform.wiring.models import *  # noqa
+from wirecloud.platform.workspace.models import *  # noqa
 
 # TODO search a better way of implementing this
 

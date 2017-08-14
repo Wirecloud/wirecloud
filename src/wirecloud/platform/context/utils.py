@@ -105,7 +105,7 @@ def get_constant_context_values():
 def get_context_values(workspace, user):
     cache_key = 'constant_context/' + str(user.id)
     constant_context = cache.get(cache_key)
-    if constant_context == None:
+    if constant_context is None:
         constant_context = get_constant_context_values()
         cache.set(cache_key, constant_context)
 

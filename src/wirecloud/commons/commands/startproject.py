@@ -45,13 +45,17 @@ class StartprojectCommand(BaseCommand):
 
     args = "[name] [optional destination directory]"
     option_list = BaseCommand.option_list + (
-        make_option('-t', '--type',
+        make_option(
+            '-t', '--type',
             action='store',
             dest='type',
-            default='platform'),
-        make_option('-q', '--quick-start',
+            default='platform'
+        ),
+        make_option(
+            '-q', '--quick-start',
             action='store_true',
-            dest='quick_start'),
+            dest='quick_start'
+        ),
     )
 
     def handle(self, project_name=None, target=None, *args, **options):
@@ -61,7 +65,7 @@ class StartprojectCommand(BaseCommand):
         if options['type'] not in ('platform', 'catalogue'):
             raise CommandError("invalid project type")
 
-        template = os.path.join(os.path.dirname(wirecloud.commons.__file__), 'conf', options['type']  + '_project_template')
+        template = os.path.join(os.path.dirname(wirecloud.commons.__file__), 'conf', options['type'] + '_project_template')
         internal_options = {
             'template': template,
             'extensions': ('py',),

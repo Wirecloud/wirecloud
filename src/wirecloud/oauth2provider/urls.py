@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.views.decorators.cache import cache_page
 
 from wirecloud.oauth2provider import views

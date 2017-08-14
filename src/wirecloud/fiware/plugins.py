@@ -151,23 +151,25 @@ class FiWareMarketManager(MarketManager):
 
         if wirecloud_plugin_supported:
             storeclient.upload_resource(
-                    resource_info['title'],
-                    resource_info['version'],
-                    "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
-                    resource_info['description'],
-                    "Mashable application component",
-                    wgt_file.get_underlying_file(),
-                    token,
-                    resource_type="Wirecloud component")
+                resource_info['title'],
+                resource_info['version'],
+                "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
+                resource_info['description'],
+                "Mashable application component",
+                wgt_file.get_underlying_file(),
+                token,
+                resource_type="Wirecloud component"
+            )
         else:
             storeclient.upload_resource(
-                    resource_info['title'],
-                    resource_info['version'],
-                    "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
-                    resource_info['description'],
-                    mimetypes[resource_info['type']],
-                    wgt_file.get_underlying_file(),
-                    token)
+                resource_info['title'],
+                resource_info['version'],
+                "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
+                resource_info['description'],
+                mimetypes[resource_info['type']],
+                wgt_file.get_underlying_file(),
+                token
+            )
 
 
 class FiWarePlugin(WirecloudPlugin):

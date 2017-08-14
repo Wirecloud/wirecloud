@@ -207,6 +207,7 @@ class CatalogueUtilsTestCase(TestCase):
     def build_add_packaged_resouce_mocks(self, files, invalid_files):
 
         file_mocks = {}
+
         def read_file(key):
             if key not in files:
                 raise KeyError()

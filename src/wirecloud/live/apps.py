@@ -29,4 +29,4 @@ class WirecloudLiveConfig(AppConfig):
 
     def ready(self):
         # import signal handlers
-        import wirecloud.live.signals.handlers
+        import wirecloud.live.signals.handlers  # noqa

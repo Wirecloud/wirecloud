@@ -20,7 +20,6 @@
 from __future__ import unicode_literals
 
 import locale
-from optparse import make_option
 
 from django.contrib.auth.models import User, Group
 from django.core.management.base import BaseCommand, CommandError
@@ -36,28 +35,38 @@ class Command(BaseCommand):
     help = 'Adds one or more packaged mashable application components into the catalogue'
 
     def add_arguments(self, parser):
-        parser.add_argument('files',
+        parser.add_argument(
+            'files',
             metavar='file.wgt',
             nargs='+',
-            help='wgt files of the mashable application components to install')
-        parser.add_argument('--redeploy',
+            help='wgt files of the mashable application components to install'
+        )
+        parser.add_argument(
+            '--redeploy',
             action='store_true',
             dest='redeploy',
-            help='Replace mashable application components files with the new ones.')
-        parser.add_argument('-u', '--users',
+            help='Replace mashable application components files with the new ones.'
+        )
+        parser.add_argument(
+            '-u', '--users',
             action='store',
             dest='users',
             help='Comma separated list of users that will obtain access to the uploaded mashable application components',
-            default=''),
-        parser.add_argument('-g', '--groups',
+            default=''
+        ),
+        parser.add_argument(
+            '-g', '--groups',
             action='store',
             dest='groups',
             help='Comma separated list of groups that will obtain access rights to the uploaded mashable application components',
-            default=''),
-        parser.add_argument('-p', '--public',
+            default=''
+        ),
+        parser.add_argument(
+            '-p', '--public',
             action='store_true',
             dest='public',
-            help='Allow any user to access the mashable application components.')
+            help='Allow any user to access the mashable application components.'
+        )
 
     def _handle(self, *args, **options):
 

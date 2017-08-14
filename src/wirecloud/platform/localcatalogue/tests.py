@@ -80,7 +80,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         zf = zipfile.ZipFile(f, 'w')
         zf.writestr('config.xml', template)
         zf.writestr('test.html', html_content or BASIC_HTML_GADGET_CODE)
-        zf.writestr('doc/', b'') # TODO
+        zf.writestr('doc/', b'')
         zf.writestr('images/catalogue.png', b'')
         zf.writestr('images/catalogue_smartphone.png', b'')
         for of in other_files:

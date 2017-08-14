@@ -26,8 +26,7 @@ from six.moves.urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 import six
 
-UNICODE_ASCII_CHARACTERS = (six.text_type(string.ascii_letters) +
-    six.text_type(string.digits))
+UNICODE_ASCII_CHARACTERS = (six.text_type(string.ascii_letters) + six.text_type(string.digits))
 
 
 def random_ascii_string(length):
@@ -53,9 +52,11 @@ def build_url(base, additional_params=None):
             if v is None:
                 query_params.pop(k)
 
-    return urlunparse((url.scheme,
-                                url.netloc,
-                                url.path,
-                                url.params,
-                                urlencode(query_params),
-                                url.fragment))
+    return urlunparse((
+        url.scheme,
+        url.netloc,
+        url.path,
+        url.params,
+        urlencode(query_params),
+        url.fragment
+    ))

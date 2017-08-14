@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import time
 from six.moves.urllib.error import HTTPError
 
 from django.http import HttpResponse
@@ -52,6 +53,8 @@ def get_market_adaptor(market_user, market):
 
 
 def get_market_user_data(user, market_user, market_name):
+
+    from wirecloud.fiware.proxy import STRATEGY
 
     if market_user == 'public':
         market_user = None

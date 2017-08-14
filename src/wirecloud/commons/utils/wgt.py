@@ -109,8 +109,7 @@ class WgtFile(object):
             if name.endswith("/"):
                 for namedir in listnames:
                     folder += os.sep + namedir.replace("/", os.sep)
-                    if (not os.path.exists(folder)
-                        or (os.path.exists(folder) and not os.path.isdir(folder))):
+                    if not os.path.exists(folder) or (os.path.exists(folder) and not os.path.isdir(folder)):
                         os.mkdir(folder)
             else:
                 for namedir in listnames:
@@ -132,8 +131,7 @@ class WgtFile(object):
             if name.endswith("/"):
                 for namedir in listnames:
                     folder += os.sep + namedir.replace("/", os.sep)
-                    if (not os.path.exists(folder)
-                        or (os.path.exists(folder) and not os.path.isdir(folder))):
+                    if not os.path.exists(folder) or (os.path.exists(folder) and not os.path.isdir(folder)):
                         os.mkdir(folder)
             else:
                 for namedir in listnames:

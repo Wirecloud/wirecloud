@@ -1305,7 +1305,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
                     'secure': True,
                     'value': '********'
                 },
-                'username': {'hidden': False,
+                'username': {
+                    'hidden': False,
                     'name': 'username',
                     'readonly': False,
                     'secure': False,

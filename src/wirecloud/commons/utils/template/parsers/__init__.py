@@ -28,7 +28,7 @@ from wirecloud.commons.utils.template.parsers.xml import ApplicationMashupTempla
 from wirecloud.commons.utils.template.parsers.rdf import RDFTemplateParser
 
 
-__all__ = ('TemplateParseException', 'TemplateParser')
+__all__ = ('ObsoleteFormatError', 'TemplateFormatError', 'TemplateParseException', 'TemplateParser')
 
 
 BASIC_URL_FIELDS = ['doc', 'image', 'smartphoneimage']

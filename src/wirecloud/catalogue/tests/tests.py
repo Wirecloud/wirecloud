@@ -364,7 +364,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.client.login(username='myuser', password='admin')
 
         # Search using a partial word: ashabl (full word: mashable)
-        # Whoosh uses maxdist = 2 by default
+        # Whoosh uses maxdist = 2 by default
         result = self.client.get(self.base_url + '?q=ashabl')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
@@ -829,10 +829,13 @@ class CatalogueMediaTestCase(TestCase):
         response_mock = MagicMock()
         response_mock.status_code = 302
         headers = {'Location': 'manage.py'}
+
         def set_header(key, value):
             headers[key] = value
+
         def get_header(key):
             return headers[key]
+
         response_mock.__setitem__.side_effect = set_header
         response_mock.__getitem__.side_effect = get_header
         build_downloadfile_response_mock.return_value = response_mock
@@ -840,5 +843,5 @@ class CatalogueMediaTestCase(TestCase):
         with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, build_downloadfile_response=build_downloadfile_response_mock):
             response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'test/../../../../../../manage.py')
             self.assertEqual(response.status_code, 302)
-            self.assertEqual(response['Location'], reverse('wirecloud_catalogue.media', kwargs= {"vendor": 'Wirecloud', "name": 'Test', "version": '1.0', "file_path": 'manage.py'}))
+            self.assertEqual(response['Location'], reverse('wirecloud_catalogue.media', kwargs={"vendor": 'Wirecloud', "name": 'Test', "version": '1.0', "file_path": 'manage.py'}))
             self.assertTrue(response['Location'].endswith('manage.py'))

@@ -124,7 +124,6 @@ class ProxyTestCase(WirecloudTestCase):
         else:
             request.method = 'GET'
 
-
         if use_deprecated_code:
             request.META['HTTP_X_FI_WARE_OAUTH_TOKEN'] = 'true'
             extra_headers = {self.deprecation_mapping[key]: value for key, value in six.iteritems(extra_headers)}
@@ -172,8 +171,11 @@ class ProxyTestCase(WirecloudTestCase):
         request = self.prepare_request_mock()
         del request.META['HTTP_FIWARE_OAUTH_TOKEN']
 
+        self.network._servers['http']['example.com'].add_response('GET', '/path', self.echo_headers_response)
+
         with patch('wirecloud.fiware.proxy.get_access_token') as get_access_token_mock:
             response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
+            self.assertEqual(response.status_code, 200)
             self.assertEqual(get_access_token_mock.call_count, 0)
 
     def test_fiware_idm_processor_header(self):
@@ -189,7 +191,6 @@ class ProxyTestCase(WirecloudTestCase):
         self.check_proxy_request(validator=validator, data='{}', extra_headers={
             "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
         })
-
 
     def test_fiware_idm_processor_header_authorization(self):
 
@@ -208,7 +209,7 @@ class ProxyTestCase(WirecloudTestCase):
     def test_fiware_idm_processor_body(self):
 
         def echo_response(method, url, *args, **kwargs):
-            self.assertEqual(int(kwargs['headers']['content-length']), 99) # Content Length after token injection
+            self.assertEqual(int(kwargs['headers']['content-length']), 99)  # Content Length after token injection
             return {'content': kwargs['data'].read()}
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
@@ -283,17 +284,19 @@ class ProxyTestCase(WirecloudTestCase):
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
         proxied_url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
 
-        self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers={
+        extra_headers = {
             "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-            }, referer='http://localhost' + proxied_url, user=self.admin_mock)
+        }
+        self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers=extra_headers, referer='http://localhost' + proxied_url, user=self.admin_mock)
 
     def test_fiware_idm_no_token_available(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
-        self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers={
+        extra_headers = {
             "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-            }, user=self.normuser_mock)
+        }
+        self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers=extra_headers, user=self.normuser_mock)
 
     def test_fiware_idm_token_from_workspace_owner_header(self):
 
@@ -346,7 +349,7 @@ class ProxyTestCase(WirecloudTestCase):
 
         self.check_proxy_request(validator=validator, data='{}', extra_headers={
             "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-        }, refresh= True)
+        }, refresh=True)
 
     def test_fiware_token_is_refreshed_missing_expires_on(self):
 
@@ -361,4 +364,4 @@ class ProxyTestCase(WirecloudTestCase):
 
         self.check_proxy_request(validator=validator, data='{}', extra_headers={
             "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-        }, refresh= True)
+        }, refresh=True)

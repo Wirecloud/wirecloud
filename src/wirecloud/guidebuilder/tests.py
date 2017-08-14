@@ -283,7 +283,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Capture new workspace
         newworkspace_menu = menu.get_entry('New workspace')
         ActionChains(self.driver).move_to_element(newworkspace_menu).perform()
-        time.sleep(0.2) # Wait hover effect
+        time.sleep(0.2)  # Wait hover effect
         imgp = take_capture(self.driver, 'new_workspace_entry')
         add_pointer(imgp, get_position(newworkspace_menu, 0.8, 0.5))
         crop_down(imgp, menu.element)  # Crop down the image
@@ -306,7 +306,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Workspace Settings
         self.open_menu().click_entry('Settings')
         dialog = FormModalTester(self, self.wait_element_visible(".wc-workspace-preferences-modal"))
-        time.sleep(0.2) # Wait hover effect
+        time.sleep(0.2)  # Wait hover effect
         imgp = take_capture(self.driver, 'workspace_settings')
         crop_image(imgp, *create_box(dialog))
 
@@ -397,7 +397,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             widg = get_by_contains(
                 container, '.resource.click_for_details', 'widget')
             ActionChains(self.driver).move_to_element(widg).perform()
-            time.sleep(0.4) # Wait hover effect
+            time.sleep(0.4)  # Wait hover effect
             imgp = take_capture(self.driver, 'component_details')
             add_pointer(imgp, get_position(widg, 0.5, 0.5))
             crop_down(imgp, widg, 50)
@@ -475,7 +475,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Initial layout
         resize_widget(self.driver, linear_graph_widget, 12, 41)
         ActionChains(self.driver).move_to_element(linear_graph_widget.element).perform()
-        time.sleep(0.6) # Wait until all the effects are applied
+        time.sleep(0.6)  # Wait until all the effects are applied
         imgp = take_capture(self.driver, "initial_linear_graph_layout")
         crop_down(imgp, linear_graph_widget)
 
@@ -485,11 +485,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         dialog = FormModalTester(self, self.wait_element_visible('.wc-component-preferences-modal'))
         dialog.get_field('apiKey').set_value(settings.GMAPS_KEY)
         dialog.accept()
-        map_viewer_widget.open_menu().get_entry("Reload").click();
+        map_viewer_widget.open_menu().get_entry("Reload").click()
 
         resize_widget(self.driver, map_viewer_widget, 8, 41)
         ActionChains(self.driver).move_to_element(linear_graph_widget.element).perform()
-        time.sleep(0.6) # Wait until all the effects are applied
+        time.sleep(0.6)  # Wait until all the effects are applied
         imgp = take_capture(self.driver, "final_layout")
 
         # Widget menu button
@@ -549,7 +549,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Wiring button
         btn = self.find_navbar_button("wc-show-wiring-button")
         ActionChains(self.driver).move_to_element(btn.element).perform()
-        time.sleep(0.4) # Wait tooltip
+        time.sleep(0.4)  # Wait tooltip
         imgp = take_capture(self.driver, 'wiring_button')
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
         crop_down(imgp, btn, 60)
@@ -597,7 +597,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 crop_down(imgp, ent_oper, 60)
 
                 ActionChains(self.driver).click_and_hold(ent_oper.element).perform()
-                time.sleep(0.05) # Wait the operator is extracted from the side panel
+                time.sleep(0.05)  # Wait the operator is extracted from the side panel
                 imgp = take_capture(self.driver, "add_ngsisource_drag")
 
                 clon = get_by_contains(self.driver, ".panel.panel-default.component-draggable.component-operator.cloned.dragging", "NGSI source")

@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
 from json import JSONEncoder

@@ -250,8 +250,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             prop_input = FieldTester(self, self.driver.find_element_by_css_selector('#update_prop_input'))
             prop_input.set_value(expected_value)
             # Work around Firefox driver bugs
-            self.driver.execute_script('arguments[0].click()',
-                self.driver.find_element_by_css_selector('#update_prop_button'))
+            self.driver.execute_script(
+                'arguments[0].click()',
+                self.driver.find_element_by_css_selector('#update_prop_button')
+            )
 
         # TODO manual wait until the property value is stored in the server
         time.sleep(1)
@@ -780,32 +782,24 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check navigation history has been filled correctly
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='ExistingWorkspace',
-            tab='ExistingTab'
-        ))
+        WebDriverWait(self.driver, timeout=5).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='ExistingWorkspace', tab='ExistingTab')
+        )
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='ExistingWorkspace',
-            tab='OtherTab'
-        ))
+        WebDriverWait(self.driver, timeout=5).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='ExistingWorkspace', tab='OtherTab')
+        )
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='Pending Events',
-            tab='Tab 2'
-        ))
+        WebDriverWait(self.driver, timeout=5).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='Pending Events', tab='Tab 2')
+        )
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='Pending Events',
-            tab='Tab 1'
-        ))
+        WebDriverWait(self.driver, timeout=5).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='Pending Events', tab='Tab 1')
+        )
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Pending%20Events')
@@ -813,32 +807,24 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Replay navigation history
         self.driver.forward()
         self.wait_wirecloud_ready()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='Pending Events',
-            tab='Tab 1'
-        ))
+        WebDriverWait(self.driver, timeout=10).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='Pending Events', tab='Tab 1')
+        )
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='Pending Events',
-            tab='Tab 2'
-        ))
+        WebDriverWait(self.driver, timeout=10).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='Pending Events', tab='Tab 2')
+        )
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='ExistingWorkspace',
-            tab='OtherTab'
-        ))
+        WebDriverWait(self.driver, timeout=10).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='ExistingWorkspace', tab='OtherTab')
+        )
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=10).until(WEC.workspace(self,
-            owner='user_with_workspaces',
-            name='ExistingWorkspace',
-            tab='ExistingTab'
-        ))
+        WebDriverWait(self.driver, timeout=10).until(
+            WEC.workspace(self, owner='user_with_workspaces', name='ExistingWorkspace', tab='ExistingTab')
+        )
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')

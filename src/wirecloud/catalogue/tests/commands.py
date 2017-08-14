@@ -61,7 +61,8 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         try:
             with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
-                with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
+                with patch.multiple(
+                        'wirecloud.catalogue.management.commands.addtocatalogue',
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
@@ -92,7 +93,8 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         try:
             with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
-                with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
+                with patch.multiple(
+                        'wirecloud.catalogue.management.commands.addtocatalogue',
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
@@ -123,7 +125,8 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         try:
             with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
-                with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
+                with patch.multiple(
+                        'wirecloud.catalogue.management.commands.addtocatalogue',
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
@@ -155,7 +158,8 @@ class AddToCatalogueCommandTestCase(TestCase):
         args = ['file.wgt']
 
         with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
-            with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
+            with patch.multiple(
+                    'wirecloud.catalogue.management.commands.addtocatalogue',
                     add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                     WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,7 +28,7 @@ from tempfile import mkdtemp
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
-from mock import Mock, patch
+from mock import patch
 from whoosh import fields, index
 
 from wirecloud.commons.searchers import get_available_search_engines
@@ -81,7 +81,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options["interactive"] = False
 
         os.mkdir(self.new_index_dir)
-        index.create_in(self.new_index_dir, fields.Schema(content = fields.TEXT), 'resource')
+        index.create_in(self.new_index_dir, fields.Schema(content=fields.TEXT), 'resource')
         self.assertTrue(os.path.exists(self.new_index_dir))
 
         with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):
@@ -102,7 +102,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options["interactive"] = False
 
         os.mkdir(self.new_index_dir)
-        index.create_in(self.new_index_dir, fields.Schema(content = fields.TEXT), 'other_index')
+        index.create_in(self.new_index_dir, fields.Schema(content=fields.TEXT), 'other_index')
         self.assertTrue(os.path.exists(self.new_index_dir))
 
         with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):

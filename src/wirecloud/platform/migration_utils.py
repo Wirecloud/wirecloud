@@ -59,7 +59,7 @@ def multiuser_variables_structure_forwards(apps, schema_editor):
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
             wiring["operators"][op]["preferences"] = {k: mutate_forwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op].get("preferences", {}))}
-            wiring["operators"][op]["properties"] = {} # Create properties structure
+            wiring["operators"][op]["properties"] = {}  # Create properties structure
         workspace.save()
 
         # Update widgets

@@ -33,6 +33,7 @@ from wirecloud.platform.core.plugins import get_version_hash
 
 provider = WirecloudAuthorizationProvider()
 
+
 @cache_page(60 * 60 * 24, key_prefix='oauth2provider-info-%s' % get_version_hash())
 @require_GET
 def oauth_discovery(request):

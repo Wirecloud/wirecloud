@@ -97,7 +97,7 @@ ROOT_URLCONF = '{{ project_name }}.urls'
 WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 
 INSTALLED_APPS += (
-    #'django.contrib.sites',
+    # 'django.contrib.sites',
     'wirecloud.oauth2provider',
 )
 

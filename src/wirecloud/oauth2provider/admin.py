@@ -20,19 +20,22 @@
 from django.contrib import admin
 from wirecloud.oauth2provider import models
 
+
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('client_id', 'redirect_uri')
     ordering = ('client_id', 'redirect_uri')
-admin.site.register(models.Application, ApplicationAdmin)
 
 
 class CodeAdmin(admin.ModelAdmin):
     list_display = ('client', 'user', 'code')
     ordering = ('client', 'user')
-admin.site.register(models.Code, CodeAdmin)
 
 
 class TokenAdmin(admin.ModelAdmin):
     list_display = ('client', 'user', 'token', 'scope', 'expires_in')
     ordering = ('client', 'user')
+
+
+admin.site.register(models.Application, ApplicationAdmin)
+admin.site.register(models.Code, CodeAdmin)
 admin.site.register(models.Token, TokenAdmin)

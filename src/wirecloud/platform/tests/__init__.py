@@ -18,15 +18,15 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from wirecloud.platform.tests.base import *
-from wirecloud.platform.tests.commands import PopuplateCommandTestCase
-from wirecloud.platform.tests.plugins import WirecloudPluginTestCase
-from wirecloud.platform.tests.rest_api import AdministrationAPI, ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI
-from wirecloud.platform.tests.selenium import *
-from wirecloud.platform.tests.themes import ThemesTestCase
-from wirecloud.platform.localcatalogue.tests import *
-from wirecloud.platform.markets.tests import *
-from wirecloud.platform.wiring.tests import *
-from wirecloud.platform.widget.tests import CodeTransformationTestCase, WidgetModuleTestCase
-from wirecloud.platform.workspace.tests import WorkspaceMigrationsTestCase, WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
-from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests
+from wirecloud.platform.tests.base import *  # noqa
+from wirecloud.platform.tests.commands import PopuplateCommandTestCase  # noqa
+from wirecloud.platform.tests.plugins import WirecloudPluginTestCase  # noqa
+from wirecloud.platform.tests.rest_api import AdministrationAPI, ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI  # noqa
+from wirecloud.platform.tests.selenium import *  # noqa
+from wirecloud.platform.tests.themes import ThemesTestCase  # noqa
+from wirecloud.platform.localcatalogue.tests import *  # noqa
+from wirecloud.platform.markets.tests import *  # noqa
+from wirecloud.platform.wiring.tests import *  # noqa
+from wirecloud.platform.widget.tests import CodeTransformationTestCase, WidgetModuleTestCase  # noqa
+from wirecloud.platform.workspace.tests import WorkspaceMigrationsTestCase, WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase  # noqa
+from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests  # noqa

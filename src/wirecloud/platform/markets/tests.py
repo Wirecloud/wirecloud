@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -139,8 +139,6 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
             with marketplace.search_in_results('Test Mashup'):
                 pass
             marketplace.switch_to('deleteme')
-
-        catalogue_base_element = self.marketplace_view.get_current_catalogue_base_element()
 
         # Check navigation history has been filled correctly
         self.driver.back()

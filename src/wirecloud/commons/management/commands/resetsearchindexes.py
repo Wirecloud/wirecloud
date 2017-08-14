@@ -21,11 +21,9 @@ from __future__ import unicode_literals
 
 import locale
 import os
-from optparse import make_option
 import six
 
 from django.core.management.base import CommandError, BaseCommand
-from django.utils.encoding import force_text
 from django.utils.translation import override, ugettext, ugettext_lazy as _
 
 from wirecloud.commons.searchers import get_available_search_engines, get_search_engine, is_available
@@ -33,6 +31,7 @@ from wirecloud.commons.searchers import get_available_search_engines, get_search
 if six.PY2:
     # Python 2 uses bytes instead of strings (unicode)
     def input(prompt):
+        from builtins import raw_input
         return raw_input(prompt.encode('utf-8')).decode('utf-8')
 
 
@@ -45,12 +44,16 @@ class Command(BaseCommand):
     nonavailable_indexes_message = _('The following indexes are not available: %s')
 
     def add_arguments(self, parser):
-        parser.add_argument('--indexes',
+        parser.add_argument(
+            '--indexes',
             action='store', dest='indexes', default='',
-            help="Indexes to reset. All by default")
-        parser.add_argument('--noinput',
+            help="Indexes to reset. All by default"
+        )
+        parser.add_argument(
+            '--noinput',
             action='store_false', dest='interactive',
-            help="Do NOT prompt the user for input of any kind.")
+            help="Do NOT prompt the user for input of any kind."
+        )
 
     def _handle(self, *args, **options):
 

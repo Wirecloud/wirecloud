@@ -305,10 +305,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Version'),
                 'description': _('Version of the platform'),
             },
-            'version': {
-                'label': _('Version'),
-                'description': _('Version of the platform'),
-            },
             'version_hash': {
                 'label': _('Version Hash'),
                 'description': _('Hash for the current version of the platform. This hash changes when the platform is updated or when an addon is added or removed'),
@@ -369,35 +365,35 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_workspace_preferences(self):
         return [
             {
-                "name":          "public",
-                "defaultValue":  False,
-                "label":         _("Public"),
-                "type":          "boolean",
-                "hidden":        True,
-                "description":   _("Allow any user to open this workspace (in read-only mode). (default: disabled)")
+                "name": "public",
+                "defaultValue": False,
+                "label": _("Public"),
+                "type": "boolean",
+                "hidden": True,
+                "description": _("Allow any user to open this workspace (in read-only mode). (default: disabled)")
             },
             {
-                "name":          "sharelist",
-                "defaultValue":  [],
-                "label":         _("Share list"),
-                "type":          "layout",
-                "hidden":        True,
-                "description":   _("List of users with access to this workspace. (default: [])")
+                "name": "sharelist",
+                "defaultValue": [],
+                "label": _("Share list"),
+                "type": "layout",
+                "hidden": True,
+                "description": _("List of users with access to this workspace. (default: [])")
             },
             {
-                "name":          "initiallayout",
-                "defaultValue":  "Fixed",
-                "label":         _("Default layout"),
-                "type":          "select",
+                "name": "initiallayout",
+                "defaultValue": "Fixed",
+                "label": _("Default layout"),
+                "type": "select",
                 "initialEntries": [
                     {"value": "Fixed", "label": _("Base")},
                     {"value": "Free", "label": _("Free")}
                 ],
-                "description":   _("Default layout for the new widgets.")
+                "description": _("Default layout for the new widgets.")
             },
             {
-                "name":          "baselayout",
-                "defaultValue":  {
+                "name": "baselayout",
+                "defaultValue": {
                     "type": "columnlayout",
                     "smart": "false",
                     "columns": 20,
@@ -405,8 +401,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                     "horizontalmargin": 4,
                     "verticalmargin": 3
                 },
-                "label":         _("Base layout"),
-                "type":          "layout"
+                "label": _("Base layout"),
+                "type": "layout"
             }
         ]
 

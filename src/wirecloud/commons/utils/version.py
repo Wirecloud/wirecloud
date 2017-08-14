@@ -68,7 +68,7 @@ class Version(object):
             raise ValueError("invalid version number '%s'" % other)
 
         maxlen = max(len(self.version), len(other.version))
-        compare = cmp(self.version + (0,)*(maxlen - len(self.version)), other.version + (0,)*(maxlen - len(other.version)))
+        compare = cmp(self.version + (0,) * (maxlen - len(self.version)), other.version + (0,) * (maxlen - len(other.version)))
 
         if compare == 0:
 

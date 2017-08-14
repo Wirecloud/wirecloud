@@ -38,7 +38,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from wirecloud.commons.authentication import logout
 from wirecloud.commons.middleware import get_api_user
 from wirecloud.commons.utils.http import get_absolute_reverse_url
-from wirecloud.commons.utils.remote import FormTester, PopupMenuTester
+from wirecloud.commons.utils.remote import FormTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selenium_test_case, WirecloudSeleniumTestCase
 from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.platform.models import Workspace

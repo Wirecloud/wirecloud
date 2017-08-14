@@ -172,7 +172,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             }
         },
         'handlers': {
-            'console':{
+            'console': {
                 'level': 'INFO',
                 'filters': ['require_debug_true'],
                 'class': 'logging.StreamHandler',

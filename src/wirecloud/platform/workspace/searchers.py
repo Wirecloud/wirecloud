@@ -57,8 +57,7 @@ class WorkspaceSearcher(BaseSearcher):
     default_search_fields = ('owner', 'name', 'description', 'longdescription')
 
     def restrict_query(self, request):
-        return Or([Term('public', 't'), Term('users', request.user.username)] +
-            [Term('groups', group.name) for group in request.user.groups.all()])
+        return Or([Term('public', 't'), Term('users', request.user.username)] + [Term('groups', group.name) for group in request.user.groups.all()])
 
     def build_compatible_fields(self, workspace):
         if workspace.last_modified is not None:

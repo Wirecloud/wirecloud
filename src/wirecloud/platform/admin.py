@@ -24,9 +24,6 @@ from relatives.utils import object_edit_link
 from wirecloud.platform import models
 
 
-admin.site.register(models.Constant)
-admin.site.register(models.IWidget)
-
 class TeamInline(admin.StackedInline):
 
     model = models.Team
@@ -42,22 +39,15 @@ class OrganizationAdmin(admin.ModelAdmin):
     ordering = ('user',)
     inlines = (TeamInline,)
 
-admin.site.register(models.Organization, OrganizationAdmin)
-
 
 class MarketAdmin(admin.ModelAdmin):
     list_display = ('user', 'name')
     ordering = ('user', 'name')
-admin.site.register(models.Market, MarketAdmin)
+
 
 class MarketUserDataAdmin(admin.ModelAdmin):
     list_display = ('market', 'user', 'name', 'value')
     ordering = ('market', 'user', 'name')
-admin.site.register(models.MarketUserData, MarketUserDataAdmin)
-admin.site.register(models.Widget)
-admin.site.register(models.XHTML)
-
-admin.site.register(models.PlatformPreference)
 
 
 class WorkspacePreferenceInline(admin.TabularInline):
@@ -97,6 +87,15 @@ class WorkspaceAdmin(admin.ModelAdmin):
     ordering = ('creator', 'name')
     inlines = (WorkspacePreferenceInline, TabInline,)
 
+
+admin.site.register(models.Constant)
+admin.site.register(models.IWidget)
+admin.site.register(models.Organization, OrganizationAdmin)
+admin.site.register(models.Market, MarketAdmin)
+admin.site.register(models.MarketUserData, MarketUserDataAdmin)
+admin.site.register(models.Widget)
+admin.site.register(models.XHTML)
+admin.site.register(models.PlatformPreference)
 admin.site.register(models.Workspace, WorkspaceAdmin)
 admin.site.register(models.Tab, TabAdmin)
 admin.site.register(models.UserWorkspace)

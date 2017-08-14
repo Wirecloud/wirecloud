@@ -3,7 +3,7 @@ import json
 import six
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import connection, models
 
 from django.utils.encoding import smart_text
 
@@ -25,8 +25,7 @@ class JSONField(models.TextField):
             if callable(self.default):
                 return copy.deepcopy(self.default())
             return copy.deepcopy(self.default)
-        if (not self.empty_strings_allowed or (self.null and
-                   not connection.features.interprets_empty_strings_as_nulls)):
+        if not self.empty_strings_allowed or (self.null and not connection.features.interprets_empty_strings_as_nulls):
             return None
         return ""
 

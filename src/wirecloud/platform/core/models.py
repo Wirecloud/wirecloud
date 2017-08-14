@@ -56,6 +56,7 @@ class OrganizationManager(models.Manager):
 
         return org
 
+
 @python_2_unicode_compatible
 class Organization(models.Model):
 

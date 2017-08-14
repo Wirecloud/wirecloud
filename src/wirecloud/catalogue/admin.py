@@ -28,4 +28,5 @@ class CatalogueResourceAdmin(admin.ModelAdmin):
     list_display = ('vendor', 'short_name', 'version', 'resource_type')
     verbose_name_plural = 'Resources'
 
+
 admin.site.register(CatalogueResource, CatalogueResourceAdmin)

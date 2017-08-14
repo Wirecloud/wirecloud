@@ -20,7 +20,9 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns('wirecloud.fp74caast.views',
+urlpatterns = patterns(
+
+    'wirecloud.fp74caast.views',
 
     url(r'^api/4caast-enabling/add_tenant$',
         'add_tenant',

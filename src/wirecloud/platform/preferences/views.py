@@ -32,7 +32,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.plugins import get_tab_preferences, get_workspace_preferences
-from wirecloud.platform.models import Organization, PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, UserWorkspace, Workspace
+from wirecloud.platform.models import Organization, PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 
 
 def update_preferences(user, preferences_json):

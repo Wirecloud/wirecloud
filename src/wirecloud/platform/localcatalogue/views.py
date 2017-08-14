@@ -42,7 +42,7 @@ from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_all_users, fix_dev_version
 from wirecloud.platform.markets.utils import get_market_managers
-from wirecloud.platform.models import Widget, IWidget, Workspace
+from wirecloud.platform.models import Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 
 
@@ -52,7 +52,7 @@ class ResourceCollection(Resource):
     @produces(('application/json',))
     def read(self, request):
 
-        process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
+        process_urls = request.GET.get('process_urls', 'true') == 'true'
         resources = {}
         if request.user.is_authenticated():
             for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all())):
@@ -77,7 +77,7 @@ class ResourceCollection(Resource):
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             public = request.POST.get('public', 'false').strip().lower() == 'true'
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
-            if not 'file' in request.FILES:
+            if 'file' not in request.FILES:
                 return build_error_response(request, 400, _('Missing component file in the request'))
 
             downloaded_file = request.FILES['file']
@@ -247,13 +247,13 @@ class ResourceEntry(Resource):
 
 class ResourceDescriptionEntry(Resource):
 
-    #@authentication_required
+    # @authentication_required
     def read(self, request, vendor, name, version):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
         # For now, all components are freely accessible/distributable
-        #if not request.user.is_superuser and not resource.is_available_for(request.user):
-        #    return build_error_response(request, 403, _('You are not allowed to retrieve info about this resource'))
+        # if not request.user.is_superuser and not resource.is_available_for(request.user):
+        #     return build_error_response(request, 403, _('You are not allowed to retrieve info about this resource'))
 
         resource_info = resource.get_processed_info(request, process_urls=request.GET.get('process_urls', 'true') == 'true')
         if request.GET.get('include_wgt_files', '').lower() == 'true':
@@ -290,7 +290,7 @@ class WorkspaceResourceCollection(Resource):
                 pass
 
         result = {}
-        process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
+        process_urls = request.GET.get('process_urls', 'true') == 'true'
         for resource in resources:
             if resource.is_available_for(workspace.creator):
                 options = resource.get_processed_info(request, process_urls=process_urls, url_pattern_name="wirecloud.showcase_media")

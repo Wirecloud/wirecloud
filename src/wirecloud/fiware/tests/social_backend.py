@@ -27,6 +27,7 @@ from mock import patch, MagicMock, Mock
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
+
 class BasicClass(object):
 
     def __init__(self):
@@ -182,6 +183,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
     def test_api_authentication_using_idm(self):
 
         auth_user_mock = MagicMock()
+
         def get_social_auth(provider, uid):
             if provider == 'fiware' and uid == 'demo':
                 return auth_user_mock

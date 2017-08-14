@@ -11,7 +11,7 @@ def get_workspace_managers():
     global _ezweb_workspace_managers
 
     if _ezweb_workspace_managers is None:
-        if hasattr(settings, 'WORKSPACE_MANAGERS') and settings.WORKSPACE_MANAGERS != None:
+        if hasattr(settings, 'WORKSPACE_MANAGERS') and settings.WORKSPACE_MANAGERS is not None:
             managers = settings.WORKSPACE_MANAGERS
         else:
             managers = ()

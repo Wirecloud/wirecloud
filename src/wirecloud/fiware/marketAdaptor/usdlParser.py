@@ -100,7 +100,7 @@ class USDLParser(object):
             if not id_:
                 result.append(six.text_type(e))
             else:
-                #If id = True means that the uri will be used so it is necesary to return the class
+                # If id = True means that the uri will be used so it is necesary to return the class
                 result.append(e)
 
         if len(result) == 0:
@@ -200,7 +200,7 @@ class USDLParser(object):
         self._info['sla'] = []
         service_level_profile = self._get_field(USDL, service_uri, 'hasServiceLevelProfile', id_=True)[0]
 
-        #If sla does not exist the mothod does nothing
+        # If sla does not exist the mothod does nothing
         if service_level_profile != '':
             service_levels = self._get_field(SLA, service_level_profile, 'hasServiceLevel', id_=True)
 

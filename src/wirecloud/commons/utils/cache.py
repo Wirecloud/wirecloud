@@ -21,7 +21,6 @@ import hashlib
 import time
 
 from django.http import HttpResponse
-from django.utils.cache import patch_cache_control
 from django.utils.http import http_date
 
 
