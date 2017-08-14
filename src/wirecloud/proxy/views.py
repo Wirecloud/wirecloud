@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -30,7 +30,7 @@ import sys
 
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
-from django.http import HttpResponse, StreamingHttpResponse
+from django.http import StreamingHttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 
@@ -44,7 +44,9 @@ request_logger = logging.getLogger('django.request')
 
 def log_error(request, exc_info):
 
-    request_logger.error('Internal Server Error: %s', request.path,
+    request_logger.error(
+        'Internal Server Error: %s',
+        request.path,
         exc_info=exc_info,
         extra={
             'status_code': 500,
@@ -111,7 +113,7 @@ class Proxy():
 
                 request_data['cookies'].update(cookie_parser)
 
-            elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
+            elif self.http_headerRE.match(header_name) and header_name not in self.blacklisted_http_headers:
 
                 fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
                 request_data['headers'][fixed_name] = header[1]

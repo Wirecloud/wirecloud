@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,26 +20,22 @@
 from __future__ import unicode_literals
 
 import errno
-import json
 import time
 import os
-from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import url2pathname
 
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
-from django.utils.http import urlunquote
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import patch_cache_headers
-from wirecloud.commons.utils.downloader import download_http_content, download_local_file
-from wirecloud.commons.utils.http import build_response, build_downloadfile_response, get_absolute_reverse_url, get_current_domain
+from wirecloud.commons.utils.downloader import download_local_file
+from wirecloud.commons.utils.http import build_response, build_downloadfile_response, get_current_domain
 from wirecloud.platform.themes import get_active_theme_name
 import wirecloud.platform.widget.utils as showcase_utils
 from wirecloud.platform.widget.utils import WIDGET_ERROR_FORMATTERS, fix_widget_code, get_widget_platform_style
@@ -102,7 +98,7 @@ def process_widget_code(request, resource):
         return build_response(request, 502, {'error_msg': msg}, WIDGET_ERROR_FORMATTERS)
     except Exception as e:
         msg = _('Error processing widget code')
-        return build_response(request, 502, {'error_msg': msg, 'details':"%s" % e}, WIDGET_ERROR_FORMATTERS)
+        return build_response(request, 502, {'error_msg': msg, 'details': "%s" % e}, WIDGET_ERROR_FORMATTERS)
 
     if xhtml.cacheable:
         cache_timeout = 31536000  # 1 year
@@ -129,8 +125,8 @@ def serve_showcase_media(request, vendor, name, version, file_path):
         raise Http404()
 
     # For now, all widgets and operators are freely accessible/distributable
-    #if not resource.is_available_for(request.user):
-    #    return build_error_response(request, 403, "Forbidden")
+    # if not resource.is_available_for(request.user):
+    #     return build_error_response(request, 403, "Forbidden")
 
     if resource.resource_type() == 'widget' and request.GET.get('entrypoint', 'false') == 'true':
         return process_widget_code(request, resource)
@@ -138,14 +134,14 @@ def serve_showcase_media(request, vendor, name, version, file_path):
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
     response = build_downloadfile_response(request, file_path, base_dir)
     if response.status_code == 302:
-        response['Location'] = reverse('wirecloud.showcase_media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
+        response['Location'] = reverse('wirecloud.showcase_media', kwargs={"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
 
     return response
 
 
 class MissingWidgetCodeView(TemplateView):
 
-    template_name='wirecloud/workspace/missing_widget.html'
+    template_name = 'wirecloud/workspace/missing_widget.html'
 
     def get_context_data(self, **kwargs):
         context = super(MissingWidgetCodeView, self).get_context_data(**kwargs)

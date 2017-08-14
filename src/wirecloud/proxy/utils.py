@@ -38,4 +38,4 @@ class ValidationError(Exception):
 
 
 def is_valid_response_header(header):
-    return not header in BLACKLISTED_HEADERS
+    return header not in BLACKLISTED_HEADERS
