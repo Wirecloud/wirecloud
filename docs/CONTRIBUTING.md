@@ -106,6 +106,73 @@ recommendation as much as possible:
 - If it adds/changes a public API, it must also include documentation for those
   changes.
 
+You can manually test your changes by running WireCloud directly from the
+working copy source code repository. The provided `settings.py` file will use
+a shared security key and a basic configuration (e.g. using `sqlite3`) so it is
+not ready for a production environments, but can be used for simple manual
+tests. Those are the steps to be followed:
+
+```shell
+#
+# Download your WireCloud repository
+#
+
+git clone https://github.com/${your_username}/wirecloud.git
+
+
+#
+# Enter into the source folder
+#
+
+cd wirecloud/src
+
+
+#
+# Install basic dependencies (see the installation guide, here are the ones for
+# Debian/Ubuntu)
+#
+
+apt-get update
+apt-get install python python-pip --no-install-recommends
+apt-get install build-essential python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev libcurl4-openssl-dev libjpeg-dev
+pip install -U pip setuptools
+
+
+#
+# Install WireCloud dependencies and WireCloud itself in development mode
+#
+
+python setup.py develop
+
+
+#
+# Install extra dependencies
+#
+
+pip install django_nose
+
+
+#
+# Init db
+#
+
+python manage.py migrate
+python manage.py createsuperuser
+
+
+#
+# Execute the develpment server
+#
+
+python manage.py runserver
+
+
+#
+# Point your browser to http://localhost:8000
+#
+```
+
+
 ### Code guidelines
 
 #### Python
