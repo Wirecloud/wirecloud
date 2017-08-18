@@ -149,7 +149,7 @@ python setup.py develop
 # Install extra dependencies
 #
 
-pip install django_nose
+pip install django-nose "mock>=1.0,<2.0"
 
 
 #
