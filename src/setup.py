@@ -34,6 +34,7 @@ from wirecloud.commons.utils.git import get_git_info
 
 VERSION_METADATA_FILE = 'wirecloud/platform/__init__.py'
 
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

@@ -1,5 +1,6 @@
 from wirecloud.platform.plugins import WirecloudPlugin
 
+
 class SemanticWiringPlugin(WirecloudPlugin):
 
     features = {

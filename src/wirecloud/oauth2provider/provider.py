@@ -400,9 +400,9 @@ class WirecloudAuthorizationProvider(object):
             else:
                 return self._make_error_response(request, 'unsupported_grant_type')
 
-        except TypeError as exc:
+        except TypeError:
             # Catch missing parameters in request
             return self._make_error_response(request, 'invalid_request')
-        except Exception as exc:
+        except Exception:
             # Catch all other server errors
             return self._make_error_response(request, 'server_error', status_code=500)
