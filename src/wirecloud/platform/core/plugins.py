@@ -670,6 +670,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
         return ('wirecloud.proxy.processors.SecureDataProcessor',)
 
     def populate(self, wirecloud_user, log):
+        updated = False
+
         if not CatalogueResource.objects.filter(vendor="WireCloud", short_name="workspace-browser", version="0.1.1").exists():
             updated = True
             log('Installing the workspace-browser widget... ', 1, ending='')
@@ -684,3 +686,5 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 workspace.public = True
                 workspace.save()
             log('DONE', 1)
+
+        return updated
