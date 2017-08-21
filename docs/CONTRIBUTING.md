@@ -10,6 +10,15 @@ the developers managing and developing this open source project. In return,
 they should reciprocate that respect in addressing your issue or assessing
 patches and features.
 
+**Contents**
+
+- [Using the issue tracker](#using-the-issue-tracker)
+- [Bug reports](#bug-reports)
+- [Feature requests](#feature-requests)
+- [Contributing code](#contributing-code)
+    - [Code Guidelines](#code-guidelines)
+
+
 ## Using the issue tracker
 
 The [issue tracker](https://github.com/Wirecloud/wirecloud/issues) is
