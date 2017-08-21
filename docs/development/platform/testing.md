@@ -23,7 +23,7 @@ There are also unit tests for the JavaScript code that is executed in the client
 side. You can tun those tests by executing the following command:
 
 ```
-$ grunt kamra
+$ grunt karma
 ```
 
 > **Note**: JavaScript unit tests are work in progress, do not expect a great
