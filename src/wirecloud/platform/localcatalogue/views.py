@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -34,7 +34,6 @@ import six
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_downloadfile_response, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -44,6 +43,7 @@ from wirecloud.platform.localcatalogue.utils import install_resource_to_user, in
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
+from wirecloud.proxy.views import parse_context_from_referer, WIRECLOUD_PROXY
 
 
 class ResourceCollection(Resource):
@@ -108,6 +108,7 @@ class ResourceCollection(Resource):
             public = request.GET.get('public', 'false').strip().lower() == 'true'
             templateURL = data.get('url')
             market_endpoint = data.get('market_endpoint', None)
+            headers = data.get('headers', {})
 
             if market_endpoint is not None:
 
@@ -126,7 +127,17 @@ class ResourceCollection(Resource):
             else:
 
                 try:
-                    downloaded_file = download_http_content(templateURL)
+                    context = parse_context_from_referer(request)
+                except:
+                    context = {}
+
+                try:
+                    context["headers"] = headers
+                    response = WIRECLOUD_PROXY.do_request(request, templateURL, "GET", context)
+                    if response.status_code >= 300 or response.status_code < 200:
+                        return build_error_response(request, 502, "")
+
+                    downloaded_file = b''.join(response)
                 except:
                     return build_error_response(request, 409, _('Content cannot be downloaded from the specified url'))
 

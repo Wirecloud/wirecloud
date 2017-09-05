@@ -39,7 +39,14 @@ from wirecloud.platform.models import Workspace
 from wirecloud.platform.plugins import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_response_header, ValidationError
 
+
 request_logger = logging.getLogger('django.request')
+HTTP_HEADER_RE = re.compile('^http_')
+BLACKLISTED_HTTP_HEADERS = [
+    'http_host', 'http_forwarded', 'http_x_forwarded_by',
+    'http_x_forwarded_host', 'http_x_forwarded_port',
+    'http_x_forwarded_proto', 'http_x_forwarded_server'
+]
 
 
 def log_error(request, exc_info):
@@ -55,16 +62,83 @@ def log_error(request, exc_info):
     )
 
 
+def parse_request_headers(request, request_data):
+
+    request_data.setdefault("cookies", SimpleCookie())
+    request_data.setdefault("headers", {})
+
+    if 'HTTP_TRANSFER_ENCODING' in request.META:
+        raise ValidationError(build_error_response(request, 422, "WireCloud doesn't support requests using the Transfer-Encoding header"))
+
+    for header in request.META.items():
+        header_name = header[0].lower()
+        if header_name == 'content_type' and header[1]:
+            request_data['headers']["content-type"] = header[1]
+
+        elif header_name == 'content_length' and header[1]:
+            # Only take into account request body if the request has a
+            # Content-Length header (we don't support chunked requests)
+            request_data['data'] = request
+            request_data['headers']['content-length'] = "%s" % header[1]
+            request_data['data'].len = int(header[1])
+
+        elif header_name == 'cookie' or header_name == 'http_cookie':
+
+            cookie_parser = SimpleCookie(str(header[1]))
+
+            del cookie_parser[str(settings.SESSION_COOKIE_NAME)]
+
+            if str(settings.CSRF_COOKIE_NAME) in cookie_parser:
+                del cookie_parser[str(settings.CSRF_COOKIE_NAME)]
+
+            request_data['cookies'].update(cookie_parser)
+
+        elif HTTP_HEADER_RE.match(header_name) and header_name not in BLACKLISTED_HTTP_HEADERS:
+
+            fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
+            request_data['headers'][fixed_name] = header[1]
+
+
+def parse_context_from_referer(request, request_method="GET"):
+    parsed_referer = urlparse(request.META["HTTP_REFERER"])
+    if request.get_host() != parsed_referer[1]:
+        raise Exception()
+
+    referer_view_info = resolve(parsed_referer.path)
+    if referer_view_info.url_name == 'wirecloud.workspace_view':
+
+        workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
+        if not workspace.is_available_for(request.user):
+            raise Exception()
+
+    elif referer_view_info.url_name == 'wirecloud.showcase_media' or referer_view_info.url_name == 'wirecloud|proxy':
+
+        if request_method not in ('GET', 'POST'):
+            raise Exception()
+
+        workspace = None
+
+    else:
+        raise Exception()
+
+    component_type = request.META.get("HTTP_WIRECLOUD_COMPONENT_TYPE")
+    if component_type is not None:
+        del request.META["HTTP_WIRECLOUD_COMPONENT_TYPE"]
+
+    component_id = request.META.get("HTTP_WIRECLOUD_COMPONENT_ID")
+    if component_id is not None:
+        del request.META["HTTP_WIRECLOUD_COMPONENT_ID"]
+
+    return {
+        "workspace": workspace,
+        "component_type": component_type,
+        "component_id": component_id
+    }
+
+
 class Proxy():
 
-    http_headerRE = re.compile('^http_')
     protocolRE = re.compile('HTTP/(.*)')
-
-    blacklisted_http_headers = [
-        'http_host', 'http_forwarded', 'http_x_forwarded_by',
-        'http_x_forwarded_host', 'http_x_forwarded_port',
-        'http_x_forwarded_proto', 'http_x_forwarded_server'
-    ]
 
     # set the timeout to 60 seconds
     socket.setdefaulttimeout(60)
@@ -76,47 +150,16 @@ class Proxy():
         request_data.update({
             "method": method,
             "url": url,
-            "data": None,
-            "headers": {},
-            "cookies": SimpleCookie(),
-            "user": request.user,
             "original-request": request,
         })
 
+        request_data.setdefault("data", None)
+        request_data.setdefault("headers", {})
+        request_data.setdefault("cookies", SimpleCookie())
+        request_data.setdefault("user", request.user)
+
         # Request creation
         proto, host, cgi, param, query = urlparse(url)[:5]
-
-        # Extract headers from META
-        if 'HTTP_TRANSFER_ENCODING' in request.META:
-            return build_error_response(request, 422, "WireCloud doesn't support requests using the Transfer-Encoding header")
-
-        for header in request.META.items():
-            header_name = header[0].lower()
-            if header_name == 'content_type' and header[1]:
-                request_data['headers']["content-type"] = header[1]
-
-            elif header_name == 'content_length' and header[1]:
-                # Only take into account request body if the request has a
-                # Content-Length header (we don't support chunked requests)
-                request_data['data'] = request
-                request_data['headers']['content-length'] = "%s" % header[1]
-                request_data['data'].len = int(header[1])
-
-            elif header_name == 'cookie' or header_name == 'http_cookie':
-
-                cookie_parser = SimpleCookie(str(header[1]))
-
-                del cookie_parser[str(settings.SESSION_COOKIE_NAME)]
-
-                if str(settings.CSRF_COOKIE_NAME) in cookie_parser:
-                    del cookie_parser[str(settings.CSRF_COOKIE_NAME)]
-
-                request_data['cookies'].update(cookie_parser)
-
-            elif self.http_headerRE.match(header_name) and header_name not in self.blacklisted_http_headers:
-
-                fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
-                request_data['headers'][fixed_name] = header[1]
 
         # Build the Via header
         protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
@@ -145,7 +188,7 @@ class Proxy():
             return e.get_response(request)
 
         # Cookies
-        cookie_header_content = ', '.join([cookie_parser[key].OutputString() for key in request_data['cookies']])
+        cookie_header_content = ', '.join([request_data['cookies'][key].OutputString() for key in request_data['cookies']])
         if cookie_header_content != '':
             request_data['headers']['Cookie'] = cookie_header_content
 
@@ -209,34 +252,7 @@ def proxy_request(request, protocol, domain, path):
         if settings.SESSION_COOKIE_NAME not in request.COOKIES:
             raise Exception()
 
-        parsed_referer = urlparse(request.META["HTTP_REFERER"])
-        if request.get_host() != parsed_referer[1]:
-            raise Exception()
-
-        referer_view_info = resolve(parsed_referer.path)
-        if referer_view_info.url_name == 'wirecloud.workspace_view':
-
-            workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
-            if not workspace.is_available_for(request.user):
-                raise Exception()
-
-        elif referer_view_info.url_name == 'wirecloud.showcase_media' or referer_view_info.url_name == 'wirecloud|proxy':
-
-            if request_method not in ('GET', 'POST'):
-                raise Exception()
-
-            workspace = None
-
-        else:
-            raise Exception()
-
-        component_type = request.META.get("HTTP_WIRECLOUD_COMPONENT_TYPE")
-        if component_type is not None:
-            del request.META["HTTP_WIRECLOUD_COMPONENT_TYPE"]
-
-        component_id = request.META.get("HTTP_WIRECLOUD_COMPONENT_ID")
-        if component_id is not None:
-            del request.META["HTTP_WIRECLOUD_COMPONENT_ID"]
+        context = parse_context_from_referer(request, request_method)
 
     except:
         return build_error_response(request, 403, _("Invalid request"))
@@ -246,11 +262,12 @@ def proxy_request(request, protocol, domain, path):
         url += '?' + request.GET.urlencode()
 
     try:
-        response = WIRECLOUD_PROXY.do_request(request, url, request_method, {
-            "workspace": workspace,
-            "component_type": component_type,
-            "component_id": component_id
-        })
+        # Extract headers from META
+        parse_request_headers(request, context)
+
+        response = WIRECLOUD_PROXY.do_request(request, url, request_method, context)
+    except ValidationError as e:
+        return e.get_response(request)
     except Exception as e:
         log_error(request, sys.exc_info())
         msg = _("Error processing proxy request: %s") % e
