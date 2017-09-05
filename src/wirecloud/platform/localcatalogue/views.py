@@ -135,7 +135,7 @@ class ResourceCollection(Resource):
                     context["headers"] = headers
                     response = WIRECLOUD_PROXY.do_request(request, templateURL, "GET", context)
                     if response.status_code >= 300 or response.status_code < 200:
-                        return build_error_response(request, 502, "")
+                        raise Exception()
 
                     downloaded_file = b''.join(response)
                 except:
