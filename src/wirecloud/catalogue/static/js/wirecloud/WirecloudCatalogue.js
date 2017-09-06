@@ -218,6 +218,7 @@
             contentType = 'application/json';
             body = JSON.stringify({
                 url: options.url,
+                headers: options.headers,
                 force_create: !!options.forceCreate,
                 install_embedded_resources: !!options.install_embedded_resources,
                 market_endpoint: options.market_endpoint
