@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,7 +28,7 @@ import stat
 import sys
 from tempfile import mkdtemp
 from six.moves.urllib.error import URLError, HTTPError
-from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import unquote, urlparse
 
 from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles import finders
@@ -201,7 +201,7 @@ class LocalFileSystemServer(object):
             raise HTTPError('url', '405', 'Method not allowed', None, None)
 
         parsed_url = urlparse(url)
-        final_path = os.path.normpath(os.path.join(self.base_path, parsed_url.path[1:]))
+        final_path = os.path.normpath(os.path.join(self.base_path, unquote(parsed_url.path[1:])))
         if final_path.startswith(self.base_path) and os.path.isfile(final_path):
             f = codecs.open(final_path, 'rb')
             contents = f.read()
