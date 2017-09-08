@@ -34,9 +34,11 @@
             throw new TypeError("invalid meta parameter");
         }
 
-        Object.defineProperty(this, 'meta', {value: meta});
-        Object.defineProperty(this, 'readonly', {value: !!readonly});
-        Object.defineProperty(this, 'hidden', {value: !!hidden});
+        Object.defineProperties(this, {
+            meta: {value: meta},
+            readonly: {value: !!readonly},
+            hidden: {value: !!hidden}
+        });
 
         if (meta.type === 'boolean' && typeof currentValue === 'string') {
             this.value = currentValue.trim().toLowerCase() === 'true';

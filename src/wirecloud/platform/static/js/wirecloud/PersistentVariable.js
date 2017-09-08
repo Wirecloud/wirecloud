@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,11 +26,19 @@
 
     "use strict";
 
-    var PersistentVariable = function PersistentVariable(def, commiter, readonly, currentValue) {
-        Object.defineProperty(this, 'meta', {value: def});
-        Object.defineProperty(this, 'readonly', {value: readonly});
-        Object.defineProperty(this, 'commiter', {value: commiter});
-        this.value = currentValue;
+    var PersistentVariable = function PersistentVariable(meta, commiter, readonly, value) {
+        if (meta == null || !(meta instanceof Wirecloud.PersistentVariableDef)) {
+            throw new TypeError("invalid meta parameter");
+        }
+
+        Object.defineProperties(this, {
+            meta: {value: meta},
+            readonly: {value: readonly},
+            commiter: {value: commiter},
+            value: {get: property_value_get}
+        });
+
+        privates.set(this, value);
     };
 
     PersistentVariable.prototype.get = function get() {
@@ -42,10 +50,20 @@
             throw new Error('Read only properties cannot be modified');
         }
 
-        this.value = new_value;
-        this.commiter.add(this.meta.name, this.value);
+        privates.set(this, new_value);
+        this.commiter.add(this.meta.name, new_value);
     };
 
     Wirecloud.PersistentVariable = PersistentVariable;
+
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
+
+    var property_value_get = function property_value_get() {
+        return privates.get(this);
+    };
 
 })();
