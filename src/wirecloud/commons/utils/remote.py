@@ -1257,6 +1257,10 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
             webdriver_args = {}
         cls.driver = getattr(module, klass_name)(**webdriver_args)
         cls.driver.set_window_size(1024, 800)
+        cls._driver_needs_unload = (
+            cls.driver.capabilities['browserName'] == 'firefox' and
+            cls.driver.capabilities.get('browserVersion', '0').split('.') > ['52', '3']
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -1305,8 +1309,12 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
     def wait_wirecloud_unload(self, timeout=15):
 
-        loading_window = self.wait_element_visible('#loading-window')
-        WebDriverWait(self.driver, timeout).until(EC.staleness_of(loading_window))
+        # TODO: This seems to be needed when using some version greather than 52.3
+        # of firefox. We need to detect the exact version, but seems safe to use
+        # 52.3 as threshold for now
+        if self._driver_needs_unload:
+            loading_window = self.wait_element_visible('#loading-window')
+            WebDriverWait(self.driver, timeout).until(EC.staleness_of(loading_window))
 
     def wait_wirecloud_ready(self, start_timeout=10, timeout=10):
 
