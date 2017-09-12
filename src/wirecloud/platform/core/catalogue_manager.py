@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -46,38 +46,6 @@ class WirecloudCatalogueManager(MarketManager):
         self._user = user
         self._name = name
         self._options = options
-
-    def search_resource(self, vendor, name, version, user):
-
-        if self._name == 'local':
-            resources = CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version)[:1]
-
-            if len(resources) == 1:
-                resource = resources[0]
-                base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
-                downloaded_file = download_local_file(os.path.join(base_dir, resource.template_uri))
-
-                return {
-                    'downloaded_file': downloaded_file,
-                }
-            else:
-                return None
-        else:
-
-            path = '/'.join(('catalogue', 'resource', vendor, name, version))
-            url = iri_to_uri(urljoin(self._options['url'], path))
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                data = json.loads(response.content)
-                downloaded_file = download_http_content(data['uriTemplate'], user=user)
-                return {
-                    'downloaded_file': downloaded_file,
-                    'template_url': data['uriTemplate'],
-                    'packaged': data['packaged']
-                }
-            else:
-                return None
 
     def publish(self, endpoint, wgt_file, user, request=None, template=None):
 

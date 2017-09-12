@@ -72,9 +72,6 @@ class FIWAREBAEManager(MarketManager):
         self._name = name
         self._options = options
 
-    def search_resource(self, vendor, name, version, user):
-        return None
-
     def download_resource(self, user, url, endpoint):
 
         store = endpoint['store']
@@ -109,9 +106,6 @@ class FiWareMarketManager(MarketManager):
         self._user = user
         self._name = name
         self._options = options
-
-    def search_resource(self, vendor, name, version, user):
-        return None
 
     def download_resource(self, user, url, endpoint):
 
