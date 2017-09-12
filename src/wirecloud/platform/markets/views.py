@@ -44,14 +44,11 @@ class MarketCollection(Resource):
     def read(self, request):
         result = []
 
-        for market in Market.objects.filter(Q(user=None) | Q(user=request.user)).order_by('user'):
+        for market in Market.objects.filter(Q(public=True) | Q(user=request.user)).order_by('user'):
             market_data = market.options
             market_data['name'] = market.name
-
-            if market.user is not None:
-                market_data['user'] = market.user.username
-            else:
-                market_data['user'] = None
+            market_data['user'] = market.user.username
+            market_data['public'] = market.public
 
             market_data['permissions'] = {
                 'delete': request.user.is_superuser or market.user == request.user
@@ -68,32 +65,28 @@ class MarketCollection(Resource):
 
         received_data = parse_json_request(request)
 
-        if 'options' not in received_data:
-            return build_error_response(request, 400, _("Missing marketplace options"))
+        validate_url_param(request, 'url', received_data['url'])
 
-        validate_url_param(request, 'options.url', received_data['options']['url'])
-
-        if 'user' not in received_data['options'] or received_data['options']['user'] == request.user.username:
-            user_entry = request.user
+        if 'user' not in received_data or received_data['user'] == request.user.username:
+            target_user = request.user
         else:
             try:
-                user_entry = User.objects.get(username=received_data['options']['user'])
+                target_user = User.objects.get(username=received_data['user'])
             except:
                 return build_error_response(request, 422, _("invalid user option"))
 
-        if user_entry != request.user and not request.user.is_superuser:
+        if target_user != request.user and not request.user.is_superuser:
             return build_error_response(request, 403, _("You don't have permissions for adding marketplaces in name of other user"))
 
-        if 'user' in received_data['options']:
-            del received_data['options']['user']
+        received_data['user'] = target_user.username
 
         try:
-            Market.objects.create(user=user_entry, name=received_data['name'], options=received_data['options'])
+            Market.objects.create(user=target_user, name=received_data['name'], public=received_data['public'], options=received_data)
         except IntegrityError:
             return build_error_response(request, 409, 'Market name already in use')
 
-        market_managers = get_market_managers(user_entry)
-        market_managers[user_entry.username + '/' + received_data['name']].create(user_entry, received_data['options'])
+        market_managers = get_market_managers(target_user)
+        market_managers[target_user.username + '/' + received_data['name']].create(target_user, received_data)
 
         return HttpResponse(status=201)
 

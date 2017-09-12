@@ -33,6 +33,7 @@
      */
     var WirecloudCatalogue = function WirecloudCatalogue(options) {
 
+        Object.defineProperty(this, 'title', {'value': options.title || options.name});
         Object.defineProperty(this, 'name', {'value': options.name});
         Object.defineProperty(this, 'permissions', {'value': options.permissions});
 

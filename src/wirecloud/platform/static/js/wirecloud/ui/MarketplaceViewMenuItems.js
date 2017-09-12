@@ -69,7 +69,7 @@
                 var menu, fields;
 
                 fields = {
-                    'name': {
+                    'title': {
                         'type': 'text',
                         'label': utils.gettext('Name'),
                         'required': true
@@ -97,23 +97,12 @@
 
                 // Form data is sent to server
                 menu.executeOperation = (data) => {
-                    var market_info = {
-                        "name": data.name,
-                        "options": {
-                            "name": data.name,
-                            "url": data.url,
-                            "type": data.type,
-                        }
-                    };
-                    if (data.public === true) {
-                        market_info.options.user = null;
-                    } else {
-                        market_info.options.user = Wirecloud.contextManager.get('username');
-                    }
-                    var task = Wirecloud.MarketManager.addMarket(market_info);
+                    data.name = URLify(data.title);
+                    data.user = Wirecloud.contextManager.get("username");
+                    var task = Wirecloud.MarketManager.addMarket(data);
                     // TODO move to use events
                     task.then(() => {
-                        this.market.addMarket(market_info.options);
+                        this.market.addMarket(data);
                     });
                     return task;
                 };

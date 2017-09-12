@@ -124,7 +124,9 @@
         "model": "platform.market",
         "fields": {
             "name": "origin",
-            "options": "{\"url\": \"http://wcatalogue.example.com\", \"type\":\"wirecloud\", \"label\":\"origin\"}"
+            "public": true,
+            "options": "{\"public\": true, \"url\": \"http://wcatalogue.example.com\", \"type\":\"wirecloud\", \"label\":\"origin\"}",
+            "user": 1
         }
     }
 ]

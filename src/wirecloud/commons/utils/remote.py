@@ -1565,7 +1565,7 @@ class MarketplaceViewTester(object):
         self.open_menu().click_entry("Add new marketplace")
 
         form = FormModalTester(self.testcase, self.testcase.wait_element_visible('.wc-add-external-catalogue-modal'))
-        form.get_field('name').set_value(name)
+        form.get_field('title').set_value(name)
         form.get_field('url').set_value(url)
         form.get_field('type').set_value(type_)
 

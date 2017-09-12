@@ -72,6 +72,7 @@
 
 {% compress js %}
 <script type="text/javascript" src="{% static "js/lib/moment-with-locales.min.js" %}"></script>
+<script type="text/javascript" src="{% static "js/lib/urlify.js" %}"></script>
 {% endcompress %}
 
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>

@@ -82,7 +82,7 @@
     CatalogueView.prototype = new StyledElements.Alternative();
 
     CatalogueView.prototype.getLabel = function getLabel() {
-        return this.catalogue.name;
+        return this.catalogue.title;
     };
 
     CatalogueView.prototype._onShow = function _onShow() {

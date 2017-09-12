@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,8 +27,9 @@ from wirecloud.commons.fields import JSONField
 
 @python_2_unicode_compatible
 class Market(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), blank=True)
     name = models.CharField(_('Name'), max_length=50)
+    public = models.BooleanField(_('Public'), default=False)
     options = JSONField(_('Options'))
 
     class Meta:
@@ -37,10 +38,7 @@ class Market(models.Model):
         db_table = 'wirecloud_market'
 
     def __str__(self):
-        if self.user is None:
-            return self.name
-        else:
-            return self.user.username + '/' + self.name
+        return self.user.username + '/' + self.name
 
 
 @python_2_unicode_compatible

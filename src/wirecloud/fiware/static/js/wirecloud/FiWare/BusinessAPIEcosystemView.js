@@ -43,7 +43,7 @@
     utils.inherit(BusinessAPIEcosystemView, Wirecloud.ui.WorkspaceView);
 
     BusinessAPIEcosystemView.prototype.getLabel = function getLabel() {
-        return this.desc.name;
+        return this.desc.title || this.desc.name;
     };
 
     BusinessAPIEcosystemView.prototype.goUp = function goUp() {

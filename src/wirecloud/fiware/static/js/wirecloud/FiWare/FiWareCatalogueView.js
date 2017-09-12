@@ -92,11 +92,7 @@
         this.appendChild(this.alternatives);
         this.currentStore = 'All stores';
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
-        if (this.desc.user != null) {
-            Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
-        } else {
-            Object.defineProperty(this, 'market_id', {value: this.desc.name});
-        }
+        Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
         this.loading = null;
         this.error = false;
         this.callbacks = [];
@@ -135,7 +131,7 @@
     FiWareCatalogueView.prototype = new StyledElements.Alternative();
 
     FiWareCatalogueView.prototype.getLabel = function () {
-        return this.desc.name;
+        return this.desc.title || this.desc.name;
     };
 
     FiWareCatalogueView.prototype.onHistoryChange = function onHistoryChange(state) {

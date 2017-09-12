@@ -69,11 +69,7 @@
 
         for (i = 0; i < response.length; i++) {
             view_element = response[i];
-            if (view_element.user != null) {
-                market_key = view_element.user + '/' + view_element.name;
-            } else {
-                market_key = view_element.name;
-            }
+            market_key = view_element.user + '/' + view_element.name;
 
             if (market_key in old_views) {
                 this.viewsByName[market_key] = old_views[market_key];
@@ -231,10 +227,6 @@
             return [utils.gettext('marketplace list not available')];
         } else {
             breadcrum = ['marketplace'];
-            if (current_alternative.desc.user) {
-                breadcrum.push(current_alternative.desc.user);
-            }
-
             breadcrum.push(current_alternative.getLabel());
             // TODO
             if (current_alternative.alternatives != null) {
@@ -258,11 +250,7 @@
         if (current_alternative === this.emptyAlternative || current_alternative === this.errorsAlternative) {
             return utils.gettext('Marketplace');
         } else {
-            if (current_alternative.desc.user) {
-                marketname = current_alternative.desc.user + '/' + current_alternative.getLabel();
-            } else {
-                marketname = current_alternative.getLabel();
-            }
+            marketname = current_alternative.getLabel();
             title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
             subalternative = current_alternative.alternatives.getCurrentAlternative();
             if (subalternative.view_name === "details" && subalternative.currentEntry != null) {

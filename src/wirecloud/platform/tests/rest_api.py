@@ -3591,10 +3591,8 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.market_collection')
         data = {
             'name': 'new_market',
-            'options': {
-                'type': 'wirecloud',
-                'url': 'http://example.com'
-            }
+            'type': 'wirecloud',
+            'url': 'http://example.com'
         }
         check_post_requires_authentication(self, url, json.dumps(data))
 
@@ -3608,10 +3606,8 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Make request
         data = {
             'name': 'new_market',
-            'options': {
-                'type': 'wirecloud',
-                'url': 'http://example.com'
-            }
+            'type': 'wirecloud',
+            'url': 'http://example.com'
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
@@ -3626,11 +3622,9 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Make request
         data = {
             'name': 'new_market',
-            'options': {
-                'user': 'user_with_markets',
-                'type': 'wirecloud',
-                'url': 'http://example.com'
-            }
+            'user': 'user_with_markets',
+            'type': 'wirecloud',
+            'url': 'http://example.com'
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
@@ -3640,11 +3634,9 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.market_collection')
         data = {
             'name': 'new_market',
-            'options': {
-                'user': 'user_with_markets',
-                'type': 'wirecloud',
-                'url': 'http://example.com'
-            }
+            'user': 'user_with_markets',
+            'type': 'wirecloud',
+            'url': 'http://example.com'
         }
         check_post_requires_permission(self, url, json.dumps(data))
 
@@ -3659,10 +3651,8 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'deleteme',
             'user': 'user_with_markets',
-            'options': {
-                'type': 'wirecloud',
-                'url': 'http://example.com'
-            }
+            'type': 'wirecloud',
+            'url': 'http://example.com'
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
@@ -3679,11 +3669,9 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Make request
         data = {
             'name': 'new_market',
-            'options': {
-                'user': 'user_with_markets',
-                'type': 'wirecloud',
-                'url': 'relative/url'
-            }
+            'user': 'user_with_markets',
+            'type': 'wirecloud',
+            'url': 'relative/url'
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
