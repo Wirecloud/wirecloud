@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -75,13 +75,14 @@ class MarketCollection(Resource):
 
         if 'user' not in received_data['options'] or received_data['options']['user'] == request.user.username:
             user_entry = request.user
-        elif received_data['options'].get('user', None) is not None:
-            user_entry = User.objects.get(username=received_data['options']['user'])
         else:
-            user_entry = None
+            try:
+                user_entry = User.objects.get(username=received_data['options']['user'])
+            except:
+                return build_error_response(request, 422, _("invalid user option"))
 
-        if (user_entry is None or user_entry != request.user) and not request.user.is_superuser:
-            return build_error_response(request, 403, _("You don't have permissions for adding public marketplaces"))
+        if user_entry != request.user and not request.user.is_superuser:
+            return build_error_response(request, 403, _("You don't have permissions for adding marketplaces in name of other user"))
 
         if 'user' in received_data['options']:
             del received_data['options']['user']
@@ -90,6 +91,9 @@ class MarketCollection(Resource):
             Market.objects.create(user=user_entry, name=received_data['name'], options=received_data['options'])
         except IntegrityError:
             return build_error_response(request, 409, 'Market name already in use')
+
+        market_managers = get_market_managers(user_entry)
+        market_managers[user_entry.username + '/' + received_data['name']].create(user_entry, received_data['options'])
 
         return HttpResponse(status=201)
 

@@ -24,6 +24,7 @@ from io import BytesIO
 from copy import deepcopy
 from Crypto.Cipher import AES
 import json
+import os
 import re
 
 from django.conf import settings
@@ -33,6 +34,7 @@ from django.utils.translation import ugettext as _
 import markdown
 import six
 
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.db import save_alternative
@@ -44,7 +46,7 @@ from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.iwidget.utils import parse_value_from_text
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
-from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
+from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values, update_workspace_preferences
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
 
@@ -592,25 +594,50 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
     return data_ret
 
 
-def create_workspace(owner, f):
+def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}):
 
     from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
-    wgt = f if isinstance(f, WgtFile) else WgtFile(f)
-    template = TemplateParser(wgt.get_template())
-
-    resource_info = template.get_resource_processed_info(process_urls=False)
-    if resource_info["type"] != 'mashup':
+    if mashup is not None and f is not None:
         raise Exception
 
-    for embedded_resource in resource_info['embedded']:
-        if embedded_resource['src'].startswith('https://'):
-            resource_file = download_http_content(embedded_resource['src'])
-        else:
-            resource_file = BytesIO(wgt.read(embedded_resource['src']))
+    if f is not None:
 
-        extra_resource_contents = WgtFile(resource_file)
-        install_resource_to_user(owner, file_contents=extra_resource_contents)
+        wgt = f if isinstance(f, WgtFile) else WgtFile(f)
+        template = TemplateParser(wgt.get_template())
 
-    workspace, _ = buildWorkspaceFromTemplate(template, owner)
+        resource_info = template.get_resource_processed_info(process_urls=False)
+        if resource_info["type"] != 'mashup':
+            raise Exception
+
+        for embedded_resource in resource_info['embedded']:
+            if embedded_resource['src'].startswith('https://'):
+                resource_file = download_http_content(embedded_resource['src'])
+            else:
+                resource_file = BytesIO(wgt.read(embedded_resource['src']))
+
+            extra_resource_contents = WgtFile(resource_file)
+            install_resource_to_user(owner, file_contents=extra_resource_contents)
+    else:
+        values = mashup.split('/', 3)
+        if len(values) != 3:
+            raise TypeError(_('invalid mashup id'))
+
+        (mashup_vendor, mashup_name, mashup_version) = values
+        try:
+            resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+            if not resource.is_available_for(owner) or resource.resource_type() != 'mashup':
+                raise CatalogueResource.DoesNotExist
+        except CatalogueResource.DoesNotExist:
+            raise Exception(_('Mashup not found: %(mashup)s') % {'mashup': mashup})
+
+        base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+        wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+        template = TemplateParser(wgt_file.get_template())
+
+    workspace, _foo = buildWorkspaceFromTemplate(template, owner, new_name=new_name)
+
+    if len(preferences) > 0:
+        update_workspace_preferences(workspace, preferences, invalidate_cache=False)
+
     return workspace

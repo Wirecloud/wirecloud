@@ -31,6 +31,9 @@ class MarketManager:
     def __init__(self, user, name, options):
         pass
 
+    def create(self, user, options):
+        pass
+
     def publish_mashup(self, endpoint, published_workspace, user, publish_options):
         pass
 

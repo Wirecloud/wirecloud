@@ -32,6 +32,7 @@ from wirecloud.platform.localcatalogue.utils import install_resource_to_all_user
 from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.models import CatalogueResource
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
+from wirecloud.platform.workspace.utils import create_workspace
 
 import wirecloud.fiware
 from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
@@ -71,6 +72,9 @@ class FIWAREBAEManager(MarketManager):
         self._user = user
         self._name = name
         self._options = options
+
+    def create(self, user, options):
+        create_workspace(user, mashup="CoNWeT/bae-marketplace/0.1.1", new_name=options['name'], preferences={'server_url': options['url']})
 
     def download_resource(self, user, url, endpoint):
 
