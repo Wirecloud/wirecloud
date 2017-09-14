@@ -64,6 +64,7 @@ class MarketCollection(Resource):
     def create(self, request):
 
         received_data = parse_json_request(request)
+        received_data.setdefault("public", False)
 
         validate_url_param(request, 'url', received_data['url'])
 
