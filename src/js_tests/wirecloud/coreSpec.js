@@ -608,10 +608,11 @@
                 Wirecloud.WorkspaceCatalogue.prototype.reload = jasmine.createSpy("reload").and.callFake(function () {
                     return new Wirecloud.Task("Requesting workspace components", function (resolve) {resolve()});
                 });
-                spyOn(Wirecloud.URLs.WORKSPACE_ENTRY, "evaluate");
+                spyOn(Wirecloud.URLs.WORKSPACE_ENTRY_OWNER_NAME, "evaluate");
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function () {
-                    expect(Wirecloud.URLs.WORKSPACE_ENTRY.evaluate).toHaveBeenCalledWith({
-                        workspace_id: 1
+                    expect(Wirecloud.URLs.WORKSPACE_ENTRY_OWNER_NAME.evaluate).toHaveBeenCalledWith({
+                        owner: "wirecloud",
+                        name: "home"
                     });
                     return new Wirecloud.Task("Requesting workspace data", function (resolve) {
                         resolve({
@@ -626,8 +627,6 @@
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function (workspace) {
                     expect(workspace).toEqual(jasmine.any(Wirecloud.Workspace));
-                    // TODO internal aspect
-                    expect(task.subtasks).toEqual([jasmine.any(Wirecloud.Task), jasmine.any(Wirecloud.Task), jasmine.any(Wirecloud.Task)]);
                     done();
                 });
             });

@@ -57,8 +57,7 @@
     var load = function load() {
         if (this.status === "unloaded") {
             this.status = "loading";
-            var id = Wirecloud.workspacesByUserAndName[this.desc.user][this.desc.name];
-            Wirecloud.loadWorkspace(id).then((workspace) => {
+            Wirecloud.loadWorkspace({owner: this.desc.user, name: this.desc.name}).then((workspace) => {
                 this.loadWorkspace(workspace);
                 this.loaded = "loaded";
             }).catch(() => {

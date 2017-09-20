@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -150,6 +150,9 @@ urlpatterns = (
     url(r'^api/workspace/(?P<workspace_id>\d+)/resources$',
         localcatalogue_views.WorkspaceResourceCollection(permitted_methods=('GET',)),
         name='wirecloud.workspace_resource_collection'),
+    url(r'^api/workspace/(?P<owner>[^/]+)/(?P<name>[^/]+)?$',
+        workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
+        name='wirecloud.workspace_entry_owner_name'),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT', 'PATCH')),

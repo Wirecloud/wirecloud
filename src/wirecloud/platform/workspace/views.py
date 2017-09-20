@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -174,9 +174,12 @@ class WorkspaceEntry(Resource):
 
     @authentication_required_cond(ALLOW_ANONYMOUS_ACCESS)
     @produces(('application/json',))
-    def read(self, request, workspace_id):
+    def read(self, request, workspace_id=None, owner=None, name=None):
 
-        workspace = get_object_or_404(Workspace, pk=workspace_id)
+        if workspace_id is not None:
+            workspace = get_object_or_404(Workspace, pk=workspace_id)
+        else:
+            workspace = get_object_or_404(Workspace, creator__username=owner, name=name)
 
         if not workspace.is_available_for(request.user):
             return build_error_response(request, 403, _("You don't have permission to access this workspace"))

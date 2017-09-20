@@ -267,23 +267,25 @@
      * Wirecloud.loadWorkspace({owner: "user", name: "dashboard"});
      */
     Wirecloud.loadWorkspace = function loadWorkspace(workspace, options) {
-        if (!('id' in workspace)) {
-            workspace = this.workspacesByUserAndName[workspace.owner][workspace.name];
+        var url;
+
+        if ('id' in workspace) {
+            url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});
+        } else if ('owner' in workspace && 'name' in workspace) {
+            url = Wirecloud.URLs.WORKSPACE_ENTRY_OWNER_NAME.evaluate({'owner': workspace.owner, 'name': workspace.name});
+        } else {
+            throw TypeError('use the id parameter or the owner/name pair of parameters');
         }
 
-        var workspace_resources = new Wirecloud.WorkspaceCatalogue(workspace.id);
-        return workspace_resources.reload().then(function () {
-            var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});
-            return Wirecloud.io.makeRequest(workspaceUrl, {
-                method: "GET",
-                requestHeaders: {'Accept': 'application/json'}
-            }).renameTask(utils.gettext("Requesting workspace data"));
-        }).then(function (response) {
+        return Wirecloud.io.makeRequest(url, {
+            method: "GET",
+            requestHeaders: {'Accept': 'application/json'}
+        }).renameTask(utils.gettext("Requesting workspace data")).then((response) => {
             if (response.status !== 200) {
                 throw new Error("Unexpected error code");
             }
-            return process_workspace_data.call(this, response, workspace_resources, options);
-        }.bind(this)).toTask("Downloading workspace");
+            return process_workspace_data.call(this, response, options);
+        }).toTask("Downloading workspace");
     };
 
     /**
@@ -540,13 +542,17 @@
     };
 
 
-    var process_workspace_data = function process_workspace_data(response, workspace_resources, options) {
+    var process_workspace_data = function process_workspace_data(response, options) {
 
-        return new Wirecloud.Task("Processing workspace data", (resolve, reject, update) => {
-            var workspace_data = JSON.parse(response.responseText);
-            var workspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
-            cache_workspace(workspace);
-            resolve(workspace);
+        var workspace_data = JSON.parse(response.responseText);
+        var workspace_resources = new Wirecloud.WorkspaceCatalogue(workspace_data.id);
+
+        return workspace_resources.reload().then(function () {
+            return new Wirecloud.Task("Processing workspace data", (resolve, reject, update) => {
+                var workspace = new Wirecloud.Workspace(workspace_data, workspace_resources);
+                cache_workspace(workspace);
+                resolve(workspace);
+            });
         });
     };
 

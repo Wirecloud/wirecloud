@@ -620,6 +620,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},
             {'id': 'OPERATOR_VARIABLES_ENTRY', 'url': build_url_template('wirecloud.operator_variables', ['workspace_id', 'operator_id'])},
             {'id': 'WORKSPACE_COLLECTION', 'url': build_url_template('wirecloud.workspace_collection')},
+            {'id': 'WORKSPACE_ENTRY_OWNER_NAME', 'url': build_url_template('wirecloud.workspace_entry_owner_name', ['owner', 'name'])},
             {'id': 'WORKSPACE_ENTRY', 'url': build_url_template('wirecloud.workspace_entry', ['workspace_id'])},
             {'id': 'WORKSPACE_MERGE', 'url': build_url_template('wirecloud.workspace_merge', ['to_ws_id'])},
             {'id': 'WORKSPACE_PREFERENCES', 'url': build_url_template('wirecloud.workspace_preferences', ['workspace_id'])},

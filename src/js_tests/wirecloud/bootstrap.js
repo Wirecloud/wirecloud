@@ -37,6 +37,7 @@ Wirecloud = {
         WIRING_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/wiring"),
         WORKSPACE_COLLECTION: "/api/workspaces",
         WORKSPACE_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s"),
+        WORKSPACE_ENTRY_OWNER_NAME: new StyledElements.Utils.Template("/api/workspace/%(owner)s/%(name)s"),
         WORKSPACE_MERGE: new StyledElements.Utils.Template("/api/workspace/%(to_ws_id)s/merge"),
         WORKSPACE_PUBLISH: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/publish"),
         WORKSPACE_VIEW: new StyledElements.Utils.Template("/%(owner)s/%(name)s")
