@@ -46,6 +46,10 @@
         return this.desc.title || this.desc.name;
     };
 
+    BusinessAPIEcosystemView.prototype.isAllow = function isAllow(action) {
+        return (action in this.desc.permissions) ? this.desc.permissions[action] : false;
+    };
+
     BusinessAPIEcosystemView.prototype.goUp = function goUp() {
         return false;
     };

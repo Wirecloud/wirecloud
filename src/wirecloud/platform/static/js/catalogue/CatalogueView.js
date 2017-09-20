@@ -85,6 +85,10 @@
         return this.catalogue.title;
     };
 
+    CatalogueView.prototype.isAllow = function isAllow(action) {
+        return this .catalogue.isAllow(action);
+    };
+
     CatalogueView.prototype._onShow = function _onShow() {
     };
 

@@ -131,7 +131,7 @@
                 dialog.show();
             }.bind(this));
             item.addIconClass('fa fa-trash');
-            item.setDisabled(current_catalogue == null || !current_catalogue.catalogue || !current_catalogue.catalogue.isAllow('delete'));
+            item.setDisabled(current_catalogue == null || !current_catalogue.isAllow('delete'));
             items.push(item);
         }
 

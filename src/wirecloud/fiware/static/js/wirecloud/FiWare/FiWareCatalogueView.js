@@ -134,6 +134,10 @@
         return this.desc.title || this.desc.name;
     };
 
+    FiWareCatalogueView.prototype.isAllow = function isAllow(action) {
+        return this .catalogue.isAllow(action);
+    };
+
     FiWareCatalogueView.prototype.onHistoryChange = function onHistoryChange(state) {
         var offering_info, parts, currentOffering;
 
