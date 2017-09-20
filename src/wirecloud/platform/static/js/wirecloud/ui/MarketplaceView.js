@@ -252,9 +252,12 @@
         } else {
             marketname = current_alternative.getLabel();
             title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
-            subalternative = current_alternative.alternatives.getCurrentAlternative();
-            if (subalternative.view_name === "details" && subalternative.currentEntry != null) {
-                title += ' - ' + subalternative.currentEntry.title;
+            // Deprecated code, currently used for WireCloud and for the deprecated FIWARE Marketplace (now replaced by the BAE)
+            if (current_alternative.alternatives) {
+                subalternative = current_alternative.alternatives.getCurrentAlternative();
+                if (subalternative.view_name === "details" && subalternative.currentEntry != null) {
+                    title += ' - ' + subalternative.currentEntry.title;
+                }
             }
 
             return title;
