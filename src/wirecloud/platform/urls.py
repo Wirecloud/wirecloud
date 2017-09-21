@@ -150,9 +150,6 @@ urlpatterns = (
     url(r'^api/workspace/(?P<workspace_id>\d+)/resources$',
         localcatalogue_views.WorkspaceResourceCollection(permitted_methods=('GET',)),
         name='wirecloud.workspace_resource_collection'),
-    url(r'^api/workspace/(?P<owner>[^/]+)/(?P<name>[^/]+)?$',
-        workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
-        name='wirecloud.workspace_entry_owner_name'),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT', 'PATCH')),
@@ -169,6 +166,10 @@ urlpatterns = (
     url(r'^api/workspace/(?P<workspace_id>\d+)/publish/?$',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),
         name='wirecloud.workspace_publish'),
+
+    url(r'^api/workspace/(?P<owner>[^/]+)/(?P<name>[^/]+)?$',
+        workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
+        name='wirecloud.workspace_entry_owner_name'),
 
     url(r'api/admin/switchuser$',
         SwitchUserService(),
