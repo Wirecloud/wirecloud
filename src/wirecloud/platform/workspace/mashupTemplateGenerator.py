@@ -201,7 +201,8 @@ def build_json_template_from_workspace(options, workspace, user):
     # Workspace preferences
     options['preferences'] = {}
     for preference in workspace.workspacepreference_set.all():
-        if not preference.inherit:
+        # Filter public and sharelist preferences
+        if not preference.inherit and preference.name not in ("public", "sharelist"):
             options['preferences'][preference.name] = preference.value
 
     # Tabs and their preferences

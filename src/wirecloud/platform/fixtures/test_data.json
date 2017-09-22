@@ -76,7 +76,7 @@
         "pk": "1",
         "fields": {
             "name": "workspace",
-            "public": true,
+            "public": false,
             "creator": "2",
             "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\" }}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value4\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\"}}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"\"}}}}}}, \"connections\": []}"
         }

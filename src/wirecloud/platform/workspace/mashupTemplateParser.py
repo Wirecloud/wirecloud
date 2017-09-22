@@ -183,6 +183,10 @@ def fillWorkspaceUsingTemplate(workspace, template):
         'widget': {},
     }
     for preference_name in mashup_description['preferences']:
+        # Filter public and sharelist preferences
+        if preference_name in ("public", "sharelist"):
+            continue
+
         new_values[preference_name] = {
             'inherit': False,
             'value': mashup_description['preferences'][preference_name],

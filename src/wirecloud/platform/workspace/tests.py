@@ -1120,6 +1120,39 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertEqual(widgets["1"]['properties'], {'prop': {'readonly': True, 'value': 'new_value'}})
         self.assertEqual(widgets["2"]['properties'], {'prop': {'readonly': False, 'value': 'test_data'}, 'prop2': {'readonly': True, 'value': None}})
 
+    def test_build_template_from_public_workspace_owned(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1'
+        }
+
+        # Make workspace_with_iwidgets public
+        self.workspace_with_iwidgets.public = True
+        self.workspace_with_iwidgets.save()
+
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.assertNotIn("public", template.get("preferences", {}))
+
+    def test_build_template_from_public_workspace(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1'
+        }
+
+        # Make workspace_with_iwidgets public
+        self.workspace_with_iwidgets.public = True
+        self.workspace_with_iwidgets.save()
+
+        other_user = User.objects.get(username='test2')
+
+        # TODO check passwords are not serialized
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, other_user)
+        self.assertNotIn("public", template.get("preferences", {}))
+
 
 class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
 
@@ -1144,6 +1177,9 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
         return contents
 
     def check_basic_workspace_structure(self, workspace):
+
+        self.assertFalse(workspace.public)
+        self.assertFalse(workspace.workspacepreference_set.filter(name="public").exists())
 
         self.assertEqual(len(workspace.wiringStatus['connections']), 1)
         self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], False)
@@ -1326,6 +1362,15 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
 
     def test_build_workspace_from_rdf_template(self):
         template = self.read_template('wt1.rdf')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+
+        self.check_basic_workspace_structure(workspace)
+
+    def test_build_workspace_from_template_with_public_and_sharelist_preferences(self):
+        # WireCloud should ignore public and sharelist preferences provided by mashups
+        # Old versions of WireCloud serialized those preferences, so we need to support
+        # mashups with those preferences, but ignoring them
+        template = self.read_template('wt-with-public-and-sharelist-preferences.xml')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
         self.check_basic_workspace_structure(workspace)
