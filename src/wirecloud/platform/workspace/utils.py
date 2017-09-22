@@ -594,7 +594,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
     return data_ret
 
 
-def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}):
+def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}, public=False):
 
     from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
@@ -636,6 +636,9 @@ def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}):
         template = TemplateParser(wgt_file.get_template())
 
     workspace, _foo = buildWorkspaceFromTemplate(template, owner, new_name=new_name)
+    if public:
+        workspace.public = True
+        workspace.save()
 
     if len(preferences) > 0:
         update_workspace_preferences(workspace, preferences, invalidate_cache=False)

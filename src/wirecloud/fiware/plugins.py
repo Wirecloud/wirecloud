@@ -74,7 +74,13 @@ class FIWAREBAEManager(MarketManager):
         self._options = options
 
     def create(self, user, options):
-        create_workspace(user, mashup="CoNWeT/bae-marketplace/0.1.1", new_name=options['name'], preferences={'server_url': options['url']})
+        create_workspace(
+            user,
+            mashup="CoNWeT/bae-marketplace/0.1.1",
+            new_name=options['name'],
+            preferences={'server_url': options['url']},
+            public=options['public']
+        )
 
     def download_resource(self, user, url, endpoint):
 
