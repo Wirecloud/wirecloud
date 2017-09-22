@@ -24,7 +24,7 @@ step, as they will be installed throughout the documentation:**
     - rdflib 3.2.0+
     - requests 2.1.0+
     - futures 2.1.3+ (only on python 2.7)
-    - selenium 2.41+
+    - selenium 3.4+
     - pytz
     - django_relatives
     - user-agents

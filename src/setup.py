@@ -175,7 +175,7 @@ setup(
         'django_compressor>=2.0,<3.0',
         'rdflib>=3.2.0',
         'requests>=2.1.0',
-        'selenium>=2.41',
+        'selenium>=3.4',
         'pytz',
         'django_relatives',
         'user-agents',

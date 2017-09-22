@@ -12,7 +12,7 @@ WIRECLOUD_SELENIUM_TEST_BROWSERS.update({
     'Chromium': {
         'CLASS': 'selenium.webdriver.Chrome',
         'ARGS': {
-            'executable_path': '/usr/lib/chromium/chromedriver',
+            'executable_path': '/usr/bin/chromedriver',
             'chrome_options': chromium_options,
         },
     },
