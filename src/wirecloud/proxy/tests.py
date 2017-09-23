@@ -130,13 +130,13 @@ class ProxyTests(ProxyTestsBase):
         self.client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
         self.client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
 
-        self.check_basic_requests('http://localhost/test/workspace')
+        self.check_basic_requests('http://localhost/test/publicworkspace')
 
     def test_basic_proxy_requests(self):
 
         self.client.login(username='test', password='test')
 
-        self.check_basic_requests('http://localhost/test/workspace')
+        self.check_basic_requests('http://localhost/test/publicworkspace')
 
     def test_basic_proxy_requests_from_widget(self):
 
