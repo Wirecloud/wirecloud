@@ -787,10 +787,10 @@ Create a new Application using the IdM server to use (for example: `https://acco
 
 5. [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`.
    This theme is the one used by the FIWARE Lab's Mashup portal.
-6. [Optional]: Provide a [`FIWARE_PORTALS` setting]. This setting is used for
-   signing out from other portals at the same time the user sign out from
-   Wirecloud, providing a single sign out experience. This setting is also used
-   for building the navigation bar.
+6. [Optional]: Provide a [`FIWARE_PORTALS` setting](#fiware_portals). This
+   setting is used for signing out from other portals at the same time the user
+   sign out from WireCloud, providing a single sign out experience. This setting
+   is also used for building the navigation bar.
 7. Run `python manage.py migrate; python manage.py collectstatic --noinput`
 
 
