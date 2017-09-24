@@ -190,7 +190,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             'api.wunderground.com': RealWebServer(),
         },
         'https': {
-            'ngsiproxy.lab.fiware.org': RealWebServer()
+            'store.lab.fiware.org': RealWebServer(),
+            'ngsiproxy.lab.fiware.org': RealWebServer(),
         }
     }
 
@@ -313,6 +314,64 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
     test_creating_new_workspace.tags = tags + ('wirecloud-guide-creating-new-workspace',)
 
     @uses_extra_resources(list_resources)
+    def test_browsing_bae(self):
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath="bae", **kargs)
+
+        self.driver.set_window_size(1024, 768)
+        self.login()
+
+        with self.marketplace_view as marketplace:
+            marketplace.switch_to('origin')
+            marketplace.delete()
+            marketplace.switch_to('FIWARE Lab')
+            marketplace.delete()
+
+            # Create a real FIWARE Lab marketplace
+            marketplace.open_menu().get_entry('Add new marketplace').click()
+            dialog = FormModalTester(self, self.wait_element_visible(".wc-add-external-catalogue-modal"))
+            dialog.get_field("title").set_value('FIWARE Lab')
+            dialog.get_field("url").set_value('https://store.lab.fiware.org')
+            dialog.get_field("type").set_value('fiware-bae')
+            dialog.accept()
+
+            # Summary
+            time.sleep(7)  # wait marketplace loaded
+            imgp = take_capture(self.driver, "summary")
+
+            # Add marketplace
+            # Menu entry
+            popup_menu = marketplace.open_menu()
+            m_menu = popup_menu.get_entry('Add new marketplace')
+            ActionChains(self.driver).move_to_element(m_menu).perform()
+            time.sleep(0.3)  # wait entry to be highlighted
+            imgp = take_capture(self.driver, 'add_new_marketplace_entry')
+            add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
+            crop_down(imgp, popup_menu.element, 80)
+
+            # Adding marketplace
+            # Modal
+            m_menu.click()
+            dialog = FormModalTester(self, self.wait_element_visible(".wc-add-external-catalogue-modal"))
+            dialog.get_field("title").set_value('FIWARE Lab')
+            dialog.get_field("url").set_value('https://store.lab.fiware.org')
+            dialog.get_field("type").set_value('fiware-bae')
+            imgp = take_capture(self.driver, 'add_new_marketplace_dialog')
+            crop_image(imgp, *create_box(dialog.element))
+            dialog.cancel()
+
+            # Marketplace dropdown screenshot
+            popup_menu = marketplace.open_menu()
+            m_menu = popup_menu.get_entry('FIWARE Lab')
+            ActionChains(self.driver).move_to_element(m_menu).perform()
+            time.sleep(0.3)  # wait entry to be highlighted
+            imgp = take_capture(self.driver, "marketplace_dropdown")
+            add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
+            crop_down(imgp, popup_menu.element, 80)
+
+    test_browsing_bae.tags = tags + ('wirecloud-guide-browsing-bae',)
+
+    @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
         def take_capture(*args, **kargs):
             return midd_take_capture(*args, prepath="browsing_marketplace", **kargs)
@@ -353,7 +412,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             # Adding marketplace
             m_menu.click()
             dialog = FormModalTester(self, self.wait_element_visible(".wc-add-external-catalogue-modal"))
-            dialog.get_field("name").set_value('FIWARE Lab')
+            dialog.get_field("title").set_value('FIWARE Lab')
             dialog.get_field("url").set_value('https://marketplace.lab.fiware.org')
             dialog.get_field("type").set_value('fiware')
             imgp = take_capture(self.driver, 'add_new_marketplace_dialog')

@@ -71,115 +71,66 @@ workspace features:
 
 <img src="../images/user_guide/create_workspace/workspace_settings.png" srcset="../images/user_guide/create_workspace/workspace_settings.png 2x" alt="create_workspace/WorkspaceSettings.png"/>
 
+
 Browsing the Marketplace
 ------------------------
 
 ### Marketplaces and Stores
 
-A mashup tool like WireCloud must support access to a **marketplace**
-made up of **stores**, where people can offer and deal with services
-made accessible through widgets and operators, like goods, and finally
-mashup them to create value added services and applications.
+A mashup tool like WireCloud must support access to **marketplaces**, where
+people can offer and deal with services made accessible through widgets and
+operators, like goods, and finally mashup them to create value added services
+and applications.
 
-On the marketplace you can quickly find and compare widgets and
-operators, which enable you to attend an industry-ecosystem better than
-before. Widgets, operators, and even pre-built mashups become tradable
-goods, which can be offered and acquired on Internet based marketplaces.
-Partner companies and other users can combine existing services to new
-services whereby new business models will be incurred and the value
-added chain is extended.
-
-We differentiate the marketplace from a store. While a store is owned by
-a store owner who has full control over the specific (limited) widget,
-operator and mashup portfolio and offerings, a marketplace is a platform
-for many stores to make their offerings available to a broader audience
-and enable consumers to search and compare widgets, operators and
-pre-built mashups and find the store, where to buy. The final business
-transaction (buying) is done at the store and the whole back office
-process is handled by the store.
+On the marketplace you can quickly find and compare widgets and operators,
+which enable you to attend an industry-ecosystem better than before. Widgets,
+operators, and even pre-built mashups become tradable goods, which can be
+offered and acquired on Internet based marketplaces. Partner companies and
+other users can combine existing services to new services whereby new business
+models will be incurred and the value added chain is extended.
 
 The following figure shows a screenshot of WireCloud where you can see
-the FIWARE Lab marketplace and the different stores made available through
-it.
+the FIWARE Lab marketplace.
 
-<img src="../images/user_guide/browsing_marketplace/marketplace_with_stores.png" srcset="../images/user_guide/browsing_marketplace/marketplace_with_stores.png 2x" alt="Marketplace with several stores"/>
+<img src="../images/user_guide/bae/summary.png" srcset="../images/user_guide/bae/summary.png 2x" alt="Initial marketplace view"/>
+
 
 ### Managing marketplaces
 
-When looking for an offer of widgets, operators and mashups, you first
-need to choose a marketplace. Use the dropdown menu shown in the
-workspace path for this purpose.
+When looking for an offer of widgets, operators and mashups, you first need to
+choose a marketplace. Use the dropdown menu shown in the workspace path for this
+purpose.
 
 <img src="../images/user_guide/browsing_marketplace/marketplace_dropdown.png" srcset="../images/user_guide/browsing_marketplace/marketplace_dropdown.png 2x" alt="Marketplace dropdown"/>
 
-As shown in the previous screenshot, this menu allows you to choose
-among the different marketplaces you have access to. To add a new
-marketplace, you only need to provide its endpoint (URL). You can also
-delete the current markeplace through the *Delete Marketplace* option in
-the context menu.
+As shown in the previous screenshot, this menu allows you to choose among the
+different marketplaces you have access to. To add a new marketplace, you only
+need to provide its endpoint (URL). You can also delete the current markeplace
+through the *Delete Marketplace* option in the context menu.
 
-If you have only Local marketplace available, you can add the FIWARE Lab
-marketplace using the *Add new marketplace* option as shown in the following
-screenshots:
+You can add the FIWARE Lab marketplace using the *Add new marketplace* option
+as shown in the following screenshots:
 
-<img src="../images/user_guide/browsing_marketplace/add_new_marketplace_entry.png" srcset="../images/user_guide/browsing_marketplace/add_new_marketplace_entry.png 2x" alt="Click *Add new marketplace*"/>
+<img src="../images/user_guide/bae/add_new_marketplace_entry.png" srcset="../images/user_guide/bae/add_new_marketplace_entry.png 2x" alt="Click *Add new marketplace*"/>
 
-<img src="../images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png" srcset="../images/user_guide/browsing_marketplace/add_new_marketplace_dialog.png 2x" alt="*Add new marketplace* dialog"/>
+<img src="../images/user_guide/bae/add_new_marketplace_dialog.png" srcset="../images/user_guide/bae/add_new_marketplace_dialog.png 2x" alt="*Add new marketplace* dialog"/>
 
-WireCloud offers a built-in local catalogue called *My Resources*, which
-allows you to search among the widgets, operators and mashups currently
-available for the user. The following figure shows a screenshot of the
-*My Resources* for a user in a given instance of WireCloud.
+WireCloud offers a built-in local catalogue called *My Resources*, which allows
+you to search among the widgets, operators and mashups currently available for
+the user. The following figure shows a screenshot of the *My Resources* for a
+user in a given instance of WireCloud.
 
 <img src="../images/user_guide/browsing_marketplace/my_resources.png" srcset="../images/user_guide/browsing_marketplace/my_resources.png 2x" alt="*My Resources* view"/>
 
-If you are a widget developer with brand new widgets to share, or you
-just have downloaded a WireCloud-compliant widget from anywhere, you can
-easily upload your new widgets to the built-in local catalogue through
-the *Upload* button available on the *My Resources* view.
+If you are a widget developer with brand new widgets to share, or you just have
+downloaded a WireCloud-compliant widget from anywhere, you can easily upload
+your new widgets to the built-in local catalogue through the *Upload* button
+available on the *My Resources* view.
 
 <img src="../images/user_guide/browsing_marketplace/upload_button.png" srcset="../images/user_guide/browsing_marketplace/upload_button.png 2x" alt="Click *Upload*"/>
 
 <img src="../images/user_guide/browsing_marketplace/upload_dialog.png" srcset="../images/user_guide/browsing_marketplace/upload_dialog.png 2x" alt="MAC upload dialog"/>
 
-### Choosing an available store
-
-Stores in WireCloud are associated to a specific marketplace. Therefore,
-to surf a store you first need to choose the FIWARE Lab marketplace that
-publishes it. In the following figure, the user uses the dropdown menu
-to choose FIWARE Lab’s marketplace:
-
-<img src="../images/user_guide/browsing_marketplace/marketplace_dropdown.png" srcset="../images/user_guide/browsing_marketplace/marketplace_dropdown.png 2x" alt="Marketplace dropdown with several marketplaces"/>
-
-Once in the FIWARE Lab marketplace, the store dropdown menu shows all its
-available stores (*CoNWeT*, *WStore FIWARE Lab* and *Another Store*). The
-following figure shows the options available in the stores dropdown menu:
-
-<img src="../images/user_guide/browsing_marketplace/marketplace_with_stores.png" srcset="../images/user_guide/browsing_marketplace/marketplace_with_stores.png 2x" alt="Marketplace store list dropdown"/>
-
-Last, but not least, you can return to surf the entire marketplace and
-see the global offer at a glance by selecting the *All stores* option.
-
-### Publishing mashable application components into Stores
-
-1.  Go to *My Resources* view:
-    <img src="../images/user_guide/browsing_marketplace/my_resources_button.png" srcset="../images/user_guide/browsing_marketplace/my_resources_button.png 2x" alt="Click *My Resources*"/>
-
-1.  Open the mashable application component details clicking on it:
-    <img src="../images/user_guide/browsing_marketplace/component_details.png" srcset="../images/user_guide/browsing_marketplace/component_details.png 2x" alt="Click on the offering for displaying the details"/>
-
-1.  Click *Publish*:
-     <img src="../images/user_guide/browsing_marketplace/publish_button.png" srcset="../images/user_guide/browsing_marketplace/publish_button.png 2x" alt="Click *Publish*"/>
-
-1.  Check the marketplace and the Store where the mashable application
-    component is going to be uploaded
-    <img src="../images/user_guide/browsing_marketplace/publish_resource_store_select.png" srcset="../images/user_guide/browsing_marketplace/publish_resource_store_select.png 2x" alt="Select the store"/>
-
-1.  That's all!. Now you will be able to create new offerings at the
-    selected Store using the uploaded resource. See the [WStore
-    documentation](http://wstore.readthedocs.org/en/latest/user-programmer-guide.html#creating-an-offering)
-    for more information on how to create offering using the uploaded
-    resources.
 
 Building a new mashup
 ---------------------
