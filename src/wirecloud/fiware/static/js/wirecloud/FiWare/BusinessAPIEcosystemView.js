@@ -31,11 +31,8 @@
         Wirecloud.ui.WorkspaceView.call(this, id, options);
 
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
-        if (this.desc.user != null) {
-            Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
-        } else {
-            Object.defineProperty(this, 'market_id', {value: this.desc.name});
-        }
+        Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
+        Object.defineProperty(this, 'workspaceview', {value: this.desc.user + '/' + this.desc.name});
         this.addEventListener('show', load.bind(this));
 
         this.status = "unloaded";
@@ -52,6 +49,21 @@
 
     BusinessAPIEcosystemView.prototype.goUp = function goUp() {
         return false;
+    };
+
+    BusinessAPIEcosystemView.prototype.wait_ready = function wait_ready(listener) {
+        listener();
+    };
+
+    BusinessAPIEcosystemView.prototype.getPublishEndpoints = function getPublishEndpoints() {
+        return null;
+    };
+
+    BusinessAPIEcosystemView.prototype.destroy = function destroy() {
+        if (this.status === "loaded") {
+            this.model.unload();
+            this.status = "unloaded";
+        }
     };
 
     Wirecloud.FiWare.BusinessAPIEcosystemView = BusinessAPIEcosystemView;

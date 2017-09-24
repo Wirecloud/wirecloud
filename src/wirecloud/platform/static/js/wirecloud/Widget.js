@@ -101,8 +101,8 @@
             codeurl: {
                 get: function () {
                     var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
-                    if ('key' in this.tab.workspace.view) {
-                        url += "&workspaceview=" + encodeURIComponent(this.tab.workspace.view.key);
+                    if ('workspaceview' in this.tab.workspace.view) {
+                        url += "&workspaceview=" + encodeURIComponent(this.tab.workspace.view.workspaceview);
                     }
                     return url;
                 }

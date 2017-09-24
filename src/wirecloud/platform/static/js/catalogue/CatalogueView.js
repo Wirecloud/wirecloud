@@ -33,11 +33,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
-        if (this.desc.user != null) {
-            this.market_id = this.desc.user + '/' + this.desc.name;
-        } else {
-            this.market_id = this.desc.name;
-        }
+        this.market_id = this.desc.user + '/' + this.desc.name;
         this.mainview = options.catalogue;
         this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
         this.alternatives = new StyledElements.Alternatives();

@@ -252,10 +252,16 @@
             marketplaceview.waitMarketListReady({
                 include_markets: true,
                 onComplete: function () {
-                    var dialog, msg;
-                    if (marketplaceview.number_of_alternatives > 0) {
-                        dialog = new Wirecloud.ui.PublishResourceWindowMenu(resource);
-                    } else {
+                    var dialog, msg, key;
+                    var views = Wirecloud.UserInterfaceManager.views.marketplace.viewsByName;
+
+                    for (key in views) {
+                        if (views[key].getPublishEndpoints() != null) {
+                            dialog = new Wirecloud.ui.PublishResourceWindowMenu(resource);
+                            break;
+                        }
+                    }
+                    if (dialog == null) {
                         msg = utils.gettext("You have not configured any marketplace to upload this resource. Please, configure one on the Marketplace view.");
                         dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.WARN_MSG);
                     }

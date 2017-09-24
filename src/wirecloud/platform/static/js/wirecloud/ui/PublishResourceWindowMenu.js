@@ -45,19 +45,21 @@
 
         for (key in views) {
             endpoints = views[key].getPublishEndpoints();
-            if (endpoints != null && endpoints.length > 0) {
-                endpoints.forEach(assign_endpoint_value, key);
-                secondInput = new StyledElements.Select({initialEntries: endpoints});
-            } else {
-                secondInput = null;
+            if (endpoints != null) {
+                if (endpoints.length > 0) {
+                    endpoints.forEach(assign_endpoint_value, key);
+                    secondInput = new StyledElements.Select({initialEntries: endpoints});
+                } else {
+                    secondInput = null;
+                }
+                buttons.push({'label': key, 'value': key, 'secondInput': secondInput});
             }
-            buttons.push({'label': key, 'value': key, 'secondInput': secondInput});
         }
         return [
             {
                 'name': 'marketplaces',
                 'type': 'buttons',
-                'label': 'Upload to',
+                'label': utils.gettext('Upload to'),
                 'kind': 'checkbox',
                 'buttons': buttons
             }

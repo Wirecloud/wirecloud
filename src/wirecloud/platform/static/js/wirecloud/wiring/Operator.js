@@ -81,8 +81,8 @@
             codeurl: {
                 get: function () {
                     var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
-                    if ('key' in this.wiring.workspace) {
-                        url += "&workspaceview=" + encodeURIComponent(this.wiring.workspace.key);
+                    if ('workspaceview' in this.wiring.workspace) {
+                        url += "&workspaceview=" + encodeURIComponent(this.wiring.workspace.workspaceview);
                     }
                     return url;
                 }

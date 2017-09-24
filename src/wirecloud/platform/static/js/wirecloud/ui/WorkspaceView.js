@@ -312,7 +312,7 @@
     };
 
     WorkspaceView.prototype.canGoUp = function canGoUp() {
-        return Wirecloud.activeWorkspace != null && Wirecloud.activeWorkspace.owner !== "wirecloud" || Wirecloud.activeWorkspace.name !== "home";
+        return Wirecloud.activeWorkspace != null && (Wirecloud.activeWorkspace.owner !== "wirecloud" || Wirecloud.activeWorkspace.name !== "home");
     };
 
     WorkspaceView.prototype.goUp = function goUp() {

@@ -50,7 +50,7 @@
         if (currentState.market && currentState.market in this.viewsByName) {
             this.changeCurrentMarket(currentState.market, {history: "ignore"});
         } else if (this.viewList.length > 0) {
-            this.changeCurrentMarket(this.viewList[0].key, {history: "replace"});
+            this.changeCurrentMarket(this.viewList[0].market_id, {history: "replace"});
         } else {
             var msg = utils.gettext("<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my resources view instead</li></ul>");
             notifyError.call(this, msg);
@@ -80,7 +80,6 @@
                     continue;
                 }
                 this.viewsByName[market_key] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: view_element}});
-                this.viewsByName[market_key].key = market_key;
                 Wirecloud.UserInterfaceManager.workspaceviews[market_key] = this.viewsByName[market_key];
             }
             this.viewList.push(this.viewsByName[market_key]);
@@ -339,13 +338,15 @@
     };
 
     MarketplaceView.prototype.addMarket = function addMarket(market_info) {
+        var market_key = market_info.user + '/' + market_info.name;
         var view_constructor = Wirecloud.MarketManager.getMarketViewClass(market_info.type);
         market_info.permissions = {'delete': true};
-        this.viewsByName[market_info.name] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: market_info}});
-        this.viewList.push(this.viewsByName[market_info.name]);
+        this.viewsByName[market_key] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: market_info}});
+        Wirecloud.UserInterfaceManager.workspaceviews[market_key] = this.viewsByName[market_key];
+        this.viewList.push(this.viewsByName[market_key]);
 
         this.number_of_alternatives += 1;
-        this.changeCurrentMarket(market_info.name);
+        this.changeCurrentMarket(market_key);
     };
 
     MarketplaceView.prototype.changeCurrentMarket = function changeCurrentMarket(market, options) {
@@ -367,7 +368,7 @@
 
     var remove_market = function remove_market(market_view) {
         return new Promise(function (alt, resolve) {
-            delete Wirecloud.UserInterfaceManager.workspaceviews[market_view.key];
+            delete Wirecloud.UserInterfaceManager.workspaceviews[market_view.market_id];
             this.alternatives.removeAlternative(alt, {onComplete: resolve});
         }.bind(this, market_view));
     };
