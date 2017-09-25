@@ -31,7 +31,6 @@ from wirecloud.commons.searchers import get_available_search_engines, get_search
 if six.PY2:
     # Python 2 uses bytes instead of strings (unicode)
     def input(prompt):
-        from builtins import raw_input
         return raw_input(prompt.encode('utf-8')).decode('utf-8')
 
 
