@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2015-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -385,41 +385,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             marketplace.switch_to('FIWARE Lab')
             select = self.driver.find_element_by_css_selector(
                 '.se-select select')
-
-            # Market list screenshot
-            imgp = take_capture(self.driver, 'marketplace_with_stores')
-            add_image(imgp, get_position(select, 0.0, 1.0), 'store_filter.png')
-            add_pointer(imgp, get_position(select, 0.7, 1.8), False)
-            crop_down(imgp, select, 80)
-
-            # marketplaces screenshot
-            popup_menu = marketplace.open_menu()
-            m_menu = popup_menu.get_entry('FIWARE Lab')
-            ActionChains(self.driver).move_to_element(m_menu).perform()
-            time.sleep(0.3)  # wait entry to be highlighted
-            imgp = take_capture(self.driver, "marketplace_dropdown")
-            add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
-            crop_down(imgp, popup_menu.element, 80)
-
-            # Add marketplace
-            m_menu = popup_menu.get_entry('Add new marketplace')
-            ActionChains(self.driver).move_to_element(m_menu).perform()
-            time.sleep(0.3)  # wait entry to be highlighted
-            imgp = take_capture(self.driver, 'add_new_marketplace_entry')
-            add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
-            crop_down(imgp, popup_menu.element, 80)
-
-            # Adding marketplace
-            m_menu.click()
-            dialog = FormModalTester(self, self.wait_element_visible(".wc-add-external-catalogue-modal"))
-            dialog.get_field("title").set_value('FIWARE Lab')
-            dialog.get_field("url").set_value('https://marketplace.lab.fiware.org')
-            dialog.get_field("type").set_value('fiware')
-            imgp = take_capture(self.driver, 'add_new_marketplace_dialog')
-            crop_image(imgp, *create_box(dialog.element))
-
-            # Cancel marketplace creation
-            dialog.cancel()
 
             # Where are my resources
             btn = self.find_navbar_button('wc-show-myresources-button')

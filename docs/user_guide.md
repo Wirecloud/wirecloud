@@ -75,8 +75,6 @@ workspace features:
 Browsing the Marketplace
 ------------------------
 
-### Marketplaces and Stores
-
 A mashup tool like WireCloud must support access to **marketplaces**, where
 people can offer and deal with services made accessible through widgets and
 operators, like goods, and finally mashup them to create value added services
@@ -101,7 +99,7 @@ When looking for an offer of widgets, operators and mashups, you first need to
 choose a marketplace. Use the dropdown menu shown in the workspace path for this
 purpose.
 
-<img src="../images/user_guide/browsing_marketplace/marketplace_dropdown.png" srcset="../images/user_guide/browsing_marketplace/marketplace_dropdown.png 2x" alt="Marketplace dropdown"/>
+<img src="../images/user_guide/bae/marketplace_dropdown.png" srcset="../images/user_guide/bae/marketplace_dropdown.png 2x" alt="Marketplace dropdown"/>
 
 As shown in the previous screenshot, this menu allows you to choose among the
 different marketplaces you have access to. To add a new marketplace, you only
