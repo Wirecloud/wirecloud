@@ -87,7 +87,7 @@ class MarketCollection(Resource):
             return build_error_response(request, 409, 'Market name already in use')
 
         market_managers = get_market_managers(target_user)
-        market_managers[target_user.username + '/' + received_data['name']].create(target_user, received_data)
+        market_managers[target_user.username + '/' + received_data['name']].create(target_user)
 
         return HttpResponse(status=201)
 
@@ -95,7 +95,8 @@ class MarketCollection(Resource):
 class MarketEntry(Resource):
 
     @authentication_required
-    def delete(self, request, market, user=None):
+    @commit_on_http_success
+    def delete(self, request, user, market):
 
         if user is None and (not request.user.is_superuser or market == 'local'):
             return build_error_response(request, 403, _('You are not allowed to delete this market'))
@@ -103,7 +104,15 @@ class MarketEntry(Resource):
         if user != request.user.username and not request.user.is_superuser:
             return build_error_response(request, 403, _('You are not allowed to delete this market'))
 
+        if user == request.user.username:
+            target_user = request.user
+        else:
+            target_user = get_object_or_404(User, username=user)
+
+        market_managers = get_market_managers(target_user)
+
         get_object_or_404(Market, user__username=user, name=market).delete()
+        market_managers[user + '/' + market].delete()
 
         return HttpResponse(status=204)
 

@@ -287,10 +287,10 @@ def check_delete_requires_authentication(self, url, test_after_request=None):
         test_after_request(self)
 
 
-def check_delete_requires_permission(self, url, test_after_request=None):
+def check_delete_requires_permission(self, url, test_after_request=None, user="emptyuser"):
 
     # Authenticate
-    self.client.login(username='emptyuser', password='admin')
+    self.client.login(username=user, password='admin')
 
     response = self.client.delete(url, HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
@@ -947,6 +947,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
         check_delete_requires_permission(self, url)
 
+    def test_workspace_entry_delete_requires_permission_shared(self):
+        # This workspace has been shared with normuser but normuser is not the owner
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 10})
+        check_delete_requires_permission(self, url, user="normuser")
+
     def test_workspace_entry_delete(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
@@ -960,6 +965,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Workspace should be removed
         self.assertFalse(Workspace.objects.filter(name='ExistingWorkspace').exists())
+
+    def test_workspace_entry_delete_shared(self):
+        # This workspace has been shared with normuser
+        self.assertGreater(Workspace.objects.get(pk=10).users.count(), 1)
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 10})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Workspace should be removed
+        self.assertFalse(Workspace.objects.filter(pk=10).exists())
 
     def test_workspace_entry_delete_not_found(self):
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
@@ -3695,16 +3715,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'deleteme'})
         check_delete_requires_permission(self, url)
-
-    def test_market_entry_delete_local(self):
-
-        url = reverse('wirecloud.market_entry', kwargs={'market': 'local'})
-
-        # Authenticate
-        self.client.login(username='admin', password='admin')
-
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
 
     def test_market_entry_delete(self):
 

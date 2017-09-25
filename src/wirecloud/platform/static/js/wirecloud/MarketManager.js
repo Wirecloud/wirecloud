@@ -71,13 +71,7 @@
      */
     MarketManager.deleteMarket = function deleteMarket(marketplace) {
         return new Wirecloud.Task("Deleting marketplace", function (resolve, reject) {
-            var url;
-
-            if (marketplace.user != null) {
-                url = Wirecloud.URLs.MARKET_ENTRY.evaluate({user: marketplace.user, market: marketplace.name});
-            } else {
-                url = Wirecloud.URLs.GLOBAL_MARKET_ENTRY.evaluate({market: marketplace.name});
-            }
+            var url = Wirecloud.URLs.MARKET_ENTRY.evaluate({user: marketplace.user, market: marketplace.name});
 
             Wirecloud.io.makeRequest(url, {
                 method: 'DELETE',

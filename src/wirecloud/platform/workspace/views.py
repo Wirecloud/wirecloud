@@ -38,13 +38,13 @@ from wirecloud.commons.utils.http import authentication_required, authentication
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
+from wirecloud.platform.models import Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.wiring.utils import get_wiring_skeleton
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_xml_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
-from wirecloud.platform.workspace.utils import deleteTab, createTab, get_tab_data, get_workspace_list, get_workspace_data, get_global_workspace_data, setVisibleTab
+from wirecloud.platform.workspace.utils import deleteTab, createTab, get_tab_data, get_workspace_list, get_workspace_data, get_global_workspace_data, setVisibleTab, delete_workspace
 from wirecloud.platform.markets.utils import get_local_catalogue
 
 
@@ -225,17 +225,10 @@ class WorkspaceEntry(Resource):
     def delete(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        if not workspace.users.filter(pk=request.user.pk).exists():
+        if not (request.user.is_superuser or workspace.creator == request.user):
             return build_error_response(request, 403, _('You are not allowed to delete this workspace'))
 
-        UserWorkspace.objects.filter(user=request.user, workspace=workspace).delete()
-        if workspace.users.count() == 0:
-
-            # Remove the workspace
-            iwidgets = IWidget.objects.filter(tab__workspace=workspace)
-            for iwidget in iwidgets:
-                iwidget.delete()
-            workspace.delete()
+        delete_workspace(workspace=workspace)
 
         return HttpResponse(status=204)
 

@@ -30,6 +30,7 @@ import re
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 import markdown
 import six
@@ -644,3 +645,14 @@ def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}, 
         update_workspace_preferences(workspace, preferences, invalidate_cache=False)
 
     return workspace
+
+
+def delete_workspace(workspace=None, user=None, name=None):
+    if workspace is None:
+        workspace = get_object_or_404(Workspace, creator__username=user, name=name)
+
+    # Remove the workspace
+    iwidgets = IWidget.objects.filter(tab__workspace=workspace)
+    for iwidget in iwidgets:
+        iwidget.delete()
+    workspace.delete()

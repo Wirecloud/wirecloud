@@ -59,6 +59,17 @@
         }
     },
     {
+        "model": "platform.workspace",
+        "pk": 10,
+        "fields": {
+            "name": "SharedWorkspace",
+            "creator": 4,
+            "description": "This is an <b>example</b> of workspace",
+            "longdescription": "This is an **example** of workspace",
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.tab",
         "fields": {
@@ -108,6 +119,22 @@
         "fields": {
             "user": 2,
             "workspace": 9
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 10,
+        "fields": {
+            "user": 4,
+            "workspace": 10
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 11,
+        "fields": {
+            "user": 2,
+            "workspace": 10
         }
     },
     {
