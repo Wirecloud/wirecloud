@@ -58,7 +58,14 @@
     };
 
     var buildURL = function buildURL(data) {
-        var key, hash = '';
+        var url, key, hash = '';
+
+        if (data.workspace_owner !== "wirecloud" || data.workspace_name !== "landing") {
+            url = new URL("/" + encodeURIComponent(data.workspace_owner) + '/' + encodeURIComponent(data.workspace_name), Wirecloud.location.base);
+        } else {
+            url = new URL("/", Wirecloud.location.base);
+        }
+        url.search = window.location.search;
 
         for (key in data) {
             if (['workspace_name', 'workspace_owner', 'title'].indexOf(key) !== -1) {
@@ -66,12 +73,9 @@
             }
             hash += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
         }
+        url.hash = '#' + hash.substr(1);
 
-        return window.location.protocol + "//" +
-            window.location.host +
-            "/" + encodeURIComponent(data.workspace_owner) + '/' + encodeURIComponent(data.workspace_name) +
-            window.location.search +
-            '#' + hash.substr(1);
+        return url;
     };
 
     var HistoryManager = {};
@@ -114,13 +118,16 @@
     };
 
     HistoryManager._parseWorkspaceFromPathName = function _parseWorkspaceFromPathName(pathname, status) {
-        var index, index2;
+        var index = pathname.lastIndexOf('/');
+        var index2 = pathname.lastIndexOf('/', index - 1);
 
-        index = pathname.lastIndexOf('/');
-        index2 = pathname.lastIndexOf('/', index - 1);
-
-        status.workspace_owner = decodeURIComponent(pathname.substring(index2 + 1, index));
-        status.workspace_name = decodeURIComponent(pathname.substring(index + 1));
+        if (index !== index2) {
+            status.workspace_owner = decodeURIComponent(pathname.substring(index2 + 1, index));
+            status.workspace_name = decodeURIComponent(pathname.substring(index + 1));
+        } else {
+            status.workspace_owner = "wirecloud";
+            status.workspace_name = "landing";
+        }
     };
 
     HistoryManager.pushState = function pushState(data) {

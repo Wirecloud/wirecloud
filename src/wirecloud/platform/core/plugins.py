@@ -240,8 +240,11 @@ STYLED_ELEMENTS_CSS = (
 
 
 BASE_PATH = os.path.dirname(__file__)
-WORKSPACE_BROWSER = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.1.wgt')
+WORKSPACE_BROWSER_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.1.wgt')
 INITIAL_HOME_DASHBOARD_FILE = os.path.join(BASE_PATH, 'initial', 'initial_home_dashboard.wgt')
+MARKDOWN_VIEWER_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-viewer_0.1.1.wgt')
+MARKDOWN_EDITOR_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-editor_0.1.0.wgt')
+LANDING_DASHBOARD_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_landing-dashboard_1.0.wgt')
 
 
 def get_version_hash():
@@ -669,19 +672,35 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_proxy_processors(self):
         return ('wirecloud.proxy.processors.SecureDataProcessor',)
 
+    def populate_component(self, wirecloud_user, log, vendor, name, version, wgt):
+
+        if not CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).exists():
+            updated = True
+            log('Installing the %(name)s widget... ' % {"name": name}, 1, ending='')
+            install_resource_to_user(wirecloud_user, file_contents=WgtFile(wgt))
+            log('DONE', 1)
+
     def populate(self, wirecloud_user, log):
         updated = False
 
-        if not CatalogueResource.objects.filter(vendor="WireCloud", short_name="workspace-browser", version="0.1.1").exists():
-            updated = True
-            log('Installing the workspace-browser widget... ', 1, ending='')
-            install_resource_to_user(wirecloud_user, file_contents=WgtFile(WORKSPACE_BROWSER))
-            log('DONE', 1)
+        self.populate_component(wirecloud_user, log, "WireCloud", "workspace-browser", "0.1.1", WORKSPACE_BROWSER_FILE)
 
         if not Workspace.objects.filter(creator__username="wirecloud", name="home").exists():
             updated = True
             log('Creating a initial version of the wirecloud/home workspace... ', 1, ending='')
             with open(INITIAL_HOME_DASHBOARD_FILE, 'rb') as f:
+                workspace = create_workspace(wirecloud_user, f)
+                workspace.public = True
+                workspace.save()
+            log('DONE', 1)
+
+        self.populate_component(wirecloud_user, log, "CoNWeT", "markdown-viewer", "0.1.1", MARKDOWN_VIEWER_FILE)
+        self.populate_component(wirecloud_user, log, "CoNWeT", "markdown-editor", "0.1.0", MARKDOWN_EDITOR_FILE)
+
+        if not Workspace.objects.filter(creator__username="wirecloud", name="landing").exists():
+            updated = True
+            log('Creating a initial version of the wirecloud/landing workspace... ', 1, ending='')
+            with open(LANDING_DASHBOARD_FILE, 'rb') as f:
                 workspace = create_workspace(wirecloud_user, f)
                 workspace.public = True
                 workspace.save()
