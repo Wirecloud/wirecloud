@@ -51,7 +51,7 @@
                 catalogue = this.market.viewList[i];
                 items.push(new StyledElements.MenuItem(catalogue.getLabel(),
                     this._click_callback,
-                    catalogue.key
+                    catalogue.market_id
                 ));
             }
 
