@@ -187,7 +187,7 @@
             wiringView: {
                 open_component_sidebar: function open_component_sidebar(type) {
                     return function (autoAction, element) {
-                        var sidebar_button = Utils.basic_selectors.toolbar_button('wc-show-component-sidebar-button')();
+                        var sidebar_button = Utils.basic_selectors.toolbar_button('we-show-component-sidebar-button')();
                         if (!sidebar_button.classList.contains('active')) {
                             sidebar_button.click();
                         }
@@ -299,13 +299,13 @@
             },
             wiringView: {
                 create_behaviour_button: function create_behaviour_button() {
-                    return Utils.basic_selectors.button(".we-panel-behaviours .panel-options .btn-create");
+                    return Utils.basic_selectors.button(".we-panel-behaviours .panel-heading .btn-create");
                 },
                 enable_behaviours_button: function enable_behaviours_button() {
-                    return Utils.basic_selectors.button(".we-panel-behaviours .panel-options .btn-enable");
+                    return Utils.basic_selectors.button(".we-panel-behaviours .panel-heading .btn-enable");
                 },
                 show_behaviours_button: function show_behaviours_button() {
-                    return Utils.basic_selectors.button(".wc-toolbar .wc-show-behaviour-sidebar-button");
+                    return Utils.basic_selectors.button(".wc-toolbar .we-show-behaviour-sidebar-button");
                 },
                 behaviour_engine: function behaviour_engine() {
                     return function () {
