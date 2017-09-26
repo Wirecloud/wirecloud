@@ -222,7 +222,7 @@ customised dialog for the settings of the widget. In this example, the
 *Map Viewer* should be provided with initial location, zoom level and
 mark shadow radius to customise the visualisation.
 
-<img src="../images/user_guide/building_mashup/linear_graph_settings.png" srcset="../images/user_guide/building_mashup/linear_graph_settings.png 2x" alt="Click *Settings*"/>
+<img src="../images/user_guide/building_mashup/mapviewer_settings.png" srcset="../images/user_guide/building_mashup/mapviewer_settings.png 2x" alt="*Map Viewer* Settings"/>
 
 As we have configure the initial position and the initial zoom, we need to
 reload the widget. To do so, we click again on the properties icon and then on

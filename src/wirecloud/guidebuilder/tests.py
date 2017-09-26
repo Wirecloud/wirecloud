@@ -161,7 +161,7 @@ def resize_widget(driver, widget, width, height):
 
     driver.execute_script('''
         var widget = Wirecloud.UserInterfaceManager.views.workspace.findWidget(arguments[0]);
-        widget.setShape({width: arguments[1], height: arguments[2]});
+        widget.setShape({width: arguments[1], height: arguments[2]}, false, true);
     ''', widget.id, width, height)
 
 
@@ -513,7 +513,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         resize_widget(self.driver, map_viewer_widget, 8, 41)
         ActionChains(self.driver).move_to_element(linear_graph_widget.element).perform()
-        time.sleep(0.6)  # Wait until all the effects are applied
+        # Wait until map viewer is loaded
+        with map_viewer_widget:
+            WebDriverWait(self.driver, timeout=60).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".gm-err-container")))
         imgp = take_capture(self.driver, "final_layout")
 
         # Widget menu button
@@ -540,12 +542,14 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Map Viewer settings
         btn.click()
         dialog = FormModalTester(self, self.wait_element_visible('.wc-component-preferences-modal'))
-        dialog.get_field('centerPreference').set_value('Santander')
+        dialog.get_field('centerPreference').set_value('Santander, Spain')
         dialog.get_field('initialZoom').set_value('14')
         dialog.get_field('zoomPreference').set_value('17')
-        imgp = take_capture(self.driver, "linear_graph_settings")
+        dialog.get_field('apiKey').set_value("********")
+        imgp = take_capture(self.driver, "mapviewer_settings")
         crop_image(imgp, *create_box(dialog))
 
+        dialog.get_field('apiKey').set_value(settings.GMAPS_KEY)
         dialog.accept()
         time.sleep(0.2)
 
@@ -613,6 +617,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
                 ent_oper = component_group.create_component()
 
+                time.sleep(20)
+
                 # Dragging the NGSI source operator
                 ActionChains(self.driver).move_to_element(ent_oper.element).perform()
                 time.sleep(0.3)
@@ -642,6 +648,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
                 # Configure NGSI source
                 self.configure_ngsi_source(ngsi_source_operator)
+                time.sleep(20)
 
                 # Capture the map-viewer panel
                 component_group = sidebar.find_component_group("widget", "CoNWeT/map-viewer")
@@ -718,21 +725,26 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             source_endpoint = poi_oper_w.find_endpoint('source', title='PoI')
             target_endpoint = mapsercvcomp.find_endpoint('target', title='Insert/Update PoI')
             source_endpoint.create_connection(target_endpoint)
+            time.sleep(0.2)
             imgp = take_capture(self.driver, 'wiring_after_connecting_ngsientity2poin_and_mapviewer')
             add_pointer(imgp, get_position(target_endpoint, 0.6, 0.5))
             crop_down(imgp, mapsercvcomp.element, 10)
 
         # Out wiring_view
+        self.change_current_workspace('History Info')
+        linear_graph_widget, map_viewer_widget = self.widgets
+
         with map_viewer_widget:
             self.driver.execute_script('mapViewer.map.setMapTypeId("satellite");')
-            WebDriverWait(self.driver, timeout=60).until(lambda driver: driver.execute_script('return Object.keys(mapViewer.mapPoiManager.getPoiList()).length !== 0;'))
-        time.sleep(5)  # Wait until market icons are loaded
+            WebDriverWait(self.driver, timeout=120).until(lambda driver: driver.execute_script('return Object.keys(mapViewer.mapPoiManager.getPoiList()).length !== 0;'))
+        time.sleep(10)  # Wait until market icons are loaded
         imgp = take_capture(self.driver, 'mapviewer_with_entities')
 
         with map_viewer_widget:
             self.driver.execute_script('mapViewer.mapPoiManager.selectPoi(new Poi({id:"OUTSMART.NODE_3509"}));mapViewer.map.setZoom(16);')
         with linear_graph_widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
+        time.sleep(10)  # Wait until market icons are loaded
         imgp = take_capture(self.driver, 'mapviewer_entity_details')
 
         with self.wiring_view as wiring:
@@ -886,14 +898,14 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             self.driver.execute_script('mapViewer.map.setMapTypeId("roadmap");')
 
         with linear_graph_widget:
-            WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
+            WebDriverWait(self.driver, timeout=120).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
         take_capture(self.driver, 'final_mashup')
 
         with linear_graph_widget:
-            ActionChains(self.driver).move_to_element_with_offset(self.driver.find_element_by_css_selector('canvas'), -50, 0).click_and_hold().move_by_offset(50, 0).perform()
+            ActionChains(self.driver).move_to_element_with_offset(self.driver.find_element_by_css_selector('canvas'), 150, 0).click_and_hold().move_by_offset(40, 0).perform()
 
         lg_path = take_capture(self.driver, 'linear_graph_zoom1')
-        add_pointer(lg_path, get_position(linear_graph_widget, 0.31, 0.5), False)
+        add_pointer(lg_path, get_position(linear_graph_widget, 0.37, 0.5), False)
         crop_image(lg_path, *create_box(linear_graph_widget))
 
         ActionChains(self.driver).release().perform()
