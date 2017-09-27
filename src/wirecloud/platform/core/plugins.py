@@ -703,6 +703,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             with open(LANDING_DASHBOARD_FILE, 'rb') as f:
                 workspace = create_workspace(wirecloud_user, f)
                 workspace.public = True
+                workspace.searchable = False
                 workspace.save()
             log('DONE', 1)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -25,7 +25,7 @@ import logging
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from whoosh import fields
-from whoosh.query import Or, Term
+from whoosh.query import And, Or, Term
 
 from wirecloud.commons.searchers import BaseSearcher, get_search_engine
 from wirecloud.platform.models import Workspace
@@ -43,6 +43,7 @@ class WorkspaceSchema(fields.SchemaClass):
     description = fields.NGRAM(stored=True, minsize=1, phrase=True)
     lastmodified = fields.DATETIME(stored=True)
     longdescription = fields.NGRAM(stored=True, minsize=1, phrase=True)
+    searchable = fields.BOOLEAN(stored=True)
     public = fields.BOOLEAN(stored=True)
     users = fields.KEYWORD(commas=True)
     groups = fields.KEYWORD(commas=True)
@@ -57,7 +58,10 @@ class WorkspaceSearcher(BaseSearcher):
     default_search_fields = ('owner', 'name', 'description', 'longdescription')
 
     def restrict_query(self, request):
-        return Or([Term('public', 't'), Term('users', request.user.username)] + [Term('groups', group.name) for group in request.user.groups.all()])
+        return Or([
+            And([Term('public', 't'), Term('searchable', 't')]),
+            Term('users', request.user.username)
+        ] + [Term('groups', group.name) for group in request.user.groups.all()])
 
     def build_compatible_fields(self, workspace):
         if workspace.last_modified is not None:
@@ -72,6 +76,7 @@ class WorkspaceSearcher(BaseSearcher):
             'description': workspace.description,
             'lastmodified': lastmodified,
             'longdescription': workspace.longdescription,
+            'searchable': workspace.searchable,
             'public': workspace.public,
             'users': ', '.join(workspace.users.all().values_list('username', flat=True)),
             'groups': ', '.join(workspace.groups.all().values_list('name', flat=True)),

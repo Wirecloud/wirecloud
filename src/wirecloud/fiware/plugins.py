@@ -79,6 +79,7 @@ class FIWAREBAEManager(MarketManager):
             mashup="CoNWeT/bae-marketplace/0.1.1",
             new_name=self._options['name'],
             preferences={'server_url': self._options['url']},
+            searchable=False,
             public=self._options['public']
         )
 

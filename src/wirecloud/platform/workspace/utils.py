@@ -156,12 +156,12 @@ def sync_base_workspaces(user):
 def get_workspace_list(user):
 
     if not user.is_authenticated():
-        return Workspace.objects.filter(public=True)
+        return Workspace.objects.filter(public=True, searchable=True)
 
     sync_base_workspaces(user)
 
     # Now we can fetch all the workspaces for the user
-    workspaces = Workspace.objects.filter(Q(public=True) | Q(users__id=user.id))
+    workspaces = Workspace.objects.filter(Q(public=True, searchable=True) | Q(users__id=user.id))
 
     return workspaces
 
@@ -595,7 +595,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
     return data_ret
 
 
-def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}, public=False):
+def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}, searchable=True, public=False):
 
     from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
@@ -636,10 +636,7 @@ def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}, 
         wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
         template = TemplateParser(wgt_file.get_template())
 
-    workspace, _foo = buildWorkspaceFromTemplate(template, owner, new_name=new_name)
-    if public:
-        workspace.public = True
-        workspace.save()
+    workspace, _foo = buildWorkspaceFromTemplate(template, owner, new_name=new_name, searchable=searchable, public=public)
 
     if len(preferences) > 0:
         update_workspace_preferences(workspace, preferences, invalidate_cache=False)

@@ -43,6 +43,7 @@ class Workspace(models.Model):
     creation_date = models.BigIntegerField(_('Creation Date'), null=False, blank=False, default=now_timestamp)
     last_modified = models.BigIntegerField(_('Last Modification Date'), null=True, blank=True)
 
+    searchable = models.BooleanField(_('Searchable'), default=True)
     public = models.BooleanField(_('Available to all users'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkspace')
     groups = models.ManyToManyField(Group, verbose_name=_('Groups'), blank=True)

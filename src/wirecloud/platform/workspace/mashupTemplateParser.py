@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -35,7 +35,7 @@ from wirecloud.platform.wiring.utils import get_wiring_skeleton, get_endpoint_na
 from wirecloud.platform.workspace.utils import createTab, normalize_forced_values, TemplateValueProcessor
 
 
-def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=None):
+def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=None, searchable=True, public=False):
 
     if not isinstance(template, TemplateParser):
         template = TemplateParser(template)
@@ -49,7 +49,7 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=No
         name = template.get_resource_processed_info(process_urls=False)['title']
 
     # Workspace creation
-    workspace = Workspace(name=name, creator=user)
+    workspace = Workspace(name=name, creator=user, searchable=searchable, public=public)
     if allow_renaming:
         save_alternative(Workspace, 'name', workspace)
     else:
