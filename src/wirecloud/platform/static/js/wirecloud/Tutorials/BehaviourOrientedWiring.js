@@ -180,7 +180,7 @@
     };
 
     ns.TutorialCatalogue.add('mashup-wiring-design', new Wirecloud.ui.Tutorial(utils.gettext("Behaviour Oriented Wiring"), [
-        /*{type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>Welcome to this Step-by-Step Interactive Tutorial!</p><p>In this tutorial you will learn how to build a <strong>behaviour oriented</strong> wiring configuration, a new feature added in WireCloud v0.8.0.</p><p>To do so, we are going to convert an application mashup created using a wiring configuration that doesn't use the behaviour engine to one that does.</p>")},
+        {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>Welcome to this Step-by-Step Interactive Tutorial!</p><p>In this tutorial you will learn how to build a <strong>behaviour oriented</strong> wiring configuration, a new feature added in WireCloud v0.8.0.</p><p>To do so, we are going to convert an application mashup created using a wiring configuration that doesn't use the behaviour engine to one that does.</p>")},
         {type: 'autoAction', action: BA.uploadComponent('CoNWeT/BOW-Tutorial/0.0.3')},
         {type: 'autoAction', action: BA.switch_view('workspace')},
         {type: 'autoAction', action: BA.create_workspace({name: utils.gettext("BOW Tutorial"), mashup: 'CoNWeT/BOW-Tutorial/0.0.3'})},
@@ -205,7 +205,7 @@
         {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>Once identified the desired behaviours, we're going to create them in the Wiring Editor view.</p>")},
         {type: 'userAction', msg: utils.gettext("Click <em>Wiring</em>"), elem: BS.toolbar_button('wc-show-wiring-button'), pos: 'downRight'},
 
-        {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>As you can see, we already have all the connections and components needed for implementing all the identified behaviours. The first step for converting this wiring configuration into a behaviour oriented configuration is enabling the behaviour engine.</p>")},*/
+        {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>As you can see, we already have all the connections and components needed for implementing all the identified behaviours. The first step for converting this wiring configuration into a behaviour oriented configuration is enabling the behaviour engine.</p>")},
         {type: 'userAction', msg: utils.gettext("Click <em>List Behaviours</em>"), elem: BS.wiringView.show_behaviours_button(), pos: 'downRight'},
         {type: 'autoAction', elem: BS.wiringView.show_behaviours_button(), action: BA.sleep(300)},
         {type: 'userAction', msg: utils.gettext("Enable the behaviour engine"), elem: BS.wiringView.enable_behaviours_button(), pos: 'topRight'},
