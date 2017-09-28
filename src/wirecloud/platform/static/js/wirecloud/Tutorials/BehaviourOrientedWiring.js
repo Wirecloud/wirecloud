@@ -184,7 +184,7 @@
         {type: 'autoAction', action: BA.uploadComponent('CoNWeT/BOW-Tutorial/0.0.3')},
         {type: 'autoAction', action: BA.switch_view('workspace')},
         {type: 'autoAction', action: BA.create_workspace({name: utils.gettext("BOW Tutorial"), mashup: 'CoNWeT/BOW-Tutorial/0.0.3'})},
-        {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext('<p><span class="label label-success">Great!</span> We are now ready to start. Let\'s start by identifying the behaviours we want to model.</p><div class="alert alert-info">We have installed a mashup into your account (<strong>BOW-Tutorial</strong>), you can remove it safetly.</div>')},
+        {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext('<p><span class="label label-success">Great!</span> We are now ready to start. Let\'s start by identifying the behaviours we want to model.</p><div class="alert alert-info">We have installed a mashup into your account (<strong>BOW-Tutorial</strong>), you can remove it safely.</div>')},
 
         // Step 1: identify behaviours
         {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Our <strong>first behaviour (1 of 4)</strong> is going to be: Allow technician searches</p>")},

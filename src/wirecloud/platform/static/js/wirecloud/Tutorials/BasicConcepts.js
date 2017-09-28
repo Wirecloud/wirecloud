@@ -68,7 +68,7 @@
             {type: 'simpleDescription', title: utils.gettext('WireCloud Basic Tutorial'), msg: utils.gettext("<p>Welcome to WireCloud!!</p><p>This tutorial will show you the basic concepts behind WireCloud.</p>")},
             {type: 'autoAction', action: BA.switch_view('workspace')},
             {type: 'autoAction', action: BA.create_workspace({name: 'Basic concepts tutorial'})},
-            {type: 'simpleDescription', title: utils.gettext('WireCloud Basic Tutorial'), msg: utils.gettext('<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add some widgets.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you. You can safetly uninstall these widgets after finishing the tutorial.</p></div>')},
+            {type: 'simpleDescription', title: utils.gettext('WireCloud Basic Tutorial'), msg: utils.gettext('<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add some widgets.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you. You can safely uninstall these widgets after finishing the tutorial.</p></div>')},
 
             // My Resources
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/input-box/1.0')},
