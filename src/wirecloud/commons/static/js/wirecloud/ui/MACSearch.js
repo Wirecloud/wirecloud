@@ -120,7 +120,8 @@
         var priv = privates.get(this);
 
         if (priv.request != null) {
-            priv.request.abort();
+            // Abort current request due user input
+            priv.request.abort("User input", true);
         }
         priv.list.disable();
         this.dispatchEvent('search');
