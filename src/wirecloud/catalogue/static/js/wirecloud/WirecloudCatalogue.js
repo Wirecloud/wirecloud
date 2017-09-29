@@ -126,7 +126,7 @@
                 }
                 resolve(data);
             });
-        });
+        }).toTask(utils.gettext("Doing catalogue search"));
     };
 
     WirecloudCatalogue.prototype.getResourceDetails = function getResourceDetails(vendor, name, options) {

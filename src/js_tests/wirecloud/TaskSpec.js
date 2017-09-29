@@ -369,7 +369,7 @@
 
         });
 
-        describe("abort()", function () {
+        describe("abort(reason, retroactive)", function () {
 
             it("should work on unabortable tasks", function () {
                 var task = new Wirecloud.Task("task", function () {});
@@ -459,9 +459,111 @@
                 expect(task.progress).toBe(50);
             });
 
+            it("should abort next task nodes", () => {
+                var t1 = new Wirecloud.Task("task", () => {});
+                var t2 = t1.then(
+                    fail,
+                    fail
+                );
+
+                expect(t1.abort("reason")).toBe(t1);
+
+                expect(t1.status).toBe("aborted");
+                expect(t1.value).toBe("reason");
+                expect(t2.status).toBe("aborted");
+                expect(t2.value).toBe("reason");
+            });
+
+            it("should leave previous task nodes untouched", () => {
+                var t1 = new Wirecloud.Task("task", () => {});
+                var t2 = t1.then(() => {});
+
+                expect(t2.abort("reason")).toBe(t2);
+
+                expect(t1.status).toBe("pending");
+                expect(t1.value).toBe(undefined);
+                expect(t2.status).toBe("aborted");
+                expect(t2.value).toBe("reason");
+            });
+
+            it("should abort previous task nodes when using the retroactive option", () => {
+                var t1 = new Wirecloud.Task("task", () => {});
+                var t2 = t1.then(() => {});
+
+                expect(t2.abort("reason", true)).toBe(t2);
+
+                expect(t1.status).toBe("aborted");
+                expect(t1.value).toBe("reason");
+                expect(t2.status).toBe("aborted");
+                expect(t2.value).toBe("reason");
+            });
+
+            var build_sequence_task = function build_sequence_task() {
+                var build_promise = function (value) {
+                    var _resolve;
+                    var p = new Promise((resolve) => {_resolve = resolve;});
+                    p._resolve = _resolve;
+                    return p;
+                };
+                var build_task = function (value) {
+                    var _resolve;
+                    var t = new Wirecloud.Task("task", (resolve) => {_resolve = resolve;});
+                    t._resolve = _resolve;
+                    return t;
+                };
+                var listener = jasmine.createSpy("listener");
+
+                var _resolve;
+                var initial_task = new Wirecloud.Task("initial task", (resolve) => {_resolve = resolve});
+                initial_task._resolve = _resolve;
+                return initial_task.then(build_promise).then(build_task).then(build_promise).toTask("sequence task").on("progress", listener);
+            };
+
+            it("should abort just started sequences tasks", function () {
+                var task = build_sequence_task()
+
+                // T = P -> P -> P -> P = P
+                task.abort();
+
+                // T = R -> A -> A -> A = A
+                task.subtasks.forEach((subtask) => {
+                    expect(subtask.status).toBe("aborted");
+                });
+            });
+
+            it("should abort partially resolved sequence tasks", function () {
+                var task = build_sequence_task()
+
+                task.subtasks[0]._resolve("value");
+
+                // T = R -> P -> P -> P = P
+                task.abort();
+
+                // T = R -> A -> A -> A = A
+                var subtasks = task.subtasks;
+                expect(subtasks.shift().status).toBe("resolved");
+                subtasks.forEach((subtask) => {
+                    expect(subtask.status).toBe("aborted");
+                });
+            });
+
+            it("should abort parent sequence tasks", function () {
+                var task = build_sequence_task()
+
+                // T = P -> P -> P -> P = P
+                task.subtasks[1].abort();
+
+                // T = P -> A -> A -> A = A
+                var subtasks = task.subtasks;
+                expect(subtasks.shift().status).toBe("pending");
+                subtasks.forEach((subtask) => {
+                    expect(subtask.status).toBe("aborted");
+                });
+            });
+
         });
 
-        describe("catch()", function () {
+        describe("catch(reject, abort)", function () {
 
             it("should react on rejected tasks", function (done) {
                 var expected_reason = "error reason";
@@ -482,7 +584,7 @@
 
                 task.abort(expected_reason);
 
-                task.catch(function (reason) {
+                task.catch(null, function (reason) {
                     expect(reason).toBe(expected_reason);
                     done();
                 });
@@ -492,10 +594,46 @@
                 var task = new Wirecloud.Task("task", function () {});
                 var expected_reason = "aborted";
 
-                task.catch(function (reason) {
+                task.catch(null, function (reason) {
                     expect(reason).toBe(expected_reason);
                     done();
                 });
+
+                expect(task.abort(expected_reason)).toBe(task);
+            });
+
+            it("should allow to convert abort events into resolve events", function (done) {
+                var task = new Wirecloud.Task("task", function () {});
+                var expected_reason = "aborted";
+
+                task.catch(null, function (reason) {
+                    expect(reason).toBe("aborted");
+                    return 3;
+                }).then(
+                    (value) => {
+                        expect(value).toBe(3);
+                        done();
+                    },
+                    fail
+                );
+
+                expect(task.abort(expected_reason)).toBe(task);
+            });
+
+            it("should allow to convert abort events into reject events", function (done) {
+                var task = new Wirecloud.Task("task", function () {});
+                var expected_reason = "reason";
+
+                task.catch(null, function (reason) {
+                    expect(reason).toBe("reason");
+                    return Promise.reject("error");
+                }).then(
+                    fail,
+                    (value) => {
+                        expect(value).toBe("error");
+                        done();
+                    }
+                );
 
                 expect(task.abort(expected_reason)).toBe(task);
             });
@@ -567,6 +705,21 @@
                 task_resolve("final value");
                 expect(task.status).toBe("resolved");
                 expect(task.value).toBe("final value");
+            });
+
+            it("title parameter is not required", () => {
+                var task_update, task_resolve;
+
+                var subtask = new Wirecloud.Task("subtask title", (resolve, reject, update) => {
+                    task_update = update;
+                    task_resolve = resolve;
+                    update(50);
+                });
+
+                var task = subtask.toTask();
+
+                expect(task).not.toBe(subtask);
+                expect(task.title).toEqual("subtask title");
             });
 
             it("Task sequences can be created using promises", (done) => {

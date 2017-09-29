@@ -107,13 +107,19 @@
         this.dispatchEvent("progress", priv.progress);
     };
 
-    Task.prototype.abort = function abort(reason) {
+    Task.prototype.abort = function abort(reason, retroactive) {
         var priv = privates.get(this);
 
         if (priv.status === "pending") {
             priv.status = "aborted";
             priv.value = reason;
-            this.dispatchEvent('fail', reason);
+
+            priv.subtasks.forEach((subtask) => {subtask.abort(reason)});
+            this.dispatchEvent('abort', reason);
+        }
+
+        if (retroactive === true && priv.parent != null && priv.parent.status === "pending") {
+            priv.parent.abort(reason, true);
         }
 
         return this;
@@ -200,8 +206,8 @@
         return task;
     };
 
-    Task.prototype.catch = function _catch(reject) {
-        return this.then(null, reject);
+    Task.prototype.catch = function _catch(reject, abort) {
+        return this.then(null, reject, abort);
     };
 
     Task.prototype.renameTask = function renameTask(title) {
@@ -209,13 +215,13 @@
         return this;
     };
 
-    Task.prototype.then = function then(onFulfilled, onRejected) {
-        return new TaskContinuation(this, onFulfilled, onRejected);
+    Task.prototype.then = function then(onFulfilled, onRejected, onAborted) {
+        return new TaskContinuation(this, onFulfilled, onRejected, onAborted);
     };
 
     var privates = new WeakMap();
 
-    var TaskContinuation = function TaskContinuation(parent, onFulfilled, onRejected) {
+    var TaskContinuation = function TaskContinuation(parent, onFulfilled, onRejected, onAborted) {
 
         privates.set(this, {
             parent: parent,
@@ -247,13 +253,17 @@
 
         var internal_resolve = resolve.bind(this);
         var internal_reject = reject.bind(this);
+        var internal_abort = this.abort.bind(this);
         if (parent.status === 'resolved') {
             resolve_then.call(parent, this, onFulfilled, internal_resolve, internal_resolve, internal_reject);
-        } else if (parent.status === 'rejected' || parent.status === 'aborted') {
+        } else if (parent.status === 'rejected') {
             resolve_then.call(parent, this, onRejected, internal_reject, internal_resolve, internal_reject);
-        } else {
+        } else if (parent.status === 'aborted') {
+            resolve_then.call(parent, this, onAborted, internal_abort, internal_resolve, internal_reject);
+        } else /* if (parent.status === 'pending') */ {
             parent.addEventListener("finish", resolve_then.bind(parent, this, onFulfilled, internal_resolve, internal_resolve, internal_reject));
             parent.addEventListener("fail", resolve_then.bind(parent, this, onRejected, internal_reject, internal_resolve, internal_reject));
+            parent.addEventListener("abort", resolve_then.bind(parent, this, onAborted, internal_abort, internal_resolve, internal_reject));
         }
     };
     utils.inherit(TaskContinuation, Task);
@@ -362,6 +372,7 @@
         task.addEventListener('progress', updateAggregatedTaskProgress.bind(this));
         task.addEventListener('finish', on_task_finish.bind(this));
         task.addEventListener('fail', on_task_finish.bind(this));
+        task.addEventListener('abort', on_task_finish.bind(this));
     };
 
     var updateAggregatedTaskProgress = function updateAggregatedTaskProgress() {
