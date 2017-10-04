@@ -421,6 +421,9 @@ class WirecloudTestCase(TransactionTestCase):
         # Restore English as the default language
         self.changeLanguage('en')
 
+        # Populate initial db
+        management.call_command('populate', verbosity=0, interactive=False)
+
     def tearDown(self):
 
         from django.conf import settings
