@@ -159,8 +159,12 @@ $ wirecloud-admin --version
 
 NGSI bindings (ngsijs) have been updated to `v1.0.2`. This allows WireCloud to
 directly use CORS requests when connecting to a `ngsi-proxy`. The downside is
-that WireCloud is unable to detect the used ngsi-proxy version, so we had to
-drop support for `ngsi-proxy` `v1.0.0` and below.
+that WireCloud is unable to detect the version of ngsi-proxy used, so we had to
+drop support for `ngsi-proxy` version `v1.0.0` and below.
+
+WireCloud 1.1 has changed the schema of the workspace search index, you have to
+update this index by running the `resetsearchindexes` command. Also, there are
+new predefined dashboards, so you have to the `populate` command.
 
 IdM integration has migrated from `python-social-auth` to
 `social-auth-app-django` (see this [link][MIGRATING_TO_SOCIAL] for more info
