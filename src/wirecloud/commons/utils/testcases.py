@@ -343,6 +343,7 @@ def prepare_temporal_resource_directories(cls):
 class WirecloudTestCase(TransactionTestCase):
 
     base_resources = ()
+    populate = True
 
     @classmethod
     def setUpClass(cls):
@@ -422,7 +423,8 @@ class WirecloudTestCase(TransactionTestCase):
         self.changeLanguage('en')
 
         # Populate initial db
-        management.call_command('populate', verbosity=0, interactive=False)
+        if self.populate:
+            management.call_command('populate', verbosity=0, interactive=False)
 
     def tearDown(self):
 

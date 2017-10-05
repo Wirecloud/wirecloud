@@ -301,7 +301,8 @@ class WorkspaceTestCase(WirecloudTestCase):
         searcher = WorkspaceSearcher()
         workspace = create_autospec(Workspace())
         fields = searcher.build_compatible_fields(workspace)
-        self.assertEqual(set(fields.keys()), {'id', 'owner', 'name', 'description', 'lastmodified', 'longdescription', 'public', 'users', 'groups', 'shared'})
+        self.assertEqual(set(fields.keys()), {'id', 'owner', 'name', 'description', 'lastmodified', 'longdescription', 'public', 'users', 'groups', 'shared', 'searchable'})
+    test_build_search_fields.tags = tags + ('current',)
 
     def test_build_search_fields_no_last_modified(self):
 
@@ -309,7 +310,8 @@ class WorkspaceTestCase(WirecloudTestCase):
         workspace = create_autospec(Workspace())
         workspace.last_modified = None
         fields = searcher.build_compatible_fields(workspace)
-        self.assertEqual(set(fields.keys()), {'id', 'owner', 'name', 'description', 'lastmodified', 'longdescription', 'public', 'users', 'groups', 'shared'})
+        self.assertEqual(set(fields.keys()), {'id', 'owner', 'name', 'description', 'lastmodified', 'longdescription', 'public', 'users', 'groups', 'shared', 'searchable'})
+    test_build_search_fields_no_last_modified.tags = tags + ('current',)
 
 
 class WorkspaceCacheTestCase(WirecloudTestCase):

@@ -689,9 +689,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             updated = True
             log('Creating a initial version of the wirecloud/home workspace... ', 1, ending='')
             with open(INITIAL_HOME_DASHBOARD_FILE, 'rb') as f:
-                workspace = create_workspace(wirecloud_user, f)
-                workspace.public = True
-                workspace.save()
+                create_workspace(wirecloud_user, f, public=True, searchable=False)
             log('DONE', 1)
 
         self.populate_component(wirecloud_user, log, "CoNWeT", "markdown-viewer", "0.1.1", MARKDOWN_VIEWER_FILE)
@@ -701,10 +699,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             updated = True
             log('Creating a initial version of the wirecloud/landing workspace... ', 1, ending='')
             with open(LANDING_DASHBOARD_FILE, 'rb') as f:
-                workspace = create_workspace(wirecloud_user, f)
-                workspace.public = True
-                workspace.searchable = False
-                workspace.save()
+                create_workspace(wirecloud_user, f, public=True, searchable=False)
             log('DONE', 1)
 
         return updated

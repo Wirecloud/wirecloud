@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -45,6 +45,7 @@ __test__ = False
 class CatalogueSearchTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
+    populate = False
     tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
 
     WIRECLOUD_RESULTS = {'Wirecloud/TestOperator/2.0', 'Wirecloud/test-mashup/1.0.5', 'Wirecloud/Book-Reader/1.5', 'Wirecloud/Test/2.5', 'CoNWeT-Lab/Clock_Now/1.11'}
