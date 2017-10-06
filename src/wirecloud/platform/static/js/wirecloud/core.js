@@ -197,8 +197,7 @@
                 Wirecloud.UserInterfaceManager.changeCurrentView('workspace', true);
 
                 Wirecloud.dispatchEvent('loaded');
-                var workspace = Wirecloud.workspacesByUserAndName[state.workspace_owner][state.workspace_name];
-                return Wirecloud.changeActiveWorkspace(workspace, {initialtab: state.tab, history: "replace"});
+                return Wirecloud.changeActiveWorkspace({owner: state.workspace_owner, name: state.workspace_name}, {initialtab: state.tab, history: "replace"});
             }, (error) => {
                 var msg = gettext("Error loading WireCloud");
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
@@ -313,9 +312,11 @@
             history: "push"
         }, options);
 
-        if (!('id' in workspace)) {
-            workspace = this.workspacesByUserAndName[workspace.owner][workspace.name];
-        } else {
+        if (!('owner' in workspace && 'name' in workspace) && !('id' in workspace)) {
+            throw TypeError('use the id parameter or the owner/name pair of parameters');
+        }
+
+        if (!('owner' in workspace) || !('name' in workspace)) {
             workspace = this.workspaceInstances[workspace.id];
         }
 
