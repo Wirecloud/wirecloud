@@ -97,6 +97,11 @@
         }.bind(this));
     };
 
+    var changesCallback = function changesCallback() {
+        if (this.callback) {
+            this.callback();
+        }
+    }
     // =========================================================================
     // CLASS DEFINITION
     // =========================================================================
@@ -200,6 +205,7 @@
             return Promise.resolve(result);
         }).then(unload_affected_components.bind(this, resource))
         .then(purge_component_info.bind(this, resource))
+        .then(changesCallback.bind(this))
         .toTask(msg);
     };
 
@@ -211,7 +217,8 @@
     LocalCatalogue.deleteResource = function deleteResource(resource, options) {
         return Wirecloud.WirecloudCatalogue.prototype.deleteResource.call(this, resource, options)
             .then(unload_affected_components.bind(this, resource))
-            .then(purge_component_info.bind(this, resource));
+            .then(purge_component_info.bind(this, resource))
+            .then(changesCallback.bind(this))
     };
 
     /**
@@ -237,6 +244,7 @@
                     this._includeResource.call(this, component);
                 }
             });
+            changesCallback.call(this);
             return Promise.resolve(response_data);
         });
         return task;

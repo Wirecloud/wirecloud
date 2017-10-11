@@ -47,6 +47,7 @@
 
         options['class'] = 'search_interface loading';
         this.catalogue = options.catalogue;
+        this.catalogue.catalogue.callback = this.mark_outdated.bind(this);
         StyledElements.Alternative.call(this, id, options);
 
         if (options.gui_template == null) {
