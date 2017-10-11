@@ -35,6 +35,7 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_downloadfile_response, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
+from wirecloud.commons.utils.structure import CaseInsensitiveDict
 from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
@@ -132,7 +133,7 @@ class ResourceCollection(Resource):
                     context = {}
 
                 try:
-                    context["headers"] = headers
+                    context["headers"] = CaseInsensitiveDict(headers)
                     response = WIRECLOUD_PROXY.do_request(request, templateURL, "GET", context)
                     if response.status_code >= 300 or response.status_code < 200:
                         raise Exception()
