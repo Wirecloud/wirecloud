@@ -462,10 +462,37 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue('id' in response_data)
         self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
         self.assertEqual(response_data['name'], 'test')
+        self.assertEqual(response_data['title'], 'test')
         self.assertTrue(isinstance(response_data['wiring'], dict))
 
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=1, name='test').exists())
+
+    def test_workspace_collection_post_title(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        data = {
+            'title': 'nÉw wörkspace'
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        # Check basic response structure
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
+        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertEqual(response_data['name'], 'new-workspace')
+        self.assertEqual(response_data['title'], 'nÉw wörkspace')
+        self.assertTrue(isinstance(response_data['wiring'], dict))
+
+        # Workspace should be created
+        self.assertTrue(Workspace.objects.filter(creator=1, name='new-workspace').exists())
 
     def test_workspace_collection_post_from_workspace(self):
 
@@ -480,7 +507,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='emptyuser', password='admin')
 
         # Make the request
-        # workspace 4 (owner: user_with_workspaces, name: Public Workspace) is readable and copyable by emptyuser
+        # workspace 4 (owner: user_with_workspaces, name: public-workspace, title: Public Workspace) is readable and copyable by emptyuser
         data = {
             'workspace': '4',
         }
@@ -489,7 +516,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['owner'], 'emptyuser')
-        self.assertEqual(response_data['name'], 'Public Workspace')
+        self.assertEqual(response_data['name'], 'public-workspace')
+        self.assertEqual(response_data['title'], 'Public Workspace')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
         self.assertEqual(public_preference['value'], 'false')
 
@@ -510,7 +538,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['owner'], 'user_with_workspaces')
-        self.assertEqual(response_data['name'], 'Pending Events 2')
+        self.assertEqual(response_data['name'], 'pending-events-2')
+        self.assertEqual(response_data['title'], 'Pending Events')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
         self.assertEqual(public_preference['value'], 'false')
 
@@ -670,11 +699,12 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
         self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
-        self.assertEqual(response_data['name'], 'Test Mashup')
+        self.assertEqual(response_data['name'], 'test-mashup')
+        self.assertEqual(response_data['title'], 'Test Mashup')
         self.assertTrue(isinstance(response_data['wiring'], dict))
 
         # Workspace should be created
-        self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
+        self.assertTrue(Workspace.objects.filter(creator=2, name='test-mashup').exists())
 
     @uses_extra_resources(('Wirecloud_ParameterizedMashup_1.0.zip',), shared=True)
     def test_workspace_collection_post_creation_from_mashup_with_preferences(self):
@@ -899,7 +929,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue('id' in response_data)
         self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
         self.assertTrue(response_data['shared'])
-        self.assertEqual(response_data['name'], 'Public Workspace')
+        self.assertEqual(response_data['name'], 'public-workspace')
+        self.assertEqual(response_data['title'], 'Public Workspace')
         self.assertEqual(response_data['owner'], 'user_with_workspaces')
 
     def test_workspace_entry_cache(self):
@@ -1402,10 +1433,39 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertIn("id", response_data)
             self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
             self.assertEqual(response_data['name'], 'rest_api_test')
+            self.assertEqual(response_data['title'], 'rest_api_test')
             self.assertEqual(response_data['iwidgets'], [])
 
             # Tab should be created
             self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+        check_cache_is_purged(self, 1, create_workspace_tab)
+
+    def test_tab_collection_post_title(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def create_workspace_tab():
+            data = {
+                'title': 'Rest apí test',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 201)
+
+            # Check basic response structure
+            response_data = json.loads(response.content.decode('utf-8'))
+            self.assertTrue(isinstance(response_data, dict))
+            self.assertIn("id", response_data)
+            self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+            self.assertEqual(response_data['name'], 'rest-api-test')
+            self.assertEqual(response_data['title'], 'Rest apí test')
+            self.assertEqual(response_data['iwidgets'], [])
+
+            # Tab should be created
+            self.assertTrue(Tab.objects.filter(name='rest-api-test').exists())
         check_cache_is_purged(self, 1, create_workspace_tab)
 
     def test_tab_collection_post_not_found(self):
@@ -3859,7 +3919,8 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, list))
         self.assertEqual(len(response_data), 1)
-        self.assertEqual(response_data[0]['name'], 'Public Workspace')
+        self.assertEqual(response_data[0]['name'], 'public-workspace')
+        self.assertEqual(response_data[0]['title'], 'Public Workspace')
 
     def test_workspace_entry_post_requires_authentication(self):
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -222,7 +222,12 @@ class JSONTemplateParser(object):
 
         elif self._info['type'] == 'mashup':
 
-            self._check_array_fields(('params', 'embedded'))
+            self._check_array_fields(('params', 'tabs', 'embedded'))
+
+            for tab in self._info['tabs']:
+                self._check_string_fields(('name',), place=tab, required=True)
+                self._check_string_fields(('title',), place=tab, required=False)
+
             for preference in self._info['params']:
                 self._check_string_fields(('name', 'type'), place=preference, required=True)
                 self._check_string_fields(('label', 'description', 'default'), place=preference)

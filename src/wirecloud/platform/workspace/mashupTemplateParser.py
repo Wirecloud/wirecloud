@@ -26,6 +26,7 @@ import six
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.urlify import URLify
 from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.platform.iwidget.utils import SaveIWidget, set_initial_values
@@ -35,7 +36,7 @@ from wirecloud.platform.wiring.utils import get_wiring_skeleton, get_endpoint_na
 from wirecloud.platform.workspace.utils import createTab, normalize_forced_values, TemplateValueProcessor
 
 
-def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=None, searchable=True, public=False):
+def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=None, new_title=None, searchable=True, public=False):
 
     if not isinstance(template, TemplateParser):
         template = TemplateParser(template)
@@ -43,13 +44,17 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=No
     if template.get_resource_type() != 'mashup':
         raise TypeError('Unsupported resource type: %s' % template.get_resource_type())
 
-    if new_name is not None:
-        name = new_name
-    else:
-        name = template.get_resource_processed_info(process_urls=False)['title']
+    if (new_name is None or new_name.strip() == '') and (new_title is None or new_title.strip() == ''):
+        processed_info = template.get_resource_processed_info(process_urls=False)
+        new_name = processed_info['name']
+        new_title = processed_info['title']
+    elif new_title is None or new_title.strip() == '':
+        new_title = new_name
+    elif new_name is None or new_name.strip() == '':
+        new_name = URLify(new_title)
 
     # Workspace creation
-    workspace = Workspace(name=name, creator=user, searchable=searchable, public=public)
+    workspace = Workspace(title=new_title, name=new_name, creator=user, searchable=searchable, public=public)
     if allow_renaming:
         save_alternative(Workspace, 'name', workspace)
     else:
@@ -211,7 +216,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         })
 
     for tab_entry in mashup_description['tabs']:
-        tab = createTab(tab_entry.get('name'), workspace, allow_renaming=True)
+        tab = createTab(tab_entry.get('title'), workspace, name=tab_entry['name'], allow_renaming=True)
 
         new_values = {}
         for preference_name in tab_entry['preferences']:

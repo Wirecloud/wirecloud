@@ -96,7 +96,7 @@ class ProxyTestCase(WirecloudTestCase):
         else:
             return response.content.decode('utf-8')
 
-    def prepare_request_mock(self, data=None, referer='http://localhost/user_with_workspaces/Public Workspace', user=None, extra_headers={}, GET='', use_deprecated_code=False):
+    def prepare_request_mock(self, data=None, referer='http://localhost/user_with_workspaces/public-workspace', user=None, extra_headers={}, GET='', use_deprecated_code=False):
 
         request = Mock()
         request.get_host.return_value = 'localhost'

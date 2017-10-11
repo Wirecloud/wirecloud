@@ -29,7 +29,7 @@
     var retry = function retry(data) {
         Wirecloud.UserInterfaceManager.monitorTask(
             Wirecloud.createWorkspace({
-                name: data.name,
+                title: data.title,
                 mashup: data.mashup
             }).then(
                 function (workspace) {
@@ -45,7 +45,7 @@
 
     var NewWorkspaceWindowMenu = function NewWorkspaceWindowMenu() {
         var fields = {
-            'name': {
+            'title': {
                 label: utils.gettext('Name'),
                 type: 'text'
             },
@@ -82,7 +82,7 @@
 
         Wirecloud.UserInterfaceManager.monitorTask(
             Wirecloud.createWorkspace({
-                name: data.name,
+                title: data.title,
                 mashup: data.mashup
             }).then(function (workspace) {
                 return Wirecloud.changeActiveWorkspace(workspace);

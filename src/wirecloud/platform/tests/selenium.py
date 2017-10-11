@@ -62,7 +62,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # admin only have one workspace, but WireCloud should allow any workspace operation
         self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed')).close()
 
-        self.create_workspace(name='Test')
+        self.create_workspace('Test')
 
         # Now we have two workspaces, nothing should change
         self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed'), ()).close()
@@ -95,7 +95,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_move_iwidget_between_tabs(self):
 
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         src_iwidget_count = len(self.find_tab(id="102").widgets)
         dst_iwidget_count = len(self.find_tab(id="103").widgets)
@@ -118,14 +118,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.find_widget(title="Test 1").remove()
 
     def test_remove_tab_from_workspace(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
         self.find_tab(title="Tab 1").remove()
 
         with self.wiring_view as wiring:
             self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
 
     def test_read_only_widgets_cannot_be_removed(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         tab = self.find_tab(title="Tab 2")
         tab.click()
@@ -134,7 +134,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertTrue(tab_widget.remove_button.is_disabled)
 
     def test_tabs_with_read_only_widgets_cannot_be_removed(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         tab = self.find_tab(title="Tab 2")
         tab.show_preferences().check(must_be_disabled=('Remove',))
@@ -388,12 +388,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         # Create a new workspace
-        self.create_workspace(name='Test')
+        self.create_workspace('Test')
 
         self.reload()
         self.wait_wirecloud_ready()
 
-        self.assertEqual(self.get_current_workspace_name(), 'Test')
+        self.assertEqual(self.get_current_workspace_title(), 'Test')
 
         # Add a new tab
         self.create_tab()
@@ -457,7 +457,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.reload()
         self.wait_wirecloud_ready()
 
-        self.assertEqual(self.get_current_workspace_name(), 'test2')
+        self.assertEqual(self.get_current_workspace_title(), 'test2')
 
         # Remove the tab with widgets
         tab = self.find_tab(title='Other Name')
@@ -542,9 +542,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
         self.login(username="admin", next="/admin/Workspace")
-        self.create_workspace(name='Test Mashup')
+        self.create_workspace('Test Mashup')
+        workspace_name = self.get_current_workspace_name()
         self.create_workspace(mashup='Test Mashup')
-        self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
+        self.assertNotEqual(self.get_current_workspace_name(), workspace_name)
 
     @uses_extra_resources(('Wirecloud_TestMashup2_1.0.zip',), shared=True)
     def test_create_workspace_from_catalogue_missing_dependencies(self):
@@ -579,11 +580,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             resource.merge()
 
         self.assertEqual(len(self.tabs), 3)
-        tab1 = self.find_tab(title='Tab')
+        tab1 = self.find_tab(name='tab')
         self.assertIsNotNone(tab1)
-        tab2 = self.find_tab(title='Tab 2')
+        tab2 = self.find_tab(name='Tab')
         self.assertIsNotNone(tab2)
-        tab3 = self.find_tab(title='Tab 2 2')
+        tab3 = self.find_tab(name='Tab 2')
         self.assertIsNotNone(tab3)
 
         self.assertEqual(len(self.find_tab(id=tab1.id).widgets), 0)
@@ -599,7 +600,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.publish_workspace({
             'vendor': 'Wirecloud',
-            'name': 'Published Workspace',
+            'title': 'Published Workspace',
             'version': '1.0',
             'email': 'a@b.com',
         })
@@ -615,7 +616,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.publish_workspace({
             'vendor': 'Wirecloud',
-            'name': 'Published Workspace',
+            'title': 'Published Workspace',
             'version': '1.0',
             'email': 'a@b.com',
             'readOnlyWidgets': True,
@@ -644,7 +645,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         test_operator.public = False
         test_operator.save()
 
-        self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
+        self.login(username='emptyuser', next='/user_with_workspaces/public-workspace')
 
         self.assertTrue(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
         self.assertTrue(self.find_navbar_button("wc-show-wiring-button").is_disabled)
@@ -667,7 +668,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         test_operator.public = False
         test_operator.save()
 
-        url = self.live_server_url + '/user_with_workspaces/Public Workspace'
+        url = self.live_server_url + '/user_with_workspaces/public-workspace'
         self.driver.get(url)
         self.wait_wirecloud_ready()
 
@@ -687,11 +688,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         form.submit()
 
         self.wait_wirecloud_ready()
-        self.assertEqual(self.get_current_workspace_name(), 'Public Workspace')
+        self.assertEqual(self.get_current_workspace_title(), 'Public Workspace')
 
     def test_embedded_view(self):
 
-        mashup_url = self.live_server_url + '/user_with_workspaces/Public Workspace?mode=embedded'
+        mashup_url = self.live_server_url + '/user_with_workspaces/public-workspace?mode=embedded'
         from django.conf import settings
         iframe_test_url = urljoin(self.live_server_url, settings.STATIC_URL) + 'tests/embedded_iframe.html'
         self.driver.get(iframe_test_url)
@@ -753,7 +754,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.forward()
         self.wait_wirecloud_ready()
-        self.assertEqual(self.get_current_workspace_name(), 'Workspace')
+        self.assertEqual(self.get_current_workspace_title(), 'Workspace')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'wiring')
@@ -766,7 +767,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_browser_workspace_navigation(self):
 
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         # Fill navigation history
         tab = self.find_tab(title='Tab 2')
@@ -802,7 +803,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         )
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Pending%20Events')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/pending-events')
 
         # Replay navigation history
         self.driver.forward()
@@ -830,16 +831,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
 
     def test_browser_workspace_initial_tab(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events#tab=Tab 2')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events#tab=Tab 2')
         self.assertEqual(self.active_tab.title, 'Tab 2')
 
         # Now test using an invalid tab name
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events#tab=Tab 4')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events#tab=Tab 4')
         self.assertEqual(self.active_tab.title, 'Tab 1')
 
     def test_browser_navigation_from_renamed_tab(self):
 
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
         initial_workspace_tab = self.active_tab
         initial_workspace_tab_name = initial_workspace_tab.title
 

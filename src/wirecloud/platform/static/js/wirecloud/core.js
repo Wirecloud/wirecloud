@@ -356,7 +356,7 @@
      * @returns {Wirecloud.Task}
      *
      * @example <caption>Create an empty workspace</caption>
-     * Wirecloud.createWorkspace({name: "MyWorkspace"}).then(function (workspace) {
+     * Wirecloud.createWorkspace({name: "my-workspace"}).then(function (workspace) {
      *     // Workspace created successfully
      * }, function (error) {
      *     // Error creating workspace
@@ -381,18 +381,22 @@
             dry_run: !!options.dry_run
         };
 
-        if (options.mashup == null && options.workspace == null && options.name == null) {
-            throw new Error(utils.gettext('Missing name parameter'));
+        if (options.mashup == null && options.workspace == null && options.name == null && options.title == null) {
+            throw new Error(utils.gettext('Missing name or title parameter'));
         } else if (options.mashup != null && options.workspace != null) {
             throw new Error(utils.gettext('Workspace and mashup options cannot be used at the same time'));
         }
 
-        if (options.mashup != null) {
+        if (options.mashup != null && options.mashup.trim() !== "") {
             body.mashup = options.mashup;
         }
 
         if (options.name != null) {
             body.name = options.name;
+        }
+
+        if (options.title != null) {
+            body.title = options.title;
         }
 
         if (options.preferences != null) {

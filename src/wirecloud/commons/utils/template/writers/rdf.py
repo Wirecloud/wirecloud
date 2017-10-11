@@ -207,6 +207,9 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
         graph.add((tab_element, rdflib.RDF.type, WIRE_M['Tab']))
         graph.add((resource_uri, WIRE_M['hasTab'], tab_element))
         graph.add((tab_element, DCTERMS['title'], rdflib.Literal(tab['name'])))
+        tab_title = tab.get('title', '')
+        if tab_title not in (None, ""):
+            graph.add((tab_element, WIRE['displayName'], rdflib.Literal(tab['title'])))
         graph.add((tab_element, WIRE['index'], rdflib.Literal(str(tab_index))))
 
         for preference_name in tab['preferences']:

@@ -11,7 +11,8 @@
      xmlns:gr="http://purl.org/goodrelations/v1#">
 
     <wire-m:Mashup rdf:about="http://wirecloud.com/test">
-        <dcterms:title>Test Mashup</dcterms:title>
+        <dcterms:title>test-mashup</dcterms:title>
+        <wire:displayName>Test Mashup</wire:displayName>
         <dcterms:description>This template defines an empty workspace</dcterms:description>
         <dcterms:creator rdf:resource="http://creatoruri/"/>
         <usdl-core:versionInfo>1</usdl-core:versionInfo>

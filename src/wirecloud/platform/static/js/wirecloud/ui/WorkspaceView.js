@@ -85,6 +85,11 @@
                     return this.model.name;
                 }
             },
+            title: {
+                get: function () {
+                    return this.model.title;
+                }
+            },
             widgets: {
                 get: function () {
                     return get_widgets.call(this);
@@ -329,7 +334,7 @@
                 {
                     'label': Wirecloud.activeWorkspace.owner
                 }, {
-                    'label': Wirecloud.activeWorkspace.name,
+                    'label': Wirecloud.activeWorkspace.title,
                 }
             ];
         } else if ('workspace_owner' in current_state) {
@@ -337,7 +342,7 @@
                 {
                     'label': current_state.workspace_owner
                 }, {
-                    'label': current_state.workspace_name,
+                    'label': current_state.workspace_title,
                 }
             ];
         } else {
@@ -400,7 +405,7 @@
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
             Wirecloud.changeActiveWorkspace(nextWorkspace, {initialtab: newState.tab, history: 'ignore'});
         } else if (newState.tab != null) {
-            target_tab = this.notebook.getTabByLabel(newState.tab);
+            target_tab = get_tab_by_id.call(this, newState.tab_id);
             this.notebook.goToTab(target_tab);
             document.title = newState.workspace_owner + '/' + newState.workspace_name;
         } else {
@@ -417,7 +422,7 @@
             var dialog = new Wirecloud.ui.AlertWindowMenu();
 
             dialog.setMsg(utils.interpolate(utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
-                name: this.name
+                name: this.title
             }));
             dialog.setHandler(function () {
                 this.model.remove().then(function () {
@@ -482,6 +487,7 @@
         state = {
             workspace_owner: this.model.owner,
             workspace_name: this.model.name,
+            workspace_title: this.model.title,
             view: "workspace",
             tab: Wirecloud.HistoryManager.getCurrentState().tab
         };
@@ -515,6 +521,15 @@
         }.bind(this), function () {
             button.enable();
         });
+    };
+
+    var get_tab_by_id = function get_tab_by_id(id) {
+        for (var i = 0; i < this.notebook.tabs.length; i++) {
+            if (this.tabs[i].id === id) {
+                return this.tabs[i];
+            }
+        }
+        return null;
     };
 
     Wirecloud.ui.WorkspaceView = WorkspaceView;

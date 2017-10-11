@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -535,6 +535,7 @@ class ApplicationMashupTemplateParser(object):
         for tab in self._xpath(TAB_XPATH, workspace_structure):
             tab_info = {
                 'name': text_type(tab.get('name')),
+                'title': text_type(tab.get('title', '')),
                 'preferences': self._parse_preference_values(tab),
                 'resources': [],
             }

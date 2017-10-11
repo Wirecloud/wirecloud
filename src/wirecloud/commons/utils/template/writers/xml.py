@@ -111,6 +111,10 @@ def write_mashup_tree(doc, resources, options):
     for tab_index, tab in enumerate(options['tabs']):
         tabElement = etree.SubElement(resources, 'tab', name=tab['name'], id=str(tab_index))
 
+        tabTitle = tab.get('title', '')
+        if tabTitle is not None and tabTitle.strip() != "":
+            tabElement.set('title', tabTitle.strip())
+
         for preference_name, preference_value in six.iteritems(tab['preferences']):
             etree.SubElement(tabElement, 'preferencevalue', name=preference_name, value=preference_value)
 

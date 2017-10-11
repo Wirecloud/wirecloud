@@ -341,6 +341,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_workspace_context_definitions(self):
         return {
+            'title': {
+                'label': _('Title'),
+                'description': _('Current title of the workspace'),
+            },
             'name': {
                 'label': _('Name'),
                 'description': _('Current name of the workspace'),

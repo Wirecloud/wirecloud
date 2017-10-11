@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,7 +27,7 @@ def save_alternative(model, variant_field, instance):
     suffix = 2
     base_value = getattr(instance, variant_field)
     while model.objects.filter(**unique_key).exists():
-        unique_key[variant_field] = base_value + ' ' + str(suffix)
+        unique_key[variant_field] = base_value + '-' + str(suffix)
         suffix += 1
 
     setattr(instance, variant_field, unique_key[variant_field])

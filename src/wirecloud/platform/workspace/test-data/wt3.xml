@@ -8,7 +8,7 @@
         <authors>admin</authors>
     </details>
     <structure>
-        <tab id="0" name="Tab">
+        <tab id="0" name="tab" title="Tab">
             <preferencevalue name="smart" value="False"/>
             <resource id="1" name="Test" title="Test (1)" vendor="Wirecloud" version="1.0">
                 <position x="0" y="0" z="0"/>
@@ -17,7 +17,7 @@
                 <preferencevalue name="list" value="default" readonly="true" hidden="true"/>
             </resource>
         </tab>
-        <tab id="1" name="Tab 2">
+        <tab id="1" name="tab-2" title="Tab 2">
             <resource id="2" name="Test" title="Test (2)" vendor="Wirecloud" version="1.0">
                 <position x="0" y="0" z="0"/>
                 <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
@@ -25,8 +25,8 @@
                 <preferencevalue name="list" value="default"/>
             </resource>
         </tab>
-        <tab id="2" name="Tab 3"/>
-        <tab id="3" name="Tab 4"/>
+        <tab id="2" name="tab-3" title="Tab 3"/>
+        <tab id="3" name="tab-4" title="Tab 4"/>
         <wiring>
             <operator id="1" name="TestOperator" vendor="Wirecloud" version="1.0">
                 <preferencevalue name="readonly_pref" value="value2" readonly="true"/>

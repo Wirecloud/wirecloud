@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -475,6 +475,7 @@ class TemplateUtilsTestCase(TestCase):
             'tabs': [
                 {
                     'name': 'Tab 1',
+                    'title': '',
                     'preferences': {},
                     'resources': []
                 }
@@ -532,7 +533,8 @@ class TemplateUtilsTestCase(TestCase):
             ],
             'tabs': [
                 {
-                    'name': 'Tab 1',
+                    'name': 'tab-1',
+                    'title': 'Tab 1',
                     'preferences': {
                         'columns': '9',
                         'smart': 'false'
@@ -598,7 +600,8 @@ class TemplateUtilsTestCase(TestCase):
                     ]
                 },
                 {
-                    'name': 'Tab 2',
+                    'name': 'tab-2',
+                    'title': 'Tab 2',
                     'preferences': {
                         'pref1': 'pref value',
                     },
@@ -736,7 +739,8 @@ class TemplateUtilsTestCase(TestCase):
             'embedded': [],
             'tabs': [
                 {
-                    'name': 'Tab 1',
+                    'name': 'tab-1',
+                    'title': 'Tab 1',
                     'preferences': {
                         'columns': '9',
                         'smart': 'false'
@@ -799,7 +803,8 @@ class TemplateUtilsTestCase(TestCase):
                     ]
                 },
                 {
-                    'name': 'Tab 2',
+                    'name': 'tab-2',
+                    'title': 'Tab 2',
                     'preferences': {
                         'pref1': 'pref value',
                     },
@@ -968,7 +973,8 @@ class TemplateUtilsTestCase(TestCase):
             'embedded': [],
             'tabs': [
                 {
-                    'name': 'Tab 1',
+                    'name': 'tab-1',
+                    'title': 'Tab 1',
                     'preferences': {
                         'columns': '9',
                         'smart': 'false'
@@ -1031,7 +1037,8 @@ class TemplateUtilsTestCase(TestCase):
                     ]
                 },
                 {
-                    'name': 'Tab 2',
+                    'name': 'tab-2',
+                    'title': 'Tab 2',
                     'preferences': {
                         'pref1': 'pref value',
                     },

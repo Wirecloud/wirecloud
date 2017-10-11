@@ -28,11 +28,11 @@
     var RenameWindowMenu = function RenameWindowMenu(what, title) {
 
         var fields = {
-            'name': {
+            'title': {
                 label: utils.gettext('New Name'),
                 type: 'text',
                 required: true,
-                initialValue: what.name
+                initialValue: what.title
             }
         };
         this.what = what;
@@ -42,11 +42,11 @@
     RenameWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     RenameWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.fieldInterfaces.name.focus();
+        this.form.fieldInterfaces.title.focus();
     };
 
     RenameWindowMenu.prototype.executeOperation = function executeOperation(data) {
-        return this.what.rename(data.name);
+        return this.what.rename(data.title);
     };
 
     Wirecloud.ui.RenameWindowMenu = RenameWindowMenu;

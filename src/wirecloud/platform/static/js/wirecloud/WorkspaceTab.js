@@ -54,6 +54,7 @@
         privates.set(this, {
             initial: data.initial,
             name: data.name,
+            title: data.title != null && data.title.trim() != "" ? data.title : data.name,
             widgets: [],
             on_changetab: on_changetab.bind(this),
             on_removewidget: on_removewidget.bind(this)
@@ -80,6 +81,14 @@
             name: {
                 get: function () {
                     return privates.get(this).name;
+                }
+            },
+            /**
+             * @type {String}
+             */
+            title: {
+                get: function () {
+                    return privates.get(this).title;
                 }
             },
             /**
@@ -224,14 +233,19 @@
         /**
          * Renames this tab.
          *
-         * @param {String} name new name for this workspace tab
+         * @param {String} title new title for this workspace tab
+         * @param {String} [name] new name for this workspace tab. This is the identifier used on URLs
          *
          * @returns {Wirecloud.Task}
          */
-        rename: function rename(name) {
+        rename: function rename(title, name) {
 
-            if (typeof name !== 'string' || !name.trim().length) {
-                throw new TypeError("invalid name parameter");
+            if (typeof title !== 'string' || !title.trim().length) {
+                throw new TypeError("invalid title parameter");
+            }
+
+            if (name == null) {
+                name = URLify(title);
             }
 
             var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
@@ -240,6 +254,7 @@
             });
 
             var content = {
+                title: title,
                 name: name
             };
 
@@ -254,7 +269,7 @@
                 } else if ([401, 403, 409, 500].indexOf(response.status) !== -1) {
                     return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
-                change_name.call(this, name);
+                change_name.call(this, title, name);
                 return Promise.resolve(this);
             });
         },
@@ -304,9 +319,14 @@
         this.dispatchEvent('change', ['initial']);
     };
 
-    var change_name = function change_name(name) {
-        privates.get(this).name = name;
-        this.dispatchEvent('change', ['name']);
+    var change_name = function change_name(title, name) {
+        var priv = privates.get(this);
+
+        var old_title = priv.title;
+        var old_name = priv.name;
+        priv.title = title;
+        priv.name = name;
+        this.dispatchEvent('change', ['name', 'title'], {name: old_name, title: old_title});
     };
 
     var clean_data = function clean_data(data) {

@@ -628,7 +628,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_current_workspace('Workspace')
 
         # Create a new workspace with a test widget
-        self.create_workspace(name='Test')
+        self.create_workspace('Test')
         self.create_widget('Test')
 
         # Delete Test widget
@@ -707,7 +707,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_current_workspace('Workspace')
 
         # Create a new workspace with a test widget
-        self.create_workspace(name='Test')
+        self.create_workspace('Test')
         self.create_widget('Test')
 
         # Uninstall Test widget
@@ -769,7 +769,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         test_widget.groups.clear()
         test_widget.save()
 
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         widgetV2 = self.create_widget('Test')
 

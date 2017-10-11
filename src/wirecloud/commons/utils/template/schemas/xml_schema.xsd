@@ -776,6 +776,9 @@
         <xs:attribute name="name" use="required"
             type="xs:string">
         </xs:attribute>
+        <xs:attribute name="title" use="optional"
+            type="xs:string">
+        </xs:attribute>
         <xs:attribute name="id" use="required"
             type="xs:string">
         </xs:attribute>

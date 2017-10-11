@@ -302,7 +302,6 @@ class WorkspaceTestCase(WirecloudTestCase):
         workspace = create_autospec(Workspace())
         fields = searcher.build_compatible_fields(workspace)
         self.assertEqual(set(fields.keys()), {'id', 'owner', 'name', 'description', 'lastmodified', 'longdescription', 'public', 'users', 'groups', 'shared', 'searchable'})
-    test_build_search_fields.tags = tags + ('current',)
 
     def test_build_search_fields_no_last_modified(self):
 
@@ -311,7 +310,6 @@ class WorkspaceTestCase(WirecloudTestCase):
         workspace.last_modified = None
         fields = searcher.build_compatible_fields(workspace)
         self.assertEqual(set(fields.keys()), {'id', 'owner', 'name', 'description', 'lastmodified', 'longdescription', 'public', 'users', 'groups', 'shared', 'searchable'})
-    test_build_search_fields_no_last_modified.tags = tags + ('current',)
 
 
 class WorkspaceCacheTestCase(WirecloudTestCase):
@@ -626,7 +624,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         # IWidgets
         self.assertXPathCount(template, '/mashup/structure/tab', 1)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'Tab')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'title', 'Tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 0)
 
     def test_build_xml_template_from_basic_workspace(self):
@@ -809,7 +808,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
         tab = next(graph.objects(mashup_uri, self.WIRE_M['hasTab']))
-        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'Tab')
+        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'tab')
+        self.assertRDFElement(graph, tab, self.WIRE, 'displayName', 'Tab')
 
         wiring = next(graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']))
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
@@ -1187,7 +1187,8 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
         self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], False)
 
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-        self.assertEqual(workspace.name, 'Test Mashup')
+        self.assertEqual(workspace.name, 'test-mashup')
+        self.assertEqual(workspace.title, 'Test Mashup')
         self.assertEqual(len(workspace_data['tabs']), 1)
 
         if workspace_data['tabs'][0]['iwidgets'][0]['title'] == 'Test (1)':
@@ -1322,7 +1323,8 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
         template = self.read_template('wt1.xml')
         fillWorkspaceUsingTemplate(self.workspace, template)
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
-        self.assertEqual(self.workspace.name, 'Testing')
+        self.assertEqual(self.workspace.name, 'testing')
+        self.assertEqual(self.workspace.title, 'Testing')
         self.assertEqual(len(data['tabs']), 2)
 
         template = self.read_template('wt2.xml')
@@ -1383,7 +1385,8 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         for t in data['tabs']:
-            self.assertEqual(t['name'][0:7], 'Pestaña')
+            self.assertEqual(t['name'][0:7], 'pestaña')
+            self.assertEqual(t['title'][0:7], 'Pestaña')
 
     def test_build_workspace_from_rdf_old_mashup_with_views(self):
         template = self.read_template('wt7.rdf')
@@ -1426,13 +1429,17 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
     def check_complex_workspace_data(self, data):
 
         self.assertEqual(len(data['tabs']), 4)
-        self.assertEqual(data['tabs'][0]['name'], 'Tab')
+        self.assertEqual(data['tabs'][0]['name'], 'tab')
+        self.assertEqual(data['tabs'][0]['title'], 'Tab')
         self.assertEqual(len(data['tabs'][0]['iwidgets']), 1)
-        self.assertEqual(data['tabs'][1]['name'], 'Tab 2')
+        self.assertEqual(data['tabs'][1]['name'], 'tab-2')
+        self.assertEqual(data['tabs'][1]['title'], 'Tab 2')
         self.assertEqual(len(data['tabs'][1]['iwidgets']), 1)
-        self.assertEqual(data['tabs'][2]['name'], 'Tab 3')
+        self.assertEqual(data['tabs'][2]['name'], 'tab-3')
+        self.assertEqual(data['tabs'][2]['title'], 'Tab 3')
         self.assertEqual(len(data['tabs'][2]['iwidgets']), 0)
-        self.assertEqual(data['tabs'][3]['name'], 'Tab 4')
+        self.assertEqual(data['tabs'][3]['name'], 'tab-4')
+        self.assertEqual(data['tabs'][3]['title'], 'Tab 4')
         self.assertEqual(len(data['tabs'][3]['iwidgets']), 0)
 
         wiring_status = data['wiring']

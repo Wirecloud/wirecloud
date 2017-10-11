@@ -133,6 +133,10 @@
 
             // Simulate Wirecloud.init has been called
             Wirecloud.constants.WORKSPACE_CONTEXT = {
+                "title": {
+                    "description": "Current title of the workspace",
+                    "label": "Title"
+                },
                 "name": {
                     "description": "Current name of the workspace",
                     "label": "Name"
@@ -171,6 +175,7 @@
 
                 expect(workspace.owner).toBe("user");
                 expect(workspace.name).toBe("empty");
+                expect(workspace.title).toBe("empty");
                 expect(workspace.description).toBe("");
                 expect(workspace.longdescription).toBe("");
                 expect(workspace.tabs).toEqual([]);
@@ -757,7 +762,7 @@
 
         });
 
-        describe("rename(name)", () => {
+        describe("rename(title[, name])", () => {
 
             var workspace;
 
@@ -765,7 +770,7 @@
                 workspace = create_workspace();
             });
 
-            it("throws a TypeError exception when not passing the name parameter", () => {
+            it("throws a TypeError exception when not passing the title parameter", () => {
                 expect(() => {
                     workspace.rename();
                 }).toThrowError(TypeError);
@@ -782,13 +787,14 @@
                 var listener = jasmine.createSpy("listener");
                 workspace.addEventListener("change", listener);
 
-                var task = workspace.rename("newname");
+                var task = workspace.rename("New Name");
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then((value) => {
-                    expect(listener).toHaveBeenCalledWith(workspace, ['name'], {name: "empty"});
+                    expect(listener).toHaveBeenCalledWith(workspace, ['name', 'title'], {name: "empty", title: "empty"});
                     expect(value).toBe(workspace);
-                    expect(workspace.name).toBe("newname");
+                    expect(workspace.title).toBe("New Name");
+                    expect(workspace.name).toBe("new-name");
                     done();
                 });
             });

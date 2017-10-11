@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -695,6 +695,7 @@ class RDFTemplateParser(object):
         for tab in ordered_tabs:
             tab_info = {
                 'name': self._get_field(DCTERMS, 'title', tab),
+                'title': self._get_field(WIRE, 'displayName', tab, required=False),
                 'preferences': {},
                 'resources': [],
             }

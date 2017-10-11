@@ -137,6 +137,15 @@
              * @memberOf Wirecloud.Workspace#
              * @type {String}
              */
+            title: {
+                get: function () {
+                    return this.contextManager.get('title');
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Workspace#
+             * @type {String}
+             */
             owner: {
                 get: function () {
                     return this.contextManager.get('owner');
@@ -208,6 +217,7 @@
         });
 
         this.contextManager.modify({
+            title: data.title != null && data.title.trim() != "" ? data.title : data.name,
             name: data.name,
             owner: data.owner,
             description: data.description,
@@ -271,12 +281,17 @@
                 workspace_id: this.id
             });
 
+            if (options.title == null) {
+                options.title = create_tabtitle.call(this);
+            }
+
             if (options.name == null) {
-                options.name = create_tabtitle.call(this);
+                options.name = URLify(options.title);
             }
 
             var content = {
-                name: options.name
+                name: options.name,
+                title: options.title
             };
 
             return Wirecloud.io.makeRequest(url, {
@@ -446,14 +461,19 @@
         /**
          * Renames this workspace.
          *
-         * @param {String} name new name for this workspace
+         * @param {String} title new title for this workspace
+         * @param {String} [name] new name for this workspace. This is the identifier used on URLs
          *
          * @returns {Wirecloud.Task}
          */
-        rename: function rename(name) {
+        rename: function rename(title, name) {
 
-            if (typeof name !== 'string' || !name.trim().length) {
-                throw new TypeError("invalid name parameter");
+            if (typeof title !== 'string' || !title.trim().length) {
+                throw new TypeError("invalid title parameter");
+            }
+
+            if (name == null) {
+                name = URLify(title);
             }
 
             var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
@@ -461,6 +481,7 @@
             });
 
             var content = {
+                title: title,
                 name: name
             };
 
@@ -477,10 +498,12 @@
                 }
 
                 var old_name = this.contextManager.get('name');
+                var old_title = this.contextManager.get('title');
                 this.contextManager.modify({
-                    name: name
+                    name: name,
+                    title: title
                 });
-                this.dispatchEvent('change', ['name'], {name: old_name});
+                this.dispatchEvent('change', ['name', 'title'], {name: old_name, title: old_title});
                 return Promise.resolve(this);
             });
         },

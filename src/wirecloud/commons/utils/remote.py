@@ -480,9 +480,9 @@ class WorkspaceMixinTester(object):
 
         return tab_widget
 
-    def find_tab(self, id=None, title=None):
+    def find_tab(self, id=None, name=None, title=None):
         for tab in self.tabs:
-            if (id is not None and tab.id == id) or (title is not None and tab.title == title):
+            if (id is not None and tab.id == id) or (name is not None and tab.name == name) or (title is not None and tab.title == title):
                 return tab
         return None
 
@@ -594,6 +594,10 @@ class WorkspaceTabTester(WebElementTester):
         return self.get_attribute('data-id')
 
     @property
+    def name(self):
+        return self.get_attribute('data-name')
+
+    @property
     def title(self):
         return self.find_element("span").text
 
@@ -628,15 +632,15 @@ class WorkspaceTabTester(WebElementTester):
 
         WebDriverWait(self.testcase.driver, timeout).until(tab_removed)
 
-    def rename(self, new_name, timeout=10):
+    def rename(self, new_title, timeout=10):
         self.show_preferences().click_entry("Rename")
         modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".window_menu:not(#loading-message)"))
-        self.testcase.assertEqual(modal.get_field('name').value, self.title)
-        modal.get_field('name').set_value(new_name)
+        self.testcase.assertEqual(modal.get_field('title').value, self.title)
+        modal.get_field('title').set_value(new_title)
         modal.accept()
 
         def tab_renamed(driver):
-            return self.title == new_name
+            return self.title == new_title
 
         WebDriverWait(self.testcase.driver, timeout).until(tab_renamed)
 
@@ -757,13 +761,13 @@ class WidgetTester(WebElementTester):
         self.open_menu().click_entry("Settings")
         return FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-component-preferences-modal"))
 
-    def rename(self, new_name, timeout=30):
+    def rename(self, new_title, timeout=30):
 
         self.open_menu().click_entry('Rename')
         name_input = self.element.find_element_by_css_selector('.wc-widget-heading span')
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
-        self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
+        self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_title)
         self.testcase.driver.execute_script('''
             var evt = document.createEvent("KeyboardEvent");
             if (evt.initKeyEvent != null) {
@@ -776,7 +780,7 @@ class WidgetTester(WebElementTester):
         ''', name_input)
 
         def name_changed(driver):
-            return driver.execute_script('return Wirecloud.activeWorkspace.findWidget("%s").title === "%s"' % (self.id, new_name))
+            return driver.execute_script('return Wirecloud.activeWorkspace.findWidget("%s").title === "%s"' % (self.id, new_title))
 
         WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 
@@ -1230,7 +1234,7 @@ class ComponentEditableViewTester(object):
         return self
 
 
-class RemoteTestCase(object):
+class RemoteTestCase(WorkspaceMixinTester):
 
     def wait_element_visible(self, selector, timeout=10, element=None):
         condition = WEC.visibility_of_element_located((By.CSS_SELECTOR, selector), base_element=element)
@@ -1241,7 +1245,7 @@ class RemoteTestCase(object):
         return WebDriverWait(self.driver, timeout).until(condition)
 
 
-class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
+class WirecloudRemoteTestCase(RemoteTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -1367,17 +1371,17 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         return PopupMenuTester(self, popup_menu_element, button)
 
-    def create_workspace(self, name=None, mashup=None, expect_missing_dependencies=None, install_dependencies=False, parameters=None):
+    def create_workspace(self, title=None, mashup=None, expect_missing_dependencies=None, install_dependencies=False, parameters=None):
 
-        if mashup is None and name is None:
-            raise ValueError('Missing workspace name')
+        if mashup is None and title is None:
+            raise ValueError('Missing workspace title')
 
         self.open_menu().click_entry('New workspace')
 
         form = FormModalTester(self, self.wait_element_visible('.wc-new-workspace-modal'))
 
-        if name:
-            form.get_field('name').set_value(name)
+        if title:
+            form.get_field('title').set_value(title)
 
         if mashup:
             with MACFieldTester(self, form.element.find_element_by_css_selector('.se-mac-field')) as select_dialog:
@@ -1418,34 +1422,37 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
 
         self.wait_wirecloud_ready()
 
-        if name is not None:
-            self.assertEqual(self.get_current_workspace_name(), name)
+        if title is not None:
+            self.assertEqual(self.get_current_workspace_title(), title)
         else:
-            self.assertTrue(self.get_current_workspace_name().startswith(mashup), 'Invalid workspace name after creating workspace from catalogue')
+            self.assertTrue(self.get_current_workspace_title() == mashup, 'Invalid workspace name after creating workspace from catalogue')
 
     def get_current_workspace_name(self):
+
+        return self.driver.execute_script('return Wirecloud.activeWorkspace.name;')
+
+    def get_current_workspace_title(self):
 
         try:
             return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
         except StaleElementReferenceException:
             return self.get_current_workspace_name()
 
-    def rename_workspace(self, workspace_name):
+    def rename_workspace(self, workspace_title):
         self.open_menu().click_entry("Rename")
 
         modal = FormModalTester(self, self.wait_element_visible(".window_menu:not(#loading-message)"))
-        self.assertEqual(modal.get_field('name').value, self.get_current_workspace_name())
-        modal.get_field('name').set_value(workspace_name)
+        self.assertEqual(modal.get_field('title').value, self.get_current_workspace_title())
+        modal.get_field('title').set_value(workspace_title)
         modal.accept()
 
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_name() == workspace_name)
-        self.assertEqual(self.get_current_workspace_name(), workspace_name)
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_title() == workspace_title)
 
-    def change_current_workspace(self, workspace_name):
-        self.open_menu().click_entry(workspace_name)
+    def change_current_workspace(self, workspace_title):
+        self.open_menu().click_entry(workspace_title)
 
         self.wait_wirecloud_ready()
-        self.assertEqual(self.get_current_workspace_name(), workspace_name)
+        self.assertEqual(self.get_current_workspace_title(), workspace_title)
 
     def remove_workspace(self):
         self.open_menu().click_entry('Remove')
@@ -1463,7 +1470,7 @@ class WirecloudRemoteTestCase(RemoteTestCase, WorkspaceMixinTester):
         self.open_menu().click_entry('Upload to my resources')
 
         form = FormModalTester(self, self.wait_element_visible('.wc-upload-workspace-modal'))
-        form.get_field('name').set_value(info['name'])
+        form.get_field('title').set_value(info['title'])
         form.get_field('vendor').set_value(info['vendor'])
         form.get_field('version').set_value(info['version'])
 

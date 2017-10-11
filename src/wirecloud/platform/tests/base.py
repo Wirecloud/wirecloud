@@ -158,7 +158,7 @@ class BasicViewsAPI(WirecloudTestCase):
     @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
     def test_workspace_view_public_anonymous_allowed(self):
 
-        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'})
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'public-workspace'})
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
         self.assertEqual(response.status_code, 200)
@@ -166,7 +166,7 @@ class BasicViewsAPI(WirecloudTestCase):
     @override_settings(ALLOW_ANONYMOUS_ACCESS=False)
     def test_workspace_view_public_anonymous_not_allowed(self):
 
-        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'})
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'public-workspace'})
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
         self.assertEqual(response.status_code, 302)
@@ -385,7 +385,7 @@ class BasicViewsAPI(WirecloudTestCase):
         A session is created when an anonymous user access a public workspace
         '''
 
-        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'}) + '?mode=embedded'
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'public-workspace'}) + '?mode=embedded'
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(self.client.cookies), 0)

@@ -37,6 +37,7 @@ from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.urlify import URLify
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.models import Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
@@ -48,8 +49,11 @@ from wirecloud.platform.workspace.utils import deleteTab, createTab, get_tab_dat
 from wirecloud.platform.markets.utils import get_local_catalogue
 
 
-def createEmptyWorkspace(workspaceName, user, allow_renaming=False):
-    workspace = Workspace(name=workspaceName, creator=user, wiringStatus=get_wiring_skeleton())
+def createEmptyWorkspace(title, user, allow_renaming=False, name=None):
+    if name is None or name == '':
+        name = URLify(title)
+
+    workspace = Workspace(title=title, name=name, creator=user, wiringStatus=get_wiring_skeleton())
     if allow_renaming is True:
         save_alternative(Workspace, 'name', workspace)
     else:
@@ -82,27 +86,31 @@ class WorkspaceCollection(Resource):
         data = parse_json_request(request)
 
         workspace_name = data.get('name', '').strip()
+        workspace_title = data.get('title', '').strip()
         workspace_id = data.get('workspace', '')
         mashup_id = data.get('mashup', '')
         initial_pref_values = data.get('preferences', {})
         allow_renaming = normalize_boolean_param(request, 'allow_renaming', data.get('allow_renaming', False))
         dry_run = normalize_boolean_param(request, 'dry_run', data.get('dry_run', False))
 
-        if mashup_id == '' and workspace_id == '' and workspace_name == '':
-            return build_error_response(request, 422, _('Missing name parameter'))
+        if mashup_id == '' and workspace_id == '' and (workspace_name == '' and workspace_title == ''):
+            return build_error_response(request, 422, _('Missing name or title parameter'))
         elif mashup_id != '' and workspace_id != '':
             return build_error_response(request, 422, _('Workspace and mashup parameters cannot be used at the same time'))
 
         if mashup_id == '' and workspace_id == '':
 
-            if not is_valid_name(workspace_name):
+            if workspace_title == '':
+                workspace_title = workspace_name
+
+            if workspace_name != '' and not is_valid_name(workspace_name):
                 return build_error_response(request, 422, _('invalid workspace name'))
 
             if dry_run:
                 return HttpResponse(status=204)
 
             try:
-                workspace = createEmptyWorkspace(workspace_name, request.user, allow_renaming=allow_renaming)
+                workspace = createEmptyWorkspace(workspace_title, request.user, name=workspace_name, allow_renaming=allow_renaming)
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)
@@ -135,7 +143,7 @@ class WorkspaceCollection(Resource):
                     'vendor': 'api',
                     'name': from_ws.name,
                     'version': '1.0',
-                    'title': '',
+                    'title': from_ws.title if from_ws.title is not None and from_ws.title.strip() != "" else from_ws.name,
                     'description': 'Temporal mashup for the workspace copy operation',
                     'email': 'a@example.com',
                 }
@@ -153,11 +161,8 @@ class WorkspaceCollection(Resource):
             if dry_run:
                 return HttpResponse(status=204)
 
-            if workspace_name == '':
-                workspace_name = None
-
             try:
-                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming, new_name=workspace_name)
+                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming, new_name=workspace_name, new_title=workspace_title)
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)
@@ -204,6 +209,10 @@ class WorkspaceEntry(Resource):
             workspace.name = ts['name']
             fields.append('name')
 
+        if 'title' in ts:
+            workspace.title = ts['title']
+            fields.append('title')
+
         if 'description' in ts:
             workspace.description = ts['description']
             fields.append('description')
@@ -244,15 +253,16 @@ class TabCollection(Resource):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         data = parse_json_request(request)
 
-        if 'name' not in data:
-            return build_error_response(request, 422, _('Malformed tab JSON: expecting tab name.'))
+        if 'name' not in data and 'title' not in data:
+            return build_error_response(request, 422, _('Malformed tab JSON: expecting tab name or title.'))
 
-        tab_name = data['name']
         if not (request.user.is_superuser or workspace.creator == request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
+        tab_title = data.get('title')
+        tab_name = data.get('name')
         try:
-            tab = createTab(tab_name, workspace)
+            tab = createTab(tab_title, workspace, name=tab_name)
         except IntegrityError:
             msg = _('A tab with the given name already exists for the workspace')
             return build_error_response(request, 409, msg)
@@ -328,6 +338,9 @@ class TabEntry(Resource):
 
         if 'name' in data:
             tab.name = data['name']
+
+        if 'title' in data:
+            tab.title = data['title']
 
         try:
             tab.save()

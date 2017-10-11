@@ -29,7 +29,8 @@
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-1">
                 <wire:index>0</wire:index>
-                <dcterms:title>Pestaña</dcterms:title>
+                <dcterms:title>pestaña</dcterms:title>
+                <wire:displayName>Pestaña</wire:displayName>
                 <wire-m:hasTabPreference>
                     <wire-m:TabPreference rdf:ID="tab_pref">
                         <dcterms:title>smart</dcterms:title>
@@ -87,7 +88,8 @@
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-2">
                 <wire:index>1</wire:index>
-                <dcterms:title>Pestaña 2</dcterms:title>
+                <dcterms:title>pestaña-2</dcterms:title>
+                <wire:displayName>Pestaña 2</wire:displayName>
                 <wire-m:hasiWidget>
                     <wire-m:iWidget rdf:ID="iG-2">
                         <wire-m:iWidgetId>iG-2</wire-m:iWidgetId>
@@ -137,14 +139,16 @@
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-3">
                 <wire:index>2</wire:index>
-                <dcterms:title>Pestaña 3</dcterms:title>
+                <dcterms:title>pestaña-3</dcterms:title>
+                <wire:displayName>Pestaña 3</wire:displayName>
             </wire-m:Tab>
         </wire-m:hasTab>
 
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-4">
                 <wire:index>3</wire:index>
-                <dcterms:title>Pestaña 4</dcterms:title>
+                <dcterms:title>pestaña-4</dcterms:title>
+                <wire:displayName>Pestaña 4</wire:displayName>
             </wire-m:Tab>
         </wire-m:hasTab>
 

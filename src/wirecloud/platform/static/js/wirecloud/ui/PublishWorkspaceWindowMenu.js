@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -39,9 +39,9 @@
                 'type': 'group',
                 'shortTitle': utils.gettext('General info'),
                 'fields': [
-                    {name: 'name', label: utils.gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.title, defaultValue: workspace.title},
-                    {name: 'vendor', label: utils.gettext('Vendor'), type: 'text',  required: true},
-                    {name: 'version', label: utils.gettext('Version'), type: 'version',  required: true},
+                    {name: 'title', label: utils.gettext('Mashup Title'), description: utils.gettext("Title to display on the catalogue"), type: 'text', required: true, initialValue: workspace.title, defaultValue: workspace.title},
+                    {name: 'vendor', label: utils.gettext('Vendor'), description: utils.gettext(""), type: 'text',  required: true, initialValue: user_name, defaultValue: user_name},
+                    {name: 'version', label: utils.gettext('Version'), type: 'version', required: true, initialValue: "1.0", defaultValue: "1.0"},
                     {name: 'email', label: utils.gettext('Email'), type: 'email'},
                     {name: 'description', label: utils.gettext('Short Description (plain text)'), type: 'longtext'},
                     {name: 'longdescription', label: utils.gettext('Detailed description (Markdown)'), type: 'longtext'},
@@ -170,11 +170,13 @@
     };
 
     PublishWorkspaceWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.fieldInterfaces.name.focus();
+        this.form.fieldInterfaces.title.focus();
     };
 
     PublishWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         var key;
+
+        data.name = URLify(data.title);
 
         data.parametrization = {
             iwidgets: {},

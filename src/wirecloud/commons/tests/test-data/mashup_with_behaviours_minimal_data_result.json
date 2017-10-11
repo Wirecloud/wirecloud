@@ -32,6 +32,7 @@
     "tabs": [
         {
             "name": "Tab 1",
+            "title": "",
             "preferences": {
                 "columns": "9",
                 "smart": "false"
@@ -95,6 +96,7 @@
         },
         {
             "name": "Tab 2",
+            "title": "",
             "preferences": {
                 "pref1": "pref value"
             },

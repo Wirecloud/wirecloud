@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,8 +38,11 @@ def now_timestamp():
 @python_2_unicode_compatible
 class Workspace(models.Model):
 
-    name = models.CharField(_('Name'), max_length=30)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
+    name = models.CharField(_('Name'), max_length=30)
+
+    title = models.CharField(_('Title'), max_length=255, blank=False, null=True)
+
     creation_date = models.BigIntegerField(_('Creation Date'), null=False, blank=False, default=now_timestamp)
     last_modified = models.BigIntegerField(_('Last Modification Date'), null=True, blank=True)
 
@@ -106,6 +109,8 @@ class UserWorkspace(models.Model):
 class Tab(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
+    title = models.CharField(_('Title'), max_length=30, null=True)
+
     visible = models.BooleanField(_('Visible'), default=False, null=False)
     position = models.IntegerField(null=True, blank=True)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, verbose_name=_('Workspace'))

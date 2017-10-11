@@ -2799,7 +2799,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
                 self.assertIsNotNone(sidebar.find_component_group('operator', "Wirecloud/TestOperatorSelenium"))
 
     def test_operator_not_available_after_being_uninstalled(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         with self.myresources_view as myresources:
             myresources.uninstall_resource("TestOperator")
@@ -3256,7 +3256,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
         # Create a new workspace to ensure we are testing the default status of
         # the behaviour engine
         self.login(username="admin", next="admin/Workspace")
-        self.create_workspace(name="Test")
+        self.create_workspace("Test")
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:

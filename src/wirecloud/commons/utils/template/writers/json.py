@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -55,7 +55,7 @@ def write_json_description(template_info):
     if template_info['type'] not in ('widget', 'operator', 'mashup'):
         raise Exception('Unsupported resource type: ' + template_info['type'])
 
-    template_info = copy.copy(template_info)
+    template_info = copy.deepcopy(template_info)
 
     remove_empty_string_fields(('title', 'description', 'longdescription', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'), template_info)
     remove_empty_array_fields(('authors', 'contributors', 'altcontents', 'embedded'), template_info)
@@ -71,6 +71,12 @@ def write_json_description(template_info):
                     raise Exception('Invalid alternative contents')
 
     elif template_info['type'] == 'mashup':
+
+        if 'tabs' not in template_info:
+            raise Exception('Missing tabs list')
+
+        for tab in template_info['tabs']:
+            remove_empty_string_fields(('title',), tab)
 
         if 'embedded' in template_info:
             for resource in template_info['embedded']:

@@ -68,7 +68,7 @@
         url.search = window.location.search;
 
         for (key in data) {
-            if (['workspace_name', 'workspace_owner', 'title'].indexOf(key) !== -1) {
+            if (['workspace_name', 'workspace_owner', 'workspace_title', 'tab_id', 'title'].indexOf(key) !== -1) {
                 continue;
             }
             hash += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);

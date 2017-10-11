@@ -36,7 +36,7 @@
 
         se.Tab.call(this, id, notebook, {
             closable: false,
-            name: model.name
+            name: model.title
         });
 
         privates.set(this, {
@@ -80,6 +80,15 @@
             },
             /**
              * @memberOf Wirecloud.ui.WorkspaceTabView#
+             * @type {String}
+             */
+            title: {
+                get: function () {
+                    return this.model.title;
+                }
+            },
+            /**
+             * @memberOf Wirecloud.ui.WorkspaceTabView#
              * @type {Array.<Wirecloud.ui.WidgetView>}
              */
             widgets: {
@@ -107,6 +116,7 @@
 
         this.tabElement.classList.add("wc-workspace-tab");
         this.tabElement.setAttribute('data-id', this.id);
+        this.tabElement.setAttribute('data-name', this.name);
 
         this.wrapperElement.classList.add("wc-workspace-tab-content");
         this.wrapperElement.setAttribute('data-id', this.id);
@@ -319,16 +329,17 @@
     };
 
     var on_changetab = function on_changetab(tab, changes) {
-        if (changes.indexOf('name') !== -1) {
-            se.Tab.prototype.rename.call(this, tab.name);
+        if (changes.indexOf('title') !== -1) {
+            se.Tab.prototype.rename.call(this, tab.title);
+        }
 
-            if (!this.hidden) {
-                var currentState = Wirecloud.HistoryManager.getCurrentState();
-                var newState = utils.merge({}, currentState, {
-                    tab: tab.name
-                });
-                Wirecloud.HistoryManager.replaceState(newState);
-            }
+        if (changes.indexOf('name') !== -1 && !this.hidden) {
+            this.tabElement.setAttribute('data-name', this.name);
+            var currentState = Wirecloud.HistoryManager.getCurrentState();
+            var newState = utils.merge({}, currentState, {
+                tab: tab.name
+            });
+            Wirecloud.HistoryManager.replaceState(newState);
         }
     };
 

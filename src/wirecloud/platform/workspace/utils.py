@@ -43,6 +43,7 @@ from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.template.parsers import TemplateParser
+from wirecloud.commons.utils.urlify import URLify
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.iwidget.utils import parse_value_from_text
@@ -61,7 +62,10 @@ def deleteTab(tab, user):
     tab.delete()
 
 
-def createTab(tab_name, workspace, allow_renaming=False):
+def createTab(title, workspace, allow_renaming=False, name=None):
+
+    if name is None:
+        name = URLify(title)
 
     visible = False
     tabs = Tab.objects.filter(workspace=workspace, visible=True)
@@ -72,7 +76,7 @@ def createTab(tab_name, workspace, allow_renaming=False):
     position = Tab.objects.filter(workspace=workspace).count()
 
     # Creating tab
-    tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace)
+    tab = Tab(name=name, title=title, visible=visible, position=position, workspace=workspace)
     if allow_renaming:
         save_alternative(Tab, 'name', tab)
     else:
@@ -330,6 +334,7 @@ def get_workspace_data(workspace, user):
     return {
         'id': "%s" % workspace.id,
         'name': workspace.name,
+        'title': workspace.title if workspace.title is not None and workspace.title.strip() != "" else workspace.name,
         'public': workspace.public,
         'shared': workspace.is_shared(),
         'owner': workspace.creator.username,
@@ -553,6 +558,7 @@ def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
     return {
         'id': "%s" % tab.id,
         'name': tab.name,
+        'title': tab.title if tab.title is not None and tab.title.strip() != "" else tab.name,
         'visible': tab.visible,
         'preferences': get_tab_preference_values(tab),
         'iwidgets': [get_iwidget_data(widget, workspace, cache_manager, user) for widget in tab.iwidget_set.order_by('id')]
@@ -595,7 +601,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
     return data_ret
 
 
-def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}, searchable=True, public=False):
+def create_workspace(owner, f=None, mashup=None, new_name=None, new_title=None, preferences={}, searchable=True, public=False):
 
     from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
@@ -636,7 +642,7 @@ def create_workspace(owner, f=None, mashup=None, new_name=None, preferences={}, 
         wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
         template = TemplateParser(wgt_file.get_template())
 
-    workspace, _foo = buildWorkspaceFromTemplate(template, owner, new_name=new_name, searchable=searchable, public=public)
+    workspace, _foo = buildWorkspaceFromTemplate(template, owner, new_name=new_name, new_title=new_title, searchable=searchable, public=public)
 
     if len(preferences) > 0:
         update_workspace_preferences(workspace, preferences, invalidate_cache=False)

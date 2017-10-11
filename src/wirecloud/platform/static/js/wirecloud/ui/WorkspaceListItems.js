@@ -55,7 +55,7 @@
             workspace = user_workspaces[workspace_name];
 
             items.push(new StyledElements.MenuItem(
-                workspace_name,
+                workspace.title,
                 this.handler,
                 workspace
             ));

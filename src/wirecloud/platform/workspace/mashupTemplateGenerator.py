@@ -226,6 +226,7 @@ def build_json_template_from_workspace(options, workspace, user):
 
         options['tabs'].append({
             'name': tab.name,
+            'title': tab.title,
             'resources': resources,
             'preferences': preferences,
         })
