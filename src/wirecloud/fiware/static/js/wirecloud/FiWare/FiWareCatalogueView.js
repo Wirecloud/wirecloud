@@ -93,6 +93,7 @@
         this.currentStore = 'All stores';
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
         Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
+        this.catalogue = new Wirecloud.FiWare.Marketplace(this.desc);
         this.loading = null;
         this.error = false;
         this.callbacks = [];
@@ -118,7 +119,6 @@
         };
         this.viewsByName.search.init();
 
-        this.catalogue = new Wirecloud.FiWare.Marketplace(this.desc);
         this.number_of_stores = 0;
         this.refresh_store_info();
 

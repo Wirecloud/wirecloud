@@ -22,7 +22,7 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (utils, se) {
 
     "use strict";
 
@@ -42,14 +42,13 @@
     };
 
     Marketplace = function Marketplace(options) {
-        if (options.user != null) {
-            this.market_user = options.user;
-        } else {
-            this.market_user = 'public';
-        }
+        se.ObjectWithEvents.call(this, ["change", "install", "uninstall"]);
+
+        this.market_user = options.user;
         this.market_name = options.name;
         Object.defineProperty(this, 'permissions', {'value': options.permissions});
     };
+    utils.inherit(Marketplace, se.ObjectWithEvents);
 
     Marketplace.prototype.isAllow = function isAllow(action) {
         if (action in this.permissions) {
@@ -168,4 +167,4 @@
 
     Wirecloud.FiWare.Marketplace = Marketplace;
 
-})(Wirecloud.Utils);
+})(Wirecloud.Utils, StyledElements);

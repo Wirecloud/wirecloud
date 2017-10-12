@@ -91,6 +91,8 @@
                     if (this.resourceVersions[component.group_id].length === 0) {
                         delete this.resourceVersions[component.group_id];
                     }
+                    this.dispatchEvent('uninstall', component);
+                    this.dispatchEvent('change', 'uninstall', component);
                 } catch (e) {}
             }, this);
             resolve(result);
@@ -234,7 +236,9 @@
             components.forEach((component) => {
                 var id = [component.vendor, component.name, component.version].join('/');
                 if (!this.resourceExistsId(id)) {
-                    this._includeResource.call(this, component);
+                    component = this._includeResource.call(this, component);
+                    this.dispatchEvent('install', component);
+                    this.dispatchEvent('change', 'install', component);
                 }
             });
             return Promise.resolve(response_data);
@@ -242,55 +246,57 @@
         return task;
     };
 
-    LocalCatalogue._includeResource = function _includeResource(resource_data) {
-        var resource, resource_id, resource_full_id;
+    LocalCatalogue._includeResource = function _includeResource(component_data) {
+        var component, component_id, component_full_id;
 
-        resource_id = resource_data.vendor + '/' + resource_data.name;
-        resource_full_id = resource_id + '/' + resource_data.version;
+        component_id = component_data.vendor + '/' + component_data.name;
+        component_full_id = component_id + '/' + component_data.version;
 
-        switch (resource_data.type) {
+        switch (component_data.type) {
         case 'widget':
-            resource = new Wirecloud.WidgetMeta(resource_data);
+            component = new Wirecloud.WidgetMeta(component_data);
             if (Wirecloud.activeWorkspace != null) {
                 Wirecloud.activeWorkspace.widgets.forEach(function (widget) {
-                    if (widget.missing && widget.meta.uri === resource.uri) {
-                        widget.upgrade(resource);
+                    if (widget.missing && widget.meta.uri === component.uri) {
+                        widget.upgrade(component);
                     }
                 });
             }
             break;
         case 'operator':
-            resource = new Wirecloud.wiring.OperatorMeta(resource_data);
+            component = new Wirecloud.wiring.OperatorMeta(component_data);
             if (Wirecloud.activeWorkspace != null) {
                 try {
                     Wirecloud.activeWorkspace.wiring.operators.forEach(function (operator) {
-                        if (operator.missing && operator.meta.uri === resource.uri) {
-                            operator.upgrade(resource);
+                        if (operator.missing && operator.meta.uri === component.uri) {
+                            operator.upgrade(component);
                         }
                     });
                 } catch (error) {}
             }
             break;
         case 'mashup':
-            resource = new Wirecloud.MashableApplicationComponent(resource_data);
+            component = new Wirecloud.MashableApplicationComponent(component_data);
             break;
         default:
             var msg = utils.interpolate(utils.gettext("Invalid component type: %(type)s"), {
-                type: resource_data.type
+                type: component_data.type
             });
             throw new TypeError(msg);
         }
 
         if (Wirecloud.activeWorkspace != null) {
-            Wirecloud.activeWorkspace.resources.restore(resource);
+            Wirecloud.activeWorkspace.resources.restore(component);
         }
 
-        if (!(resource_id in this.resourceVersions)) {
-            this.resourceVersions[resource_id] = [];
+        if (!(component_id in this.resourceVersions)) {
+            this.resourceVersions[component_id] = [];
         }
 
-        this.resourceVersions[resource_id].push(resource);
-        this.resources[resource_full_id] = resource;
+        this.resourceVersions[component_id].push(component);
+        this.resources[component_full_id] = component;
+
+        return component;
     };
 
     /**

@@ -178,6 +178,7 @@
             options.resource_extra_context
         );
 
+        this.catalogue.catalogue.addEventListener('change', this.mark_outdated.bind(this));
         this.addEventListener('show', this.refresh_if_needed.bind(this));
         initEmptyCatalogueInfoBox.call(this, options.emptyTitle, options.emptyMessage);
     };

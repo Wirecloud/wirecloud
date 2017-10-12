@@ -19,19 +19,25 @@
  *
  */
 
-/* globals Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (utils, se) {
 
     "use strict";
 
     /**
      * Class for accessing WireCloud catalogues.
      *
+     * @constructor
+     * @extends StyledElements.ObjectWithEvents
+     * @name Wirecloud.WirecloudCatalogue
+     *
      * @param {Object} options
      */
     var WirecloudCatalogue = function WirecloudCatalogue(options) {
+
+        se.ObjectWithEvents.call(this, ["change", "install", "uninstall"]);
 
         Object.defineProperty(this, 'title', {'value': options.title || options.name});
         Object.defineProperty(this, 'name', {'value': options.name});
@@ -51,6 +57,7 @@
             'RESOURCE_ENTRY': {value: new utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')},
         });
     };
+    utils.inherit(WirecloudCatalogue, se.ObjectWithEvents);
 
     WirecloudCatalogue.prototype.isAllow = function isAllow(action) {
         if (action in this.permissions) {
@@ -297,4 +304,4 @@
 
     Wirecloud.WirecloudCatalogue = WirecloudCatalogue;
 
-})(Wirecloud.Utils);
+})(Wirecloud.Utils, StyledElements);

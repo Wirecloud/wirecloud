@@ -25,15 +25,11 @@
 
     "use strict";
 
-    var UploadWindowMenu, upload_wgt_files, acceptListener, updateEmptyStatus, onUploadFailure, onUploadSuccess;
+    var UploadWindowMenu, upload_wgt_files, acceptListener, updateEmptyStatus, onUploadFailure;
 
     /*************************************************************************
      *                            Private methods                            *
      *************************************************************************/
-
-    onUploadSuccess = function onUploadSuccess() {
-        this.mainview.viewsByName.search.mark_outdated();
-    };
 
     onUploadFailure = function onUploadFailure(file_entry, msg) {
         this.failures.push({'file': file_entry.name, 'msg': msg});
@@ -51,7 +47,6 @@
                     force_create: true
                 });
                 task.then(
-                    onUploadSuccess.bind(this),
                     onUploadFailure.bind(this, entry)
                 );
                 return task;
