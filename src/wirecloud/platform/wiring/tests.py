@@ -2779,7 +2779,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
             # Upgrade it to version 2.0 and check it leaves the missing status
             operator.change_version("2.0")
-            self.assertFalse(operator.has_class('missing'))
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: operator.has_class('missing') == False)
 
 
 @wirecloud_selenium_test_case
