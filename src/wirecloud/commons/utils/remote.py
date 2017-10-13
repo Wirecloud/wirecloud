@@ -838,10 +838,6 @@ class BaseComponentTester(WebElementTester):
         self.type = type
         self.id = self.get_attribute('data-id')
 
-    def scroll(self):
-        self.testcase.driver.execute_script("return arguments[0].scrollIntoView(false);", self.element)
-        return self
-
     @property
     def btn_preferences(self):
         return ButtonTester(self.testcase, self.find_element(".we-prefs-btn"))
@@ -877,7 +873,6 @@ class BaseComponentTester(WebElementTester):
         modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-upgrade-component-modal"))
         modal.get_field('version').set_value(version)
         modal.accept()
-        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.version ==  "v" + version)
         return self
 
 
@@ -895,12 +890,21 @@ class WiringComponentTester(BaseComponentTester):
     def has_state(self, state):
         return self.state == state
 
+    def change_version(self, version):
+        super(WiringComponentTester, self).change_version(version)
+        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.version ==  "v" + version)
+        return self
+
 
 class WiringComponentGroupTester(WebElementTester):
 
     def __init__(self, testcase, element, type):
         super(WiringComponentGroupTester, self).__init__(testcase, element)
         self.type = type
+
+    def scroll(self):
+        self.testcase.driver.execute_script("return arguments[0].scrollIntoView(false);", self.element)
+        return self
 
     @property
     def btn_create(self):

@@ -224,12 +224,15 @@ def build_json_template_from_workspace(options, workspace, user):
             if options['embedmacs']:
                 options['embedded'].add('/'.join((resource_info['vendor'], resource_info['name'], resource_info['version'])))
 
-        options['tabs'].append({
+        tab_info = {
             'name': tab.name,
-            'title': tab.title,
             'resources': resources,
             'preferences': preferences,
-        })
+        }
+        if tab.title is not None and tab.title.strip() != "":
+            tab_info['title'] = tab.title
+
+        options['tabs'].append(tab_info)
 
     # wiring conections and operators
     readOnlyConnectables = options.get('readOnlyConnectables', False)

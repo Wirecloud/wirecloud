@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -445,7 +445,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         self.assertTrue(added)
         self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
-        self.assertEqual(resource.short_name, 'Test Mashup')
+        self.assertEqual(resource.short_name, 'test-mashup')
         self.assertEqual(resource.version, '1')
         self.assertTrue(resource.is_available_for(self.user))
 
@@ -456,7 +456,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         self.assertTrue(added)
         self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
-        self.assertEqual(resource.short_name, 'Test Mashup')
+        self.assertEqual(resource.short_name, 'test-mashup')
         self.assertEqual(resource.version, '1')
         self.assertTrue(resource.is_available_for(self.user))
 
