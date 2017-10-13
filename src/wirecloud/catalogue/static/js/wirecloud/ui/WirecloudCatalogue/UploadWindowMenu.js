@@ -46,9 +46,7 @@
                     file: entry.file,
                     force_create: true
                 });
-                task.then(
-                    onUploadFailure.bind(this, entry)
-                );
+                task.catch(onUploadFailure.bind(this, entry));
                 return task;
             }, this)
         );
