@@ -838,6 +838,10 @@ class BaseComponentTester(WebElementTester):
         self.type = type
         self.id = self.get_attribute('data-id')
 
+    def scroll(self):
+        self.testcase.driver.execute_script("return arguments[0].scrollIntoView(false);", self.element)
+        return self
+
     @property
     def btn_preferences(self):
         return ButtonTester(self.testcase, self.find_element(".we-prefs-btn"))
@@ -873,6 +877,7 @@ class BaseComponentTester(WebElementTester):
         modal = FormModalTester(self.testcase, self.testcase.wait_element_visible(".wc-upgrade-component-modal"))
         modal.get_field('version').set_value(version)
         modal.accept()
+        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.version ==  "v" + version)
         return self
 
 
@@ -916,8 +921,7 @@ class WiringComponentGroupTester(WebElementTester):
     def create_component(self):
         new_length = len(self.find_components()) + 1
         # scroll into view the component_group panel to be able to click the create button
-        self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", self.element)
-        self.btn_create.click()
+        self.scroll().btn_create.click()
         WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: new_length == len(self.find_components()))
         return self.find_components()[-1]
 

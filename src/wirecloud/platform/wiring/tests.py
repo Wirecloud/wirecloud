@@ -2433,7 +2433,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             with wiring.component_sidebar as sidebar:
                 # Rename the widget available in sidebar.
                 component = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
-                component.rename(new_title)
+                component.scroll().rename(new_title)
             # Check if the widget draggable's title is changed too.
             self.assertIsNotNone(wiring.find_draggable_component('widget', title=new_title))
         # Check if the widget interface's title is changed too.
@@ -2529,7 +2529,6 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             with wiring.component_sidebar as sidebar:
                 operator = sidebar.find_component('operator', "Wirecloud/TestOperator", id=0)
                 operator.change_version("2.0")
-                self.assertEqual(operator.version, "v2.0")
                 modal = operator.show_logs()
                 WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The operator was upgraded to v2.0 successfully.")) == 1)
                 modal.accept()
