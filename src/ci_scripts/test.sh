@@ -4,7 +4,13 @@ export WC_INSTANCE_NAME=virtenv_test
 [ -n "${IP_ADDR}" ] || IP_ADDR="localhost"
 
 set -ex
-virtualenv -p $1 ${WORKSPACE}/virtenv
+
+if [[ $1 == "/usr/local/pythonz/"* ]]; then
+    # for now we are using pythonz only for python 3
+    $1 -m venv ${WORKSPACE}/virtenv
+else
+    virtualenv -p $1 ${WORKSPACE}/virtenv
+fi
 
 # Discard the python interpreter parameter
 shift
