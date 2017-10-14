@@ -236,6 +236,10 @@ class WebElementTester(object):
         self.testcase = testcase
         self.element = element
 
+    def scroll(self):
+        self.testcase.driver.execute_script("return arguments[0].scrollIntoView(false);", self.element)
+        return self
+
     @property
     def class_list(self):
         return self.get_attribute('class').split()
@@ -901,10 +905,6 @@ class WiringComponentGroupTester(WebElementTester):
     def __init__(self, testcase, element, type):
         super(WiringComponentGroupTester, self).__init__(testcase, element)
         self.type = type
-
-    def scroll(self):
-        self.testcase.driver.execute_script("return arguments[0].scrollIntoView(false);", self.element)
-        return self
 
     @property
     def btn_create(self):
