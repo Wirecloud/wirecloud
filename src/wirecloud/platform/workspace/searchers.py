@@ -70,7 +70,7 @@ class WorkspaceSearcher(BaseSearcher):
         else:
             lastmodified = datetime.datetime.utcfromtimestamp(workspace.creation_date / 1e3)
 
-        title = workspace.title if workspace.title else workspace.name
+        title = workspace.title if workspace.title is not None and workspace.title.strip() != "" else workspace.name
         return {
             'id': '%s' % workspace.pk,
             'owner': '%s' % workspace.creator,
