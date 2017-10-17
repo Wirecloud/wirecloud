@@ -40,6 +40,7 @@ class WorkspaceSchema(fields.SchemaClass):
     id = fields.ID(stored=True, unique=True)
     owner = fields.TEXT(stored=True, spelling=True)
     name = fields.TEXT(stored=True, spelling=True)
+    title = fields.TEXT(stored=True, spelling=True)
     description = fields.NGRAM(stored=True, minsize=1, phrase=True)
     lastmodified = fields.DATETIME(stored=True)
     longdescription = fields.NGRAM(stored=True, minsize=1, phrase=True)
@@ -55,7 +56,7 @@ class WorkspaceSearcher(BaseSearcher):
     indexname = 'workspace'
     model = Workspace
     schema_class = WorkspaceSchema
-    default_search_fields = ('owner', 'name', 'description', 'longdescription')
+    default_search_fields = ('owner', 'name', 'title', 'description', 'longdescription')
 
     def restrict_query(self, request):
         return Or([
@@ -69,10 +70,12 @@ class WorkspaceSearcher(BaseSearcher):
         else:
             lastmodified = datetime.datetime.utcfromtimestamp(workspace.creation_date / 1e3)
 
+        title = workspace.title if workspace.title else workspace.name
         return {
             'id': '%s' % workspace.pk,
             'owner': '%s' % workspace.creator,
             'name': '%s' % workspace.name,
+            'title': '%s' % title,
             'description': workspace.description,
             'lastmodified': lastmodified,
             'longdescription': workspace.longdescription,
