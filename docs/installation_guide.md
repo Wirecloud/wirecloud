@@ -725,28 +725,17 @@ Don't forget to run the collectstatic commands on your WireCloud installation:
 
 ### NGSI proxy
 
-WireCloud comes with a javascript library that allows widgets and operators to
+WireCloud comes with a JavaScript library that allows widgets and operators to
 connect to NGSI-9/10 servers. This support works out of the box when installing
 WireCloud except for receiving notification directly to widgets and operators.
-To enable it WireCloud requires what is called NGSI proxy, this proxy is a
+To enable it WireCloud requires what is called [NGSI proxy], this proxy is a
 facade that receives NGSI notifications and passes them to Widgets or Operators.
 
 This NGSI proxy doesn't need to be installed in the same machine as WireCloud
-and can be shared with other WireCloud instances. WireCloud will use the NGSI
-proxy passed to the `ngsi_proxy_url` option of the `NGSI.Connection` object. This
-URL can be obtained from Widget/Operator preference defined in its `config.xml`.
+and can be shared with other WireCloud instances. Follow this [link][NGSI proxy]
+for more information about how to install and configure such a NGSI proxy.
 
-You can install a NGSI proxy following those steps:
-
-    $ apt-get install nodejs npm
-    $ ln -s /usr/bin/nodejs /usr/bin/node
-    $ git clone git://github.com/conwetlab/ngsijs.git
-    $ cd ngsijs/ngsi-proxy
-    $ npm install
-
-After this, you can run the NGSI proxy issuing the following command:
-
-    $ npm run start
+[NGSI proxy]: https://github.com/conwetlab/ngsi-proxy
 
 
 ### Integration with the IdM GE
