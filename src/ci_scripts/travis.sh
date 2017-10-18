@@ -3,7 +3,7 @@
 export WC_INSTANCE_NAME=test_instance
 [ -n "${IP_ADDR}" ] || IP_ADDR="localhost"
 
-PY_VERSION=`python -c "import sys; print('%s.%s' % sys.version_info[:2])"`
+PYTHON_VERSION=`python -c "import sys; print('%s.%s.%s' % sys.version_info[:3])"`
 COVERAGE_CMD=coverage
 RADON_CMD=radon
 
@@ -20,7 +20,7 @@ done
 # Build and install WireCloud
 pip install -U setuptools wheel
 cd src; ./setup.py bdist_wheel; cd ..
-pip install ${TRAVIS_BUILD_DIR}/src/dist/wirecloud*-py2.py3-none-any.whl
+pip install ${TRAVIS_BUILD_DIR}/src/dist/wirecloud*.whl
 
 # Install the required testing tools
 pip install coverage django-nose mock radon
@@ -29,7 +29,7 @@ DJANGO_VERSION=`django-admin.py --version`
 DJANGO_VERSION="${DJANGO_VERSION%.*}"
 
 # Create a WireCloud instance
-${COVERAGE_CMD} run --branch --source=wirecloud ~/virtualenv/bin/wirecloud-admin startproject ${WC_INSTANCE_NAME}
+${COVERAGE_CMD} run --branch --source=wirecloud ~/virtualenv/python$PYTHON_VERSION/bin/wirecloud-admin startproject ${WC_INSTANCE_NAME}
 mv .coverage ${WC_INSTANCE_NAME}
 cd ${WC_INSTANCE_NAME}
 
