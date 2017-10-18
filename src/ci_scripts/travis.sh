@@ -52,3 +52,5 @@ python manage.py collectstatic -v 0 --noinput
 DJANGO_LIVE_TEST_SERVER_ADDRESS="${IP_ADDR}:28081"    # Used by Django 1.8-1.10
 DJANGO_LIVE_TEST_SERVER_HOST="${IP_ADDR}"             # Custom env variable used on Django 1.11
 ${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --noinput --with-xunit --nologcapture -v 2 ${TESTS}
+
+mv nosetests.xml ${TRAVIS_BUILD_DIR}
