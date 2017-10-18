@@ -1,0 +1,13 @@
+language: python
+env:
+    - DJANGO_VERSION=1.8
+    - DJANGO_VERSION=1.9
+    - DJANGO_VERSION=1.10
+    - DJANGO_VERSION=1.11
+python:
+    - "2.7"
+    - "3.4"
+    - "3.5"
+    - "3.6"
+script:
+    - src/ci_scripts/travi.sh sqlite3 django$DJANGO_VERSION unittest
