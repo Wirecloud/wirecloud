@@ -3,6 +3,7 @@
 export WC_INSTANCE_NAME=test_instance
 [ -n "${IP_ADDR}" ] || IP_ADDR="localhost"
 
+WORKSPACE=${TRAVIS_BUILD_DIR}
 PYTHON_VERSION=`python -c "import sys; print('%s.%s.%s' % sys.version_info[:3])"`
 COVERAGE_CMD=coverage
 RADON_CMD=radon
