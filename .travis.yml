@@ -10,4 +10,4 @@ python:
     - "3.5"
     - "3.6"
 script:
-    - src/ci_scripts/travi.sh sqlite3 django$DJANGO_VERSION unittest
+    - src/ci_scripts/travis.sh sqlite3 django$DJANGO_VERSION unittest
