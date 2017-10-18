@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://mashup.lab.fiware.org/
 TITLE: FIWARE Application Mashup RESTful v2.1 Specification
-DATE: 25th January 2017
+DATE: 16th October 2017
 VERSION: v2.2
 PREVIOUS_VERSION: v2
 APIARY_PROJECT: fiwareapplicationmashup
@@ -247,7 +247,8 @@ This action will return a subset of the fields returned by the [Get workspace de
                     "name": "workspace",
                     "owner": "user",
                     "removable": true,
-                    "shared": false
+                    "shared": false,
+                    "title": "Workspace"
                 },
                 {
                     "description": "A public dashboard",
@@ -257,7 +258,8 @@ This action will return a subset of the fields returned by the [Get workspace de
                     "name": "public-workspace",
                     "owner": "otheruser",
                     "removable": false,
-                    "shared": true
+                    "shared": true,
+                    "title": "Public Workspace"
                 }
             ]
 
@@ -284,7 +286,8 @@ This action will return a subset of the fields returned by the [Get workspace de
                     "name": "public-workspace",
                     "owner": "otheruser",
                     "removable": false,
-                    "shared": true
+                    "shared": true,
+                    "title": "Public Workspace"
                 }
             ]
 
@@ -298,9 +301,19 @@ Those parameters should be sent in the body of the request using the selected re
   This option cannot be used along `workspace`.
 + `workspace` (string): Id of the workspace to use as base for creating the new
   workspace. This option cannot be used along `mashup`.
-+ `name` (string): Name for the new workspace. This parameter is optional if
-  either `mashup` or `workspace` are used. In those cases, the name will be
-  obtained from the referenced mashup or workspace when not provided.
++ `name` (string): Id for the new workspace. This parameter is optional if
+  either `mashup` or `workspace` are used. In those cases, the `name` parameter
+  will be obtained from the referenced mashup or workspace. This parameter is
+  also optional if the `title` is provided, in this case a urlify version of
+  the `title` parameter will be used as `name`.
+  This parameter currently support any character (except '/'), but it is
+  recommended to only use english alphanumeric characters (lowercase), dashes
+  ('-') and underscores ('_') as this parameter will be used in URLs. Moreover,
+  future versions of the API will enforce this.
++ `title` (string): Title for the new workspace. This parameter is optional. If
+  either `mashup` or `workspace` are used, the `title` parameter will be
+  obtained from the referenced mashup or workspace. In any other case it will be
+  filled using the `name` parameter.
 + `allow_renaming` (boolean; default: `false`): If `false`, any attempt to
   create a workspace using a currently used name will fail (with a `409` status
   code). If this parameter is `true` and the name is already in use, a new name
@@ -346,10 +359,12 @@ If everything goes well and the workspace is created, this action will return th
                         "visible": true,
                         "iwidgets": [],
                         "id": "84",
-                        "name": "Tab",
-                        "preferences": {}
+                        "name": "tab",
+                        "preferences": {},
+                        "title": "Tab"
                     }
                 ],
+                "title": "test",
                 "users": [],
                 "wiring": {"operators": {}, "connections": []}
             }
@@ -424,10 +439,12 @@ If everything goes well and the workspace is created, this action will return th
                             }
                         ],
                         "id": "100",
-                        "name": "Tab",
-                        "preferences": {}
+                        "name": "tab",
+                        "preferences": {},
+                        "title": "Tab"
                     }
                 ],
+                "title": "Example",
                 "users": [],
                 "wiring": {"operators": {}, "connections": []},
             }
@@ -546,10 +563,12 @@ If everything goes well and the workspace is created, this action will return th
                             }
                         ],
                         "id": "101",
-                        "name": "Tab",
-                        "preferences": {}
+                        "name": "tab",
+                        "preferences": {},
+                        "name": "Tab"
                     }
                 ],
+                "title": "Example",
                 "users": [],
                 "wiring": {"operators": {}, "connections": []}
             }
@@ -565,12 +584,19 @@ If everything goes well and the workspace is created, this action will return th
 Returned fields:
 
 - `id` (string): Id of the workspace.
-- `name` (string): Name of the workspace.
 - `owner` (string): Username of the workspace's owner.
-- `description` (string): Short description in plain text describing the workspace.
-- `longdescription` (string): Text describing this workspace. This field can be formatted using Markdown.
+- `name` (string): Name of the workspace.
+- `title` (string, available in WireCloud 1.1+ / FIWARE Application Mashup
+  RESTful Specification v2.2+): Title of the workspace.
+- `description` (string, available in WireCloud 1.0+ / FIWARE Application Mashup
+  RESTful Specification v2.1+): Short description in plain text describing the
+  workspace.
+- `longdescription` (string, available in WireCloud 1.0+ / FIWARE Application
+  Mashup RESTful Specification v2.1+): Text describing this workspace. This
+  field can be formatted using Markdown.
 - `preferences` (object): Preference values.
-- `lastmodified` (number): Unix timestamp indicating the last time this workspace was updated.
+- `lastmodified` (number): Unix timestamp indicating the last time this
+  workspace was updated.
 - `tabs` (array): Visual description of the workspace.
 - `wiring` (object): Wiring configuration of the workspace. See the [Update workspace wiring configuration](reference/managing-workspaces/workspace/update-workspace-wiring-configuration) action documentation for more details about the structure of this field.
 - `removable` (object): Indicates wheter this workspace can be removed by the current user.
@@ -609,10 +635,12 @@ Returned fields:
                         "visible": true,
                         "iwidgets": [],
                         "id": 84,
-                        "name": "Tab",
-                        "preferences": {}
+                        "name": "tab",
+                        "preferences": {},
+                        "title": "Tab"
                     }
                 ],
+                "title": "Test",
                 "users": [
                     {
                         "accesslevel": "read",
@@ -634,9 +662,18 @@ Returned fields:
 
 Workspace attributes that can be modified:
 
-- `name` (string): Name of the workspace.
-- `description` (string, available in WireCloud 1.0+): Short description in plain text describing the workspace.
-- `longdescription` (string, available in WireCloud 1.0+): Text describing this workspace. This field can be formatted using Markdown.
+- `name` (string): Name of the workspace. This parameter currently support any
+  character (except '/'), but it is recommended to only use english alphanumeric
+  characters (lowercase), dashes ('-') and underscores ('_') as this parameter
+  will be used in URLs. Moreover, future versions of the API will enforce this.
+- `title` (string, available in WireCloud 1.1+ / FIWARE Application Mashup
+  RESTful Specification v2.2+): Title of the workspace.
+- `description` (string, available in WireCloud 1.0+ / FIWARE Application Mashup
+  RESTful Specification v2.1+): Short description in plain text describing the
+  workspace.
+- `longdescription` (string, available in WireCloud 1.0+ / FIWARE Application
+  Mashup RESTful Specification v2.1+): Text describing this workspace. This
+  field can be formatted using Markdown.
 
 **Used status codes**: 204, 400, 401, 403, 404, 415
 
@@ -650,7 +687,8 @@ Workspace attributes that can be modified:
     + Body
 
             {
-                "name": "New name",
+                "title": "New Name",
+                "name": "new-name",
                 "longdescription": "A dashboard description using **Markdown** _Syntax_"
             }
 
@@ -824,9 +862,9 @@ Workspace attributes that can be modified:
 
 ### Adding new tabs [POST /api/worksace/{workspace_id}/tabs]
 
-Creates a new empty tab. This request must provide the name of the tab passing
-it using the `name` parameter in the body of the request using the selected
-representation format (e.g. JSON).
+Creates a new empty tab. This request must provide the `name` or the `title`
+parameter to be used for creating the tab in the body of the request using the
+selected representation format (e.g. JSON).
 
 **Used status codes**: 201, 400, 401, 403, 404, 406, 413, 415, 422
 
@@ -840,7 +878,7 @@ representation format (e.g. JSON).
     + Body
 
             {
-                "name": "Tab 2"
+                "title": "Tab 2"
             }
 
 + Response 201 (application/json)
@@ -850,8 +888,9 @@ representation format (e.g. JSON).
             {
                "id": "3",
                "iwidgets": [],
-               "name": "Tab 2",
+               "name": "tab-2",
                "preferences": {},
+               "title": "Tab 2",
                "visible": false
             }
 
@@ -868,6 +907,8 @@ Returned fields:
 
 - `id` (string): Id of the tab.
 - `name` (string): Name of the tab.
+- `title` (string, available in WireCloud 1.1+ / FIWARE Application Mashup
+  RESTful Specification v2.2+): Title of the tab.
 - `visible` (boolean): Indicates if this is the tab to display by default when
   loading the workspace.
 - `iwidgets` (array): List of widgets associated with this tab.
@@ -929,6 +970,7 @@ Returned fields:
                 ],
                 "name": "Tab",
                 "preferences": {},
+                "title": "tab",
                 "visible": true
             }
 
@@ -936,7 +978,13 @@ Returned fields:
 
 Tab attributes that can be modified:
 
-- `name` (string): Label to display in the user interface.
+- `name` (string): Name to use for identifying this tab.
+  This parameter currently support any character (except '/'), but it is
+  recommended to only use english alphanumeric characters (lowercase), dashes
+  ('-') and underscores ('_') as this parameter will be used in URLs. Moreover,
+  future versions of the API will enforce this.
+- `title` (string, available in WireCloud 1.1+ / FIWARE Application Mashup
+  RESTful Specification v2.2+): Label to display in the user interface.
 - `visible` (boolean): `true` to make this the initial/default tab of the workspace.
 
 **Used status codes**: 204, 400, 401, 403, 404, 409, 413, 415, 422
@@ -953,7 +1001,8 @@ Tab attributes that can be modified:
     + Body
 
             {
-                "name": "New name"
+                "name": "new-name",
+                "title": "New Name"
             }
 
 + Response 204
