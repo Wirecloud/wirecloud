@@ -29,7 +29,7 @@ DJANGO_VERSION=`django-admin.py --version`
 DJANGO_VERSION="${DJANGO_VERSION%.*}"
 
 # Create a WireCloud instance
-${COVERAGE_CMD} run --branch --source=wirecloud wirecloud-admin startproject ${WC_INSTANCE_NAME}
+${COVERAGE_CMD} run --branch --source=wirecloud ~/virtualenv/bin/wirecloud-admin startproject ${WC_INSTANCE_NAME}
 mv .coverage ${WC_INSTANCE_NAME}
 cd ${WC_INSTANCE_NAME}
 
