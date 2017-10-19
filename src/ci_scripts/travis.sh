@@ -19,7 +19,6 @@ do
 done
 
 # Build and install WireCloud
-pip install -U setuptools wheel
 cd src; ./setup.py bdist_wheel &> /dev/null; cd ..
 pip install ${TRAVIS_BUILD_DIR}/src/dist/wirecloud*.whl
 
