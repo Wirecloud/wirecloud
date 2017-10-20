@@ -31,7 +31,7 @@ from wirecloud.commons.utils.wgt import WgtFile
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
-from wirecloud.platform.models import CatalogueResource, Workspace
+from wirecloud.platform.models import CatalogueResource, IWidget, Workspace
 from wirecloud.platform.plugins import build_url_template, get_active_features_info, WirecloudPlugin
 from wirecloud.platform.themes import get_active_theme_name
 from wirecloud.platform.workspace.utils import create_workspace
@@ -240,7 +240,7 @@ STYLED_ELEMENTS_CSS = (
 
 
 BASE_PATH = os.path.dirname(__file__)
-WORKSPACE_BROWSER_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.1.wgt')
+WORKSPACE_BROWSER_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.2.wgt')
 INITIAL_HOME_DASHBOARD_FILE = os.path.join(BASE_PATH, 'initial', 'initial_home_dashboard.wgt')
 MARKDOWN_VIEWER_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-viewer_0.1.1.wgt')
 MARKDOWN_EDITOR_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-editor_0.1.0.wgt')
@@ -681,13 +681,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
         if not CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).exists():
             updated = True
             log('Installing the %(name)s widget... ' % {"name": name}, 1, ending='')
-            install_resource_to_user(wirecloud_user, file_contents=WgtFile(wgt))
+            added, component = install_resource_to_user(wirecloud_user, file_contents=WgtFile(wgt))
+            IWidget.objects.filter(widget__resource__vendor=vendor, widget__resource__short_name=name).exclude(widget__resource__version=version).update(widget=component.widget, widget_uri=component.local_uri_part)
             log('DONE', 1)
 
     def populate(self, wirecloud_user, log):
         updated = False
 
-        self.populate_component(wirecloud_user, log, "WireCloud", "workspace-browser", "0.1.1", WORKSPACE_BROWSER_FILE)
+        self.populate_component(wirecloud_user, log, "WireCloud", "workspace-browser", "0.1.2", WORKSPACE_BROWSER_FILE)
 
         if not Workspace.objects.filter(creator__username="wirecloud", name="home").exists():
             updated = True
