@@ -24,6 +24,16 @@ from relatives.utils import object_edit_link
 from wirecloud.platform import models
 
 
+def get_workspace(iwidget):
+    return iwidget.tab.workspace
+get_workspace.short_description = 'Workspace'
+
+
+class IWidgetAdmin(admin.ModelAdmin):
+
+    list_display = ('id', get_workspace, 'tab', 'widget', 'name')
+
+
 class TeamInline(admin.StackedInline):
 
     model = models.Team
@@ -89,7 +99,7 @@ class WorkspaceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Constant)
-admin.site.register(models.IWidget)
+admin.site.register(models.IWidget, IWidgetAdmin)
 admin.site.register(models.Organization, OrganizationAdmin)
 admin.site.register(models.Market, MarketAdmin)
 admin.site.register(models.MarketUserData, MarketUserDataAdmin)
