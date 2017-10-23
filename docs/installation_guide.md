@@ -740,11 +740,12 @@ for more information about how to install and configure such a NGSI proxy.
 
 ### Integration with the IdM GE
 
-Create a new Application using the IdM server to use (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more info.
+Create a new Application using the IdM server that is going to be linked (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more information about how to create such an Application. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`.
 
-1. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`
-2. Install the `social-auth-app-django` module (e.g. `pip install "social-auth-app-django"`)
-3. Edit `settings.py`:
+On the WireCloud instance:
+
+1. Install the `social-auth-app-django` module (e.g. `pip install "social-auth-app-django"`)
+2. Edit `settings.py`:
     - Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
     - Add `social_django` to `INSTALLED_APPS`
     - Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` to `AUTHENTICATION_BACKENDS`. example:
@@ -764,7 +765,7 @@ Create a new Application using the IdM server to use (for example: `https://acco
         SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
         ```
 
-4. Edit `urls.py`:
+3. Edit `urls.py`:
     - Replace the login endpoint:
         - Add the following import line at the beginning of the file:
           `from wirecloud.fiware import views as wc_fiware`
@@ -774,17 +775,18 @@ Create a new Application using the IdM server to use (for example: `https://acco
           `url(r'^login/?$', wc_fiware.login, name="login"),`
     - Add `social-auth-app-django` url endpoints at the end of the pattern list: `url('', include('social_django.urls', namespace='social')),`
 
-5. [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`.
+4. [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`.
    This theme is the one used by the FIWARE Lab's Mashup portal.
-6. [Optional]: Provide a [`FIWARE_PORTALS` setting](#fiware_portals). This
+5. [Optional]: Provide a [`FIWARE_PORTALS` setting](#fiware_portals). This
    setting is used for signing out from other portals at the same time the user
    sign out from WireCloud, providing a single sign out experience. This setting
    is also used for building the navigation bar.
-7. Run `python manage.py migrate; python manage.py collectstatic --noinput`
+6. Run `python manage.py migrate; python manage.py collectstatic --noinput`
 
 
 [KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application
 [`FIWARE_PORTALS` setting]: #fiware_portals
+
 
 ### Enabling the real-time synchronization support
 
