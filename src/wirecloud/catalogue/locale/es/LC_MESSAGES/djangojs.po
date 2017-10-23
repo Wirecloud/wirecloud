@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-21 01:31+0200\n"
+"POT-Creation-Date: 2017-10-23 10:46+0200\n"
 "PO-Revision-Date: 2016-09-21 01:34+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -18,27 +18,32 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.9\n"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:63
-msgid "Error deleting resource: %(errorMsg)s."
-msgstr "Error borrando el recurso: %(errorMsg)s."
+#: static/js/wirecloud/WirecloudCatalogue.js:120
+#: static/js/wirecloud/WirecloudCatalogue.js:244
+msgid "Unexpected response from server"
+msgstr "Respuesta inesperada del servidor"
+
+#: static/js/wirecloud/WirecloudCatalogue.js:136
+msgid "Doing catalogue search"
+msgstr "Buscando en el servidor"
+
+#: static/js/wirecloud/WirecloudCatalogue.js:182
+msgid "market_endpoint option can only be used on local catalogues"
+msgstr "la opción market_endpoint solo se puede usar en el catálogo local"
 
 #: static/js/wirecloud/WirecloudCatalogue.js:201
-msgid "Uploading packaged resource"
-msgstr "Subiendo el recurso empaquetado"
+msgid "Uploading packaged component %(filename)s"
+msgstr "Subiendo el componente empaquetado %(filename)s"
 
 #: static/js/wirecloud/WirecloudCatalogue.js:221
-msgid "Error uploading packaged resource: %(errorMsg)s."
-msgstr "Error subiendo el recurso empaquetado: %(errorMsg)s."
+msgid "Installing component from %(url)s"
+msgstr "Instalando componente desde %(url)s"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:247
-msgid "Error adding resource from URL: %(errorMsg)s."
-msgstr "Error añadiendo el recurso desde la URL: %(errorMsg)s."
-
-#: static/js/wirecloud/WirecloudCatalogue.js:273
+#: static/js/wirecloud/WirecloudCatalogue.js:270
 msgid "Deleting all versions of %(title)s (%(group_id)s)"
 msgstr "Eliminando todas las versiones de %(title)s (%(group_id)s)"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:280
+#: static/js/wirecloud/WirecloudCatalogue.js:277
 msgid "Deleting %(title)s (%(uri)s)"
 msgstr "Borrando %(title)s (%(uri)s)"
 
@@ -102,42 +107,42 @@ msgstr "Documentación"
 msgid "Change Log"
 msgstr "Registro de cambios"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:41
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:43
 msgid "Uploading packaged components"
 msgstr "Subiendo los componentes empaquetados"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:50
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:57
 msgid "Error uploading the following components:"
 msgstr "Error subiendo los siguientes componentes:"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:111
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:107
 msgid "Upload mashable application components"
 msgstr "Subir componentes de aplicación mashable"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:116
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:112
 msgid "Select files from your computer"
 msgstr "Selecionar archivos del equipo"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:131
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:127
 msgid "Name"
 msgstr "Nombre"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:136
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:132
 msgid "Size"
 msgstr "Tamaño"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:147
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:143
 msgid "Remove this file"
 msgstr "Eliminar este fichero"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:155
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:151
 msgid "Add more files"
 msgstr "Añadir más ficheros"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:165
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:161
 msgid "Upload"
 msgstr "Subir"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:179
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:175
 msgid "Cancel"
 msgstr "Cancelar"

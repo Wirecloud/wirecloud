@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-21 01:37+0200\n"
+"POT-Creation-Date: 2017-10-23 11:10+0200\n"
 "PO-Revision-Date: 2016-09-21 01:42+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -84,11 +84,11 @@ msgstr "Error 500 - Error interno del servidor"
 msgid "WireCloud Platform - Sign in"
 msgstr "Plataforma WireCloud - Iniciar sesión"
 
-#: templates/registration/login.html:30 templates/wirecloud/views/base.html:47
+#: templates/registration/login.html:30 templates/wirecloud/views/base.html:48
 msgid "Your browser seems to lack some required features"
 msgstr "Parece que tu navegador no soporta ciertas funcionalidades necesarias"
 
-#: templates/registration/login.html:31 templates/wirecloud/views/base.html:48
+#: templates/registration/login.html:31 templates/wirecloud/views/base.html:49
 msgid ""
 "We recommend you to upgrade your browser to the newest version of either <a "
 "href=\"https://www.mozilla.org/firefox\">Firefox</a> or <a href=\"www.google."
@@ -115,9 +115,9 @@ msgstr "Nombre de usuario"
 msgid "Password"
 msgstr "Contraseña"
 
-#: templates/registration/login.html:48
-msgid "Log in"
-msgstr "Iniciar sesión"
+#: templates/registration/login.html:48 templates/wirecloud/signin.html:3
+msgid "Sign in"
+msgstr "Iniciar sessión"
 
 #: templates/wirecloud/catalogue/main_resource_details.html:3
 msgid "Description"
@@ -317,21 +317,20 @@ msgstr "Nueva versión"
 msgid "Change Log"
 msgstr "Registro de cambios"
 
-#: templates/wirecloud/views/base.html:7
+#: templates/wirecloud/views/base.html:38
+msgid "Loading WireCloud"
+msgstr "Iniciando WireCloud"
+
+#: templates/wirecloud/views/base.html:42
+msgid "Retrieving WireCloud code"
+msgstr "Obteniendo el código de WireCloud"
+
 #: templates/wirecloud/views/base_plain.html:7
 #: templates/wirecloud/views/classic.html:5
 #: templates/wirecloud/views/embedded.html:5
 #: templates/wirecloud/views/smartphone.html:5
 msgid "WireCloud Platform"
 msgstr "Plataforma WireCloud"
-
-#: templates/wirecloud/views/base.html:33
-msgid "Loading WireCloud"
-msgstr "Iniciando WireCloud"
-
-#: templates/wirecloud/views/base.html:37
-msgid "Retrieving WireCloud code"
-msgstr "Obteniendo el código de WireCloud"
 
 #: templates/wirecloud/wiring/behaviour_sidebar.html:6
 msgid "Behaviours"

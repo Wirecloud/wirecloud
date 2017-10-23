@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-21 01:31+0200\n"
+"POT-Creation-Date: 2017-10-23 10:46+0200\n"
 "PO-Revision-Date: 2016-09-15 15:25+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -18,11 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.7\n"
 
-#: management/commands/addtocatalogue.py:64
-msgid "Wrong number of arguments"
-msgstr "Número de argumentos incorrecto"
-
-#: management/commands/addtocatalogue.py:76
+#: management/commands/addtocatalogue.py:83
 msgid ""
 "You must use at least one of the following flags: --redeploy, --users, --"
 "groups or --public "
@@ -30,60 +26,60 @@ msgstr ""
 "Al menos una de las siguientes opciones tiene que ser usada: --redeploy, --"
 "users, --groups ó --public"
 
-#: management/commands/addtocatalogue.py:93
+#: management/commands/addtocatalogue.py:100
 #, python-format
 msgid "Failed to read from %(file_name)s"
 msgstr "Error al leer desde el fichero %(file_name)s"
 
-#: management/commands/addtocatalogue.py:113
+#: management/commands/addtocatalogue.py:120
 #, python-format
 msgid "Successfully imported \"%(name)s\" from \"%(file_name)s\""
 msgstr "Importado \"%(name)s\" desde \"%(file_name)s\" de forma correcta"
 
-#: management/commands/addtocatalogue.py:115
+#: management/commands/addtocatalogue.py:122
 #, python-format
 msgid "Failed to import the mashable application component from %(file_name)s"
 msgstr ""
 "Fallo la importación del componente de aplicación mashable desde "
 "%(file_name)s"
 
-#: models.py:52
+#: models.py:53
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: models.py:53
+#: models.py:54
 msgid "Name"
 msgstr "Nombre"
 
-#: models.py:54
+#: models.py:55
 msgid "Version"
 msgstr "Versión"
 
-#: models.py:55
+#: models.py:56
 msgid "Type"
 msgstr "Tipo"
 
-#: models.py:59
+#: models.py:60
 msgid "Available to all users"
 msgstr "Disponible para todos los usuarios"
 
-#: models.py:60
+#: models.py:61
 msgid "Users"
 msgstr "Usuarios"
 
-#: models.py:61
+#: models.py:62
 msgid "Groups"
 msgstr "Grupos"
 
-#: models.py:64
+#: models.py:65
 msgid "templateURI"
 msgstr "templateURI"
 
-#: models.py:66
+#: models.py:67
 msgid "popularity"
 msgstr "popularidad"
 
-#: models.py:68
+#: models.py:69
 msgid "JSON description"
 msgstr "Descripción en JSON"
 
@@ -110,7 +106,7 @@ msgstr ""
 "El fichero %(file_name)s no está codificado usando el conjunto de caracteres "
 "indicado (%(charset)s según el fichero de descripción del widget)."
 
-#: views.py:87 views.py:232
+#: views.py:87 views.py:242
 msgid "Missing parameter: template_uri or file"
 msgstr "Faltan el parámetro template_uri o file"
 
@@ -120,37 +116,47 @@ msgstr "Ya existe el recurso"
 
 #: views.py:113
 #, python-format
+msgid "Invalid pagenum value: %s"
+msgstr "Valor inválido para pagenum: %s"
+
+#: views.py:119
+#, python-format
+msgid "Invalid maxresults value: %s"
+msgstr "Valor inválido para maxresults: %s"
+
+#: views.py:123
+#, python-format
 msgid "Orderby value not supported: %s"
 msgstr "Valor para el parámetro orderby no soportado: %s"
 
-#: views.py:119
+#: views.py:129
 #, python-format
 msgid "Scope value not supported: %s"
 msgstr "Valor para el parámetro scope no soportado: %s"
 
-#: views.py:122
+#: views.py:132
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: views.py:157
+#: views.py:167
 #, python-format
 msgid "user %(username)s is not the owner of the resource %(resource_id)s"
 msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
 
-#: views.py:188
+#: views.py:198
 msgid "Invalid prefix value (it cannot contain spaces)"
 msgstr "Valor inválido para el parámetro limit (no puede contener espacios)"
 
-#: views.py:195
+#: views.py:205
 msgid "Invalid limit value (it must be positive integer)"
 msgstr ""
 "Valor inválido para el parámetro limit (tiene que ser un entero positivo)"
 
-#: views.py:252
+#: views.py:262
 msgid "Error opening the changelog file"
 msgstr "Error abriendo el fichero de registro de cambios"
 
-#: views.py:278
+#: views.py:288
 #, python-format
 msgid ""
 "You can find the userguide of this component in this external <a target="
@@ -159,6 +165,6 @@ msgstr ""
 "Puedes encontrar la documentación de este recurso in este <a target=\"_blank"
 "\" href=\"%s\">enlace externo</a>"
 
-#: views.py:294
+#: views.py:304
 msgid "Error opening the userguide file"
 msgstr "Error abriendo el fichero de la guía de usuario"

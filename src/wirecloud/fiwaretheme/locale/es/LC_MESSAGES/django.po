@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-21 01:46+0200\n"
+"POT-Creation-Date: 2017-10-23 11:25+0200\n"
 "PO-Revision-Date: 2016-09-21 01:46+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -21,6 +21,10 @@ msgstr ""
 #: __init__.py:22
 msgid "FIWARE Basic"
 msgstr "FIWARE Básico"
+
+#: templates/wirecloud/signin.html:3
+msgid "Sign in"
+msgstr "Iniciar sesión"
 
 #: templates/wirecloud/views/base_plain.html:7
 msgid "WireCloud Platform"

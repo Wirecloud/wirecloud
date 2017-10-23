@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-21 01:43+0200\n"
+"POT-Creation-Date: 2017-10-23 11:22+0200\n"
 "PO-Revision-Date: 2016-03-31 13:09+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -31,19 +31,19 @@ msgstr "Error pareando el documento RDF: %s"
 msgid "Error the document is not a valid usdl document"
 msgstr "Error - el documento no es un documento USDL válido"
 
-#: plugins.py:187
+#: plugins.py:250
 msgid "FIWARE version"
 msgstr "Versión de FIWARE"
 
-#: plugins.py:188
+#: plugins.py:251
 msgid "FIWARE version of the platform"
 msgstr "La versión de FIWARE de la plataforma"
 
-#: plugins.py:191
+#: plugins.py:254
 msgid "FIWARE token available"
 msgstr "Token de FIWARE disponible"
 
-#: plugins.py:192
+#: plugins.py:255
 msgid ""
 "Indicates if the current user has associated a FIWARE auth token that can be "
 "used for accessing other FIWARE resources"

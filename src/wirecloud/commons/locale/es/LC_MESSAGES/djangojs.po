@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-21 01:35+0200\n"
+"POT-Creation-Date: 2017-10-23 10:58+0200\n"
 "PO-Revision-Date: 2016-01-15 11:48+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.6\n"
 
 #: static/js/StyledElements/FileField.js:107
-#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:41
+#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:35
 msgid "Select"
 msgstr "Seleccionar"
 
@@ -71,11 +71,11 @@ msgstr ""
 msgid "The following fields does contain an out of range value: %(fields)s."
 msgstr "Los siguientes campos contienen un valor fuera de rango: %(fields)s."
 
-#: static/js/StyledElements/ModelTable.js:55
+#: static/js/StyledElements/ModelTable.js:54
 msgid "Sort by %(column_name)s"
 msgstr "Ordenar por %(column_name)s"
 
-#: static/js/StyledElements/ModelTable.js:205
+#: static/js/StyledElements/ModelTable.js:204
 msgid "No data available"
 msgstr "No hay datos disponibles"
 
@@ -86,21 +86,18 @@ msgstr "Añadir pestaña"
 
 #: static/js/StyledElements/PaginationInterface.js:82
 msgid ""
-"<s:styledgui xmlns:s=\"http://wirecloud.conwet.fi.upm.es/StyledElements\" "
-"xmlns:t=\"http://wirecloud.conwet.fi.upm.es/Template\" xmlns=\"http://www.w3."
-"org/1999/xhtml\"><t:firstBtn/><t:prevBtn/><div class=\"box\">Page: <t:"
-"currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>"
+"<div class=\"se-input-group\"><t:firstBtn/><t:prevBtn/><div class=\"se-box"
+"\">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></div>"
 msgstr ""
-"<s:styledgui xmlns:s=\"http://wirecloud.conwet.fi.upm.es/StyledElements\" "
-"xmlns:t=\"http://wirecloud.conwet.fi.upm.es/Template\" xmlns=\"http://www.w3."
-"org/1999/xhtml\"><t:firstBtn/><t:prevBtn/><div class=\"box\">Página: <t:"
-"currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>"
+"<div class=\"se-input-group\"><t:firstBtn/><t:prevBtn/><div class=\"se-box"
+"\">Página: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/>"
+"</s:styledgui>"
 
 #: static/js/StyledElements/Typeahead.js:174
 msgid "No results found for <em><t:query/></em>"
 msgstr "No se han encontrado resultados para <em><t:query/></em>"
 
-#: static/js/StyledElements/Utils.js:526
+#: static/js/StyledElements/Utils.js:511
 msgid "N/A"
 msgstr "N/A"
 
@@ -109,9 +106,9 @@ msgid "Start"
 msgstr "Iniciar"
 
 #: static/js/wirecloud/ui/HTMLWindowMenu.js:48
-#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:51
+#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:45
 #: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:145
-#: static/js/wirecloud/ui/WindowMenu.js:82
+#: static/js/wirecloud/ui/WindowMenu.js:57
 msgid "Close"
 msgstr "Cerrar"
 
@@ -127,11 +124,15 @@ msgstr "Buscar"
 msgid "Keywords..."
 msgstr "Texto de búsqueda"
 
-#: static/js/wirecloud/ui/MACSearch.js:195
+#: static/js/wirecloud/ui/MACSearch.js:134
+msgid "Connection error: No resource retrieved"
+msgstr "Problema de conexión: No se ha recibido ningún recurso"
+
+#: static/js/wirecloud/ui/MACSearch.js:204
 msgid "<p>Showing results for <b><t:corrected_query/></b></p>"
 msgstr "<p>Mostrando los resultados para <b><t:corrected_query/></b></p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:212
+#: static/js/wirecloud/ui/MACSearch.js:221
 msgid ""
 "<p>We couldn't find anything for your search - <b>%(keywords)s.</b></"
 "p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</"
@@ -142,7 +143,7 @@ msgstr ""
 "palabras estén escritas correctamente.</li><li>Prueba con otras palabras "
 "clave.</li><li>Inténtalo con palabras clave más generales.</li></ul>"
 
-#: static/js/wirecloud/ui/MACSearch.js:215
+#: static/js/wirecloud/ui/MACSearch.js:224
 msgid ""
 "<p>Currently, you do not have access to any %(scope)s component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -153,7 +154,7 @@ msgstr ""
 "recursos de forma manual usando el botón Subir en la vista de Mis Recursos.</"
 "p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:218
+#: static/js/wirecloud/ui/MACSearch.js:227
 msgid ""
 "<p>Currently, you do not have access to any component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -162,10 +163,6 @@ msgstr ""
 "<p>Actualmente no tienes acceso a ningún componente. Puedes obtener "
 "componentes usando la vista de Marketplace o subiendo recursos de forma "
 "manual usando el botón Subir en la vista de Mis Recursos.</p>"
-
-#: static/js/wirecloud/ui/MACSearch.js:225
-msgid "Connection error: No resource retrieved"
-msgstr "Problema de conexión: No se ha recibido ningún recurso"
 
 #: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:83
 msgid "Next"

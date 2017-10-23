@@ -40,7 +40,7 @@
                 'shortTitle': utils.gettext('General info'),
                 'fields': [
                     {name: 'title', label: utils.gettext('Mashup Title'), description: utils.gettext("Title to display on the catalogue"), type: 'text', required: true, initialValue: workspace.title, defaultValue: workspace.title},
-                    {name: 'vendor', label: utils.gettext('Vendor'), description: utils.gettext(""), type: 'text',  required: true, initialValue: user_name, defaultValue: user_name},
+                    {name: 'vendor', label: utils.gettext('Vendor'), description: utils.gettext("Id of the vendor/distributor of the mashable application component"), type: 'text',  required: true, initialValue: user_name, defaultValue: user_name},
                     {name: 'version', label: utils.gettext('Version'), type: 'version', required: true, initialValue: "1.0", defaultValue: "1.0"},
                     {name: 'email', label: utils.gettext('Email'), type: 'email'},
                     {name: 'description', label: utils.gettext('Short Description (plain text)'), type: 'longtext'},
