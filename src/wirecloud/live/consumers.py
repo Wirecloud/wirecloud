@@ -28,6 +28,7 @@ def ws_connect(message):
     user_group = build_group_name("live-%s" % message.user.username)
     Group(user_group).add(message.reply_channel)
     Group(WIRECLOUD_BROADCAST_GROUP).add(message.reply_channel)
+    message.reply_channel.send({"accept": True})
 
 
 @channel_session_user
