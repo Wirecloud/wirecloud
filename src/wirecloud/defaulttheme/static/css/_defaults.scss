@@ -179,7 +179,10 @@ $input-external-shadow:    0 1px 2px rgba(0, 0, 0, 0.05) !default;
 $input-padding-horizontal: 6px !default;
 $input-padding-vertical:   $padding-vertical-base !default;
 
-/* Navigation */
+
+// ======================================================================================
+// NAVIGATION
+// ======================================================================================
 
 $navbar-height:                 50px !default;
 $navbar-margin-bottom:          0px !default;
@@ -201,6 +204,14 @@ $nav-link-default-active-bg:    rgba(12, 184, 182, 0.21) !default;
 
 $nav-disabled-link-color:       $gray-light !default;
 $nav-disabled-link-hover-color: $gray-light !default;
+
+
+// ======================================================================================
+// GRID SYSTEM
+// ======================================================================================
+
+$grid-gutter-width: 30px;
+
 
 // ======================================================================================
 // COMPONENT - PANEL

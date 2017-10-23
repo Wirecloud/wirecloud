@@ -82,7 +82,6 @@ header.navbar .container-fluid {
 .col-md-12 {
     position: relative;
     min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: $grid-gutter-width/2;
+    padding-left: $grid-gutter-width/2;
 }
-
