@@ -119,7 +119,7 @@ moving the copied database file to the place expected by WireCloud.
 
 ### PostgreSQL database backups
 
-You can find more informatio about how to create PostgreSQL backups in this
+You can find more information about how to create PostgreSQL backups in this
 [page](http://www.postgresql.org/docs/9.1/static/backup-dump.html). Basically,
 you have to run the following command:
 
@@ -135,11 +135,17 @@ You can restore the backup using the following command:
 ## Upgrading from previous versions
 
 1. Install the new version of WireCloud
-2. Migrate the database and collect the new static files by running the
-following commands:
+2. Migrate the database and populate it with any new base component, rebuild the
+   search indexes and collect the new static files by running the following
+   commands:
 
         $ python manage.py migrate
+        $ python manage.py populate
+        $ python manage.py resetsearchindexes
         $ python manage.py collectstatic --noinput
+
+    > **NOTE**: Remember to run those commands using the user serving wirecloud
+    > (e.g. `su wirecloud`)
 
 3. Reload WireCloud (e.g. `$ service apache2 graceful`)
 
