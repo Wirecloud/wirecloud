@@ -176,7 +176,7 @@
 
                 if (resource.image) {
                     image.onerror = onImageError;
-                    image.src = resource.image;
+                    setTimeout(() => {image.src = resource.image;});
                 } else {
                     setTimeout(onImageError.bind(null, {target: image}), 0);
                 }
