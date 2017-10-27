@@ -340,7 +340,7 @@ something similiar to this:
 
 The wiring editor comes with a recommendation system for connections.
 For example, move the pointer to the *Provide entity* endpoint. You will
-see that the endpoint get highlighted, this means that te recommendation
+see that the endpoint get highlighted, this means that the recommendation
 system is searching for compatible endpoints. In this case there are no
 compatible endpoints.
 
