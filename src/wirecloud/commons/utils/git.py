@@ -54,7 +54,7 @@ def get_git_info():
 
     # Check if HEAD points to a release commit
     IS_RELEASE = False
-    release_tag = 'v' + wirecloud.platform.__version__
+    release_tag = wirecloud.platform.__version__
     try:
         out = _minimal_ext_cmd(['git', 'tag', '-l', '--points-at', 'HEAD'])
         tags = out.strip().decode('ascii').splitlines()
