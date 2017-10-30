@@ -76,7 +76,7 @@ def version_entry(request):
         "version": wirecloud.platform.__version__,
         "uptime": "%d d, %d h, %d m, %d s" % (td.days, td.seconds // 3600, (td.seconds // 60) % 60, td.seconds % 60),
         "version_hash": get_version_hash(),
-        "doc": "http://fiware.github.io/apps.Wirecloud/restapi/v2.2/",
+        "doc": "http://fiware.github.io/apps.Wirecloud/restapi/v%s/" % wirecloud.platform.__application_mashup_version__,
         "git_hash": wirecloud.platform.__git_hash__,
         "git_dirty": wirecloud.platform.__git_dirty__,
         "release_date": wirecloud.platform.__release_date__,
