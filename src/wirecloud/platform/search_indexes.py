@@ -79,6 +79,7 @@ def searchWorkspace(request, querytext, pagenum, maxresults):
     if len(querytext) > 0:
         parser = ParseSQ()
         query = parser.parse(querytext, CONTENT_FIELDS)
+
         # If there's any query
         if len(query) > 0:
             sqs = sqs.filter(query)
