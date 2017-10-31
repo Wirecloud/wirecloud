@@ -29,14 +29,13 @@ from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 from wirecloud.commons.haystack_queryparser import ParseSQ
 
 
-CONTENT_FIELDS = ["owner", "name2"]
+CONTENT_FIELDS = ["owner", "name"]
 
 
 class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
-    name = indexes.CharField(model_attr='name', indexed=False)
-    name2 = indexes.EdgeNgramField(model_attr='name', stored=False, boost=1.3)
+    name = indexes.EdgeNgramField(model_attr='name', boost=1.3)
 
     description = indexes.CharField(model_attr='description')
     longdescription = indexes.CharField(model_attr='longdescription')
