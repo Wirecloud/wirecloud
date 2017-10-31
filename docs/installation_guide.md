@@ -740,7 +740,7 @@ for more information about how to install and configure such a NGSI proxy.
 
 ### Integration with the IdM GE
 
-Create a new Application using the IdM server that is going to be linked (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more information about how to create such an Application. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`.
+Create a new Application using the IdM server that is going to be linked (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more information about how to create such an Application. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`. Take note of the *Client ID* and the *Client Secret* values (those values are available in the Application details page, inside the *OAuth2 Credentials* section) as they are going to be used later.
 
 On the WireCloud instance:
 
@@ -758,7 +758,7 @@ On the WireCloud instance:
         ```
 
     - Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g. `FIWARE_IDM_SERVER = "https://account.lab.fiware.org"`)
-    - Add `SOCIAL_AUTH_FIWARE_KEY` and `SOCIAL_AUTH_FIWARE_SECRET` settings using the id and secret values provided by the IdM. You should end having something like this:
+    - Add `SOCIAL_AUTH_FIWARE_KEY` and `SOCIAL_AUTH_FIWARE_SECRET` settings using the *Client ID* and the *Client Secret* values provided by the IdM. You should end having something like this:
 
         ```python
         SOCIAL_AUTH_FIWARE_KEY = "43"
