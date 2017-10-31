@@ -42,6 +42,8 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
     longdescription = indexes.CharField(model_attr='longdescription')
     public = indexes.CharField(model_attr="public")
 
+    searchable = indexes.CharField(model_attr="searchable", stored=False)
+
     lastmodified = indexes.CharField()
     owner = indexes.CharField()
     users = indexes.MultiValueField()
@@ -70,6 +72,9 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
 def searchWorkspace(request, querytext, pagenum, maxresults):
     sqs = SearchQuerySet().models(Workspace).all()
+
+    # Only searchable results
+    sqs = sqs.filter(searchable=1)
 
     if len(querytext) > 0:
         parser = ParseSQ()
