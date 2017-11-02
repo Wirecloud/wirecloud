@@ -36,7 +36,7 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
     name = indexes.EdgeNgramField(model_attr='name', boost=1.3)
-    title = indexes.EdgeNgramField(model_attr='title', boost=1.3, null=True)
+    title = indexes.EdgeNgramField(model_attr='title', boost=1.3)
 
     description = indexes.CharField(model_attr='description')
     longdescription = indexes.CharField(model_attr='longdescription')
@@ -66,7 +66,6 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
         self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
         self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
         self.prepared_data["shared"] = object.is_shared()
-        self.prepared_data["title"] = object.title if object.title is not None and object.title.strip() != "" else object.name
 
         return self.prepared_data
 
