@@ -66,6 +66,7 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
         self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
         self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
         self.prepared_data["shared"] = object.is_shared()
+        self.prepared_data["title"] = object.title if object.title is not None and object.title.strip() != "" else object.name
 
         return self.prepared_data
 
