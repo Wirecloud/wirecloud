@@ -36,7 +36,7 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
     name = indexes.EdgeNgramField(model_attr='name', boost=1.3)
-    title = indexes.EdgeNgramField(model_attr='title', boost=1.3)
+    title = indexes.EdgeNgramField(model_attr='title', boost=1.3, null=True)
 
     description = indexes.CharField(model_attr='description')
     longdescription = indexes.CharField(model_attr='longdescription')
