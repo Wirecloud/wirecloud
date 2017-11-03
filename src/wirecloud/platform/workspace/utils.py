@@ -334,7 +334,7 @@ def get_workspace_data(workspace, user):
     return {
         'id': "%s" % workspace.id,
         'name': workspace.name,
-        'title': workspace.title if workspace.title is not None and workspace.title.strip() != "" else workspace.name,
+        'title': workspace.title,
         'public': workspace.public,
         'shared': workspace.is_shared(),
         'owner': workspace.creator.username,
@@ -558,7 +558,7 @@ def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
     return {
         'id': "%s" % tab.id,
         'name': tab.name,
-        'title': tab.title if tab.title is not None and tab.title.strip() != "" else tab.name,
+        'title': tab.title,
         'visible': tab.visible,
         'preferences': get_tab_preference_values(tab),
         'iwidgets': [get_iwidget_data(widget, workspace, cache_manager, user) for widget in tab.iwidget_set.order_by('id')]
