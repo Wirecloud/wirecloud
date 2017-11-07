@@ -2,6 +2,7 @@
 # Django settings used as base for developing wirecloud.
 
 from os import path
+import sys
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from django.core.urlresolvers import reverse_lazy
 
@@ -94,7 +95,10 @@ HAYSTACK_CONNECTIONS = {
 #    },
 #}
 
-HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+if 'test' in sys.argv:
+    HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
+else:
+    HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
