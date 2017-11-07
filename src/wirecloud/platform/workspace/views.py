@@ -261,6 +261,10 @@ class TabCollection(Resource):
 
         tab_title = data.get('title')
         tab_name = data.get('name')
+
+        if tab_title == '':
+            tab_title = tab_name
+
         try:
             tab = createTab(tab_title, workspace, name=tab_name)
         except IntegrityError:
