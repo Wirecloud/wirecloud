@@ -1423,6 +1423,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         def create_workspace_tab():
             data = {
                 'name': 'rest_api_test',
+                'title': 'rest_api_test'
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 201)
