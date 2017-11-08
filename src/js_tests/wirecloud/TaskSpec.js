@@ -459,6 +459,24 @@
                 expect(task.progress).toBe(50);
             });
 
+            it("should make TaskContinuation nodes to ignore previous node resolutions", function () {
+                var _resolve;
+                var t1 = new Wirecloud.Task("task", (resolve, reject) => {_resolve = resolve});
+                var t2 = t1.then(
+                    fail,
+                    fail
+                );
+                var listener1 = jasmine.createSpy("listener1");
+                var listener2 = jasmine.createSpy("listener2");
+                t1.then(null, null, listener1);
+                t2.then(null, null, listener2);
+
+                expect(t2.abort("reason")).toBe(t2);
+                _resolve();
+                expect(listener1).not.toHaveBeenCalled();
+                expect(listener2).toHaveBeenCalled();
+            });
+
             it("should abort next task nodes", () => {
                 var t1 = new Wirecloud.Task("task", () => {});
                 var t2 = t1.then(

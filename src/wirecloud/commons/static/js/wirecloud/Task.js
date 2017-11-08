@@ -158,7 +158,9 @@
     var resolve_then = function resolve_then(tc, callback, next, resolve, reject) {
         var result;
 
-        if (typeof callback === 'function') {
+        if (tc.status === 'aborted') {
+            return;
+        } else if (typeof callback === 'function') {
             try {
                 result = callback(this.value);
             } catch (e) {
