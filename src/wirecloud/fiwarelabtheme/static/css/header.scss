@@ -72,12 +72,10 @@
 */
 
 .fiware-header ul.nav {
-    height: 36px;
     padding: 0px;
     margin-bottom: 0px;
     margin-left: 0px;
     margin-top: 0px;
-    display: inline-block;
     vertical-align: top;
     font-family: "NeoTech";
 }
@@ -118,11 +116,6 @@
 
 .fiware-header .pull-right {
     float: right;
-}
-
-.fiware-header .nav > li {
-    float: left;
-    line-height: 20px;
 }
 
 .fiware-header .user-menu {
