@@ -31,6 +31,7 @@ from mock import DEFAULT, patch, Mock, ANY
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html, filter_changelog
+import wirecloud.commons.utils.http
 from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, InvalidMimeType, parse_mime_type
@@ -642,6 +643,8 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=80)
     def test_get_current_domain_fallback_http(self):
         request = self._prepare_request_mock()
+        # Reset the _servername variable
+        wirecloud.commons.utils.http._servername = None
         with patch(self.get_current_site_import) as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
                 get_current_site_mock.side_effect = Exception
@@ -652,6 +655,8 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=81)
     def test_get_current_domain_fallback_http_custom_port(self):
         request = self._prepare_request_mock()
+        # Reset the _servername variable
+        wirecloud.commons.utils.http._servername = None
         with patch(self.get_current_site_import) as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
                 get_current_site_mock.side_effect = Exception
@@ -662,6 +667,8 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_DOMAIN=None, FORCE_PORT=443)
     def test_get_current_domain_fallback_https(self):
         request = self._prepare_request_mock()
+        # Reset the _servername variable
+        wirecloud.commons.utils.http._servername = None
         with patch(self.get_current_site_import) as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
                 get_current_site_mock.side_effect = Exception
@@ -672,6 +679,8 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_DOMAIN=None, FORCE_PORT=8443)
     def test_get_current_domain_fallback_https_custom_port(self):
         request = self._prepare_request_mock()
+        # Reset the _servername variable
+        wirecloud.commons.utils.http._servername = None
         with patch(self.get_current_site_import) as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
                 get_current_site_mock.side_effect = Exception

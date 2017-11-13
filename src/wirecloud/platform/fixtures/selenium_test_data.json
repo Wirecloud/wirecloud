@@ -23,6 +23,7 @@
         "pk": 1,
         "fields": {
             "name": "ExistingWorkspace",
+            "title": "ExistingWorkspace",
             "creator": 4,
             "description": "This is an <b>example</b> of workspace",
             "longdescription": "This is an **example** of workspace",
@@ -34,6 +35,7 @@
         "pk": 2,
         "fields": {
             "name": "Workspace",
+            "title": "Workspace",
             "creator": 4,
             "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
         }
@@ -43,6 +45,7 @@
         "pk": 8,
         "fields": {
             "name": "Workspace",
+            "title": "Workspace",
             "creator": 1,
             "description": "This is an <b>example</b> of workspace",
             "longdescription": "This is an **example** of workspace",
@@ -54,6 +57,7 @@
         "pk": 9,
         "fields": {
             "name": "Workspace",
+            "title": "Workspace",
             "creator": 2,
             "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
         }
@@ -63,6 +67,7 @@
         "pk": 10,
         "fields": {
             "name": "SharedWorkspace",
+            "title": "SharedWorkspace",
             "creator": 4,
             "description": "This is an <b>example</b> of workspace",
             "longdescription": "This is an **example** of workspace",
@@ -75,6 +80,7 @@
         "fields": {
             "visible": true,
             "name": "ExistingTab",
+            "title": "ExistingTab",
             "workspace": 1,
             "position": 0
         }
@@ -85,6 +91,7 @@
         "fields": {
             "visible": true,
             "name": "OtherTab",
+            "title": "OtherTab",
             "workspace": 1,
             "position": 1
         }

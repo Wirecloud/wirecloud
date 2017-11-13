@@ -42,9 +42,6 @@ urlpatterns = (
     url(r'^resources$',
         views.ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_catalogue.resource_collection'),
-    url(r'^resources/suggest$',
-        views.ResourceSuggestion(permitted_methods=('GET',)),
-        name='wirecloud_catalogue.resource_suggestion'),
 
     # version check
     url(r'^versions',

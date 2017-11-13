@@ -2,6 +2,7 @@
 # Django settings used as base for developing wirecloud.
 
 from os import path
+import sys
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from django.core.urlresolvers import reverse_lazy
 
@@ -76,7 +77,29 @@ INSTALLED_APPS += (
     'wirecloud.oauth2provider',
     'wirecloud.fiware',
     'django_nose',
+    'haystack',
 )
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
+        'PATH': path.join(path.dirname(__file__), 'whoosh_index'),
+    },
+}
+#HAYSTACK_CONNECTIONS = {
+#    'default': {
+#        'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
+#        'URL': 'http://127.0.0.1:8983/solr'
+#        # ...or for multicore...
+#        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+#    },
+#}
+
+if 'test' in sys.argv:
+    HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
+else:
+    HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 SESSION_COOKIE_AGE = 5184000  # 2 months
