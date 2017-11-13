@@ -32,7 +32,7 @@ import six
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudTransactionTestCase
 from wirecloud.platform.models import IWidget, Tab, Workspace, UserWorkspace, WorkspacePreference
 from wirecloud.platform.widget import utils as localcatalogue
 from wirecloud.platform.workspace.utils import encrypt_value
@@ -395,7 +395,7 @@ def check_get_request(self, url, *args, **kwargs):
     return response
 
 
-class ApplicationMashupAPI(WirecloudTestCase):
+class ApplicationMashupAPI(WirecloudTransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-noselenium')

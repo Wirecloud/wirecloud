@@ -34,7 +34,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles import finders
 from django.core import management
 from django.test import LiveServerTestCase
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, TestCase
 from django.test.client import Client
 from django.utils import translation
 from django.core.management import call_command
@@ -342,7 +342,7 @@ DEFAULT_TEST_HAYSTACK_CONNECTIONS = {
 }
 
 
-class WirecloudTestCase(TransactionTestCase):
+class WirecloudTestCase(TestCase):
 
     base_resources = ()
     populate = True
@@ -445,6 +445,119 @@ class WirecloudTestCase(TransactionTestCase):
         call_command('clear_index', interactive=False, verbosity=0)
 
         super(WirecloudTestCase, self).tearDown()
+
+    def changeLanguage(self, new_language):
+
+        from django.conf import settings
+
+        settings.LANGUAGE_CODE = new_language
+        settings.DEFAULT_LANGUAGE = new_language
+        translation.activate(new_language)
+
+
+class WirecloudTransactionTestCase(TransactionTestCase):
+
+    base_resources = ()
+    populate = True
+
+    @classmethod
+    def setUpClass(cls):
+
+        # Setup languages
+        from django.conf import settings
+
+        cls.old_LANGUAGES = settings.LANGUAGES
+        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
+        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
+        settings.LANGUAGES = (('en', 'English'), ('es', 'Spanish'))
+        settings.LANGUAGE_CODE = 'en'
+        settings.DEFAULT_LANGUAGE = 'en'
+
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
+
+        # Mock network requests
+        cls.network = FakeNetwork(getattr(cls, 'servers', {
+            'http': {
+                'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
+                'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
+                'example.com': DynamicWebServer(),
+            },
+        }))
+        cls.network.mock_requests()
+
+        prepare_temporal_resource_directories(cls)
+
+        super(WirecloudTransactionTestCase, cls).setUpClass()
+
+        # Try to load test settings, else load default test settings
+        try:
+            settings.HAYSTACK_CONNECTIONS = settings.TEST_HAYSTACK_CONNECTIONS
+            # Update whoosh index dir if not set by user
+            if settings.TEST_HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.TEST_HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+                settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        except:
+            settings.HAYSTACK_CONNECTIONS = DEFAULT_TEST_HAYSTACK_CONNECTIONS
+            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+
+        # Reload the connection
+        haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
+        haystack.connections.reload('default')
+
+    @classmethod
+    def tearDownClass(cls):
+
+        # Remove temporal directory
+        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
+        # deployers
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        showcase.wgt_deployer = cls.old_deployer
+
+        # Restore previous language configuration
+        from django.conf import settings
+
+        settings.LANGUAGES = cls.old_LANGUAGES
+        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
+        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
+
+        # Clear cache
+        from django.core.cache import cache
+        cache.clear()
+
+        # Unmock network requests
+        cls.network.unmock_requests()
+
+        super(WirecloudTransactionTestCase, cls).tearDownClass()
+
+    def setUp(self):
+
+        haystack.connections.reload('default')
+        call_command('rebuild_index', interactive=False, verbosity=0)
+
+        # deployers
+        restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
+        restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
+
+        # clean example.com responses
+        try:
+            self.network._servers['http']['example.com'].clear()
+        except:
+            pass
+
+        # cache
+        from django.core.cache import cache
+        cache.clear()
+
+        # Restore English as the default language
+        self.changeLanguage('en')
+
+        super(WirecloudTransactionTestCase, self).setUp()
+
+    def tearDown(self):
+
+        call_command('clear_index', interactive=False, verbosity=0)
+
+        super(WirecloudTransactionTestCase, self).tearDown()
 
     def changeLanguage(self, new_language):
 
