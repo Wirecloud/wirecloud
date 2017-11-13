@@ -52,6 +52,7 @@ header.navbar .container-fluid {
             &:hover,
             &:focus {
                 text-decoration: none;
+                color: $nav-link-hover-text;
                 background-color: $nav-link-hover-bg;
             }
         }
@@ -62,15 +63,16 @@ header.navbar .container-fluid {
     .navbar-nav {
         > li > a {
             color: $nav-link-default-text;
-        }
-
-        > .active > a {
-            &,
             &:hover,
             &:focus {
                 color: $nav-link-default-active-text;
                 background-color: $nav-link-default-active-bg;
             }
+        }
+
+        > .active > a {
+            color: $nav-link-default-active-text;
+            background-color: $nav-link-default-active-bg;
         }
     }
 }

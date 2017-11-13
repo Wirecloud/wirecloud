@@ -196,11 +196,12 @@ $nav-tabs-active-link-hover-bg: $nav-tabs-border-color !default;
 
 $nav-link-padding-vertical:     10px !default;
 $nav-link-padding-horizontal:   15px !default;
+$nav-link-hover-text:           darken($brand-default, 60%) !default;
 $nav-link-hover-bg:             $gray-lighter !default;
 
 $nav-link-default-text:         darken($brand-default, 60%) !default;
 $nav-link-default-active-text:  white !default;
-$nav-link-default-active-bg:    rgba(12, 184, 182, 0.21) !default;
+$nav-link-default-active-bg:    $brand-primary !default;
 
 $nav-disabled-link-color:       $gray-light !default;
 $nav-disabled-link-hover-color: $gray-light !default;
