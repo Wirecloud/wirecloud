@@ -156,6 +156,7 @@ class ResourceCollection(Resource):
         try:
             fix_dev_version(file_contents, request.user)
             added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
+            resource.save()
 
             if not added and force_create:
                 return build_error_response(request, 409, _('Resource already exists'))

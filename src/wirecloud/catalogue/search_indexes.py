@@ -20,8 +20,6 @@
 from __future__ import unicode_literals
 
 from django.db.models import Q
-from django.dispatch import receiver
-from django.db.models.signals import m2m_changed
 from six.moves.urllib.parse import urljoin
 from haystack import indexes
 
@@ -207,8 +205,3 @@ def add_absolute_urls(hit, request=None):
     hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
     hit['image'] = "" if not hit['image'] or hit['image'] == '' else urljoin(base_url, hit['image'])
     hit['smartphoneimage'] = "" if not hit['smartphoneimage'] or hit['smartphoneimage'] == '' else urljoin(base_url, hit['smartphoneimage'])
-
-
-@receiver(m2m_changed, sender=CatalogueResource.users.through)
-def reindex_catalogue(sender, **kwargs):
-    CatalogueResourceIndex().update_object(kwargs['instance'])

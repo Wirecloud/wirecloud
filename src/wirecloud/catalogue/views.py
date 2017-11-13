@@ -95,6 +95,8 @@ class ResourceCollection(Resource):
             return build_error_response(request, 409, _('Resource already exists'))
 
         resource.users.add(request.user)
+        resource.save()
+
         return HttpResponse(resource.json_description, content_type='application/json; charset=UTF-8')
 
     def read(self, request):
