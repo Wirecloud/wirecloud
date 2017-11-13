@@ -3,6 +3,44 @@
 
 #wirecloud_header {
     margin-bottom: 0.5ex;
+    overflow: hidden;
+
+    &.collapsing {
+        transition: transform 0.3s linear, height 0.3s step-end;
+    }
+
+    &.expanding {
+        transition: transform 0.3s linear, height 0.3s step-start;
+    }
+
+    &.collapsed {
+        height: 0px !important;
+        transform: translateY(-100%);
+    }
+}
+
+#wc-collapsed-bar {
+    position: relative;
+    height: 0px;
+    margin-top: calc(-0.5ex - 1px);
+    overflow: hidden;
+    z-index: 100;
+
+    &.collapsing {
+        transition: height 0.3s step-end;
+    }
+
+    &.expanding {
+        transition: height 0.3s step-start;
+    }
+
+    &.collapsed {
+        height: 24px;
+    }
+}
+
+.wc-header-collapse {
+    float: right;
 }
 
 .wirecloud_app_bar {
