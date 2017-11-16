@@ -368,62 +368,61 @@ def wirecloudSetUpClass(cls):
 
 def wirecloudTearDownClass(cls):
 
-        # Remove temporal directory
-        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+    # Remove temporal directory
+    shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
-        # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        showcase.wgt_deployer = cls.old_deployer
+    # deployers
+    catalogue.wgt_deployer = cls.old_catalogue_deployer
+    showcase.wgt_deployer = cls.old_deployer
 
-        # Restore previous language configuration
-        from django.conf import settings
+    # Restore previous language configuration
+    from django.conf import settings
 
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
+    settings.LANGUAGES = cls.old_LANGUAGES
+    settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
+    settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
-        # Restore old index dir
-        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
+    # Restore old index dir
+    settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
-        # Clear cache
-        from django.core.cache import cache
-        cache.clear()
+    # Clear cache
+    from django.core.cache import cache
+    cache.clear()
 
-        # Unmock network requests
-        cls.network.unmock_requests()
+    # Unmock network requests
+    cls.network.unmock_requests()
 
 
 def wirecloudSetUp(cls):
+    # deployers
+    restoretree(cls.localcatalogue_tmp_dir_backup, cls.localcatalogue_tmp_dir)
+    restoretree(cls.catalogue_tmp_dir_backup, cls.catalogue_tmp_dir)
 
-        # deployers
-        restoretree(cls.localcatalogue_tmp_dir_backup, cls.localcatalogue_tmp_dir)
-        restoretree(cls.catalogue_tmp_dir_backup, cls.catalogue_tmp_dir)
+    # clean example.com responses
+    try:
+        cls.network._servers['http']['example.com'].clear()
+    except:
+        pass
 
-        # clean example.com responses
-        try:
-            cls.network._servers['http']['example.com'].clear()
-        except:
-            pass
+    # cache
+    from django.core.cache import cache
+    cache.clear()
 
-        # cache
-        from django.core.cache import cache
-        cache.clear()
+    # Restore English as the default language
+    changeLanguage('en')
 
-        # Restore English as the default language
-        changeLanguage('en')
-
-        # Populate initial db
-        if cls.populate:
-            management.call_command('populate', verbosity=0, interactive=False)
+    # Populate initial db
+    if cls.populate:
+        management.call_command('populate', verbosity=0, interactive=False)
 
 
 def wirecloudTearDown(cls):
 
-        from django.conf import settings
+    from django.conf import settings
 
-        for searcher in get_available_search_engines():
-            searcher.clear_cache()
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+    for searcher in get_available_search_engines():
+        searcher.clear_cache()
+    shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
 
 def changeLanguage(new_language):
