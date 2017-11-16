@@ -686,6 +686,6 @@ class HTTPUtilsTestCase(TestCase):
         with patch(self.get_current_site_import) as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
                 get_current_site_mock.side_effect = Exception
-                mocks['socket'].getfqdn.return_value = 'example.com'
+                mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
                 mocks['get_current_scheme'].return_value = 'http'
                 self.assertEqual(get_current_domain(request), 'fqdn.example.com:8443')
