@@ -37,7 +37,7 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.commons
 from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
-from wirecloud.commons.utils.testcases import uses_extra_resources, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase, wirecloud_selenium_test_case
+from wirecloud.commons.utils.testcases import uses_extra_resources, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase, wirecloud_selenium_test_case, changeLanguage
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.utils import add_m2m, install_resource, install_resource_to_user, install_resource_to_group, install_resource_to_all_users, fix_dev_version
 import wirecloud.platform.widget.utils
@@ -330,7 +330,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
         self.assertTrue(added)
-        self.changeLanguage('es')
+        changeLanguage('es')
         data = resource.get_processed_info(process_urls=False)
         self.assertEqual(data['vendor'], 'Wirecloud')
         self.assertEqual(data['name'], 'test')
