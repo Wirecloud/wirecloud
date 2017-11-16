@@ -227,6 +227,8 @@ class SafeWriter(WhooshIndexWriter):
             self.writer = self.index.writer(**self.writerargs)
         except LockError:
             self.writer = None
+        except OSError:  # The index no longer exist (Can happen during tests)
+            self.writer = None
 
     def reader(self):
         return self.index.reader()
@@ -266,6 +268,8 @@ class SafeWriter(WhooshIndexWriter):
                 writer = self.index.writer(**self.writerargs)
             except LockError:
                 time.sleep(self.delay)
+            except OSError:  # The index no longer exist, so the write is cancelled (happens during tests)
+                return
         for method, evt_args, evt_kwargs in self.events:
             getattr(writer, method)(*evt_args, **evt_kwargs)
         writer.commit(*args, **kwargs)

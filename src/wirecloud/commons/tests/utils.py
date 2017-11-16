@@ -31,6 +31,7 @@ from mock import DEFAULT, patch, Mock, ANY
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html, filter_changelog
+import wirecloud.commons.utils.http as http
 from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, InvalidMimeType, parse_mime_type
@@ -393,6 +394,16 @@ class HTTPUtilsTestCase(TestCase):
         super(HTTPUtilsTestCase, cls).setUpClass()
         cls.get_current_site_import = 'django.contrib.sites.shortcuts.get_current_site' if django.VERSION[1] >= 7 else 'django.contrib.sites.models.get_current_site'
 
+    def setUp(cls):
+        global _servername
+        http._servername = None  # Reset _servername before each test
+        super(HTTPUtilsTestCase, cls).setUp()
+
+    def tearDown(cls):
+        global _servername
+        http._servername = None  # Reset _servername before each test
+        super(HTTPUtilsTestCase, cls).tearDown()
+
     def _prepare_request_mock(self):
 
         request = Mock()
@@ -675,6 +686,6 @@ class HTTPUtilsTestCase(TestCase):
         with patch(self.get_current_site_import) as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
                 get_current_site_mock.side_effect = Exception
-                mocks['socket'].getfqdn.return_value = 'example.com'
+                mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
                 mocks['get_current_scheme'].return_value = 'http'
                 self.assertEqual(get_current_domain(request), 'fqdn.example.com:8443')

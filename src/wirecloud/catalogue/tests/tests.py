@@ -35,14 +35,14 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.views import serve_catalogue_media
 from wirecloud.commons.searchers import get_search_engine
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTransactionTestCase, WirecloudTestCase
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
 __test__ = False
 
 
-class CatalogueSearchTestCase(WirecloudTestCase):
+class CatalogueSearchTestCase(WirecloudTransactionTestCase):
 
     fixtures = ('catalogue_search_data',)
     populate = False
@@ -403,7 +403,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
 
-class CatalogueSuggestionTestCase(WirecloudTestCase):
+class CatalogueSuggestionTestCase(WirecloudTransactionTestCase):
 
     fixtures = ('catalogue_search_data',)
     tags = ('wirecloud-catalogue', 'wirecloud-catalogue-suggestions', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')

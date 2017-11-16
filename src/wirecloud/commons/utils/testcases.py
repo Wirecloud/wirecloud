@@ -34,7 +34,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles import finders
 from django.core import management
 from django.test import LiveServerTestCase
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, TestCase
 from django.test.client import Client
 from django.utils import translation
 import mock
@@ -340,7 +340,101 @@ def prepare_temporal_resource_directories(cls):
         os.mkdir(cls.catalogue_tmp_dir_backup)
 
 
-class WirecloudTestCase(TransactionTestCase):
+def wirecloudSetUpClass(cls):
+    # Setup languages
+    from django.conf import settings
+
+    cls.old_LANGUAGES = settings.LANGUAGES
+    cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
+    cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
+    settings.LANGUAGES = (('en', 'English'), ('es', 'Spanish'))
+    settings.LANGUAGE_CODE = 'en'
+    settings.DEFAULT_LANGUAGE = 'en'
+
+    cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
+
+    # Mock network requests
+    cls.network = FakeNetwork(getattr(cls, 'servers', {
+        'http': {
+            'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
+            'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
+            'example.com': DynamicWebServer(),
+        },
+    }))
+    cls.network.mock_requests()
+
+    prepare_temporal_resource_directories(cls)
+
+
+def wirecloudTearDownClass(cls):
+
+    # Remove temporal directory
+    shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
+    # deployers
+    catalogue.wgt_deployer = cls.old_catalogue_deployer
+    showcase.wgt_deployer = cls.old_deployer
+
+    # Restore previous language configuration
+    from django.conf import settings
+
+    settings.LANGUAGES = cls.old_LANGUAGES
+    settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
+    settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
+
+    # Restore old index dir
+    settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
+
+    # Clear cache
+    from django.core.cache import cache
+    cache.clear()
+
+    # Unmock network requests
+    cls.network.unmock_requests()
+
+
+def wirecloudSetUp(cls):
+    # deployers
+    restoretree(cls.localcatalogue_tmp_dir_backup, cls.localcatalogue_tmp_dir)
+    restoretree(cls.catalogue_tmp_dir_backup, cls.catalogue_tmp_dir)
+
+    # clean example.com responses
+    try:
+        cls.network._servers['http']['example.com'].clear()
+    except:
+        pass
+
+    # cache
+    from django.core.cache import cache
+    cache.clear()
+
+    # Restore English as the default language
+    changeLanguage('en')
+
+    # Populate initial db
+    if cls.populate:
+        management.call_command('populate', verbosity=0, interactive=False)
+
+
+def wirecloudTearDown(cls):
+
+    from django.conf import settings
+
+    for searcher in get_available_search_engines():
+        searcher.clear_cache()
+    shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+
+
+def changeLanguage(new_language):
+
+        from django.conf import settings
+
+        settings.LANGUAGE_CODE = new_language
+        settings.DEFAULT_LANGUAGE = new_language
+        translation.activate(new_language)
+
+
+class WirecloudTestCase(TestCase):
 
     base_resources = ()
     populate = True
@@ -348,99 +442,53 @@ class WirecloudTestCase(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
 
-        # Setup languages
-        from django.conf import settings
-
-        cls.old_LANGUAGES = settings.LANGUAGES
-        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'), ('es', 'Spanish'))
-        settings.LANGUAGE_CODE = 'en'
-        settings.DEFAULT_LANGUAGE = 'en'
-
-        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
-
-        # Mock network requests
-        cls.network = FakeNetwork(getattr(cls, 'servers', {
-            'http': {
-                'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
-                'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
-                'example.com': DynamicWebServer(),
-            },
-        }))
-        cls.network.mock_requests()
-
-        prepare_temporal_resource_directories(cls)
+        wirecloudSetUpClass(cls)
 
         super(WirecloudTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
 
-        # Remove temporal directory
-        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
-
-        # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        showcase.wgt_deployer = cls.old_deployer
-
-        # Restore previous language configuration
-        from django.conf import settings
-
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
-
-        # Restore old index dir
-        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
-
-        # Clear cache
-        from django.core.cache import cache
-        cache.clear()
-
-        # Unmock network requests
-        cls.network.unmock_requests()
+        wirecloudTearDownClass(cls)
 
         super(WirecloudTestCase, cls).tearDownClass()
 
     def setUp(self):
 
-        # deployers
-        restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
-        restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
-
-        # clean example.com responses
-        try:
-            self.network._servers['http']['example.com'].clear()
-        except:
-            pass
-
-        # cache
-        from django.core.cache import cache
-        cache.clear()
-
-        # Restore English as the default language
-        self.changeLanguage('en')
-
-        # Populate initial db
-        if self.populate:
-            management.call_command('populate', verbosity=0, interactive=False)
+        wirecloudSetUp(self)
 
     def tearDown(self):
 
-        from django.conf import settings
+        wirecloudTearDown(self)
 
-        for searcher in get_available_search_engines():
-            searcher.clear_cache()
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
-    def changeLanguage(self, new_language):
+# TestCase to be used on tests that do require TransactionTestCase logic. Slower than normal WirecloudTestCase
+class WirecloudTransactionTestCase(TransactionTestCase):
 
-        from django.conf import settings
+    base_resources = ()
+    populate = True
 
-        settings.LANGUAGE_CODE = new_language
-        settings.DEFAULT_LANGUAGE = new_language
-        translation.activate(new_language)
+    @classmethod
+    def setUpClass(cls):
+
+        wirecloudSetUpClass(cls)
+
+        super(WirecloudTransactionTestCase, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+
+        wirecloudTearDownClass(cls)
+
+        super(WirecloudTransactionTestCase, cls).tearDownClass()
+
+    def setUp(self):
+
+        wirecloudSetUp(self)
+
+    def tearDown(self):
+
+        wirecloudTearDown(self)
 
 
 def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False, creator=None):

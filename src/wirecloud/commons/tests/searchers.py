@@ -22,14 +22,14 @@ from __future__ import unicode_literals
 import json
 
 from django.core.urlresolvers import reverse
-from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.commons.utils.testcases import WirecloudTransactionTestCase
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
 __test__ = False
 
 
-class SearchAPITestCase(WirecloudTestCase):
+class SearchAPITestCase(WirecloudTransactionTestCase):
 
     fixtures = ('user_search_test_data',)
     tags = ('wirecloud-search-api', 'wirecloud-noselenium')
