@@ -603,7 +603,7 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.return_value = self._prepare_site_mock()
                 mocks['get_current_scheme'].return_value = 'http'
                 self.assertEqual(get_current_domain(request), 'site.example.com:8000')
@@ -613,7 +613,7 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain_forced(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 mocks['get_current_scheme'].return_value = 'http'
                 self.assertEqual(get_current_domain(request), 'myserver.com:8080')
                 self.assertEqual(mocks['socket'].getfqdn.call_count, 0)
@@ -623,7 +623,7 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain_forced_domain(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.return_value = self._prepare_site_mock()
                 mocks['get_current_scheme'].return_value = 'http'
                 self.assertEqual(get_current_domain(request), 'forced.example.com:8000')
@@ -633,7 +633,7 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain_forced_port(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.return_value = self._prepare_site_mock()
                 mocks['get_current_scheme'].return_value = 'http'
                 self.assertEqual(get_current_domain(request), 'site.example.com:81')
@@ -643,7 +643,7 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain_fallback_http(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
                 mocks['get_current_scheme'].return_value = 'http'
@@ -653,7 +653,7 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain_fallback_http_custom_port(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
                 mocks['get_current_scheme'].return_value = 'http'
@@ -663,7 +663,7 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain_fallback_https(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
                 mocks['get_current_scheme'].return_value = 'https'
@@ -673,8 +673,8 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_current_domain_fallback_https_custom_port(self):
         request = self._prepare_request_mock()
         with patch(self.get_current_site_import) as get_current_site_mock:
-            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'example.com'
                 mocks['get_current_scheme'].return_value = 'http'
-                self.assertEqual(get_current_domain(request), 'fqdn.example.com:8443')
+                self.assertEqual(get_current_domain(request), 'example.com:8443')
