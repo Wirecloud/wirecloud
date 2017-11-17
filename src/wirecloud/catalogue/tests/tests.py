@@ -26,7 +26,7 @@ import os
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.test import Client, TestCase
+from django.test import Client, TestCase, TransactionTestCase
 from django.test.utils import override_settings
 from mock import MagicMock, Mock, patch
 
@@ -42,7 +42,7 @@ from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTes
 __test__ = False
 
 
-class CatalogueSearchTestCase(WirecloudTestCase):
+class CatalogueSearchTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('catalogue_search_data',)
     populate = False
@@ -403,7 +403,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
 
-class CatalogueSuggestionTestCase(WirecloudTestCase):
+class CatalogueSuggestionTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('catalogue_search_data',)
     tags = ('wirecloud-catalogue', 'wirecloud-catalogue-suggestions', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
@@ -454,7 +454,7 @@ class CatalogueSuggestionTestCase(WirecloudTestCase):
             self.assertTrue(term.startswith('wire'))
 
 
-class CatalogueAPITestCase(WirecloudTestCase):
+class CatalogueAPITestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('catalogue_test_data',)
     tags = ('wirecloud-catalogue', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
@@ -664,7 +664,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
             self.assertIn('changelog', response_text)
 
 
-class WGTDeploymentTestCase(WirecloudTestCase):
+class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-catalogue', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
 

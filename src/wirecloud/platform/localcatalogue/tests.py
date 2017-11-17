@@ -27,7 +27,7 @@ import zipfile
 from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.test import Client
+from django.test import Client, TransactionTestCase
 from mock import Mock
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -51,7 +51,7 @@ __test__ = False
 BASIC_HTML_GADGET_CODE = b"<html><body><p>widget code</p></body></html>"
 
 
-class LocalCatalogueTestCase(WirecloudTestCase):
+class LocalCatalogueTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
     servers = {
@@ -475,7 +475,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
             self.assertIn('Invalid embedded file: ', e.message)
 
 
-class PackagedResourcesTestCase(WirecloudTestCase):
+class PackagedResourcesTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-localcatalogue', 'wirecloud-noselenium', 'wirecloud-localcatalogue-noselenium')
 

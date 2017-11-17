@@ -34,7 +34,6 @@ from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles import finders
 from django.core import management
 from django.test import LiveServerTestCase
-from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
 import mock
@@ -340,7 +339,7 @@ def prepare_temporal_resource_directories(cls):
         os.mkdir(cls.catalogue_tmp_dir_backup)
 
 
-class WirecloudTestCase(TransactionTestCase):
+class WirecloudTestCase(object):
 
     base_resources = ()
     populate = True

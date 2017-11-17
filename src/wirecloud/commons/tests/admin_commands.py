@@ -26,7 +26,7 @@ from tempfile import mkdtemp
 
 import django
 from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from mock import DEFAULT, Mock, patch
 
 from wirecloud.commons.wirecloud_admin import CommandLineUtility
@@ -166,7 +166,7 @@ class BaseAdminCommandTestCase(TestCase):
         self.assertEqual(second_output, third_output)
 
 
-class ConvertCommandTestCase(WirecloudTestCase):
+class ConvertCommandTestCase(WirecloudTestCase, TestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-convert', 'wirecloud-noselenium')
     fixtures = ()
@@ -244,7 +244,7 @@ class ConvertCommandTestCase(WirecloudTestCase):
             self.assertNotEqual(f.read(), '')
 
 
-class StartprojectCommandTestCase(WirecloudTestCase):
+class StartprojectCommandTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-startproject', 'wirecloud-noselenium')
     fixtures = ()

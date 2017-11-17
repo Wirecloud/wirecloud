@@ -31,6 +31,7 @@ try:
 except:
     # Django 1.8 doesn't support IrreversibleError
     IrreversibleError = Exception
+from django.test import TransactionTestCase
 from mock import Mock, create_autospec
 import six
 from unittest import TestCase
@@ -219,7 +220,7 @@ def check_secure_preferences(self, workspace, user):
     self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]["value"], "********")
 
 
-class WorkspaceTestCase(WirecloudTestCase):
+class WorkspaceTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-noselenium', 'wirecloud-workspace')
@@ -312,7 +313,7 @@ class WorkspaceTestCase(WirecloudTestCase):
         self.assertEqual(set(fields.keys()), {'id', 'owner', 'name', 'description', 'lastmodified', 'longdescription', 'public', 'users', 'groups', 'shared', 'searchable', 'title'})
 
 
-class WorkspaceCacheTestCase(WirecloudTestCase):
+class WorkspaceCacheTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-workspace', 'wirecloud-noselenium')
@@ -398,7 +399,7 @@ class WorkspaceCacheTestCase(WirecloudTestCase):
         self.assertEqual(len(iwidget_list), 1)
 
 
-class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
+class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTestCase):
 
     WIRE = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/widget#')
     WIRE_M = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/mashup#')
@@ -1156,7 +1157,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertNotIn("public", template.get("preferences", {}))
 
 
-class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
+class ParameterizedWorkspaceParseTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-workspace', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')

@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 import json
 
 from django.core.urlresolvers import reverse
-from django.test import Client
+from django.test import Client, TransactionTestCase
 from django.test.utils import override_settings
 from mock import Mock
 
@@ -34,7 +34,7 @@ __test__ = False
 
 
 @override_settings(ROOT_URLCONF='wirecloud.commons.tests.basic_views_urls')
-class BasicViewTestCase(WirecloudTestCase):
+class BasicViewTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-noselenium', 'wirecloud-error-handlers')
 

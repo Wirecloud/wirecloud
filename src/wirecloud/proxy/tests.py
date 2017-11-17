@@ -26,7 +26,7 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
-from django.test import Client, override_settings
+from django.test import Client, override_settings, TestCase
 from django.contrib.auth.models import User
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
@@ -40,7 +40,7 @@ __test__ = False
 
 
 @override_settings(WIRECLOUD_PLUGINS=(), FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=None)
-class ProxyTestsBase(WirecloudTestCase):
+class ProxyTestsBase(WirecloudTestCase, TestCase):
 
     fixtures = ('test_data.json',)
     tags = ('wirecloud-proxy', 'wirecloud-noselenium')

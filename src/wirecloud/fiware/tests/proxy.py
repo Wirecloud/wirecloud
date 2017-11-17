@@ -27,6 +27,7 @@ import time
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.urlresolvers import reverse
+from django.test import TestCase
 from mock import MagicMock, Mock, patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
@@ -41,7 +42,7 @@ TEST_TOKEN = 'yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyC
 TEST_WORKSPACE_TOKEN = 'rtHdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPx6'
 
 
-class ProxyTestCase(WirecloudTestCase):
+class ProxyTestCase(WirecloudTestCase, TestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-fiware-proxy', 'wirecloud-proxy', 'wirecloud-noselenium')

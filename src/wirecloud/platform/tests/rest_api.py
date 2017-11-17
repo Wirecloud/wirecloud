@@ -26,7 +26,7 @@ import os
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.test import Client
+from django.test import Client, TransactionTestCase
 from mock import Mock, patch
 import six
 
@@ -395,7 +395,7 @@ def check_get_request(self, url, *args, **kwargs):
     return response
 
 
-class ApplicationMashupAPI(WirecloudTestCase):
+class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
@@ -2846,7 +2846,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         IWidget.objects.get(pk=4)
 
 
-class ResourceManagementAPI(WirecloudTestCase):
+class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
@@ -3455,7 +3455,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         check_not_found_response(self, 'delete', url)
 
 
-class ExtraApplicationMashupAPI(WirecloudTestCase):
+class ExtraApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api', 'wirecloud-noselenium')
@@ -4607,7 +4607,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         check_post_bad_request_syntax(self, url)
 
 
-class AdministrationAPI(WirecloudTestCase):
+class AdministrationAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-rest-api', 'wirecloud-rest-api-admin', 'wirecloud-noselenium')

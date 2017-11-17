@@ -21,7 +21,7 @@ import json
 from six.moves.urllib.parse import parse_qs, urlparse
 
 from django.core.urlresolvers import reverse
-from django.test import Client
+from django.test import Client, TransactionTestCase
 from django.test.utils import override_settings
 from django.utils.http import urlencode
 from mock import patch
@@ -32,7 +32,7 @@ from wirecloud.platform.plugins import clear_cache
 
 
 @override_settings(INSTALLED_APPS=BASE_APPS + ('wirecloud.catalogue', 'wirecloud.platform', 'wirecloud.oauth2provider'))
-class Oauth2TestCase(WirecloudTestCase):
+class Oauth2TestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
     tags = ('wirecloud-oauth2provider', 'wirecloud-noselenium')

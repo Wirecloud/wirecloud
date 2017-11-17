@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 import json
 
 from django.core.urlresolvers import reverse
+from django.test import TransactionTestCase
+
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
@@ -29,7 +31,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 __test__ = False
 
 
-class SearchAPITestCase(WirecloudTestCase):
+class SearchAPITestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('user_search_test_data',)
     tags = ('wirecloud-search-api', 'wirecloud-noselenium')

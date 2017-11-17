@@ -23,6 +23,7 @@ from copy import deepcopy
 import json
 import sys
 
+from django.test import TestCase
 from mock import patch, MagicMock, Mock
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
@@ -38,7 +39,7 @@ class BasicClass(object):
         return ('client', 'secret')
 
 
-class TestSocialAuthBackend(WirecloudTestCase):
+class TestSocialAuthBackend(WirecloudTestCase, TestCase):
 
     tags = ('wirecloud-fiware-social-auth', 'wirecloud-noselenium')
 

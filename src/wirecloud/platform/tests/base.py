@@ -27,7 +27,7 @@ from lxml import etree
 import django
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
-from django.test import Client
+from django.test import Client, TransactionTestCase
 from django.test.client import RequestFactory
 from django.test.utils import override_settings
 from django.template import TemplateDoesNotExist
@@ -51,7 +51,7 @@ from django.utils.translation import LANGUAGE_SESSION_KEY
 __test__ = False
 
 
-class BasicViewsAPI(WirecloudTestCase):
+class BasicViewsAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-base-views', 'wirecloud-base-views-unit', 'wirecloud-noselenium')

@@ -23,7 +23,7 @@ import unittest
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import Client
+from django.test import Client, TransactionTestCase
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.context.utils import get_platform_context_current_values, get_workspace_context_current_values
@@ -34,7 +34,7 @@ if 'wirecloud.fp74caast' in settings.INSTALLED_APPS:
 
 
 @unittest.skipIf('wirecloud.fp74caast' not in settings.INSTALLED_APPS, '4CaaSt support not enabled')
-class FP74CaastTests(WirecloudTestCase):
+class FP74CaastTests(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', '4caast_test_data')
     tags = ('fp74CaaSt',)

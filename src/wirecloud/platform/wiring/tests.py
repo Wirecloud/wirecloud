@@ -28,7 +28,7 @@ import unittest
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.test import Client, override_settings
+from django.test import Client, override_settings, TestCase, TransactionTestCase
 from mock import Mock, patch
 import selenium
 from selenium.webdriver.common.keys import Keys
@@ -65,7 +65,7 @@ def send_basic_key_event(driver, keycode):
     ''', keycode)
 
 
-class WiringTestCase(WirecloudTestCase):
+class WiringTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
@@ -2050,7 +2050,7 @@ class WiringTestCase(WirecloudTestCase):
 
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
 @override_settings(DEBUG=False, FORCE_PROTO='http', FORCE_DOMAIN='example.com', FORCE_PORT=80, WIRECLOUD_PLUGINS=())
-class OperatorCodeEntryTestCase(WirecloudTestCase):
+class OperatorCodeEntryTestCase(WirecloudTestCase, TestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium', 'wirecloud-operator-code-transformation')

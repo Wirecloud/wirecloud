@@ -22,7 +22,7 @@ import sys
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import override_settings
+from django.test import override_settings, TransactionTestCase
 from mock import patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
@@ -35,7 +35,7 @@ __test__ = False
 
 @override_settings(WIRECLOUD_PLUGINS=())
 @patch('wirecloud.platform.management.commands.populate.locale.getdefaultlocale', return_value=("en_US",))
-class PopuplateCommandTestCase(WirecloudTestCase):
+class PopuplateCommandTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-populate', 'wirecloud-noselenium')
 
