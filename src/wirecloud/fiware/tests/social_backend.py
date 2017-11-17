@@ -236,7 +236,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
         plugin = FiWarePlugin()
 
         urls = plugin.get_urls()
-        self.assertEqual(len(urls), 2)
+        self.assertEqual(len(urls), 1)
 
         constants = plugin.get_constants()
         self.assertIn('FIWARE_HOME', constants)
@@ -252,7 +252,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
         plugin = FiWarePlugin()
 
         urls = plugin.get_urls()
-        self.assertEqual(len(urls), 1)
+        self.assertEqual(len(urls), 0)
 
         constants = plugin.get_constants()
         self.assertIn('FIWARE_HOME', constants)
