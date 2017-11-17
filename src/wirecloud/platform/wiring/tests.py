@@ -2049,7 +2049,7 @@ class WiringTestCase(WirecloudTestCase):
 
 
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
-@override_settings(DEBUG=False, FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
+@override_settings(DEBUG=False, FORCE_PROTO='http', FORCE_DOMAIN='example.com', FORCE_PORT=80, WIRECLOUD_PLUGINS=())
 class OperatorCodeEntryTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)

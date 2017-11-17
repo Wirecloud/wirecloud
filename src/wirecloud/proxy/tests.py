@@ -39,7 +39,7 @@ from wirecloud.platform.workspace.utils import encrypt_value
 __test__ = False
 
 
-@override_settings(WIRECLOUD_PLUGINS=())
+@override_settings(WIRECLOUD_PLUGINS=(), FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=None)
 class ProxyTestsBase(WirecloudTestCase):
 
     fixtures = ('test_data.json',)
