@@ -44,6 +44,8 @@ class ProxyTestsBase(WirecloudTestCase, TestCase):
 
     fixtures = ('test_data.json',)
     tags = ('wirecloud-proxy', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     servers = {
         'http': {

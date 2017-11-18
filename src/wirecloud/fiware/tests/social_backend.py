@@ -42,6 +42,8 @@ class BasicClass(object):
 class TestSocialAuthBackend(WirecloudTestCase, TestCase):
 
     tags = ('wirecloud-fiware-social-auth', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     OLD_RESPONSE = {
         "schemas": ["urn:scim:schemas:core:2.0:User"],

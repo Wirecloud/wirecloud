@@ -349,7 +349,9 @@ class WirecloudTestCase(object):
     @classmethod
     def setUpClass(cls):
 
-        if cls.clear_search_indexes is None and issubclass(cls, TestCase):
+        if cls.use_search_indexes is False:
+            cls.clear_search_indexes = False
+        elif cls.clear_search_indexes is None and issubclass(cls, TestCase):
             cls.clear_search_indexes = False
         elif cls.clear_search_indexes is None:
             cls.clear_search_indexes = True
@@ -398,6 +400,13 @@ class WirecloudTestCase(object):
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
         # Restore old index dir
+        if not cls.clear_search_indexes:
+            # If self.clear_search_indexes is True, this step is done in a per
+            # test basis in the tearDown method
+            for searcher in get_available_search_engines():
+                searcher.clear_cache()
+            shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+
         settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
         # Clear cache
@@ -436,7 +445,7 @@ class WirecloudTestCase(object):
 
         from django.conf import settings
 
-        if self.use_search_indexes and self.clear_search_indexes:
+        if self.clear_search_indexes:
             for searcher in get_available_search_engines():
                 searcher.clear_cache()
             shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)

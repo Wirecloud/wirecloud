@@ -69,6 +69,7 @@ class WiringTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
+    populate = False
 
     def setUp(self):
 
@@ -2054,6 +2055,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase, TestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium', 'wirecloud-operator-code-transformation')
+    populate = False
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
     COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\.js')

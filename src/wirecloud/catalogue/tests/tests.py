@@ -19,7 +19,6 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
 import json
 import os
 
@@ -34,7 +33,6 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.views import serve_catalogue_media
-from wirecloud.commons.searchers import get_search_engine
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 
 
@@ -367,10 +365,11 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
 
-class CatalogueSuggestionTestCase(WirecloudTestCase, TransactionTestCase):
+class CatalogueSuggestionTestCase(WirecloudTestCase, TestCase):
 
     fixtures = ('catalogue_search_data',)
     tags = ('wirecloud-catalogue', 'wirecloud-catalogue-suggestions', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
+    populate = False
 
     @classmethod
     def setUpClass(cls):
@@ -422,6 +421,8 @@ class CatalogueAPITestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('catalogue_test_data',)
     tags = ('wirecloud-catalogue', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
+    populate = False
+    use_search_indexes = False
 
     @classmethod
     def setUpClass(cls):
@@ -631,6 +632,7 @@ class CatalogueAPITestCase(WirecloudTestCase, TransactionTestCase):
 class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-catalogue', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
+    populate = False
 
     def setUp(self):
         super(WGTDeploymentTestCase, self).setUp()

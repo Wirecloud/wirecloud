@@ -38,6 +38,7 @@ __test__ = False
 class PopuplateCommandTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-populate', 'wirecloud-noselenium')
+    populate = False
 
     @classmethod
     def setUpClass(cls):
@@ -50,6 +51,8 @@ class PopuplateCommandTestCase(WirecloudTestCase, TransactionTestCase):
         clear_cache()
 
     def setUp(self):
+
+        super(PopuplateCommandTestCase, self).setUp()
 
         if sys.version_info > (3, 0):
             self.options = {"stdout": io.StringIO(), "stderr": io.StringIO()}

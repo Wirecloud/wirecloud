@@ -55,6 +55,7 @@ class BasicViewsAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-base-views', 'wirecloud-base-views-unit', 'wirecloud-noselenium')
+    use_search_indexes = False
 
     def setUp(self):
         super(BasicViewsAPI, self).setUp()

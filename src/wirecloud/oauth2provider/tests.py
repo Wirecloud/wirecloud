@@ -36,11 +36,13 @@ class Oauth2TestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
     tags = ('wirecloud-oauth2provider', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     @classmethod
     def setUpClass(cls):
 
-        WirecloudTestCase.setUpClass.__func__(cls)
+        super(Oauth2TestCase, cls).setUpClass()
 
         cls.client = Client()
         cls.user_client = Client()
@@ -50,12 +52,14 @@ class Oauth2TestCase(WirecloudTestCase, TransactionTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        WirecloudTestCase.tearDownClass.__func__(cls)
+        super(Oauth2TestCase, cls).tearDownClass()
 
         # Clear WireCloud plugins cache
         clear_cache()
 
     def setUp(self):
+        super(Oauth2TestCase, self).setUp()
+
         self.user_client.login(username='normuser', password='admin')
 
     def _check_token(self, token, endpoint='wirecloud.resource_collection'):

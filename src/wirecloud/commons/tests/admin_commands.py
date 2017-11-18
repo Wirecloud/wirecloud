@@ -170,6 +170,8 @@ class ConvertCommandTestCase(WirecloudTestCase, TestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-convert', 'wirecloud-noselenium')
     fixtures = ()
+    populate = False
+    user_search_indexes = False
 
     @classmethod
     def setUpClass(cls):
@@ -248,6 +250,8 @@ class StartprojectCommandTestCase(WirecloudTestCase, TestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-startproject', 'wirecloud-noselenium')
     fixtures = ()
+    populate = False
+    user_search_indexes = False
 
     @classmethod
     def setUpClass(cls):

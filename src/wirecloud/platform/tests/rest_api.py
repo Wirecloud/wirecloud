@@ -26,7 +26,7 @@ import os
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.test import Client, TransactionTestCase
+from django.test import Client, TestCase, TransactionTestCase
 from mock import Mock, patch
 import six
 
@@ -400,6 +400,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
     populate = False
+    use_search_indexes = False
 
     def setUp(self):
         super(ApplicationMashupAPI, self).setUp()
@@ -4611,10 +4612,12 @@ class ExtraApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         check_post_bad_request_syntax(self, url)
 
 
-class AdministrationAPI(WirecloudTestCase, TransactionTestCase):
+class AdministrationAPI(WirecloudTestCase, TestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-rest-api', 'wirecloud-rest-api-admin', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     @classmethod
     def setUpClass(cls):

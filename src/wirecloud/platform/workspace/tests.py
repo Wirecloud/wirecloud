@@ -220,6 +220,8 @@ class WorkspaceTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-noselenium', 'wirecloud-workspace')
+    populate = False
+    use_search_indexes = False
 
     def setUp(self):
         super(WorkspaceTestCase, self).setUp()
@@ -313,6 +315,8 @@ class WorkspaceCacheTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-workspace', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     def setUp(self):
         super(WorkspaceCacheTestCase, self).setUp()
@@ -407,6 +411,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
 
     fixtures = ('test_data',)
     tags = ('wirecloud-workspace', 'wirecloud-template', 'wirecloud-workspace-write', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     @classmethod
     def setUpClass(cls):
@@ -1159,6 +1165,8 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase, TransactionTestCase
     tags = ('wirecloud-workspace', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')
 
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
+    populate = False
+    use_search_indexes = False
 
     def setUp(self):
 

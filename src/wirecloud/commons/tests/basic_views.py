@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 import json
 
 from django.core.urlresolvers import reverse
-from django.test import Client, TransactionTestCase
+from django.test import Client, TestCase
 from django.test.utils import override_settings
 from mock import Mock
 
@@ -34,9 +34,11 @@ __test__ = False
 
 
 @override_settings(ROOT_URLCONF='wirecloud.commons.tests.basic_views_urls')
-class BasicViewTestCase(WirecloudTestCase, TransactionTestCase):
+class BasicViewTestCase(WirecloudTestCase, TestCase):
 
     tags = ('wirecloud-noselenium', 'wirecloud-error-handlers')
+    populate = False
+    use_search_indexes = False
 
     def setUp(self):
         super(BasicViewTestCase, self).setUp()
@@ -49,6 +51,7 @@ class BasicViewTestCase(WirecloudTestCase, TransactionTestCase):
 
     def check_json_response(self, response, status_code):
         self.assertEqual(response.status_code, status_code)
+        self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
 
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))

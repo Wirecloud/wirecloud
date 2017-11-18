@@ -46,6 +46,8 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-fiware-proxy', 'wirecloud-proxy', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     @classmethod
     def setUpClass(cls):

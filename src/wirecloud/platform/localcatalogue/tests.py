@@ -60,6 +60,7 @@ class LocalCatalogueTestCase(WirecloudTestCase, TransactionTestCase):
         }
     }
     tags = ('wirecloud-localcatalogue', 'wirecloud-noselenium', 'wirecloud-localcatalogue-noselenium')
+    populate = False
 
     def setUp(self):
         super(LocalCatalogueTestCase, self).setUp()
@@ -478,6 +479,7 @@ class LocalCatalogueTestCase(WirecloudTestCase, TransactionTestCase):
 class PackagedResourcesTestCase(WirecloudTestCase, TransactionTestCase):
 
     tags = ('wirecloud-localcatalogue', 'wirecloud-noselenium', 'wirecloud-localcatalogue-noselenium')
+    populate = False
 
     def setUp(self):
 
