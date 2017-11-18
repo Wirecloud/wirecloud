@@ -42,11 +42,11 @@ from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTes
 __test__ = False
 
 
-class CatalogueSearchTestCase(WirecloudTestCase, TransactionTestCase):
+class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
 
     fixtures = ('catalogue_search_data',)
-    populate = False
     tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
+    populate = False
 
     WIRECLOUD_RESULTS = {'Wirecloud/TestOperator/2.0', 'Wirecloud/test-mashup/1.0.5', 'Wirecloud/Book-Reader/1.5', 'Wirecloud/Test/2.5', 'CoNWeT-Lab/Clock_Now/1.11'}
     MASHABLE_RESULTS = {'Wirecloud/test-mashup/1.0', 'Wirecloud/Test/2.5', 'CoNWeT/test-mashup-dependencies/1.5.5'}

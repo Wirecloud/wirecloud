@@ -33,7 +33,7 @@ from six.moves.urllib.parse import unquote, urlparse
 from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles import finders
 from django.core import management
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, TestCase
 from django.test.client import Client
 from django.utils import translation
 import mock
@@ -343,9 +343,16 @@ class WirecloudTestCase(object):
 
     base_resources = ()
     populate = True
+    use_search_indexes = True
+    clear_search_indexes = None
 
     @classmethod
     def setUpClass(cls):
+
+        if cls.clear_search_indexes is None and issubclass(cls, TestCase):
+            cls.clear_search_indexes = False
+        elif cls.clear_search_indexes is None:
+            cls.clear_search_indexes = True
 
         # Setup languages
         from django.conf import settings
@@ -429,9 +436,10 @@ class WirecloudTestCase(object):
 
         from django.conf import settings
 
-        for searcher in get_available_search_engines():
-            searcher.clear_cache()
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+        if self.use_search_indexes and self.clear_search_indexes:
+            for searcher in get_available_search_engines():
+                searcher.clear_cache()
+            shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
     def changeLanguage(self, new_language):
 

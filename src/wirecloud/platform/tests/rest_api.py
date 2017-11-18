@@ -399,6 +399,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
+    populate = False
 
     def setUp(self):
         super(ApplicationMashupAPI, self).setUp()
@@ -2849,7 +2850,9 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
+    tags = ('wirecloud-rest-api', 'wirecloud-resource-rest-api', 'wirecloud-noselenium')
+    populate = False
+    use_search_indexes = False
 
     def test_resource_collection_get_requires_authentication(self):
 
@@ -3459,6 +3462,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api', 'wirecloud-noselenium')
+    populate = False
 
     def test_iwidget_collection_get_requires_authentication(self):
 
