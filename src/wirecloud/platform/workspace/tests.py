@@ -26,11 +26,7 @@ import rdflib
 import json
 
 from django.contrib.auth.models import AnonymousUser, User
-try:
-    from django.db.migrations.exceptions import IrreversibleError
-except:
-    # Django 1.8 doesn't support IrreversibleError
-    IrreversibleError = Exception
+from django.db.migrations.exceptions import IrreversibleError
 from django.test import TransactionTestCase
 from mock import Mock, create_autospec
 import six

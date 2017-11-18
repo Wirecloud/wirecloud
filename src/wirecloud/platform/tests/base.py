@@ -66,12 +66,7 @@ class BasicViewsAPI(WirecloudTestCase, TransactionTestCase):
         super(BasicViewsAPI, cls).setUpClass()
         factory = RequestFactory()
         request = factory.get(reverse('login'))
-        if django.VERSION[1] >= 9:
-            # Django 1.9 doesn't force the use of absolute urls for the location header
-            # https://docs.djangoproject.com/en/1.9/releases/1.9/#http-redirects-no-longer-forced-to-absolute-uris
-            cls.login_url = reverse('login')
-        else:
-            cls.login_url = get_absolute_reverse_url('login', request=request)
+        cls.login_url = reverse('login')
 
     def test_workspace_view_redirects_to_login(self):
 
