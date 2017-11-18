@@ -27,7 +27,7 @@ def logout(request, next_page=getattr(settings, 'LOGOUT_REDIRECT_URL', None), te
 
     old_lang = request.session.get(LANGUAGE_SESSION_KEY, None)
 
-    # Django 1.8+ removes session cookie when calling request.session.flush()
+    # Django removes session cookie when calling request.session.flush()
     # and do not allow to create a new session id
     request.session.clear()
     request.session.cycle_key()

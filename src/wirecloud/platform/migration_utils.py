@@ -19,11 +19,7 @@
 
 from __future__ import unicode_literals
 
-try:
-    from django.db.migrations.exceptions import IrreversibleError
-except:
-    # Django 1.8 doesn't support IrreversibleError
-    IrreversibleError = Exception
+from django.db.migrations.exceptions import IrreversibleError
 
 import six
 
