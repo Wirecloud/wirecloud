@@ -76,6 +76,7 @@
         "pk": "1",
         "fields": {
             "name": "workspace",
+            "title": "workspace",
             "public": false,
             "creator": "2",
             "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\" }}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value4\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\"}}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"\"}}}}}}, \"connections\": []}"
@@ -86,6 +87,7 @@
         "pk": "201",
         "fields": {
             "name": "workspace",
+            "title": "workspace",
             "public": false,
             "creator": "3",
             "wiringStatus": "{\"operators\": {}, \"connections\": []}"
@@ -96,6 +98,7 @@
         "pk": "202",
         "fields": {
             "name": "workspaceSecure",
+            "title": "workspaceSecure",
             "public": false,
             "creator": "2",
             "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"\"}}}, \"username\": {\"secure\": false, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"username\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"r16Ts7Ekgd4EuYggazdIqQ==\"}}}, \"username\": {\"secure\": false, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"test_username\"}}}}}}, \"connections\": []}"
@@ -106,6 +109,7 @@
         "pk": "203",
         "fields": {
             "name": "publicworkspace",
+            "title": "publicworkspace",
             "public": true,
             "creator": "2",
             "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\" }}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value4\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\"}}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"\"}}}}}}, \"connections\": []}"
@@ -149,6 +153,7 @@
         "fields": {
             "workspace": "1",
             "name": "tab",
+            "title": "tab",
             "visible": true
         }
     },
@@ -158,6 +163,7 @@
         "fields": {
             "workspace": "202",
             "name": "tabSecure",
+            "title": "tabSecure",
             "visible": true
         }
     },

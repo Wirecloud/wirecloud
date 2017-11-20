@@ -24,6 +24,23 @@ from django.db.migrations.exceptions import IrreversibleError
 import six
 
 
+def workspace_and_tab_title_data_forwards(apps, schema_editor):
+    # Migrate workspace titles
+    workspaces = apps.get_model("platform", "workspace")
+    for workspace in workspaces.objects.all():
+        if workspace.title is None or workspace.title.strip() is "":
+            workspace.title = workspace.name
+            workspace.save()
+            #workspace.title if workspace.title is not None and workspace.title.strip() != "" else workspace.name
+
+    # Migrate tab titles
+    tabs = apps.get_model("platform", "tab")
+    for tab in tabs.objects.all():
+        if tab.title is None or tab.title.strip() is "":
+            tab.title = tab.name
+            tab.save()
+
+
 def mutate_forwards_operator(preference, userID):
     preference["value"] = {"users": {"%s" % userID: preference.get("value", "")}}
     return preference
