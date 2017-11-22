@@ -117,8 +117,6 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         }
     ]
 
-    settings['HAYSTACK_SIGNAL_PROCESSOR'] = 'wirecloud.commons.signals.WirecloudSignalProcessor'
-
     settings['MIDDLEWARE_CLASSES'] = (
         'wirecloud.commons.middleware.URLMiddleware',
     )
@@ -203,7 +201,18 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
     settings['LOGIN_REDIRECT_URL'] = reverse_lazy('wirecloud.root')
     settings['LOGOUT_REDIRECT_URL'] = reverse_lazy('wirecloud.root')
 
+    # Haystack
+    settings['HAYSTACK_CONNECTIONS'] = {
+        'default': {
+            'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
+            'PATH': os.path.join(settings['BASEDIR'], 'index'),
+        },
+    }
+    settings['HAYSTACK_SIGNAL_PROCESSOR'] = 'wirecloud.commons.signals.WirecloudSignalProcessor'
+
+    # Component storage
     settings['CATALOGUE_MEDIA_ROOT'] = os.path.join(settings['BASEDIR'], 'catalogue', 'media')
     settings['GADGETS_DEPLOYMENT_DIR'] = os.path.join(settings['BASEDIR'], 'deployment', 'widgets')
 
+    # Testing
     settings['NOSE_ARGS'] = NoseArgs(instance_type)

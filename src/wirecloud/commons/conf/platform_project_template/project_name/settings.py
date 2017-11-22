@@ -32,7 +32,7 @@ DATABASES = {
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
-        'PATH': path.join(path.dirname(__file__), 'whoosh_index'),
+        'PATH': path.join(BASEDIR, 'index'),
     },
 }
 
