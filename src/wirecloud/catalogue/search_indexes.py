@@ -49,7 +49,7 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
     vendor = indexes.EdgeNgramField(model_attr='vendor')
     name = indexes.EdgeNgramField(model_attr="short_name", boost=1.5)
     version = indexes.CharField(model_attr='version')
-    version_sortable = indexes.CharField()
+    version_sortable = indexes.FloatField()
     template_uri = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
     creation_date = indexes.DateTimeField(model_attr="creation_date")
@@ -105,37 +105,26 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 def buildVersionSortable(version, length=5):
-    result = ""
 
+    code = 0
     ver = Version(version)
 
-    # Version number
-    for v in ver.version:
-
-        prefix = ""
-        count = len(str(v))
-
-        for t in range(0, length - count):
-            prefix += "0"
-
-        result += prefix + "%d." % v
+    code += ver.version[0] * 1000 * 1000
+    code += ver.version[1] * 1000 if len(ver.version) > 1 else 0
+    code += ver.version[2] if len(ver.version) > 2 else 0
 
     # Prerelease
     prerelease = ver.prerelease
-    if prerelease is not None:
-        # prerelease letter
-        result += prerelease[0]
+    if prerelease is None:
+        code += .999
+    elif prerelease[0] == "a":
+        code += int(prerelease[1:]) / 1000
+    elif prerelease[0] == "b":
+        code += (100 + int(prerelease[1:])) / 1000
+    else: # prerelease[0:1] == "rc"
+        code += (200 + int(prerelease[2:])) / 1000
 
-        # prerelease number
-        prefix = ""
-        count = len(str(prerelease[1]))
-
-        for t in range(0, length - count):
-            prefix += "0"
-
-        result += prefix + "%d." % prerelease[1]
-
-    return result
+    return code
 
 
 def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
