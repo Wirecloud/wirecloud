@@ -38,7 +38,6 @@ from django.views.decorators.http import require_GET
 import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.catalogue.models import search, suggest
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data, get_resource_group_data
 from wirecloud.catalogue.utils import add_packaged_resource
@@ -49,6 +48,7 @@ from wirecloud.commons.utils.http import authentication_required, build_error_re
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.version import Version
+from wirecloud.commons.search_indexes import get_search_engine
 
 
 @require_GET
@@ -95,6 +95,7 @@ class ResourceCollection(Resource):
             return build_error_response(request, 409, _('Resource already exists'))
 
         resource.users.add(request.user)
+
         return HttpResponse(resource.json_description, content_type='application/json; charset=UTF-8')
 
     def read(self, request):
@@ -123,7 +124,7 @@ class ResourceCollection(Resource):
             return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])
 
         if filters['scope']:
-            filters['scope'] = set(filters['scope'].split(','))
+            filters['scope'] = filters['scope'].split(',')
             for scope in filters['scope']:
                 if scope not in ['mashup', 'operator', 'widget']:
                     return build_error_response(request, 400, _('Scope value not supported: %s') % scope)
@@ -131,7 +132,7 @@ class ResourceCollection(Resource):
         if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
 
-        response_json = search(querytext, request, **filters)
+        response_json = get_search_engine("resource")(querytext, request, **filters)
 
         return HttpResponse(json.dumps(response_json, sort_keys=True), content_type='application/json')
 
@@ -184,29 +185,6 @@ class ResourceEntry(Resource):
             response_json['affectedVersions'].append(resource.version)
 
         return HttpResponse(json.dumps(response_json), content_type='application/json; charset=UTF-8')
-
-
-class ResourceSuggestion(Resource):
-
-    @produces(('application/json',))
-    def read(self, request):
-
-        prefix = request.GET.get('p', '')
-        number = request.GET.get('limit', '30')
-
-        if prefix.find(' ') != -1:
-            return build_error_response(request, 422, _('Invalid prefix value (it cannot contain spaces)'))
-
-        try:
-            limit = int(number)
-            if limit < 0:
-                raise ValueError()
-        except:
-            return build_error_response(request, 422, _('Invalid limit value (it must be positive integer)'))
-
-        response = {'terms': suggest(request, prefix, limit)}
-
-        return HttpResponse(json.dumps(response, sort_keys=True), content_type='application/json')
 
 
 class ResourceVersionCollection(Resource):

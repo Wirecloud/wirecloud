@@ -19,7 +19,6 @@
 
 from __future__ import unicode_literals
 
-import operator
 import random
 from six.moves.urllib.parse import urlparse, urljoin
 
@@ -28,15 +27,10 @@ from django.core.cache import cache
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from whoosh.qparser import MultifieldParser
-from whoosh.query import And, Every, Or, Term
-from whoosh.sorting import FieldFacet, FunctionFacet
 
 from wirecloud.commons.fields import JSONField
-from wirecloud.commons.searchers import get_search_engine
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
-from wirecloud.commons.utils.version import Version
 
 
 @python_2_unicode_compatible
@@ -139,13 +133,6 @@ class CatalogueResource(models.Model):
         # Remove cache for this resource
         self.invalidate_cache()
 
-        # Remove document from search indexes
-        try:
-            with get_search_engine('resource').get_batch_writer() as writer:
-                writer.delete_by_term('pk', '%s' % old_id)
-        except:
-            pass  # ignore errors
-
         # Remove id attribute definetly
         self.id = None
 
@@ -176,104 +163,3 @@ def get_template_url(vendor, name, version, url, request=None, url_pattern_name=
         template_url = url
 
     return template_url
-
-
-def add_absolute_urls(results, request=None):
-
-    for hit in results:
-        base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
-        hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
-        hit['image'] = "" if hit['image'] == '' else urljoin(base_url, hit['image'])
-        hit['smartphoneimage'] = "" if hit['image'] == '' else urljoin(base_url, hit['smartphoneimage'])
-
-
-def add_other_versions(searcher, results, user, staff):
-
-    allow_q = []
-
-    if not staff:
-        allow_q = [Or([Term('public', 't'), Term('users', user.username.lower())] + [Term('groups', group.name.lower()) for group in user.groups.all()])]
-
-    for result in results:
-        user_q = And([Term('vendor_name', '%s/%s' % (result['vendor'], result['name']))] + allow_q)
-        version_results = [h.fields()['version'] for h in searcher.search(user_q)]
-        result['others'] = [v for v in version_results if v != result['version']]
-
-    return results
-
-
-def build_search_kwargs(user_q, request, types, staff, orderby):
-
-    if not staff:
-        user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] + [Term('groups', group.name) for group in request.user.groups.all()])])
-
-    if types and len(types) > 0:
-        user_q = And([user_q, Or([Term('type', resource_type) for resource_type in types])])
-
-    orderby_f = FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
-
-    search_kwargs = {
-        'sortedby': [orderby_f],
-        'collapse': FieldFacet('vendor_name'),
-        'collapse_limit': 1,
-        'collapse_order': FunctionFacet(order_by_version)
-    }
-
-    return (user_q, search_kwargs)
-
-
-def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None,
-           orderby='-creation_date'):
-
-    search_engine = get_search_engine('resource')
-    search_result = {}
-
-    if pagenum < 1:
-        pagenum = 1
-
-    with search_engine.searcher() as searcher:
-
-        parser = MultifieldParser(search_engine.default_search_fields, searcher.schema)
-
-        user_q = querytext and parser.parse(querytext) or Every()
-        user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
-        hits = searcher.search(user_q, limit=(pagenum * maxresults) + 1, **search_kwargs)
-
-        if querytext and hits.is_empty():
-
-            correction_q = parser.parse(querytext)
-            corrected = searcher.correct_query(correction_q, querytext)
-
-            if corrected.query != correction_q:
-                querytext = corrected.string
-                search_result['corrected_q'] = querytext
-
-                user_q, search_kwargs = build_search_kwargs(corrected.query, request, scope, staff, orderby)
-                hits = searcher.search(user_q, limit=(pagenum * maxresults), **search_kwargs)
-
-        search_engine.prepare_search_response(search_result, hits, pagenum, maxresults)
-        search_result['results'] = add_other_versions(searcher, search_result['results'], request.user, staff)
-        add_absolute_urls(search_result['results'], request)
-
-    return search_result
-
-
-def suggest(request, prefix='', limit=30):
-
-    reader = get_search_engine('resource').open_index().reader()
-    frequent_terms = {}
-
-    for fieldname in ['title', 'vendor', 'description']:
-        for frequency, term in reader.most_frequent_terms(fieldname, limit, prefix):
-            if term in frequent_terms:
-                frequent_terms[term] += frequency
-            else:
-                frequent_terms[term] = frequency
-
-    # flatten terms
-    return [term.decode('utf-8') for term, frequency in sorted(frequent_terms.items(), key=operator.itemgetter(1), reverse=True)[:limit]]
-
-
-def order_by_version(searcher, docnum):
-
-    return Version(searcher.stored_fields(docnum)['version'], reverse=True)

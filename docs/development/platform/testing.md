@@ -90,3 +90,49 @@ Now you can pass the integration tests by running the following command:
 ```
 python manage.py test -v 2 --noinput --nologcapture -a tags="wirecloud-selenium"
 ```
+
+## Using other search backeds
+
+By default, tests are run using Whoosh, however, this can be configured to use Solr or ElasticSearch2.
+
+To change the testing search backed, configure the `TEST_HAYSTACK_CONNECTIONS` propertie on the `settings.py` file.
+
+### For Whoosh
+
+Manually configuring Whoosh as the testing search backend allows to set a custom path to store the Whoosh indexes. The default `PATH` used by Wirecloud tests is removed after the testing ends.
+
+```python
+TEST_HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
+        'PATH': path.join(path.dirname(__file__), 'whoosh_index'), # This setting is optional, if not set, the default tmp location will be used.
+    },
+}
+```
+
+### For Solr
+
+```python
+TEST_HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr/wirecloud_test_core'
+    },
+}
+```
+
+Where `URL` is the URL of the Solr core that will be used for testing.
+
+### For ElasticSearch
+
+```python
+TEST_HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'wirecloud_testing',
+    },
+}
+```
+
+Where `URL` is the URL of the Haystack server.
