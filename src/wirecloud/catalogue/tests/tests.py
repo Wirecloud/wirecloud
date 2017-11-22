@@ -134,6 +134,8 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['total'], 11)
         self.assertEqual(result_json['pagecount'], 3)
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 3)
 
     def test_basic_search_with_pagination(self):
 
@@ -171,6 +173,8 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertGreater(result_json['total'], 10)
         self.assertGreater(result_json['pagecount'], 2)
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 9)
 
         # Paginated response returning less than maxresults results
         response = self.client.get(self.base_url + '?staff=true&pagenum=3&maxresults=5')
@@ -199,6 +203,8 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
 
         self.client.login(username='myuser', password='admin')
 
+        # keywords terms and mashable are in the description of the
+        # Wirecloud/Test/1.5 widget
         result = self.client.get(self.base_url + '?q=term+mashable')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
@@ -207,15 +213,23 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
-        result = self.client.get(self.base_url + '?q=mashable+application&orderby=creation_date')
+        # keywords mashable and application are in the description of the
+        # Wirecloud/Test/{1.5,2.0,2.5} widgets and the Wirecloud/test-mashup/1.0
+        # mashup
+        result = self.client.get(self.base_url + '?q=mashable+application')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 2)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['version'], "2.5")
-        self.assertEqual(len(result_json['results'][0]['others']), 2)
+        self.assertEqual(result_json['results'][0]['version'], "1.0")
+        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(result_json['results'][1]['version'], "2.5")
+        self.assertEqual(len(result_json['results'][1]['others']), 2)
 
-        result = self.client.get(self.base_url + '?q=mashable&orderby=-creation_date')
+        # keyword mashable is present in the description of the
+        # Wirecloud/Test/{1.5,2.0,2.5} widgets and the Wirecloud/test-mashup/1.0
+        # and the Wirecloud/test-mashup-dependencies/1.5.5 mashups
+        result = self.client.get(self.base_url + '?q=mashable')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 3)
@@ -224,7 +238,12 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(len(result_json['results'][0]['others']), 0)
         self.assertEqual(result_json['results'][1]['version'], "1.0")
         self.assertEqual(len(result_json['results'][1]['others']), 0)
+        self.assertEqual(result_json['results'][2]['version'], "2.5")
+        self.assertEqual(len(result_json['results'][2]['others']), 2)
 
+        # keywords output and digit are present in the description of the
+        # Wirecloud/Test/1.5 widget (inside the description of the
+        # outputendpoint endpoint)
         result = self.client.get(self.base_url + '?q=output+digit')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
@@ -233,9 +252,13 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
+        # Switch session user to MyUser
         self.client.logout()
         self.client.login(username='MyUser', password='admin')
 
+        # keywords test, mashup and dependencies are present in the description
+        # of the Wirecloud/test-mashup-dependencies/{1.5.5,1.10.5} mashups, but
+        # MyUser only has access to Wirecloud/test-mashup-dependencies/1.10.5
         result = self.client.get(self.base_url + '?q=test+mashup+dependencies')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
@@ -249,11 +272,11 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.client.login(username='myuser', password='admin')
 
         # Empty query
-        result = self.client.get(self.base_url + '?q=')
+        result = self.client.get(self.base_url + '?q=totally+uncorrectable+search+giving+an+empty+resultset')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagenum'], 1)
-        self.assertEqual(result_json['pagelen'], 10)
+        self.assertEqual(result_json['pagelen'], 0)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
 
     def test_basic_search_with_staff(self):
@@ -264,6 +287,7 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagelen'], 9)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['total'], result_json['pagelen'])
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
@@ -294,12 +318,11 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
                 self.assertEqual(result['image'], '')
                 self.assertEqual(result['smartphoneimage'], '')
 
-    def test_basic_search_partial_word_correction(self):
+    def test_basic_search_partial_word(self):
 
         self.client.login(username='myuser', password='admin')
 
         # Search using a partial word: ashabl (full word: mashable)
-        # Whoosh uses maxdist = 2 by default
         result = self.client.get(self.base_url + '?q=ashabl')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
@@ -315,8 +338,8 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         result = self.client.get(self.base_url + '?q=wire')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['pagelen'], len(self.WIRECLOUD_RESULTS))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['pagelen'], len(self.WIRECLOUD_RESULTS))
         self.assertEqual(set([component['uri'] for component in result_json['results']]), self.WIRECLOUD_RESULTS)
 
     def test_advanced_search_phrase_with_prefix(self):

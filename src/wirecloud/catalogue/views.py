@@ -132,7 +132,7 @@ class ResourceCollection(Resource):
         if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
 
-        response_json = get_search_engine("catalogueresource")(querytext, request, **filters)
+        response_json = get_search_engine("resource")(querytext, request, **filters)
 
         return HttpResponse(json.dumps(response_json, sort_keys=True), content_type='application/json')
 

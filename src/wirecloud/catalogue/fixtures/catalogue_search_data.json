@@ -73,7 +73,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "template_uri": "Wirecloud_Test_1.5.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "Test",
@@ -91,7 +91,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "template_uri": "Wirecloud_Test_2.0.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "Test",
@@ -109,7 +109,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "template_uri": "Wirecloud_Test_2.5.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "Test",
@@ -289,7 +289,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "Wirecloud_TestOperator_1.0.wgt",
+            "template_uri": "CoNWeT_TestOperator_1.0.wgt",
             "popularity": "0",
             "vendor": "CoNWeT",
             "short_name": "TestOperator",
@@ -307,7 +307,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "Wirecloud_TestOperator_1.0.wgt",
+            "template_uri": "CoNWeT_HD-Drive_1.5.wgt",
             "popularity": "0",
             "vendor": "CoNWeT",
             "short_name": "HD-Drive",
@@ -325,7 +325,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "Wirecloud_TestOperator_1.0.wgt",
+            "template_uri": "Android-Interprice-pocket-flipboard_2.0.wgt",
             "popularity": "0",
             "vendor": "Android-Interprice",
             "short_name": "pocket-flipboard",
@@ -343,7 +343,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "template_uri": "Wirecloud_Book-Reader_1.5.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "Book-Reader",
@@ -361,7 +361,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "CoNWeT-Lab_Test_1.0.wgt",
+            "template_uri": "CoNWeT-Lab_Live_Sport_1.0.wgt",
             "popularity": "0",
             "vendor": "CoNWeT-Lab",
             "short_name": "Live_Sports",

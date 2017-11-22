@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import codecs
+import copy
 from six.moves.http_cookies import SimpleCookie
 from io import BytesIO
 import mimetypes
@@ -30,13 +31,13 @@ from tempfile import mkdtemp
 from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import unquote, urlparse
 
+from django.apps import apps
 from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles import finders
 from django.core import management
 from django.test import LiveServerTestCase, TestCase
 from django.test.client import Client
 from django.utils import translation
-from django.core.management import call_command
 import mock
 import haystack
 from six import text_type
@@ -300,13 +301,9 @@ class FakeNetwork(object):
 
 def prepare_temporal_resource_directories(cls):
 
-    cls.tmp_dir = mkdtemp()
-
     from django.conf import settings
-    # Whoosh indexes
-    if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
-        cls.old_index_dir = settings.HAYSTACK_CONNECTIONS['default']['PATH']
-        cls.new_index_dir = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+
+    cls.tmp_dir = mkdtemp()
 
     # catalogue deployer
     cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -388,21 +385,25 @@ class WirecloudTestCase(object):
 
         prepare_temporal_resource_directories(cls)
 
-        super(WirecloudTestCase, cls).setUpClass()
-
-        # Try to load test settings, else load default test settings
+        # Prepare haystack configuration
+        cls.old_haystack_conf = settings.HAYSTACK_CONNECTIONS
         try:
-            settings.HAYSTACK_CONNECTIONS = settings.TEST_HAYSTACK_CONNECTIONS
+            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(settings.TEST_HAYSTACK_CONNECTIONS)
             # Update whoosh index dir if not set by user
-            if settings.TEST_HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.TEST_HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
-                settings.HAYSTACK_CONNECTIONS['default']['PATH'] = cls.new_index_dir
+            if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+                settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
         except:
-            settings.HAYSTACK_CONNECTIONS = DEFAULT_TEST_HAYSTACK_CONNECTIONS
-            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = cls.new_index_dir
+            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
+            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
 
         # Reload the connection
         haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
         haystack.connections.reload('default')
+
+        if not cls.use_search_indexes:
+            apps.get_app_config('haystack').signal_processor.teardown()
+
+        super(WirecloudTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
@@ -421,14 +422,15 @@ class WirecloudTestCase(object):
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
-        # Restore old index dir
-        if not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
+        # Restore old haystack configuration
+        if not cls.use_search_indexes:
+            apps.get_app_config('haystack').signal_processor.setup()
+        elif not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
             # If self.clear_search_indexes is True, this step is done in a per
             # test basis in the tearDown method
-            call_command('clear_index', interactive=False, verbosity=0)
-            shutil.rmtree(settings.HAYSTACK_CONNECTIONS['default']['PATH'], ignore_errors=True)
+            management.call_command('clear_index', interactive=False, verbosity=0)
 
-        settings.HAYSTACK_CONNECTIONS['default']['PATH'] = cls.old_index_dir
+        settings.HAYSTACK_CONNECTIONS = cls.old_haystack_conf
 
         # Clear cache
         from django.core.cache import cache
@@ -440,9 +442,6 @@ class WirecloudTestCase(object):
         super(WirecloudTestCase, cls).tearDownClass()
 
     def setUp(self):
-
-        haystack.connections.reload('default')
-        call_command('rebuild_index', interactive=False, verbosity=0)
 
         # deployers
         restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
@@ -463,13 +462,16 @@ class WirecloudTestCase(object):
 
         super(WirecloudTestCase, self).setUp()
 
+        # Populate initial db
+        if self.populate:
+            management.call_command('populate', verbosity=0, interactive=False)
+
     def tearDown(self):
 
         from django.conf import settings
 
         if self.clear_search_indexes:
-            call_command('clear_index', interactive=False, verbosity=0)
-            shutil.rmtree(settings.HAYSTACK_CONNECTIONS['default']['PATH'], ignore_errors=True)
+            management.call_command('clear_index', interactive=False, verbosity=0)
 
         super(WirecloudTestCase, self).tearDown()
 
@@ -560,6 +562,10 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     # Only affecting Django 1.11+
     host = os.environ.get('DJANGO_LIVE_TEST_SERVER_HOST', 'localhost')
 
+    populate = True
+    use_search_indexes = True
+    clear_search_indexes = True
+
     @classmethod
     def setUpClass(cls):
 
@@ -586,6 +592,24 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         prepare_temporal_resource_directories(cls)
 
+        # Prepare haystack configuration
+        cls.old_haystack_conf = settings.HAYSTACK_CONNECTIONS
+        try:
+            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(settings.TEST_HAYSTACK_CONNECTIONS)
+            # Update whoosh index dir if not set by user
+            if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+                settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+        except:
+            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
+            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+
+        # Reload the connection
+        haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
+        haystack.connections.reload('default')
+
+        if not cls.use_search_indexes:
+            apps.get_app_config('haystack').signal_processor.teardown()
+
         # Browsers doesn't use content negotiation using ETags with HTTP 1.0 servers
         # Force Django to use HTTP 1.1 when using the runserver command
         from wsgiref import simple_server
@@ -594,20 +618,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         LiveServerTestCase.setUpClass.__func__(cls)
 
         cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()
-
-        # Try to load test settings, else load default test settings
-        try:
-            settings.HAYSTACK_CONNECTIONS = settings.TEST_HAYSTACK_CONNECTIONS
-            # Update whoosh index dir if not set by user
-            if settings.TEST_HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.TEST_HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
-                settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
-        except:
-            settings.HAYSTACK_CONNECTIONS = DEFAULT_TEST_HAYSTACK_CONNECTIONS
-            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
-
-        # Reload the connection
-        haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
-        haystack.connections.reload('default')
 
     @classmethod
     def tearDownClass(cls):
@@ -630,12 +640,22 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
+        # Restore old haystack configuration
+        if not cls.use_search_indexes:
+            apps.get_app_config('haystack').signal_processor.setup()
+        elif not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
+            # If self.clear_search_indexes is True, this step is done in a per
+            # test basis in the tearDown method
+            management.call_command('clear_index', interactive=False, verbosity=0)
+
+        settings.HAYSTACK_CONNECTIONS = cls.old_haystack_conf
+
         super(WirecloudSeleniumTestCase, cls).tearDownClass()
 
     def setUp(self):
 
         haystack.connections.reload('default')
-        call_command('rebuild_index', interactive=False, verbosity=0)
+        management.call_command('rebuild_index', interactive=False, verbosity=0)
 
         from django.core.cache import cache
 
@@ -653,7 +673,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     def tearDown(self):
 
-        call_command('clear_index', interactive=False, verbosity=0)
+        management.call_command('clear_index', interactive=False, verbosity=0)
 
         LiveServerTestCase.tearDown(self)
         WirecloudRemoteTestCase.tearDown(self)
