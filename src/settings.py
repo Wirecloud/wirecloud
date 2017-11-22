@@ -86,6 +86,7 @@ HAYSTACK_CONNECTIONS = {
         'PATH': path.join(path.dirname(__file__), 'whoosh_index'),
     },
 }
+
 #HAYSTACK_CONNECTIONS = {
 #    'default': {
 #        'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
@@ -103,11 +104,6 @@ HAYSTACK_CONNECTIONS = {
 #        'INDEX_NAME': 'wirecloud',
 #    },
 #}
-
-if 'test' in sys.argv:
-    HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
-else:
-    HAYSTACK_SIGNAL_PROCESSOR = 'wirecloud.commons.haystack_backends.wirecloud_signal_processor.WirecloudRealtimeSignalProcessor'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
