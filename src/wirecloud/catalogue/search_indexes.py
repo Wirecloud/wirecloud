@@ -32,7 +32,7 @@ from wirecloud.commons.haystack_queryparser import ParseSQ
 CONTENT_FIELDS = ["name", "vendor", "version", "type", "title", "description", "endpoint_descriptions"]
 
 
-class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
+class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     text = indexes.CharField(document=True)
 
@@ -65,7 +65,7 @@ class CatalogueResourceIndex(indexes.SearchIndex, indexes.Indexable):
         return CatalogueResource
 
     def prepare(self, object):
-        self.prepared_data = super(CatalogueResourceIndex, self).prepare(object)
+        self.prepared_data = super(ResourceIndex, self).prepare(object)
         resource_info = object.get_processed_info(process_urls=False)
 
         endpoint_descriptions = ''
@@ -131,7 +131,7 @@ def buildVersionSortable(version, length=5):
     return result
 
 
-def searchCatalogueResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
+def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
     sqs = SearchQuerySet().models(CatalogueResource).all()
 
     if len(querytext) > 0:

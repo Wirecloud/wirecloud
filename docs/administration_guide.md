@@ -61,6 +61,13 @@ Example usage:
 
 	$ python manage.py rebuild_index
 
+### resetsearchindexes (deprecated)
+
+Rebuilds Haystack indexes used by the search engine of WireCloud. To be removed in Wirecloud WireCloud v1.3.
+
+Example usage:
+    $ python manage.py resetsearchindexes
+
 
 ## Creating WireCloud backups and restoring them
 
