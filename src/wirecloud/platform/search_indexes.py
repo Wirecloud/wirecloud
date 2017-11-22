@@ -33,6 +33,7 @@ CONTENT_FIELDS = ["owner", "name"]
 
 
 class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
+    model = Workspace
 
     text = indexes.CharField(document=True)
     name = indexes.EdgeNgramField(model_attr='name', boost=1.3)
@@ -51,7 +52,7 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
     shared = indexes.CharField()
 
     def get_model(self):
-        return Workspace
+        return self.model
 
     def prepare(self, object):
         self.prepared_data = super(WorkspaceIndex, self).prepare(object)

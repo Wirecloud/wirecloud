@@ -108,6 +108,7 @@ USER_CONTENT_FIELDS = ["fullname", "username"]
 
 
 class UserIndex(indexes.SearchIndex, indexes.Indexable):
+    model = User
 
     text = indexes.CharField(document=True)
 
@@ -116,7 +117,7 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
     organization = indexes.CharField()
 
     def get_model(self):
-        return User
+        return self.model
 
     def prepare(self, object):
         self.prepared_data = super(UserIndex, self).prepare(object)
@@ -156,12 +157,14 @@ GROUP_CONTENT_FIELDS = ["name"]
 
 
 class GroupIndex(indexes.SearchIndex, indexes.Indexable):
+    model = Group
+
     text = indexes.CharField(document=True)
 
     name = indexes.CharField(model_attr='name')
 
     def get_model(self):
-        return Group
+        return self.model
 
 
 # Search for groups

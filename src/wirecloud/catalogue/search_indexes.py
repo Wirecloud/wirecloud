@@ -33,6 +33,13 @@ CONTENT_FIELDS = ["name", "vendor", "version", "type", "title", "description", "
 
 
 class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
+    model = CatalogueResource
+
+    # TODO: Improve this quickfix
+    try:
+        indexes.GroupField
+    except:
+        indexes.GroupField = indexes.FacetMultiValueField
 
     text = indexes.CharField(document=True)
 
@@ -62,7 +69,7 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
     output_friendcodes = indexes.MultiValueField()
 
     def get_model(self):
-        return CatalogueResource
+        return self.model
 
     def prepare(self, object):
         self.prepared_data = super(ResourceIndex, self).prepare(object)

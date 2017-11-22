@@ -107,7 +107,7 @@ HAYSTACK_CONNECTIONS = {
 if 'test' in sys.argv:
     HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
 else:
-    HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+    HAYSTACK_SIGNAL_PROCESSOR = 'wirecloud.commons.haystack_backends.wirecloud_signal_processor.WirecloudRealtimeSignalProcessor'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
