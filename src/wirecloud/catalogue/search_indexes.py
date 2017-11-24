@@ -118,11 +118,11 @@ def buildVersionSortable(version, length=5):
     if prerelease is None:
         code += .999
     elif prerelease[0] == "a":
-        code += int(prerelease[1:]) / 1000
+        code += prerelease[1] / 1000
     elif prerelease[0] == "b":
-        code += (100 + int(prerelease[1:])) / 1000
+        code += (100 + prerelease[1]) / 1000
     else: # prerelease[0:1] == "rc"
-        code += (200 + int(prerelease[2:])) / 1000
+        code += (200 + prerelease[1]) / 1000
 
     return code
 
