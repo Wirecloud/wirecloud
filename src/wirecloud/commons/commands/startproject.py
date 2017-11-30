@@ -80,11 +80,8 @@ class StartprojectCommand(BaseCommand):
             internal_options['db_name'] = mark_safe("path.join(BASEDIR, '%s.db')" % project_name)
 
         command = Command()
-        if django.VERSION[1] >= 8:
-            internal_options.update({"name": project_name, "directory": target})
-            command.handle(**internal_options)
-        else:
-            command.handle(project_name, target, *(), **internal_options)
+        internal_options.update({"name": project_name, "directory": target})
+        command.handle(**internal_options)
 
         if options['quick_start']:
 

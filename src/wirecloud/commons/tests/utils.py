@@ -387,12 +387,6 @@ class HTTPUtilsTestCase(TestCase):
 
     tags = ('wirecloud-utils', 'wirecloud-general-utils', 'wirecloud-http-utils', 'wirecloud-noselenium')
 
-    @classmethod
-    def setUpClass(cls):
-
-        super(HTTPUtilsTestCase, cls).setUpClass()
-        cls.get_current_site_import = 'django.contrib.sites.shortcuts.get_current_site' if django.VERSION[1] >= 7 else 'django.contrib.sites.models.get_current_site'
-
     def _prepare_request_mock(self):
 
         request = Mock()
@@ -602,7 +596,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=None)
     def test_get_current_domain(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.return_value = self._prepare_site_mock()
                 mocks['get_current_scheme'].return_value = 'http'
@@ -612,7 +606,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN='myserver.com', FORCE_PORT=8080)
     def test_get_current_domain_forced(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 mocks['get_current_scheme'].return_value = 'http'
                 self.assertEqual(get_current_domain(request), 'myserver.com:8080')
@@ -622,7 +616,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN='forced.example.com', FORCE_PORT=8000)
     def test_get_current_domain_forced_domain(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.return_value = self._prepare_site_mock()
                 mocks['get_current_scheme'].return_value = 'http'
@@ -632,7 +626,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=81)
     def test_get_current_domain_forced_port(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.return_value = self._prepare_site_mock()
                 mocks['get_current_scheme'].return_value = 'http'
@@ -642,7 +636,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=80)
     def test_get_current_domain_fallback_http(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
@@ -652,7 +646,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=81)
     def test_get_current_domain_fallback_http_custom_port(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
@@ -662,7 +656,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_DOMAIN=None, FORCE_PORT=443)
     def test_get_current_domain_fallback_https(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
@@ -672,7 +666,7 @@ class HTTPUtilsTestCase(TestCase):
     @override_settings(FORCE_DOMAIN=None, FORCE_PORT=8443)
     def test_get_current_domain_fallback_https_custom_port(self):
         request = self._prepare_request_mock()
-        with patch(self.get_current_site_import) as get_current_site_mock:
+        with patch('django.contrib.sites.shortcuts.get_current_site') as get_current_site_mock:
             with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT, _servername=None) as mocks:
                 get_current_site_mock.side_effect = Exception
                 mocks['socket'].getfqdn.return_value = 'example.com'

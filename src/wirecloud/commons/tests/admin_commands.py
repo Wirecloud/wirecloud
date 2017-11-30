@@ -307,13 +307,8 @@ class StartprojectCommandTestCase(WirecloudTestCase, TestCase):
         }
         options.update(values)
 
-        if django.VERSION[1] >= 8:
-            for key in options:
-                self.assertEqual(call_kwargs.get(key), options[key])
-        else:
-            self.assertEqual(call_args[0], options['name'])
-            self.assertEqual(call_args[1], options['directory'])
-            self.assertEqual(call_kwargs['verbosity'], options['verbosity'])
+        for key in options:
+            self.assertEqual(call_kwargs.get(key), options[key])
 
     def test_platform_creation(self):
 
