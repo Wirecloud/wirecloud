@@ -1,12 +1,9 @@
 @import 'variables';
 
 .wc-upgrade-component-info {
-    display: table;
-
-    & > div {
-        display: table-cell;
-        width: 50%;
-    }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .wc-upgrade-component-modal article {
