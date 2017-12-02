@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,6 +27,7 @@ from six.moves.urllib.request import pathname2url, url2pathname
 import time
 
 from django.conf import settings
+from django.utils import timezone
 from django.utils.translation import get_language, ugettext as _
 import markdown
 
@@ -34,7 +35,6 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.http import get_absolute_reverse_url, force_trailing_slash
-from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import ObsoleteFormatError, TemplateParser, TemplateFormatError, TemplateParseException
 from wirecloud.commons.utils.version import Version
 from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
@@ -233,7 +233,7 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
             type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
             creator=user,
             template_uri=file_name,
-            creation_date=now(),
+            creation_date=timezone.now(),
             popularity='0.0',
             json_description=resource_info
         )
