@@ -37,11 +37,8 @@
     left: 0px;
     background: white;
     border-radius: 0 ($panel-border-radius - 1);
-    display: inline-block;
     text-align: center;
     overflow: hidden;
-    line-height: 80px;
-    font-size: 0;
 }
 
 .wc-resource-img {
@@ -49,14 +46,6 @@
     max-height: 80px;
     display: inline-block;
     vertical-align: middle;
-}
-
-.wc-resource-img-container.se-thumbnail-missing {
-    font-size: $font-size-base;
-}
-
-.wc-resource-img-container.se-thumbnail-missing > .wc-resource-img {
-    display: none;
 }
 
 .resource > .panel-heading > .rating {
