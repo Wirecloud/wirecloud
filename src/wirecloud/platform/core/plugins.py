@@ -145,7 +145,6 @@ STYLED_ELEMENTS_FILES = (
 
 BASE_CSS = (
     'css/font-awesome.css',
-    'css/font-awesome-backwards.css',
     'css/base/utils.scss',
     'css/base/body.scss',
     'css/base/fade.css',
