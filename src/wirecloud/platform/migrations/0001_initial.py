@@ -35,10 +35,10 @@ class Migration(migrations.Migration):
                 ('widget_uri', models.CharField(max_length=250, verbose_name='Widget URI')),
                 ('name', models.CharField(max_length=250, verbose_name='Name')),
                 ('layout', models.IntegerField(default=0, verbose_name='Layout')),
-                ('positions', wirecloud.commons.fields.JSONField(default=b'{}', blank=True)),
+                ('positions', wirecloud.commons.fields.JSONField(default={}, blank=True)),
                 ('refused_version', models.CharField(max_length=150, null=True, verbose_name='Refused Version', blank=True)),
                 ('readOnly', models.BooleanField(default=False, verbose_name='Read Only')),
-                ('variables', wirecloud.commons.fields.JSONField(default=b'{}', blank=True)),
+                ('variables', wirecloud.commons.fields.JSONField(default={}, blank=True)),
             ],
             options={
                 'db_table': 'wirecloud_iwidget',
@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=50, verbose_name='Name')),
-                ('options', wirecloud.commons.fields.JSONField(default=b'{}', verbose_name='Options')),
+                ('options', wirecloud.commons.fields.JSONField(default={}, verbose_name='Options')),
                 ('user', models.ForeignKey(on_delete=models.CASCADE, verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -173,8 +173,8 @@ class Migration(migrations.Migration):
                 ('public', models.BooleanField(default=False, verbose_name='Available to all users')),
                 ('description', models.TextField(max_length=140, verbose_name='Description', blank=True)),
                 ('longdescription', models.TextField(verbose_name='Long description', blank=True)),
-                ('forcedValues', wirecloud.commons.fields.JSONField(default=b'{}', blank=True)),
-                ('wiringStatus', wirecloud.commons.fields.JSONField(default=b'{}', blank=True)),
+                ('forcedValues', wirecloud.commons.fields.JSONField(default={}, blank=True)),
+                ('wiringStatus', wirecloud.commons.fields.JSONField(default={}, blank=True)),
                 ('creator', models.ForeignKey(on_delete=models.CASCADE, related_name='creator', verbose_name='Creator', to=settings.AUTH_USER_MODEL)),
                 ('groups', models.ManyToManyField(to='auth.Group', null=True, verbose_name='Groups', blank=True)),
                 ('users', models.ManyToManyField(to=settings.AUTH_USER_MODEL, verbose_name='Users', through='platform.UserWorkspace')),
