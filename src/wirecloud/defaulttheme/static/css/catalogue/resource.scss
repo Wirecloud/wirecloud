@@ -23,7 +23,7 @@
     }
 
     & > .description.text-truncate:after {
-        @include background-image(linear-gradient(to right, rgba($panel-bg, 0), $panel-bg));
+        background-image: linear-gradient(to right, rgba($panel-bg, 0), $panel-bg);
         height: $line-height-small;
         width: 70px;
     }

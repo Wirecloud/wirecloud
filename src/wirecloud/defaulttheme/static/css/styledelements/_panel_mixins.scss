@@ -21,7 +21,7 @@
         }
 
         .text-truncate:after {
-            @include background-image(linear-gradient(to right, rgba($background-color, 0), $background-color));
+            background-image: linear-gradient(to right, rgba($background-color, 0), $background-color);
         }
     }
 }
@@ -36,7 +36,7 @@
             background-color: darken($background-color, 6%);
 
             .text-truncate:after {
-                @include background-image(linear-gradient(to right, rgba(darken($background-color, 6%), 0), darken($background-color, 6%)));
+                background-image: linear-gradient(to right, rgba(darken($background-color, 6%), 0), darken($background-color, 6%));
             }
         }
     }

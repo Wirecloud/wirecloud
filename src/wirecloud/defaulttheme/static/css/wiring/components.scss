@@ -95,7 +95,7 @@
 
         @if alpha($component-variant-bg) == 1.0 {
             .text-truncate:after {
-                @include background-image(linear-gradient(to right, rgba($component-variant-bg, 0), $component-variant-bg));
+                background-image: linear-gradient(to right, rgba($component-variant-bg, 0), $component-variant-bg);
             }
         }
     }

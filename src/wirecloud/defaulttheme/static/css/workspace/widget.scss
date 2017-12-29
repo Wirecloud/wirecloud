@@ -50,7 +50,7 @@
     position: absolute;
     top: $panel-padding-vertical;
     right: 0px;
-    @include background-image(linear-gradient(to right, rgba($panel-default-heading-bg, 0), $panel-default-heading-bg 38px, $panel-default-heading-bg));
+    background-image: linear-gradient(to right, rgba($panel-default-heading-bg, 0), $panel-default-heading-bg 38px, $panel-default-heading-bg);
     padding: 0px $panel-padding-horizontal 0px 38px;
     opacity: 0;
     white-space: nowrap;
@@ -65,7 +65,7 @@
 
 .wc-widget-infobuttons {
     padding: 0px 38px 0px $panel-padding-horizontal;
-    @include background-image(linear-gradient(to left, rgba($panel-default-heading-bg, 0), $panel-default-heading-bg 38px, $panel-default-heading-bg));
+    background-image: linear-gradient(to left, rgba($panel-default-heading-bg, 0), $panel-default-heading-bg 38px, $panel-default-heading-bg);
     position: absolute;
     top: $panel-padding-vertical;
     left: 0px;
@@ -197,11 +197,11 @@
     @include animation(highlight_iwidget 5s linear);
 
     & .wc-widget-buttons {
-        @include background-image(linear-gradient(to right, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg));
+        background-image: linear-gradient(to right, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg);
     }
 
     & .wc-widget-infobuttons{
-        @include background-image(linear-gradient(to left, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg));
+        background-image: linear-gradient(to left, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg);
     }
 }
 
