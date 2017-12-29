@@ -196,9 +196,9 @@ setup(
         'django-nose',
         'mock>=1.0,<2.0',
     ),
-    setup_requires={
+    setup_requires=(
         'wheel>=0.24',
-    },
+    ),
     classifiers=(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
