@@ -177,11 +177,11 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
 
     def test_request_user_info(self):
 
-        with patch('wirecloud.fiware.social_auth_backend.requests') as requests_mock:
-            response = MagicMock()
-            response.json.return_value = {"test": True}
-            requests_mock.get.return_value = response
-            self.assertEqual(self.instance._request_user_info('token'), {"test": True})
+        self.instance.request = Mock()
+        response = MagicMock()
+        response.json.return_value = {"test": True}
+        self.instance.request.return_value = response
+        self.assertEqual(self.instance._request_user_info('token'), {"test": True})
 
     def test_api_authentication_using_idm(self):
 
@@ -193,7 +193,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.social_django.models.UserSocialAuth.objects.get.side_effect = get_social_auth
 
         with patch('wirecloud.fiware.plugins.FIWARE_SOCIAL_AUTH_BACKEND', create=True) as backend_mock:
-            backend_mock._user_data.return_value = self.USER_DATA
+            backend_mock.user_data.return_value = self.USER_DATA
             from wirecloud.fiware.plugins import auth_fiware_token
             self.assertEqual(auth_fiware_token('Bearer', 'token'), auth_user_mock.user)
 

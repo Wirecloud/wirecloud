@@ -35,8 +35,8 @@ from wirecloud.platform.workspace.utils import create_workspace, delete_workspac
 import wirecloud.fiware
 
 try:
-    from social_django.utils import BACKENDS, get_backend
-    FIWARE_SOCIAL_AUTH_BACKEND = get_backend(BACKENDS, 'fiware')
+    from social_django.utils import BACKENDS, get_backend, load_strategy
+    FIWARE_SOCIAL_AUTH_BACKEND = get_backend(BACKENDS, 'fiware')(load_strategy())
 
     IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_django' in settings.INSTALLED_APPS
 except:
@@ -53,7 +53,7 @@ BAE_MASHUP = os.path.join(BASE_PATH, 'initial', 'CoNWeT_bae-marketplace_0.1.1.wg
 def auth_fiware_token(auth_type, token):
 
     from social_django.models import UserSocialAuth
-    user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
+    user_data = FIWARE_SOCIAL_AUTH_BACKEND.user_data(token)
     return UserSocialAuth.objects.get(provider='fiware', uid=user_data['username']).user
 
 

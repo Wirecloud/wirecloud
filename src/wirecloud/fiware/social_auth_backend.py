@@ -32,7 +32,6 @@ field, check OAuthBackend class for details on how to extend it.
 """
 
 import base64
-import requests
 import time
 from six.moves.urllib.parse import urljoin
 
@@ -120,15 +119,15 @@ class FIWAREOAuth2(BaseOAuth2):
                 'first_name': first_name,
                 'last_name': last_name}
 
-    @classmethod
-    def request_user_info(cls, access_token):
-        response = requests.get(cls.USER_DATA_URL, params={'access_token': access_token})
+        return response.json()
+
+    def request_user_info(self, access_token):
+        response = self.request(url=self.USER_DATA_URL, params={'access_token': access_token})
         response.raise_for_status()
         return response.json()
 
-    @classmethod
-    def _user_data(cls, access_token):
-        data = cls.request_user_info(access_token)
+    def user_data(self, access_token, *args, **kwargs):
+        data = self.request_user_info(access_token)
         # Newer versions of the FIWARE IdM provides and id field with the
         # username of the user. Older versions use actorId as identifier, but
         # also provides a nickName field. We use nickName because it is also
@@ -143,6 +142,3 @@ class FIWAREOAuth2(BaseOAuth2):
             organization["id"] = organization['actorId'] if 'actorId' in organization else organization['id']
 
         return data
-
-    def user_data(self, access_token, *args, **kwargs):
-        return self._user_data(access_token)
