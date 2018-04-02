@@ -231,6 +231,15 @@
         priv.callbacks = [];
     };
 
+    // Remove all proxy connections on WireCloud unload
+    Wirecloud.addEventListener('unload', () => {
+        Object.values(proxy_connections).forEach((connection) => {
+            try {
+                connection.proxy.close(false);
+            } catch (e) {}
+        });
+    });
+
     Manager.NGSI = NGSI;
     window.NGSIManager = Manager;
 
