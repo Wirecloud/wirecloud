@@ -119,8 +119,6 @@ class FIWAREOAuth2(BaseOAuth2):
                 'first_name': first_name,
                 'last_name': last_name}
 
-        return response.json()
-
     def request_user_info(self, access_token):
         response = self.request(url=self.USER_DATA_URL, params={'access_token': access_token})
         response.raise_for_status()
