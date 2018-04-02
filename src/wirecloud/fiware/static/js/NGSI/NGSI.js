@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of ngsijs.
  *
@@ -57,20 +58,207 @@
     } else {
         NGSI = {};
         var URL = window.URL;
+
+        /*
+         * Basic makeRequest implementation for webbrowsers
+         */
+        var merge = function merge(object) {
+
+            if (object == null || typeof object !== "object") {
+                throw new TypeError("object argument must be an object");
+            }
+
+            Array.prototype.slice.call(arguments, 1).forEach(function (source) {
+                if (source != null) {
+                    Object.keys(source).forEach(function (key) {
+                        object[key] = source[key];
+                    });
+                }
+            });
+
+            return object;
+        };
+
+        var setRequestHeaders = function setRequestHeaders() {
+            var headers, name;
+
+            headers = merge({
+                'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+            }, this.options.requestHeaders);
+
+            if (!('Content-Type' in headers) && this.options.contentType != null) {
+                headers['Content-Type'] = this.options.contentType;
+                if (this.options.encoding != null) {
+                    headers['Content-Type'] += '; charset=' + this.options.encoding;
+                }
+            }
+
+            for (name in headers) {
+                if (headers[name] != null) {
+                    this.transport.setRequestHeader(name, headers[name]);
+                }
+            }
+        };
+
+        var Response = function Response(request) {
+            Object.defineProperties(this, {
+                'request': {value: request},
+                'transport': {value: request.transport},
+                'status': {value: request.transport.status},
+                'statusText': {value: request.transport.statusText},
+                'response': {value: request.transport.response}
+            });
+
+            if (request.options.responseType == null || request.options.responseType === '') {
+                Object.defineProperties(this, {
+                    'responseText': {value: request.transport.responseText},
+                    'responseXML': {value: request.transport.responseXML}
+                });
+            }
+        };
+
+        Response.prototype.getHeader = function getHeader(name) {
+            try {
+                return this.transport.getResponseHeader(name);
+            } catch (e) { return null; }
+        };
+
+        Response.prototype.getAllResponseHeaders = function getAllResponseHeaders() {
+            return this.transport.getAllResponseHeaders();
+        };
+
+        var toQueryString = function toQueryString(parameters) {
+            var key, query = [];
+
+            if (parameters != null && typeof parameters === 'object') {
+                for (key in parameters) {
+                    if (typeof parameters[key] === 'undefined') {
+                        continue;
+                    } else if (parameters[key] === null) {
+                        query.push(encodeURIComponent(key) + '=');
+                    } else {
+                        query.push(encodeURIComponent(key) + '=' + encodeURIComponent(parameters[key]));
+                    }
+                }
+            } else {
+                return null;
+            }
+
+            if (query.length > 0) {
+                return query.join('&');
+            } else {
+                return null;
+            }
+        };
+
+        var Request = function Request(url, options) {
+            this.options = merge({
+                method: 'POST',
+                asynchronous: true,
+                responseType: null,
+                contentType: null,
+                encoding: null,
+                postBody: null
+            }, options);
+
+            Object.defineProperties(this, {
+                method: {
+                    value: this.options.method.toUpperCase()
+                }
+            });
+
+            var parameters = toQueryString(this.options.parameters);
+            if (['PUT', 'POST'].indexOf(this.method) !== -1 && this.options.postBody == null) {
+                if (parameters != null) {
+                    this.options.postBody = parameters;
+                    if (this.options.contentType == null) {
+                        this.options.contentType = 'application/x-www-form-urlencoded';
+                    }
+                    if (this.options.encoding == null) {
+                        this.options.encoding = 'UTF-8';
+                    }
+                }
+            } else /* if (['PUT', 'POST'].indexOf(this.method) === -1 || this.options.postBody != null) */ {
+                if (parameters != null) {
+                    if (url.search !== "") {
+                        url.search = url.search + '&' + parameters;
+                    }  else {
+                        url.search = '?' + parameters;
+                    }
+                }
+            }
+
+            Object.defineProperties(this, {
+                url: {
+                    value: url
+                },
+                abort: {
+                    value: function () {
+                        this.transport.aborted = true;
+                        this.transport.abort();
+                        return this;
+                    }
+                }
+            });
+
+            Object.defineProperty(this, 'transport', {value: new XMLHttpRequest()});;
+            if (this.options.withCredentials === true && this.options.supportsAccessControl) {
+                this.transport.withCredentials = true;
+            }
+            if (this.options.responseType) {
+                this.transport.responseType = this.options.responseType;
+            }
+
+            this.promise = new Promise(function (resolve, reject) {
+                this.transport.addEventListener("abort", function (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+
+                    reject("aborted");
+                });
+                this.transport.addEventListener("load", function () {
+                    var response = new Response(this);
+                    resolve(response);
+                }.bind(this));
+                this.transport.addEventListener("error", function () {
+                    reject(new NGSI.ConnectionError(this));
+                }.bind(this));
+            }.bind(this));
+
+            this.transport.open(this.method, this.url, this.options.asynchronous);
+            setRequestHeaders.call(this);
+            this.transport.send(this.options.postBody);
+        };
+
+        Request.prototype.then = function then(onFulfilled, onRejected) {
+            return this.promise.then(onFulfilled, onRejected);
+        };
+
+        Request.prototype.catch = function _catch(onRejected) {
+            return this.promise.catch(onRejected);
+        };
+
+        var makeRequest = function makeRequest(url, options) {
+            return new Request(url, options);
+        };
     }
 
     NGSI.endpoints = {
-        REGISTER_CONTEXT: 'v1/registry/registerContext',
-        DISCOVER_CONTEXT_AVAILABILITY: 'v1/registry/discoverContextAvailability',
-        SUBSCRIBE_CONTEXT_AVAILABILITY: 'v1/registry/subscribeContextAvailability',
-        UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION: 'v1/registry/updateContextAvailabilitySubscription',
-        UNSUBSCRIBE_CONTEXT_AVAILABILITY: 'v1/registry/unsubscribeContextAvailability',
-        QUERY_CONTEXT: 'v1/queryContext',
-        UPDATE_CONTEXT: 'v1/updateContext',
-        SUBSCRIBE_CONTEXT: 'v1/subscribeContext',
-        UPDATE_CONTEXT_SUBSCRIPTION: 'v1/updateContextSubscription',
-        UNSUBSCRIBE_CONTEXT: 'v1/unsubscribeContext',
-        CONTEXT_TYPES: 'v1/contextTypes',
+        SERVER_DETAILS: 'version',
+
+        v1: {
+            REGISTER_CONTEXT: 'v1/registry/registerContext',
+            DISCOVER_CONTEXT_AVAILABILITY: 'v1/registry/discoverContextAvailability',
+            SUBSCRIBE_CONTEXT_AVAILABILITY: 'v1/registry/subscribeContextAvailability',
+            UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION: 'v1/registry/updateContextAvailabilitySubscription',
+            UNSUBSCRIBE_CONTEXT_AVAILABILITY: 'v1/registry/unsubscribeContextAvailability',
+            QUERY_CONTEXT: 'v1/queryContext',
+            UPDATE_CONTEXT: 'v1/updateContext',
+            SUBSCRIBE_CONTEXT: 'v1/subscribeContext',
+            UPDATE_CONTEXT_SUBSCRIPTION: 'v1/updateContextSubscription',
+            UNSUBSCRIBE_CONTEXT: 'v1/unsubscribeContext',
+            CONTEXT_TYPES: 'v1/contextTypes'
+        },
 
         v2: {
             BATCH_QUERY_OP: 'v2/op/query',
@@ -109,7 +297,7 @@
             body = JSON.stringify(payload);
         }
 
-        requestHeaders = JSON.parse(JSON.stringify(this.request_headers));
+        requestHeaders = JSON.parse(JSON.stringify(this.headers));
         requestHeaders.Accept = 'application/json';
 
         this.makeRequest(url, {
@@ -192,7 +380,7 @@
             options.postBody = JSON.stringify(options.postBody);
         }
 
-        var requestHeaders = JSON.parse(JSON.stringify(this.request_headers));
+        var requestHeaders = JSON.parse(JSON.stringify(this.headers));
         requestHeaders.Accept = 'application/json';
 
         for (var headerName in options.requestHeaders) {
@@ -1020,6 +1208,7 @@
                 if (priv.source_url == null) {
                     return Promise.reject(new NGSI.InvalidResponseError('Missing Location Header'));
                 }
+                priv.source_url = new URL(priv.source_url);
                 return connect_to_eventsource.call(this);
             }.bind(this),
             function (error) {
@@ -1180,7 +1369,7 @@
         }
 
         return this.connect().then(function () {
-            return this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION, {
+            return this.makeRequest(new URL(NGSI.proxy_endpoints.CALLBACK_COLLECTION, this.url), {
                 supportsAccessControl: true,  // required for using CORS on WireCloud
                 method: 'POST',
                 contentType: 'application/json',
@@ -1214,17 +1403,24 @@
      * Closes the connection with the ngsi-proxy. All the callback endpoints
      * will be removed.
      *
+     * @param {Boolean} [async] Make an asynchronous requests. default: `true`.
+     *
      * @returns {Promise}
      */
-    NGSI.ProxyConnection.prototype.close = function close() {
+    NGSI.ProxyConnection.prototype.close = function close(async) {
         if (this.connected === false) {
             return Promise.resolve();
+        }
+
+        if (async !== false) {
+            async = true;
         }
 
         var priv = privates.get(this);
         return this.makeRequest(priv.source_url, {
             supportsAccessControl: true,  // required for using CORS on WireCloud
-            method: 'DELETE'
+            method: 'DELETE',
+            asynchronous: async
         }).then(
             function (response) {
                 if (response.status !== 204) {
@@ -1254,7 +1450,7 @@
      * @returns {Promise}
      */
     NGSI.ProxyConnection.prototype.closeCallback = function closeCallback(callback_id) {
-        return this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
+        return this.makeRequest(new URL(NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, this.url), {
             supportsAccessControl: true,  // required for using CORS on WireCloud
             method: 'DELETE'
         }).then(
@@ -1418,7 +1614,18 @@
      * @summary A context broker connection.
      *
      * @param {String|URL} url URL of the context broker
-     * @param {Object} options
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `headers` (`Object`): Default headers to be sent when making requests
+     *   through this connection.
+     * - `service` (`String`): Default service/tenant to use when making
+     *   requests through this connection.
+     * - `servicepath` (`String`): Default service path to use when making
+     *   requests through this connection.
+     * - `ngsi_proxy_url` (`String`|`URL`): URL of the NGSI proxy to be used for
+     *   receiving notifications.
      *
      * @example <caption>Basic usage</caption>
      *
@@ -1426,14 +1633,14 @@
      *
      * @example <caption>Using the FIWARE Lab's instance</caption>
      *
-     * var connection = new NGSI.Connection("http://orion.lab.fiware.org", {
-     *     requestHeaders: {
+     * var connection = new NGSI.Connection("http://orion.lab.fiware.org:1026", {
+     *     headers: {
      *         "X-Auth-Token": token
      *     }
      * });
      *
      **/
-    NGSI.Connection = function NGSIConnection(url, options) {
+    NGSI.Connection = function Connection(url, options) {
 
         try {
             url = new URL(url);
@@ -1453,24 +1660,29 @@
             options = {};
         }
 
-        if (options.request_headers != null) {
-            this.request_headers = options.request_headers;
+        if (options.headers != null && typeof options.headers === 'object') {
+            this.headers = options.headers;
+        } else if (options.request_headers != null) {
+            // Backwards compatibilty
+            this.headers = options.request_headers;
         } else {
-            this.request_headers = {};
+            this.headers = {};
         }
 
         if (options.service != null) {
-            deleteHeader("FIWARE-Service", this.request_headers);
-            this.request_headers["FIWARE-Service"] = options.service;
+            deleteHeader("FIWARE-Service", this.headers);
+            this.headers["FIWARE-Service"] = options.service;
         }
 
         if (options.servicepath != null) {
-            deleteHeader("FIWARE-ServicePath", this.request_headers);
-            this.request_headers["FIWARE-ServicePath"] = options.servicepath;
+            deleteHeader("FIWARE-ServicePath", this.headers);
+            this.headers["FIWARE-ServicePath"] = options.servicepath;
         }
 
         if (typeof options.requestFunction === 'function') {
             this.makeRequest = options.requestFunction;
+        } else {
+            this.makeRequest = makeRequest;
         }
 
         if (options.ngsi_proxy_connection instanceof NGSI.ProxyConnection) {
@@ -1485,6 +1697,69 @@
             v2: {value: new NGSI.Connection.V2(this)}
         });
     };
+
+    /**
+     * Retrieves context broker server information.
+     *
+     * @name NGSI.Connection@getServerDetails
+     * @memberof NGSI.Connection
+     * @method "getServerDetails"
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     *
+     * @returns {Promise}
+     *
+     * @example
+     *
+     * connection.getServerDetails().then(
+     *     (response) => {
+     *         // Server information retrieved successfully
+     *         // response.details contains all the details returned by the server.
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving server information
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     */
+    NGSI.Connection.prototype.getServerDetails = function getServerDetails(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var url = new URL(NGSI.endpoints.SERVER_DETAILS, this.url);
+        return makeJSONRequest2.call(this, url, {
+            method: "GET",
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+            }
+        }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
+
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
+            }
+
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator));
+            }
+
+            var result = {
+                details: data,
+                correlator: correlator
+            };
+
+            return Promise.resolve(result);
+        });
+    };
+
 
     /**
      * Registers context information (entities and attributes) into the NGSI
@@ -1556,7 +1831,7 @@
         }
 
         var payload = ngsi_build_register_context_request(entities, attributes, duration, providingApplication);
-        var url = new URL(NGSI.endpoints.REGISTER_CONTEXT, this.url);
+        var url = new URL(NGSI.endpoints.v1.REGISTER_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_register_context_response, callbacks);
     };
@@ -1628,7 +1903,7 @@
         }
 
         var payload = ngsi_build_register_context_request(entities, attributes, duration, providingApplication, regId);
-        var url = new URL(NGSI.endpoints.REGISTER_CONTEXT, this.url);
+        var url = new URL(NGSI.endpoints.v1.REGISTER_CONTEXT, this.url);
 
         return makeJSONRequest.call(this, url, payload, parse_register_context_response, callbacks);
     };
@@ -1720,7 +1995,7 @@
         }
 
         var payload = ngsi_build_discover_context_availability_request(entities, attributeNames);
-        var url = new URL(NGSI.endpoints.DISCOVER_CONTEXT_AVAILABILITY, this.url);
+        var url = new URL(NGSI.endpoints.v1.DISCOVER_CONTEXT_AVAILABILITY, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_discover_context_availability_response, callbacks);
     };
@@ -1779,7 +2054,7 @@
             throw new TypeError('A ngsi-proxy is needed for using local onNotify callbacks');
         }
 
-        var url = new URL(NGSI.endpoints.SUBSCRIBE_CONTEXT_AVAILABILITY, this.url);
+        var url = new URL(NGSI.endpoints.v1.SUBSCRIBE_CONTEXT_AVAILABILITY, this.url);
         if (typeof options.onNotify === 'function' && this.ngsi_proxy != null) {
 
             var onNotify = function onNotify(payload) {
@@ -1872,7 +2147,7 @@
         }
 
         var payload = ngsi_build_subscribe_update_context_availability_request(entities, attributeNames, duration, restriction, subId);
-        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION, this.url);
+        var url = new URL(NGSI.endpoints.v1.UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, callbacks);
     };
@@ -1905,7 +2180,7 @@
         }
 
         var payload = ngsi_build_unsubscribe_context_availability_request(subId);
-        var url = new URL(NGSI.endpoints.UNSUBSCRIBE_CONTEXT_AVAILABILITY, this.url);
+        var url = new URL(NGSI.endpoints.v1.UNSUBSCRIBE_CONTEXT_AVAILABILITY, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_unsubscribe_context_availability_response, callbacks);
     };
@@ -1974,7 +2249,7 @@
 
         parameters = parse_pagination_options(options, 'off');
 
-        url = new URL(NGSI.endpoints.QUERY_CONTEXT, this.url);
+        url = new URL(NGSI.endpoints.v1.QUERY_CONTEXT, this.url);
         payload = ngsi_build_query_context_request(entities, attributesName, options.restriction);
         makeJSONRequest.call(this, url, payload, parse_query_context_response, options, parameters);
     };
@@ -2025,7 +2300,7 @@
         }
 
         var payload = ngsi_build_update_context_request('UPDATE', update);
-        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT, this.url);
+        var url = new URL(NGSI.endpoints.v1.UPDATE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_response, callbacks);
     };
@@ -2075,7 +2350,7 @@
         }
 
         var payload = ngsi_build_update_context_request('APPEND', toAdd);
-        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT, this.url);
+        var url = new URL(NGSI.endpoints.v1.UPDATE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_response, callbacks);
     };
@@ -2138,7 +2413,7 @@
         }
 
         var payload = ngsi_build_update_context_request('DELETE', toDelete);
-        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT, this.url);
+        var url = new URL(NGSI.endpoints.v1.UPDATE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_response, callbacks);
     };
@@ -2224,7 +2499,7 @@
             throw new TypeError('A ngsi-proxy is needed for using local onNotify callbacks');
         }
 
-        var url = new URL(NGSI.endpoints.SUBSCRIBE_CONTEXT, this.url);
+        var url = new URL(NGSI.endpoints.v1.SUBSCRIBE_CONTEXT, this.url);
         if (typeof options.onNotify === 'function' && this.ngsi_proxy != null) {
 
             var onNotify = function onNotify(payload) {
@@ -2332,7 +2607,7 @@
         }
 
         var payload = ngsi_build_subscribe_update_context_request(subId, null, null, duration, throttling, cond);
-        var url = new URL(NGSI.endpoints.UPDATE_CONTEXT_SUBSCRIPTION, this.url);
+        var url = new URL(NGSI.endpoints.v1.UPDATE_CONTEXT_SUBSCRIPTION, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_update_context_subscription_response, options);
     };
@@ -2386,7 +2661,7 @@
             }.bind(this);
         }
         var payload = ngsi_build_unsubscribe_context_request(subId);
-        var url = new URL(NGSI.endpoints.UNSUBSCRIBE_CONTEXT, this.url);
+        var url = new URL(NGSI.endpoints.v1.UNSUBSCRIBE_CONTEXT, this.url);
 
         makeJSONRequest.call(this, url, payload, parse_unsubscribe_context_response, options);
     };
@@ -2425,7 +2700,7 @@
      *
      */
     NGSI.Connection.prototype.getAvailableTypes = function getAvailableTypes(options) {
-        var url = new URL(NGSI.endpoints.CONTEXT_TYPES, this.url);
+        var url = new URL(NGSI.endpoints.v1.CONTEXT_TYPES, this.url);
         var parameters = parse_pagination_options(options, 'on');
         makeJSONRequest.call(this, url, null, parse_available_types_response, options, parameters);
     };
@@ -2467,7 +2742,7 @@
             throw new TypeError("Invalid type parameter");
         }
 
-        var url = new URL(NGSI.endpoints.CONTEXT_TYPES + '/' + encodeURIComponent(type), this.url);
+        var url = new URL(NGSI.endpoints.v1.CONTEXT_TYPES + '/' + encodeURIComponent(type), this.url);
         makeJSONRequest.call(this, url, null, parse_type_info_response, options);
     };
 
@@ -2496,7 +2771,8 @@
      *   the attributes are retrieved in arbitrary order.
      * - `correlator` (`String`): Transaction id
      * - `count` (`Boolean`; default: `false`): Request total count
-     * - `id` (`String`): A comma-separated list of entity ids to retrieve
+     * - `id` (`String`): A comma-separated list of entity ids to retrieve.
+     *   Incompatible with the `idPattern` option.
      * - `idPattern` (`String`): A correctly formated regular expression.
      *   Retrieve entities whose ID matches the regular expression. Incompatible
      *   with the `id` option
@@ -2513,7 +2789,8 @@
      *   separated by semicolons (`;`)
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
-     * - `type` (`String`): A comma-separated list of entity types to retrieve
+     * - `type` (`String`): A comma-separated list of entity types to retrieve.
+     *   Incompatible with the `typePattern` option.
      * - `typePattern` (`String`): A correctly formated regular expression.
      *   Retrieve entities whose type matches the regular expression.
      *   Incompatible with the `type` option.
@@ -2649,7 +2926,8 @@
      *
      * @param {Object}
      *
-     * entity values to be used for creating the new entity
+     * entity values to be used for creating the new entity. Requires at least
+     * the `id` value for the new entity.
      *
      * @param {Object} [options]
      *
@@ -2722,6 +3000,10 @@
             options = {};
         }
 
+        if (entity.id == null) {
+            throw new TypeError('missing entity id');
+        }
+
         var connection = privates.get(this);
         var parameters = {};
 
@@ -2765,10 +3047,12 @@
      *
      * @param {String|Object} options
      *
-     * Object with extra options:
+     * String with the id of the entity to query or an object with extra
+     * options:
      *
      * - `correlator` (`String`): Transaction id
      * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `id` (`String`, required): Id of the entity to query
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
@@ -2818,6 +3102,8 @@
             options = {
                 id: options
             };
+        } else if (options.id == null) {
+            throw new TypeError("missing id option");
         }
 
         var connection = privates.get(this);
@@ -2874,6 +3160,7 @@
      *
      * - `correlator` (`String`): Transaction id
      * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `id` (`String`, required): Id of the entity to query
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
@@ -2923,6 +3210,8 @@
             options = {
                 id: options
             };
+        } else if (options.id == null) {
+            throw new TypeError("missing id option");
         }
 
         var connection = privates.get(this);
@@ -2973,6 +3262,10 @@
      * @memberof NGSI.Connection
      *
      * @param {Object} changes
+     *
+     * New values for the attributes. Must contain the `id` of the entity to
+     * update and may contain the `type` option to avoid ambiguity in case there are
+     * several entities with the same entity id.
      *
      * @param {Object} [options]
      *
@@ -3041,6 +3334,8 @@
         if (changes.type != null) {
             parameters.type = changes.type;
             delete changes.type;
+        } else if (options.type != null) {
+            parameters.type = options.type;
         }
 
         if (options.strict === true) {
@@ -3088,8 +3383,9 @@
      *
      * @param {Object} changes
      *
-     * New values for the attributes, including the `id` and the `type` values
-     * for searching the entity to update.
+     * New values for the attributes. Must contain the `id` of the entity to
+     * update and may contain the `type` option to avoid ambiguity in case there are
+     * several entities with the same entity id.
      *
      * @param {Object} [options]
      *
@@ -3200,8 +3496,9 @@
      *
      * @param {Object} entity
      *
-     * New values for the attributes, including the `id` and the `type` values
-     * for searching the entity to update.
+     * New values for the attributes. Must contain the `id` of the entity to
+     * update and may contain the `type` option to avoid ambiguity in case there are
+     * several entities with the same entity id.
      *
      * @param {Object} [options]
      *
@@ -3315,7 +3612,7 @@
      * String with the entity id to remove or an object providing options:
      *
      * - `correlator` (`String`): Transaction id
-     * - `id` (`String`): Id of the entity to remove
+     * - `id` (`String`, required): Id of the entity to remove
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
@@ -3361,6 +3658,8 @@
             options = {
                 id: options
             };
+        } else if (options.id == null) {
+            throw new TypeError("missing id option");
         }
 
         var connection = privates.get(this);
@@ -3412,9 +3711,9 @@
      *
      * Object with options:
      *
-     * - `attribute` (`String`): Name of the attribute to query
+     * - `attribute` (`String`, required): Name of the attribute to query
      * - `correlator` (`String`): Transaction id
-     * - `id` (`String`): Id of the entity to query
+     * - `id` (`String`, required): Id of the entity to query
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
@@ -3430,7 +3729,7 @@
      * }).then(
      *     (response) => {
      *         // Entity details retrieved successfully
-     *         // response.entity entity details
+     *         // response.attribute attribute details
      *         // response.correlator transaction id associated with the server response
      *     }, (error) => {
      *         // Error retrieving entity
@@ -3448,7 +3747,7 @@
      * }).then(
      *     (response) => {
      *         // Entity details retrieved successfully
-     *         // response.entity entity details
+     *         // response.attribute attribute details
      *         // response.correlator transaction id associated with the server response
      *     }, (error) => {
      *         // Error retrieving entity
@@ -3470,12 +3769,12 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(
+        var url = new URL(interpolate(
             NGSI.endpoints.v2.ENTITY_ATTR_ENTRY, {
                 entityId: encodeURIComponent(options.id),
                 attribute: encodeURIComponent(options.attribute)
             }
-        );
+        ), connection.url);
         var parameters = {};
         if (options.type != null) {
             parameters.type = options.type;
@@ -3519,16 +3818,17 @@
      *
      * @param {Object} changes
      *
-     * Object with the new values for the attribute
+     * Object with the new values for the attribute. Can also be used for
+     * providing options. See the `options` parameter.
      *
      * @param {Object} [options]
      *
      * Object with options (those options can also be passed inside the changes
      * parameter):
      *
-     * - `attribute` (`String`): Name of the attribute to modify
+     * - `attribute` (`String`, required): Name of the attribute to modify
      * - `correlator` (`String`): Transaction id
-     * - `id` (`String`): Id of the entity to modify
+     * - `id` (`String`, required): Id of the entity to modify
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
@@ -3613,12 +3913,12 @@
             metadata: changes.metadata
         };
         var connection = privates.get(this);
-        var url = connection.url + interpolate(
+        var url = new URL(interpolate(
             NGSI.endpoints.v2.ENTITY_ATTR_ENTRY, {
                 entityId: encodeURIComponent(options.id),
                 attribute: encodeURIComponent(options.attribute)
             }
-        );
+        ), connection.url);
         var parameters = {};
         if (options.type != null) {
             parameters.type = options.type;
@@ -3662,9 +3962,9 @@
      * Object providing information about the attribute to remove and any
      * extra options:
      *
-     * - `attribute` (`String`): Name of the attribute to delete
+     * - `attribute` (`String`, required): Name of the attribute to delete
      * - `correlator` (`String`): Transaction id
-     * - `id` (`String`): Id of the entity to modify
+     * - `id` (`String`, required): Id of the entity to modify
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
@@ -3717,12 +4017,12 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(
+        var url = new URL(interpolate(
             NGSI.endpoints.v2.ENTITY_ATTR_ENTRY, {
                 entityId: encodeURIComponent(options.id),
                 attribute: encodeURIComponent(options.attribute)
             }
-        );
+        ), connection.url);
 
         var parameters = {};
         if (options.type != null) {
@@ -3770,9 +4070,9 @@
      *
      * Object with extra options:
      *
-     * - `attribute` (`String`): Name of the attribute to query
+     * - `attribute` (`String`, required): Name of the attribute to query
      * - `correlator` (`String`): Transaction id
-     * - `id` (`String`): Id of the entity to query
+     * - `id` (`String`, required): Id of the entity to query
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
@@ -3828,12 +4128,12 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(
+        var url = new URL(interpolate(
             NGSI.endpoints.v2.ENTITY_ATTR_VALUE_ENTRY, {
                 entityId: encodeURIComponent(options.id),
                 attribute: encodeURIComponent(options.attribute)
             }
-        );
+        ), connection.url);
         var parameters = {};
         if (options.type != null) {
             parameters.type = options.type;
@@ -3881,12 +4181,13 @@
      *
      * Object with options:
      *
-     * - `attribute` (`String`): Name of the attribute to query
+     * - `attribute` (`String`, required): Name of the attribute to query
      * - `correlator` (`String`): Transaction id
-     * - `id` (`String`): Id of the entity to query
+     * - `id` (`String`, required): Id of the entity to query
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
-     * - `value` (`String`|`Boolean`|`Number`|`Object`|`Array`) new value
+     * - `value` (`String`|`Boolean`|`Number`|`Object`|`Array`, required) new
+     *   value
      * - `type` (`String`): Entity type, to avoid ambiguity in case there are
      *   several entities with the same entity id.
      *
@@ -3944,12 +4245,12 @@
         }
 
         var connection = privates.get(this);
-        var url = connection.url + interpolate(
+        var url = new URL(interpolate(
             NGSI.endpoints.v2.ENTITY_ATTR_VALUE_ENTRY, {
                 entityId: encodeURIComponent(options.id),
                 attribute: encodeURIComponent(options.attribute)
             }
-        );
+        ), connection.url);
         var parameters = {};
         if (options.type != null) {
             parameters.type = options.type;
@@ -4341,7 +4642,11 @@
      *        }
      *    },
      *    "notification": {
-     *        "callback": function () {
+     *        "callback": function (notification) {
+     *            // notification.attrsformat provides information about the format used by notification.data
+     *            // notification.data contains the modified entities
+     *            // notification.subscriptionId provides the associated subscription id
+     *            // etc...
      *        },
      *        "attrs": [
      *            "temperature",
@@ -4782,6 +5087,24 @@
      * @method "v2.batchQuery"
      * @memberof NGSI.Connection
      *
+     * @param {Object} query
+     *
+     * Object with the parameters to make the entity queries. Composed of those
+     * attributes:
+     *
+     * - `entities` (`Array`): a list of entites to search for. Each element is
+     *   represented by a JSON object with the following elements:
+     *      - `id` or `idPattern`: Id or pattern of the affected entities. Both
+     *      cannot be used at the same time, but one of them must be present.
+     *      - `type` or `typePattern`: Type or type pattern of the entities total
+     *      search for. Both cannot be used at the same time. If omitted, it
+     *      means "any entity type"
+     * - `attributes` (`Array`): a list of attribute names to search for. If
+     *   omitted, it means "all attributes".
+     * - `metadata` (`Array`): a list of metadata names to include in the
+     *   response. See "Filtering out attributes and metadata" section for more
+     *   detail.
+     *
      * @param {Object} [options]
      *
      * Object with extra options:
@@ -4840,7 +5163,9 @@
         }
 
         if (query == null) {
-            throw new TypeError("missing query parameter");
+            query = {'entities': []};
+        } else if (query.entities == null && query.attributes == null) {
+            query.entities = [];
         }
 
         var connection = privates.get(this);
