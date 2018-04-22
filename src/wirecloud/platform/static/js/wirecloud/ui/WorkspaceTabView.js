@@ -125,6 +125,7 @@
             var button = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 class: 'icon-tab-menu',
+                iconClass: 'fa fa-caret-up',
                 plain: true,
                 menuOptions: {
                     position: ['top-left', 'top-right']

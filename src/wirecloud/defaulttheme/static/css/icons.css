@@ -1,30 +1,3 @@
-.se-btn.icon-menu {
-    border-width: 1px 1px 0px 1px;
-    border-style: solid;
-    border-color: transparent;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    text-align: center;
-}
-
-.se-btn.icon-menu.open {
-    background-color: white;
-    border-color: #BEBEBE;
-}
-
-.se-btn.icon-tab-menu {
-    float: right;
+.icon-tab-menu {
     margin: 0 0 0 6px;
 }
-
-.se-btn.icon-tab-menu.open {
-    border-color: #BEBEBE;
-}
-
-.tab.selected .icon-tab-menu {
-    display: inline-block;
-}
-
-.icon-doc:before        { content: "\f02d"; }
-.icon-menu:before       { content: "\f0d7"; }
-.icon-tab-menu:before   { content: "\f0d8"; }
