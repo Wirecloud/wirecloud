@@ -11,8 +11,26 @@ python:
     - "3.4"
     - "3.5"
     - "3.6"
+
+matrix:
+    include:
+        - node_js: "lts/*"
+          language: node_js
+          python: ""
+          addons:
+              chrome: stable
+              firefox: latest-esr
+          env: TEST_SUITE=js_unittests
+
+before_install:
+    - . src/ci_scripts/travis_before_install.sh
+
+before_script:
+    - . src/ci_scripts/travis_before_script.sh
+
 script:
     - src/ci_scripts/travis.sh sqlite3 django$DJANGO_VERSION unittest
+
 branches:
-  only:
-    - develop
+    only:
+        - develop

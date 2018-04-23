@@ -162,8 +162,11 @@ module.exports = function (grunt) {
             styledelements: {
                 options: {
                     coverageReporter: {
-                        type : 'html',
-                        dir : 'build/coverage/styledelements'
+                        reporters: [
+                            {type: 'html', dir: 'build/coverage/styledelements', subdir: 'html'},
+                            {type: 'cobertura', dir: 'build/coverage/styledelements', subdir: 'xml'},
+                            {type: 'lcov', dir: 'build/coverage/styledelements', subdir: 'lcov'},
+                        ]
                     },
                     files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/*Spec.js']),
                     preprocessors: {
@@ -174,8 +177,11 @@ module.exports = function (grunt) {
             wirecloud: {
                 options: {
                     coverageReporter: {
-                        type : 'html',
-                        dir : 'build/coverage/wirecloud'
+                        reporters: [
+                            {type: 'html', dir: 'build/coverage/wirecloud', subdir: 'html'},
+                            {type: 'cobertura', dir: 'build/coverage/wirecloud', subdir: 'xml'},
+                            {type: 'lcov', dir: 'build/coverage/wirecloud', subdir: 'lcov'},
+                        ]
                     },
                     files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/**/*Spec.js']),
                     preprocessors: {
@@ -223,6 +229,8 @@ module.exports = function (grunt) {
         'eslint',
         'karma'
     ]);
+
+    grunt.registerTask('ci', ['test']);
 
     grunt.registerTask('default', [
         'test',
