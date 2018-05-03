@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -156,7 +157,7 @@ module.exports = function (grunt) {
             options: {
                 frameworks: ['jasmine'],
                 reporters: ['progress', 'coverage'],
-                browsers: ['Chrome', 'Firefox'],
+                browsers: ['Firefox'],
                 singleRun: true
             },
             styledelements: {

@@ -18,7 +18,12 @@ matrix:
           language: node_js
           python: ""
           addons:
-              chrome: stable
+              firefox: "45.0"
+          env: TEST_SUITE=js_unittests
+        - node_js: "lts/*"
+          language: node_js
+          python: ""
+          addons:
               firefox: latest-esr
           env: TEST_SUITE=js_unittests
 
