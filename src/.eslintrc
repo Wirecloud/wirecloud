@@ -48,6 +48,7 @@
       {
         "newIsCap": true,
         "capIsNew": true,
+        "capIsNewExceptions": ["URLify"],
         "properties": true
       }
     ],

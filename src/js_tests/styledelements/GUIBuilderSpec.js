@@ -205,24 +205,25 @@
         check_template_context_type("function returning elements",
             function (options) {
                 var element = document.createElement('div');
+                element.textContent = 'a';
                 if (options != null && 'class' in options) {
                     element.className = options.class;
                 }
                 return element;
             },
-            '<div></div>',
-            '<div class="my-class"></div>'
+            '<div>a</div>',
+            '<div class="my-class">a</div>'
         );
         check_template_context_type("function returning styled elements",
             function (options) {
-                var element = new StyledElements.Button();
+                var element = new StyledElements.Button({text: 'a'});
                 if (options != null && 'class' in options) {
                     element.addClassName(options.class);
                 }
                 return element;
             },
-            '<div class="se-btn"></div>',
-            '<div class="se-btn my-class"></div>'
+            '<div class="se-btn"><span>a</span></div>',
+            '<div class="se-btn my-class"><span>a</span></div>'
         );
         check_template_context_type("function returning null", function (options) {return null;});
 

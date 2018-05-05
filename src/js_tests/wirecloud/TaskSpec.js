@@ -726,11 +726,7 @@
             });
 
             it("title parameter is not required", () => {
-                var task_update, task_resolve;
-
                 var subtask = new Wirecloud.Task("subtask title", (resolve, reject, update) => {
-                    task_update = update;
-                    task_resolve = resolve;
                     update(50);
                 });
 

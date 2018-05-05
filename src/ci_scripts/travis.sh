@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [ "${TEST_SUITE}" == "js_unittests" ]; then
+    cd $TRAVIS_BUILD_DIR/src
+    grunt ci
+    exit
+fi
+
+
 export WC_INSTANCE_NAME=test_instance
 [ -n "${IP_ADDR}" ] || IP_ADDR="localhost"
 

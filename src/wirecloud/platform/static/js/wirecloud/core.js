@@ -273,7 +273,7 @@
         } else if ('owner' in workspace && 'name' in workspace) {
             url = Wirecloud.URLs.WORKSPACE_ENTRY_OWNER_NAME.evaluate({'owner': workspace.owner, 'name': workspace.name});
         } else {
-            throw TypeError('use the id parameter or the owner/name pair of parameters');
+            throw new TypeError('use the id parameter or the owner/name pair of parameters');
         }
 
         return Wirecloud.io.makeRequest(url, {
@@ -313,7 +313,7 @@
         }, options);
 
         if (!('owner' in workspace && 'name' in workspace) && !('id' in workspace)) {
-            throw TypeError('use the id parameter or the owner/name pair of parameters');
+            throw new TypeError('use the id parameter or the owner/name pair of parameters');
         }
 
         if (!('owner' in workspace) || !('name' in workspace)) {

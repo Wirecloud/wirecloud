@@ -19,7 +19,7 @@
  *
  */
 
-/* globals encodeURIComponent, StyledElements, Wirecloud */
+/* globals encodeURIComponent, StyledElements, URLify, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -217,7 +217,7 @@
         });
 
         this.contextManager.modify({
-            title: data.title != null && data.title.trim() != "" ? data.title : data.name,
+            title: data.title != null && data.title.trim() !== "" ? data.title : data.name,
             name: data.name,
             owner: data.owner,
             description: data.description,
