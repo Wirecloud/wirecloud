@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<!--
+Copyright 2010 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original slides: Marcin Wichary (mwichary@google.com)
+Modifications: Ernest Delgado (ernestd@google.com)
+Alex Russell (slightlyoff@chromium.org)
+
+landslide modifications: Adam Zapletal (adamzap@gmail.com)
+Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <title>Integration with other GEs</title>
+        <!-- Styles -->
+        
+        <link rel="stylesheet" media="print" href="./fiwaretheme/css/print.css">
+        <link rel="stylesheet" media="screen, projection" href="./fiwaretheme/css/screen.css">
+        
+        
+        <!-- /Styles -->
+        <!-- Javascripts -->
+        
+        <script type="text/javascript" src="./fiwaretheme/js/slides.js"></script>
+        
+        
+        <!-- /Javascripts -->
+    </head>
+    <body>
+        <div id="blank"></div>
+        <div class="presentation">
+            <div id="current_presenter_notes">
+                <div id="presenter_note"></div>
+            </div>
+            <div class="slides">
+                
+                <div class="slide-wrapper">
+                    <section class="slide cover">
+                        
+
+                        <header class="slide-header"><h1>Integration with other GEs</h1><h2>Application Mashup (WireCloud) course @ http://edu.fiware.org</h2></header>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+
+                        <div class="navigation-tip">Use <kbd class="key">←</kbd> and <kbd class="key">→</kbd> to move around. Press <kbd class="key">h</kbd> for getting more info</div>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Integration with other GEs</h1>
+                            <h2><h2>Introduction</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Introduction</h2>
+                        </header>
+                        
+                        <div class="contents"><p>WireCloud provides integration with several of the generic enablers provided by
+by FIWARE. Some of those GE has been integrated in the core of WireCloud by
+means of providing a plugin for FIWARE. This core integration provides support
+for the following GEs:</p>
+<ul>
+<li>IdM</li>
+<li>WStore</li>
+<li>Orion Context Broker</li>
+<li>Object Storage</li>
+</ul>
+<p>In any case, widgets and operators can make use of other GE as some of them
+does require special support from WireCloud:</p>
+<ul>
+<li>Kurento</li>
+<li>CKAN</li>
+<li>...</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            3/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Introduction</h2>
+                        </header>
+                        
+                        <div class="contents"><p>This documnet will describe what can you expect from the integration of each of
+these generic enablers, from the perspective of an end-user and from the
+perpective of a developer.</p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            4/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Integration with other GEs</h1>
+                            <h2><h2>IdM</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>IdM</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>IdM is integrated directly in Wirecloud, there is no API for making request to
+  the IdM server from widgets/operators</li>
+<li>This integration provides the following features:<ul>
+<li>User authentication using IdM credentials</li>
+<li>Support for using the obtained OAuth2 token for making requests to
+  three-party services (including from widgets/operators)</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            6/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Integration with other GEs</h1>
+                            <h2><h2>WStore</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>WStore</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>WStore is integrated directly in WireCloud, there is no API for making request to the WStore from widgets/operators</li>
+<li>Requires IdM integration for using user credentials when connecting with the WStore</li>
+<li>This integration provides the following features:<ul>
+<li>Allow to browse WStore offerings</li>
+<li>Support for acquiring and installing offerings</li>
+<li>Support for uploading Wirecloud components to the WStore. Enabling you to easily create offering using those resources</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            8/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Integration with other GEs</h1>
+                            <h2><h2>Orion Context Broker</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Orion Context Broker</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>Orion Context Broker subscriptions/notifications requires what is called
+  ngsi-proxy (You have to deploy it for custom deployments, but there is a
+  global instance at FIWARE Lab)</li>
+<li>See the <a href="https://store.lab.fiware.org/search/keyword/OrionStarterKit">OrionStarterKit
+  offering</a>
+  available on FIWARE Lab for obtaining a set of generic widgets/operators and
+  some example mashups using the Orion Context Broker.</li>
+<li>Those widgets/operators will be enough for simple usages. In any case,
+  WireCloud provides JavaScript API that can be used for developing new
+  widgets/operators:<ul>
+<li>This API provides integration for authentication through the IdM</li>
+<li>Supports creating and modifying entities, querying, subscriptions, etc.</li>
+<li>Automatically cancels subscriptions created by widgets/operators when they
+  are unloaded</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            10/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Integration with other GEs</h1>
+                            <h2><h2>Object Storage</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Object Storage</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>WireCloud provides a JavaScript API:<ul>
+<li>Has minimal support for querying KeyStone services</li>
+<li>This API provides integration for authenticating through the KeyStone server using tokens obtained from the IdM server</li>
+<li>Supports uploading objects, download objects, deleting objects, listing containers, creating containers and deleting containers</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            12/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Integration with other GEs</h1>
+                            <h2><h2>Other GEs</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Other GEs</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Kurento</h3>
+<ul>
+<li><a href="http://catalogue.fiware.org/enablers/stream-oriented-kurento">Kurento</a> is a
+  WebRTC media server and a set of client APIs making simple the development of
+  advanced video applications for WWW and smartphone platforms.</li>
+<li>See the <a href="https://store.lab.fiware.org/search/keyword/KurentoStarterKit">KurentoStarterKit
+  offering</a>
+  available on FIWARE Lab for obtaining a set of widgets already using Kurento.</li>
+<li>You can develop widgets using Kurento without requiring special support from
+  WireCloud.</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            14/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Other GEs</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>CKAN</h3>
+<ul>
+<li>
+<p>CKAN is a powerful data management system that makes data <strong>accessible</strong> – by
+  providing tools to streamline <strong>publishing</strong>, sharing, <strong>finding</strong> and
+  <strong>using</strong> data. CKAN is aimed at data publishers (national and regional
+  governments, companies and organizations) wanting to make their data open and
+  available.</p>
+</li>
+<li>
+<p>See the <a href="https://store.lab.fiware.org/search/keyword/CKANStarterKit">CKANStarterKit
+  offering</a>
+  available on FIWARE Lab for obtaining a set of widgets/operators already using
+  CKAN.</p>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            15/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Other GEs</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Cosmos</h3>
+<ul>
+<li>Comsos is planned to be integrated soon. This integration will provide support
+  for:<ul>
+<li>using the webHDFS filesystem (uploading and downloading data being
+  consumed and produced by Cosmos)</li>
+<li>Integration with the Hive service: queue new jobs and retrieving their
+  results</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            16/17
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide back-cover">
+                        
+                        <div>Thanks!</div>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="1.2_Integration with other GEs.md">1.2_Integration with other GEs.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div id="toc" class="sidebar hidden">
+            <h2>Table of Contents</h2>
+            <table>
+                <caption>Table of Contents</caption>
+                
+                <tr id="toc-row-1">
+                    <th><a href="#slide1">Integration with other GEs</a></th>
+                    <td><a href="#slide1">1</a></td>
+                </tr>
+                
+                
+                <tr id="toc-row-2" class="sub">
+                    <th><a href="#slide2">Introduction</a></th>
+                    <td><a href="#slide2">2</a></td>
+                </tr>
+                
+                <tr id="toc-row-3" class="sub">
+                    <th><a href="#slide3">Introduction</a></th>
+                    <td><a href="#slide3">3</a></td>
+                </tr>
+                
+                <tr id="toc-row-4" class="sub">
+                    <th><a href="#slide4">Introduction</a></th>
+                    <td><a href="#slide4">4</a></td>
+                </tr>
+                
+                <tr id="toc-row-5" class="sub">
+                    <th><a href="#slide5">IdM</a></th>
+                    <td><a href="#slide5">5</a></td>
+                </tr>
+                
+                <tr id="toc-row-6" class="sub">
+                    <th><a href="#slide6">IdM</a></th>
+                    <td><a href="#slide6">6</a></td>
+                </tr>
+                
+                <tr id="toc-row-7" class="sub">
+                    <th><a href="#slide7">WStore</a></th>
+                    <td><a href="#slide7">7</a></td>
+                </tr>
+                
+                <tr id="toc-row-8" class="sub">
+                    <th><a href="#slide8">WStore</a></th>
+                    <td><a href="#slide8">8</a></td>
+                </tr>
+                
+                <tr id="toc-row-9" class="sub">
+                    <th><a href="#slide9">Orion Context Broker</a></th>
+                    <td><a href="#slide9">9</a></td>
+                </tr>
+                
+                <tr id="toc-row-10" class="sub">
+                    <th><a href="#slide10">Orion Context Broker</a></th>
+                    <td><a href="#slide10">10</a></td>
+                </tr>
+                
+                <tr id="toc-row-11" class="sub">
+                    <th><a href="#slide11">Object Storage</a></th>
+                    <td><a href="#slide11">11</a></td>
+                </tr>
+                
+                <tr id="toc-row-12" class="sub">
+                    <th><a href="#slide12">Object Storage</a></th>
+                    <td><a href="#slide12">12</a></td>
+                </tr>
+                
+                <tr id="toc-row-13" class="sub">
+                    <th><a href="#slide13">Other GEs</a></th>
+                    <td><a href="#slide13">13</a></td>
+                </tr>
+                
+                <tr id="toc-row-14" class="sub">
+                    <th><a href="#slide14">Other GEs</a></th>
+                    <td><a href="#slide14">14</a></td>
+                </tr>
+                
+                <tr id="toc-row-15" class="sub">
+                    <th><a href="#slide15">Other GEs</a></th>
+                    <td><a href="#slide15">15</a></td>
+                </tr>
+                
+                <tr id="toc-row-16" class="sub">
+                    <th><a href="#slide16">Other GEs</a></th>
+                    <td><a href="#slide16">16</a></td>
+                </tr>
+                
+                
+                
+                <tr id="toc-row-17">
+                    <th><a href="#slide17">-</a></th>
+                    <td><a href="#slide17">17</a></td>
+                </tr>
+                
+                
+            </table>
+        </div>
+        
+        <div id="help" class="sidebar hidden">
+            <h2>Help</h2>
+            <table>
+                <caption>Help</caption>
+                <tr>
+                    <th>Table of Contents</th>
+                    <td>t</td>
+                </tr>
+                <tr>
+                    <th>Exposé</th>
+                    <td>ESC</td>
+                </tr>
+                <tr>
+                    <th>Full screen slides</th>
+                    <td>e</td>
+                </tr>
+                <tr>
+                    <th>Presenter View</th>
+                    <td>p</td>
+                </tr>
+                <tr>
+                    <th>Source Files</th>
+                    <td>s</td>
+                </tr>
+                <tr>
+                    <th>Slide Numbers</th>
+                    <td>n</td>
+                </tr>
+                <tr>
+                    <th>Toggle screen blanking</th>
+                    <td>b</td>
+                </tr>
+                <tr>
+                    <th>Show/hide slide context</th>
+                    <td>c</td>
+                </tr>
+                <tr>
+                    <th>Notes</th>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th>Help</th>
+                    <td>h</td>
+                </tr>
+            </table>
+        </div>
+        <script>main()</script>
+    </body>
+</html>

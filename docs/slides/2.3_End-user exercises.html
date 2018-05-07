@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<!--
+Copyright 2010 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original slides: Marcin Wichary (mwichary@google.com)
+Modifications: Ernest Delgado (ernestd@google.com)
+Alex Russell (slightlyoff@chromium.org)
+
+landslide modifications: Adam Zapletal (adamzap@gmail.com)
+Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <title>WireCloud End-User Exercises</title>
+        <!-- Styles -->
+        
+        <link rel="stylesheet" media="print" href="./fiwaretheme/css/print.css">
+        <link rel="stylesheet" media="screen, projection" href="./fiwaretheme/css/screen.css">
+        
+        
+        <!-- /Styles -->
+        <!-- Javascripts -->
+        
+        <script type="text/javascript" src="./fiwaretheme/js/slides.js"></script>
+        
+        
+        <!-- /Javascripts -->
+    </head>
+    <body>
+        <div id="blank"></div>
+        <div class="presentation">
+            <div id="current_presenter_notes">
+                <div id="presenter_note"></div>
+            </div>
+            <div class="slides">
+                
+                <div class="slide-wrapper">
+                    <section class="slide cover">
+                        
+
+                        <header class="slide-header"><h1>WireCloud End-User Exercises</h1><h2>Application Mashup (WireCloud) course @ http://edu.fiware.org</h2></header>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+
+                        <div class="navigation-tip">Use <kbd class="key">←</kbd> and <kbd class="key">→</kbd> to move around. Press <kbd class="key">h</kbd> for getting more info</div>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Outline</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>WC-EU-1. Complete the basic concepts tutorial</li>
+<li>WC-EU-2. Multimedia viewer</li>
+<li>WC-EU-3. Install the Orion Starter Kit</li>
+<li>WC-EU-4. Create a your own Dashboard using the context broker</li>
+<li>WC-EU-5. Add basic video conference support into your dashboards</li>
+<li>WC-EU-6. Testing the Crowd detector widget</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            2/9
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide tutorialeasy">
+                        
+
+                        
+                        <div class="tutorial-level">Easy</div>
+                        
+                        <header class="slide-header">
+                            <h2>WC-EU-1. Complete the basic concepts tutorial</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>
+<p>Prerequisites</p>
+<ul>
+<li>A FIWARE Lab account</li>
+</ul>
+</li>
+<li>
+<p>Steps</p>
+<ul>
+<li>Go to Mashup portal page</li>
+<li>Click on the user menu -&gt; Tutorials -&gt; Basic concepts:
+        <img alt="Basic concepts tutorial" src="images/Basic concepts tutorial.png"/></li>
+<li>Follow the steps</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            3/9
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>WC-EU-2. Multimedia viewer</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>
+<p>Prerequisites</p>
+<ul>
+<li>WC-EU-1</li>
+</ul>
+</li>
+<li>
+<p>Steps</p>
+<ul>
+<li>Go to Mashup portal page</li>
+<li>Go to the marketplace and install the MultimediaPack offering</li>
+<li>Open the "Basic concepts tutorial" workspace created in the previous exercise</li>
+<li>Add a Multimedia Viewer widget</li>
+<li>Connect it so you can click on the videos provided by the YouTube browser widget</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            4/9
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>WC-EU-3. Install the Orion Starter Kit</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>
+<p>Prerequisites</p>
+<ul>
+<li>A FIWARE Lab account</li>
+</ul>
+</li>
+<li>
+<p>Steps</p>
+<ul>
+<li>Open the Mashup portal</li>
+<li>Go to the Marketplace</li>
+<li>Install the OrionStarterKit offering</li>
+<li>Create a new workspace using the provided "NGSI map visualization example" template</li>
+</ul>
+</li>
+<li>
+<p>Hints</p>
+<ul>
+<li>Use the template field when creating the new workspace</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            5/9
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>WC-EU-4. Create a your own Dashboard using the context broker</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>
+<p>Prerequisites</p>
+<ul>
+<li>WC-EU-3</li>
+</ul>
+</li>
+<li>
+<p>Steps</p>
+<ul>
+<li>Open the Mashup portal</li>
+<li>Browser available context on the global Orion instance (orion.lab.fiware.org)</li>
+<li>Use the "NGSI source" and "NGSI Entity 2 PoI" operators connected to a map viewer widget visualizing the selected data from the Context Broker</li>
+</ul>
+</li>
+<li>
+<p>Hints</p>
+<ul>
+<li>Search for context broker data (Fill the search field with "tags: ngsi10") on https://data.lab.fiware.org<ul>
+<li>Inspect the payload metadata field for getting the parameters to use for retrieving the data: entity type, id pattern, ...</li>
+</ul>
+</li>
+<li>Use the NGSI browser widget (experimental)</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            6/9
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>WC-EU-5. Add basic video conference support into your dashboards</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>
+<p>Prerequisites</p>
+<ul>
+<li>Two FIWARE Lab accounts</li>
+<li>KurentoStarterKit installed</li>
+</ul>
+</li>
+<li>
+<p>Steps</p>
+<ul>
+<li>Create a new Workspace</li>
+<li>Add the Kurento one2one widget</li>
+<li>Make your dashboard public</li>
+<li>Open it also with the other user</li>
+<li>Fill the input field on the one2one widget with the username of the other user</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            7/9
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>WC-EU-6. Testing the Crowd detector widget</h2>
+                        </header>
+                        
+                        <div class="contents"><ul>
+<li>
+<p>Prerequisites</p>
+<ul>
+<li>KurentoStarterKit installed</li>
+</ul>
+</li>
+<li>
+<p>Steps</p>
+<ul>
+<li>Create a new Workspace using the crowd detector example mashup</li>
+<li>Create one or several polygons and click on the Editing button</li>
+</ul>
+</li>
+</ul></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            8/9
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide back-cover">
+                        
+                        <div>Thanks!</div>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="2.3_End-user exercises.md">2.3_End-user exercises.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div id="toc" class="sidebar hidden">
+            <h2>Table of Contents</h2>
+            <table>
+                <caption>Table of Contents</caption>
+                
+                <tr id="toc-row-1">
+                    <th><a href="#slide1">WireCloud End-User Exercises</a></th>
+                    <td><a href="#slide1">1</a></td>
+                </tr>
+                
+                
+                <tr id="toc-row-2" class="sub">
+                    <th><a href="#slide2">Outline</a></th>
+                    <td><a href="#slide2">2</a></td>
+                </tr>
+                
+                <tr id="toc-row-3" class="sub">
+                    <th><a href="#slide3">WC-EU-1. Complete the basic concepts tutorial</a></th>
+                    <td><a href="#slide3">3</a></td>
+                </tr>
+                
+                <tr id="toc-row-4" class="sub">
+                    <th><a href="#slide4">WC-EU-2. Multimedia viewer</a></th>
+                    <td><a href="#slide4">4</a></td>
+                </tr>
+                
+                <tr id="toc-row-5" class="sub">
+                    <th><a href="#slide5">WC-EU-3. Install the Orion Starter Kit</a></th>
+                    <td><a href="#slide5">5</a></td>
+                </tr>
+                
+                <tr id="toc-row-6" class="sub">
+                    <th><a href="#slide6">WC-EU-4. Create a your own Dashboard using the context broker</a></th>
+                    <td><a href="#slide6">6</a></td>
+                </tr>
+                
+                <tr id="toc-row-7" class="sub">
+                    <th><a href="#slide7">WC-EU-5. Add basic video conference support into your dashboards</a></th>
+                    <td><a href="#slide7">7</a></td>
+                </tr>
+                
+                <tr id="toc-row-8" class="sub">
+                    <th><a href="#slide8">WC-EU-6. Testing the Crowd detector widget</a></th>
+                    <td><a href="#slide8">8</a></td>
+                </tr>
+                
+                
+                
+                <tr id="toc-row-9">
+                    <th><a href="#slide9">-</a></th>
+                    <td><a href="#slide9">9</a></td>
+                </tr>
+                
+                
+            </table>
+        </div>
+        
+        <div id="help" class="sidebar hidden">
+            <h2>Help</h2>
+            <table>
+                <caption>Help</caption>
+                <tr>
+                    <th>Table of Contents</th>
+                    <td>t</td>
+                </tr>
+                <tr>
+                    <th>Exposé</th>
+                    <td>ESC</td>
+                </tr>
+                <tr>
+                    <th>Full screen slides</th>
+                    <td>e</td>
+                </tr>
+                <tr>
+                    <th>Presenter View</th>
+                    <td>p</td>
+                </tr>
+                <tr>
+                    <th>Source Files</th>
+                    <td>s</td>
+                </tr>
+                <tr>
+                    <th>Slide Numbers</th>
+                    <td>n</td>
+                </tr>
+                <tr>
+                    <th>Toggle screen blanking</th>
+                    <td>b</td>
+                </tr>
+                <tr>
+                    <th>Show/hide slide context</th>
+                    <td>c</td>
+                </tr>
+                <tr>
+                    <th>Notes</th>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th>Help</th>
+                    <td>h</td>
+                </tr>
+            </table>
+        </div>
+        <script>main()</script>
+    </body>
+</html>

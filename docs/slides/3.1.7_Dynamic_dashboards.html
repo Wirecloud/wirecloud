@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<!--
+Copyright 2010 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original slides: Marcin Wichary (mwichary@google.com)
+Modifications: Ernest Delgado (ernestd@google.com)
+Alex Russell (slightlyoff@chromium.org)
+
+landslide modifications: Adam Zapletal (adamzap@gmail.com)
+Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <title>Dynamic dashboards</title>
+        <!-- Styles -->
+        
+        <link rel="stylesheet" media="print" href="./fiwaretheme/css/print.css">
+        <link rel="stylesheet" media="screen, projection" href="./fiwaretheme/css/screen.css">
+        
+        
+        <!-- /Styles -->
+        <!-- Javascripts -->
+        
+        <script type="text/javascript" src="./fiwaretheme/js/slides.js"></script>
+        
+        
+        <!-- /Javascripts -->
+    </head>
+    <body>
+        <div id="blank"></div>
+        <div class="presentation">
+            <div id="current_presenter_notes">
+                <div id="presenter_note"></div>
+            </div>
+            <div class="slides">
+                
+                <div class="slide-wrapper">
+                    <section class="slide cover">
+                        
+
+                        <header class="slide-header"><h1>Dynamic dashboards</h1><h2>Application Mashup (WireCloud) course @ http://edu.fiware.org</h2></header>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+
+                        <div class="navigation-tip">Use <kbd class="key">←</kbd> and <kbd class="key">→</kbd> to move around. Press <kbd class="key">h</kbd> for getting more info</div>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Dynamic dashboards</h1>
+                            <h2><h2>Introduction</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Introduction</h2>
+                        </header>
+                        
+                        <div class="contents"><p>This tutorial will show you how to use the Dashboard Management API from
+widgets and operators by providing some examples of what can be done by using
+it.</p>
+<p>Widgets and operators using the Dashboard Management API will be able to add new
+widgets/operators to the current dashboards. Widget and operators using the
+Dasbhaord Management API will have full control over the created widgets and
+operators. For example, they will be able to configure the wiring connections,
+close them, assigning custom values to their preferences, etc.</p>
+<p>You can find the reference documentation of the Dashboard Management API on the
+<a href="https://wirecloud.readthedocs.org/en/latest/widgetapi/widgetapi/">WidgetAPI documentation</a> (Search <code>DashboardManagement</code> to discover the relevant
+documentation sections).</p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            3/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Dynamic dashboards</h1>
+                            <h2><h2>Enabling the Dashboard Management API</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Enabling the Dashboard Management API</h2>
+                        </header>
+                        
+                        <div class="contents"><p>The first step for being able to use the Dashboard Management API is to add the
+<code>DashboardManagement</code> feature as a requirement of the widget/operator.</p>
+<p>For example, if you use the xml version of the MACDL this is done by adding the
+following code inside the <code>&lt;widget&gt;</code> or <code>&lt;operator&gt;</code> element (depending if you
+are adding this feature into a widget or an operator):</p>
+<div class="codehilite"><pre><span class="nt">&lt;requirements&gt;</span>
+    <span class="nt">&lt;feature</span> <span class="na">name=</span><span class="s">&quot;DashboardManagement&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/requirements&gt;</span>
+</pre></div></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            5/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Dynamic dashboards</h1>
+                            <h2><h2>Videoconference example</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Videoconference example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Introduction</h3>
+<p>This example will show you how to use the <em>Kurento one2one</em> widget for providing
+videoconferece support into a thrid party widget.</p>
+<p>The steps for adding that functionallity are:</p>
+<ol>
+<li>Enable the Dasbhoard Management API (as shown in the previous section)</li>
+<li>Add the <em>Kurento One2one</em> widget into the current dashboard</li>
+<li>Create some dynamic endpoints on the thrid party widget/operator</li>
+<li>Connect those endpoints with the ones provided by the <em>Kurento One2one</em>
+widget</li>
+<li>Wait until the <em>Kurento One2one</em> connects with the kurento service</li>
+<li>Start the videoconference by sending a call event to the <em>Kurento One2one</em> widget</li>
+</ol></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            7/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Videoconference example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Adding the one2one widget</h3>
+<p>You can add the <em>Kurento One2one</em> widget to the current dashboard using the
+<a href="https://wirecloud.readthedocs.org/en/latest/widgetapi/widgetapi/#mashupplatformmashupaddwidget-method"><code>addWidget</code> method</a>. For example, using the following code:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">mashup</span><span class="p">.</span><span class="nx">addWidget</span><span class="p">(</span><span class="s1">&#39;CoNWeT/kuernto-one2one/1.0&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;permissions&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;close&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;configure&quot;</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;preferences&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stand-alone&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;top&quot;</span><span class="o">:</span> <span class="s2">&quot;0px&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;left&quot;</span><span class="o">:</span> <span class="s2">&quot;66%&quot;</span>
+<span class="p">});</span>
+</pre></div></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            8/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Videoconference example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Adding the one2one widget</h3>
+<p>The previous code will add the <em>Kurento One2one</em> widget placed it at an static
+position: 0px, 66%. Also, we are using the <code>permissions</code> option to block users
+to configure and close the <em>Kurento One2one</em> widget. By using the <code>preferences</code>
+options, we are configuring it in non-standalone mode.</p>
+<p>If you are adding the videoconference support into a widget, probably you are
+creating the videoconference because the user has clicked some button. A better
+alternative to to use the <code>top</code> and <code>left</code> options, in this case, is to use the
+<code>refposition</code> option. This way, the <em>Kurento One2one</em> widget will be placed near
+the button the user has clicked.</p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            9/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Videoconference example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Adding the one2one widget</h3>
+<p>To use the <code>refposition</code> option, you have to obtain a <code>ClientRect</code> instance
+representing your button, you can obtain such an object by using the
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect"><code>getBoundingClientRect</code></a> method:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">one2one_widget</span> <span class="o">=</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">mashup</span><span class="p">.</span><span class="nx">addWidget</span><span class="p">(</span><span class="s1">&#39;CoNWeT/kuernto-one2one/1.0&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;permissions&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;close&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;configure&quot;</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;preferences&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stand-alone&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;refposition&quot;</span><span class="o">:</span> <span class="nx">button</span><span class="p">.</span><span class="nx">getBoundingClientRect</span><span class="p">()</span>
+<span class="p">});</span>
+</pre></div></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            10/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Videoconference example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Wiring configuration</h3>
+<p>We can make use the enpoints defined in the widget/operator description
+(<code>config.xml</code> file) for connecting with the <em>Kurento One2one</em> widget, so it's
+not mandatory to create new endpoints in a dynamic way. However, by creating
+them using the Dashboard Management API we are declaring that they are going to
+be used exclusively from the widget/operator code: Users won't be able to create
+connections using those endpoint in the <em>Wiring Editor</em> view.</p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            11/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Videoconference example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Wiring configuration</h3>
+<p>The needed endpoints can be created using this code:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">call_endpoint</span> <span class="o">=</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">createOutputEndpoint</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">state_endpoint</span> <span class="o">=</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">createInputEndpoint</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;REGISTERED&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Update the call button that tiggered the videoconference to become a</span>
+        <span class="c1">// hang button. This button should call one2one_widget.remove() to end</span>
+        <span class="c1">// the videoconference</span>
+
+        <span class="c1">// By sending this event, the one2one widget will start the videoconferece</span>
+        <span class="nx">call_endpoint</span><span class="p">.</span><span class="nx">pushEvent</span><span class="p">(</span><span class="nx">information</span><span class="p">.</span><span class="nx">username</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;ENABLED_CALL&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">one2one_widget</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<blockquote>
+<p><strong>Note</strong>: If you are developing an operator you should use
+<code>MashupPlatform.operator.createOutputEndpoint</code> and
+<code>MashupPlatform.operator.createInputEndpoint</code> instead.</p>
+</blockquote></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            12/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Videoconference example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Wiring configuration</h3>
+<p>The connection between those dynamic endpoint and the endpoints of the
+<em>Kurento One2one</em> widget can be established using the following code:</p>
+<div class="codehilite"><pre><span class="nx">call_endpoint</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">one2one_widget</span><span class="p">.</span><span class="nx">inputs</span><span class="p">[</span><span class="s1">&#39;call-user&#39;</span><span class="p">]);</span>
+<span class="nx">one2one_widget</span><span class="p">.</span><span class="nx">outputs</span><span class="p">[</span><span class="s1">&#39;call-state&#39;</span><span class="p">].</span><span class="nx">connect</span><span class="p">(</span><span class="nx">state_endpoint</span><span class="p">);</span>
+</pre></div></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            13/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Dynamic dashboards</h1>
+                            <h2><h2>Map example</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Map example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Introduction</h3>
+<p>This example will show you how to use the <em>Map viewer</em> widget for displaying
+some Point of Interest in a map in a dynamic way (without displaying a map
+viewer widget all the time).</p>
+<p>The main difference with the previous example is that in this case, we are going
+to use a <em>NGSI Entity 2 PoI</em> operator for transforming the event data to be
+compatible with the one expected by the <em>Map Viewer</em> widget.</p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            15/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Map example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Adding the Map viewer widget</h3>
+<p>This step can be accomplished in the same way as we did with the <em>Kurento One2one</em> widget:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">map_widget</span> <span class="o">=</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">mashup</span><span class="p">.</span><span class="nx">addWidget</span><span class="p">(</span><span class="s1">&#39;CoNWeT/map-viewer/2.5.7&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;permissions&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;close&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;configure&quot;</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;preferences&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stand-alone&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;top&quot;</span><span class="o">:</span> <span class="s2">&quot;0px&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;left&quot;</span><span class="o">:</span> <span class="s2">&quot;66%&quot;</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Remember to use <code>refposition</code> in replacement of the <code>top</code> and <code>left</code> options if
+applicable.</p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            16/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Map example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Adding the NGSI entity to PoI operator</h3>
+<p>The <a href="https://wirecloud.readthedocs.org/en/latest/widgetapi/widgetapi/#mashupplatformmashupaddoperator-method"><code>addOperator</code> method</a> works in a very similar way to the
+<code>addWidget</code> operator. E.g. for adding the <em>NGSI Entity 2 PoI</em> operator, we can
+make use of the following code:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">operator</span> <span class="o">=</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">mashup</span><span class="p">.</span><span class="nx">addOperator</span><span class="p">(</span><span class="s1">&#39;CoNWeT/ngsientity2poi/3.0.3&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;preferences&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;coordinates_attr&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="s2">&quot;position&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<blockquote>
+<p><strong>Note</strong>: Rembember to change the <code>coordinates_attr</code> value according to your
+requirements.</p>
+</blockquote></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            17/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Map example</h2>
+                        </header>
+                        
+                        <div class="contents"><h3>Wiring configuration</h3>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">poi_endpoint</span> <span class="o">=</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">wiring</span><span class="p">.</span><span class="nx">createOutputEndpoint</span><span class="p">();</span>
+
+<span class="nx">poi_endpoint</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">operator</span><span class="p">.</span><span class="nx">inputs</span><span class="p">[</span><span class="s1">&#39;entityInput&#39;</span><span class="p">]);</span>
+<span class="nx">operator</span><span class="p">.</span><span class="nx">outputs</span><span class="p">[</span><span class="s1">&#39;poiOutput&#39;</span><span class="p">].</span><span class="nx">connect</span><span class="p">(</span><span class="nx">map_widget</span><span class="p">.</span><span class="nx">inputs</span><span class="p">[</span><span class="s1">&#39;poiInput&#39;</span><span class="p">]);</span>
+</pre></div>
+
+
+<p>Now you can send events using <code>poi_endpoint</code>. E.g.:</p>
+<div class="codehilite"><pre><span class="nx">poi_endpoint</span><span class="p">.</span><span class="nx">pushEvent</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;Big Ben&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;position&quot;</span><span class="o">:</span> <span class="s2">&quot;51.5008715, -0.1259872&quot;</span>
+<span class="p">});</span>
+</pre></div></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            18/19
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide back-cover">
+                        
+                        <div>Thanks!</div>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.7_Dynamic_dashboards.md">3.1.7_Dynamic_dashboards.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div id="toc" class="sidebar hidden">
+            <h2>Table of Contents</h2>
+            <table>
+                <caption>Table of Contents</caption>
+                
+                <tr id="toc-row-1">
+                    <th><a href="#slide1">Dynamic dashboards</a></th>
+                    <td><a href="#slide1">1</a></td>
+                </tr>
+                
+                
+                <tr id="toc-row-2" class="sub">
+                    <th><a href="#slide2">Introduction</a></th>
+                    <td><a href="#slide2">2</a></td>
+                </tr>
+                
+                <tr id="toc-row-3" class="sub">
+                    <th><a href="#slide3">Introduction</a></th>
+                    <td><a href="#slide3">3</a></td>
+                </tr>
+                
+                <tr id="toc-row-4" class="sub">
+                    <th><a href="#slide4">Enabling the Dashboard Management API</a></th>
+                    <td><a href="#slide4">4</a></td>
+                </tr>
+                
+                <tr id="toc-row-5" class="sub">
+                    <th><a href="#slide5">Enabling the Dashboard Management API</a></th>
+                    <td><a href="#slide5">5</a></td>
+                </tr>
+                
+                <tr id="toc-row-6" class="sub">
+                    <th><a href="#slide6">Videoconference example</a></th>
+                    <td><a href="#slide6">6</a></td>
+                </tr>
+                
+                <tr id="toc-row-7" class="sub">
+                    <th><a href="#slide7">Videoconference example</a></th>
+                    <td><a href="#slide7">7</a></td>
+                </tr>
+                
+                <tr id="toc-row-8" class="sub">
+                    <th><a href="#slide8">Videoconference example</a></th>
+                    <td><a href="#slide8">8</a></td>
+                </tr>
+                
+                <tr id="toc-row-9" class="sub">
+                    <th><a href="#slide9">Videoconference example</a></th>
+                    <td><a href="#slide9">9</a></td>
+                </tr>
+                
+                <tr id="toc-row-10" class="sub">
+                    <th><a href="#slide10">Videoconference example</a></th>
+                    <td><a href="#slide10">10</a></td>
+                </tr>
+                
+                <tr id="toc-row-11" class="sub">
+                    <th><a href="#slide11">Videoconference example</a></th>
+                    <td><a href="#slide11">11</a></td>
+                </tr>
+                
+                <tr id="toc-row-12" class="sub">
+                    <th><a href="#slide12">Videoconference example</a></th>
+                    <td><a href="#slide12">12</a></td>
+                </tr>
+                
+                <tr id="toc-row-13" class="sub">
+                    <th><a href="#slide13">Videoconference example</a></th>
+                    <td><a href="#slide13">13</a></td>
+                </tr>
+                
+                <tr id="toc-row-14" class="sub">
+                    <th><a href="#slide14">Map example</a></th>
+                    <td><a href="#slide14">14</a></td>
+                </tr>
+                
+                <tr id="toc-row-15" class="sub">
+                    <th><a href="#slide15">Map example</a></th>
+                    <td><a href="#slide15">15</a></td>
+                </tr>
+                
+                <tr id="toc-row-16" class="sub">
+                    <th><a href="#slide16">Map example</a></th>
+                    <td><a href="#slide16">16</a></td>
+                </tr>
+                
+                <tr id="toc-row-17" class="sub">
+                    <th><a href="#slide17">Map example</a></th>
+                    <td><a href="#slide17">17</a></td>
+                </tr>
+                
+                <tr id="toc-row-18" class="sub">
+                    <th><a href="#slide18">Map example</a></th>
+                    <td><a href="#slide18">18</a></td>
+                </tr>
+                
+                
+                
+                <tr id="toc-row-19">
+                    <th><a href="#slide19">-</a></th>
+                    <td><a href="#slide19">19</a></td>
+                </tr>
+                
+                
+            </table>
+        </div>
+        
+        <div id="help" class="sidebar hidden">
+            <h2>Help</h2>
+            <table>
+                <caption>Help</caption>
+                <tr>
+                    <th>Table of Contents</th>
+                    <td>t</td>
+                </tr>
+                <tr>
+                    <th>Exposé</th>
+                    <td>ESC</td>
+                </tr>
+                <tr>
+                    <th>Full screen slides</th>
+                    <td>e</td>
+                </tr>
+                <tr>
+                    <th>Presenter View</th>
+                    <td>p</td>
+                </tr>
+                <tr>
+                    <th>Source Files</th>
+                    <td>s</td>
+                </tr>
+                <tr>
+                    <th>Slide Numbers</th>
+                    <td>n</td>
+                </tr>
+                <tr>
+                    <th>Toggle screen blanking</th>
+                    <td>b</td>
+                </tr>
+                <tr>
+                    <th>Show/hide slide context</th>
+                    <td>c</td>
+                </tr>
+                <tr>
+                    <th>Notes</th>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th>Help</th>
+                    <td>h</td>
+                </tr>
+            </table>
+        </div>
+        <script>main()</script>
+    </body>
+</html>

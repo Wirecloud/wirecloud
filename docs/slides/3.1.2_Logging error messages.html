@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<!--
+Copyright 2010 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original slides: Marcin Wichary (mwichary@google.com)
+Modifications: Ernest Delgado (ernestd@google.com)
+Alex Russell (slightlyoff@chromium.org)
+
+landslide modifications: Adam Zapletal (adamzap@gmail.com)
+Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <title>Logging error messages</title>
+        <!-- Styles -->
+        
+        <link rel="stylesheet" media="print" href="./fiwaretheme/css/print.css">
+        <link rel="stylesheet" media="screen, projection" href="./fiwaretheme/css/screen.css">
+        
+        
+        <!-- /Styles -->
+        <!-- Javascripts -->
+        
+        <script type="text/javascript" src="./fiwaretheme/js/slides.js"></script>
+        
+        
+        <!-- /Javascripts -->
+    </head>
+    <body>
+        <div id="blank"></div>
+        <div class="presentation">
+            <div id="current_presenter_notes">
+                <div id="presenter_note"></div>
+            </div>
+            <div class="slides">
+                
+                <div class="slide-wrapper">
+                    <section class="slide cover">
+                        
+
+                        <header class="slide-header"><h1>Logging error messages</h1><h2>Application Mashup (WireCloud) course @ http://edu.fiware.org</h2></header>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+
+                        <div class="navigation-tip">Use <kbd class="key">←</kbd> and <kbd class="key">→</kbd> to move around. Press <kbd class="key">h</kbd> for getting more info</div>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide section-title">
+                        
+
+                        <header class="section-title-header">
+                            <h1>Logging error messages</h1>
+                            <h2><h2>Logging error messages</h2></h2>
+                        </header>
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide has_code">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Logging error messages</h2>
+                        </header>
+                        
+                        <div class="contents"><p>WireCloud provides support for logging error messages from widgets/operators. Those messages will be stored as info associated to the widget/operator and will be used to provide feedback to the user/developer (not only while the developer is testing a widget/operator, but also as part of bug reports).</p>
+<div class="highlight"><pre><span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is an error message&quot;</span><span class="p">);</span> <span class="c1">// defaults to MashupPlatform.log.ERROR</span>
+<span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is also an error message&quot;</span><span class="p">,</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">ERROR</span><span class="p">);</span>
+<span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is a warning message&quot;</span><span class="p">,</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">WARN</span><span class="p">);</span>
+<span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is an info message&quot;</span><span class="p">,</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">INFO</span><span class="p">);</span>
+</pre></div>
+</div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            3/10
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Logging error messages</h2>
+                        </header>
+                        
+                        <div class="contents"><p>WireCloud will provide a visual hint about widgets/operators having problems when a widget/operator calls to the log method using the ERROR level. This is an example of the visual hint for widgets:</p>
+<p><img class="screenshot" src="images/Error messages1.png"/></p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            4/10
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Logging error messages</h2>
+                        </header>
+                        
+                        <div class="contents"><p>Clicking on the alert icon will open the logs view. Anyway, you can always visit this view at any time using the widget's dropdown menu:</p>
+<p><img class="screenshot" src="images/Error messages2.png"/></p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            5/10
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Logging error messages</h2>
+                        </header>
+                        
+                        <div class="contents"><p><img class="screenshot screenshot-sm" src="images/Error messages3.png"/></p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            6/10
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide has_code">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Logging error messages</h2>
+                        </header>
+                        
+                        <div class="contents"><p>The API for logging messages from operators is very similar:</p>
+<div class="highlight"><pre><span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">operator</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is an error message&quot;</span><span class="p">);</span> <span class="c1">// defaults to MashupPlatform.log.ERROR</span>
+<span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">operator</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is also an error message&quot;</span><span class="p">,</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">ERROR</span><span class="p">);</span>
+<span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">operator</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is a warning message&quot;</span><span class="p">,</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">WARN</span><span class="p">);</span>
+<span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">operator</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This is an info message&quot;</span><span class="p">,</span> <span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">INFO</span><span class="p">);</span>
+</pre></div>
+</div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            7/10
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Logging error messages</h2>
+                        </header>
+                        
+                        <div class="contents"><p>Since Opertators are not shown in the Editor view, WireCloud provides you graphical elements to inform you when an Operator arises an error. If you are in the Editor view, you will be able to see that an error bag with the number of detected errors appears attached to the Wiring element in the menu, as you can note in the following image:</p>
+<p><img class="screenshot" src="images/Error messages4.png"/></p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            8/10
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide">
+                        
+
+                        
+                        <header class="slide-header">
+                            <h2>Logging error messages</h2>
+                        </header>
+                        
+                        <div class="contents"><p>When you are in the Wiring View, you will easily identify the Operator that caused the error because it will have an alert icon attached as you can be seen in the following picture:</p>
+<p><img class="screenshot" src="images/Error messages5.png"/></p>
+<p>As happened with the widgets, clicking on the alert icon will show you the logs view. In the same way, you can use the widget's dropdown menu at any time to show that view.</p></div>
+                        
+
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            <aside class="page_number">
+                            9/10
+                            </aside>
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+                <div class="slide-wrapper">
+                    <section class="slide back-cover">
+                        
+                        <div>Thanks!</div>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+                        
+                        <footer>
+                            
+                            <aside class="source">Source: <a href="3.1.2_Logging error messages.md">3.1.2_Logging error messages.md</a></aside>
+                            
+                            
+                            
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
+                            
+                        </footer>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
+                            
+                            </section>
+                        </div>
+                    </section>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div id="toc" class="sidebar hidden">
+            <h2>Table of Contents</h2>
+            <table>
+                <caption>Table of Contents</caption>
+                
+                <tr id="toc-row-1">
+                    <th><a href="#slide1">Logging error messages</a></th>
+                    <td><a href="#slide1">1</a></td>
+                </tr>
+                
+                
+                <tr id="toc-row-2" class="sub">
+                    <th><a href="#slide2">Logging error messages</a></th>
+                    <td><a href="#slide2">2</a></td>
+                </tr>
+                
+                <tr id="toc-row-3" class="sub">
+                    <th><a href="#slide3">Logging error messages</a></th>
+                    <td><a href="#slide3">3</a></td>
+                </tr>
+                
+                <tr id="toc-row-4" class="sub">
+                    <th><a href="#slide4">Logging error messages</a></th>
+                    <td><a href="#slide4">4</a></td>
+                </tr>
+                
+                <tr id="toc-row-5" class="sub">
+                    <th><a href="#slide5">Logging error messages</a></th>
+                    <td><a href="#slide5">5</a></td>
+                </tr>
+                
+                <tr id="toc-row-6" class="sub">
+                    <th><a href="#slide6">Logging error messages</a></th>
+                    <td><a href="#slide6">6</a></td>
+                </tr>
+                
+                <tr id="toc-row-7" class="sub">
+                    <th><a href="#slide7">Logging error messages</a></th>
+                    <td><a href="#slide7">7</a></td>
+                </tr>
+                
+                <tr id="toc-row-8" class="sub">
+                    <th><a href="#slide8">Logging error messages</a></th>
+                    <td><a href="#slide8">8</a></td>
+                </tr>
+                
+                <tr id="toc-row-9" class="sub">
+                    <th><a href="#slide9">Logging error messages</a></th>
+                    <td><a href="#slide9">9</a></td>
+                </tr>
+                
+                
+                
+                <tr id="toc-row-10">
+                    <th><a href="#slide10">-</a></th>
+                    <td><a href="#slide10">10</a></td>
+                </tr>
+                
+                
+            </table>
+        </div>
+        
+        <div id="help" class="sidebar hidden">
+            <h2>Help</h2>
+            <table>
+                <caption>Help</caption>
+                <tr>
+                    <th>Table of Contents</th>
+                    <td>t</td>
+                </tr>
+                <tr>
+                    <th>Exposé</th>
+                    <td>ESC</td>
+                </tr>
+                <tr>
+                    <th>Full screen slides</th>
+                    <td>e</td>
+                </tr>
+                <tr>
+                    <th>Presenter View</th>
+                    <td>p</td>
+                </tr>
+                <tr>
+                    <th>Source Files</th>
+                    <td>s</td>
+                </tr>
+                <tr>
+                    <th>Slide Numbers</th>
+                    <td>n</td>
+                </tr>
+                <tr>
+                    <th>Toggle screen blanking</th>
+                    <td>b</td>
+                </tr>
+                <tr>
+                    <th>Show/hide slide context</th>
+                    <td>c</td>
+                </tr>
+                <tr>
+                    <th>Notes</th>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th>Help</th>
+                    <td>h</td>
+                </tr>
+            </table>
+        </div>
+        <script>main()</script>
+    </body>
+</html>
