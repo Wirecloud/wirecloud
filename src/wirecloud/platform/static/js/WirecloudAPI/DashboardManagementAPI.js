@@ -149,11 +149,11 @@
         if (options == null) {
             options = {};
         }
-        var dialog = new Wirecloud.ui.AlertWindowMenu();
-
-        dialog.setMsg(Wirecloud.Utils.interpolate(Wirecloud.Utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
-            name: workspace.owner + '/' + workspace.name
-        }));
+        var dialog = new Wirecloud.ui.AlertWindowMenu(
+            Wirecloud.Utils.interpolate(Wirecloud.Utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
+                name: workspace.owner + '/' + workspace.name
+            })
+        );
         dialog.setHandler(function () {
             Wirecloud.removeWorkspace(workspace).then(options.onSuccess, options.onFailure);
         }.bind(this));

@@ -222,9 +222,7 @@
         remove: function remove() {
 
             if (privates.get(this).widgets.length) {
-                var dialog = new Wirecloud.ui.AlertWindowMenu();
-
-                dialog.setMsg(utils.gettext("The tab's widgets will also be removed. Would you like to continue?"));
+                var dialog = new Wirecloud.ui.AlertWindowMenu(utils.gettext("The tab's widgets will also be removed. Would you like to continue?"));
                 dialog.setHandler(function () {
                     _remove.call(this);
                 }.bind(this));

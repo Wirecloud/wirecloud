@@ -384,10 +384,10 @@
         message = utils.gettext("The following operation is irreversible and removes the behaviour completely. Would you like to continue?");
 
         dialog = new Wirecloud.ui.AlertWindowMenu({
+            message: message,
             acceptLabel: utils.gettext("Continue"),
             cancelLabel: utils.gettext("No, thank you")
         });
-        dialog.setMsg(message);
         dialog.acceptHandler = function () {
             this.dispatchEvent('optremove');
         }.bind(this);

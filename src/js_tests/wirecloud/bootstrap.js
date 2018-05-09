@@ -1,4 +1,4 @@
-Wirecloud = {
+const Wirecloud = {
     constants: {
         HTTP_STATUS_DESCRIPTIONS: {
             503: "Service unavailable"
@@ -10,7 +10,8 @@ Wirecloud = {
     },
     currentTheme: {
         templates: {
-            'wirecloud/logs/details': '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><h5>Exception details</h5><p><t:message/></p><h5>Stacktrace</h5><pre><t:stacktrace/></pre></s:styledgui>'
+            'wirecloud/logs/details': '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><h5>Exception details</h5><p><t:message/></p><h5>Stacktrace</h5><pre><t:stacktrace/></pre></s:styledgui>',
+            'wirecloud/modals/base': '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div>    <div class="wc-modal-title"><t:closebutton/><t:title/></div><t:body class="wc-modal-content"/><t:footer class="wc-modal-footer"/></div></s:styledgui>'
         }
     },
     location: {

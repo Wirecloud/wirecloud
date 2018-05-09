@@ -419,11 +419,11 @@
 
     WorkspaceView.prototype.remove = function remove() {
         return new Promise(function (resolve, reject) {
-            var dialog = new Wirecloud.ui.AlertWindowMenu();
-
-            dialog.setMsg(utils.interpolate(utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
-                name: this.title
-            }));
+            var dialog = new Wirecloud.ui.AlertWindowMenu(
+                utils.interpolate(utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
+                    name: this.title
+                })
+            );
             dialog.setHandler(function () {
                 this.model.remove().then(function () {
                     resolve();
