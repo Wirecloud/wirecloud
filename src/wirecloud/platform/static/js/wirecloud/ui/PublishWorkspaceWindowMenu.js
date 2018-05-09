@@ -176,6 +176,7 @@
     PublishWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         var key;
 
+        this.form.acceptButton.addClassName('busy');
         data.name = URLify(data.title);
 
         data.parametrization = {
@@ -190,15 +191,16 @@
             }
         }
 
-        this.workspace.publish(data).then(function () {
-            this.form.acceptButton.enable();
-            this.form.cancelButton.enable();
-            this.hide();
-        }.bind(this), function (reason) {
-            this.form.acceptButton.enable();
-            this.form.cancelButton.enable();
-            this.form.pSetMsgs([reason]);
-        }.bind(this));
+        this.workspace.publish(data).then(
+            () => {
+                this.hide();
+            }, (reason) => {
+                this.form.acceptButton.removeClassName('busy');
+                this.form.acceptButton.enable();
+                this.form.cancelButton.enable();
+                this.form.pSetMsgs([reason]);
+            }
+        );
     };
 
     Wirecloud.ui.PublishWorkspaceWindowMenu = PublishWorkspaceWindowMenu;
