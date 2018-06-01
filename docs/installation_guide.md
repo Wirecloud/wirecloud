@@ -823,7 +823,7 @@ On the WireCloud instance:
 2. Edit `settings.py`:
     - Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
     - Add `social_django` to `INSTALLED_APPS`
-    - Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` to `AUTHENTICATION_BACKENDS`. example:
+    - Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` and `django.contrib.auth.backends.ModelBackend` to `AUTHENTICATION_BACKENDS`. example:
 
         ```python
         AUTHENTICATION_BACKENDS = (
