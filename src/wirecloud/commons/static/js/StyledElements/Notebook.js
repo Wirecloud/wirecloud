@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -169,7 +170,7 @@
                 context.finalScrollLeft = currentTab.offsetLeft - padding;
                 break;
             case 'focus':
-                if (context.control.tabsById[command.tabId]) {
+                if (context.control.tabsById[command.tabId] == null) {
                     return false;
                 }
                 currentTab = context.control.tabsById[command.tabId].getTabElement();
@@ -193,11 +194,30 @@
                 stepTimes[i] = baseTime + (i * 100);
             }
 
+            context.step = 0;
             context.inc = Math.floor((context.finalScrollLeft - context.initialScrollLeft) / context.steps);
-            return stepTimes; // we have things to do
+            return new Promise((resolve, reject) => {
+                var doStep = function doStep() {
+                    var cont = stepFunc(context.step, context);
+
+                    if (cont) {
+                        var timeDiff = stepTimes[context.step] - (new Date()).getTime();
+                        if (timeDiff < 0) {
+                            timeDiff = 0;
+                        }
+
+                        context.step++;
+                        setTimeout(doStep, timeDiff);
+                    } else {
+                        resolve();
+                    }
+                };
+
+                doStep();
+            });
         };
 
-        this.transitionsQueue = new StyledElements.CommandQueue(context, initFunc, stepFunc);
+        this.transitionsQueue = new StyledElements.CommandQueue(context, initFunc);
 
         /* Code for handling internal events */
         this.moveLeftButton.addEventListener("click", this.shiftLeftTabs.bind(this));
@@ -286,13 +306,11 @@
      *
      * @name StyledElements.Notebook#shiftLeftTabs
      *
-     * @returns {StyledElements.Notebook}
-     *      The instance on which the member is called.
+     * @returns {Promise}
+     *     A promise tracking the progress of animation
      */
     Notebook.prototype.shiftLeftTabs = function shiftLeftTabs() {
-        this.transitionsQueue.addCommand({type: 'shiftLeft'});
-
-        return this;
+        return this.transitionsQueue.addCommand({type: 'shiftLeft'});
     };
 
     /**
@@ -300,13 +318,11 @@
      *
      * @name StyledElements.Notebook#shiftRightTabs
      *
-     * @returns {StyledElements.Notebook}
-     *      The instance on which the member is called.
+     * @returns {Promise}
+     *     A promise tracking the progress of animation
      */
     Notebook.prototype.shiftRightTabs = function shiftRightTabs() {
-        this.transitionsQueue.addCommand({type: 'shiftRight'});
-
-        return this;
+        return this.transitionsQueue.addCommand({type: 'shiftRight'});
     };
 
     /**
@@ -508,7 +524,7 @@
      * creado con la opción "focusOnSetVisible" activada, además se le pasará el
      * foco a la pestaña asociada.
      *
-     * @param {Number|Tab} tab instancia o identificador de la pestaña que se quiere eliminar.
+     * @param {Number|Tab} tab intance or tab id of the tab to make visible
      */
     Notebook.prototype.goToTab = function goToTab(tab, options) {
         var newTab, oldTab;
@@ -561,11 +577,26 @@
     };
 
     /**
-     * Establece el foco en la pestaña indicada, esto es, fuerza a que sea visible
-     * la pestaña en el area de pestañas del notebook.
+     * Set the focus on the indicated tab. That is, makes the tab visible on
+     * the tab area of the notebook.
+     *
+     * @param {Number|Tab} tab intance or tab id of the tab to focus
+     *
+     * @returns {Promise}
+     *     A promise tracking the progress of animation
      */
-    Notebook.prototype.focus = function focus(tabId) {
-        this.transitionsQueue.addCommand({type: 'focus', tabId: tabId});
+    Notebook.prototype.focus = function focus(tab) {
+        if (tab instanceof StyledElements.Tab) {
+            if (this.tabsById[tab.tabId] !== tab) {
+                throw new TypeError('tab is not owned by this notebook');
+            }
+        } else {
+            tab = this.tabsById[tab];
+            if (tab == null) {
+                throw new TypeError('Invalid tab id');
+            }
+        }
+        return this.transitionsQueue.addCommand({type: 'focus', tabId: tab.tabId});
     };
 
     Notebook.prototype.repaint = function repaint(temporal) {

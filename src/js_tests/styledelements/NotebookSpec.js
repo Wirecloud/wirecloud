@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,6 +33,7 @@
         beforeEach(function () {
             dom = document.createElement('div');
             document.body.appendChild(dom);
+            dom.innerHTML = "<style>.se-notebook-tab-area {overflow: hidden;padding:0px 12px;white-space: nowrap;width: 50px;} li {display:inline-block;padding:4px 15px;margin:0px 1px;}</style>";
         });
 
         afterEach(function () {
@@ -337,6 +339,61 @@
 
         });
 
+        describe("focus(tab)", () => {
+
+            var element;
+
+            beforeEach(() => {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+            });
+
+            it("throws an exception if tab is null", function () {
+                expect(() => {element.focus(null);}).toThrow(jasmine.any(TypeError));
+            });
+
+            it("throws an exception if tab is not a valid tab id", function () {
+                expect(() => {element.focus(404);}).toThrow(jasmine.any(TypeError));
+            });
+
+            it("should raise an exception if the passed tab is not owned by the notebook", function () {
+                var other_notebook = new StyledElements.Notebook();
+                var other_tab = other_notebook.createTab();
+                expect(function () {element.focus(other_tab);}).toThrow(jasmine.any(TypeError));
+            });
+
+            it("should scroll to the left if the tab is located on the left side", (done) => {
+                element.appendTo(dom);
+                var tab = element.createTab({name: "Tab 1"});
+                element.createTab({name: "mytab"});
+
+                // scroll to mytab
+                dom.querySelector('.se-notebook-tab-area').scrollLeft = 77;
+
+                var p = element.focus(tab);
+
+                p.then(() => {
+                    // this number depends on CSS
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(9);
+                    done();
+                });
+            });
+
+            it("should scroll to the right if the tab is located on the right side", (done) => {
+                element.appendTo(dom);
+                element.createTab({name: "Tab 1"});
+                var tab = element.createTab({name: "mytab"});
+
+                var p = element.focus(tab.tabId);
+
+                p.then(() => {
+                    // this number depends on CSS
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(77);
+                    done();
+                });
+            });
+        });
+
         describe("requestFullscreen()", function () {
             var element;
 
@@ -414,30 +471,68 @@
         });
 
         describe("shiftLeftTabs()", function () {
-            it("should no crash if there are no tabs", function () {
+
+            it("should no crash if there are no tabs", () => {
                 var element = new StyledElements.Notebook();
                 element.appendTo(dom);
-                expect(element.shiftLeftTabs()).toBe(element);
+                let p = element.shiftLeftTabs();
+                expect(p).toEqual(jasmine.any(Promise));
             });
 
-            it("should no crash if there are only one tab", function () {
+            it("should no crash if there are only one tab", () => {
                 var element = new StyledElements.Notebook();
                 element.appendTo(dom).createTab();
-                expect(element.shiftLeftTabs()).toBe(element);
+                let p = element.shiftLeftTabs();
+                expect(p).toEqual(jasmine.any(Promise));
+            });
+
+            it("should move tabs to the left", (done) => {
+                var element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                element.createTab({name: "Tab 1"});
+                element.createTab({name: "mytab"});
+
+                // scroll to mytab
+                dom.querySelector('.se-notebook-tab-area').scrollLeft = 77;
+
+                var p = element.shiftLeftTabs();
+
+                p.then(() => {
+                    // this number depends on CSS
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(9);
+                    done();
+                });
             });
         });
 
         describe("shiftRightTabs()", function () {
-            it("should no crash if there are no tabs", function () {
+            it("should no crash if there are no tabs", () => {
                 var element = new StyledElements.Notebook();
                 element.appendTo(dom);
-                expect(element.shiftRightTabs()).toBe(element);
+                let p = element.shiftRightTabs();
+                expect(p).toEqual(jasmine.any(Promise));
             });
 
-            it("should no crash if there are only one tab", function () {
+            it("should no crash if there are only one tab", () => {
                 var element = new StyledElements.Notebook();
                 element.appendTo(dom).createTab();
-                expect(element.shiftRightTabs()).toBe(element);
+                let p = element.shiftRightTabs();
+                expect(p).toEqual(jasmine.any(Promise));
+            });
+
+            it("should move tabs to the right", (done) => {
+                var element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                element.createTab({name: "Tab 1"});
+                element.createTab({name: "mytab"});
+
+                var p = element.shiftRightTabs();
+
+                p.then(() => {
+                    // this number depends on CSS
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(77);
+                    done();
+                });
             });
         });
 
