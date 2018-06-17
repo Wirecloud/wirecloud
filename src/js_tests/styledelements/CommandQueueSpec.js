@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,6 +33,18 @@
 
         describe("new CommandQueue(context, callback)", function () {
 
+            it("throws a TypeError exception when not passing context and callback parameters", () => {
+                expect(() => {
+                    new CommandQueue();
+                }).toThrowError(TypeError);
+            });
+
+            it("throws a TypeError exception when the callback parameters is not a function", () => {
+                expect(() => {
+                    new CommandQueue({}, null);
+                }).toThrowError(TypeError);
+            });
+
             it("works using basic options", function () {
                 var queue = new CommandQueue({}, function () {});
                 expect(queue.running).toBe(false);
@@ -53,6 +66,14 @@
                 callback = jasmine.createSpy('callback').and.callFake(function (context, command) {
                     if (command === "skip") {
                         return false;
+                    } else if (command === "exception") {
+                        throw Error("error message");
+                    } else if (command === "reject") {
+                        return new Promise(function (resolve, reject) {
+                            setTimeout(function () {
+                                reject(command);
+                            }, 200);
+                        });
                     } else {
                         return new Promise(function (resolve, reject) {
                             setTimeout(function () {
@@ -79,6 +100,30 @@
                 expect(queue.running).toBe(false);
                 expect(p).toEqual(jasmine.any(Promise));
                 p.then(done);
+            });
+
+            it("handles exceptions on the callback function", function (done) {
+                var p = queue.addCommand("exception");
+
+                // Command is resolved immediately so the queue should be empty
+                expect(queue.running).toBe(false);
+                expect(p).toEqual(jasmine.any(Promise));
+                p.catch((error) => {
+                    expect(error).toEqual(jasmine.any(Error));
+                    done();
+                });
+            });
+
+            it("handles rejected commands", function (done) {
+                var p = queue.addCommand("reject");
+
+                // Command is resolved asynchronously so the queue should not be empty
+                expect(queue.running).toBe(true);
+                expect(p).toEqual(jasmine.any(Promise));
+                p.catch((error) => {
+                    expect(error).toEqual("reject");
+                    done();
+                });
             });
 
             it("supports adding commands to empty queues", function (done) {

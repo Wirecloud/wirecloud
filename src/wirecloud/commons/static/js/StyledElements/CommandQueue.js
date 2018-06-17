@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -31,14 +32,16 @@
     /**
      * Creates an asyncrhonous FIFO queue.
      */
-    var CommandQueue = function CommandQueue(context, callback, stepFunc) {
+    var CommandQueue = function CommandQueue(context, callback) {
+        if (typeof callback !== "function") {
+            throw new TypeError("callback parameter must be a function");
+        }
+
         privates.set(this, {
             callback: callback,
             context: context,
             elements: [],
-            running: false,
-            step: 0,
-            stepTimes: null
+            running: false
         });
 
         Object.defineProperties(this, {
@@ -50,9 +53,6 @@
             },
             running: {
                 get: running_getter
-            },
-            stepFunc: {
-                value: stepFunc
             }
         });
     };
@@ -84,30 +84,8 @@
         return p;
     };
 
-    var doStep = function doStep() {
-        var cont;
-
-        try {
-            cont = this.stepFunc(this.step, this.context);
-        } catch (e) {
-            doInit.call(this);
-        }
-
-        if (cont) {
-            var timeDiff = this.stepTimes[this.step] - (new Date()).getTime();
-            if (timeDiff < 0) {
-                timeDiff = 0;
-            }
-
-            this.step++;
-            setTimeout(doStep.bind(this), timeDiff);
-        } else {
-            doInit.call(this);
-        }
-    };
-
     var doInit = function doInit() {
-        var element, action, timeDiff;
+        var element, action;
 
         element = this.elements.shift();
         if (element === undefined) {
@@ -121,29 +99,20 @@
             doInit.call(this);
         }
 
-        if (action === false) {
-            element.resolve();
-            doInit.call(this);
-        } else if (typeof action.then === "function") {
+        if (action != null && typeof action.then === "function") {
             action.then(
-                function (value) {
+                (value) => {
                     element.resolve(value);
                     doInit.call(this);
-                }.bind(this),
-                function (error) {
+                },
+                (error) => {
                     element.reject(error);
                     doInit.call(this);
-                }.bind(this)
+                }
             );
         } else {
-            this.step = 0;
-            this.stepTimes = action;
-
-            timeDiff = this.stepTimes[this.step] - (new Date()).getTime();
-            if (timeDiff < 0) {
-                timeDiff = 0;
-            }
-            setTimeout(doStep.bind(this), timeDiff);
+            element.resolve(action);
+            doInit.call(this);
         }
     };
 
