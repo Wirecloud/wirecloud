@@ -215,7 +215,7 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks("gruntify-eslint");
-    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-uglify-es');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks("grunt-jsdoc");
 
