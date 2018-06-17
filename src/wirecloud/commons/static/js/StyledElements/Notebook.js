@@ -681,6 +681,9 @@
             break;
         }
 
+        // Enable/Disable tab moving buttons
+        enableDisableButtons.call(this);
+
         return this;
     };
 
