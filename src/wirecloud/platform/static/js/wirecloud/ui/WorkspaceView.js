@@ -1,5 +1,6 @@
 /*
  *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -417,22 +418,13 @@
         return this.model.rename(name);
     };
 
+    /**
+     * Removes the workspace currently loaded by this WorkspaceView from the WireCloud server.
+     *
+     * @returns {Wirecloud.Task}
+     */
     WorkspaceView.prototype.remove = function remove() {
-        return new Promise(function (resolve, reject) {
-            var dialog = new Wirecloud.ui.AlertWindowMenu(
-                utils.interpolate(utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
-                    name: this.title
-                })
-            );
-            dialog.setHandler(function () {
-                this.model.remove().then(function () {
-                    resolve();
-                }, function (reason) {
-                    reject(reason);
-                });
-            }.bind(this));
-            dialog.show();
-        }.bind(this));
+        return this.model.remove();
     };
 
     WorkspaceView.prototype.publish = function publish(data) {
@@ -498,7 +490,9 @@
 
     var on_workspace_remove = function on_workspace_remove(workspace) {
         // Go to the wirecloud/home dashboard
-        Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'});
+        Wirecloud.UserInterfaceManager.monitorTask(
+            Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'})
+        );
     };
 
     var on_workspace_unload = function on_workspace_unload(workspace) {
