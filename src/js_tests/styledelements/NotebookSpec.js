@@ -33,7 +33,7 @@
         beforeEach(function () {
             dom = document.createElement('div');
             document.body.appendChild(dom);
-            dom.innerHTML = "<style>.se-notebook-tab-area {overflow: hidden;padding:0px 12px;white-space: nowrap;width: 50px;} li {display:inline-block;padding:4px 15px;margin:0px 1px;}</style>";
+            dom.innerHTML = "<style>.se-notebook-tab-area {overflow: hidden;padding:0px 12px;white-space: nowrap;width: 50px;} li {display:inline-block;text-align:center;width: 50px;margin:0px 1px;}</style>";
         });
 
         afterEach(function () {
@@ -368,7 +368,7 @@
                 element.createTab({name: "mytab"});
 
                 // scroll to mytab
-                dom.querySelector('.se-notebook-tab-area').scrollLeft = 77;
+                dom.querySelector('.se-notebook-tab-area').scrollLeft = 42;
 
                 var p = element.focus(tab);
 
@@ -388,7 +388,7 @@
 
                 p.then(() => {
                     // this number depends on CSS
-                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(77);
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(42);
                     done();
                 });
             });
@@ -493,7 +493,7 @@
                 element.createTab({name: "mytab"});
 
                 // scroll to mytab
-                dom.querySelector('.se-notebook-tab-area').scrollLeft = 77;
+                dom.querySelector('.se-notebook-tab-area').scrollLeft = 42;
 
                 var p = element.shiftLeftTabs();
 
@@ -530,7 +530,7 @@
 
                 p.then(() => {
                     // this number depends on CSS
-                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(77);
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(42);
                     done();
                 });
             });
