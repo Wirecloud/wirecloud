@@ -36,6 +36,9 @@ before_script:
 script:
     - src/ci_scripts/travis.sh sqlite3 django$DJANGO_VERSION unittest
 
+after_sucess:
+    - coveralls
+
 branches:
     only:
         - develop
