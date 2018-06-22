@@ -53,3 +53,56 @@ class ResetSearchIndexesCommandTestCase(TestCase):
 
         with self.assertRaises(CommandError):
             call_command('resetsearchindexes', '--indexes', 'users')
+
+
+@patch('wirecloud.commons.management.commands.createorganization.locale.getdefaultlocale', return_value=("en_US",))
+class CreateOrganizationCommandTestCase(TestCase):
+
+    tags = ('wirecloud-commands', 'wirecloud-command-createorganization', 'wirecloud-noselenium')
+
+    def setUp(self):
+        if sys.version_info > (3, 0):
+            self.options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
+        else:
+            self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+
+    @patch('wirecloud.commons.management.commands.createorganization.Organization.objects.is_available', return_value=True)
+    @patch('wirecloud.commons.management.commands.createorganization.Organization.objects.create_organization')
+    def test_createorganization_avilable(self, is_available, create_organization_mock, getdefaultlocale_mock):
+        call_command('createorganization', 'org', **self.options)
+        create_organization_mock.assert_called_with('org')
+
+        self.options['stdout'].seek(0)
+        self.assertNotEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
+
+    @patch('wirecloud.commons.management.commands.createorganization.Organization.objects.is_available', return_value=True)
+    @patch('wirecloud.commons.management.commands.createorganization.Organization.objects.create_organization')
+    def test_createorganization_avilable_quiet(self, is_available, create_organization_mock, getdefaultlocale_mock):
+        self.options['verbosity'] = 0
+        call_command('createorganization', 'org', **self.options)
+        create_organization_mock.assert_called_with('org')
+
+        self.options['stdout'].seek(0)
+        self.assertEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
+
+    @patch('wirecloud.commons.management.commands.createorganization.Organization.objects.is_available', return_value=False)
+    def test_createorganization_non_avilable(self, is_available_mock, getdefaultlocale_mock):
+
+        with self.assertRaises(CommandError):
+            call_command('createorganization', 'existing')
+
+    @patch('wirecloud.commons.management.commands.createorganization.Organization.objects.is_available', return_value=True)
+    @patch('wirecloud.commons.management.commands.createorganization.Organization.objects.create_organization')
+    def test_createorganization_command_individual_index_broken_locale_env(self, is_available_mock, create_organization_mock, getdefaultlocale_mock):
+        getdefaultlocale_mock.side_effect = TypeError
+        call_command('createorganization', 'org')
+        create_organization_mock.assert_called_with('org')
+
+        self.options['stdout'].seek(0)
+        self.assertEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')

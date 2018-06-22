@@ -61,7 +61,7 @@ class Command(BaseCommand):
         with override(default_locale):
             self._handle(*args, **options)
 
-    def log(self, msg, level=2):
+    def log(self, msg, level=1):
         """
         Small log helper
         """
