@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2015-2017 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -83,8 +84,9 @@ class TestSocialAuthBackend(WirecloudTestCase):
         }]
     }
 
-    USER_DATA = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo user", "first_name": "Demo", "last_name": "user"}
-    USER_DATA_NO_LAST_NAME = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo", "first_name": "Demo", "last_name": ""}
+    USER_DATA = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo user", "first_name": "Demo", "last_name": "user", "is_superuser": False, "is_staff": False}
+    USER_DATA_ADMIN = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo user", "first_name": "Demo", "last_name": "user", "is_superuser": True, "is_staff": True}
+    USER_DATA_NO_LAST_NAME = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo", "first_name": "Demo", "last_name": "", "is_superuser": False, "is_staff": False}
 
     def setUp(self):
         self.social_core = MagicMock()
@@ -157,6 +159,14 @@ class TestSocialAuthBackend(WirecloudTestCase):
 
         self.assertEqual(data, self.USER_DATA)
 
+    def test_get_user_details_old_version_admin(self):
+
+        response = deepcopy(self.OLD_RESPONSE)
+        response['roles'][0]['name'] = 'admin'
+        data = self.instance.get_user_details(response)
+
+        self.assertEqual(data, self.USER_DATA_ADMIN)
+
     def test_get_user_details_new_version(self):
 
         response = deepcopy(self.NEW_RESPONSE)
@@ -164,6 +174,14 @@ class TestSocialAuthBackend(WirecloudTestCase):
         data = self.instance.get_user_details(response)
 
         self.assertEqual(data, self.USER_DATA)
+
+    def test_get_user_details_new_version_admin(self):
+
+        response = deepcopy(self.NEW_RESPONSE)
+        response['roles'][0]['name'] = 'Admin'
+        data = self.instance.get_user_details(response)
+
+        self.assertEqual(data, self.USER_DATA_ADMIN)
 
     def test_get_user_details_no_last_name(self):
 

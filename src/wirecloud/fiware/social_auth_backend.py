@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -114,11 +115,17 @@ class FIWAREOAuth2(BaseOAuth2):
             first_name, last_name = name.split(' ', 1)
         else:
             first_name = name
-        return {'username': response.get('username'),
-                'email': response.get('email') or '',
-                'fullname': name,
-                'first_name': first_name,
-                'last_name': last_name}
+
+        superuser = any(rol['name'].strip().lower() == "admin" for rol in response.get("roles", []))
+        return {
+            'username': response.get('username'),
+            'email': response.get('email') or '',
+            'fullname': name,
+            'first_name': first_name,
+            'last_name': last_name,
+            'is_superuser': superuser,
+            'is_staff': superuser
+        }
 
     @classmethod
     def request_user_info(cls, access_token):
