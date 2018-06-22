@@ -1,5 +1,6 @@
 from wirecloud.commons.tests.admin_commands import BaseAdminCommandTestCase, ConvertCommandTestCase, StartprojectCommandTestCase
 from wirecloud.commons.tests.basic_views import BasicViewTestCase
+from wirecloud.commons.tests.commands import ResetSearchIndexesCommandTestCase
 from wirecloud.commons.tests.search_indexes import SearchAPITestCase
 from wirecloud.commons.tests.template import TemplateUtilsTestCase
 from wirecloud.commons.tests.utils import GeneralUtilsTestCase, HTMLCleanupTestCase, WGTTestCase, HTTPUtilsTestCase
