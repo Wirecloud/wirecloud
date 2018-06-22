@@ -27,8 +27,8 @@ matrix:
               firefox: latest-esr
           env: TEST_SUITE=js_unittests
 
-before_install:
-    - . src/ci_scripts/travis_before_install.sh
+install:
+    - . src/ci_scripts/travis_install.sh
 
 before_script:
     - . src/ci_scripts/travis_before_script.sh
@@ -36,8 +36,8 @@ before_script:
 script:
     - src/ci_scripts/travis.sh sqlite3 django$DJANGO_VERSION unittest
 
-after_sucess:
-    - coveralls
+after_success:
+    - cd src; coveralls
 
 branches:
     only:

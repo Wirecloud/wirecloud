@@ -3,4 +3,6 @@ if [ "${TEST_SUITE}" == "js_unittests" ]; then
     npm install grunt-cli -g
     npm install
     cd $TRAVIS_BUILD_DIR
+else
+    pip install coveralls
 fi
