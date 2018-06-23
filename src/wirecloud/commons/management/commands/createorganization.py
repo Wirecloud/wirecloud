@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
     help = 'Creates new Organizations'
 
-    update_success_message = _('The "%s" index was updated successfully')
+    update_success_message = _('Organization "%s" created successfully')
 
     def add_arguments(self, parser):
         parser.add_argument(
