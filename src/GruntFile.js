@@ -138,6 +138,12 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
+        coveralls: {
+            ci: {
+                src: 'build/coverage/lcov.info'
+            }
+        },
+
         eslint: {
             styledelements: {
                 src: styledElementsFiles
@@ -211,6 +217,16 @@ module.exports = function (grunt) {
             }
         },
 
+        lcovMerge: {
+            options: {
+                outputFile: 'build/coverage/lcov.info'
+            },
+            src: [
+                'build/coverage/styledelements/lcov/lcov.info',
+                'build/coverage/wirecloud/lcov/lcov.info'
+            ]
+        },
+
         uglify: {
             styledelements: {
                 files: {
@@ -223,7 +239,9 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks("gruntify-eslint");
     grunt.loadNpmTasks('grunt-contrib-uglify-es');
+    grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-lcov-merge');
     grunt.loadNpmTasks("grunt-jsdoc");
 
     grunt.registerTask('test', [
@@ -231,7 +249,7 @@ module.exports = function (grunt) {
         'karma'
     ]);
 
-    grunt.registerTask('ci', ['test']);
+    grunt.registerTask('ci', ['test', 'lcovMerge', 'coveralls']);
 
     grunt.registerTask('default', [
         'test',

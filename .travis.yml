@@ -37,7 +37,7 @@ script:
     - src/ci_scripts/travis.sh sqlite3 django$DJANGO_VERSION unittest
 
 after_success:
-    - cd src; coveralls
+    - . src/ci_scripts/travis_after_success.sh
 
 branches:
     only:
