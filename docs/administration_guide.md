@@ -33,6 +33,16 @@ Example usage:
 	$ python manage.py changepassword ringo
 
 
+### createorganization
+
+Creates an empty organization. Once created, you will be able to add users to
+the associated group.
+
+Example usage:
+
+	$ python manage.py createorganization
+
+
 ### createsuperuser
 
 Creates a superuser account (a user who has all permissions). This is useful if you need to create an initial superuser account or if you need to programmatically generate superuser accounts for your site(s).
@@ -55,17 +65,28 @@ Example usage:
 
 ### rebuild_index
 
-Rebuilds Haystack indexes used by the search engine of WireCloud.
+Rebuilds Haystack indexes used by the search engine of WireCloud. See Haystack
+[documentation][haystack_rebuild_index] for more details.
+
+- **--noinput**
+  If provided, no prompts will be issued to the user and the data will be wiped out.
 
 Example usage:
 
 	$ python manage.py rebuild_index
 
+[haystack_rebuild_index]: http://django-haystack.readthedocs.io/en/master/management_commands.html#rebuild-index
+
+
 ### resetsearchindexes (deprecated)
 
 Rebuilds Haystack indexes used by the search engine of WireCloud. To be removed in Wirecloud WireCloud v1.3.
 
+- **--noinput**
+  Tells Django to NOT prompt the user for input of any kind.
+
 Example usage:
+
     $ python manage.py resetsearchindexes
 
 

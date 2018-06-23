@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,20 +18,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import CommandError, BaseCommand
 from django.core.management import call_command
+from django.utils.translation import ugettext_lazy as _
 
 
 class Command(BaseCommand):
 
-    help = 'Resets WireCloud search indexes'
+    help = 'Resets WireCloud search indexes (deprecated, please use rebuild_index instead)'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--indexes',
+            action='store', dest='indexes', default='',
+            help="Indexes to reset. All by default (No supported by haystack, available only for giving an error message about this backward incompatible change)."
+        )
+        parser.add_argument(
+            '--noinput',
+            action='store_false', dest='interactive',
+            help="Do NOT prompt the user for input of any kind."
+        )
 
     def handle(self, *args, **options):
-        call_command("rebuild_index", interactive=True)
+        if options['indexes'] != '':
+            raise CommandError(_("The indexes argument is not supported anymore."))
 
-    def log(self, msg, level=2):
-        """
-        Small log helper
-        """
-        if self.verbosity >= level:
-            self.stdout.write(msg)
+        call_command("rebuild_index", interactive=options['interactive'])
