@@ -33,6 +33,16 @@ Example usage:
 	$ python manage.py changepassword ringo
 
 
+### createorganization
+
+Creates an empty organization. Once created, you will be able to add users to
+the associated group.
+
+Example usage:
+
+	$ python manage.py createorganization
+
+
 ### createsuperuser
 
 Creates a superuser account (a user who has all permissions). This is useful if you need to create an initial superuser account or if you need to programmatically generate superuser accounts for your site(s).
@@ -61,6 +71,8 @@ Rebuilds whoosh indexes used by the search engine of WireCloud. Some commonly us
   Do NOT prompt the user for input of any kind.
 - **indexes**=INDEXES
   Comma separated list of indexes to reset. Current available indexes: user, group and resource. All by default.
+- **--noinput**
+  Tells Django to NOT prompt the user for input of any kind.
 
 Example usage:
 
