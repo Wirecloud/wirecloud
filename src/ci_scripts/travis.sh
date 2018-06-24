@@ -7,7 +7,7 @@ if [ "${TEST_SUITE}" == "js_unittests" ]; then
     grunt ci
     exit
 elif [ "${TEST_SUITE}" == "selenium" ]; then
-    FLAGS="postgres django${DJANGO_VERSION} selenium"
+    FLAGS="sqlite3 django${DJANGO_VERSION} firefox-local selenium"
 else
     FLAGS="sqlite3 django${DJANGO_VERSION} unittest"
 fi
