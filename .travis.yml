@@ -26,6 +26,11 @@ matrix:
           addons:
               firefox: latest-esr
           env: TEST_SUITE=js_unittests
+        - addons:
+              firefox: "60.0.2esr"
+          env:
+              - TEST_SUITE=selenium
+              - DJANGO_VERSION=1.11
 
 install:
     - . src/ci_scripts/travis_install.sh
@@ -34,10 +39,10 @@ before_script:
     - . src/ci_scripts/travis_before_script.sh
 
 script:
-    - src/ci_scripts/travis.sh sqlite3 django$DJANGO_VERSION unittest
+    - src/ci_scripts/travis.sh
 
 after_success:
-    - . src/ci_scripts/travis_after_success.sh
+    - src/ci_scripts/travis_after_success.sh
 
 branches:
     only:
