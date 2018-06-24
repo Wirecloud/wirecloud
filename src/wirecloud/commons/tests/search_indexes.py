@@ -47,6 +47,13 @@ class SearchAPITestCase(WirecloudTestCase, TestCase):
         super(SearchAPITestCase, cls).setUpClass()
         cls.url = reverse('wirecloud.search_service')
 
+    def test_searh_without_query(self):
+        response = self.client.get(self.url + '?namespace=user', HTTP_ACCEPT="application/json")
+
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(result_json['results']), 10)
+
     def test_simple_search(self):
         response = self.client.get(self.url + '?namespace=user&q=lin', HTTP_ACCEPT="application/json")
 
@@ -74,6 +81,18 @@ class SearchAPITestCase(WirecloudTestCase, TestCase):
 
     def test_invalid_namespace_parameters(self):
         response = self.client.get(self.url + '?namespace=invalid', HTTP_ACCEPT="application/json")
+
+        self.assertEqual(response.status_code, 422)
+        json.loads(response.content.decode('utf-8'))
+
+    def test_invalid_pagenum_parameters(self):
+        response = self.client.get(self.url + '?namespace=user&pagenum=invalid', HTTP_ACCEPT="application/json")
+
+        self.assertEqual(response.status_code, 422)
+        json.loads(response.content.decode('utf-8'))
+
+    def test_invalid_maxresult_parameters(self):
+        response = self.client.get(self.url + '?namespace=user&maxresults=invalid', HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 422)
         json.loads(response.content.decode('utf-8'))
