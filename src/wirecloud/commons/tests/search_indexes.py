@@ -22,10 +22,13 @@ from __future__ import unicode_literals
 
 import json
 
+from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from mock import Mock, patch
 
 from wirecloud.commons.haystack_queryparser import NoMatchingBracketsFound, ParseSQ
+from wirecloud.commons.search_indexes import cleanUserResults, cleanGroupResults, searchGroup, searchUser, GROUP_CONTENT_FIELDS, USER_CONTENT_FIELDS
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
@@ -169,3 +172,102 @@ class QueryParserTestCase(WirecloudTestCase, TestCase):
             parser.parse("(one OR two AND three", ["fullname", "username"])
 
         self.assertEqual("%s" % cm.exception, "Matching brackets were not found: (one OR two AND three")
+
+
+@patch("wirecloud.commons.search_indexes.buildSearchResults")
+@patch("wirecloud.commons.search_indexes.SearchQuerySet")
+class UserIndexTestCase(WirecloudTestCase, TestCase):
+
+    fixtures = ()
+    tags = ('wirecloud-search-api', 'wirecloud-noselenium')
+    populate = False
+
+    def test_searchUser_emptyquery(self, sqs_mock, buildSearchResults_mock):
+        request_mock = Mock()
+        searchUser(request_mock, "", 1, 10)
+        sqs_mock().models.assert_called_with(User)
+        sqs_mock().models().all().filter.assert_not_called()
+        buildSearchResults_mock.assert_called_with(sqs_mock().models().all(), 1, 10, cleanUserResults)
+
+    @patch("wirecloud.commons.search_indexes.ParseSQ")
+    def test_searchUser_query(self, ParseSQ_mock, sqs_mock, buildSearchResults_mock):
+        request_mock = Mock()
+        ParseSQ_mock().parse.return_value = "filter"
+
+        searchUser(request_mock, "query", 1, 10)
+        ParseSQ_mock().parse.assert_called_with("query", USER_CONTENT_FIELDS)
+        sqs_mock().models.assert_called_with(User)
+        sqs_mock().models().all().filter.assert_called_with("filter")
+        buildSearchResults_mock.assert_called_with(sqs_mock().models().all().filter(), 1, 10, cleanUserResults)
+
+    def test_cleanUserResults(self, sqs_mock, buildSearchResults_mock):
+        self.assertEqual(
+            cleanUserResults(
+                Mock(get_stored_fields=Mock(return_value={
+                    "fullname": "Full Name",
+                    "username": "username",
+                    "organization": "false",
+                    "text": "search content",
+                })),
+                Mock()
+            ),
+            {
+                "fullname": "Full Name",
+                "username": "username",
+                "organization": False
+            }
+        )
+
+    def test_cleanUserResults_org(self, sqs_mock, buildSearchResults_mock):
+        self.assertEqual(
+            cleanUserResults(
+                Mock(get_stored_fields=Mock(return_value={
+                    "fullname": "Organization Name",
+                    "username": "username",
+                    "organization": "true",
+                    "text": "search content",
+                })),
+                Mock()
+            ),
+            {
+                "fullname": "Organization Name",
+                "username": "username",
+                "organization": True
+            }
+        )
+
+
+@patch("wirecloud.commons.search_indexes.buildSearchResults")
+@patch("wirecloud.commons.search_indexes.SearchQuerySet")
+class GroupIndexTestCase(WirecloudTestCase, TestCase):
+
+    fixtures = ()
+    tags = ('wirecloud-search-api', 'wirecloud-noselenium')
+    populate = False
+
+    def test_searchGroup_emptyquery(self, sqs_mock, buildSearchResults_mock):
+        request_mock = Mock()
+        searchGroup(request_mock, "", 1, 10)
+        sqs_mock().models.assert_called_with(Group)
+        sqs_mock().models().all().filter.assert_not_called()
+        buildSearchResults_mock.assert_called_with(sqs_mock().models().all(), 1, 10, cleanGroupResults)
+
+    @patch("wirecloud.commons.search_indexes.ParseSQ")
+    def test_searchGroup_query(self, ParseSQ_mock, sqs_mock, buildSearchResults_mock):
+        request_mock = Mock()
+        ParseSQ_mock().parse.return_value = "filter"
+
+        searchGroup(request_mock, "query", 1, 10)
+        ParseSQ_mock().parse.assert_called_with("query", GROUP_CONTENT_FIELDS)
+        sqs_mock().models.assert_called_with(Group)
+        sqs_mock().models().all().filter.assert_called_with("filter")
+        buildSearchResults_mock.assert_called_with(sqs_mock().models().all().filter(), 1, 10, cleanGroupResults)
+
+    def test_cleanGroupResults(self, sqs_mock, buildSearchResults_mock):
+        self.assertEqual(
+            cleanGroupResults(
+                Mock(get_stored_fields=Mock(return_value={"text": "hello", "name": "group"})),
+                Mock()
+            ),
+            {"name": "group"}
+        )
