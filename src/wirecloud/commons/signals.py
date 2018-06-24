@@ -21,10 +21,11 @@ import inspect
 from importlib import import_module
 
 from haystack import signals, indexes
+from django.contrib.auth.models import User
 from django.db import models
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.platform.models import Workspace
+from wirecloud.platform.models import Workspace, Organization
 
 
 class WirecloudSignalProcessor(signals.BaseSignalProcessor):
@@ -44,25 +45,44 @@ class WirecloudSignalProcessor(signals.BaseSignalProcessor):
 
         super(WirecloudSignalProcessor, self).__init__(connections, connection_router)
 
+    def handle_org(self, *args, **kwargs):
+        kwargs["instance"] = kwargs['instance'].user
+        kwargs["sender"] = User
+        self.handle_save(*args, **kwargs)
+
     def setup(self):
+
+        from django.conf import settings
 
         for model in self.models:
             models.signals.post_save.connect(self.handle_save, sender=model)
             models.signals.post_delete.connect(self.handle_delete, sender=model)
 
         # TODO manual list of m2m relations => automate field discovering
-        models.signals.m2m_changed.connect(self.handle_m2m_change, sender=CatalogueResource.users.through)
-        models.signals.m2m_changed.connect(self.handle_m2m_change, sender=CatalogueResource.groups.through)
-        models.signals.m2m_changed.connect(self.handle_m2m_change, sender=Workspace.users.through)
-        models.signals.m2m_changed.connect(self.handle_m2m_change, sender=Workspace.groups.through)
+        models.signals.post_save.connect(self.handle_org, sender=Organization)
+
+        if "wirecloud.catalogue" in settings.INSTALLED_APPS:
+            models.signals.m2m_changed.connect(self.handle_m2m_change, sender=CatalogueResource.users.through)
+            models.signals.m2m_changed.connect(self.handle_m2m_change, sender=CatalogueResource.groups.through)
+
+        if "wirecloud.platform" in settings.INSTALLED_APPS:
+            models.signals.m2m_changed.connect(self.handle_m2m_change, sender=Workspace.users.through)
+            models.signals.m2m_changed.connect(self.handle_m2m_change, sender=Workspace.groups.through)
 
     def teardown(self):
 
+        from django.conf import settings
+
         # TODO manual list of m2m relations => automate field discovering
-        models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=Workspace.users.through)
-        models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=Workspace.groups.through)
-        models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=CatalogueResource.users.through)
-        models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=CatalogueResource.groups.through)
+        if "wirecloud.platform" in settings.INSTALLED_APPS:
+            models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=Workspace.users.through)
+            models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=Workspace.groups.through)
+
+        if "wirecloud.catalogue" in settings.INSTALLED_APPS:
+            models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=CatalogueResource.users.through)
+            models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=CatalogueResource.groups.through)
+
+        models.signals.post_save.disconnect(self.handle_org, sender=Organization)
 
         for model in self.models:
             models.signals.post_save.disconnect(self.handle_save, sender=model)
