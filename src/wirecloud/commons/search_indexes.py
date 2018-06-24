@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -128,10 +129,17 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
             is_organization = False
 
         self.prepared_data['fullname'] = '%s' % (object.get_full_name())
-        self.prepared_data['organization'] = '%s' % is_organization
+        self.prepared_data['organization'] = 'true' if is_organization else 'false'
         self.prepared_data['text'] = '%s %s' % (object.get_full_name(), object.username)
 
         return self.prepared_data
+
+
+def cleanUserResults(result, request):
+    res = result.get_stored_fields()
+    res['organization'] = res['organization'] == 'true'
+    del res["text"]
+    return res
 
 
 # Search for users
@@ -139,18 +147,9 @@ def searchUser(request, querytext, pagenum, maxresults):
     sqs = SearchQuerySet().models(User).all()
     if len(querytext) > 0:
         parser = ParseSQ()
-        query = parser.parse(querytext, USER_CONTENT_FIELDS)
-        # If there's any query
-        if len(query) > 0:
-            sqs = sqs.filter(query)
+        sqs = sqs.filter(parser.parse(querytext, USER_CONTENT_FIELDS))
 
-    return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
-
-
-def cleanResults(result, request):
-    res = result.get_stored_fields()
-    del res["text"]
-    return res
+    return buildSearchResults(sqs, pagenum, maxresults, cleanUserResults)
 
 
 GROUP_CONTENT_FIELDS = ["name"]
@@ -160,11 +159,16 @@ class GroupIndex(indexes.SearchIndex, indexes.Indexable):
     model = Group
 
     text = indexes.CharField(document=True)
-
     name = indexes.CharField(model_attr='name')
 
     def get_model(self):
         return self.model
+
+
+def cleanGroupResults(result, request):
+    res = result.get_stored_fields()
+    del res["text"]
+    return res
 
 
 # Search for groups
@@ -172,9 +176,6 @@ def searchGroup(request, querytext, pagenum, maxresults):
     sqs = SearchQuerySet().models(Group).all()
     if len(querytext) > 0:
         parser = ParseSQ()
-        query = parser.parse(querytext, GROUP_CONTENT_FIELDS)
-        # If there's any query
-        if len(query) > 0:
-            sqs = sqs.filter(query)
+        sqs = sqs.filter(parser.parse(querytext, GROUP_CONTENT_FIELDS))
 
-    return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
+    return buildSearchResults(sqs, pagenum, maxresults, cleanGroupResults)
