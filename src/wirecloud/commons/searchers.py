@@ -25,6 +25,7 @@ import time
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.utils.encoding import force_text
 from whoosh.collectors import Collector
 from whoosh.compat import xrange
 from whoosh.fields import BOOLEAN, DATETIME, ID, NGRAM, SchemaClass, TEXT
@@ -100,6 +101,10 @@ class IndexWriter(IndexManager):
                 writer.add_document(**resource)
             else:
                 writer.update_document(**resource)
+
+    def delete_resource(self, fieldname, text):
+        with self.get_batch_writer() as writer:
+            writer.delete_by_term(fieldname, force_text(text))
 
     def build_compatible_fields(self, resource):
         raise NotImplementedError

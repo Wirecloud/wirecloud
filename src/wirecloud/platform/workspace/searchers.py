@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 import datetime
 import logging
 
-from django.db.models.signals import m2m_changed, post_save
+from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.dispatch import receiver
 from whoosh import fields
 from whoosh.query import And, Or, Term
@@ -93,6 +93,14 @@ def update_workspace_index(sender, instance, created, **kwargs):
         get_search_engine('workspace').add_resource(instance, created)
     except:
         logger.warning("Error adding %s into the workspace search index" % instance)
+
+
+@receiver(post_delete, sender=Workspace)
+def clean_workspace_index(sender, instance, **kwargs):
+    try:
+        get_search_engine('workspace').delete_resource("id", instance.pk)
+    except:
+        logger.warning("Error removing workspace %s from the search index" % instance)
 
 
 @receiver(m2m_changed, sender=Workspace.groups.through)
