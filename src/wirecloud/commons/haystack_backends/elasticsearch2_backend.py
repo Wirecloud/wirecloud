@@ -72,30 +72,31 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
 
     def build_params(self, *args, **kwargs):
         res = super(GroupedSearchQuery, self).build_params(*args, **kwargs)
-        parsed_order = self.parse_sort_field(self.order_by[0])
         if self.grouping_field is not None:
-            aux = {
-                "items": {"top_hits": {"size": 5}},
-                "max_order": {"max": {"field": parsed_order[0]}}
-            }
+            parsed_order = self.parse_sort_field(self.order_by[0]) if len(self.order_by) > 0 else None
 
-            if self.group_order_by:
-                aux["items"]["top_hits"]["sort"] = [{self.group_order_by: {"order": self.group_order_sense}}]
             aggregation = {
                 "aggs": {
                     "items": {
                         "terms": {
                             "field": self.grouping_field,
                             "size": self.end_offset,
-                            "order": {
-                                "max_order": parsed_order[1]
-                            }
                         },
-                        "aggs": aux
+                        "aggs": {
+                            "items": {"top_hits": {"size": 5}},
+                        }
                     }
                 },
                 "result_class": GroupedSearchResult
             }
+
+            if self.group_order_by:
+                aggregation["aggs"]["items"]["aggs"]["items"]["top_hits"]["sort"] = [{self.group_order_by: {"order": self.group_order_sense}}]
+
+            if parsed_order:
+                aggregation["aggs"]["items"]["terms"]["order"] = {"max_order": parsed_order[1]}
+                aggregation["aggs"]["items"]["aggs"]["max_order"] = {"max": {"field": parsed_order[0]}}
+
             res.update(aggregation)
 
         return res
