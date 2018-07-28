@@ -170,7 +170,7 @@ class GroupedSearchQuerySet(SearchQuerySet):
 class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
 
     def build_search_kwargs(self, *args, **kwargs):
-        group_kwargs = [(i, kwargs.pop(i)) for i in kwargs.keys() if i.startswith("aggs")]
+        group_kwargs = [(i, kwargs.pop(i)) for i in list(kwargs) if i.startswith("aggs")]
         self.start_offset = kwargs["start_offset"]
         self.end_offset = kwargs["end_offset"]
 
