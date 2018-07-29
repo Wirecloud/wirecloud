@@ -104,27 +104,29 @@
     var accept = function accept() {
         var username, sharelist = [];
 
+        this.btnAccept.addClassName('busy');
+
         for (username in this.sharingUsers) {
             sharelist.push({type: 'user', name: username});
         }
 
         this.btnAccept.disable();
+        this.btnCancel.disable();
         this.workspace.model.preferences.set({
             public: {value: this.visibilityOptions.value === "public"},
             sharelist: {value: sharelist}
-        }, {
-            onSuccess: function () {
-                this.workspace.model.users.length = 0;
+        }).then(() => {
+            this.workspace.model.users.length = 0;
 
-                for (username in this.sharingUsers) {
-                    this.workspace.model.users.push(this.sharingUsers[username]);
-                }
+            for (username in this.sharingUsers) {
+                this.workspace.model.users.push(this.sharingUsers[username]);
+            }
 
-                this._closeListener();
-            }.bind(this),
-            onFailure: function () {
-                this.btnAccept.enable();
-            }.bind(this)
+            this._closeListener();
+        }, () => {
+            this.btnAccept.enable();
+            this.btnCancel.disable();
+            this.btnAccept.removeClassName('busy');
         });
     };
 

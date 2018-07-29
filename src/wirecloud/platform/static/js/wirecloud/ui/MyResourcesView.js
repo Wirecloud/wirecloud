@@ -348,8 +348,7 @@
         msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
         msg = utils.interpolate(msg, resource, true);
         return function () {
-            var dialog = new Wirecloud.ui.AlertWindowMenu();
-            dialog.setMsg(msg);
+            var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
             dialog.setHandler(doRequest.bind(this));
             dialog.show();
         }.bind(this);
@@ -381,8 +380,7 @@
 
         msg = utils.interpolate(msg, context, true);
         return function () {
-            var dialog = new Wirecloud.ui.AlertWindowMenu();
-            dialog.setMsg(msg);
+            var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
             dialog.setHandler(doRequest.bind(this));
             dialog.show();
         }.bind(this);

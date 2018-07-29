@@ -382,9 +382,11 @@
 
         describe("init([options])", () => {
 
-            var preferencesmanager;
+            var preferencesmanager, currentThemeBackup;
 
             beforeEach(() => {
+                currentThemeBackup = Wirecloud.currentTheme;
+
                 preferencesmanager = {
                     addEventListener: jasmine.createSpy("addEventListener")
                 };
@@ -452,6 +454,8 @@
             });
 
             afterEach(() => {
+                Wirecloud.currentTheme = currentThemeBackup;
+
                 if ("WEBSOCKET" in Wirecloud.URLs) {
                     delete Wirecloud.URLs.WEBSOCKET;
                 }

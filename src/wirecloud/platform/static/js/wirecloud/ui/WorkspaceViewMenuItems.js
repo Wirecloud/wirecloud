@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -97,9 +98,16 @@
             item.setDisabled(!this.workspace.model.isAllowed('update_preferences'));
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("Remove"), function () {
-                this.remove();
-            }.bind(this.workspace));
+            item = new se.MenuItem(utils.gettext("Remove"), () => {
+                var dialog = new Wirecloud.ui.AlertWindowMenu(
+                    utils.interpolate(utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
+                        name: this.workspace.title
+                    })
+                );
+                dialog.setHandler(() => {
+                    return this.workspace.remove();
+                }).show();
+            });
             item.addIconClass("fa fa-trash");
             item.setDisabled(!this.workspace.model.isAllowed('remove'));
             items.push(item);

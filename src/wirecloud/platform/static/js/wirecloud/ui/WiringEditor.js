@@ -658,8 +658,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The connection will also be modified for the rest of behaviours, would you like to continue?") + builder.DEFAULT_CLOSING);
 
-        modal = new Wirecloud.ui.AlertWindowMenu();
-        modal.setMsg(message);
+        modal = new Wirecloud.ui.AlertWindowMenu(message);
         modal.acceptHandler = function () {
             this.behaviourEngine.removeConnection(connection, true);
         }.bind(this);

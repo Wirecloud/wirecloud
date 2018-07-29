@@ -737,9 +737,9 @@
 
             dialog = new Wirecloud.ui.AlertWindowMenu({
                 acceptLabel: utils.gettext("Continue"),
-                cancelLabel: utils.gettext("Cancel")
+                cancelLabel: utils.gettext("Cancel"),
+                message: message
             });
-            dialog.setMsg(message);
             dialog.acceptHandler = function () {
                 for (var i = this.behaviours.length - 1; i >= 0; i--) {
                     this.body.removeChild(this.behaviours[i]);
@@ -814,8 +814,7 @@
                 title: component.title
             });
 
-        modal = new Wirecloud.ui.AlertWindowMenu();
-        modal.setMsg(message);
+        modal = new Wirecloud.ui.AlertWindowMenu(message);
         modal.acceptHandler = _removeComponent.bind(this, component, false);
         modal.show();
 
