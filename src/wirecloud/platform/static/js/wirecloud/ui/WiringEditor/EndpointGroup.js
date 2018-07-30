@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -317,35 +318,25 @@
 
                 endpoint.addClassName("dragging");
 
-                context.marginVertical = 5;
-
-                context.refHeigth = endpointBCR.height + context.marginVertical;
-                context.refHeigthUp = (endpointBCR.height / 2) + context.marginVertical;
-                context.refHeigthDown = context.refHeigthUp;
-
-                context.canMoveUp = endpoint.index;
-                context.canMoveDown = context.group.children.length - (context.canMoveUp + 1);
+                let groupBCR = context.group.getBoundingClientRect();
+                context.topBorder = groupBCR.top - layoutBCR.top;
+                context.ratio = groupBCR.height / context.group.children.length;
             },
             function drag(e, draggable, context, xDelta, yDelta) {
-                context.clonedEndpoint.style.left = Math.round(context.x + xDelta) + 'px';
-                context.clonedEndpoint.style.top = Math.round(context.y + yDelta) + 'px';
+                let yPos = context.y + yDelta;
 
-                if ((context.canMoveUp > 0) && (-(yDelta + context.offsetHeight) > context.refHeigthUp)) {
-                    context.canMoveUp -= 1;
-                    context.refHeigthUp += context.refHeigth;
+                context.clonedEndpoint.style.left = (context.x + xDelta) + 'px';
+                context.clonedEndpoint.style.top = yPos + 'px';
 
-                    context.canMoveDown += 1;
-                    context.refHeigthDown -= context.refHeigth;
+                let new_index = Math.round((yPos - context.topBorder) / context.ratio);
+                if (new_index < 0) {
+                    new_index = 0;
+                } else if (new_index >= context.group.children.length) {
+                    new_index = context.group.children.length - 1;
+                }
 
-                    moveUpEndpoint.call(context.group, endpoint);
-                } else if ((context.canMoveDown > 0) && ((yDelta + context.offsetHeight) > context.refHeigthDown)) {
-                    context.canMoveUp += 1;
-                    context.refHeigthUp -= context.refHeigth;
-
-                    context.canMoveDown -= 1;
-                    context.refHeigthDown += context.refHeigth;
-
-                    moveDownEndpoint.call(context.group, endpoint);
+                if (new_index != endpoint.index) {
+                    moveEndpoint.call(context.group, endpoint, new_index);
                 }
             },
             function dragend(draggable, context) {
@@ -360,42 +351,18 @@
         return this;
     };
 
-    var moveDownEndpoint = function moveDownEndpoint(endpoint) {
-        var nextEndpoint, index = endpoint.index;
-
-        if (index == (this.children.length - 1)) {
-            return this;
+    var moveEndpoint = function moveEndpoint(endpoint, new_index) {
+        se.Container.prototype.removeChild.call(this, endpoint);
+        let refElement = this.children[new_index - 1];
+        if (refElement) {
+            se.Container.prototype.appendChild.call(this, endpoint, refElement);
+        } else {
+            se.Container.prototype.prependChild.call(this, endpoint);
         }
 
-        nextEndpoint = this.children[index + 1];
-        endpoint.parent().insertBefore(endpoint.get(), nextEndpoint.get().nextSibling);
-
-        endpoint.index = index + 1;
-        nextEndpoint.index = index;
-
-        this.children[index + 1] = endpoint;
-        this.children[index] = nextEndpoint;
-
-        return this.refresh();
-    };
-
-    var moveUpEndpoint = function moveUpEndpoint(endpoint) {
-        var previousEndpoint, index;
-
-        index = endpoint.index;
-
-        if (index === 0) {
-            return this;
-        }
-
-        previousEndpoint = this.children[index - 1];
-        endpoint.parent().insertBefore(endpoint.get(), previousEndpoint.get());
-
-        endpoint.index = index - 1;
-        previousEndpoint.index = index;
-
-        this.children[index - 1] = endpoint;
-        this.children[index] = previousEndpoint;
+        this.children.forEach((endpoint, index) => {
+            endpoint.index = index;
+        });
 
         return this.refresh();
     };

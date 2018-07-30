@@ -1098,13 +1098,9 @@ class WiringEndpointTester(WebElementTester):
 
     def change_position(self, endpoint):
         new_index = endpoint.index
-        actions = ActionChains(self.testcase.driver).click_and_hold(self.element)
+        actions = ActionChains(self.testcase.driver).click_and_hold(self.element).move_to_element(endpoint.element).release().perform()
 
-        for i in range(abs(new_index - self.index)):
-            actions.move_to_element(endpoint.element)
-
-        actions.release().perform()
-        self.testcase.assertEqual(self.index, new_index)
+        WebDriverWait(self.testcase.driver, 3).until(lambda driver: self.index == new_index)
         return self
 
     def create_connection(self, endpoint, must_recommend=(), must_expand=()):
