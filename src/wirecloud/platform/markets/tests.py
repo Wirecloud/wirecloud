@@ -38,6 +38,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         },
     }
     tags = ('wirecloud-selenium', 'wirecloud-markets', 'wirecloud-markets-selenium')
+    use_search_indexes = False
 
     def check_resource_buttons(self, marketplace, resources, button_text=None):
         for resource_name in resources:

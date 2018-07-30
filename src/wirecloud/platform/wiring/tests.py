@@ -71,6 +71,7 @@ class WiringTestCase(WirecloudTestCase, TransactionTestCase):
     fixtures = ('test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
     populate = False
+    use_search_indexes = False
 
     def setUp(self):
 
@@ -2057,6 +2058,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase, TestCase):
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium', 'wirecloud-operator-code-transformation')
     populate = False
+    use_search_indexes = False
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
     COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\.js')
@@ -2120,6 +2122,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+    populate = False
 
     def test_sends_event_after_connecting_two_widgets(self):
 
@@ -2375,6 +2378,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+    use_search_indexes = False
 
     def _read_json_fixtures(self, filename):
         testdir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test-data'))
@@ -2836,6 +2840,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-connection-management')
+    use_search_indexes = False
 
     def test_readonly_connections_cannot_be_deleted(self):
         # Change the connection state to readonly
@@ -2978,6 +2983,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-endpoint-management')
+    use_search_indexes = False
 
     @classmethod
     def setUpClass(cls):
@@ -3197,6 +3203,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-behaviour-management')
+    clear_search_indexes = False
 
     def test_behaviour_engine_is_disabled_by_default(self):
         # Create a new workspace to ensure we are testing the default status of

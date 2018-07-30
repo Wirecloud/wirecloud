@@ -54,6 +54,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-basics-selenium')
+    populate = False
 
     def test_basic_workspace_operations(self):
 
