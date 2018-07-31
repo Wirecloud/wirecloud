@@ -3203,7 +3203,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-behaviour-management')
-    clear_search_indexes = False
+    use_search_indexes = False
 
     def test_behaviour_engine_is_disabled_by_default(self):
         # Create a new workspace to ensure we are testing the default status of
@@ -3310,7 +3310,7 @@ class ComponentVolatileTestCase(WirecloudSeleniumTestCase):
             # and directly clickable without scrolling the view
             self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
             # Wait until the test finish with a success message
-            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
+            WebDriverWait(self.driver, timeout=6).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
 
         # Two widgets are created when clicking the dashboard management button
         # one of them is connected directly, the other is connected through and

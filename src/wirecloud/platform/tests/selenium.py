@@ -939,7 +939,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.resource_sidebar as sidebar:
 
             # Add the youtube browser widget
-            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'YouTube Browser')).click()
+            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'YouTube Browser'))
 
             # Next tutorial step
             next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
@@ -947,7 +947,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             next_button.click()
 
             # Add the input box widget
-            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'Input Box')).click()
+            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'Input Box'))
 
         # cancel current tutorial
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
