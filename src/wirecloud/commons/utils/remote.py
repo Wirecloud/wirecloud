@@ -1290,11 +1290,14 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         self.driver.delete_all_cookies()
 
-    def find_navbar_button(self, classname):
-        try:
-            return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .%s" % classname))
-        except NoSuchElementException:
-            return None
+    def find_navbar_button(self, classname, wait=False):
+        if wait:
+            return ButtonTester(self, self.wait_element_visible(".wc-toolbar .%s" % classname))
+        else:
+            try:
+                return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .%s" % classname))
+            except NoSuchElementException:
+                return None
 
     def scroll_and_click(self, element):
 
@@ -2001,7 +2004,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
-        self.testcase.find_navbar_button("wc-show-wiring-button").click()
+        self.testcase.find_navbar_button("wc-show-wiring-button", wait=True).click()
         self.testcase.wait_element_visible('.wc-body:not(.se-on-transition)')
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
