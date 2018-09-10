@@ -141,7 +141,7 @@ setup(
         'requests>=2.1.0',
         'selenium>=2.41',
         'pytz',
-        'django_relatives',
+        'django_relatives<1.0.0',
         'user-agents',
         'regex',
         'markdown',
