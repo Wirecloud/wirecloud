@@ -28,6 +28,7 @@ import shutil
 import stat
 import sys
 from tempfile import mkdtemp
+import time
 from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import unquote, urlparse
 
@@ -301,8 +302,6 @@ class FakeNetwork(object):
 
 def prepare_temporal_resource_directories(cls):
 
-    from django.conf import settings
-
     cls.tmp_dir = mkdtemp()
 
     # catalogue deployer
@@ -386,21 +385,21 @@ class WirecloudTestCase(object):
         prepare_temporal_resource_directories(cls)
 
         # Prepare haystack configuration
-        cls.old_haystack_conf = settings.HAYSTACK_CONNECTIONS
-        try:
-            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(settings.TEST_HAYSTACK_CONNECTIONS)
-            # Update whoosh index dir if not set by user
-            if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+        if cls.use_search_indexes:
+            cls.old_haystack_conf = settings.HAYSTACK_CONNECTIONS
+            try:
+                settings.HAYSTACK_CONNECTIONS = copy.deepcopy(settings.TEST_HAYSTACK_CONNECTIONS)
+                # Update whoosh index dir if not set by user
+                if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+                    settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+            except:
+                settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
                 settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
-        except:
-            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
-            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
 
-        # Reload the connection
-        haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
-        haystack.connections.reload('default')
-
-        if not cls.use_search_indexes:
+            # Reload the connection
+            haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
+            haystack.connections.reload('default')
+        else:
             apps.get_app_config('haystack').signal_processor.teardown()
 
         super(WirecloudTestCase, cls).setUpClass()
@@ -425,12 +424,13 @@ class WirecloudTestCase(object):
         # Restore old haystack configuration
         if not cls.use_search_indexes:
             apps.get_app_config('haystack').signal_processor.setup()
-        elif not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
-            # If self.clear_search_indexes is True, this step is done in a per
-            # test basis in the tearDown method
-            management.call_command('clear_index', interactive=False, verbosity=0)
+        else:
+            if not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
+                # If self.clear_search_indexes is True, this step is done in a per
+                # test basis in the tearDown method
+                management.call_command('clear_index', interactive=False, verbosity=0)
 
-        settings.HAYSTACK_CONNECTIONS = cls.old_haystack_conf
+            settings.HAYSTACK_CONNECTIONS = cls.old_haystack_conf
 
         # Clear cache
         from django.core.cache import cache
@@ -472,6 +472,10 @@ class WirecloudTestCase(object):
 
         if self.clear_search_indexes:
             management.call_command('clear_index', interactive=False, verbosity=0)
+
+            # Reload the connection
+            haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
+            haystack.connections.reload('default')
 
         super(WirecloudTestCase, self).tearDown()
 
@@ -593,21 +597,21 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         prepare_temporal_resource_directories(cls)
 
         # Prepare haystack configuration
-        cls.old_haystack_conf = settings.HAYSTACK_CONNECTIONS
-        try:
-            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(settings.TEST_HAYSTACK_CONNECTIONS)
-            # Update whoosh index dir if not set by user
-            if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+        if cls.use_search_indexes:
+            cls.old_haystack_conf = settings.HAYSTACK_CONNECTIONS
+            try:
+                settings.HAYSTACK_CONNECTIONS = copy.deepcopy(settings.TEST_HAYSTACK_CONNECTIONS)
+                # Update whoosh index dir if not set by user
+                if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
+                    settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
+            except:
+                settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
                 settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
-        except:
-            settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
-            settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
 
-        # Reload the connection
-        haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
-        haystack.connections.reload('default')
-
-        if not cls.use_search_indexes:
+            # Reload the connection
+            haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
+            haystack.connections.reload('default')
+        else:
             apps.get_app_config('haystack').signal_processor.teardown()
 
         # Browsers doesn't use content negotiation using ETags with HTTP 1.0 servers
@@ -643,12 +647,13 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         # Restore old haystack configuration
         if not cls.use_search_indexes:
             apps.get_app_config('haystack').signal_processor.setup()
-        elif not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
-            # If self.clear_search_indexes is True, this step is done in a per
-            # test basis in the tearDown method
-            management.call_command('clear_index', interactive=False, verbosity=0)
+        else:
+            if not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
+                # If self.clear_search_indexes is True, this step is done in a per
+                # test basis in the tearDown method
+                management.call_command('clear_index', interactive=False, verbosity=0)
 
-        settings.HAYSTACK_CONNECTIONS = cls.old_haystack_conf
+            settings.HAYSTACK_CONNECTIONS = cls.old_haystack_conf
 
         super(WirecloudSeleniumTestCase, cls).tearDownClass()
 
@@ -673,7 +678,15 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     def tearDown(self):
 
-        management.call_command('clear_index', interactive=False, verbosity=0)
+        from django.conf import settings
+        if self.clear_search_indexes:
+            management.call_command('clear_index', interactive=False, verbosity=0)
+
+            # Reload the connection
+            haystack.connections.connections_info = settings.HAYSTACK_CONNECTIONS
+            haystack.connections.reload('default')
+
+            time.sleep(0.2)
 
         LiveServerTestCase.tearDown(self)
         WirecloudRemoteTestCase.tearDown(self)

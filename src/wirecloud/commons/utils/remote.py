@@ -1342,7 +1342,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         self.wait_element_visible('.wc-body:not(.se-on-transition)')
 
-        time.sleep(0.1)  # work around some problems
+        time.sleep(0.2)  # work around some problems
 
     def login(self, username='admin', password='admin', next=None):
 
