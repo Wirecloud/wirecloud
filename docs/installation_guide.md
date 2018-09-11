@@ -447,29 +447,54 @@ $ python manage.py populate
 
 ## Search indexes configuration
 
-Wirecloud uses Haystack to handle the search indexes.
+Wirecloud uses [Haystack](http://haystacksearch.org/) to handle the search
+indexes.
 
-Currently, Solr, ElasticSearch2 and Whoosh are supported. Whoosh is enabled by default.
+Currently, [Solr][], [ElasticSearch2][] and [Whoosh][] are supported. Whoosh is enabled by
+default.
 
-To modify the search engine configuration, it is necessary to modify the `HAYSTACK_CONNECTIONS`
-configuration setting in the instance `settings.py` file (e.g.
-`/opt/wirecloud_instance/wirecloud_instance/settings.py`).
+To modify the search engine configuration, it is necessary to modify the
+`HAYSTACK_CONNECTIONS` configuration setting in the instance `settings.py` file
+(e.g. `/opt/wirecloud_instance/wirecloud_instance/settings.py`).
 
+[Solr]: http://lucene.apache.org/solr/
+[ElasticSearch2]: https://www.elastic.co/products/elasticsearch
+[Whoosh]: https://whoosh.readthedocs.io/en/latest/
 
 ### Whoosh configuration
+
+[Whoosh][] is a fast, featureful full-text indexing and searching library
+implemented in pure Python. It is very easy to configure and does not require to
+configure any service, so it is ideal for basic installations. This make this
+engine the default engine for using WireCloud, altough probably ElasticSearch2
+or Solr are better choices if you require to provide an high availablility
+installation of WireCloud.
+
+This is the default configuration:
 
 ```python
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
-        'PATH': path.join(path.dirname(__file__), 'whoosh_index'),
+        'PATH': path.join(BASEDIR, 'index'),
     },
 }
 ```
 
-Where `PATH` is the location where Whoosh will store the indexes.
+You can add the `HAYSTACK_CONNECTIONS` setting in the `settings.py` file to
+change the `PATH` where Whoosh indices will be stored.
+
 
 ### ElasticSearch2 configuration
+
+[ElasticSearch][] support is not installed by default, so the first thing is to
+install the python module required to connect to ElasticSearch:
+
+```
+$ pip install elasticsearch==2.4.1
+```
+
+Next step is to configure haystack to use ElasticSearch:
 
 ```python
 HAYSTACK_CONNECTIONS = {
@@ -483,24 +508,16 @@ HAYSTACK_CONNECTIONS = {
 
 Where `URL` is the URL of the ElasticSearch2 server.
 
-The only thing that remains is installing the python library for ElasticSearch:
-
-    $ pip install elasticsearch==2.4.1
-
-and configuring the `URL` parameter to point to the ElasticSearch2 server.
-
 
 ### Solr cofiguration
 
-Before being able to use Solr, you should install `pysolr`:
+Solr support is not installed by default, so the first thing is to install the python library required to connect to Solr:
 
 ```
 $ pip install pysolr
 ```
 
-Once you have Solr 6.x deployed, you have to create and configure a new Solr core to be used from WireCloud. The Solr core can be created by running the following commannd: `bin/solr create -c wirecloud_core -n basic_config` on the Solr installation, where `wirecloud_core` is the core name. Then you have to execute the `python manage.py build_solr_schema` command jointly with the `--configure-directory` option on the WireCloud installation. Ideally, you should use the `--configure-directory` to point into the configuration folder (e.g. to `${SOLR_ROOT}/server/solr/wirecloud_core/conf`) of the Solr core, so it gets configured automatically. But if this is not possible (because the folder is in a remote server), you should point it into a temporal folder and copy the generated files (`schema.xml` and `solrconfig.xml`) to the final destination. You should also ensure the configuration folder does not contain a `managed-schema.xml` file, as this file is created by default but should not be used when using the WireCloud schema.
-
-Now you can change the Haystack configuration to point to the Solr server. This is an example:
+Once installed `pysolr`, you have to change the Haystack configuration:
 
 ```python
 HAYSTACK_CONNECTIONS = {
@@ -513,6 +530,14 @@ HAYSTACK_CONNECTIONS = {
 ```
 
 Where the `URL` setting should point to the Solr core URL.
+
+Haystack provides a command for generating the solr schema (needed to create the
+solr core), but requires you to configure haystack to use the rSsolr engine before
+running that command. You can provide and invalid URL (e.g. an empty string:
+`''`) and change this configuration once you have created the core in the
+Solr server.
+
+The Solr core can be created by running the following commannd: `bin/solr create -c wirecloud_core -n basic_config` on the Solr installation, where `wirecloud_core` is the core name. Then you have to execute the `python manage.py build_solr_schema` command jointly with the `--configure-directory` option on the WireCloud installation. Ideally, you should use the `--configure-directory` to point into the configuration folder (e.g. to `${SOLR_ROOT}/server/solr/wirecloud_core/conf`) of the Solr core, so it gets configured automatically. But if this is not possible (because the folder is in a remote server), you should point it into a temporal folder and copy the generated files (`schema.xml` and `solrconfig.xml`) to the final destination. You should also ensure the configuration folder does not contain a `managed-schema.xml` file, as this file is created by default and conflicts with the configuration created by Haystack.
 
 
 ## Extra options
