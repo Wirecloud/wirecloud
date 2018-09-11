@@ -2429,8 +2429,8 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
-                self.assertIsNotNone(sidebar.add_component('operator', "Wirecloud/TestOperator", y=-250))
-                self.assertIsNotNone(sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-450))
+                self.assertIsNotNone(sidebar.add_component('operator', "Wirecloud/TestOperator", y=-20))
+                self.assertIsNotNone(sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-4))
 
     def test_rename_widget_from_component_preferences(self):
         new_title = "New title"
