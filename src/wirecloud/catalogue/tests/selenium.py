@@ -30,13 +30,6 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
     tags = ('wirecloud-selenium', 'wirecloud-catalogue', 'wirecloud-catalogue-selenium')
     populate = False
 
-    def test_upload_packaged_mashup(self):
-
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
-
     def test_upload_packaged_mashup_embedded_resources(self):
 
         self.login()
@@ -72,11 +65,3 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
             myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
         self.create_widget('Test_Selenium')
-
-    def test_upload_and_delete_widget(self):
-
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
-            myresources.delete_resource('Test_Selenium')

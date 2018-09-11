@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -37,19 +38,28 @@
      */
     var WirecloudCatalogue = function WirecloudCatalogue(options) {
 
-        se.ObjectWithEvents.call(this, ["change", "install", "uninstall"]);
+        if (options == null) {
+            options = {};
+        }
 
-        Object.defineProperty(this, 'title', {'value': options.title || options.name});
-        Object.defineProperty(this, 'name', {'value': options.name});
-        Object.defineProperty(this, 'permissions', {'value': options.permissions});
+        if (options.permissions == null) {
+            options.permissions = {};
+        }
+
+        se.ObjectWithEvents.call(this, ["change", "install", "uninstall"]);
 
         if (options.url == null) {
             options.url = Wirecloud.URLs.LOCAL_REPOSITORY;
+            options.name = 'local';
         } else if (options.url[options.url.length - 1] !== '/') {
             options.url += '/';
         }
 
         Object.defineProperties(this, {
+            'title': {'value': options.title || options.name},
+            'name': {'value': options.name},
+            'permissions': {'value': options.permissions},
+            'url': {value: options.url},
             'RESOURCE_CHANGELOG_ENTRY': {value: new utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog')},
             'RESOURCE_USERGUIDE_ENTRY': {value: new utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/userguide')},
             'RESOURCE_COLLECTION': {value: options.url + 'catalogue/resources'},
@@ -76,7 +86,7 @@
      */
     WirecloudCatalogue.prototype.search = function search(options) {
         if (options == null) {
-            throw new TypeError();
+            options = {};
         }
 
         var params = {};
@@ -115,49 +125,33 @@
             requestHeaders: {'Accept': 'application/json'},
             parameters: params
         }).then((response) => {
-            return new Promise((resolve, reject) => {
-                if ([200, 401, 403, 500].indexOf(response.status) === -1) {
-                    return reject(utils.gettext("Unexpected response from server"));
-                } else if ([401, 403, 500].indexOf(response.status) !== -1) {
-                    return reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
-                }
+            if ([200, 401, 403, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if ([401, 403, 500].indexOf(response.status) !== -1) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+            }
 
-                var raw_data = JSON.parse(response.responseText);
-                var data = {
-                    'resources': raw_data.results,
-                    'current_page': parseInt(raw_data.pagenum, 10),
-                    'total_count': parseInt(raw_data.total, 10)
-                };
-                if ('corrected_q' in raw_data) {
-                    data.corrected_query = raw_data.corrected_q;
-                }
-                resolve(data);
-            });
+            var raw_data = JSON.parse(response.responseText);
+            var data = {
+                'resources': raw_data.results,
+                'current_page': parseInt(raw_data.pagenum, 10),
+                'total_count': parseInt(raw_data.total, 10)
+            };
+            if ('corrected_q' in raw_data) {
+                data.corrected_query = raw_data.corrected_q;
+            }
+            return Promise.resolve(data);
         }).toTask(utils.gettext("Doing catalogue search"));
     };
 
-    WirecloudCatalogue.prototype.getResourceDetails = function getResourceDetails(vendor, name, options) {
-
-        if (options == null) {
-            options = {};
-        }
+    WirecloudCatalogue.prototype.getResourceDetails = function getResourceDetails(vendor, name) {
 
         var url = this.RESOURCE_UNVERSIONED_ENTRY.evaluate({vendor: vendor, name: name});
-        Wirecloud.io.makeRequest(url, {
-            method: 'GET',
-            onSuccess: function (response) {
-                var resource_details = new Wirecloud.WirecloudCatalogue.ResourceDetails(JSON.parse(response.responseText), this);
-                try {
-                    options.onSuccess(resource_details);
-                } catch (e) {}
-            }.bind(this),
-            onFailure: options.onFailure,
-            onComplete: options.onComplete
+        return Wirecloud.io.makeRequest(url, {
+            method: 'GET'
+        }).then((response) => {
+            return Promise.resolve(new Wirecloud.WirecloudCatalogue.ResourceDetails(JSON.parse(response.responseText), this));
         });
-    };
-
-    WirecloudCatalogue.prototype.is_purchased = function is_purchased() {
-        return true;
     };
 
     /**
@@ -170,7 +164,7 @@
     WirecloudCatalogue.prototype.addComponent = function addComponent(options) {
         var url, parameters, requestHeaders, contentType, body;
 
-        if (typeof options == null) {
+        if (options == null) {
             throw new TypeError("missing options parameter");
         }
 
@@ -178,8 +172,10 @@
             install_embedded_resources: true
         }, options);
 
-        if (this.name !== 'local' && options.market_endpoint !== null) {
+        if (this.name !== 'local' && options.market_endpoint != null) {
             throw new TypeError(utils.gettext("market_endpoint option can only be used on local catalogues"));
+        } else if (options.market_endpoint == null && options.file == null && options.url == null) {
+            throw new TypeError(utils.gettext("at least one of the following options has to be used: file or market_endpoint"));
         }
 
         requestHeaders = {
@@ -190,10 +186,11 @@
             url = Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION;
         } else {
             url = this.RESOURCE_COLLECTION;
-
+            /* TODO future support for external catalogues with authentication
             if (this.accesstoken != null) {
                 requestHeaders.Authorization = 'Bearer ' + this.accesstoken;
             }
+            */
         }
 
         if (options.file != null) {
@@ -285,7 +282,7 @@
             return new Promise(function (resolve, reject) {
                 var result;
                 if (response.status !== 200) {
-                    reject(new Error("Unexpected response from server"));
+                    return reject(new Error("Unexpected response from server"));
                 }
 
                 try {
@@ -294,8 +291,7 @@
                         result.affectedVersions = [resource.version.text];
                     }
                 } catch (e) {
-                    reject(e);
-                    return;
+                    return reject(new Error("Unexpected response from server"));
                 }
                 resolve(result);
             });
