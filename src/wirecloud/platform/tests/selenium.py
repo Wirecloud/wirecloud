@@ -125,20 +125,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
 
-    def test_read_only_widgets_cannot_be_removed(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
-
-        tab = self.find_tab(title="Tab 2")
-        tab.click()
-
-        tab_widget = tab.find_widget(title="Test 2")
-        self.assertTrue(tab_widget.remove_button.is_disabled)
-
     def test_tabs_with_read_only_widgets_cannot_be_removed(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         tab = self.find_tab(title="Tab 2")
         tab.show_preferences().check(must_be_disabled=('Remove',))
+
+        tab.click()
+        tab_widget = tab.find_widget(title="Test 2")
+        self.assertTrue(tab_widget.remove_button.is_disabled)
 
     def test_refresh_widget(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
