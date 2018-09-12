@@ -297,7 +297,7 @@
             for (found = false, i = 0; !found && i < this.description.connections.length; i++) {
                 _connection = this.description.connections[i];
 
-                if (_connection.sourcename == connection.sourceId && _connection.targetname == connection.targetId) {
+                if (_connection.sourcename === connection.sourceId && _connection.targetname === connection.targetId) {
                     found = true;
                     index = i;
                 }
@@ -582,7 +582,7 @@
                 case ns.BehaviourEngine.GLOBAL:
                     if (!component.background || beShared) {
                         this.behaviour.updateComponent(component);
-                        component.removeAllowed = (this.filterByComponent(component).length == 1);
+                        component.removeAllowed = (this.filterByComponent(component).length === 1);
                         component.background = false;
                     }
                     break;
@@ -633,7 +633,7 @@
                         this.behaviour.updateConnection(connection);
                         this.updateComponent(connection.sourceComponent, {}, true);
                         this.updateComponent(connection.targetComponent, {}, true);
-                        connection.removeAllowed = (this.filterByConnection(connection).length == 1);
+                        connection.removeAllowed = (this.filterByConnection(connection).length === 1);
                         connection.background = false;
                     }
                     break;
@@ -718,7 +718,8 @@
     };
 
     var btncreate_onclick = function btncreate_onclick() {
-        var dialog = new Wirecloud.ui.FormWindowMenu([
+        var dialog = new Wirecloud.ui.FormWindowMenu(
+            [
                 {name: 'title', label: utils.gettext("Title"), type: 'text'},
                 {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
             ],
@@ -809,10 +810,13 @@
     var showComponentRemoveModal = function showComponentRemoveModal(component) {
         var modal, message;
 
-        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
+        message = builder.parse(
+            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING,
+            {
                 type: component.type,
                 title: component.title
-            });
+            }
+        );
 
         modal = new Wirecloud.ui.AlertWindowMenu(message);
         modal.setHandler(_removeComponent.bind(this, component, false)).show();
@@ -853,10 +857,13 @@
     var showComponentDeleteCascadeModal = function showComponentDeleteCascadeModal(component) {
         var modal, message;
 
-        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
+        message = builder.parse(
+            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING,
+            {
                 type: component.type,
                 title: component.title
-            });
+            }
+        );
 
         modal = new Wirecloud.ui.AlertWindowMenu(message);
         modal.setHandler(_removeComponent.bind(this, component, true)).show();
@@ -977,7 +984,7 @@
     var moveDownBehaviour = function moveDownBehaviour(behaviour) {
         var nextBehaviour, index = this.behaviours.indexOf(behaviour);
 
-        if (index == (this.behaviours.length - 1)) {
+        if (index === (this.behaviours.length - 1)) {
             return this;
         }
 
