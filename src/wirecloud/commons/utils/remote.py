@@ -1368,7 +1368,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
     def get_current_view(self):
 
         try:
-            return self.driver.execute_script("return Wirecloud.UserInterfaceManager.header.currentView.view_name;")
+            return self.driver.execute_script("return document.querySelector('.wc-body').classList.contains('se-on-transition') ? '' : Wirecloud.UserInterfaceManager.header.currentView.view_name;")
         except:
             return ""
 
