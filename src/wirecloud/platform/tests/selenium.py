@@ -699,7 +699,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Swicth to Wirecloud's iframe
         iframe = self.driver.find_element_by_id('iframe')
         self.driver.switch_to.frame(iframe)
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(embedded=True)
         self.check_public_workspace(frame_id='iframe')
 
     def check_public_workspace(self, frame_id=None):
