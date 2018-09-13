@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -154,10 +155,9 @@
                 name: workspace.owner + '/' + workspace.name
             })
         );
-        dialog.setHandler(function () {
+        dialog.setHandler(() => {
             Wirecloud.removeWorkspace(workspace).then(options.onSuccess, options.onFailure);
-        }.bind(this));
-        dialog.show();
+        }).show();
     };
 
     var addWidget = function addWidget(ref, options) {

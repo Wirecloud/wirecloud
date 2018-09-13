@@ -353,8 +353,7 @@
         msg = utils.interpolate(msg, resource, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
-            dialog.setHandler(doRequest.bind(this));
-            dialog.show();
+            dialog.setHandler(doRequest.bind(this)).show();
         }.bind(this);
     };
 
@@ -385,8 +384,7 @@
         msg = utils.interpolate(msg, context, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
-            dialog.setHandler(doRequest.bind(this));
-            dialog.show();
+            dialog.setHandler(doRequest.bind(this)).show();
         }.bind(this);
     };
 

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -117,7 +118,7 @@
                 var msg = utils.gettext('Do you really want to remove the marketplace "%(marketName)s"?');
                 msg = utils.interpolate(msg, {'marketName': this.market.alternatives.getCurrentAlternative().getLabel()});
                 var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
-                dialog.setHandler(function () {
+                dialog.setHandler(() => {
                     Wirecloud.UserInterfaceManager.monitorTask(
                         Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc)
                             .then(this.market.refreshViewInfo.bind(this.market))
@@ -126,8 +127,7 @@
                                 Wirecloud.GlobalLogManager.log(error);
                             })
                     );
-                }.bind(this));
-                dialog.show();
+                }).show();
             }.bind(this));
             item.addIconClass('fa fa-trash');
             item.setDisabled(current_catalogue == null || current_catalogue.isAllow == null || !current_catalogue.isAllow('delete'));

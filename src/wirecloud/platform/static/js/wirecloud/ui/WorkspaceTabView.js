@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -223,10 +224,9 @@
 
             if (privates.get(this).widgets.length) {
                 var dialog = new Wirecloud.ui.AlertWindowMenu(utils.gettext("The tab's widgets will also be removed. Would you like to continue?"));
-                dialog.setHandler(function () {
+                dialog.setHandler(() => {
                     _remove.call(this);
-                }.bind(this));
-                dialog.show();
+                }).show();
             } else {
                 _remove.call(this);
             }
