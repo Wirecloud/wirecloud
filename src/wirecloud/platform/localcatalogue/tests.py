@@ -547,11 +547,18 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-localcatalogue', 'wirecloud-selenium', 'wirecloud-localcatalogue-selenium')
+    populate = False
 
-    def test_basic_resource_details(self):
+    def test_public_resources(self):
+        # Check admin can make use of the public Test widget
+        self.login(username="admin", next="/admin/Workspace")
+        self.create_widget('Test')
 
-        self.login()
+        # Check normuser also can make use of the public Test widget
+        self.login(username='normuser', next="/normuser/Workspace")
+        self.create_widget('Test')
 
+        # Also widget details can be accessed
         with self.myresources_view as myresources:
             myresources.wait_catalogue_ready()
             myresources.search('Test')
@@ -569,13 +576,8 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
                 headings = documentation_contents.find_elements_by_css_selector('h1, h2')
                 self.assertEqual(len(headings), 2)
 
-    def test_public_resources(self):
-
-        self.login(username="admin", next="/admin/Workspace")
-        self.create_widget('Test')
-
-        self.login(username='normuser', next="/normuser/Workspace")
-        self.create_widget('Test')
+            # But cannot be uninstalled by normal users
+            myresources.uninstall_resource('Test', expect_error=True)
 
     def test_resource_visibility(self):
 
@@ -621,7 +623,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             widget = myresources.search_in_results('Test')
             self.assertIsNotNone(widget)
 
-    def test_resource_deletion(self):
+    def test_resource_deletion_affects_other_workspaces(self):
 
         self.login(username="admin", next="/admin/Workspace")
 
@@ -653,87 +655,6 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             widget = myresources.search_in_results('Test')
             self.assertIsNone(widget)
 
-    def test_public_resources_are_uninstallable(self):
-
-        self.login(username='normuser')
-
-        with self.myresources_view as myresources:
-            myresources.uninstall_resource('Test', expect_error=True)
-
-    def test_resource_uninstall(self):
-
-        test_widget = CatalogueResource.objects.get(short_name='Test')
-        test_widget.public = False
-        test_widget.save()
-
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        # WireCloud has cached current workspace
-        initial_workspace_widgets = len(self.widgets)
-
-        # Switch to another workspace
-        self.change_current_workspace('Public Workspace')
-        current_workspace_widgets = len(self.widgets)
-
-        # Uninstall Test widget
-        with self.myresources_view as myresources:
-            myresources.uninstall_resource('Test')
-
-        # Check current workspace has no been affected
-        self.assertEqual(len(self.widgets), current_workspace_widgets)
-
-        # Check WireCloud can load the initial workspace
-        self.change_current_workspace('Workspace')
-        self.assertEqual(len(self.widgets), initial_workspace_widgets)
-
-        # Check admin still has access to the Test widget
-        self.login(username="admin", next="/admin/Workspace")
-
-        self.create_widget('Test')
-
-    def test_resource_uninstall_last_usage(self):
-
-        norm_user = User.objects.get(username='normuser')
-
-        test_widget = CatalogueResource.objects.get(short_name='Test')
-        test_widget.public = False
-        test_widget.users.clear()
-        test_widget.users.add(norm_user)
-        test_widget.groups.clear()
-        test_widget.save()
-
-        self.login(username="normuser", next="/normuser/Workspace")
-
-        # Add a Test widget to the initial workspace and cache it
-        self.create_widget('Test')
-        self.change_current_workspace('Workspace')
-
-        # Create a new workspace with a test widget
-        self.create_workspace('Test')
-        self.create_widget('Test')
-
-        # Uninstall Test widget
-        with self.myresources_view as myresources:
-            myresources.uninstall_resource('Test')
-
-        # Check current workspace has only a missing widget
-        self.assertEqual(len(self.widgets), 1)
-        self.assertEqual(self.widgets[0].error_count, 1)
-
-        # Check initial workspace has only a missing widget
-        self.change_current_workspace('Workspace')
-        self.assertEqual(len(self.widgets), 1)
-        self.assertEqual(self.widgets[0].error_count, 1)
-
-    def test_resources_are_always_deletable_by_superusers(self):
-
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.delete_resource('Test')
-            myresources.delete_resource('TestOperator')
-            myresources.delete_resource('Test Mashup')
-
     def check_multiversioned_widget(self, admin):
 
         with self.myresources_view as myresources:
@@ -759,8 +680,18 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='normuser')
         self.check_multiversioned_widget(admin=False)
 
-    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
-    def test_resource_uninstall_all_version(self):
+    @uses_extra_resources((
+            'Wirecloud_Test_2.0.wgt',
+            'Wirecloud_Test_3.0.wgt',
+            'Wirecloud_Test_Selenium_1.0.wgt',
+            'Wirecloud_Test_Selenium_1.0-dev.wgt',
+        ),
+        shared=True,
+        public=False,
+        creator='user_with_workspaces',
+        users=('user_with_workspaces',)
+    )
+    def test_resource_uninstall(self):
 
         user_with_workspaces = User.objects.get(username='user_with_workspaces')
 
@@ -771,80 +702,74 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         test_widget.groups.clear()
         test_widget.save()
 
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
-
-        widgetV2 = self.create_widget('Test')
-
-        # Uninstall all Test widget versions
-        with self.myresources_view as myresources:
-            myresources.uninstall_resource('Test')
-
-        # The workspace should contain three missig widgets
-        self.assertEqual(len(self.widgets), 3)
-        # A Test v2.0 widget just created in this test
-        self.assertEqual(widgetV2.wait_loaded().error_count, 1)
-
-        # And two Test v1.0 widget
-        # one in the first tab and another in the second one
-        self.assertEqual(self.find_widget(title="Test 1").error_count, 1)
-        self.find_tab(title="Tab 2").click()
-        self.assertEqual(self.find_widget(title="Test 2").error_count, 1)
-
-    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
-    def test_resource_uninstall_version(self):
-
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/pending-events")
 
         initial_widgets = self.widgets
 
-        # This is the only widget using version 2.0 and should automatically be
-        # unloaded after uninstalling version 2.0 of the Test widget
-        added_widget = self.create_widget('Test')
+        # add a widget using Test v3.0
+        widgetV3 = self.create_widget('Test')
+        widgetT1 = self.create_widget('Test_Selenium', version='1.0')
+        widgetT2 = self.create_widget('Test_Selenium', version='1.0-dev')
 
         # Uninstall Test widget
         with self.myresources_view as myresources:
-            myresources.uninstall_resource('Test', version="2.0")
+            # Uninstall all versions of the Test_Selenium widget
+            myresources.uninstall_resource('Test_Selenium')
+            # Uninstall only one version of the Test widget
+            myresources.uninstall_resource('Test', version="1.0")
 
-        # Check current workspace has only a missing widget
-        self.assertEqual(len(self.widgets), len(initial_widgets) + 1)
-        self.assertEqual(added_widget.wait_loaded().error_count, 1)
-        for widget in initial_widgets:
-            self.assertEqual(widget.error_count, 0)
+        # The workspace should contain four missig widgets and a surviving widget
+        self.assertEqual(len(self.widgets), 5)
+        # Test v3.0 widget is just the surviving one
+        self.assertEqual(widgetV3.wait_loaded().error_count, 0)
 
-    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
-    def test_resource_delete_all_version(self):
+        # But both Test_Selenium widget should be now marked as missing
+        self.assertEqual(widgetT1.wait_loaded().error_count, 1)
+        self.assertEqual(widgetT2.wait_loaded().error_count, 1)
+
+        # As the two Test v1.0 widgets
+        # one in the first tab and another in the second one
+        self.assertEqual(self.find_widget(title="Test 1").error_count, 1)
+        self.find_tab(title="Tab 2").click()
+        self.assertEqual(self.find_widget(title="Test 2").wait_loaded().error_count, 1)
+
+    @uses_extra_resources((
+            'Wirecloud_Test_2.0.wgt',
+            'Wirecloud_Test_3.0.wgt',
+            'Wirecloud_Test_Selenium_1.0.wgt',
+            'Wirecloud_Test_Selenium_1.0-dev.wgt',
+        ),
+        shared=True,
+        public=True,
+        creator='user_with_workspaces'
+    )
+    def test_resource_delete(self):
 
         self.login()
 
-        # Delete all versions of the Test widget
         with self.myresources_view as myresources:
-            myresources.delete_resource('Test')
-
-        self.login(username='normuser')
-        with self.myresources_view as myresources:
-            myresources.search('Test')
-            self.assertIsNone(myresources.search_in_results('Test'))
-
-    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
-    def test_resource_delete_version(self):
-
-        self.login()
-
-        # Delete Test widget
-        with self.myresources_view as myresources:
+            # Delete all versions of the Test_Selenium widget
+            myresources.delete_resource('Test_Selenium')
+            # Delete version 1.0 of the Test widget
             myresources.delete_resource('Test', version="1.0")
+            # Delete also TestOperator and Test Mashup to check that
+            # those components can also be removed
+            myresources.delete_resource('TestOperator')
+            myresources.delete_resource('Test Mashup')
 
         self.login(username='normuser')
         with self.myresources_view as myresources:
-            myresources.wait_catalogue_ready()
+            myresources.search('Test_Selenium')
+            self.assertIsNone(myresources.search_in_results('Test_Selenium'))
 
+            myresources.search('Test')
             with myresources.search_in_results('Test') as test_widget:
 
                 version_list = test_widget.get_version_list()
 
                 versions = set(version_list)
                 self.assertEqual(len(versions), len(version_list), 'Repeated versions')
-                self.assertEqual(versions, set(('v2.0',)))
+                self.assertEqual(versions, set(('v2.0', 'v3.0')))
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_myresources_navigation(self):

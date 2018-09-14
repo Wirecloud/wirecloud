@@ -474,10 +474,10 @@ class WorkspaceMixinTester(object):
 
         return WebDriverWait(self.driver, timeout=5).until(tab_created)
 
-    def create_widget(self, query, new_title=None):
+    def create_widget(self, query, new_title=None, version=None):
         with self.resource_sidebar as sidebar:
             resource = sidebar.search_component('widget', query)
-            tab_widget = resource.create_component()
+            tab_widget = resource.create_component(version=version)
 
         if new_title is not None:
             tab_widget.rename(new_title)
@@ -561,7 +561,17 @@ class WorkspaceComponentTester(WebElementTester):
     def title(self):
         return self.find_element('.we-component-meta .panel-title').text
 
-    def create_component(self):
+    @property
+    def version_select(self):
+        return Select(self.element.find_element_by_css_selector('.se-select select'))
+
+    def switch_to(self, version):
+        self.version_select.select_by_value(version)
+
+    def create_component(self, version=None):
+        if version is not None:
+            self.switch_to(version)
+
         ids = [WidgetTester(self.testcase, e).id for e in self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
         self.testcase.scroll_and_click(self.find_element(".wc-create-resource-component"))
 
@@ -1753,6 +1763,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         if should_disappear_from_listings:
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(resource.element))
 
+        time.sleep(0.2)
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
             self.testcase.assertIsNone(resource)
@@ -1787,6 +1798,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         if should_disappear_from_listings:
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(resource.element))
 
+        time.sleep(0.2)
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
             self.testcase.assertIsNone(resource)
