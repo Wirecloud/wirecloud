@@ -1050,7 +1050,7 @@ class WiringConnectionTester(WebElementTester):
         if not self.has_class('active'):
             self.click()
         ActionChains(self.testcase.driver).click_and_hold(endpoint.element).move_to_element(new_endpoint.element).perform()
-        self.testcase.assertTrue(self.has_class('temporal'))
+        WebDriverWait(self.testcase.driver, 2).until(lambda driver: self.has_class('temporal'))
         ActionChains(self.testcase.driver).release().perform()
         return self
 
@@ -1571,12 +1571,18 @@ class MarketplaceViewTester(object):
 
     def get_subview(self):
 
-        return self.testcase.driver.execute_script('return Wirecloud.UserInterfaceManager.views.marketplace.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;')
+        return self.testcase.driver.execute_script('''
+            var alternatives = Wirecloud.UserInterfaceManager.views.marketplace.alternatives.getCurrentAlternative().alternatives;
+            return alternatives.hasClassName('se-on-transition') ? "" : alternatives.getCurrentAlternative().view_name;
+        ''')
 
     def get_current_resource(self):
 
         if self.get_subview() == 'details':
-            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .resource_title').text
+            try:
+                return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .resource_title').text
+            except StaleElementReferenceException:
+                return ""
 
     def switch_to(self, market, timeout=5):
 
@@ -1691,12 +1697,18 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def get_subview(self):
 
-        return self.testcase.driver.execute_script('return Wirecloud.UserInterfaceManager.views.myresources.alternatives.getCurrentAlternative().view_name;')
+        return self.testcase.driver.execute_script('''
+            var alternatives = Wirecloud.UserInterfaceManager.views.myresources.alternatives;
+            return alternatives.hasClassName('se-on-transition') ? "" : alternatives.getCurrentAlternative().view_name;
+        ''')
 
     def get_current_resource(self):
 
         if self.get_subview() == 'details':
-            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+            try:
+                return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+            except StaleElementReferenceException:
+                return ""
 
     def upload_resource(self, wgt_file, resource_name, shared=False, expect_error=False):
 

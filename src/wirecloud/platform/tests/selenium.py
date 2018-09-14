@@ -352,9 +352,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'myresources')
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
-        self.assertEqual(self.myresources_view.get_subview(), 'details')
-        self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_current_resource() == 'Test')
 
     def test_pending_wiring_events(self):
 
