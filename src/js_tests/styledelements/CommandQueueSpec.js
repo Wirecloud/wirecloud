@@ -59,9 +59,11 @@
 
         describe("addCommand(command)", function () {
 
+            const realSetTimeout = setTimeout;
             var queue, context, callback;
 
             beforeEach(function () {
+                jasmine.clock().install();
                 context = {context: true};
                 callback = jasmine.createSpy('callback').and.callFake(function (context, command) {
                     if (command === "skip") {
@@ -84,6 +86,10 @@
                 });
 
                 queue = new CommandQueue(context, callback);
+            });
+
+            afterEach(() => {
+                jasmine.clock().uninstall();
             });
 
             it("ignore calls without a command parameter", function (done) {
@@ -124,42 +130,68 @@
                     expect(error).toEqual("reject");
                     done();
                 });
+                jasmine.clock().tick(200);
             });
 
-            it("supports adding commands to empty queues", function (done) {
+            it("supports adding commands to empty queues", (done) => {
                 expect(queue.running).toBe(false);
                 queue.addCommand(1);
                 expect(queue.running).toBe(true);
-                setTimeout(function () {
+                jasmine.clock().tick(200);
+                jasmine.clock().uninstall();
+
+                setTimeout(() => {
                     expect(queue.running).toBe(false);
                     expect(callback.calls.count()).toBe(1);
                     expect(callback.calls.argsFor(0)).toEqual([context, 1]);
                     done();
-                }, 200);
+                }, 0);
             });
 
-            it("supports adding several commands", function (done) {
-                var listener = jasmine.createSpy();
+            it("supports adding several commands", (done) => {
+                var listener1 = jasmine.createSpy();
+                var listener2 = jasmine.createSpy();
+                var listener3 = jasmine.createSpy();
 
                 expect(queue.running).toBe(false);
-                queue.addCommand(1);
-                queue.addCommand(2);
-                var p = queue.addCommand(3);
+                var p1 = queue.addCommand(1);
+                var p2 = queue.addCommand(2);
+                var p3 = queue.addCommand(3);
 
-                expect(p).toEqual(jasmine.any(Promise));
+                expect(p1).toEqual(jasmine.any(Promise));
+                expect(p2).toEqual(jasmine.any(Promise));
+                expect(p3).toEqual(jasmine.any(Promise));
                 expect(queue.running).toBe(true);
 
-                p.then(listener);
+                p1.then(listener1);
+                p2.then(listener2);
+                p3.then(listener3);
 
-                setTimeout(function () {
-                    expect(queue.running).toBe(false);
-                    expect(listener).toHaveBeenCalled();
-                    expect(callback.calls.count()).toBe(3);
-                    expect(callback.calls.argsFor(0)).toEqual([context, 1]);
-                    expect(callback.calls.argsFor(1)).toEqual([context, 2]);
-                    expect(callback.calls.argsFor(2)).toEqual([context, 3]);
-                    done();
-                }, 620);
+                // Use realSetTimeout to allow promise resolution
+                // Wait resolution of command 1
+                jasmine.clock().tick(200);
+                realSetTimeout(() => {
+                    expect(listener1).toHaveBeenCalled();
+                    expect(listener2).not.toHaveBeenCalled();
+                    jasmine.clock().tick(200);
+                    // Wait resolution of command 2
+                    realSetTimeout(() => {
+                        expect(listener2).toHaveBeenCalled();
+                        expect(listener3).not.toHaveBeenCalled();
+                        jasmine.clock().tick(200);
+                        // Wait resolution of command 3
+                        realSetTimeout(() => {
+                            expect(listener3).toHaveBeenCalled();
+
+                            expect(queue.running).toBe(false);
+                            expect(callback.calls.count()).toBe(3);
+                            expect(callback.calls.argsFor(0)).toEqual([context, 1]);
+                            expect(callback.calls.argsFor(1)).toEqual([context, 2]);
+                            expect(callback.calls.argsFor(2)).toEqual([context, 3]);
+                            done();
+                        }, 0);
+                    }, 0);
+                }, 0);
             });
 
             it("supports skiping a command", function (done) {
@@ -175,15 +207,23 @@
 
                 p.then(listener);
 
-                setTimeout(function () {
-                    expect(queue.running).toBe(false);
-                    expect(listener).toHaveBeenCalled();
-                    expect(callback.calls.count()).toBe(3);
-                    expect(callback.calls.argsFor(0)).toEqual([context, 1]);
-                    expect(callback.calls.argsFor(1)).toEqual([context, "skip"]);
-                    expect(callback.calls.argsFor(2)).toEqual([context, 3]);
-                    done();
-                }, 620);
+                // Use realSetTimeout to allow promise resolution
+                // Wait resolution of command 1
+                jasmine.clock().tick(200);
+                realSetTimeout(() => {
+                    // Command skip is immediately resolve
+                    // Wait resolution of command 3
+                    jasmine.clock().tick(200);
+                    realSetTimeout(() => {
+                        expect(queue.running).toBe(false);
+                        expect(listener).toHaveBeenCalled();
+                        expect(callback.calls.count()).toBe(3);
+                        expect(callback.calls.argsFor(0)).toEqual([context, 1]);
+                        expect(callback.calls.argsFor(1)).toEqual([context, "skip"]);
+                        expect(callback.calls.argsFor(2)).toEqual([context, 3]);
+                        done();
+                    }, 0);
+                }, 0);
             });
 
         });
