@@ -55,4 +55,4 @@ Have a bug or a feature request? Please first read the [issue guidelines](CONTRI
 
 ## License
 
-Wirecloud is licensed under Affero General Public License (GPL) version 3 with classpath-like exception
+WireCloud is licensed under Affero General Public License (GPL) version 3 (or any later, at your option) with classpath-like exception.
