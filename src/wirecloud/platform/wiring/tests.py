@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -70,6 +71,7 @@ class WiringTestCase(WirecloudTestCase, TransactionTestCase):
     fixtures = ('test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
     populate = False
+    use_search_indexes = False
 
     def setUp(self):
 
@@ -2056,6 +2058,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase, TestCase):
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium', 'wirecloud-operator-code-transformation')
     populate = False
+    use_search_indexes = False
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
     COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\.js')
@@ -2119,6 +2122,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+    populate = False
 
     def test_sends_event_after_connecting_two_widgets(self):
 
@@ -2374,6 +2378,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+    use_search_indexes = False
 
     def _read_json_fixtures(self, filename):
         testdir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test-data'))
@@ -2424,8 +2429,8 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
-                self.assertIsNotNone(sidebar.add_component('operator', "Wirecloud/TestOperator", y=-250))
-                self.assertIsNotNone(sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-450))
+                self.assertIsNotNone(sidebar.add_component('operator', "Wirecloud/TestOperator", y=-20))
+                self.assertIsNotNone(sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-4))
 
     def test_rename_widget_from_component_preferences(self):
         new_title = "New title"
@@ -2620,50 +2625,6 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
             draggable_widget.change_version("3.0")
             draggable_widget.show_preferences().check(must_be_disabled=("Order endpoints",))
-
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
-    def test_search_components_by_keywords(self):
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                groups = sidebar.find_component_groups('widget', keywords="api")
-                self.assertEqual(len(groups), 1)
-                group = groups[0]
-                self.assertEqual(group.id, "Wirecloud/api-test")
-
-    def test_search_components_by_keywords_no_results(self):
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                groups = sidebar.find_component_groups('widget', keywords="api")
-                self.assertEqual(len(groups), 0)
-                alert = sidebar.alert
-                self.assertIsNotNone(alert)
-                self.assertTrue(alert.has_class('alert-error'))
-
-    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
-    def test_check_component_sidebar(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
-        self._check_component_sidebar()
-        # Get back to dashboard
-        self._check_component_sidebar()
-
-    def _check_component_sidebar(self):
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                widgets = sidebar.find_components('widget', "Wirecloud/Test")
-                self.assertEqual(len(widgets), 2)
-                self.assertEqual(widgets[0].title, "Test 1")
-                self.assertEqual(widgets[0].state, "in use")
-                self.assertEqual(widgets[1].title, "Test 2")
-                self.assertEqual(widgets[1].state, "in use")
-
-                operators = sidebar.find_components('operator', "Wirecloud/TestOperator")
-                self.assertEqual(len(operators), 1)
-                self.assertEqual(operators[0].title, "TestOperator")
-                self.assertEqual(operators[0].state, "in use")
 
 
 @wirecloud_selenium_test_case
@@ -2879,6 +2840,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-connection-management')
+    use_search_indexes = False
 
     def test_readonly_connections_cannot_be_deleted(self):
         # Change the connection state to readonly
@@ -3021,6 +2983,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-endpoint-management')
+    use_search_indexes = False
 
     @classmethod
     def setUpClass(cls):
@@ -3240,6 +3203,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-behaviour-management')
+    use_search_indexes = False
 
     def test_behaviour_engine_is_disabled_by_default(self):
         # Create a new workspace to ensure we are testing the default status of
@@ -3346,7 +3310,7 @@ class ComponentVolatileTestCase(WirecloudSeleniumTestCase):
             # and directly clickable without scrolling the view
             self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
             # Wait until the test finish with a success message
-            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
+            WebDriverWait(self.driver, timeout=6).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
 
         # Two widgets are created when clicking the dashboard management button
         # one of them is connected directly, the other is connected through and

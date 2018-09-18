@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,15 +29,35 @@
 
     var WORKSPACE_TAB = {
         workspace: {
+            contextManager: {
+                addCallback: jasmine.createSpy('addCallback'),
+                removeCallback: jasmine.createSpy('removeCallback')
+            },
             isAllowed: jasmine.createSpy('isAllowed').and.callFake(() => {
                 return true;
             }),
             restricted: false,
             view: {}
         },
-        addEventListener: jasmine.createSpy('addEventListener')
+        addEventListener: jasmine.createSpy('addEventListener'),
+        removeEventListener: jasmine.createSpy('removeEventListener')
     };
     Object.freeze(WORKSPACE_TAB);
+
+    var WORKSPACEVIEW_TAB = {
+        workspace: {
+            contextManager: {
+                addCallback: jasmine.createSpy('addCallback'),
+                removeCallback: jasmine.createSpy('removeCallback')
+            },
+            restricted: false,
+            view: {
+                workspaceview: "id232"
+            }
+        },
+        addEventListener: jasmine.createSpy('addEventListener'),
+    };
+    Object.freeze(WORKSPACEVIEW_TAB);
 
     var LOCKED_WORKSPACE_TAB = {
         workspace: {
@@ -63,6 +84,34 @@
         codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
     };
     Object.freeze(EMPTY_WIDGET_META);
+
+    var MISSING_WIDGET_META = {
+        title: "My Widget",
+        hasEndpoints: jasmine.createSpy("hasEndpoints").and.returnValue(false),
+        hasPreferences: jasmine.createSpy("hasPreferences").and.returnValue(false),
+        inputList: [],
+        missing: true,
+        requirements: [],
+        outputList: [],
+        preferenceList: [],
+        propertyList: [],
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+    };
+    Object.freeze(EMPTY_WIDGET_META);
+
+    var FULLSCREEN_WIDGET_META = {
+        title: "My Widget",
+        hasEndpoints: jasmine.createSpy("hasEndpoints").and.returnValue(false),
+        hasPreferences: jasmine.createSpy("hasPreferences").and.returnValue(false),
+        inputList: [],
+        missing: false,
+        requirements: [{}, {type: "feature", name: "FullscreenWidget"}],
+        outputList: [],
+        preferenceList: [],
+        propertyList: [],
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+    };
+    Object.freeze(FULLSCREEN_WIDGET_META);
 
     var PREF = new Wirecloud.UserPrefDef({name: "pref", type: "text", default: "other"});
     var PROP = new Wirecloud.PersistentVariableDef({name: "prop", type: "text"});
@@ -94,25 +143,36 @@
     Object.freeze(WIDGET_META);
 
 
-    // endsWith polyfill
-    if (!String.prototype.endsWith) {
-        String.prototype.endsWith = function (searchString, position) {
-            var subjectString = this.toString();
-            if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-                position = subjectString.length;
-            }
-            position -= searchString.length;
-            var lastIndex = subjectString.indexOf(searchString, position);
-            return lastIndex !== -1 && lastIndex === position;
-        };
-    }
-
-
-
     describe("Wirecloud.Widget", function () {
 
+        // TODO
         beforeEach(() => {
-            Wirecloud.PropertyCommiter = jasmine.createSpy("PropertyCommiter");
+            Wirecloud.PropertyCommiter = jasmine.createSpy("PropertyCommiter").and.returnValue({
+                commit: jasmine.createSpy('commit')
+            });
+            Wirecloud.ui.LogWindowMenu = jasmine.createSpy("LogWindowMenu").and.returnValue({
+                htmlElement: {
+                    classList: {
+                        add: jasmine.createSpy("add")
+                    }
+                },
+                show: jasmine.createSpy("show")
+            });
+            Wirecloud.Widget.PreferencesWindowMenu = jasmine.createSpy("PreferencesWindowMenu").and.returnValue({
+                show: jasmine.createSpy("show")
+            });
+            Wirecloud.contextManager = {
+                addCallback: jasmine.createSpy("addCallback"),
+                removeCallback: jasmine.createSpy("removeCallback")
+            };
+
+        });
+
+        // TODO
+        afterAll(() => {
+            delete Wirecloud.PropertyCommiter;
+            delete Wirecloud.ui.LogWindowMenu;
+            delete Wirecloud.Widget.PreferencesWindowMenu;
         });
 
         describe("new Widget(tab, meta, data)", () => {
@@ -220,6 +280,34 @@
                 expect(new URL(widget.codeurl)).toEqual(jasmine.any(URL));
             });
 
+            it("allow to instantiate fullscreen capable widgets", () => {
+                var widget = new Wirecloud.Widget(WORKSPACE_TAB, FULLSCREEN_WIDGET_META, {
+                    id: "1"
+                });
+
+                expect(widget.wrapperElement.getAttribute("allowfullscreen")).toBe("true");
+            });
+
+            it("handles tab remove events", () => {
+                WORKSPACE_TAB.addEventListener.calls.reset();
+                let widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1"
+                });
+                let listener = jasmine.createSpy("listener");
+                widget.addEventListener("remove", listener);
+
+                WORKSPACE_TAB.addEventListener.calls.argsFor(0)[1](WORKSPACE_TAB);
+
+                expect(listener).toHaveBeenCalled();
+            });
+
+            it("allow to instantiate widgets on workspaceviews", () => {
+                let widget = new Wirecloud.Widget(WORKSPACEVIEW_TAB, EMPTY_WIDGET_META, {
+                    id: "1"
+                });
+                expect(widget.codeurl).toBe("https://wirecloud.example.com/widgets/MyWidget/index.html#id=1&workspaceview=id232");
+            });
+
         });
 
         describe("changeTab(tab)", () => {
@@ -289,6 +377,246 @@
                     }
                 );
 
+            });
+
+        });
+
+        describe("load()", () => {
+
+            it("loads unloaded widgets", () => {
+
+                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                    id: "1"
+                });
+                let element = widget.wrapperElement;
+
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+
+                expect(widget.load()).toBe(widget);
+
+                // Widget should now be in loading false
+                expect(widget.loaded).toBe(false);
+                expect(widget.wrapperElement.contentWindow.location.replace).toHaveBeenCalledWith(widget.codeurl);
+                expect(widget.wrapperElement.setAttribute).toHaveBeenCalledWith("type", widget.codecontenttype);
+
+                // Should ignore initial load events raised in between
+                element.dispatchEvent(new Event("load"));
+                expect(widget.wrapperElement.contentDocument.defaultView.addEventListener).not.toHaveBeenCalled();
+
+                // Emulate final load event
+                widget.wrapperElement.contentWindow.location.href = widget.codeurl;
+                element.dispatchEvent(new Event("load"));
+
+                // Now the widget should be fully loaded
+                expect(widget.loaded).toBe(true);
+                expect(widget.wrapperElement.contentDocument.defaultView.addEventListener).toHaveBeenCalled();
+            });
+
+            it("loads missing widgets", () => {
+                let widget = new Wirecloud.Widget(WORKSPACE_TAB, MISSING_WIDGET_META, {
+                    id: "1"
+                });
+                let element = widget.wrapperElement;
+
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+
+                expect(widget.load()).toBe(widget);
+
+                // Emulate final load event
+                widget.wrapperElement.contentWindow.location.href = widget.codeurl;
+                element.dispatchEvent(new Event("load"));
+
+                // Now the widget should be fully loaded
+                expect(widget.loaded).toBe(true);
+                expect(widget.wrapperElement.contentDocument.defaultView.addEventListener).toHaveBeenCalled();
+            });
+
+            it("sends pending events", () => {
+                var widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                    id: "1"
+                });
+                let element = widget.wrapperElement;
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            href: widget.codeurl,
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+                widget.pending_events.push({endpoint: "input", value: "hello world"});
+
+                widget.load();
+                element.dispatchEvent(new Event("load"));
+
+                // Now the widget should be fully loaded
+                expect(widget.loaded).toBe(true);
+                expect(widget.wrapperElement.contentDocument.defaultView.addEventListener).toHaveBeenCalled();
+                expect(widget.pending_events).toEqual([]);
+            });
+
+            it("does nothing for widgets in loading state", () => {
+
+                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                    id: "1"
+                });
+                widget.wrapperElement = {
+                    contentWindow: {
+                        location: {
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+                expect(widget.load()).toBe(widget);
+                widget.wrapperElement.contentWindow.location.replace.calls.reset();
+                widget.wrapperElement.setAttribute.calls.reset();
+
+                expect(widget.load()).toBe(widget);
+
+                expect(widget.wrapperElement.contentWindow.location.replace).not.toHaveBeenCalled();
+                expect(widget.wrapperElement.setAttribute).not.toHaveBeenCalled();
+            });
+
+            it("does nothing for loaded widgets", () => {
+
+                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                    id: "1"
+                });
+                let element = widget.wrapperElement;
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            href: widget.codeurl,
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+                expect(widget.load()).toBe(widget);
+                widget.wrapperElement.contentWindow.location.replace.calls.reset();
+                widget.wrapperElement.setAttribute.calls.reset();
+                element.dispatchEvent(new Event("load"));
+                expect(widget.loaded).toBe(true);
+
+                expect(widget.load()).toBe(widget);
+
+                expect(widget.wrapperElement.contentWindow.location.replace).not.toHaveBeenCalled();
+                expect(widget.wrapperElement.setAttribute).not.toHaveBeenCalled();
+            });
+
+            it("handles unload events", () => {
+
+                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                    id: "1"
+                });
+                let listener = jasmine.createSpy();
+                widget.registerContextAPICallback("iwidget", listener);
+                widget.registerContextAPICallback("mashup", listener);
+                widget.registerContextAPICallback("platform", listener);
+                let element = widget.wrapperElement;
+
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+
+                expect(widget.load()).toBe(widget);
+
+                // Emulate final load event
+                widget.wrapperElement.contentWindow.location.href = widget.codeurl;
+                element.dispatchEvent(new Event("load"));
+
+                // Now the widget should be fully loaded
+                expect(widget.loaded).toBe(true);
+
+                // Send unload event
+                widget.wrapperElement.contentDocument.defaultView.addEventListener.calls.argsFor(0)[1]();
+
+                expect(widget.callbacks.iwidget).toEqual([]);
+                expect(widget.callbacks.mashup).toEqual([]);
+                expect(widget.callbacks.platform).toEqual([]);
+            });
+
+            it("ignores unload events when unloaded", () => {
+
+                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                    id: "1"
+                });
+                let element = widget.wrapperElement;
+
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+
+                expect(widget.load()).toBe(widget);
+
+                // Emulate final load event
+                widget.wrapperElement.contentWindow.location.href = widget.codeurl;
+                element.dispatchEvent(new Event("load"));
+
+                // Send unload event
+                widget.wrapperElement.contentDocument.defaultView.addEventListener.calls.argsFor(0)[1]();
+
+                // Now the widget should be fully unloaded
+                expect(widget.loaded).toBe(false);
+
+                // Send a second unload event
+                widget.wrapperElement.contentDocument.defaultView.addEventListener.calls.argsFor(0)[1]();
             });
 
         });
@@ -402,6 +730,17 @@
                     expect(widget.isAllowed("close")).toBe(true);
                 });
 
+                it("readonly widget", () => {
+                    var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                        id: "1",
+                        permissions: {
+                            close: true
+                        },
+                        readonly: true
+                    });
+                    expect(widget.isAllowed("close")).toBe(false);
+                });
+
             });
 
             describe("move", () => {
@@ -489,15 +828,122 @@
 
         });
 
+        describe("registerContextAPICallback(scope, callback)", () => {
+            var widget;
+
+            beforeEach(() => {
+                widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    title: "old title"
+                });
+            });
+
+            it("throws a TypeError exception when passing an invalid scope", () => {
+                let listener = jasmine.createSpy();
+                expect(() => {
+                    widget.registerContextAPICallback("invalid", listener);
+                }).toThrowError(TypeError);
+            });
+
+            it("support registering widget context callbacks", () => {
+                let listener = jasmine.createSpy();
+                widget.registerContextAPICallback("iwidget", listener);
+            });
+
+            it("support registering mashup context callbacks", () => {
+                let listener = jasmine.createSpy();
+                WORKSPACE_TAB.workspace.contextManager.addCallback.calls.reset();
+
+                widget.registerContextAPICallback("mashup", listener);
+
+                expect(WORKSPACE_TAB.workspace.contextManager.addCallback).toHaveBeenCalledWith(listener);
+            });
+
+            it("support registering platform context callbacks", () => {
+                let listener = jasmine.createSpy();
+                widget.registerContextAPICallback("platform", listener);
+            });
+
+        });
+
+        describe("registerPrefCallback(callback)", () => {
+
+            it("should register preference callbacks", () => {
+                var listener = jasmine.createSpy("listener");
+                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    title: "old title"
+                });
+                expect(widget.registerPrefCallback(listener)).toBe(widget);
+            });
+
+        });
+
+        describe("reload()", () => {
+
+            it("should reload widget view", () => {
+                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    title: "old title"
+                });
+                widget.wrapperElement = {
+                    contentWindow: {
+                        location: {
+                            reload: jasmine.createSpy("reload")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+                expect(widget.reload()).toBe(widget);
+
+                expect(widget.wrapperElement.contentWindow.location.reload).toHaveBeenCalledWith();
+            });
+
+        });
+
         describe("remove()", () => {
 
-            it("support removing volatile widgets", (done) => {
+            it("supports removing volatile widgets", (done) => {
                 var listener = jasmine.createSpy("listener");
                 var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
+
+                widget.addEventListener("remove", listener);
+                var p = widget.remove();
+                p.then((value) => {
+                    expect(value).toBe(value);
+                    expect(listener).toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it("supports removing loaded widgets", (done) => {
+                let listener = jasmine.createSpy("listener");
+                let widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1/1",
+                    title: "old title",
+                    volatile: true
+                });
+                let element = widget.wrapperElement;
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            href: widget.codeurl,
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+                widget.load();
+                element.dispatchEvent(new Event("load"));
 
                 widget.addEventListener("remove", listener);
                 var p = widget.remove();
@@ -648,6 +1094,122 @@
                     }
                 );
 
+            });
+
+        });
+
+        describe("setPosition(position)", () => {
+
+            var widget;
+
+            beforeEach(() => {
+                widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1/1",
+                    title: "old title"
+                });
+            });
+
+            it("should do nothing when passing an empty position", () => {
+                let initial_position = widget.position;
+
+                expect(widget.setPosition({})).toBe(widget);
+
+                expect(widget.position).toEqual(initial_position);
+            });
+
+            it("should allow to modify all the position properties", () => {
+                const new_position = {
+                    x: 1,
+                    y: 2,
+                    z: 3
+                };
+                expect(widget.setPosition(new_position)).toBe(widget);
+
+                expect(widget.position).toEqual(new_position);
+            });
+
+            it("should ignore extra properties", () => {
+                const new_position = {
+                    extra: 123,
+                    x: 1,
+                    y: 2,
+                    z: 3
+                };
+                expect(widget.setPosition(new_position)).toBe(widget);
+
+                expect(widget.position).toEqual({
+                    x: 1,
+                    y: 2,
+                    z: 3
+                });
+            });
+
+        });
+
+        describe("setShape(shape)", () => {
+
+            var widget;
+
+            beforeEach(() => {
+                widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1/1",
+                    title: "old title"
+                });
+            });
+
+            it("should do nothing when passing an empty shape", () => {
+                let initial_shape = widget.shape;
+
+                expect(widget.setShape({})).toBe(widget);
+
+                expect(widget.shape).toEqual(initial_shape);
+            });
+
+            it("should allow to modify all the shape properties", () => {
+                const new_shape = {
+                    width: 2,
+                    height: 3
+                };
+                expect(widget.setShape(new_shape)).toBe(widget);
+
+                expect(widget.shape).toEqual(new_shape);
+            });
+
+            it("should ignore extra properties", () => {
+                const new_shape = {
+                    extra: 123,
+                    width: 2,
+                    height: 3
+                };
+                expect(widget.setShape(new_shape)).toBe(widget);
+
+                expect(widget.shape).toEqual({
+                    width: 2,
+                    height: 3
+                });
+            });
+
+        });
+
+        describe("showLogs()", () => {
+
+            it("shows a log window menu", () => {
+                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1"
+                });
+
+                expect(widget.showLogs()).toBe(widget);
+            });
+
+        });
+
+        describe("showSettings()", () => {
+
+            it("shows a window menu for changing widget preferences", () => {
+                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1"
+                });
+                expect(widget.showSettings()).toBe(widget);
             });
 
         });
@@ -838,6 +1400,48 @@
                 p.then(
                     (value) => {
                         expect(widget.meta).toBe(MISSING_WIDGET_META);
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+
+            });
+
+            it("handle status transition from loaded widget", (done) => {
+
+                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1"
+                });
+                let element = widget.wrapperElement;
+                widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            href: widget.codeurl,
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute")
+                };
+                widget.load();
+                element.dispatchEvent(new Event("load"));
+
+                var new_meta = new Wirecloud.WidgetMeta();
+                new_meta.version.compareTo.and.returnValue(1);
+                var p = widget.upgrade(new_meta);
+                p.then(
+                    (value) => {
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        expect(widget.meta).toBe(new_meta);
+                        expect(widget.preferences.npref).toEqual(jasmine.any(Wirecloud.UserPref));
+                        expect(widget.preferences.npref.value).toBe("upgraded value");
+                        expect(widget.preferences.pref).toBe(undefined);
                         done();
                     },
                     (error) => {

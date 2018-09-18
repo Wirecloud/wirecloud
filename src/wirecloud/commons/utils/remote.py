@@ -474,10 +474,10 @@ class WorkspaceMixinTester(object):
 
         return WebDriverWait(self.driver, timeout=5).until(tab_created)
 
-    def create_widget(self, query, new_title=None):
+    def create_widget(self, query, new_title=None, version=None):
         with self.resource_sidebar as sidebar:
             resource = sidebar.search_component('widget', query)
-            tab_widget = resource.create_component()
+            tab_widget = resource.create_component(version=version)
 
         if new_title is not None:
             tab_widget.rename(new_title)
@@ -561,7 +561,17 @@ class WorkspaceComponentTester(WebElementTester):
     def title(self):
         return self.find_element('.we-component-meta .panel-title').text
 
-    def create_component(self):
+    @property
+    def version_select(self):
+        return Select(self.element.find_element_by_css_selector('.se-select select'))
+
+    def switch_to(self, version):
+        self.version_select.select_by_value(version)
+
+    def create_component(self, version=None):
+        if version is not None:
+            self.switch_to(version)
+
         ids = [WidgetTester(self.testcase, e).id for e in self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
         self.testcase.scroll_and_click(self.find_element(".wc-create-resource-component"))
 
@@ -1040,7 +1050,7 @@ class WiringConnectionTester(WebElementTester):
         if not self.has_class('active'):
             self.click()
         ActionChains(self.testcase.driver).click_and_hold(endpoint.element).move_to_element(new_endpoint.element).perform()
-        self.testcase.assertTrue(self.has_class('temporal'))
+        WebDriverWait(self.testcase.driver, 2).until(lambda driver: self.has_class('temporal'))
         ActionChains(self.testcase.driver).release().perform()
         return self
 
@@ -1098,13 +1108,9 @@ class WiringEndpointTester(WebElementTester):
 
     def change_position(self, endpoint):
         new_index = endpoint.index
-        actions = ActionChains(self.testcase.driver).click_and_hold(self.element)
+        actions = ActionChains(self.testcase.driver).click_and_hold(self.element).move_to_element(endpoint.element).release().perform()
 
-        for i in range(abs(new_index - self.index)):
-            actions.move_to_element(endpoint.element)
-
-        actions.release().perform()
-        self.testcase.assertEqual(self.index, new_index)
+        WebDriverWait(self.testcase.driver, 3).until(lambda driver: self.index == new_index)
         return self
 
     def create_connection(self, endpoint, must_recommend=(), must_expand=()):
@@ -1294,11 +1300,14 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         self.driver.delete_all_cookies()
 
-    def find_navbar_button(self, classname):
-        try:
-            return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .%s" % classname))
-        except NoSuchElementException:
-            return None
+    def find_navbar_button(self, classname, wait=False):
+        if wait:
+            return ButtonTester(self, self.wait_element_visible(".wc-toolbar .%s" % classname))
+        else:
+            try:
+                return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .%s" % classname))
+            except NoSuchElementException:
+                return None
 
     def scroll_and_click(self, element):
 
@@ -1328,7 +1337,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             loading_window = self.wait_element_visible('#loading-window')
             WebDriverWait(self.driver, timeout).until(EC.staleness_of(loading_window))
 
-    def wait_wirecloud_ready(self, start_timeout=10, timeout=10):
+    def wait_wirecloud_ready(self, start_timeout=10, timeout=10, embedded=False):
 
         loading_window = None
 
@@ -1344,9 +1353,12 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         except:
             pass
 
-        self.wait_element_visible('.wc-body:not(.se-on-transition)')
+        if embedded:
+            self.wait_element_visible('.wc-body:not(.se-on-transition)')
+        else:
+            WebDriverWait(self.driver, 10).until(lambda driver: self.get_current_view() != '')
 
-        time.sleep(0.1)  # work around some problems
+        time.sleep(0.2)  # work around some problems
 
     def login(self, username='admin', password='admin', next=None):
 
@@ -1369,7 +1381,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
     def get_current_view(self):
 
         try:
-            return self.driver.execute_script("return Wirecloud.UserInterfaceManager.header.currentView.view_name;")
+            return self.driver.execute_script("return document.querySelector('.wc-body').classList.contains('se-on-transition') ? '' : Wirecloud.UserInterfaceManager.header.currentView.view_name;")
         except:
             return ""
 
@@ -1559,12 +1571,18 @@ class MarketplaceViewTester(object):
 
     def get_subview(self):
 
-        return self.testcase.driver.execute_script('return Wirecloud.UserInterfaceManager.views.marketplace.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;')
+        return self.testcase.driver.execute_script('''
+            var alternatives = Wirecloud.UserInterfaceManager.views.marketplace.alternatives.getCurrentAlternative().alternatives;
+            return alternatives.hasClassName('se-on-transition') ? "" : alternatives.getCurrentAlternative().view_name;
+        ''')
 
     def get_current_resource(self):
 
         if self.get_subview() == 'details':
-            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .resource_title').text
+            try:
+                return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .resource_title').text
+            except StaleElementReferenceException:
+                return ""
 
     def switch_to(self, market, timeout=5):
 
@@ -1679,12 +1697,18 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def get_subview(self):
 
-        return self.testcase.driver.execute_script('return Wirecloud.UserInterfaceManager.views.myresources.alternatives.getCurrentAlternative().view_name;')
+        return self.testcase.driver.execute_script('''
+            var alternatives = Wirecloud.UserInterfaceManager.views.myresources.alternatives;
+            return alternatives.hasClassName('se-on-transition') ? "" : alternatives.getCurrentAlternative().view_name;
+        ''')
 
     def get_current_resource(self):
 
         if self.get_subview() == 'details':
-            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+            try:
+                return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+            except StaleElementReferenceException:
+                return ""
 
     def upload_resource(self, wgt_file, resource_name, shared=False, expect_error=False):
 
@@ -1751,6 +1775,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         if should_disappear_from_listings:
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(resource.element))
 
+        time.sleep(0.2)
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
             self.testcase.assertIsNone(resource)
@@ -1785,6 +1810,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         if should_disappear_from_listings:
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(resource.element))
 
+        time.sleep(0.2)
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
             self.testcase.assertIsNone(resource)
@@ -2005,7 +2031,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
-        self.testcase.find_navbar_button("wc-show-wiring-button").click()
+        self.testcase.find_navbar_button("wc-show-wiring-button", wait=True).click()
         self.testcase.wait_element_visible('.wc-body:not(.se-on-transition)')
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
@@ -2030,8 +2056,9 @@ class WiringViewTester(BaseWiringViewTester):
         return 'disabled' in self.testcase.driver.find_element_by_css_selector(".wiring-view").get_attribute('class').split()
 
     def select(self, components=(), key=Keys.CONTROL):
-        actions = ActionChains(self.testcase.driver).key_down(key)
+        actions = ActionChains(self.testcase.driver)
         for component in components:
-            actions.click(component.element)
-        actions.key_up(key).perform()
+            actions.key_down(key).click(component.element)
+        actions.perform()
+        ActionChains(self.testcase.driver).key_up(key).perform()
         return self

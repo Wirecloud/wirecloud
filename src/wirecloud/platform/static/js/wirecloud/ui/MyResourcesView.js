@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -321,10 +322,13 @@
                 onSuccess.call(this, resource);
                 onCompleteRequest.call(this);
             } else {
-                this.catalogue.getResourceDetails(resource.vendor, resource.name, {
-                    onSuccess: onSuccess.bind(this),
-                    onComplete: onCompleteRequest.bind(this)
-                });
+                this.catalogue.getResourceDetails(resource.vendor, resource.name).then(
+                    (resource) => {
+                        onSuccess.call(this, resource);
+                        onCompleteRequest.call(this);
+                    },
+                    onCompleteRequest.bind(this)
+                );
             }
         }.bind(this);
     };
@@ -349,8 +353,7 @@
         msg = utils.interpolate(msg, resource, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
-            dialog.setHandler(doRequest.bind(this));
-            dialog.show();
+            dialog.setHandler(doRequest.bind(this)).show();
         }.bind(this);
     };
 
@@ -381,8 +384,7 @@
         msg = utils.interpolate(msg, context, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
-            dialog.setHandler(doRequest.bind(this));
-            dialog.show();
+            dialog.setHandler(doRequest.bind(this)).show();
         }.bind(this);
     };
 

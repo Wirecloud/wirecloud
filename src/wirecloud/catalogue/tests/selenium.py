@@ -28,20 +28,7 @@ __test__ = False
 class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     tags = ('wirecloud-selenium', 'wirecloud-catalogue', 'wirecloud-catalogue-selenium')
-
-    def test_upload_packaged_widget(self):
-
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
-
-    def test_upload_packaged_mashup(self):
-
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
+    populate = False
 
     def test_upload_packaged_mashup_embedded_resources(self):
 
@@ -78,26 +65,3 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
             myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
         self.create_widget('Test_Selenium')
-
-    def test_upload_and_delete_widget(self):
-
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
-            myresources.delete_resource('Test_Selenium')
-
-    def test_search_empty_results(self):
-
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.search('nousedkeyword')
-            catalogue_base_element = myresources.wait_catalogue_ready()
-
-            resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
-            self.assertEqual(len(resources), 0)
-
-            alert = catalogue_base_element.find_elements_by_css_selector('.alert')
-            self.assertEqual(len(alert), 1)
-            self.assertIn('nousedkeyword', alert[0].text)

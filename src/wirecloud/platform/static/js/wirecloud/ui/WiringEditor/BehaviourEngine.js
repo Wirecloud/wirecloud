@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -740,7 +741,7 @@
                 cancelLabel: utils.gettext("Cancel"),
                 message: message
             });
-            dialog.acceptHandler = function () {
+            dialog.setHandler(() => {
                 for (var i = this.behaviours.length - 1; i >= 0; i--) {
                     this.body.removeChild(this.behaviours[i]);
                 }
@@ -749,8 +750,7 @@
                 delete this.behaviour;
                 this.enabled = false;
                 this.dispatchEvent('enable', this.enabled);
-            }.bind(this);
-            dialog.show();
+            }).show();
         } else {
             this.enabled = true;
             this.createBehaviour();
@@ -815,8 +815,7 @@
             });
 
         modal = new Wirecloud.ui.AlertWindowMenu(message);
-        modal.acceptHandler = _removeComponent.bind(this, component, false);
-        modal.show();
+        modal.setHandler(_removeComponent.bind(this, component, false)).show();
 
         return this;
     };
@@ -839,16 +838,14 @@
             components: components
         }));
 
-        modal = new Wirecloud.ui.AlertWindowMenu();
-        modal.setMsg(message);
-        modal.acceptHandler = function () {
+        modal = new Wirecloud.ui.AlertWindowMenu(message);
+        modal.setHandler(() => {
             var i;
 
             for (i = 0; i < componentList.length; i++) {
                 _removeComponent.call(this, componentList[i], false);
             }
-        }.bind(this);
-        modal.show();
+        }).show();
 
         return this;
     };
@@ -861,10 +858,8 @@
                 title: component.title
             });
 
-        modal = new Wirecloud.ui.AlertWindowMenu();
-        modal.setMsg(message);
-        modal.acceptHandler = _removeComponent.bind(this, component, true);
-        modal.show();
+        modal = new Wirecloud.ui.AlertWindowMenu(message);
+        modal.setHandler(_removeComponent.bind(this, component, true)).show();
 
         return this;
     };

@@ -3,6 +3,7 @@
  *
  *     Copyright (c) 2012-2016 Universidad Politécnica de Madrid
  *     Copyright (c) 2012-2014 the Center for Open Middleware
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     Licensed under the Apache License, Version 2.0 (the
  *     "License"); you may not use this file except in compliance
@@ -659,10 +660,9 @@ Wirecloud.ui = Wirecloud.ui || {};
         message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The connection will also be modified for the rest of behaviours, would you like to continue?") + builder.DEFAULT_CLOSING);
 
         modal = new Wirecloud.ui.AlertWindowMenu(message);
-        modal.acceptHandler = function () {
+        modal.setHandler(() => {
             this.behaviourEngine.removeConnection(connection, true);
-        }.bind(this);
-        modal.show();
+        }).show();
     };
 
     var component_onremove = function component_onremove(component) {

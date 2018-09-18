@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -38,6 +39,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         },
     }
     tags = ('wirecloud-selenium', 'wirecloud-markets', 'wirecloud-markets-selenium')
+    use_search_indexes = False
 
     def check_resource_buttons(self, marketplace, resources, button_text=None):
         for resource_name in resources:
@@ -152,15 +154,15 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(self.marketplace_view.get_current_marketplace_name(), 'origin')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
-        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test Mashup')
+        # get_current_resource also checks we are at the details subview
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_resource() == 'Test Mashup')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
-        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test')
+        # get_current_resource also checks we are at the details subview
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_resource() == 'Test')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
@@ -175,15 +177,15 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(self.marketplace_view.get_subview(), 'search')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
-        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test')
+        # get_current_resource also checks we are at the details subview
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_resource() == 'Test')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
-        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test Mashup')
+        # get_current_resource also checks we are at the details subview
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_resource() == 'Test Mashup')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')

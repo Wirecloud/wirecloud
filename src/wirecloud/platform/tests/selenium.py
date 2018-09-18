@@ -54,6 +54,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-basics-selenium')
+    populate = False
 
     def test_basic_workspace_operations(self):
 
@@ -124,20 +125,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
 
-    def test_read_only_widgets_cannot_be_removed(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
-
-        tab = self.find_tab(title="Tab 2")
-        tab.click()
-
-        tab_widget = tab.find_widget(title="Test 2")
-        self.assertTrue(tab_widget.remove_button.is_disabled)
-
     def test_tabs_with_read_only_widgets_cannot_be_removed(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
         tab = self.find_tab(title="Tab 2")
         tab.show_preferences().check(must_be_disabled=('Remove',))
+
+        tab.click()
+        tab_widget = tab.find_widget(title="Test 2")
+        self.assertTrue(tab_widget.remove_button.is_disabled)
 
     def test_refresh_widget(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
@@ -356,9 +352,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'myresources')
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
-        self.assertEqual(self.myresources_view.get_subview(), 'details')
-        self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_current_resource() == 'Test')
 
     def test_pending_wiring_events(self):
 
@@ -703,7 +697,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Swicth to Wirecloud's iframe
         iframe = self.driver.find_element_by_id('iframe')
         self.driver.switch_to.frame(iframe)
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(embedded=True)
         self.check_public_workspace(frame_id='iframe')
 
     def check_public_workspace(self, frame_id=None):
@@ -938,7 +932,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.resource_sidebar as sidebar:
 
             # Add the youtube browser widget
-            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'YouTube Browser')).click()
+            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'YouTube Browser'))
 
             # Next tutorial step
             next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
@@ -946,7 +940,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             next_button.click()
 
             # Add the input box widget
-            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'Input Box')).click()
+            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'Input Box'))
 
         # cancel current tutorial
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()

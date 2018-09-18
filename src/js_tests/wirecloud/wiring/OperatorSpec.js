@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -89,6 +90,18 @@
 
 
     describe("Wirecloud.wiring.Operator", function () {
+
+        // TODO
+        beforeEach(() => {
+            Wirecloud.PropertyCommiter = jasmine.createSpy("PropertyCommiter").and.returnValue({
+                commit: jasmine.createSpy('commit')
+            });
+        });
+
+        // TODO
+        afterAll(() => {
+            delete Wirecloud.PropertyCommiter;
+        });
 
         describe("new Operator(wiring, meta, [data])", function () {
 

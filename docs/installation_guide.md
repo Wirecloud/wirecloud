@@ -26,7 +26,7 @@ step, as they will be installed throughout the documentation:**
     - futures 2.1.3+ (only on python 2.7)
     - selenium 3.4+
     - pytz
-    - django_relatives
+    - django_relatives 0.3.x
     - user-agents
     - regex
     - markdown

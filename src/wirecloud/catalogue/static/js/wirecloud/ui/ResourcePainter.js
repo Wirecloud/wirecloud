@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements, Wirecloud */
+/* globals moment, StyledElements, Wirecloud */
 
 (function (se, utils) {
 
