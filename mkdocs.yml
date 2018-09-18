@@ -28,4 +28,12 @@ pages:
         - 'Testing': 'development/platform/testing.md'
         - 'Translations': 'development/platform/translation.md'
 
-
+markdown_extensions:
+    - markdown_github.headerid
+    - markdown_github.superfences
+    - markdown_github.magiclink
+    - codehilite:
+        guess_lang: False
+    - toc:
+        permalink: True
+        separator: "."
