@@ -2,7 +2,7 @@ site_name: WireCloud
 site_description: WireCloud Documentation
 repo_url: https://github.com/Wirecloud/wirecloud
 theme: readthedocs
-extra_css: ['https://fiware.org/style/fiware_readthedocs.css', 'css/mkdocs.css']
+extra_css: ['https://fiware.org/style/fiware_readthedocs.css', 'https://fiware.org/style/fiware_readthedocs_processing.css']
 google_analytics: ['UA-84269043-1', 'wirecloud.readthedocs.io']
 
 pages:
