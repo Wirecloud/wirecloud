@@ -2374,51 +2374,6 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
 
 @wirecloud_selenium_test_case
-class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
-
-    fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
-    use_search_indexes = False
-
-    def _read_json_fixtures(self, filename):
-        testdir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test-data'))
-
-        with open(os.path.join(testdir_path, filename + '.json')) as file_opened:
-            return json.loads(file_opened.read())
-
-    def test_components_with_no_visual_data_should_be_recovered(self):
-        workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_missing_visual_data')
-        workspace.save()
-
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
-            self.assertEqual(len(wiring.find_draggable_components()), 3)
-            self.assertEqual(len(wiring.find_draggable_components(extra_class='missing')), 0)
-            self.assertEqual(len(wiring.find_connections()), 3)
-
-        widgets = self.widgets
-        event = 'hello world!!'
-
-        self.send_basic_event(widgets[0], event)
-
-        with widgets[1]:
-            self.assertEqual(self.driver.find_element_by_id('wiringOut').text, event)
-
-    def test_connections_with_unrecoverable_endpoint_should_not_be_recovered(self):
-        workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_unrecoverabledata')
-        workspace.save()
-
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-        self.assertIsNone(self.find_navbar_button("wc-show-wiring-button").badge)
-
-        with self.wiring_view as wiring:
-            self.assertEqual(len(wiring.find_connections()), 0)
-
-
-@wirecloud_selenium_test_case
 class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
