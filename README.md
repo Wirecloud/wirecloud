@@ -12,9 +12,9 @@ WireCloud
 [![Documentation badge](https://img.shields.io/readthedocs/wirecloud.svg)](http://wirecloud.readthedocs.org/en/latest/)
 [![Docker Status](https://img.shields.io/docker/pulls/fiware/wirecloud.svg)](https://hub.docker.com/r/fiware/wirecloud/)
 [![Support badge](https://img.shields.io/badge/tag-fiware--wirecloud-orange.svg?logo=stackoverflow)](https://stackoverflow.com/questions/tagged/fiware-wirecloud)
-[![WireCloud version](https://img.shields.io/pypi/v/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
-[![WireCloud continuous integration](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-1.0.x-python2.7-django1.8-selenium/badge/icon)](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-1.0.x-python2.7-django1.8-selenium/)
-[![WireCloud Coverage Status](https://coveralls.io/repos/Wirecloud/wirecloud/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/Wirecloud/wirecloud?branch=HEAD)
+[![Current stable version](https://img.shields.io/pypi/v/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
+[![Build Status](https://travis-ci.org/Wirecloud/wirecloud.svg?branch=develop)](https://travis-ci.org/Wirecloud/wirecloud)
+[![Coverage Status](https://coveralls.io/repos/github/Wirecloud/wirecloud/badge.svg?branch=develop)](https://coveralls.io/github/Wirecloud/wirecloud?branch=develop)
 
 WireCloud builds on cutting-edge end-user development, RIA and semantic
 technologies to offer a next-generation end-user centred web application mashup
