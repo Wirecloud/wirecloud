@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -248,6 +249,42 @@
                             readonly: false,
                             source: {endpoint: "output", type: "operator", id: "1"},
                             target: {endpoint: "missinginput", type: "widget", id: "3"}
+                        }
+                    ]
+                });
+
+                // The connection referring to the missing widget should be
+                // filtered as it cannot be recovered
+                expect(wiring.status).toEqual({
+                    version: '2.0',
+                    connections: [],
+                    operators: {
+                        "1": jasmine.any(Wirecloud.wiring.Operator)
+                    },
+                    visualdescription: {
+                        behaviours: [],
+                        components: {
+                            operator: {},
+                            widget: {}
+                        },
+                        connections: []
+                    }
+                });
+
+            });
+
+            it("loads wiring configurations with totally broken connections", () => {
+
+                var workspace = createWorkspaceMock();
+                var wiring = new Wirecloud.Wiring(workspace, {
+                    operators: {
+                        "1": {id: "1", name: "Wirecloud/TestOperator/1.0"}
+                    },
+                    connections: [
+                        {
+                            readonly: false,
+                            source: {},
+                            target: {endpoint: "input", type: "widget", id: "3"}
                         }
                     ]
                 });
