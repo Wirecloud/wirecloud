@@ -56,7 +56,7 @@
                 expect(endpoint.description).toEqual("");
                 expect(endpoint.friendcodeList).toEqual([]);
                 expect(endpoint.label).toEqual(DEFAULT_ENDPOINT_NAME);
-                expect(endpoint.missing).toBeTruthy();
+                expect(endpoint.missing).toBe(true);
             });
 
             it("should allow to create widget endpoints", function () {
@@ -68,7 +68,7 @@
                 expect(endpoint.description).toEqual("");
                 expect(endpoint.friendcodeList).toEqual([]);
                 expect(endpoint.label).toEqual(DEFAULT_ENDPOINT_NAME);
-                expect(endpoint.missing).toBeTruthy();
+                expect(endpoint.missing).toBe(true);
             });
 
         });

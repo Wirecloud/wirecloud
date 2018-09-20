@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -210,7 +211,8 @@
                 volatile: false
             }, data);
 
-            var operator = create_operator.call(this, meta, data);
+            var operator = new Wirecloud.wiring.Operator(this, meta, data);
+            priv.operatorId += 1;
 
             if (data.volatile) {
                 return append_operator.call(this, operator);
@@ -298,7 +300,7 @@
 
                 if (priv.operatorsById[id] == null) {
                     append_operator.call(this, operator);
-                } else if (operator.missing) {
+                } else if (operator.loaded && operator.missing) {
                     this.logManager.log(utils.gettext("Failed to load operator."));
                 }
             }
@@ -309,12 +311,11 @@
             }, this);
 
             // Init operatorId counter
-            priv.operatorId = 1;
-            priv.operators.forEach(function (operator) {
-                if (Number(operator.id) >= priv.operatorId) {
-                    priv.operatorId = Number(operator.id) + 1;
-                }
-            }, this);
+            if (priv.operators.length > 0) {
+                priv.operatorId = priv.operators[priv.operators.length - 1].id + 1;
+            } else {
+                priv.operatorId = 1;
+            }
 
             status.connections.forEach(function (connection) {
                 connection.addEventListener('remove', priv.on_removeconnection);
@@ -396,8 +397,8 @@
         return {
             version: '2.0',
             connections: priv.connections.slice(0),
-            operators: this.operatorsById,
-            visualdescription: this.visualdescription
+            operators: priv.operatorsById,
+            visualdescription: priv.visualdescription
         };
     };
 
@@ -593,19 +594,6 @@
         operator.addEventListener('change', priv.on_changecomponent);
         operator.addEventListener('remove', priv.on_removeoperator);
         this.dispatchEvent('createoperator', operator.load());
-
-        return operator;
-    };
-
-    var create_operator = function create_operator(meta, data) {
-        var operator, priv;
-
-        priv = privates.get(this);
-        operator = new Wirecloud.wiring.Operator(this, meta, data);
-
-        if (Number(operator.id) >= priv.operatorId) {
-            priv.operatorId = Number(operator.id) + 1;
-        }
 
         return operator;
     };
