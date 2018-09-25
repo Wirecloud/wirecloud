@@ -2830,19 +2830,6 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             self.assertTrue(operator.has_class('readonly'))
             self.assertTrue(operator.btn_remove.is_disabled)
 
-    def test_connections_with_only_visual_data_should_be_ignored(self):
-        # Change the connection output-endpoint from the business description.
-        workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus['connections'][0]['target']['endpoint'] = 'nothandled'
-        workspace.save()
-
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
-            # The workspace should have three connections loaded
-            self.assertEqual(len(wiring.find_connections()), 3)
-            self.assertEqual(len(wiring.find_connections(extra_class='missing')), 0)
-
     def test_active_connection_should_allow_to_change_their_endpoints(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
