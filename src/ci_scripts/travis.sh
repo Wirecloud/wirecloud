@@ -2,8 +2,9 @@
 
 set -e
 
+cd $TRAVIS_BUILD_DIR/src
+
 if [ "${TEST_SUITE}" == "js_unittests" ]; then
-    cd $TRAVIS_BUILD_DIR/src
     grunt ci
     exit
 elif [ "${TEST_SUITE}" == "selenium" ]; then
@@ -13,7 +14,6 @@ else
 fi
 
 
-export WC_INSTANCE_NAME=test_instance
 [ -n "${IP_ADDR}" ] || IP_ADDR="localhost"
 
 WORKSPACE=${TRAVIS_BUILD_DIR}
@@ -31,18 +31,14 @@ do
 done
 
 # Build and install WireCloud
-cd src; ./setup.py bdist_wheel &> /dev/null; cd ..
+./setup.py bdist_wheel &> /dev/null
 pip install ${TRAVIS_BUILD_DIR}/src/dist/wirecloud*.whl
 
 # Install the required testing tools
 pip install django-nose mock radon
 
-# Create a WireCloud instance
-wirecloud-admin startproject ${WC_INSTANCE_NAME}
-cd ${WC_INSTANCE_NAME}
-
-# And configure it
-cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/base_settings.py >> ${WC_INSTANCE_NAME}/settings.py
+# Configure WireCloud
+cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/base_settings.py >> settings.py
 for conf in $FLAGS
 do
     file="${TRAVIS_BUILD_DIR}/src/ci_scripts/conf_scripts/${conf}-prepare.sh"
