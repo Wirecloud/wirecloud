@@ -642,11 +642,7 @@
                 context.active = context.component.active;
                 context.component.btnPrefs.getPopupMenu().hide();
                 context.position = context.component.addClassName('dragging').position();
-
-                if (!context.active) {
-                    context.component.active = true;
-                }
-
+                context.component.active = true;
                 context.component.dispatchEvent('dragstart', event);
             },
             function drag(event, draggable, context, x, y) {
@@ -668,10 +664,7 @@
                     context.component.active = !context.active;
                 } else {
 
-                    if (!context.active) {
-                        context.component.active = false;
-                    }
-
+                    context.component.active = context.active;
                     context.component
                         .dispatchEvent('change', {
                             position: position

@@ -63,30 +63,42 @@
                     }
                 },
                 _addOperator: {
-                    value: function () {
+                    value: function (options) {
+                        if (options == null) {
+                            options = {};
+                        }
                         let operator = {
                             id: "" + (this.wiring.operators.length + 1),
+                            volatile: options.volatile,
                             meta: {
                                 type: "operator"
                             },
                             getEndpoint: jasmine.createSpy("getEndpoint")
                         };
                         this.wiring.operators.push(operator);
-                        this.wiring.visualdescription.components.operator[operator.id] = {name: "Wirecloud/TestOperator/1.0"};
+                        if (options.visual) {
+                            this.wiring.visualdescription.components.operator[operator.id] = {
+                                name: "Wirecloud/TestOperator/1.0"
+                            };
+                        }
                         return this;
                     }
                 },
                 _addWidget: {
-                    value: function (visual) {
+                    value: function (options) {
+                        if (options == null) {
+                            options = {};
+                        }
                         let widget = {
                             id: "" + (this.widgets.length + 1),
+                            volatile: options.volatile,
                             meta: {
                                 type: "widget"
                             },
                             getEndpoint: jasmine.createSpy("getEndpoint")
                         };
                         this.widgets.push(widget);
-                        if (visual != null) {
+                        if (options.visual) {
                             this.wiring.visualdescription.components.widget[widget.id] = {
                                 collapsed: false,
                                 endpoints: {source: [], target: []},
@@ -98,29 +110,60 @@
                     }
                 },
                 _addConnection: {
-                    value: function (A, B) {
+                    value: function (options) {
+                        if (options == null) {
+                            options = {};
+                        }
+
+                        if (!('source' in options)) {
+                            options.source = {
+                                type: "widget",
+                                id: "1",
+                                endpoint: "output1"
+                            };
+                        }
+                        if (!('target' in options)) {
+                            options.target = {
+                                type: "operator",
+                                id: "1",
+                                endpoint: "input1"
+                            };
+                        }
+                        let sourceid = [options.source.type, options.source.id, options.source.endpoint].join("/");
+                        let targetid = [options.target.type, options.target.id, options.target.endpoint].join("/");
+
                         let connection = {
-                            volatile: false,
+                            volatile: !!options.volatile,
                             source: {
-                                name: "output1",
+                                id: sourceid,
+                                name: options.source.endpoint,
                                 component: {
-                                    id: "1",
+                                    id: options.source.id,
                                     meta: {
-                                        type: "widget"
+                                        type: options.source.type
                                     }
                                 }
                             },
                             target: {
-                                name: "input1",
+                                id: targetid,
+                                name: options.target.endpoint,
                                 component: {
-                                    id: "1",
+                                    id: options.target.id,
                                     meta: {
-                                        type: "operator"
+                                        type: options.target.type
                                     }
                                 }
                             }
                         };
                         this.wiring.connections.push(connection);
+                        if (options.visual) {
+                            this.wiring.visualdescription.connections.push({
+                                sourcehandle: "auto",
+                                sourcename: sourceid,
+                                targethandle: "auto",
+                                targetname: targetid
+                            });
+                        }
                     }
                 }
             });
@@ -157,17 +200,35 @@
                 this.addEventListener = jasmine.createSpy('addEventListener').and.returnValue(this);
                 this.stopOrdering = jasmine.createSpy('stopOrdering').and.returnValue(this);
                 this.loadBehaviours = jasmine.createSpy('loadBehaviours').and.returnValue(this);
-                this.updateComponent = jasmine.createSpy('updateComponent').and.returnValue(this);
+                this.hasComponents = jasmine.createSpy('hasComponents');
+                this.updateConnection = jasmine.createSpy('updateConnection');
+                this.removeComponent = jasmine.createSpy('removeComponent');
+                this.updateComponent = jasmine.createSpy('updateComponent').and.callFake(function (component) {
+                    this.components[component.type][component.id] = component;
+                    return this;
+                });
                 this.removeComponentList = jasmine.createSpy('removeComponentList').and.returnValue(this);
                 this.forEachComponent = jasmine.createSpy('forEachComponent').and.returnValue(this);
+                this.filterByConnection = jasmine.createSpy('filterByConnection');
+                this.filterByComponent = jasmine.createSpy('filterByComponent');
                 this.clear = jasmine.createSpy('clear').and.returnValue(this);
                 this.disable = jasmine.createSpy('disable').and.returnValue(this);
                 this.toJSON = jasmine.createSpy('toJSON').and.returnValue({"BehaviourEngine": "toJSON"});
                 this.wrapperElement = document.createElement('div');
+                this.components = {
+                    operator: {},
+                    widget: {}
+                };
             });
             se.Utils.inherit(ns.WiringEditor.BehaviourEngine, se.StyledElement);
+            ns.WiringEditor.BehaviourEngine.GLOBAL = 0;
 
-            ns.WiringEditor.ComponentDraggable = jasmine.createSpy("ComponentDraggable").and.callFake(function () {
+            ns.WiringEditor.ComponentDraggable = jasmine.createSpy("ComponentDraggable").and.callFake(function (wiringComponent) {
+                this._component = wiringComponent;
+                this.id = wiringComponent.id;
+                this.type = wiringComponent.meta.type;
+                this.active = false;
+
                 this.addEventListener = jasmine.createSpy('addEventListener').and.returnValue(this);
                 this.forEachEndpoint = jasmine.createSpy('forEachEndpoint').and.returnValue(this);
                 this.setUp = jasmine.createSpy('setUp').and.returnValue(this);
@@ -180,11 +241,16 @@
 
             ns.WiringEditor.ComponentShowcase = jasmine.createSpy("ComponentShowcase").and.callFake(function () {
                 this.addComponent = jasmine.createSpy('addComponent');
+                this.removeComponent = jasmine.createSpy('removeComponent');
                 this.addEventListener = jasmine.createSpy('addEventListener');
                 this.clear = jasmine.createSpy('clear');
-                this.findComponent = jasmine.createSpy('findComponent').and.callFake(() => {
+                this.findComponent = jasmine.createSpy('findComponent').and.callFake((type, id) => {
                     return {
                         _component: {
+                            id: id,
+                            meta: {
+                                type: type
+                            },
                             addEventListener: jasmine.createSpy("addEventListener")
                         }
                     };
@@ -199,6 +265,8 @@
             ns.WiringEditor.ConnectionEngine = jasmine.createSpy("ConnectionEngine").and.callFake(function () {
                 this.setUp = jasmine.createSpy('setUp').and.returnValue(this);
                 this.connect = jasmine.createSpy('connect').and.returnValue(this);
+                this.appendEndpoint = jasmine.createSpy('appendEndpoint');
+                this.removeEndpoint = jasmine.createSpy('removeEndpoint');
                 this.forEachConnection = jasmine.createSpy('forEachConnection').and.returnValue(this);
                 this.addEventListener = jasmine.createSpy('addEventListener').and.returnValue(this);
             });
@@ -236,6 +304,20 @@
                 expect(editor.layout.slideIn).toHaveBeenCalledWith(1);
             });
 
+            it("btnFindComponents should slideOut the component panel when active", () => {
+                let editor = new ns.WiringEditor(1);
+                Wirecloud.dispatchEvent('loaded');
+                spyOn(editor.layout, "slideIn");
+                spyOn(editor.layout, "slideOut");
+                // toggle the btnFindComponents button
+                editor.btnFindComponents.active = true;
+
+                editor.btnFindComponents.click();
+
+                expect(editor.componentManager.searchComponents.refresh).not.toHaveBeenCalled();
+                expect(editor.layout.slideOut).toHaveBeenCalledWith();
+            });
+
             it("btnListBehaviours should slideIn the behaviours panel", () => {
                 let editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
@@ -246,6 +328,17 @@
 
                 expect(editor.layout.slideIn).toHaveBeenCalledWith(0);
             });
+
+            it("dblclick should slideOut the component panel", () => {
+                let editor = new ns.WiringEditor(1);
+                Wirecloud.dispatchEvent('loaded');
+                spyOn(editor.layout, "slideOut");
+
+                editor.layout.content.get().dispatchEvent(new MouseEvent("dblclick"));
+
+                expect(editor.layout.slideOut).toHaveBeenCalledWith();
+            });
+
         });
 
         describe("getTitle()", () => {
@@ -303,14 +396,45 @@
                 Wirecloud.dispatchEvent('loaded');
                 let workspace = createWorkspaceMock();
                 workspace._addWidget()._addOperator();
-                workspace._addConnection("1", "1");
-                // No visualdescription => no components on the behaviourEngine
-                editor.behaviourEngine.components = {
-                    widget: {},
-                    operator: {}
-                };
+                workspace._addConnection();
+                editor.load(workspace);
+
+                // No visualdescription for components, but they are loaded as
+                // there is a connection
+                expect(editor.behaviourEngine.components).toEqual({
+                    widget: {"1": jasmine.any(Wirecloud.ui.WiringEditor.ComponentDraggable)},
+                    operator: {"1": jasmine.any(Wirecloud.ui.WiringEditor.ComponentDraggable)}
+                });
+
+                expect(editor.componentManager.addComponent.calls.count()).toBe(2);
+                expect(editor.connectionEngine.connect.calls.count()).toBe(1);
+                expect(editor.behaviourEngine.loadBehaviours.calls.count()).toBe(1);
+                expect(editor.behaviourEngine.loadBehaviours).toHaveBeenCalledWith([]);
+            });
+
+            it("should support loading a basic wiring (with broken visualdescription)", () => {
+                let editor = new ns.WiringEditor(1);
+                Wirecloud.dispatchEvent('loaded');
+                let workspace = createWorkspaceMock();
+                workspace._addWidget({visual: true})._addOperator({visual: true});
+                workspace._addConnection({visual: true});
+
+                // Add broken connection description
+                workspace.wiring.visualdescription.connections.push({
+                    sourcehandle: "auto",
+                    sourcename: "widget/1/routeDescriptionOutput",
+                    targethandle: "auto",
+                    targetname: "operator/3/routeInput"
+                });
 
                 editor.load(workspace);
+
+                // No visualdescription for components, but they are loaded as
+                // there is a valid afecting them
+                expect(editor.behaviourEngine.components).toEqual({
+                    widget: {"1": jasmine.any(Wirecloud.ui.WiringEditor.ComponentDraggable)},
+                    operator: {"1": jasmine.any(Wirecloud.ui.WiringEditor.ComponentDraggable)}
+                });
 
                 expect(editor.componentManager.addComponent.calls.count()).toBe(2);
                 expect(editor.connectionEngine.connect.calls.count()).toBe(1);
@@ -323,7 +447,7 @@
                 Wirecloud.dispatchEvent('loaded');
                 let workspace = createWorkspaceMock();
                 workspace._addOperator()._addWidget();
-                workspace._addConnection("1", "1");
+                workspace._addConnection();
                 editor.behaviourEngine.components = {
                     widget: {1: {missing: true, getEndpoint: jasmine.createSpy('getEndpoint')}},
                     operator: {1: {getEndpoint: jasmine.createSpy('getEndpoint')}}
@@ -337,31 +461,100 @@
                 expect(editor.behaviourEngine.loadBehaviours).toHaveBeenCalledWith([]);
             });
 
+            it("should support loading a wiring configuration with volatile connections and components", () => {
+                let editor = new ns.WiringEditor(1);
+                Wirecloud.dispatchEvent('loaded');
+                let workspace = createWorkspaceMock();
+                workspace._addWidget({visual: true})._addOperator({visual: true});
+                workspace._addConnection({visual: true});
+                workspace._addWidget({volatile: true})._addOperator({volatile: true});
+                workspace._addConnection({
+                    volatile: true
+                });
+                editor.load(workspace);
+
+                // No visualdescription for components, but they are loaded as
+                // there is a connection
+                expect(editor.behaviourEngine.components).toEqual({
+                    widget: {"1": jasmine.any(Wirecloud.ui.WiringEditor.ComponentDraggable)},
+                    operator: {"1": jasmine.any(Wirecloud.ui.WiringEditor.ComponentDraggable)}
+                });
+
+                expect(editor.componentManager.addComponent.calls.count()).toBe(4);
+                expect(editor.connectionEngine.connect.calls.count()).toBe(1);
+                expect(editor.behaviourEngine.loadBehaviours.calls.count()).toBe(1);
+                expect(editor.behaviourEngine.loadBehaviours).toHaveBeenCalledWith([]);
+            });
+
+            it("should handle component updates", () => {
+                let editor = new ns.WiringEditor(1);
+                let workspace = createWorkspaceMock();
+                workspace._addWidget({visual: true});
+                Wirecloud.dispatchEvent('loaded');
+                editor.load(workspace);
+
+                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+
+                callEventListener(component, "change", {title: "new title"});
+
+                expect(editor.behaviourEngine.updateComponent).toHaveBeenCalledWith(component);
+            });
+
+            it("should handle optshare events on components", () => {
+                let editor = new ns.WiringEditor(1);
+                let workspace = createWorkspaceMock();
+                workspace._addWidget({visual: true});
+                Wirecloud.dispatchEvent('loaded');
+                editor.load(workspace);
+
+                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+
+                callEventListener(component, "optshare");
+
+                expect(editor.behaviourEngine.updateComponent).toHaveBeenCalledWith(component, true);
+            });
+
+            it("should handle optremove events on components", () => {
+                let editor = new ns.WiringEditor(1);
+                let workspace = createWorkspaceMock();
+                workspace._addWidget({visual: true});
+                Wirecloud.dispatchEvent('loaded');
+                editor.load(workspace);
+
+                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+
+                callEventListener(component, "optremove");
+
+                expect(editor.behaviourEngine.removeComponent).toHaveBeenCalledWith(component);
+            });
+
+            it("should handle optremovecascade events on components", () => {
+                let editor = new ns.WiringEditor(1);
+                let workspace = createWorkspaceMock();
+                workspace._addWidget({visual: true});
+                Wirecloud.dispatchEvent('loaded');
+                editor.load(workspace);
+
+                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+
+                callEventListener(component, "optremovecascade");
+
+                expect(editor.behaviourEngine.removeComponent).toHaveBeenCalledWith(component, true);
+            });
+
             describe("should handle order events on components", () => {
 
-                var editor, component1, component2, component3;
+                var editor, component1, component2;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
                     let workspace = createWorkspaceMock();
-                    workspace._addWidget(true)._addWidget(true)._addOperator();
+                    workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator();
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
 
                     component1 = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
-                    component1.type = "widget";
-                    component1.id = "1";
-                    component1.active = false;
-
                     component2 = editor.behaviourEngine.updateComponent.calls.argsFor(1)[0];
-                    component2.type = "widget";
-                    component2.id = "2";
-                    component2.active = false;
-
-                    component3 = editor.behaviourEngine.updateComponent.calls.argsFor(2)[0];
-                    component3.type = "operator";
-                    component3.id = "3";
-                    component3.active = false;
 
                     spyOn(editor.suggestionManager, "disable");
                     spyOn(editor.suggestionManager, "enable");
@@ -395,6 +588,309 @@
                     expect(editor.suggestionManager.disable).toHaveBeenCalledWith();
                 });
 
+                it("should disable endpoint ordering when clicking on the layout (outside any component)", () => {
+                    callEventListener(component1, "orderstart");
+                    component1.setUp.calls.reset();
+
+                    editor._layout_onclick();
+
+                    // setUp will raise a dragend event but we don't simulate it
+                    expect(component1.setUp).toHaveBeenCalledWith();
+                    expect(editor.orderableComponent).toBe(null);
+                });
+
+                it("should disable endpoint ordering when clicking on a connection (witout using the control or the meta keys)", () => {
+                    callEventListener(component1, "orderstart");
+                    component1.setUp.calls.reset();
+
+                    callEventListener(editor.connectionEngine, "click", {});
+
+                    // setUp will raise a dragend event but we don't simulate it
+                    expect(component1.setUp).toHaveBeenCalledWith();
+                    expect(editor.orderableComponent).toBe(null);
+                });
+
+            });
+
+            describe("should handle endpoint events on components", () => {
+
+                var editor, widget, operator;
+
+                beforeEach(() => {
+                    editor = new ns.WiringEditor(1);
+                    let workspace = createWorkspaceMock();
+                    workspace._addWidget({visual: true})._addOperator({visual: true});
+                    Wirecloud.dispatchEvent('loaded');
+                    editor.load(workspace);
+
+                    widget = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+                    operator = editor.behaviourEngine.updateComponent.calls.argsFor(1)[0];
+                });
+
+                it("endpointadded", () => {
+                    let endpoint = {
+                        addEventListener: jasmine.createSpy("addEventListener")
+                    };
+                    endpoint.addEventListener.and.returnValue(endpoint);
+                    spyOn(editor.suggestionManager, "appendEndpoint");
+
+                    callEventListener(widget, "endpointadded", endpoint);
+                    callEventListener(operator, "endpointadded", endpoint);
+
+                    expect(endpoint.addEventListener).toHaveBeenCalled();
+                    expect(editor.connectionEngine.appendEndpoint).toHaveBeenCalledWith(endpoint);
+                    expect(editor.suggestionManager.appendEndpoint).toHaveBeenCalledWith(endpoint);
+                });
+
+                it("endpointremoved", () => {
+                    let endpoint = {};
+                    spyOn(editor.suggestionManager, "removeEndpoint");
+
+                    callEventListener(widget, "endpointremoved", endpoint);
+                    callEventListener(operator, "endpointremoved", endpoint);
+
+                    expect(editor.connectionEngine.removeEndpoint).toHaveBeenCalledWith(endpoint);
+                    expect(editor.suggestionManager.removeEndpoint).toHaveBeenCalledWith(endpoint);
+                });
+
+                it("should freeze endpoint recommendation while editing/creating connections", () => {
+                    let endpoint = {
+                        addEventListener: jasmine.createSpy("addEventListener")
+                    };
+                    endpoint.addEventListener.and.returnValue(endpoint);
+                    spyOn(editor.suggestionManager, "appendEndpoint");
+                    callEventListener(widget, "endpointadded", endpoint);
+                    editor.connectionEngine.temporalConnection = {};
+                    spyOn(editor.suggestionManager, "showSuggestions");
+                    spyOn(editor.suggestionManager, "hideSuggestions");
+
+                    callEventListener(endpoint, "mouseenter");
+                    callEventListener(endpoint, "mouseleave");
+
+                    expect(editor.suggestionManager.showSuggestions).not.toHaveBeenCalled();
+                    expect(editor.suggestionManager.hideSuggestions).not.toHaveBeenCalled();
+                });
+
+                it("should show/hide endpoint suggestions on mouseenter/mouseleave", () => {
+                    let endpoint = {
+                        addEventListener: jasmine.createSpy("addEventListener")
+                    };
+                    endpoint.addEventListener.and.returnValue(endpoint);
+                    spyOn(editor.suggestionManager, "appendEndpoint");
+                    callEventListener(widget, "endpointadded", endpoint);
+                    editor.connectionEngine.temporalConnection = null;
+                    spyOn(editor.suggestionManager, "showSuggestions");
+                    spyOn(editor.suggestionManager, "hideSuggestions");
+
+                    callEventListener(endpoint, "mouseenter");
+                    callEventListener(endpoint, "mouseleave");
+
+                    expect(editor.suggestionManager.showSuggestions).toHaveBeenCalledWith(endpoint);
+                    expect(editor.suggestionManager.hideSuggestions).toHaveBeenCalledWith(endpoint);
+                });
+
+            });
+
+            describe("should handle remove events on components", () => {
+
+                var editor, component1, component2;
+
+                beforeEach(() => {
+                    editor = new ns.WiringEditor(1);
+                    let workspace = createWorkspaceMock();
+                    workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
+                    Wirecloud.dispatchEvent('loaded');
+                    editor.load(workspace);
+
+                    component1 = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+                    component2 = editor.behaviourEngine.updateComponent.calls.argsFor(1)[0];
+                });
+
+                it("should remove the component from current selection", () => {
+                    // Prepare the selection
+                    editor.selectedComponents.widget = {1: component1, 2: component2};
+                    editor.selectedComponents.operator = {};
+
+                    // Prepare mocks
+                    editor.behaviourEngine.hasComponents.and.returnValue(true);
+                    spyOn(editor.suggestionManager, "removeEndpoint");
+                    component2.forEachEndpoint.calls.reset();
+                    component2.forEachEndpoint.and.callFake((listener) => {
+                        listener({});
+                        listener({});
+                    });
+
+                    callEventListener(component2, "remove");
+
+                    expect(editor.connectionEngine.removeEndpoint.calls.count()).toBe(2);
+                    expect(editor.suggestionManager.removeEndpoint.calls.count()).toBe(2);
+                    expect(component2.forEachEndpoint).toHaveBeenCalled();
+                    expect(editor.selectedComponents.widget).toEqual({1: component1});
+                    expect(editor.selectedComponents.operator).toEqual({});
+                });
+
+                it("should show info message when removing the last component", () => {
+                    // Prepare mocks
+                    editor.behaviourEngine.hasComponents.and.returnValue(false);
+
+                    spyOn(editor.initialMessage, "show");
+                    callEventListener(component2, "remove");
+
+                    expect(editor.initialMessage.show).toHaveBeenCalledWith();
+                });
+
+                it("should remove missing components from the component manager", () => {
+                    // Prepare mocks
+                    editor.behaviourEngine.hasComponents.and.returnValue(true);
+                    component2.missing = true;
+
+                    callEventListener(component2, "remove");
+
+                    expect(editor.componentManager.removeComponent).toHaveBeenCalledWith(component2._component);
+                });
+
+            });
+
+            describe("should handle behaviour engine events", () => {
+
+                var editor;
+
+                beforeEach(() => {
+                    editor = new ns.WiringEditor(1);
+                    let workspace = createWorkspaceMock();
+                    Wirecloud.dispatchEvent('loaded');
+                    editor.load(workspace);
+                });
+
+                it("should refresh behaviour and connection engine on enable", () => {
+                    editor.behaviourEngine.updateComponent = jasmine.createSpy("updateComponent");
+                    editor.connectionEngine.forEachConnection.and.callFake((listener) => {
+                        let connection = {};
+                        listener(connection);
+                        expect(connection.removeAllowed).toBe(true);
+                        expect(connection.background).toBe(false);
+                        expect(editor.behaviourEngine.updateConnection).toHaveBeenCalledWith(connection);
+                    });
+
+                    editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
+                        let component = {};
+                        listener(component);
+                        expect(component.removeCascadeAllowed).toBe(true);
+                        expect(component.removeAllowed).toBe(true);
+                        expect(component.background).toBe(false);
+                        expect(editor.behaviourEngine.updateComponent).toHaveBeenCalledWith(component);
+                    });
+
+                    callEventListener(editor.behaviourEngine, "enable", true);
+                });
+
+                it("should refresh behaviour and connection engine on disable", () => {
+                    editor.behaviourEngine.updateComponent = jasmine.createSpy("updateComponent");
+                    editor.connectionEngine.forEachConnection.and.callFake((listener) => {
+                        let connection = {};
+                        listener(connection);
+                        expect(connection.removeAllowed).toBe(true);
+                        expect(connection.background).toBe(false);
+                        expect(editor.behaviourEngine.updateConnection).toHaveBeenCalledWith(connection);
+                    });
+
+                    editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
+                        let component = {};
+                        listener(component);
+                        expect(component.removeCascadeAllowed).toBe(false);
+                        expect(component.removeAllowed).toBe(true);
+                        expect(component.background).toBe(false);
+                        expect(editor.behaviourEngine.updateComponent).toHaveBeenCalledWith(component);
+                    });
+
+                    callEventListener(editor.behaviourEngine, "enable", false);
+                });
+
+                it("should refresh editor footer on updates (engine disabled)", () => {
+                    let currentstatus = {
+                        title: "",
+                        connections: 5,
+                        components: {
+                            operator: 3,
+                            widget: 1
+                        }
+                    };
+                    callEventListener(editor.behaviourEngine, "change", currentstatus, false);
+                });
+
+                it("should refresh editor footer on updates (engine enabled)", () => {
+                    let currentstatus = {
+                        title: "My Behaviour",
+                        connections: 5,
+                        components: {
+                            operator: 3,
+                            widget: 1
+                        }
+                    };
+                    callEventListener(editor.behaviourEngine, "change", currentstatus, true);
+                });
+
+                it("should refresh the view when changing the active behaviour", () => {
+                    let currentstatus = {
+                        title: "My Behaviour",
+                        connections: 5,
+                        components: {
+                            operator: 3,
+                            widget: 1
+                        }
+                    };
+                    let behaviour = {
+                        hasComponent: jasmine.createSpy("hasComponent"),
+                        hasConnection: jasmine.createSpy("hasConnection"),
+                        getCurrentStatus: jasmine.createSpy("getCurrentStatus").and.returnValue(currentstatus)
+                    };
+                    editor.connectionEngine.forEachConnection.and.callFake((listener) => {
+                        let connection1 = {
+                            show: jasmine.createSpy("show")
+                        };
+                        editor.behaviourEngine.filterByConnection.and.returnValue([1]);
+                        behaviour.hasConnection.and.returnValue(true);
+                        connection1.show.and.returnValue(connection1);
+
+                        listener(connection1);
+
+                        expect(connection1.removeAllowed).toBe(true);
+                        expect(connection1.background).toBe(false);
+
+                        let connection2 = {
+                            show: jasmine.createSpy("show")
+                        };
+                        editor.behaviourEngine.filterByConnection.and.returnValue([1, 2]);
+                        behaviour.hasConnection.and.returnValue(false);
+                        connection2.show.and.returnValue(connection2);
+
+                        listener(connection2);
+
+                        expect(connection2.removeAllowed).toBe(false);
+                        expect(connection2.background).toBe(true);
+                    });
+
+                    editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
+                        editor.behaviourEngine.filterByComponent.and.returnValue([1]);
+                        behaviour.hasComponent.and.returnValue(true);
+                        let component1 = {};
+                        listener(component1);
+                        expect(component1.removeCascadeAllowed).toBe(true);
+                        expect(component1.removeAllowed).toBe(true);
+                        expect(component1.background).toBe(false);
+
+                        editor.behaviourEngine.filterByComponent.and.returnValue([1, 2]);
+                        behaviour.hasComponent.and.returnValue(false);
+                        let component2 = {};
+                        listener(component2);
+                        expect(component2.removeCascadeAllowed).toBe(true);
+                        expect(component2.removeAllowed).toBe(false);
+                        expect(component2.background).toBe(true);
+                    });
+
+                    callEventListener(editor.behaviourEngine, "activate", behaviour, 0);
+                });
+
             });
 
             describe("should handle click events on components", () => {
@@ -404,24 +900,13 @@
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
                     let workspace = createWorkspaceMock();
-                    workspace._addWidget(true)._addWidget(true)._addOperator();
+                    workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
 
                     component1 = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
-                    component1.type = "widget";
-                    component1.id = "1";
-                    component1.active = false;
-
                     component2 = editor.behaviourEngine.updateComponent.calls.argsFor(1)[0];
-                    component2.type = "widget";
-                    component2.id = "2";
-                    component2.active = false;
-
                     component3 = editor.behaviourEngine.updateComponent.calls.argsFor(2)[0];
-                    component3.type = "operator";
-                    component3.id = "3";
-                    component3.active = false;
                 });
 
                 it("should select components", () => {
@@ -528,7 +1013,7 @@
                     callEventListener(component3, "dragstart", {ctrlKey: false, metaKey: false});
                     callEventListener(component3, "click", {ctrlKey: false, metaKey: false});
                     expect(editor.selectedComponents.widget).toEqual({});
-                    expect(editor.selectedComponents.operator).toEqual({3: component3});
+                    expect(editor.selectedComponents.operator).toEqual({1: component3});
                 });
 
                 it("should clear current selection when clicking on the layout (outside any component)", () => {
@@ -548,6 +1033,85 @@
                     expect(editor.selectedComponents.operator).toEqual({});
                 });
 
+                it("should clear current selection when clicking on a connection (without using the control or the meta keys)", () => {
+                    component1.active = true; // Simulate ComponentDraggable behaviour
+                    callEventListener(component1, "dragstart", {ctrlKey: false, metaKey: false});
+                    callEventListener(component1, "click", {ctrlKey: false, metaKey: false});
+                    component2.active = true; // Simulate ComponentDraggable behaviour
+                    callEventListener(component2, "dragstart", {ctrlKey: true, metaKey: false});
+                    callEventListener(component2, "click", {ctrlKey: true, metaKey: false});
+                    component3.active = true; // Simulate ComponentDraggable behaviour
+                    callEventListener(component3, "dragstart", {ctrlKey: true, metaKey: false});
+                    callEventListener(component3, "click", {ctrlKey: true, metaKey: false});
+
+                    callEventListener(editor.connectionEngine, "click", {});
+
+                    expect(editor.selectedComponents.widget).toEqual({});
+                    expect(editor.selectedComponents.operator).toEqual({});
+                });
+
+            });
+
+            describe("should handle drag events on connections", () => {
+
+                var editor;
+
+                beforeEach(() => {
+                    editor = new ns.WiringEditor(1);
+                    let workspace = createWorkspaceMock();
+                    workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
+                    Wirecloud.dispatchEvent('loaded');
+                    editor.load(workspace);
+                });
+
+                it("should temporally expand collapsed components", () => {
+                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    let component2 = {type: "operator", id: "2", collapsed: true, _component: "operator1"};
+                    let initialEndpoint = {};
+                    let realEndpoint = {};
+                    spyOn(editor.suggestionManager, "hideSuggestions");
+                    editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
+                        listener(component1);
+                        listener(component2);
+                    });
+
+                    callEventListener(editor.connectionEngine, "dragstart", {}, initialEndpoint, realEndpoint);
+
+                    expect(component1.collapsed).toBe(false);
+                    expect(component2.collapsed).toBe(false);
+
+                    callEventListener(editor.connectionEngine, "dragend", {}, initialEndpoint, realEndpoint);
+
+                    expect(editor.suggestionManager.hideSuggestions).toHaveBeenCalledWith(initialEndpoint);
+                    expect(component1.collapsed).toBe(false);
+                    expect(component2.collapsed).toBe(true);
+                });
+
+                it("should work when editing a connection", () => {
+                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    let component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
+                    let initialEndpoint = {};
+                    let realEndpoint = {};
+                    spyOn(editor.suggestionManager, "hideSuggestions");
+                    spyOn(editor.suggestionManager, "showSuggestions");
+                    editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
+                        listener(component1);
+                        listener(component2);
+                    });
+                    // TODO currently, the connection engine stores a
+                    // connection backup when editing a connectionEngine
+                    editor.connectionEngine._connectionBackup = {};
+
+                    callEventListener(editor.connectionEngine, "dragstart", {}, initialEndpoint, realEndpoint);
+
+                    expect(editor.suggestionManager.hideSuggestions).toHaveBeenCalledWith(realEndpoint);
+                    expect(editor.suggestionManager.showSuggestions).toHaveBeenCalledWith(initialEndpoint);
+
+                    callEventListener(editor.connectionEngine, "dragend", {}, initialEndpoint, realEndpoint);
+
+                    expect(editor.suggestionManager.hideSuggestions).toHaveBeenCalledWith(initialEndpoint);
+                });
+
             });
 
             describe("should handle drag events on components", () => {
@@ -557,24 +1121,13 @@
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
                     let workspace = createWorkspaceMock();
-                    workspace._addWidget(true)._addWidget(true)._addOperator();
+                    workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
 
                     component1 = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
-                    component1.type = "widget";
-                    component1.id = "1";
-                    component1.active = false;
-
                     component2 = editor.behaviourEngine.updateComponent.calls.argsFor(1)[0];
-                    component2.type = "widget";
-                    component2.id = "2";
-                    component2.active = false;
-
                     component3 = editor.behaviourEngine.updateComponent.calls.argsFor(2)[0];
-                    component3.type = "operator";
-                    component3.id = "3";
-                    component3.active = false;
                 });
 
                 it("should drag single components", () => {
@@ -611,7 +1164,7 @@
                     callEventListener(component3, "drag", 10, 10);
 
                     expect(editor.selectedComponents.widget).toEqual({1: component1, 2: component2});
-                    expect(editor.selectedComponents.operator).toEqual({3: component3});
+                    expect(editor.selectedComponents.operator).toEqual({1: component3});
 
                     callEventListener(component3, "dragend", {ctrlKey: false, metaKey: false});
                     callEventListener(component3, "click", {ctrlKey: false, metaKey: false});
@@ -620,7 +1173,7 @@
                     expect(component2.dispatchEvent).toHaveBeenCalledWith('change', {position: jasmine.any(Object)});
                     expect(component3.dispatchEvent).not.toHaveBeenCalled();
                     expect(editor.selectedComponents.widget).toEqual({1: component1, 2: component2});
-                    expect(editor.selectedComponents.operator).toEqual({3: component3});
+                    expect(editor.selectedComponents.operator).toEqual({1: component3});
                 });
 
             });
@@ -632,7 +1185,7 @@
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
                     let workspace = createWorkspaceMock();
-                    workspace._addWidget(true)._addWidget(true)._addOperator();
+                    workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator();
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
                     handler = Wirecloud.UserInterfaceManager.rootKeydownHandler;

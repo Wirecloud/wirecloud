@@ -567,15 +567,13 @@
          * [TODO: updateComponent description]
          *
          * @param {Component} component
-         * @param {PlainObject} view
-         *      [TODO: description]
          * @param {Boolean} [beShared=false]
          *      [TODO: description]
          * @returns {BehaviourEngine}
          *      The instance on which the member is called.
          */
-        updateComponent: function updateComponent(component, view, beShared) {
-            var name;
+        updateComponent: function updateComponent(component, beShared) {
+            var name, view = component.toJSON();
 
             if (this.enabled) {
                 switch (this.viewpoint) {
@@ -596,8 +594,6 @@
                 this.description.components[component.type][component.id] = {};
             }
 
-            view = view || {};
-
             for (name in view) {
                 this.description.components[component.type][component.id][name] = view[name];
             }
@@ -616,23 +612,22 @@
          *
          * @param {Connection} connection
          *      [TODO: description]
-         * @param {PlainObject} view
-         *      [TODO: description]
          * @param {Boolean} [beShared=false]
          *      [TODO: description]
          * @returns {BehaviourEngine}
          *      The instance on which the member is called.
          */
-        updateConnection: function updateConnection(connection, view, beShared) {
+        updateConnection: function updateConnection(connection, beShared) {
             var index = this.getConnectionIndex(connection);
+            var view = connection.toJSON();
 
             if (this.enabled) {
                 switch (this.viewpoint) {
                 case ns.BehaviourEngine.GLOBAL:
                     if (!connection.background || beShared) {
                         this.behaviour.updateConnection(connection);
-                        this.updateComponent(connection.sourceComponent, {}, true);
-                        this.updateComponent(connection.targetComponent, {}, true);
+                        this.updateComponent(connection.sourceComponent, true);
+                        this.updateComponent(connection.targetComponent, true);
                         connection.removeAllowed = (this.filterByConnection(connection).length === 1);
                         connection.background = false;
                     }

@@ -160,7 +160,16 @@
             return this;
         },
 
-        removeComponent: function removeComponent(type, component) {
+        /**
+         * Removes a component.
+         *
+         * @param {Wirecloud.Widget|Wirecloud.wiring.Operator} component
+         *
+         * @returns {Wirecloud.ui.WiringEditor.ComponentShowcase}
+         *
+         */
+        removeComponent: function removeComponent(component) {
+            let type = component.meta.type;
             var group_id = component.meta.group_id;
 
             this.components[type][group_id][component.id].remove();

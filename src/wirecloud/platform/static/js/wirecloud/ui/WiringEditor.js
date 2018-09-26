@@ -107,24 +107,24 @@ Wirecloud.ui = Wirecloud.ui || {};
             component
                 .addEventListener('endpointadded', component_onendpointadded.bind(this))
                 .addEventListener('endpointremoved', component_onendpointremoved.bind(this))
-                .addEventListener('change', function () {
-                    this.behaviourEngine.updateComponent(component, component.toJSON());
-                }.bind(this))
+                .addEventListener('change', () => {
+                    this.behaviourEngine.updateComponent(component);
+                })
                 .addEventListener('click', component_onclick.bind(this))
                 .addEventListener('dragstart', component_ondragstart.bind(this))
                 .addEventListener('drag', component_ondrag.bind(this))
                 .addEventListener('dragend', component_ondragend.bind(this))
                 .addEventListener('orderstart', component_onorderstart.bind(this))
                 .addEventListener('orderend', component_onorderend.bind(this))
-                .addEventListener('optremove', function () {
+                .addEventListener('optremove', () => {
                     this.behaviourEngine.removeComponent(component);
-                }.bind(this))
-                .addEventListener('optremovecascade', function () {
+                })
+                .addEventListener('optremovecascade', () => {
                     this.behaviourEngine.removeComponent(component, true);
-                }.bind(this))
-                .addEventListener('optshare', function () {
-                    this.behaviourEngine.updateComponent(component, component.toJSON(), true);
-                }.bind(this))
+                })
+                .addEventListener('optshare', () => {
+                    this.behaviourEngine.updateComponent(component, true);
+                })
                 .addEventListener('remove', component_onremove.bind(this));
 
             component.forEachEndpoint(bindEndpoint.bind(this));
@@ -132,7 +132,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
             if (options.commit) {
                 this.layout.content.appendChild(component);
-                this.behaviourEngine.updateComponent(component, component.toJSON());
+                this.behaviourEngine.updateComponent(component);
                 disableComponent.call(this, component);
             }
 
@@ -252,16 +252,16 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.suggestionManager.appendEndpoint(endpoint);
 
         endpoint
-            .addEventListener('mouseenter', function () {
+            .addEventListener('mouseenter', () => {
                 if (!this.connectionEngine.temporalConnection) {
                     this.suggestionManager.showSuggestions(endpoint);
                 }
-            }.bind(this))
-            .addEventListener('mouseleave', function () {
+            })
+            .addEventListener('mouseleave', () => {
                 if (!this.connectionEngine.temporalConnection) {
                     this.suggestionManager.hideSuggestions(endpoint);
                 }
-            }.bind(this));
+            });
     };
 
     var createAndSetUpBehaviourEngine = function createAndSetUpBehaviourEngine() {
@@ -564,14 +564,14 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.connectionEngine.forEachConnection(function (connection) {
             connection.removeAllowed = true;
             connection.background = false;
-            this.behaviourEngine.updateConnection(connection, connection.toJSON());
+            this.behaviourEngine.updateConnection(connection);
         }.bind(this));
 
         this.behaviourEngine.forEachComponent(function (component) {
             component.removeCascadeAllowed = enabled;
             component.removeAllowed = true;
             component.background = false;
-            this.behaviourEngine.updateComponent(component, component.toJSON());
+            this.behaviourEngine.updateComponent(component);
         }.bind(this));
     };
 
@@ -600,7 +600,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var connection_onduplicate = function connection_onduplicate(connectionEngine, connection, connectionBackup) {
         if (connection.background) {
-            this.behaviourEngine.updateConnection(connection, connection.toJSON(), true);
+            this.behaviourEngine.updateConnection(connection, true);
 
             if (connectionBackup != null) {
                 removeBackupConnection.call(this, connectionBackup);
@@ -609,17 +609,17 @@ Wirecloud.ui = Wirecloud.ui || {};
     };
 
     var connection_onestablish = function connection_onestablish(connectionEngine, connection, connectionBackup) {
-        this.behaviourEngine.updateConnection(connection, connection.toJSON());
+        this.behaviourEngine.updateConnection(connection);
 
         connection
             .addEventListener('change', function () {
-                this.behaviourEngine.updateConnection(connection, connection.toJSON());
+                this.behaviourEngine.updateConnection(connection);
             }.bind(this))
             .addEventListener('optremove', function () {
                 this.behaviourEngine.removeConnection(connection);
             }.bind(this))
             .addEventListener('optshare', function () {
-                this.behaviourEngine.updateConnection(connection, connection.toJSON(), true);
+                this.behaviourEngine.updateConnection(connection, true);
             }.bind(this));
 
         if (connectionBackup != null) {
@@ -659,7 +659,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         if (component.missing) {
-            this.componentManager.removeComponent(component.type, component._component);
+            this.componentManager.removeComponent(component._component);
         } else {
             this.componentManager.findComponent(component.type, component.id).used = false;
         }
@@ -681,13 +681,12 @@ Wirecloud.ui = Wirecloud.ui || {};
     var connection_ondragstart = function connection_ondragstart(connectionEngine, connection, initialEndpoint, realEndpoint) {
         this.collapsedComponents = [];
 
-        this.behaviourEngine.forEachComponent(function (component) {
-
+        this.behaviourEngine.forEachComponent((component) => {
             if (component.collapsed) {
                 component.collapsed = false;
                 this.collapsedComponents.push(component);
             }
-        }.bind(this));
+        });
 
         if (this.connectionEngine._connectionBackup != null) {
             this.suggestionManager.hideSuggestions(realEndpoint);
@@ -700,7 +699,7 @@ Wirecloud.ui = Wirecloud.ui || {};
     var connection_ondragend = function connection_ondragend(connectionEngine, connection, initialEndpoint) {
         if (this.collapsedComponents != null) {
 
-            this.collapsedComponents.forEach(function (component) {
+            this.collapsedComponents.forEach((component) => {
                 component.collapsed = true;
             });
 
@@ -709,9 +708,9 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.suggestionManager.hideSuggestions(initialEndpoint);
 
-        setTimeout(function () {
+        setTimeout(() => {
             this.layout.content.get().addEventListener('click', this._layout_onclick);
-        }.bind(this), 0);
+        }, 0);
     };
 
     var behaviour_onchange = function behaviour_onchange(behaviourEngine, currentStatus, enabled) {
@@ -723,8 +722,6 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.legend.connections.textContent = currentStatus.connections;
         this.legend.operators.textContent = currentStatus.components.operator;
         this.legend.widgets.textContent = currentStatus.components.widget;
-
-        return this;
     };
 
     var layout_onclick = function layout_onclick() {
@@ -852,7 +849,6 @@ Wirecloud.ui = Wirecloud.ui || {};
     };
 
     var component_onorderstart = function component_onorderstart(component) {
-
         if (this.orderableComponent != null && !this.orderableComponent.equals(component)) {
             this.orderableComponent.setUp();
         }
