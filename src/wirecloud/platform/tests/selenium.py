@@ -192,7 +192,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         modal.accept()
 
         self.reload()
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.active_tab is not None)
+        WebDriverWait(self.driver, timeout=15).until(lambda driver: self.active_tab is not None)
 
         iwidget = self.find_widget(title="Test 1")
 
@@ -255,7 +255,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         time.sleep(1)
 
         self.reload()
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.active_tab is not None)
+        WebDriverWait(self.driver, timeout=15).until(lambda driver: self.active_tab is not None)
         # Refresh api_test_iwidget as we have reloaded the browser
         api_test_iwidget = self.find_widget(id=api_test_iwidget_id)
 
