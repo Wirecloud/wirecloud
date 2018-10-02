@@ -1,1 +1,1 @@
-cat ${WORKSPACE}/src/ci_scripts/templates/sqlite3-conf.template >> ${WC_INSTANCE_NAME}/settings.py
+cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/templates/sqlite3-conf.template >> settings.py

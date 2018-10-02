@@ -1,1 +1,1 @@
-cat ${WORKSPACE}/src/ci_scripts/templates/chromium-local-conf.template >> ${WC_INSTANCE_NAME}/settings.py
+cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/templates/chromium-local-conf.template >> settings.py
