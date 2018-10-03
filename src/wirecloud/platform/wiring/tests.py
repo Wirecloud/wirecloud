@@ -2797,7 +2797,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-connection-management')
     use_search_indexes = False
 
-    def test_readonly_connections_cannot_be_deleted(self):
+    def test_components_with_readonly_connections_cannot_be_deleted(self):
         # Change the connection state to readonly
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus['connections'][1]['readonly'] = True
@@ -2812,15 +2812,6 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             self.assertTrue(connection.has_class('readonly'))
             self.assertTrue(connection.btn_remove.is_disabled)
 
-    def test_components_with_readonly_connections_cannot_be_deleted(self):
-        # Change the connection state to readonly
-        workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus['connections'][1]['readonly'] = True
-        workspace.save()
-
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
             # Both components of the readonly connection should also be readonly and
             # their buttons 'delete' should be disabled
             widget = wiring.find_draggable_component('widget', id=2)
@@ -2829,41 +2820,6 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             operator = wiring.find_draggable_component('operator', id=0)
             self.assertTrue(operator.has_class('readonly'))
             self.assertTrue(operator.btn_remove.is_disabled)
-
-    def test_active_connection_should_allow_to_change_their_endpoints(self):
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
-            target1 = wiring.find_draggable_component('operator', id=0).find_endpoint('target', 'input')
-            target2 = wiring.find_draggable_component('widget', id=1).find_endpoint('target', 'inputendpoint')
-
-            connection = wiring.find_connection('widget/2/outputendpoint', 'operator/0/input')
-            connection.change_endpoint(target1, target2)
-
-            self.assertIsNone(wiring.find_connection('widget/2/outputendpoint', 'operator/0/input'))
-            connection = wiring.find_connection('widget/2/outputendpoint', 'widget/1/inputendpoint')
-            self.assertIsNotNone(connection)
-            WebDriverWait(self.driver, timeout=2).until(lambda driver: connection.has_class('active'))
-
-    def test_modify_connection_on_several_behaviours(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
-
-        with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', id=0)
-            target1 = operator.find_endpoint('target', 'input')
-            target2 = operator.find_endpoint('target', 'nothandled')
-
-            connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/input')
-            connection.change_endpoint(target1, target2)
-
-            # The button 'accept' corresponds to modify such connection in all the behaviours
-            modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
-            modal.accept()
-
-            self.assertIsNone(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input'))
-            connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled')
-            self.assertIsNotNone(connection)
-            self.assertTrue(connection.has_class('active'))
 
     def test_modify_connection_on_active_behaviours(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
@@ -2902,22 +2858,6 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             self.assertTrue(connection1.has_class('background'))
             self.assertFalse(connection1.has_class('active'))
             self.assertIsNotNone(connection2)
-
-    def test_modify_connection_and_drop_over_connection_on_background(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
-
-        with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', id=0)
-            widget = wiring.find_draggable_component('widget', title="Test 1")
-
-            source1 = operator.find_endpoint('source', 'output')
-            target1 = widget.find_endpoint('target', 'inputendpoint')
-            target2 = widget.find_endpoint('target', 'nothandled')
-            connection = source1.create_connection(target2)
-            connection.change_endpoint(target2, target1)
-
-            self.assertIsNone(wiring.find_connection(source1.id, target2.id))
-            self.assertFalse(wiring.find_connection(source1.id, target1.id).has_class('background'))
 
 
 @wirecloud_selenium_test_case
