@@ -276,29 +276,37 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var createAndSetUpComponentManager = function createAndSetUpComponentManager() {
         this.componentManager =  new ns.WiringEditor.ComponentShowcase();
-        this.componentManager.addEventListener('create', function (showcase, group, button) {
+        this.componentManager.addEventListener('create', (showcase, group, button) => {
             button.disable();
 
             if (group.meta.type === 'operator') {
-                this.workspace.wiring.createOperator(group.meta).then((operator) => {
-                    button.enable();
-                    showcase.addComponent(operator);
-                }, (error) => {
-                    button.enable();
-                });
+                this.workspace.wiring.createOperator(group.meta).then(
+                    (operator) => {
+                        button.enable();
+                        showcase.addComponent(operator);
+                    },
+                    (error) => {
+                        button.enable();
+                    }
+                );
             } else {
-                this.workspace.view.activeTab.createWidget(group.meta).then(function (widgetView) {
-                    button.enable();
-                    showcase.addComponent(widgetView.model);
-                });
+                this.workspace.view.activeTab.createWidget(group.meta).then(
+                    (widgetView) => {
+                        button.enable();
+                        showcase.addComponent(widgetView.model);
+                    },
+                    (error) => {
+                        button.enable();
+                    }
+                );
             }
-        }.bind(this));
-        this.componentManager.addEventListener('add', function (showcase, context) {
+        });
+        this.componentManager.addEventListener('add', (showcase, context) => {
             context.layout = this.layout;
             context.element = this.createComponent(context.component._component, {
                 commit: false
             });
-        }.bind(this));
+        });
         this.layout.appendChild(this.componentManager);
     };
 
@@ -336,19 +344,19 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.layout.content.appendChild(this.initialMessage);
 
         this.layout
-            .addEventListener('slideOut', function () {
+            .addEventListener('slideOut', () => {
                 this.btnFindComponents.active = false;
                 this.btnListBehaviours.active = false;
                 this.behaviourEngine.stopOrdering();
-            }.bind(this))
-            .addEventListener('slideIn', function (offcanvas, panel) {
+            })
+            .addEventListener('slideIn', (offcanvas, panel) => {
                 this.btnFindComponents.active = panel.hasClassName("we-panel-components");
                 this.btnListBehaviours.active = panel.hasClassName("we-panel-behaviours");
 
                 if (this.btnFindComponents.active) {
                     this.behaviourEngine.stopOrdering();
                 }
-            }.bind(this));
+            });
 
         this.legend = {
             title: document.createElement('span'),
@@ -612,15 +620,15 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.behaviourEngine.updateConnection(connection);
 
         connection
-            .addEventListener('change', function () {
+            .addEventListener('change', () => {
                 this.behaviourEngine.updateConnection(connection);
-            }.bind(this))
-            .addEventListener('optremove', function () {
+            })
+            .addEventListener('optremove', () => {
                 this.behaviourEngine.removeConnection(connection);
-            }.bind(this))
-            .addEventListener('optshare', function () {
+            })
+            .addEventListener('optshare', () => {
                 this.behaviourEngine.updateConnection(connection, true);
-            }.bind(this));
+            });
 
         if (connectionBackup != null) {
             removeBackupConnection.call(this, connectionBackup);
