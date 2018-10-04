@@ -31,11 +31,12 @@ from mock import DEFAULT, patch, Mock, ANY
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html, filter_changelog
-from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
+from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_absolute_static_url, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, InvalidMimeType, parse_mime_type
 from wirecloud.commons.utils.version import Version
 from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.platform.core.plugins import get_version_hash
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
@@ -564,6 +565,31 @@ class HTTPUtilsTestCase(TestCase):
         request = self._prepare_request_mock()
         request.META['CONTENT_TYPE'] = 'application/json/ji'
         self.assertEqual(get_content_type(request), ('', {}))
+
+    @override_settings(STATIC_URL="/static/")
+    @patch("wirecloud.commons.utils.http.get_current_scheme")
+    @patch("wirecloud.commons.utils.http.get_current_domain")
+    def test_get_absolute_static_url_unversioned(self, get_current_domain, get_current_scheme):
+        request = self._prepare_request_mock()
+        get_current_scheme.return_value = "http"
+        get_current_domain.return_value = "dashboards.example.org"
+
+        self.assertEqual(get_absolute_static_url("/path", request=request), 'http://dashboards.example.org/path')
+
+        get_current_scheme.assert_called_once_with(request)
+        get_current_domain.assert_called_once_with(request)
+
+    @override_settings(STATIC_URL="/static/")
+    @patch("wirecloud.commons.utils.http.get_current_scheme")
+    @patch("wirecloud.commons.utils.http.get_current_domain")
+    def test_get_absolute_static_url_versioned(self, get_current_domain, get_current_scheme):
+        request = self._prepare_request_mock()
+        get_current_scheme.return_value = "http"
+        get_current_domain.return_value = "dashboards.example.org"
+        self.assertEqual(get_absolute_static_url("/path", request=request, versioned=True), 'http://dashboards.example.org/path?v=' + get_version_hash())
+
+        get_current_scheme.assert_called_once_with(request)
+        get_current_domain.assert_called_once_with(request)
 
     @override_settings(FORCE_PROTO=None)
     def test_get_current_scheme_http(self):
