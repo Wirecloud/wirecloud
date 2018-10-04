@@ -46,24 +46,10 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
     populate = False
     use_search_indexes = False
 
+    # KeyRock v6
     OLD_RESPONSE = {
-        "schemas": ["urn:scim:schemas:core:2.0:User"],
-        "id": 1,
-        "actorId": 1,
-        "nickName": "demo",
-        "displayName": "Demo user",
-        "email": "demo@fiware.org",
-        "roles": [{"id": 1, "name": "Manager"}, {"id": 7, "name": "Ticket manager"}],
-        "organizations": [{
-            "id": 1,
-            "actorId": 2,
-            "displayName": "Universidad Politecnica de Madrid",
-            "roles": [{"id": 14, "name": "Admin"}]
-        }]
-    }
-
-    NEW_RESPONSE = {
         "id": "demo",
+        "username": "demo",
         "displayName": "Demo user",
         "email": "demo@fiware.org",
         "roles": [{"id": "1", "name": "Manager"}, {"id": "7", "name": "Ticket manager"}],
@@ -74,7 +60,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         }]
     }
 
-    RESPONSE_NO_LAST_NAME = {
+    OLD_RESPONSE_NO_LAST_NAME = {
         "id": "demo",
         "username": "demo",
         "displayName": "Demo",
@@ -87,8 +73,26 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         }]
     }
 
+    # KeyRock v7
+    NEW_RESPONSE = {
+        "id": "8b0127d8-38f7-4428-b22d-31bd80bba510",
+        "displayName": "",
+        "username": "demo",
+        "email": "demo@fiware.org",
+        "roles": [{"id": "4a923351-b767-4fef-bc92-4a4fa996e88e", "name": "Manager"}, {"id": "4a92as51-b54d-4fef-bc92-4a4fa996e88e", "name": "Ticket manager"}],
+        "organizations": [{
+            "id": "04ac28b2-54c7-46a7-a606-c62fdc4f1513",
+            "name": "Mi organization",
+            "description":"dafsdf",
+            "website": None,
+            "roles":[{"id": "4a923351-b767-4fef-bc92-4a4fa996e88e", "name":"one_role"}]
+        }]
+    }
+
     USER_DATA = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo user", "first_name": "Demo", "last_name": "user", "is_superuser": False, "is_staff": False}
+    NEW_USER_DATA = {"username": "demo", "email": "demo@fiware.org", "fullname": "", "first_name": "", "last_name": "", "is_superuser": False, "is_staff": False}
     USER_DATA_ADMIN = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo user", "first_name": "Demo", "last_name": "user", "is_superuser": True, "is_staff": True}
+    NEW_USER_DATA_ADMIN = {"username": "demo", "email": "demo@fiware.org", "fullname": "", "first_name": "", "last_name": "", "is_superuser": True, "is_staff": True}
     USER_DATA_NO_LAST_NAME = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo", "first_name": "Demo", "last_name": "", "is_superuser": False, "is_staff": False}
 
     def setUp(self):
@@ -129,7 +133,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertIn('username', data)
         self.assertEqual(data['username'], 'demo')
         self.assertIn('id', data['organizations'][0])
-        self.assertEqual(data['organizations'][0]['id'], 2)
+        self.assertEqual(data['organizations'][0]['id'], "00000000000000000000000000000001")
 
     def test_get_user_data_new_version(self):
 
@@ -139,7 +143,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertIn('username', data)
         self.assertEqual(data['username'], 'demo')
         self.assertIn('id', data['organizations'][0])
-        self.assertEqual(data['organizations'][0]['id'], "00000000000000000000000000000001")
+        self.assertEqual(data['organizations'][0]['id'], "04ac28b2-54c7-46a7-a606-c62fdc4f1513")
 
     def test_get_user_data_invalid_response(self):
 
@@ -165,10 +169,17 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
     def test_get_user_details_old_version_admin(self):
 
         response = deepcopy(self.OLD_RESPONSE)
-        response['roles'][0]['name'] = 'admin'
+        response['roles'][0]['name'] = 'Admin'
         data = self.instance.get_user_details(response)
 
         self.assertEqual(data, self.USER_DATA_ADMIN)
+
+    def test_get_user_details_old_version_no_last_name(self):
+
+        response = deepcopy(self.OLD_RESPONSE_NO_LAST_NAME)
+        data = self.instance.get_user_details(response)
+
+        self.assertEqual(data, self.USER_DATA_NO_LAST_NAME)
 
     def test_get_user_details_new_version(self):
 
@@ -176,7 +187,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         response['username'] = 'demo'
         data = self.instance.get_user_details(response)
 
-        self.assertEqual(data, self.USER_DATA)
+        self.assertEqual(data, self.NEW_USER_DATA)
 
     def test_get_user_details_new_version_admin(self):
 
@@ -184,14 +195,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         response['roles'][0]['name'] = 'Admin'
         data = self.instance.get_user_details(response)
 
-        self.assertEqual(data, self.USER_DATA_ADMIN)
-
-    def test_get_user_details_no_last_name(self):
-
-        response = deepcopy(self.RESPONSE_NO_LAST_NAME)
-        data = self.instance.get_user_details(response)
-
-        self.assertEqual(data, self.USER_DATA_NO_LAST_NAME)
+        self.assertEqual(data, self.NEW_USER_DATA_ADMIN)
 
     def test_request_user_info(self):
 
