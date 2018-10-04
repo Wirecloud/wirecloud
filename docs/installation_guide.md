@@ -815,7 +815,7 @@ for more information about how to install and configure such a NGSI proxy.
 
 ### Integration with the IdM GE
 
-Create a new Application using the IdM server that is going to be linked (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more information about how to create such an Application. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`. Take note of the *Client ID* and the *Client Secret* values (those values are available in the Application details page, inside the *OAuth2 Credentials* section) as they are going to be used later.
+The first thing to take into account is that this version of WireCloud is compatible with KeyRock v6 and KeyRock v7. To enable this integration, the first step is creating a new Application using the IdM server that is going to be used (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more information about how to create such an Application. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`. Take note of the *Client ID* and the *Client Secret* values (those values are available in the Application details page, inside the *OAuth2 Credentials* section) as they are going to be used later.
 
 On the WireCloud instance:
 
