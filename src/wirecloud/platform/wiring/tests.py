@@ -2511,10 +2511,11 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(connection.source_id, source.id)
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
-    def test_upgrade_widget(self):
+    def test_upgrade_and_downgrade_widget(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
         with self.wiring_view as wiring:
+            # Upgrade to v3 on the sidebar
             with wiring.component_sidebar as sidebar:
                 widget = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
                 widget.change_version("3.0")
@@ -2522,6 +2523,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 modal = widget.show_logs()
                 WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was upgraded to v3.0 successfully.")) == 1)
                 modal.accept()
+
             draggable_widget = wiring.find_draggable_component('widget', id=widget.id)
 
             self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)
@@ -2538,13 +2540,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             self.assertFalse(source.has_class('missing'))
             self.assertTrue(len(source.find_connections()), 1)
 
-    @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
-    def test_upgrade_and_downgrade_widget(self):
-        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-
-        with self.wiring_view as wiring:
-            draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
-            draggable_widget.change_version("3.0")
+            # Downgrade to v1 using the widget preferences
             draggable_widget.change_version("1.0")
             modal = draggable_widget.show_logs()
             WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was downgraded to v1.0 successfully.")) == 1)
@@ -3087,18 +3083,6 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-behaviour-management')
     use_search_indexes = False
 
-    def test_behaviour_engine_is_disabled_by_default(self):
-        # Create a new workspace to ensure we are testing the default status of
-        # the behaviour engine
-        self.login(username="admin", next="admin/Workspace")
-        self.create_workspace("Test")
-
-        with self.wiring_view as wiring:
-            with wiring.behaviour_sidebar as sidebar:
-                # Check the behaviour engine is disabled
-                self.assertTrue(sidebar.disabled)
-                self.assertFalse(sidebar.has_behaviours())
-
     def test_behaviour_engine_can_be_enabled(self):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
@@ -3130,28 +3114,12 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
                 sidebar.active_behaviour.update("Title", "Description")
 
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
-    def test_behaviour_title_and_description_cannot_be_emptied(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
-
-        with self.wiring_view as wiring:
-            with wiring.behaviour_sidebar as sidebar:
-                sidebar.active_behaviour.update("", "")
-
-    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviours_can_be_created(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.create_behaviour("Title", "Description")
-
-    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
-    def test_behaviours_can_be_created_with_no_info(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
-
-        with self.wiring_view as wiring:
-            with wiring.behaviour_sidebar as sidebar:
-                sidebar.create_behaviour()
 
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_order_behaviours(self):
