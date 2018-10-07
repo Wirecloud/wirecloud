@@ -1794,7 +1794,6 @@
                 editor.unload();
 
                 expect(editor.behaviourEngine.clear).toHaveBeenCalledWith();
-                expect(editor.behaviourEngine.disable).toHaveBeenCalledWith();
                 expect(editor.componentManager.clear).toHaveBeenCalledWith();
                 expect(editor.suggestionManager.enable).toHaveBeenCalledWith();
                 expect(editor.orderableComponent).toBe(null);

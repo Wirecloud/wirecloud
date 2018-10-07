@@ -435,7 +435,7 @@ Wirecloud.ui = Wirecloud.ui || {};
     var readyView = function readyView() {
         this.layout.slideOut();
 
-        this.behaviourEngine.clear().disable();
+        this.behaviourEngine.clear();
         this.componentManager.clear();
         this.suggestionManager.enable();
 

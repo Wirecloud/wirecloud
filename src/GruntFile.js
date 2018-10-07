@@ -125,6 +125,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/wiring/Operator.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Behaviour.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/KeywordSuggestion.js',
     'wirecloud/platform/static/js/wirecloud/wiring/Endpoint.js',
