@@ -285,7 +285,7 @@
 
         });
 
-        describe("WiringEditor(id[, options])", () => {
+        describe("new WiringEditor(id[, options])", () => {
 
             it("should work without providing options", () => {
                 let editor = new ns.WiringEditor(1);
