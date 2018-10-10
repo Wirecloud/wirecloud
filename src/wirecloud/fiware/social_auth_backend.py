@@ -32,6 +32,8 @@ By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
 
+from __future__ import unicode_literals
+
 import base64
 import time
 from six.moves.urllib.parse import urljoin
@@ -61,7 +63,9 @@ def create_organizations(strategy, backend, user, response, *args, **kwargs):
             social = None
 
         if social is None:
-            org_name = Organization.objects.search_available_name(organization['displayName'])
+            # KeyRock v6 uses displayName instead of name
+            organization_name = organization["name"] if "name" in organization else organization['displayName']
+            org_name = Organization.objects.search_available_name(organization_name)
             org = Organization.objects.create_organization(org_name)
             social = UserSocialAuth.objects.create(user=org, uid=organization['id'])
 
@@ -123,7 +127,7 @@ class FIWAREOAuth2(BaseOAuth2):
             'first_name': first_name,
             'last_name': last_name,
             'is_superuser': superuser,
-            'is_staff': superuser
+            'is_staff': superuser,
         }
 
     def request_user_info(self, access_token):
@@ -133,17 +137,6 @@ class FIWAREOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         data = self.request_user_info(access_token)
-        # Newer versions of the FIWARE IdM provides and id field with the
-        # username of the user. Older versions use actorId as identifier, but
-        # also provides a nickName field. We use nickName because it is also
-        # unique and provides a better way for migrating to newer versions
-        # of KeyRock. Store the appropiated field in username to simplify
-        # the rest of the code
-        data['username'] = data['nickName'] if 'nickName' in data else data['id']
-
-        # Something similar happens with Organizations, previous versions of the
-        # IdM used to provide an actorId, unify this behaviour...
-        for organization in data['organizations']:
-            organization["id"] = organization['actorId'] if 'actorId' in organization else organization['id']
+        data['username'] = data.get('username') if "username" in data else data.get('id')
 
         return data
