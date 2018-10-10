@@ -32,6 +32,8 @@ By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
 
+from __future__ import unicode_literals
+
 import base64
 import time
 from six.moves.urllib.parse import urljoin

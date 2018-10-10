@@ -35,6 +35,20 @@ class BasicClass(object):
     def __init__(self):
         pass
 
+    def extra_data(self, user, uid, response, details=None, *args, **kwargs):
+        return {
+            "access_token": "access_token",
+            "refresh_token": "refresh_token",
+            "expires_in": 3600
+        }
+
+    def refresh_token(self, token, *args, **kwargs):
+        return {
+            "access_token": "new_access_token",
+            "refresh_token": "new_refresh_token",
+            "expires_in": 3600
+        }
+
     @classmethod
     def get_key_and_secret(cls):
         return ('client', 'secret')
@@ -158,6 +172,20 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertIn('Basic ', headers['Authorization'])
         self.assertEqual(headers['Authorization'], 'Basic Y2xpZW50OnNlY3JldA==')
 
+    @patch("wirecloud.fiware.social_auth_backend.time.time")
+    def test_extra_data(self, time_mock):
+
+        time_mock.return_value = 10000
+
+        data = self.instance.extra_data("user", "uid", "response")
+
+        self.assertEqual(data, {
+            "access_token": "access_token",
+            "refresh_token": "refresh_token",
+            "expires_in": 3600,
+            "expires_on": 13600
+        })
+
     def test_get_user_details_old_version(self):
 
         response = deepcopy(self.OLD_RESPONSE)
@@ -196,6 +224,21 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         data = self.instance.get_user_details(response)
 
         self.assertEqual(data, self.NEW_USER_DATA_ADMIN)
+
+    @patch("wirecloud.fiware.social_auth_backend.time.time")
+    def test_refresh_token_normalizes_token_expiration_time(self, time_mock):
+
+        time_mock.return_value = 10000
+
+        data = self.instance.refresh_token("old_access_token")
+
+        self.assertEqual(data, {
+            "access_token": "new_access_token",
+            "refresh_token": "new_refresh_token",
+            "expires_in": 3600,
+            "expires_on": 13600,
+            "openstack_token": None
+        })
 
     def test_request_user_info(self):
 
