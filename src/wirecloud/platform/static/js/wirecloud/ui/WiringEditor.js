@@ -67,6 +67,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.selectedCount = 0;
 
         this.orderableComponent = null;
+        this.disable();
     };
 
     utils.inherit(ns.WiringEditor, se.Alternative, /** @lends Wirecloud.ui.WiringEditor.prototype */ {
@@ -196,6 +197,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             loadWiringStatus.call(this);
 
             Wirecloud.UserInterfaceManager.rootKeydownHandler = document_onkeydown.bind(this);
+            this.enable();
 
             return this;
         },
@@ -212,6 +214,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             readyView.call(this);
 
             Wirecloud.UserInterfaceManager.rootKeydownHandler = null;
+            this.disable();
 
             return this;
         },

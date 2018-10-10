@@ -262,7 +262,7 @@
         "model": "platform.workspace",
         "fields": {
             "forcedValues": "",
-            "wiringStatus": "{\"connections\": [], \"operators\": {}, \"version\": \"2.0\", \"visualdescription\": {\"connections\": [], \"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}}}",
+            "wiringStatus": "{\"version\":\"2.0\",\"connections\":[{\"readonly\":false,\"source\":{\"type\":\"widget\",\"id\":\"7\",\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"widget\",\"id\":\"8\",\"endpoint\":\"inputendpoint\"}}],\"operators\":{},\"visualdescription\":{\"behaviours\":[],\"components\":{\"operator\":{},\"widget\":{\"7\":{\"name\":\"Wirecloud/Test/1.0\",\"position\":{\"x\":84,\"y\":40},\"collapsed\":false,\"endpoints\":{\"source\":[],\"target\":[]}},\"8\":{\"name\":\"Wirecloud/Test/1.0\",\"position\":{\"x\":411,\"y\":41},\"collapsed\":false,\"endpoints\":{\"source\":[],\"target\":[]}},\"9\":{\"name\":\"Wirecloud/Test/1.0\",\"position\":{\"x\":411,\"y\":188},\"collapsed\":false,\"endpoints\":{\"source\":[],\"target\":[]}}}},\"connections\":[{\"sourcename\":\"widget/7/outputendpoint\",\"sourcehandle\":\"auto\",\"targetname\":\"widget/8/inputendpoint\",\"targethandle\":\"auto\"}]}}",
             "name": "WiringTests",
             "title": "WiringTests",
             "groups": [],

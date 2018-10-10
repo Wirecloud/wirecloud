@@ -810,10 +810,7 @@ class WidgetTester(WebElementTester):
         return self
 
     def wait_loaded(self):
-        def widget_loaded(driver):
-            return self.loaded
-
-        WebDriverWait(self.testcase.driver, timeout=10).until(widget_loaded)
+        WebDriverWait(self.testcase.driver, timeout=10).until(lambda driver: self.loaded)
         return self
 
     def maximize(self, timeout=10):
