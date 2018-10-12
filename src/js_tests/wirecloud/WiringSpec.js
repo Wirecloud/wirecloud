@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,15 +34,18 @@
             spyOn(Wirecloud.wiring, "Operator").and.callFake(function (wiring, meta, data) {
                 this.id = data.id;
                 this.meta = {
+                    missing: (meta === "Wirecloud/TestOperator/0.5"),
                     type: "operator",
                     uri: meta
                 };
+                this.missing = (meta === "Wirecloud/TestOperator/0.5");
                 this.addEventListener = jasmine.createSpy("addEventListener");
                 this.fullDisconnect = jasmine.createSpy("fullDisconnect");
                 this.load = jasmine.createSpy("load");
                 this.remove = jasmine.createSpy("remove");
                 this.removeEventListener = jasmine.createSpy("removeEventListener");
                 this.inputs = [];
+                this.upgrade = jasmine.createSpy("upgrade");
                 this.is = jasmine.createSpy("is").and.callFake(function (other) {
                     return this === other;
                 });
@@ -52,6 +56,7 @@
                     this.inputs.input = new Wirecloud.wiring.OperatorTargetEndpoint(this, {name: "input", friendcode: ""});
                     this.outputs.output = new Wirecloud.wiring.OperatorSourceEndpoint(this, {name: "output", friendcode: ""});
                 }
+
             });
         });
 
@@ -68,17 +73,34 @@
 
                 var wiring = new Wirecloud.Wiring(workspace, {});
                 expect(wiring).not.toBe(null);
+                expect(wiring.errorCount).toBe(0);
+            });
+
+            it("should cache operatorsById", function () {
+                var workspace = createWorkspaceMock();
+
+                var wiring = new Wirecloud.Wiring(workspace, {});
+
+                let operatorsById = wiring.operatorsById;
+                expect(wiring.operatorsById).toBe(operatorsById);
             });
 
             it("loads simple wiring configurations", function () {
 
                 var workspace = createWorkspaceMock();
+                let widget = {
+                    addEventListener: jasmine.createSpy("addEventListener")
+                };
+                workspace.widgets.push(widget);
+
                 var wiring = new Wirecloud.Wiring(workspace, {
                     operators: {
                         "1": {id: "1", name: "Wirecloud/TestOperator/1.0"}
                     }
                 });
 
+                expect(widget.addEventListener).toHaveBeenCalled();
+                expect(wiring.errorCount).toBe(0);
                 expect(wiring.status).toEqual({
                     version: '2.0',
                     connections: [],
@@ -106,6 +128,7 @@
                     }
                 });
 
+                expect(wiring.errorCount).toBe(0);
                 expect(wiring.status).toEqual({
                     version: '2.0',
                     connections: [],
@@ -141,6 +164,7 @@
                     ]
                 });
 
+                expect(wiring.errorCount).toBe(0);
                 expect(wiring.status).toEqual({
                     version: '2.0',
                     connections: [
@@ -149,6 +173,48 @@
                     operators: {
                         "1": jasmine.any(Wirecloud.wiring.Operator),
                         "2": jasmine.any(Wirecloud.wiring.Operator)
+                    },
+                    visualdescription: {
+                        behaviours: [],
+                        components: {
+                            operator: {},
+                            widget: {}
+                        },
+                        connections: []
+                    }
+                });
+
+            });
+
+            it("loads wiring configurations with connections and missing components", function () {
+
+                var workspace = createWorkspaceMock();
+                let widget = createWidgetMock("2");
+                widget.missing = true;
+                workspace.widgets = [widget];
+                var wiring = new Wirecloud.Wiring(workspace, {
+                    operators: {
+                        "1": {id: "1", name: "Wirecloud/TestOperator/0.5"}
+                    },
+                    connections: [
+                        {
+                            readonly: false,
+                            source: {endpoint: "missingoutput", type: "operator", id: "1"},
+                            target: {endpoint: "missinginput", type: "widget", id: "2"}
+                        }
+                    ]
+                });
+
+                // Wiring should report 1 error for the connection.
+                // Error for the missing components are reported by them on load
+                expect(wiring.errorCount).toBe(1);
+                expect(wiring.status).toEqual({
+                    version: '2.0',
+                    connections: [
+                        jasmine.any(Wirecloud.wiring.Connection)
+                    ],
+                    operators: {
+                        "1": jasmine.any(Wirecloud.wiring.Operator)
                     },
                     visualdescription: {
                         behaviours: [],
@@ -179,6 +245,8 @@
                     ]
                 });
 
+                // Wiring should report 1 error
+                expect(wiring.errorCount).toBe(1);
                 expect(wiring.status).toEqual({
                     version: '2.0',
                     connections: [
@@ -217,7 +285,8 @@
                 });
 
                 // The connection referring to the missing operator should be
-                // filtered as it cannot be recovered
+                // ignored as it cannot be recovered
+                expect(wiring.errorCount).toBe(0);
                 expect(wiring.status).toEqual({
                     version: '2.0',
                     connections: [],
@@ -253,7 +322,8 @@
                 });
 
                 // The connection referring to the missing widget should be
-                // filtered as it cannot be recovered
+                // ignored as it cannot be recovered
+                expect(wiring.errorCount).toBe(0);
                 expect(wiring.status).toEqual({
                     version: '2.0',
                     connections: [],
@@ -270,6 +340,64 @@
                     }
                 });
 
+            });
+
+            it("loads wiring configurations with totally broken connections", () => {
+
+                var workspace = createWorkspaceMock();
+                var wiring = new Wirecloud.Wiring(workspace, {
+                    operators: {
+                        "1": {id: "1", name: "Wirecloud/TestOperator/1.0"}
+                    },
+                    connections: [
+                        {
+                            readonly: false,
+                            source: {},
+                            target: {endpoint: "input", type: "widget", id: "3"}
+                        }
+                    ]
+                });
+
+                // The connection referring to the missing widget should be
+                // ignored as it cannot be recovered
+                expect(wiring.errorCount).toBe(0);
+                expect(wiring.status).toEqual({
+                    version: '2.0',
+                    connections: [],
+                    operators: {
+                        "1": jasmine.any(Wirecloud.wiring.Operator)
+                    },
+                    visualdescription: {
+                        behaviours: [],
+                        components: {
+                            operator: {},
+                            widget: {}
+                        },
+                        connections: []
+                    }
+                });
+
+            });
+
+        });
+
+        describe("_notifyOperatorInstall(component)", () => {
+
+            it("should upgrade missing operators", () => {
+                let workspace = createWorkspaceMock();
+                var wiring = new Wirecloud.Wiring(workspace, {
+                    operators: {
+                        "1": {id: "1", name: "Wirecloud/TestOperator/0.5"},
+                        "2": {id: "2", name: "Wirecloud/OtherOperator/0.5"}
+                    },
+                    connections: []
+                });
+                let new_meta = {uri: "Wirecloud/TestOperator/0.5"};
+
+                wiring._notifyOperatorInstall(new_meta);
+
+                expect(wiring.operators[0].upgrade).toHaveBeenCalledWith(new_meta);
+                expect(wiring.operators[1].upgrade).not.toHaveBeenCalled();
             });
 
         });
@@ -363,6 +491,55 @@
                 });
             });
 
+            it("handles unexpected responses", (done) => {
+
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("PATCH");
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 201
+                        });
+                    });
+                });
+
+                var task = wiring.createOperator("Wirecloud/TestOperator/1.0");
+
+                task.then(
+                    (value) => {
+                        fail("success callback called");
+                    },
+                    (error) => {
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        done();
+                    }
+                );
+
+            });
+
+            it("handles error responses", (done) => {
+
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("PATCH");
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 403
+                        });
+                    });
+                });
+
+                var task = wiring.createOperator("Wirecloud/TestOperator/1.0");
+
+                task.then(
+                    (value) => {
+                        fail("success callback called");
+                    },
+                    (error) => {
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        done();
+                    }
+                );
+
+            });
         });
 
         describe("findOperator(id)", function () {
@@ -372,6 +549,18 @@
             beforeEach(function () {
                 var workspace = createWorkspaceMock();
                 wiring = new Wirecloud.Wiring(workspace, {operators: {"1": {id: "1", name: "Wirecloud/TestOperator/1.0"}}});
+            });
+
+            it("throws a TypeError exception when not passing any id", () => {
+                expect(() => {
+                    wiring.findOperator();
+                }).toThrowError(TypeError);
+            });
+
+            it("throws a TypeError exception when passing null as id", () => {
+                expect(() => {
+                    wiring.findOperator(null);
+                }).toThrowError(TypeError);
             });
 
             it("returns operators instances", function () {
@@ -456,6 +645,35 @@
                 expect(connection1.detach).toHaveBeenCalledWith();
                 expect(wiring.operators).toEqual([operator1, operator2]);
                 expect(wiring.connections).toEqual([]);
+            });
+
+            it("should report error status for loaded missing components", function () {
+
+                var workspace = createWorkspaceMock();
+                let widget = createWidgetMock("2");
+                widget.missing = true;
+                workspace.widgets = [widget];
+                var wiring = new Wirecloud.Wiring(workspace, {
+                    operators: {
+                        "1": {id: "1", name: "Wirecloud/TestOperator/0.5"}
+                    },
+                    connections: [
+                        {
+                            readonly: false,
+                            source: {endpoint: "missingoutput", type: "operator", id: "1"},
+                            target: {endpoint: "missinginput", type: "widget", id: "2"}
+                        }
+                    ]
+                });
+                expect(wiring.errorCount).toBe(1);
+
+                widget.loaded = wiring.operators[0].loaded = true;
+                wiring.load(wiring.status);
+
+                // Wiring should report 3 errors as it is in charge of reporting
+                // missing status for the missing components (already loaded)
+                expect(wiring.errorCount).toBe(3);
+
             });
 
             it("should maintain valid volatile connections", function () {
@@ -790,13 +1008,169 @@
             expect(wiring.visualdescription.connections).toEqual(expected_vconnections);
         });
 
+        it("should handle duplicate operators removals", function () {
+            var workspace = createWorkspaceMock();
+            let listener = jasmine.createSpy();
+            var wiring = new Wirecloud.Wiring(workspace, {
+                operators: {
+                    "1": {id: "1", name: "Wirecloud/TestOperator/1.0"}
+                },
+                connections: [],
+                visualdescription: {
+                    behaviours: [],
+                    components: {
+                        operator: {},
+                        widget: {}
+                    },
+                    connections: []
+                }
+            });
+            wiring.addEventListener('removeoperator', listener);
+
+            let operator = wiring.operators[0];
+            callEventListener(operator, "remove");
+            expect(listener).toHaveBeenCalledWith(wiring, operator);
+            listener.calls.reset();
+
+            // This second call should not happend, but just in case
+            callEventListener(operator, "remove");
+
+            expect(listener).not.toHaveBeenCalled();
+        });
+
+        it("should handle widget removals", () => {
+            var workspace = createWorkspaceMock();
+            let widget2 = createWidgetMock("2");
+            let widget3 = createWidgetMock("3");
+            workspace.widgets = [widget2, widget3];
+            var wiring = new Wirecloud.Wiring(workspace, {
+                operators: {
+                    "1": {id: "1", name: "Wirecloud/TestOperator/1.0"}
+                },
+                connections: [
+                    {
+                        readonly: false,
+                        source: {endpoint: "output", type: "operator", id: "1"},
+                        target: {endpoint: "input", type: "widget", id: "2"}
+                    },
+                    {
+                        readonly: false,
+                        source: {endpoint: "output", type: "operator", id: "1"},
+                        target: {endpoint: "input", type: "widget", id: "3"}
+                    },
+                    {
+                        readonly: false,
+                        source: {endpoint: "output", type: "widget", id: "3"},
+                        target: {endpoint: "input", type: "widget", id: "2"}
+                    }
+                ],
+                visualdescription: {
+                    behaviours: [
+                        {
+                            title: "behaviour1",
+                            description: "behaviour description",
+                            components: {
+                                operator: {},
+                                widget: {}
+                            },
+                            connections: [
+                                {
+                                    sourcename: "operator/1/output",
+                                    sourcehandle: "auto",
+                                    targetname: "widget/2/input",
+                                    targethandle: "auto"
+                                },
+                                {
+                                    sourcename: "operator/1/output",
+                                    sourcehandle: "auto",
+                                    targetname: "widget/3/input",
+                                    targethandle: "auto"
+                                },
+                                {
+                                    sourcename: "widget/3/output",
+                                    sourcehandle: "auto",
+                                    targetname: "widget/2/input",
+                                    targethandle: "auto"
+                                }
+                            ]
+                        }
+                    ],
+                    components: {
+                        operator: {},
+                        widget: {}
+                    },
+                    connections: [
+                        {
+                            sourcename: "operator/1/output",
+                            sourcehandle: "auto",
+                            targetname: "widget/2/input",
+                            targethandle: "auto"
+                        },
+                        {
+                            sourcename: "operator/1/output",
+                            sourcehandle: "auto",
+                            targetname: "widget/3/input",
+                            targethandle: "auto"
+                        },
+                        {
+                            sourcename: "widget/3/output",
+                            sourcehandle: "auto",
+                            targetname: "widget/2/input",
+                            targethandle: "auto"
+                        }
+                    ]
+                }
+            });
+
+            var expected_operators = wiring.operators;
+            var expected_connections = [wiring.connections[0]];
+            var expected_vconnections = [wiring.visualdescription.connections[0]];
+            callEventListener(workspace.widgets[1], "remove");
+
+            expect(wiring.operators).toEqual(expected_operators);
+            expect(wiring.connections).toEqual(expected_connections);
+            expect(wiring.visualdescription.connections).toEqual(expected_vconnections);
+        });
+
+        it("should handle missing widget removals", () => {
+            var workspace = createWorkspaceMock();
+            let widget = createWidgetMock("2");
+            widget.missing = true;
+            workspace.widgets = [widget];
+            var wiring = new Wirecloud.Wiring(workspace, {
+                operators: {},
+                connections: [],
+                visualdescription: {
+                    behaviours: [],
+                    components: {
+                        operator: {},
+                        widget: {}
+                    },
+                    connections: []
+                }
+            });
+            // Simulate error loading widget
+            wiring.logManager.log("missing widget");
+            expect(wiring.errorCount).toBe(1);
+
+            var expected_operators = wiring.operators;
+            var expected_connections = [];
+            var expected_vconnections = [];
+            callEventListener(widget, "remove");
+
+            expect(wiring.errorCount).toBe(0);
+            expect(wiring.operators).toEqual(expected_operators);
+            expect(wiring.connections).toEqual(expected_connections);
+            expect(wiring.visualdescription.connections).toEqual(expected_vconnections);
+        });
+
         it("should handle upgraded/downgraded operators", function () {
             var workspace = createWorkspaceMock();
             var wiring = new Wirecloud.Wiring(workspace, {
                 operators: {
-                    "1": {id: "1", name: "Wirecloud/TestOperator/1.0"},
                     "2": {id: "2", name: "Wirecloud/TestOperator/1.0"},
                     "3": {id: "3", name: "Wirecloud/TestOperator/1.0"},
+                    "1": {id: "1", name: "Wirecloud/TestOperator/1.0"}
                 },
                 connections: [
                     {
@@ -819,6 +1193,58 @@
             // TODO improve this test
             var operator = wiring.operators[1];
             callEventListener(operator, "change", ["meta"], {meta: {missing: false}});
+        });
+
+        it("should handle upgraded/downgraded missing operators", function () {
+            var workspace = createWorkspaceMock();
+            var wiring = new Wirecloud.Wiring(workspace, {
+                operators: {
+                    "1": {id: "1", name: "Wirecloud/TestOperator/0.5"},
+                    "2": {id: "2", name: "Wirecloud/TestOperator/0.5"},
+                    "3": {id: "3", name: "Wirecloud/TestOperator/1.0"}
+                },
+                connections: [
+                    {
+                        readonly: false,
+                        source: {endpoint: "output", type: "operator", id: "1"},
+                        target: {endpoint: "input", type: "operator", id: "2"}
+                    },
+                    {
+                        readonly: false,
+                        source: {endpoint: "output", type: "operator", id: "1"},
+                        target: {endpoint: "input", type: "operator", id: "3"}
+                    }
+                ]
+            });
+            wiring.connections[0].missing = wiring.connections[1].missing = false;
+
+            // TODO improve this test
+            var operator = wiring.operators[0];
+            callEventListener(operator, "change", ["meta"], {meta: operator.meta});
+
+            // TODO improve this test
+            var operator = wiring.operators[1];
+            callEventListener(operator, "change", ["meta"], {meta: operator.meta});
+        });
+
+        it("should ignore superfluos superfluous changes in operators", function () {
+            var workspace = createWorkspaceMock();
+            var wiring = new Wirecloud.Wiring(workspace, {
+                operators: {
+                    "1": {id: "1", name: "Wirecloud/TestOperator/1.0"},
+                    "2": {id: "2", name: "Wirecloud/TestOperator/1.0"}
+                },
+                connections: [
+                    {
+                        readonly: false,
+                        source: {endpoint: "output", type: "operator", id: "1"},
+                        target: {endpoint: "input", type: "operator", id: "2"}
+                    }
+                ]
+            });
+
+            callEventListener(wiring.operators[0], "change", ["title"], {title: "New title"});
+            expect(wiring.operators[0].fullDisconnect).not.toHaveBeenCalled();
         });
 
     });
@@ -869,6 +1295,25 @@
         };
 
         return workspace;
+    };
+
+    var createWidgetMock = function createWidgetMock(id) {
+        let widget = {
+            id: id,
+            meta: {
+                type: "widget"
+            },
+            inputs: {
+            },
+            outputs: {
+            },
+            addEventListener: jasmine.createSpy("addEventListener"),
+            removeEventListener: jasmine.createSpy("removeEventListener")
+        };
+
+        widget.inputs.input = new Wirecloud.wiring.WidgetTargetEndpoint(widget, {name: "input", friendcode: ""});
+        widget.outputs.output = new Wirecloud.wiring.WidgetSourceEndpoint(widget, {name: "output", friendcode: ""});
+        return widget;
     };
 
     var callEventListener = function callEventListener(instance, event) {

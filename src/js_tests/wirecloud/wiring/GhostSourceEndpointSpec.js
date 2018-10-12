@@ -60,7 +60,7 @@
                 expect(endpoint.id).toEqual([OPERATOR.meta.type, OPERATOR.id, DEFAULT_ENDPOINT_NAME].join("/"));
                 expect(endpoint.description).toEqual("");
                 expect(endpoint.label).toEqual(DEFAULT_ENDPOINT_NAME);
-                expect(endpoint.missing).toBeTruthy();
+                expect(endpoint.missing).toBe(true);
             });
 
             it("should allow to create widget endpoints", function () {

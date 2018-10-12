@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -43,8 +44,6 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/BehaviourPrefs.js',
     'js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
     'js/wirecloud/ui/WiringEditor/Endpoint.js',
-    'js/wirecloud/ui/WiringEditor/SourceEndpoint.js',
-    'js/wirecloud/ui/WiringEditor/TargetEndpoint.js',
     'js/wirecloud/ui/WiringEditor/EndpointGroup.js',
     'js/wirecloud/ui/WiringEditor/Component.js',
     'js/wirecloud/ui/WiringEditor/ComponentPrefs.js',

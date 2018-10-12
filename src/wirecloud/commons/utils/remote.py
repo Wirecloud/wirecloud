@@ -810,10 +810,7 @@ class WidgetTester(WebElementTester):
         return self
 
     def wait_loaded(self):
-        def widget_loaded(driver):
-            return self.loaded
-
-        WebDriverWait(self.testcase.driver, timeout=10).until(widget_loaded)
+        WebDriverWait(self.testcase.driver, timeout=10).until(lambda driver: self.loaded)
         return self
 
     def maximize(self, timeout=10):
@@ -1337,7 +1334,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             loading_window = self.wait_element_visible('#loading-window')
             WebDriverWait(self.driver, timeout).until(EC.staleness_of(loading_window))
 
-    def wait_wirecloud_ready(self, start_timeout=10, timeout=10, embedded=False):
+    def wait_wirecloud_ready(self, start_timeout=20, timeout=20, embedded=False):
 
         loading_window = None
 

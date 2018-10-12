@@ -187,7 +187,7 @@
             var i, connection;
 
             for (i = 0; i < this.connections.length && !connection; i++) {
-                if (this.connections[i].sourceId == sourceId && this.connections[i].targetId == targetId) {
+                if (this.connections[i].sourceId === sourceId && this.connections[i].targetId === targetId) {
                     connection = this.connections[i];
                 }
             }
@@ -216,7 +216,7 @@
         removeEndpoint: function removeEndpoint(endpoint) {
             var index = this.endpoints[endpoint.type].indexOf(endpoint);
 
-            if (index != -1) {
+            if (index !== -1) {
                 endpoint
                     .removeEventListener('mousedown', this.endpoint_ondragstart)
                     .removeEventListener('mouseenter', this.endpoint_onmouseenter)
@@ -292,7 +292,7 @@
     var connection_onremove = function connection_onremove(connection) {
         var index = this.connections.indexOf(connection);
 
-        if (index != -1) {
+        if (index !== -1) {
             if (connection.equals(this.activeConnection)) {
                 this.deactivateAll();
             }

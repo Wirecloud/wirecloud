@@ -86,7 +86,7 @@
         });
 
         note = this.disabledAlert.addNote(utils.gettext("<a>Click here</a> for a quick guide/tutorial on how to use this new feature."));
-        note.firstElementChild.addEventListener('click', function () {
+        note.firstElementChild.addEventListener('click', () => {
             Wirecloud.TutorialCatalogue.get('mashup-wiring-design').start();
         });
 
@@ -94,8 +94,11 @@
 
         this.behaviours = [];
         this.components = {operator: {}, widget: {}};
+
+        this.clear();
     };
 
+    // TODO
     ns.BehaviourEngine.GLOBAL = 0;
     ns.BehaviourEngine.INDEPENDENT = 1;
 
@@ -114,6 +117,13 @@
                 this.body.removeChild(this.disabledAlert);
                 this.btnCreate.get().parentElement.classList.remove('hidden');
             } else {
+                for (var i = this.behaviours.length - 1; i >= 0; i--) {
+                    this.body.removeChild(this.behaviours[i]);
+                }
+
+                this.behaviours.length = 0;
+                this.behaviour = null;
+
                 this.btnEnable
                     .setTitle(utils.gettext("Enable"))
                     .replaceIconClassName('fa-unlock', 'fa-lock');
@@ -125,65 +135,64 @@
 
             onchange_ordering.call(this);
 
-            return this;
+            return this.dispatchEvent('enable', this.enabled);
         },
 
         /**
-         * [TODO: activate description]
+         * Switchs the visible behaviour. Do nothing if the engine is disabled.
          *
-         * @param {Behaviour} behaviour
-         *      [TODO: description]
-         * @param {Boolean} [toggleViewpoint]
-         *      [TODO: description]
-         * @returns {BehaviourEngine}
+         * @param {Wirecloud.ui.WiringEditor.Behaviour} [behaviour]
+         *      The behaviour to switch to
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
-        activate: function activate(behaviour, toggleViewpoint) {
+        activate: function activate(behaviour) {
 
             if (!this.enabled) {
                 return this;
             }
 
-            desactivateAllExcept.call(this, behaviour);
-
-            if (toggleViewpoint) {
-                this.viewpoint = this.viewpoint === ns.BehaviourEngine.GLOBAL ? ns.BehaviourEngine.INDEPENDENT : ns.BehaviourEngine.GLOBAL;
+            if (this.behaviour !== behaviour) {
+                desactivateAllExcept.call(this, behaviour);
+                this.dispatchEvent('activate', this.behaviour, this.viewpoint);
             }
 
-            return this.dispatchEvent('activate', this.behaviour, this.viewpoint);
+            return this;
         },
 
         /**
-         * [TODO: createBehaviour description]
+         * Creates and adds a new behaviour
          *
          * @param {PlainObject} behaviourInfo
-         *      [TODO: description]
-         * @returns {Behaviour}
-         *      [TODO: description]
+         *      Behaviour information to use for creating the behaviour
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour}
+         *      The created behaviour instance
          */
         createBehaviour: function createBehaviour(behaviourInfo) {
-            var behaviour;
-
-            behaviour = (new ns.Behaviour(this.behaviours.length, behaviourInfo))
-                .addEventListener('change', function () {
+            var behaviour = (new ns.Behaviour(this.behaviours.length, behaviourInfo))
+                .addEventListener('change', () => {
                     if (this.behaviour.equals(behaviour)) {
                         this.dispatchEvent('change', behaviour.getCurrentStatus(), this.enabled);
                     }
-                }.bind(this))
-                .addEventListener('click', function () {
+                })
+                .addEventListener('click', () => {
                     if (!this.orderingEnabled) {
                         this.activate(behaviour);
                     }
-                }.bind(this))
-                .addEventListener('optremove', function () {
+                })
+                .addEventListener('optremove', () => {
                     this.removeBehaviour(behaviour);
-                }.bind(this));
+                });
 
             return insertBehaviour.call(this, behaviour);
         },
 
         /**
-         * @override
+         * Clear all the resources usded by the engine leaving it ready for
+         * another use
+         *
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
+         *      The instance on which the member is called.
          */
         clear: function clear() {
             var i;
@@ -196,28 +205,28 @@
 
                 this.behaviours.length = 0;
                 this.viewpoint = ns.BehaviourEngine.GLOBAL;
-                delete this.behaviour;
+                this.behaviour = null;
 
                 this.stopOrdering();
             } else {
-                this.forEachComponent(function (component) {
+                this.forEachComponent((component) => {
                     this.removeComponent(component);
-                }.bind(this));
+                });
             }
 
             onchange_ordering.call(this);
 
             this.description = Wirecloud.Wiring.normalize().visualdescription;
-
+            this.enabled = false;
             return this;
         },
 
         /**
-         * [emptyBehaviour description]
+         * Removes all the components and connections from a behaviour
          *
-         * @param {Behaviour} [behaviour]
-         *      [description]
-         * @returns {BehaviourEngine}
+         * @param {Wirecloud.ui.WiringEditor.Behaviour} behaviour
+         *      behaviour to clear
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
         emptyBehaviour: function emptyBehaviour(behaviour) {
@@ -227,21 +236,16 @@
                 return this;
             }
 
-            if (behaviour == null) {
-                behaviour = this.behaviour;
-            }
-
             if (!this.behaviour.equals(behaviour)) {
                 _behaviour = this.behaviour;
                 this.activate(behaviour);
             }
 
-            this.forEachComponent(function (component) {
-
+            this.forEachComponent((component) => {
                 if (behaviour.hasComponent(component)) {
                     _removeComponent.call(this, component);
                 }
-            }.bind(this));
+            });
             behaviour.clear();
 
             if (_behaviour != null) {
@@ -252,12 +256,12 @@
         },
 
         /**
-         * [TODO: filterByComponent description]
+         * Returns the list of behaviours containing a given component.
          *
-         * @param {Component} component
-         *      [TODO: description]
-         * @returns {Behaviour[]}
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.ComponentDraggable} component
+         *      The component used for filtering
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour[]}
+         *      List of behaviours containing the component
          */
         filterByComponent: function filterByComponent(component) {
             return this.behaviours.filter(function (behaviour) {
@@ -265,6 +269,14 @@
             });
         },
 
+        /**
+         * Returns the list of behaviours containing a given connection.
+         *
+         * @param {Wirecloud.ui.WiringEditor.Connection} connection
+         *      The connection used for filtering
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour[]}
+         *      List of behaviours containing the connection
+         */
         filterByConnection: function filterByConnection(connection) {
             return this.behaviours.filter(function (behaviour) {
                 return behaviour.hasConnection(connection);
@@ -276,7 +288,7 @@
          *
          * @param {Function} callback
          *      [TODO: description]
-         * @returns {BehaviourEngine}
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
         forEachComponent: function forEachComponent(callback) {
@@ -297,7 +309,7 @@
             for (found = false, i = 0; !found && i < this.description.connections.length; i++) {
                 _connection = this.description.connections[i];
 
-                if (_connection.sourcename == connection.sourceId && _connection.targetname == connection.targetId) {
+                if (_connection.sourcename === connection.sourceId && _connection.targetname === connection.targetId) {
                     found = true;
                     index = i;
                 }
@@ -318,12 +330,13 @@
         },
 
         /**
-         * [TODO: hasComponent description]
+         * Checks if a given component is present in current wiring status, that
+         * is, it is present on any of the managed behaviours.
          *
          * @param {Component} component
-         *      [TODO: description]
+         *      Component to check for
          * @returns {Boolean}
-         *      [TODO: description]
+         *      true if the component is in any of the managed behaviours
          */
         hasComponent: function hasComponent(component) {
             var found;
@@ -372,20 +385,22 @@
         },
 
         /**
-         * [TODO: loadBehaviours description]
+         * Process behaviour information from wiring status and load initial
+         * status for this component.
          *
          * @param  {PlainObject[]} behaviours
-         *      [TODO: description]
-         * @returns {BehaviourEngine}
+         *      Behaviour information as it comes on the wiring status visual
+         *      description
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
         loadBehaviours: function loadBehaviours(behaviours) {
 
-            behaviours.forEach(function (info) {
+            behaviours.forEach((info) => {
                 var behaviour = this.createBehaviour(info);
 
-                behaviour.logManager.log(utils.interpolate(utils.gettext("The behaviour (%(title)s) was loaded."), behaviour), Wirecloud.constants.LOGGING.INFO_MSG);
-            }, this);
+                behaviour.logManager.log(utils.interpolate(utils.gettext("The behaviour (%(title)s) was loaded."), behaviour), Wirecloud.constants.LOGGING.DEBUG_MSG);
+            });
 
             if (behaviours.length) {
                 this.enabled = true;
@@ -398,11 +413,11 @@
         },
 
         /**
-         * [TODO: removeBehaviour description]
+         * Removes a behaviour from the Behaviour Engine
          *
-         * @param {Behaviour} behaviour
-         *      [TODO: description]
-         * @returns {BehaviourEngine}
+         * @param {Wirecloud.ui.WiringEditor.Behaviour} behaviour
+         *      Behaviour to remove
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
         removeBehaviour: function removeBehaviour(behaviour) {
@@ -441,13 +456,15 @@
         },
 
         /**
-         * [TODO: removeComponent description]
+         * Removes the given component from the active behaviour, or from all
+         * the behaviours if the cascade option is used.
          *
-         * @param {Component} component
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.ComponentDraggable} component
+         *      component to remove
          * @param {Boolean} [cascade=false]
-         *      [TODO: description]
-         * @returns {BehaviourEngine}
+         *      `true` for removing the component from all the behaviours,
+         *      `false` (default) for removing the component from the active one
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
         removeComponent: function removeComponent(component, cascade) {
@@ -469,6 +486,14 @@
             return this;
         },
 
+        /**
+         * Removes a list of components from the active behaviour.
+         *
+         * @param {Wirecloud.ui.WiringEditor.ComponentDraggable[]} components
+         *      component to remove
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
+         *      The instance on which the member is called.
+         */
         removeComponentList: function removeComponentList(componentList) {
             var i, componentsForModal = [];
 
@@ -494,13 +519,15 @@
         },
 
         /**
-         * [TODO: removeConnection description]
+         * Removes a connection from this behaviour engine
          *
-         * @param {Connection} connection
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.Connection} connection
+         *      The connection to remove
          * @param {Boolean} [cascade=false]
-         *      [TODO: description]
-         * @returns {BehaviourEngine}
+         *      `true` for removing the connection from all the behaviours,
+         *      `false` (default)  for removing it only from the active
+         *      behaviour
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
         removeConnection: function removeConnection(connection, cascade) {
@@ -540,16 +567,6 @@
         },
 
         /**
-         * [TODO: toggleViewpoint description]
-         *
-         * @returns {BehaviourEngine}
-         *      The instance on which the member is called.
-         */
-        toggleViewpoint: function toggleViewpoint() {
-            return this.activate(this.behaviour, true);
-        },
-
-        /**
          * [TODO: toJSON description]
          *
          * @returns {PlainObject}
@@ -564,39 +581,27 @@
         },
 
         /**
-         * [TODO: updateComponent description]
+         * Adds or updates the given component into the active behaviour
          *
-         * @param {Component} component
-         * @param {PlainObject} view
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.Component} component
+         *      component to add/update
          * @param {Boolean} [beShared=false]
-         *      [TODO: description]
-         * @returns {BehaviourEngine}
+         *      `true` if the component should be added to the current behaviour
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
-        updateComponent: function updateComponent(component, view, beShared) {
-            var name;
+        updateComponent: function updateComponent(component, beShared) {
+            var name, view = component.toJSON();
 
-            if (this.enabled) {
-                switch (this.viewpoint) {
-                case ns.BehaviourEngine.GLOBAL:
-                    if (!component.background || beShared) {
-                        this.behaviour.updateComponent(component);
-                        component.removeAllowed = (this.filterByComponent(component).length == 1);
-                        component.background = false;
-                    }
-                    break;
-                case ns.BehaviourEngine.INDEPENDENT:
-                    // TODO: do nothing
-                    return this;
-                }
+            if (this.enabled && (!component.background || beShared)) {
+                this.behaviour.updateComponent(component);
+                component.removeAllowed = (this.filterByComponent(component).length === 1);
+                component.background = false;
             }
 
             if (!(component.id in this.description.components[component.type])) {
                 this.description.components[component.type][component.id] = {};
             }
-
-            view = view || {};
 
             for (name in view) {
                 this.description.components[component.type][component.id][name] = view[name];
@@ -612,35 +617,25 @@
         },
 
         /**
-         * [TODO: updateConnection description]
+         * Adds or updates the given connection into the active behaviour
          *
-         * @param {Connection} connection
-         *      [TODO: description]
-         * @param {PlainObject} view
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.Component} connection
+         *      connection to add/update
          * @param {Boolean} [beShared=false]
-         *      [TODO: description]
-         * @returns {BehaviourEngine}
+         *      `true` if the connection should be added to the current behaviour
+         * @returns {Wirecloud.ui.WiringEditor.BehaviourEngine}
          *      The instance on which the member is called.
          */
-        updateConnection: function updateConnection(connection, view, beShared) {
+        updateConnection: function updateConnection(connection, beShared) {
             var index = this.getConnectionIndex(connection);
+            var view = connection.toJSON();
 
-            if (this.enabled) {
-                switch (this.viewpoint) {
-                case ns.BehaviourEngine.GLOBAL:
-                    if (!connection.background || beShared) {
-                        this.behaviour.updateConnection(connection);
-                        this.updateComponent(connection.sourceComponent, {}, true);
-                        this.updateComponent(connection.targetComponent, {}, true);
-                        connection.removeAllowed = (this.filterByConnection(connection).length == 1);
-                        connection.background = false;
-                    }
-                    break;
-                case ns.BehaviourEngine.INDEPENDENT:
-                    // TODO: do nothing
-                    return this;
-                }
+            if (this.enabled && (!connection.background || beShared)) {
+                this.behaviour.updateConnection(connection);
+                this.updateComponent(connection.sourceComponent, true);
+                this.updateComponent(connection.targetComponent, true);
+                connection.removeAllowed = (this.filterByConnection(connection).length === 1);
+                connection.background = false;
             }
 
             if (index !== -1) {
@@ -682,7 +677,7 @@
         delete this.description.components[component.type][component.id];
         delete this.components[component.type][component.id];
 
-        removeConnections.call(this, component, true);
+        removeConnections.call(this, component, false);
         component.remove();
 
         this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
@@ -718,7 +713,8 @@
     };
 
     var btncreate_onclick = function btncreate_onclick() {
-        var dialog = new Wirecloud.ui.FormWindowMenu([
+        var dialog = new Wirecloud.ui.FormWindowMenu(
+            [
                 {name: 'title', label: utils.gettext("Title"), type: 'text'},
                 {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
             ],
@@ -742,19 +738,11 @@
                 message: message
             });
             dialog.setHandler(() => {
-                for (var i = this.behaviours.length - 1; i >= 0; i--) {
-                    this.body.removeChild(this.behaviours[i]);
-                }
-
-                this.behaviours.length = 0;
-                delete this.behaviour;
                 this.enabled = false;
-                this.dispatchEvent('enable', this.enabled);
             }).show();
         } else {
             this.enabled = true;
             this.createBehaviour();
-            this.dispatchEvent('enable', this.enabled);
         }
     };
 
@@ -773,7 +761,7 @@
     };
 
     var onchange_ordering = function onchange_ordering() {
-        this.btnOrder.setDisabled(!this.enabled || this.behaviours.length < 2);
+        this.btnOrder.enabled = this.enabled && this.behaviours.length >= 2;
 
         if (!this.btnOrder.enabled) {
             this.btnCreate.enable();
@@ -809,10 +797,13 @@
     var showComponentRemoveModal = function showComponentRemoveModal(component) {
         var modal, message;
 
-        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
+        message = builder.parse(
+            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING,
+            {
                 type: component.type,
                 title: component.title
-            });
+            }
+        );
 
         modal = new Wirecloud.ui.AlertWindowMenu(message);
         modal.setHandler(_removeComponent.bind(this, component, false)).show();
@@ -853,10 +844,13 @@
     var showComponentDeleteCascadeModal = function showComponentDeleteCascadeModal(component) {
         var modal, message;
 
-        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
+        message = builder.parse(
+            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING,
+            {
                 type: component.type,
                 title: component.title
-            });
+            }
+        );
 
         modal = new Wirecloud.ui.AlertWindowMenu(message);
         modal.setHandler(_removeComponent.bind(this, component, true)).show();
@@ -865,12 +859,9 @@
     };
 
     var removeConnections = function removeConnections(component, cascade) {
-
-        component.forEachConnection(function (connection) {
+        component.forEachConnection((connection) => {
             this.removeConnection(connection, cascade);
-        }.bind(this));
-
-        return this;
+        });
     };
 
     var btnorder_onclick = function btnorder_onclick(button) {
@@ -903,109 +894,77 @@
                 layout = context.container.get();
 
                 context.layout = layout;
+
+                behaviourBCR = behaviour.getBoundingClientRect();
+                layoutBCR = context.layout.getBoundingClientRect();
+
+                context.y = (event.clientY + layout.scrollTop) - (layoutBCR.top + (behaviourBCR.height / 2));
+
                 context.tmpBehaviour = behaviour.get().cloneNode(true);
                 context.tmpBehaviour.classList.add("dragging");
-                context.layout.appendChild(context.tmpBehaviour);
 
                 behaviour.addClassName("temporal");
 
-                behaviourBCR = behaviour.get().getBoundingClientRect();
-                layoutBCR = context.layout.getBoundingClientRect();
-
-                context.x = behaviourBCR.left - layoutBCR.left - ((behaviour.get().offsetWidth - behaviour.get().clientWidth) / 2);
-                context.y = (event.clientY + layout.scrollTop) - (layoutBCR.top + (behaviour.get().offsetHeight / 2));
-
-                context.tmpBehaviour.style.left = context.x + 'px';
-                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
-                context.tmpBehaviour.style.top = context.y + 'px';
-
-                var firstBehaviour = this.behaviours[0].get(), lastBehaviour = this.behaviours[this.behaviours.length - 1].get();
+                var firstBehaviour = this.behaviours[0].get();
+                var lastBehaviour = this.behaviours[this.behaviours.length - 1].get();
 
                 context.upperLimit = firstBehaviour.offsetTop;
                 context.lowerLimit = lastBehaviour.offsetTop;
+                context.ratio = behaviourBCR.height;
 
-                context.offsetHeight = event.clientY - (behaviourBCR.top + (behaviour.get().offsetHeight / 2));
-
-                context.marginVertical = 5;
-
-                context.refHeigth = behaviourBCR.height + context.marginVertical;
-                context.refHeigthUp = (behaviourBCR.height / 2) + context.marginVertical;
-                context.refHeigthDown = context.refHeigthUp;
-
-                context.canMoveUp = this.behaviours.indexOf(behaviour);
-                context.canMoveDown = this.behaviours.length - (context.canMoveUp + 1);
+                context.layout.appendChild(context.tmpBehaviour);
+                context.tmpBehaviour.style.left = behaviour.get().offsetLeft + 'px';
+                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
+                if (context.y < context.upperLimit) {
+                    context.tmpBehaviour.style.top = context.upperLimit + 'px';
+                } else if (context.y > context.lowerLimit) {
+                    context.tmpBehaviour.style.top = context.lowerLimit + 'px';
+                } else {
+                    context.tmpBehaviour.style.top = context.y + 'px';
+                }
             }.bind(this),
-            function drag(e, draggable, context, xDelta, yDelta) {
-                var offsetTop = Math.round(context.y + yDelta);
+            // drag
+            (e, draggable, context, xDelta, yDelta) => {
+                var yPos = Math.round(context.y + yDelta);
+
+                if (yPos < context.upperLimit) {
+                    yPos = context.upperLimit;
+                } else if (yPos > context.lowerLimit) {
+                    yPos = context.lowerLimit;
+                }
 
                 context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
+                context.tmpBehaviour.style.top = yPos + 'px';
 
-                if (offsetTop >= context.upperLimit && offsetTop <= context.lowerLimit) {
-                    context.tmpBehaviour.style.top = offsetTop + 'px';
+                let new_index = Math.round((yPos - context.upperLimit) / context.ratio);
+
+                if (new_index !== behaviour.index) {
+                    moveBehaviour.call(this, behaviour, new_index);
                 }
-
-                if ((context.canMoveUp > 0) && (-(yDelta + context.offsetHeight) > context.refHeigthUp)) {
-                    context.canMoveUp -= 1;
-                    context.refHeigthUp += context.refHeigth;
-
-                    context.canMoveDown += 1;
-                    context.refHeigthDown -= context.refHeigth;
-
-                    moveUpBehaviour.call(this, behaviour);
-                } else if ((context.canMoveDown > 0) && ((yDelta + context.offsetHeight) > context.refHeigthDown)) {
-                    context.canMoveUp += 1;
-                    context.refHeigthUp -= context.refHeigth;
-
-                    context.canMoveDown -= 1;
-                    context.refHeigthDown += context.refHeigth;
-
-                    moveDownBehaviour.call(this, behaviour);
-                }
-            }.bind(this),
+            },
             function dragend(draggable, context) {
                 behaviour.removeClassName("temporal");
                 context.layout.removeChild(context.tmpBehaviour);
-            },
-            function canDrag() {
-                return true;
             }
         );
 
         return this;
     };
 
-    var moveDownBehaviour = function moveDownBehaviour(behaviour) {
-        var nextBehaviour, index = this.behaviours.indexOf(behaviour);
+    var moveBehaviour = function moveBehaviour(behaviour, new_index) {
+        this.behaviours.splice(this.behaviours.indexOf(behaviour), 1);
+        let refElement = this.behaviours[new_index];
+        this.behaviours.splice(new_index, 0, behaviour);
 
-        if (index == (this.behaviours.length - 1)) {
-            return this;
+        if (refElement) {
+            behaviour.parent().insertBefore(behaviour.get(), refElement.get());
+        } else {
+            behaviour.parent().insertBefore(behaviour.get(), null);
         }
 
-        nextBehaviour = this.behaviours[index + 1];
-        behaviour.parent().insertBefore(behaviour.get(), nextBehaviour.get().nextSibling);
-
-        behaviour.index = index + 1;
-        nextBehaviour.index = index;
-
-        this.behaviours[index + 1] = behaviour;
-        this.behaviours[index] = nextBehaviour;
-    };
-
-    var moveUpBehaviour = function moveUpBehaviour(behaviour) {
-        var previousBehaviour, index = this.behaviours.indexOf(behaviour);
-
-        if (index === 0) {
-            return this;
-        }
-
-        previousBehaviour = this.behaviours[index - 1];
-        behaviour.parent().insertBefore(behaviour.get(), previousBehaviour.get());
-
-        behaviour.index = index - 1;
-        previousBehaviour.index = index;
-
-        this.behaviours[index - 1] = behaviour;
-        this.behaviours[index] = previousBehaviour;
+        this.behaviours.forEach((behaviour, index) => {
+            behaviour.index = index;
+        });
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

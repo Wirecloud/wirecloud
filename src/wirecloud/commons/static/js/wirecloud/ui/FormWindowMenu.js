@@ -78,10 +78,14 @@
 
     FormWindowMenu.prototype.setValue = function setValue(newValue) {
         this.form.setData(newValue);
+
+        return this;
     };
 
     FormWindowMenu.prototype.setFocus = function setFocus() {
         this.form.focus();
+
+        return this;
     };
 
     FormWindowMenu.prototype.show = function show(parentWindow) {
@@ -90,6 +94,8 @@
         this.form.cancelButton.enable();
         Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
         this.form.repaint();
+
+        return this;
     };
 
     Wirecloud.ui.FormWindowMenu = FormWindowMenu;

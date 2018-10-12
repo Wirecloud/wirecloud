@@ -44,11 +44,11 @@
 
         options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
 
-        if (!options.title) {
+        if (options.title == null || options.title.trim() === "") {
             options.title = ns.Behaviour.JSON_TEMPLATE.title;
         }
 
-        if (!options.description) {
+        if (options.description == null || options.description.trim() === "") {
             options.description = ns.Behaviour.JSON_TEMPLATE.description;
         }
 
@@ -87,14 +87,20 @@
 
             description: {
                 get: function get() {return descriptionElement.textContent;},
-                set: function set(value) {descriptionElement.textContent = value ? value : ns.Behaviour.JSON_TEMPLATE.description;}
+                set: function set(value) {
+                    descriptionElement.textContent = value != null && value.trim() !== "" ? value : ns.Behaviour.JSON_TEMPLATE.description;
+                }
             },
 
             index: {
                 get: function () {
-                    return this.get().getAttribute('data-index');
+                    return Number(this.get().getAttribute('data-index'));
                 },
                 set: function (value) {
+                    value = Number(value);
+                    if (isNaN(value)) {
+                        throw new TypeError("Invalid index value");
+                    }
                     this.get().setAttribute('data-index', value);
                 }
             },
@@ -160,28 +166,27 @@
         /**
          * [TODO: equals description]
          *
-         * @param {Behaviour} behaviour
+         * @param {Wirecloud.ui.WiringEditor.Behaviour} behaviour
          *      [TODO: description]
          * @returns {Boolean}
          *      [TODO: description]
          */
         equals: function equals(behaviour) {
-            return (behaviour instanceof ns.Behaviour) && (this === behaviour);
+            return this === behaviour;
         },
 
         getConnectionIndex: function getConnectionIndex(connection) {
-            var _connection, found, i, index = -1;
+            var _connection, i;
 
-            for (found = false, i = 0; !found && i < this.connections.length; i++) {
+            for (i = 0; i < this.connections.length; i++) {
                 _connection = this.connections[i];
 
-                if (_connection.sourcename == connection.sourceId && _connection.targetname == connection.targetId) {
-                    found = true;
-                    index = i;
+                if (_connection.sourcename === connection.sourceId && _connection.targetname === connection.targetId) {
+                    return i;
                 }
             }
 
-            return index;
+            return -1;
         },
 
         getCurrentStatus: function getCurrentStatus() {
@@ -196,66 +201,53 @@
         },
 
         /**
-         * [TODO: hasComponent description]
+         * Checks if the given component is present in the behaviour
          *
-         * @param {Component} component
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.ComponentDraggable} component
+         *      component to check
          * @returns {Boolean}
-         *      [TODO: description]
+         *      true if the component is present on this behaviour
          */
         hasComponent: function hasComponent(component) {
             return component.id in this.components[component.type];
         },
 
         /**
-         * [TODO: hasComponentView description]
+         * Checks if the given connection is present in the behaviour
          *
-         * @param {Component} component
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.Connection} connection
+         *      Connection to check
          * @returns {Boolean}
-         *      [TODO: description]
-         */
-        hasComponentView: function hasComponentView(component) {
-            return Object.keys(this.components[component.type][component.id] || {}).length > 0;
-        },
-
-        /**
-         * [TODO: hasConnection description]
-         *
-         * @param {Connection} connection
-         *      [TODO: description]
-         * @returns {Boolean}
-         *      [TODO: description]
+         *      true if the connection is present on this behaviour
          */
         hasConnection: function hasConnection(connection) {
             return this.connections.some(function (vInfo) {
-                return vInfo.sourcename == connection.sourceId && vInfo.targetname == connection.targetId;
+                return vInfo.sourcename === connection.sourceId && vInfo.targetname === connection.targetId;
             });
         },
 
         /**
-         * [TODO: removeComponent description]
+         * Removes a component from the behaviour
          *
-         * @param {ComponentDraggable} component
-         *      [TODO: description]
-         * @returns {Behaviour}
+         * @param {Wirecloud.ui.WiringEditor.ComponentDraggable} component
+         *      Component to remove from the behaviour
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
         removeComponent: function removeComponent(component) {
-
             if (this.hasComponent(component)) {
                 delete this.components[component.type][component.id];
+                this.dispatchEvent('change');
             }
-
-            return this.dispatchEvent('change');
+            return this;
         },
 
         /**
-         * [TODO: removeConnection description]
+         * Removes a connection from the behaviour
          *
-         * @param {Connection} connection
-         *      [TODO: description]
-         * @returns {Behaviour}
+         * @param {Wirecloud.ui.WiringEditor.Connection} connection
+         *      Connection to remove
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
         removeConnection: function removeConnection(connection) {
@@ -263,15 +255,16 @@
 
             if (index !== -1) {
                 this.connections.splice(index, 1);
+                this.dispatchEvent('change');
             }
 
-            return this.dispatchEvent('change');
+            return this;
         },
 
         /**
          * [TODO: showLogs description]
          *
-         * @returns {Behaviour}
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
         showLogs: function showLogs() {
@@ -288,12 +281,22 @@
         /**
          * [TODO: showSettings description]
          *
-         * @returns {Behaviour}
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
         showSettings: function showSettings() {
 
-            displayUpdateForm.call(this);
+            var dialog = new Wirecloud.ui.FormWindowMenu(
+                [
+                    {name: 'title', label: utils.gettext("Title"), type: 'text'},
+                    {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
+                ],
+                utils.gettext("Behaviour settings"),
+                'behaviour-update-form'
+            );
+
+            dialog.executeOperation = updateInfo.bind(this);
+            dialog.setValue(this).show();
 
             return this;
         },
@@ -315,60 +318,44 @@
         },
 
         /**
-         * [TODO: updateComponent description]
+         * Adds or updates a component
          *
-         * @param {ComponentDraggable} component
-         *      [TODO: description]
-         * @param {PlainObject} [view]
-         *      [TODO: description]
-         * @returns {Behaviour}
+         * @param {Wirecloud.ui.WiringEditor.ComponentDraggable} component
+         *      Component to add/update
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
-        updateComponent: function updateComponent(component, view) {
-            var name;
-
+        updateComponent: function updateComponent(component) {
             if (!this.hasComponent(component)) {
                 this.components[component.type][component.id] = {};
+                this.dispatchEvent('change');
             }
 
-            view = view || {};
-
-            for (name in view) {
-                this.components[component.type][component.id][name] = view[name];
-            }
-
-            return this.dispatchEvent('change');
+            return this;
         },
 
         /**
-         * [TODO: updateConnection description]
+         * Adds or updates a connection in the behaviour
          *
-         * @param {Connection} connection
-         *      [TODO: description]
-         * @param {PlainObject} [view]
-         *      [TODO: description]
-         * @returns {Behaviour}
+         * @param {Wirecloud.ui.WiringEditor.Connection} connection
+         *      Connection to add/update
+         * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
         updateConnection: function updateConnection(connection, view) {
-            var name, index;
 
-            index = this.getConnectionIndex(connection);
+            let index = this.getConnectionIndex(connection);
 
-            if (index < 0) {
+            if (index === -1) {
                 index = this.connections.push({
                     sourcename: connection.sourceId,
                     targetname: connection.targetId
                 });
+
+                this.dispatchEvent('change');
             }
 
-            view = view || {};
-
-            for (name in view) {
-                this.connections[index][name] = view[name];
-            }
-
-            return this.dispatchEvent('change');
+            return this;
         }
 
     });
@@ -394,26 +381,8 @@
         }).show();
     };
 
-    var displayUpdateForm = function displayUpdateForm() {
-        var dialog = new Wirecloud.ui.FormWindowMenu(
-            [
-                {name: 'title', label: utils.gettext("Title"), type: 'text'},
-                {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
-            ],
-            utils.gettext("Behaviour settings"),
-            'behaviour-update-form'
-        );
-
-        dialog.executeOperation = function (data) {
-            updateInfo.call(this, data);
-        }.bind(this);
-
-        dialog.show();
-        dialog.setValue(this);
-    };
-
     var updateInfo = function updateInfo(data) {
-        this.setTitle(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
+        this.setTitle(data.title != null && data.title.trim() !== "" ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
         this.dispatchEvent('change');
     };

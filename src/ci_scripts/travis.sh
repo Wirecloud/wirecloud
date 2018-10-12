@@ -38,7 +38,7 @@ pip install ${TRAVIS_BUILD_DIR}/src/dist/wirecloud*.whl
 pip install django-nose mock radon
 
 # Configure WireCloud
-cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/base_settings.py >> settings.py
+cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/base_settings.py > settings.py
 for conf in $FLAGS
 do
     file="${TRAVIS_BUILD_DIR}/src/ci_scripts/conf_scripts/${conf}-prepare.sh"

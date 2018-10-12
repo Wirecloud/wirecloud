@@ -15,19 +15,21 @@ python:
 matrix:
     include:
         - node_js: "lts/*"
+          dist: trusty
           language: node_js
           python: ""
           addons:
               firefox: "45.0"
           env: TEST_SUITE=js_unittests
         - node_js: "lts/*"
+          dist: trusty
           language: node_js
           python: ""
           addons:
               firefox: latest-esr
           env: TEST_SUITE=js_unittests
         - addons:
-              firefox: "60.0.2esr"
+              firefox: "60.2.2esr"
           env:
               - TEST_SUITE=selenium
               - DJANGO_VERSION=1.11

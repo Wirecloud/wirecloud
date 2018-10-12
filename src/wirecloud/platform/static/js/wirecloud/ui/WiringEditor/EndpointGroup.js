@@ -40,17 +40,14 @@
      *      [TODO: description]
      * @param {ComponentDraggable} component
      *      [TODO: description]
-     * @param {Function} EndpointClass
-     *      [TODO: description]
      */
-    ns.EndpointGroup = function EndpointGroup(type, component, EndpointClass) {
+    ns.EndpointGroup = function EndpointGroup(type, component) {
         se.Container.call(this, {class: "endpoints"});
         this.addClassName(type + "-endpoints");
 
         this.endpoints = {};
         this.component = component;
 
-        this.EndpointClass = EndpointClass;
         this.originalOrder = [];
 
         Object.defineProperties(this, {
@@ -82,7 +79,7 @@
          *      The instance on which the member is called.
          */
         appendEndpoint: function appendEndpoint(wiringEndpoint) {
-            var endpoint = new this.EndpointClass(wiringEndpoint, this.component);
+            var endpoint = new ns.Endpoint(wiringEndpoint, this.component);
             var missingEndpoint = findFirstMissingEndpoint.call(this);
             var i;
 

@@ -22,7 +22,7 @@
 /* globals Wirecloud */
 
 
-(function (ns) {
+(function (ns, utils) {
 
     "use strict";
 
@@ -33,14 +33,24 @@
         return this.id === other.id;
     };
 
-    var BASIC_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
-        {
+    var SourceEndpoint = function (options) {
+        Object.assign(this, options);
+    };
+    utils.inherit(SourceEndpoint, Wirecloud.wiring.SourceEndpoint);
+
+    var TargetEndpoint = function (options) {
+        Object.assign(this, options);
+    };
+    utils.inherit(TargetEndpoint, Wirecloud.wiring.TargetEndpoint);
+
+    var BASIC_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new TargetEndpoint({
             id: "widget/19/condition-list",
             friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -48,14 +58,14 @@
         }
     );
 
-    var BASIC_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
-        {
+    var BASIC_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new SourceEndpoint({
             id: "widget/19/condition-list",
             friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -63,14 +73,14 @@
         }
     );
 
-    var EXTRA_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
-        {
+    var EXTRA_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new TargetEndpoint({
             id: "widget/22/other-endpoint",
             friendcodeList: ["other"],
             name: "other-endpoint",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -78,14 +88,14 @@
         }
     );
 
-    var EXTRA_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
-        {
+    var EXTRA_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new SourceEndpoint({
             id: "widget/22/other-endpoint",
             friendcodeList: ["other"],
             name: "other-endpoint",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -93,15 +103,15 @@
         }
     );
 
-    var MISSING_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
-        {
+    var MISSING_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new TargetEndpoint({
             id: "widget/20/condition-list",
             friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: "",
             missing: true
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -109,15 +119,15 @@
         }
     );
 
-    var MISSING_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
-        {
+    var MISSING_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new SourceEndpoint({
             id: "widget/20/condition-list",
             friendcodeList: ["list"],
             name: "condition-list",
             description: "",
             label: "",
             missing: true
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -126,14 +136,14 @@
         }
     );
 
-    var OPERATOR_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
-        {
+    var OPERATOR_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new TargetEndpoint({
             id: "operator/1/list",
             friendcodeList: ["list"],
             name: "list",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/example-1/1.0",
             type: "operator",
@@ -141,14 +151,14 @@
         }
     );
 
-    var OPERATOR_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
-        {
+    var OPERATOR_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new SourceEndpoint({
             id: "operator/1/list",
             friendcodeList: ["list"],
             name: "list",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/example-1/1.0",
             type: "operator",
@@ -156,14 +166,14 @@
         }
     );
 
-    var WIDGET_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
-        {
+    var WIDGET_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new TargetEndpoint({
             id: "widget/21/other-endpoint",
             friendcodeList: ["list"],
             name: "other-endpoint",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -171,14 +181,14 @@
         }
     );
 
-    var WIDGET_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
-        {
+    var WIDGET_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new SourceEndpoint({
             id: "widget/21/other-outputendpoint",
             friendcodeList: ["list"],
             name: "other-outputendpoint",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -186,14 +196,14 @@
         }
     );
 
-    var FRIENDCODES_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("source",
-        {
+    var FRIENDCODES_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new SourceEndpoint({
             id: "operator/1/query",
             friendcodeList: ["query", "string"],
             name: "query",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/example-1/1.0",
             type: "operator",
@@ -201,14 +211,14 @@
         }
     );
 
-    var FRIENDCODES_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint("target",
-        {
+    var FRIENDCODES_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+        new TargetEndpoint({
             id: "widget/21/keywords",
             friendcodeList: ["keywords", "query", "input-text"],
             name: "keywords",
             description: "",
             label: ""
-        },
+        }),
         {
             id: "CoNWeT/jenkins-project-build-list/0.1.9",
             type: "widget",
@@ -543,4 +553,4 @@
         });
     });
 
-})(Wirecloud.wiring);
+})(Wirecloud.wiring, Wirecloud.Utils);

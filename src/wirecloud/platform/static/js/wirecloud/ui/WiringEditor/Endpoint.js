@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -31,20 +32,31 @@
     // =========================================================================
 
     /**
-     * Creates a new instance of class Endpoint.
+     * Creates a visual representation of a wiring endpoint for being used on
+     * the Wiring Editor user interface.
      *
      * @extends {StyledElements.StyledElement}
      * @name Wirecloud.ui.WiringEditor.Endpoint
      *
      * @constructor
      * @param {String} type
-     *      [TODO: description]
-     * @param {Wiring.Endpoint} wiringEndpoint
-     *      [TODO: description]
-     * @param {ComponentDraggable} component
-     *      [TODO: description]
+     *      `"source"` for output endpoints and `"target"` for input endpoints
+     * @param {Wirecloud.wiring.Endpoint} wiringEndpoint
+     *      Real endpoint instance
+     * @param {Wirecloud.ui.WiringEditor.ComponentDraggable} component
+     *      WiringEditor component associated with the endpoint
      */
-    ns.Endpoint = function Endpoint(type, wiringEndpoint, component) {
+    ns.Endpoint = function Endpoint(wiringEndpoint, component) {
+        var type;
+
+        if (wiringEndpoint instanceof Wirecloud.wiring.SourceEndpoint) {
+            type = "source";
+        } else if (wiringEndpoint instanceof Wirecloud.wiring.TargetEndpoint) {
+            type = "target";
+        } else {
+            throw new TypeError('invalid wiringEndpoint parameter');
+        }
+
         se.StyledElement.call(this, events);
 
         this.wrapperElement = document.createElement('div');
@@ -72,11 +84,7 @@
             },
 
             anchorPosition: {
-                get: function get() {return getAnchorPosition.call(this);}
-            },
-
-            editableConnection: {
-                get: function get() {return getEditableConnection.call(this);}
+                get: getAnchorPosition
             },
 
             id: {value: [component.type, component.id, wiringEndpoint.name].join("/")},
@@ -110,7 +118,7 @@
             this.missing = true;
         }
 
-        this.rightAnchorPoint = false;
+        this.rightAnchorPoint = type === "source";
 
         this.tooltip = new se.Popover({
             title: wiringEndpoint.label,
@@ -128,9 +136,10 @@
     utils.inherit(ns.Endpoint, se.StyledElement, /** @lends Wirecloud.ui.WiringEditor.Endpoint.prototype */ {
 
         /**
-         * [TODO: activate description]
+         * Increments the activation count for this endpoint and, if the
+         * activation count is 0 before calling, activates this endpoint.
          *
-         * @returns {Endpoint}
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         activate: function activate() {
@@ -145,9 +154,9 @@
         },
 
         /**
-         * [TODO: activateAll description]
+         * Activates all the connections associated with this endpoint
          *
-         * @returns {Endpoint}
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         activateAll: function activateAll() {
@@ -157,11 +166,13 @@
         },
 
         /**
-         * [TODO: appendConnection description]
+         * Appends a connection to this endpoint.
          *
          * @param {Connection} connection
-         *      [TODO: description]
-         * @returns {Endpoint}
+         *      Connection to append
+         * @param {Boolean} [updateEndpoint]
+         *      `true` for calling `refreshEndpoint` on the connection
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         appendConnection: function appendConnection(connection, updateEndpoint) {
@@ -176,9 +187,10 @@
         },
 
         /**
-         * [TODO: deactivate description]
+         * Decrements the activation count and, if the activation count is 1,
+         * deactivates this endpoint.
          *
-         * @returns {Endpoint}
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         deactivate: function deactivate() {
@@ -197,9 +209,9 @@
         },
 
         /**
-         * [TODO: deactivateAll description]
+         * Deactivates all the connections associated with this endpoint
          *
-         * @returns {Endpoint}
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         deactivateAll: function deactivateAll() {
@@ -209,28 +221,13 @@
         },
 
         /**
-         * [TODO: empty description]
+         * Equality comparison with other value.
          *
-         * @returns {Endpoint}
-         *      The instance on which the member is called.
-         */
-        empty: function empty() {
-            var i;
-
-            for (i = this.connections.length - 1; i >= 0; i--) {
-                this.connections[i].remove();
-            }
-
-            return this;
-        },
-
-        /**
-         * [TODO: equals description]
-         *
-         * @param {Endpoint} endpoint
-         *      [TODO: description]
+         * @param endpoint
+         *      value to check if represents the same endpoint
          * @returns {Boolean}
-         *      [TODO: description]
+         *      `true` if endpoint represents the same endpoint,
+         *      `false` otherwise
          */
         equals: function equals(endpoint) {
 
@@ -242,11 +239,11 @@
         },
 
         /**
-         * [TODO: forEachConnection description]
+         * Loops over all the connections associated with this endpoint
          *
          * @param {Function} callback
-         *      [TODO: description]
-         * @returns {Endpoint}
+         *      Callback to call for each connection
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         forEachConnection: function forEachConnection(callback) {
@@ -259,23 +256,20 @@
         },
 
         /**
-         * [TODO: getConnectionTo description]
+         * Gets the connection whose other endpoint is connected to the given
+         * endpoint.
          *
-         * @param {Endpoint} endpoint
-         *      [description]
-         * @returns {Connection}
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Target endpoint of the connection to search
+         * @returns {Wirecloud.ui.WiringEditor.Connection}
+         *      Found connection
          */
         getConnectionTo: function getConnectionTo(endpoint) {
-            var connection, i;
+            var connection = this.connections.find((connection) => {
+                return connection.hasEndpoint(endpoint);
+            });
 
-            for (i = this.connections.length - 1; connection == null && i >= 0; i--) {
-                if (this.connections[i].hasEndpoint(endpoint)) {
-                    connection = this.connections[i];
-                }
-            }
-
-            return connection;
+            return connection || null;
         },
 
         /**
@@ -294,22 +288,23 @@
         },
 
         /**
-         * [TODO: hasConnections description]
+         * Checks if the enpdoint has associated connections
          *
          * @returns {Boolean}
-         *      [TODO: description]
+         *      `true` if the endpoint has associated connections
          */
         hasConnections: function hasConnections() {
             return this.connections.length > 0;
         },
 
         /**
-         * [TODO: hasConnectionTo description]
+         * Checks if the endpoint has an associated connection whose other
+         * endpoint is the given one.
          *
-         * @param {Endpoint} endpoint
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Endpoint to use for searching the connection
          * @returns {Boolean}
-         *      [TODO: description]
+         *      `true` if there is such connection
          */
         hasConnectionTo: function hasConnectionTo(endpoint) {
             return this.connections.some(function (connection) {
@@ -318,23 +313,25 @@
         },
 
         /**
-         * [TODO: refresh description]
+         * Refreshes all the connections associated with this endpoint.
          *
-         * @returns {Endpoint}
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         refresh: function refresh() {
-            return this.connections.forEach(function (connection) {
+            this.connections.forEach(function (connection) {
                 connection.refresh();
             });
+
+            return this;
         },
 
         /**
-         * [TODO: removeConnection description]
+         * Removes the connection from the list of associated connections.
          *
          * @param {Connection} connection
-         *      [TODO: description]
-         * @returns {Endpoint}
+         *      Connection to remove
+         * @returns {Wirecloud.ui.WiringEditor.Endpoint}
          *      The instance on which the member is called.
          */
         removeConnection: function removeConnection(connection) {
@@ -349,30 +346,16 @@
         },
 
         /**
-         * [TODO: toggleActive description]
+         * TODO
          *
          * @param {Boolean} active
-         *      [TODO: description]
+         *      `true` for activating the endpoint, `false` for deactivating it
          * @returns {Endpoint}
          *      The instance on which the member is called.
          */
         toggleActive: function toggleActive(active) {
             return active ? this.activate() : this.deactivate();
         },
-
-        /**
-         * [TODO: toJSON description]
-         *
-         * @returns {PlainObject}
-         *      [TODO: description]
-         */
-        toJSON: function toJSON() {
-            return {
-                type: this.component.type,
-                id: this.component.id,
-                endpoint: this.name
-            };
-        }
 
     });
 
@@ -383,7 +366,6 @@
     var events = ['click', 'connectionadded', 'connectionremoved', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
 
     var endpoint_onmousedown = function endpoint_onmousedown(event) {
-
         if (this.enabled && event.button === 0) {
             event.stopPropagation();
             event.preventDefault();  // Required for disabling text selection
@@ -392,7 +374,6 @@
     };
 
     var endpoint_onmouseenter = function endpoint_onmouseenter(event) {
-
         if (this.enabled) {
             event.stopPropagation();
             this.dispatchEvent('mouseenter', event);
@@ -400,7 +381,6 @@
     };
 
     var endpoint_onmouseleave = function endpoint_onmouseleave(event) {
-
         if (this.enabled) {
             event.stopPropagation();
             this.dispatchEvent('mouseleave', event);
@@ -408,7 +388,6 @@
     };
 
     var endpoint_onmouseup = function endpoint_onmouseup(event) {
-
         if (this.enabled && event.button === 0) {
             event.stopPropagation();
             event.preventDefault();  // Required for disabling text selection
@@ -427,22 +406,10 @@
         };
 
         if (this.rightAnchorPoint) {
-            anchorPosition.x = Math.round(anchorPosition.x + this.anchorElement.offsetWidth);
+            anchorPosition.x = Math.round(anchorPosition.x + anchorBCR.width);
         }
 
         return anchorPosition;
-    };
-
-    var getEditableConnection = function getEditableConnection() {
-        var connection, i;
-
-        for (i = 0; connection == null && i < this.connections.length; i++) {
-            if (this.connections[i].editable) {
-                connection = this.connections[i];
-            }
-        }
-
-        return connection;
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

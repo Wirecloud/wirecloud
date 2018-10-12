@@ -40,7 +40,7 @@
                 behaviourEngine.activate(behaviour);
                 connections.forEach(function (context) {
                     var connection = findConnection(context.source, context.target);
-                    behaviourEngine.updateConnection(connection, connection.toJSON(), true);
+                    behaviourEngine.updateConnection(connection, true);
                 });
 
                 return behaviour.get();
