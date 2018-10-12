@@ -22,6 +22,7 @@ from wirecloud.platform.tests.base import *  # noqa
 from wirecloud.platform.tests.commands import PopuplateCommandTestCase  # noqa
 from wirecloud.platform.tests.plugins import WirecloudPluginTestCase  # noqa
 from wirecloud.platform.tests.rest_api import AdministrationAPI, ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI  # noqa
+from wirecloud.platform.tests.search_indexes import *  # noqa
 from wirecloud.platform.tests.selenium import *  # noqa
 from wirecloud.platform.tests.themes import ThemesTestCase  # noqa
 from wirecloud.platform.localcatalogue.tests import *  # noqa
