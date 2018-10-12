@@ -14,6 +14,13 @@ python:
 
 matrix:
     include:
+        - python: "3.6"
+          dist: trusty
+          services:
+              - docker
+          env:
+              - TEST_SUITE=elasticsearch
+              - DJANGO_VERSION=1.11
         - node_js: "lts/*"
           dist: trusty
           language: node_js

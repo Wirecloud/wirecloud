@@ -1,9 +1,7 @@
-import os
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': path.join(BASEDIR, 'virtenv_test.db'),
+        'NAME': os.path.join(BASEDIR, 'virtenv_test.db'),
         'USER': '',
         'PASSWORD': '',
         'HOST': '',

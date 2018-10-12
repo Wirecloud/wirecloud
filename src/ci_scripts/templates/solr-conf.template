@@ -1,5 +1,3 @@
-import os
-
 TEST_HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',

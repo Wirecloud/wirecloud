@@ -2,8 +2,6 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 chromium_options = ChromeOptions()
 chromium_options.binary_location = "/usr/lib/chromium/chromium"
 
-import os
-
 if os.path.exists("/.dockerenv"):
     chromium_options.add_argument("--no-sandbox")
 
