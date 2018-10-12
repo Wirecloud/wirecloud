@@ -35,21 +35,21 @@ CONTENT_FIELDS = ["owner", "name"]
 class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
     model = Workspace
 
-    text = indexes.CharField(document=True)
+    text = indexes.CharField(document=True, stored=False)
     name = indexes.EdgeNgramField(model_attr='name', boost=1.3)
     title = indexes.EdgeNgramField(model_attr='title', boost=1.3)
 
     description = indexes.CharField(model_attr='description')
     longdescription = indexes.CharField(model_attr='longdescription')
-    public = indexes.CharField(model_attr="public")
+    public = indexes.BooleanField(model_attr="public")
 
-    searchable = indexes.CharField(model_attr="searchable", stored=False)
+    searchable = indexes.BooleanField(model_attr="searchable", stored=False)
 
     lastmodified = indexes.CharField()
     owner = indexes.CharField()
-    users = indexes.MultiValueField()
-    groups = indexes.MultiValueField()
-    shared = indexes.CharField()
+    users = indexes.MultiValueField(stored=False)
+    groups = indexes.MultiValueField(stored=False)
+    shared = indexes.BooleanField()
 
     def get_model(self):
         return self.model
@@ -64,14 +64,14 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
         self.prepared_data["lastmodified"] = lastmodified
         self.prepared_data["owner"] = object.creator.username
-        self.prepared_data["users"] = ', '.join(object.users.all().values_list('username', flat=True))
-        self.prepared_data["groups"] = ', '.join(object.groups.all().values_list('name', flat=True))
+        self.prepared_data["users"] = tuple(object.users.all().values_list('username', flat=True))
+        self.prepared_data["groups"] = tuple(object.groups.all().values_list('name', flat=True))
         self.prepared_data["shared"] = object.is_shared()
 
         return self.prepared_data
 
 
-def searchWorkspace(request, querytext, pagenum, maxresults):
+def searchWorkspace(request, querytext, pagenum, maxresults, orderby=None):
     sqs = SearchQuerySet().models(Workspace).all()
 
     # Only searchable results
@@ -85,14 +85,17 @@ def searchWorkspace(request, querytext, pagenum, maxresults):
         if len(query) > 0:
             sqs = sqs.filter(query)
 
-    q = Q(public=True) | Q(users=request.user.username) | Q(groups=request.user.groups.name)
+    q = Q(public=True) | Q(users=request.user.username)
+    for group in request.user.groups.values_list("name", flat=True):
+        q |= Q(groups=group)
     sqs = sqs.filter(q)
+
+    if orderby is not None:
+        sqs = sqs.order_by(*orderby)
 
     # Build response data
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults)
 
 
 def cleanResults(result, request):
-    res = result.get_stored_fields()
-    del res["text"]
-    return res
+    return result.get_stored_fields()

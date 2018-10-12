@@ -78,7 +78,7 @@ class WorkspaceIndexTestCase(WirecloudTestCase, TestCase):
     def test_cleanWorkspaceResults(self, sqs_mock, buildSearchResults_mock):
         self.assertEqual(
             cleanResults(
-                Mock(get_stored_fields=Mock(return_value={"text": "hello", "name": "workspace"})),
+                Mock(get_stored_fields=Mock(return_value={"name": "workspace"})),
                 Mock()
             ),
             {"name": "workspace"}

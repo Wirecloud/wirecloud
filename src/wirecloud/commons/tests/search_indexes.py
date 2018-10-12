@@ -238,9 +238,10 @@ class UserIndexTestCase(WirecloudTestCase, TestCase):
             cleanUserResults(
                 Mock(get_stored_fields=Mock(return_value={
                     "fullname": "Full Name",
+                    "fullname_orderby": "Full Name",
                     "username": "username",
-                    "organization": "false",
-                    "text": "search content",
+                    "username_orderby": "username",
+                    "organization": False,
                 })),
                 Mock()
             ),
@@ -256,9 +257,10 @@ class UserIndexTestCase(WirecloudTestCase, TestCase):
             cleanUserResults(
                 Mock(get_stored_fields=Mock(return_value={
                     "fullname": "Organization Name",
+                    "fullname_orderby": "Organization Name",
                     "username": "username",
-                    "organization": "true",
-                    "text": "search content",
+                    "username_orderby": "username",
+                    "organization": True,
                 })),
                 Mock()
             ),
@@ -311,7 +313,7 @@ class GroupIndexTestCase(WirecloudTestCase, TestCase):
     def test_cleanGroupResults(self, sqs_mock, buildSearchResults_mock):
         self.assertEqual(
             cleanGroupResults(
-                Mock(get_stored_fields=Mock(return_value={"text": "hello", "name": "group"})),
+                Mock(get_stored_fields=Mock(return_value={"name": "group"})),
                 Mock()
             ),
             {"name": "group"}
