@@ -122,6 +122,8 @@ class ResourceCollection(Resource):
 
         if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
             return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])
+        # This api only supports ordering by one field, but the searcher supports ordering by multiple fields
+        filters['orderby'] = [filters['orderby']]
 
         if filters['scope']:
             filters['scope'] = filters['scope'].split(',')

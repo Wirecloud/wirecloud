@@ -84,7 +84,11 @@ class ResourceSearch(Resource):
             message = _('Invalid maxresults value: %s' % request.GET['maxresults'])
             return build_error_response(request, 422, message)
 
-        result = get_search_engine(indexname)(request, querytext, pagenum=pagenum, maxresults=maxresults)
+        orderby = tuple(entry.strip() for entry in request.GET.get('orderby', '').split(','))
+        if orderby == ("",):
+            orderby = None
+
+        result = get_search_engine(indexname)(request, querytext, pagenum=pagenum, maxresults=maxresults, orderby=orderby)
 
         return HttpResponse(json.dumps(result, sort_keys=True), status=200, content_type='application/json; charset=utf-8')
 

@@ -114,7 +114,9 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True)
 
     fullname = indexes.NgramField()
+    fullname_orderby = indexes.CharField()
     username = indexes.NgramField(model_attr='username')
+    username_orderby = indexes.CharField(model_attr='username')
     organization = indexes.CharField()
 
     def get_model(self):
@@ -128,7 +130,7 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
         except:
             is_organization = False
 
-        self.prepared_data['fullname'] = '%s' % (object.get_full_name())
+        self.prepared_data['fullname'] = self.prepared_data['fullname_orderby'] = '%s' % (object.get_full_name())
         self.prepared_data['organization'] = 'true' if is_organization else 'false'
         self.prepared_data['text'] = '%s %s' % (object.get_full_name(), object.username)
 
@@ -143,11 +145,15 @@ def cleanUserResults(result, request):
 
 
 # Search for users
-def searchUser(request, querytext, pagenum, maxresults):
+def searchUser(request, querytext, pagenum, maxresults, orderby=None):
     sqs = SearchQuerySet().models(User).all()
+
     if len(querytext) > 0:
         parser = ParseSQ()
         sqs = sqs.filter(parser.parse(querytext, USER_CONTENT_FIELDS))
+
+    if orderby is not None:
+        sqs = sqs.order_by(*orderby)
 
     return buildSearchResults(sqs, pagenum, maxresults, cleanUserResults)
 
@@ -172,10 +178,13 @@ def cleanGroupResults(result, request):
 
 
 # Search for groups
-def searchGroup(request, querytext, pagenum, maxresults):
+def searchGroup(request, querytext, pagenum, maxresults, orderby=None):
     sqs = SearchQuerySet().models(Group).all()
     if len(querytext) > 0:
         parser = ParseSQ()
         sqs = sqs.filter(parser.parse(querytext, GROUP_CONTENT_FIELDS))
+
+    if orderby is not None:
+        sqs = sqs.order_by(*orderby)
 
     return buildSearchResults(sqs, pagenum, maxresults, cleanGroupResults)

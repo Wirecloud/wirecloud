@@ -127,7 +127,7 @@ def buildVersionSortable(version, length=5):
     return code
 
 
-def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
+def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby=('-creation_date',)):
     sqs = SearchQuerySet().models(CatalogueResource).all()
 
     if len(querytext) > 0:
@@ -137,7 +137,7 @@ def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, sc
         if len(query) > 0:
             sqs = sqs.filter(query)
 
-    sqs = sqs.order_by(orderby).group_by("group_field", order_by='-version_sortable')
+    sqs = sqs.order_by(*orderby).group_by("group_field", order_by='-version_sortable')
 
     q = None
     # Filter resource type

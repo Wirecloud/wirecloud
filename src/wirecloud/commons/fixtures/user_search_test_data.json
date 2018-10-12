@@ -6,7 +6,7 @@
             "first_name": "Lourdes",
             "last_name": "McGlynn",
             "email": "Vincenza.Berge@tod.us",
-            "username": "Madaline.Hane",
+            "username": "madaline.hane",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -19,7 +19,7 @@
             "first_name": "Linwood",
             "last_name": "DuBuque",
             "email": "Jonas.Wisoky@trystan.ca",
-            "username": "Dahlia",
+            "username": "dahlia",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -32,7 +32,7 @@
             "first_name": "Samantha",
             "last_name": "Kihn",
             "email": "Cristopher@norberto.us",
-            "username": "Estel_Murray",
+            "username": "estel_murray",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -45,7 +45,7 @@
             "first_name": "Rachael",
             "last_name": "Hegmann",
             "email": "Georgette.Feil@sharon.org",
-            "username": "Jalyn",
+            "username": "jalyn",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -58,7 +58,7 @@
             "first_name": "Hayley",
             "last_name": "Reichel",
             "email": "Myron_Cronin@karson.biz",
-            "username": "Priscilla.Berge",
+            "username": "priscilla.berge",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -71,7 +71,7 @@
             "first_name": "Carlos",
             "last_name": "Johns",
             "email": "Marcelina@walker.org",
-            "username": "Dominique",
+            "username": "dominique",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -84,7 +84,7 @@
             "first_name": "Tanner",
             "last_name": "Koss",
             "email": "Aniya_Grant@elwyn.us",
-            "username": "Selmer",
+            "username": "selmer",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -97,7 +97,7 @@
             "first_name": "Elsie",
             "last_name": "Jacobson",
             "email": "Misty.Shields@blaise.biz",
-            "username": "Fredrick",
+            "username": "fredrick",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -110,7 +110,7 @@
             "first_name": "Allison",
             "last_name": "Dare",
             "email": "Vanessa.Turner@marianna.info",
-            "username": "Filinberto",
+            "username": "filinberto",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
@@ -123,7 +123,7 @@
             "first_name": "Tiara",
             "last_name": "Botsford",
             "email": "Heather_Reynolds@conner.name",
-            "username": "Hoyt",
+            "username": "hoyt",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
