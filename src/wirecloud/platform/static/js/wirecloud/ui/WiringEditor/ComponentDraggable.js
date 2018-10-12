@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -69,8 +70,8 @@
         this._component = wiringComponent;
 
         this.endpoints = {
-            source: new ns.EndpointGroup('source', this, ns.SourceEndpoint),
-            target: new ns.EndpointGroup('target', this, ns.TargetEndpoint)
+            source: new ns.EndpointGroup('source', this),
+            target: new ns.EndpointGroup('target', this)
         };
 
         this.body

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -46,11 +47,11 @@
     ns.KeywordSuggestion.prototype = {
 
         /**
-         * [TODO: appendEndpoint description]
+         * Adds an endpoint into the managed endpoints.
          *
-         * @param {Endpoint} endpoint
-         *      [TODO: description]
-         * @returns {KeywordSuggestion}
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Endpoint to add.
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
          *      The instance on which the member is called.
          */
         appendEndpoint: function appendEndpoint(endpoint) {
@@ -67,13 +68,15 @@
         },
 
         /**
-         * [TODO: forEachSuggestion description]
+         * Loop over the suggested endpoints to be connected to the endpoint
+         * provided as reference.
          *
-         * @param {Endpoint} endpoint
-         *      [TODO: description]
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Endpoint to which the engine should search connection
+         *      recommendations
          * @param {Function} callback
-         *      [TODO: description]
-         * @returns {KeywordSuggestion}
+         *      Function to call for each suggestion
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
          *      The instance on which the member is called.
          */
         forEachSuggestion: function forEachSuggestion(endpoint, callback) {
@@ -96,11 +99,11 @@
         },
 
         /**
-         * [TODO: removeEndpoint description]
+         * Removes an endpoint from the managed ones
          *
-         * @param {Endpoint} endpoint
-         *      [TODO: description]
-         * @returns {KeywordSuggestion}
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Endpoint to remove
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
          *      The instance on which the member is called.
          */
         removeEndpoint: function removeEndpoint(endpoint) {
@@ -117,9 +120,9 @@
         },
 
         /**
-         * [TODO: empty description]
+         * Clear the status of this instance.
          *
-         * @returns {KeywordSuggestion}
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
          *      The instance on which the member is called.
          */
         empty: function empty() {
