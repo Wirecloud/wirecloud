@@ -164,9 +164,7 @@ def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, sc
                     user_group_query |= Q(groups=group)
 
             q |= user_group_query
-    else:
-        q = Q(public=True) | Q(public=False)  # Without this filter it does not work (?)
-    sqs = sqs.filter(q)
+        sqs = sqs.filter(q)
 
     # Build response data
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults, request)
