@@ -178,7 +178,8 @@ class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
         res = super(GroupedElasticsearch2SearchBackend, self).build_search_kwargs(*args, **kwargs)
 
         res.update(group_kwargs)
-        res["query"]["filtered"]["query"]["query_string"]["analyzer"] = "standard"
+        if "query_string" in res["query"]["filtered"]["query"]:
+            res["query"]["filtered"]["query"]["query_string"]["analyzer"] = "standard"
 
         return res
 
