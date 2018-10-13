@@ -155,7 +155,7 @@ class GroupedSearchQuerySet(SearchQuerySet):
 class GroupedSolrSearchBackend(SolrSearchBackend):
 
     def build_search_kwargs(self, *args, **kwargs):
-        group_kwargs = [(i, kwargs.pop(i)) for i in kwargs.keys() if i.startswith("group")]
+        group_kwargs = [(i, kwargs.pop(i)) for i in list(kwargs) if i.startswith("group")]
 
         res = super(GroupedSolrSearchBackend, self).build_search_kwargs(*args, **kwargs)
 
