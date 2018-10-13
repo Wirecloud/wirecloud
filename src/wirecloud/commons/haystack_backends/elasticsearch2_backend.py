@@ -154,6 +154,52 @@ class GroupedSearchQuerySet(SearchQuerySet):
 
 class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
 
+    def __init__(self, connection_alias, **connection_options):
+        super(GroupedElasticsearch2SearchBackend, self).__init__(connection_alias, **connection_options)
+        setattr(self, 'DEFAULT_SETTINGS', {
+            'settings': {
+                "analysis": {
+                    "analyzer": {
+                        "ngram_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": ["haystack_ngram", "lowercase"],
+                        },
+                        "edgengram_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": ["haystack_edgengram", "lowercase"],
+                        }
+                    },
+                    "tokenizer": {
+                        "haystack_ngram_tokenizer": {
+                            "type": "nGram",
+                            "min_gram": 3,
+                            "max_gram": 20,
+                        },
+                        "haystack_edgengram_tokenizer": {
+                            "type": "edgeNGram",
+                            "min_gram": 2,
+                            "max_gram": 20,
+                            "side": "front",
+                        },
+                    },
+                    "filter": {
+                        "haystack_ngram": {
+                            "type": "nGram",
+                            "min_gram": 3,
+                            "max_gram": 20
+                        },
+                        "haystack_edgengram": {
+                            "type": "edgeNGram",
+                            "min_gram": 2,
+                            "max_gram": 20
+                        }
+                    }
+                }
+            }
+        })
+
     def build_search_kwargs(self, *args, **kwargs):
         group_kwargs = [(i, kwargs.pop(i)) for i in list(kwargs) if i.startswith("aggs")]
         self.start_offset = kwargs["start_offset"]
