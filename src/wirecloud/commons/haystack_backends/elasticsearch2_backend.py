@@ -193,6 +193,3 @@ class Elasticsearch2SearchEngine(OriginalElasticsearch2SearchEngine):
     backend = GroupedElasticsearch2SearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
-
-
-indexes.GroupField = FacetMultiValueField

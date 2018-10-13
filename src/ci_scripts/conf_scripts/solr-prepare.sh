@@ -5,9 +5,12 @@ pip install pysolr
 cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/templates/solr-conf.template >> settings.py
 
 # Upload Solr schema
-apt-get install -y sshpass
-sshpass -p 'wirecloud' ssh solr@${SOLR_SERVER} "rm -f /opt/solr/server/solr/tester/conf/schema.xml /opt/solr/server/solr/tester/conf/managed-schema"
-sshpass -p 'wirecloud' scp -r ${TRAVIS_BUILD_DIR}/src/ci_scripts/templates/solr-schema.template solr@${SOLR_SERVER}:/opt/solr/server/solr/tester/conf/schema.xml
+mkdir solr_conf
+python manage.py build_solr_schema --configure-directory solr_conf
+docker exec -it --user=solr ${SOLR_CONTAINER:-solr} bin/solr create -c tester -n basic_config
+docker exec -it ${SOLR_CONTAINER:-solr} rm -f /opt/solr/server/solr/tester/conf/managed-schema.xml
+docker cp solr_conf/schema.xml ${SOLR_CONTAINER:-solr}:/opt/solr/server/solr/tester/conf/
+docker cp solr_conf/solrconfig.xml ${SOLR_CONTAINER:-solr}:/opt/solr/server/solr/tester/conf/
 
 # Reload the Solr core
-curl "http://${SOLR_SERVER}:8983/solr/admin/cores?action=RELOAD&core=tester"
+curl "${INDEX_URI}/solr/admin/cores?action=RELOAD&core=tester"

@@ -35,11 +35,14 @@ CONTENT_FIELDS = ["name", "vendor", "version", "type", "title", "description", "
 class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
     model = CatalogueResource
 
-    # TODO: Improve this quickfix
+    # TODO: Remove this hack
+    # Elasticsearch2 uses FacetField
+    # Solr uses FacetField
+    # Whoosh uses FacetMultiValueField
     try:
         indexes.GroupField
     except:
-        indexes.GroupField = indexes.FacetMultiValueField
+        indexes.GroupField = indexes.FacetField
 
     text = indexes.CharField(document=True, stored=False)
 
