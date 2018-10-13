@@ -44,6 +44,9 @@ matrix:
           env: TEST_SUITE=js_unittests
         - addons:
               firefox: "60.2.2esr"
+          dist: trusty
+          services:
+              - docker
           env:
               - TEST_SUITE=selenium
               - DJANGO_VERSION=1.11
