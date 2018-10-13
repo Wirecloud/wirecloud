@@ -84,7 +84,8 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
         self.prepared_data["input_friendcodes"] = tuple(input_friendcodes)
         self.prepared_data["output_friendcodes"] = tuple(output_friendcodes)
 
-        types = ["widget", "mashup", "operator"]
+        # TODO This is required as elasticsearch has problems with "operator"
+        types = ["_widget_", "_mashup_", "_operator_"]
 
         self.prepared_data["type"] = types[object.type]
         self.prepared_data["users"] = tuple(object.users.all().values_list('id', flat=True))
@@ -135,14 +136,11 @@ def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, sc
 
     sqs = sqs.order_by(*orderby).group_by("group_field", order_by='-version_sortable')
 
-    q = None
     # Filter resource type
-    if scope is not None:
+    if scope is not None and len(scope) > 0:
+        q = Q(type='_%s_' % scope.pop())
         for s in scope:
-            if q is None:
-                q = Q(type=s)
-            else:
-                q |= Q(type=s)
+            q |= Q(type='_%s_' % s)
         sqs = sqs.filter(q)
 
     # Filter available only
@@ -171,6 +169,8 @@ def cleanResults(document, request):
     res["pk"] = results[0].pk
     res["others"] = others
     res["creation_date"] = res["creation_date"].isoformat()
+    # TODO This is required as elasticsearch has problems with "operator"
+    res["type"] = res["type"][1:-1]
     add_absolute_urls(res, request)
 
     del res["group_field"]
