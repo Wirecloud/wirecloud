@@ -492,31 +492,27 @@ and configuring the `URL` parameter to point to the ElasticSearch2 server.
 
 ### Solr cofiguration
 
+Before being able to use Solr, you should install `pysolr`:
+
+```
+$ pip install pysolr
+```
+
+Once you have Solr 6.x deployed, you have to create and configure a new Solr core to be used from WireCloud. The Solr core can be created by running the following commannd: `bin/solr create -c wirecloud_core -n basic_config` on the Solr installation, where `wirecloud_core` is the core name. Then you have to execute the `python manage.py build_solr_schema` command jointly with the `--configure-directory` option on the WireCloud installation. Ideally, you should use the `--configure-directory` to point into the configuration folder (e.g. to `${SOLR_ROOT}/server/solr/wirecloud_core/conf`) of the Solr core, so it gets configured automatically. But if this is not possible (because the folder is in a remote server), you should point it into a temporal folder and copy the generated files (`schema.xml` and `solrconfig.xml`) to the final destination. You should also ensure the configuration folder does not contain a `managed-schema.xml` file, as this file is created by default but should not be used when using the WireCloud schema.
+
+Now you can change the Haystack configuration to point to the Solr server. This is an example:
 
 ```python
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr/wirecloud_core'
+        'URL': 'http://127.0.0.1:8983/solr/wirecloud_core',
+        'ADMIN_URL': 'http://127.0.0.1:8983/solr/admin/cores',
     },
 }
 ```
 
-Where `URL` is the URL of the Solr instance's core.
-
-The only thing that remains is installing the python library for Solr:
-
-    $ pip install pysolr
-
-and configuring the `URL` parameter to point to the Solr server.
-
-
-
-## Search index population
-
-If you're using Solr an extra step is needed. You should run `python manage.py build_solr_schema` first, drop the XML output in your Solr’s schema.xml file and restart your Solr server.
-
-In order to populate the index for the first time run the `python manage.py rebuild_index` command.
+Where the `URL` setting should point to the Solr core URL.
 
 
 ## Extra options
