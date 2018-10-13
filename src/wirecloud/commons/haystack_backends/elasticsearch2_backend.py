@@ -27,13 +27,11 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
 
     def parse_sort_field(self, order_by):
         if order_by and len(order_by) > 1:
-            order_sense = "asc"
             if order_by[0] == "-":
                 order_sense = "desc"
                 order_by = order_by[1:]
-            elif order_by[0] == "+":
+            else:
                 order_sense = "asc"
-                order_by = order_by[1:]
             return (order_by, order_sense)
         return None
 
@@ -46,20 +44,6 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
         self.group_order_sense = result[1]
 
         self.end_offset = 100
-
-    def post_process_facets(self, results):
-        # FIXME: remove this hack once https://github.com/toastdriven/django-haystack/issues/750 lands
-        # See matches dance in _process_results below:
-        total = 0
-
-        if 'hits' in results:
-            total = int(results['hits'])
-        elif 'matches' in results:
-            total = int(results['matches'])
-
-        self._total_document_count = total
-
-        return super(GroupedSearchQuery, self).post_process_facets(results)
 
     def get_total_document_count(self):
         """Return the total number of matching documents rather than document groups
