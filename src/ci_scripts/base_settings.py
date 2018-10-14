@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # Django settings for {{ project_name }} project.
 
-from os import path
+import os
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from django.core.urlresolvers import reverse_lazy
 
 DEBUG = False
-BASEDIR = path.dirname(path.abspath(__file__))
+BASEDIR = os.path.dirname(os.path.abspath(__file__))
 load_default_wirecloud_conf(locals())
 
 USE_XSENDFILE = False
@@ -16,7 +16,7 @@ ADMINS = MANAGERS = ()
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
-        'PATH': path.join(BASEDIR, 'index'),
+        'PATH': os.path.join(BASEDIR, 'index'),
     },
 }
 
@@ -55,7 +55,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = path.join(BASEDIR, '../static')
+STATIC_ROOT = os.path.join(BASEDIR, '../static')
 
 # Controls the absolute file path that linked static will be read from and
 # compressed static will be written to when using the default COMPRESS_STORAGE.
@@ -100,8 +100,8 @@ THEME_ACTIVE = "wirecloud.defaulttheme"
 DEFAULT_LANGUAGE = 'browser'
 
 # WGT deployment dirs
-CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue_resources')
-GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'widget_files')
+CATALOGUE_MEDIA_ROOT = os.path.join(BASEDIR, 'catalogue_resources')
+GADGETS_DEPLOYMENT_DIR = os.path.join(BASEDIR, 'widget_files')
 
 # Cache settings
 CACHES = {

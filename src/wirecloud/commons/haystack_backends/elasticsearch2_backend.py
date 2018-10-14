@@ -27,13 +27,11 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
 
     def parse_sort_field(self, order_by):
         if order_by and len(order_by) > 1:
-            order_sense = "asc"
             if order_by[0] == "-":
                 order_sense = "desc"
                 order_by = order_by[1:]
-            elif order_by[0] == "+":
+            else:
                 order_sense = "asc"
-                order_by = order_by[1:]
             return (order_by, order_sense)
         return None
 
@@ -47,20 +45,6 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
 
         self.end_offset = 100
 
-    def post_process_facets(self, results):
-        # FIXME: remove this hack once https://github.com/toastdriven/django-haystack/issues/750 lands
-        # See matches dance in _process_results below:
-        total = 0
-
-        if 'hits' in results:
-            total = int(results['hits'])
-        elif 'matches' in results:
-            total = int(results['matches'])
-
-        self._total_document_count = total
-
-        return super(GroupedSearchQuery, self).post_process_facets(results)
-
     def get_total_document_count(self):
         """Return the total number of matching documents rather than document groups
         If the query has not been run, this will execute the query and store the results.
@@ -72,30 +56,31 @@ class GroupedSearchQuery(Elasticsearch2SearchQuery):
 
     def build_params(self, *args, **kwargs):
         res = super(GroupedSearchQuery, self).build_params(*args, **kwargs)
-        parsed_order = self.parse_sort_field(self.order_by[0])
         if self.grouping_field is not None:
-            aux = {
-                "items": {"top_hits": {"size": 5}},
-                "max_order": {"max": {"field": parsed_order[0]}}
-            }
+            parsed_order = self.parse_sort_field(self.order_by[0]) if len(self.order_by) > 0 else None
 
-            if self.group_order_by:
-                aux["items"]["top_hits"]["sort"] = [{self.group_order_by: {"order": self.group_order_sense}}]
             aggregation = {
                 "aggs": {
                     "items": {
                         "terms": {
                             "field": self.grouping_field,
                             "size": self.end_offset,
-                            "order": {
-                                "max_order": parsed_order[1]
-                            }
                         },
-                        "aggs": aux
+                        "aggs": {
+                            "items": {"top_hits": {"size": 5}},
+                        }
                     }
                 },
                 "result_class": GroupedSearchResult
             }
+
+            if self.group_order_by:
+                aggregation["aggs"]["items"]["aggs"]["items"]["top_hits"]["sort"] = [{self.group_order_by: {"order": self.group_order_sense}}]
+
+            if parsed_order:
+                aggregation["aggs"]["items"]["terms"]["order"] = {"max_order": parsed_order[1]}
+                aggregation["aggs"]["items"]["aggs"]["max_order"] = {"max": {"field": parsed_order[0]}}
+
             res.update(aggregation)
 
         return res
@@ -169,15 +154,62 @@ class GroupedSearchQuerySet(SearchQuerySet):
 
 class GroupedElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
 
+    def __init__(self, connection_alias, **connection_options):
+        super(GroupedElasticsearch2SearchBackend, self).__init__(connection_alias, **connection_options)
+        setattr(self, 'DEFAULT_SETTINGS', {
+            'settings': {
+                "analysis": {
+                    "analyzer": {
+                        "ngram_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": ["haystack_ngram", "lowercase"],
+                        },
+                        "edgengram_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": ["haystack_edgengram", "lowercase"],
+                        }
+                    },
+                    "tokenizer": {
+                        "haystack_ngram_tokenizer": {
+                            "type": "nGram",
+                            "min_gram": 3,
+                            "max_gram": 20,
+                        },
+                        "haystack_edgengram_tokenizer": {
+                            "type": "edgeNGram",
+                            "min_gram": 2,
+                            "max_gram": 20,
+                            "side": "front",
+                        },
+                    },
+                    "filter": {
+                        "haystack_ngram": {
+                            "type": "nGram",
+                            "min_gram": 3,
+                            "max_gram": 20
+                        },
+                        "haystack_edgengram": {
+                            "type": "edgeNGram",
+                            "min_gram": 2,
+                            "max_gram": 20
+                        }
+                    }
+                }
+            }
+        })
+
     def build_search_kwargs(self, *args, **kwargs):
-        group_kwargs = [(i, kwargs.pop(i)) for i in kwargs.keys() if i.startswith("aggs")]
+        group_kwargs = [(i, kwargs.pop(i)) for i in list(kwargs) if i.startswith("aggs")]
         self.start_offset = kwargs["start_offset"]
         self.end_offset = kwargs["end_offset"]
 
         res = super(GroupedElasticsearch2SearchBackend, self).build_search_kwargs(*args, **kwargs)
 
         res.update(group_kwargs)
-        res["query"]["filtered"]["query"]["query_string"]["analyzer"] = "standard"
+        if "query_string" in res["query"]["filtered"]["query"]:
+            res["query"]["filtered"]["query"]["query_string"]["analyzer"] = "standard"
 
         return res
 
@@ -207,6 +239,3 @@ class Elasticsearch2SearchEngine(OriginalElasticsearch2SearchEngine):
     backend = GroupedElasticsearch2SearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
-
-
-indexes.GroupField = FacetMultiValueField

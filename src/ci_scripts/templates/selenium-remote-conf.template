@@ -1,4 +1,3 @@
-import os
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 WIRECLOUD_SELENIUM_TEST_BROWSERS = {
    'Remote': {

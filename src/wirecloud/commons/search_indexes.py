@@ -111,11 +111,13 @@ USER_CONTENT_FIELDS = ["fullname", "username"]
 class UserIndex(indexes.SearchIndex, indexes.Indexable):
     model = User
 
-    text = indexes.CharField(document=True)
+    text = indexes.CharField(document=True, stored=False)
 
     fullname = indexes.NgramField()
+    fullname_orderby = indexes.CharField()
     username = indexes.NgramField(model_attr='username')
-    organization = indexes.CharField()
+    username_orderby = indexes.CharField(model_attr='username')
+    organization = indexes.BooleanField()
 
     def get_model(self):
         return self.model
@@ -128,8 +130,8 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
         except:
             is_organization = False
 
-        self.prepared_data['fullname'] = '%s' % (object.get_full_name())
-        self.prepared_data['organization'] = 'true' if is_organization else 'false'
+        self.prepared_data['fullname'] = self.prepared_data['fullname_orderby'] = '%s' % (object.get_full_name())
+        self.prepared_data['organization'] = is_organization
         self.prepared_data['text'] = '%s %s' % (object.get_full_name(), object.username)
 
         return self.prepared_data
@@ -137,17 +139,21 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
 def cleanUserResults(result, request):
     res = result.get_stored_fields()
-    res['organization'] = res['organization'] == 'true'
-    del res["text"]
+    del res['fullname_orderby']
+    del res['username_orderby']
     return res
 
 
 # Search for users
-def searchUser(request, querytext, pagenum, maxresults):
+def searchUser(request, querytext, pagenum, maxresults, orderby=None):
     sqs = SearchQuerySet().models(User).all()
+
     if len(querytext) > 0:
         parser = ParseSQ()
         sqs = sqs.filter(parser.parse(querytext, USER_CONTENT_FIELDS))
+
+    if orderby is not None:
+        sqs = sqs.order_by(*orderby)
 
     return buildSearchResults(sqs, pagenum, maxresults, cleanUserResults)
 
@@ -158,7 +164,7 @@ GROUP_CONTENT_FIELDS = ["name"]
 class GroupIndex(indexes.SearchIndex, indexes.Indexable):
     model = Group
 
-    text = indexes.CharField(document=True)
+    text = indexes.CharField(document=True, stored=False)
     name = indexes.CharField(model_attr='name')
 
     def get_model(self):
@@ -166,16 +172,17 @@ class GroupIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 def cleanGroupResults(result, request):
-    res = result.get_stored_fields()
-    del res["text"]
-    return res
+    return result.get_stored_fields()
 
 
 # Search for groups
-def searchGroup(request, querytext, pagenum, maxresults):
+def searchGroup(request, querytext, pagenum, maxresults, orderby=None):
     sqs = SearchQuerySet().models(Group).all()
     if len(querytext) > 0:
         parser = ParseSQ()
         sqs = sqs.filter(parser.parse(querytext, GROUP_CONTENT_FIELDS))
+
+    if orderby is not None:
+        sqs = sqs.order_by(*orderby)
 
     return buildSearchResults(sqs, pagenum, maxresults, cleanGroupResults)

@@ -65,6 +65,16 @@ class SearchAPITestCase(WirecloudTestCase, TestCase):
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(result_json['results']), 3)
 
+    def test_ordered_search(self):
+        response = self.client.get(self.url + '?namespace=user&orderby=username_orderby', HTTP_ACCEPT="application/json")
+
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+        results = [result['username'] for result in result_json['results']]
+        expected_results = list(results)
+        expected_results.sort()
+        self.assertEqual(results, expected_results)
+
     def test_searches_are_cached(self):
 
         response = self.client.get(self.url + '?namespace=user&q=lin', HTTP_ACCEPT="application/json")
@@ -228,9 +238,10 @@ class UserIndexTestCase(WirecloudTestCase, TestCase):
             cleanUserResults(
                 Mock(get_stored_fields=Mock(return_value={
                     "fullname": "Full Name",
+                    "fullname_orderby": "Full Name",
                     "username": "username",
-                    "organization": "false",
-                    "text": "search content",
+                    "username_orderby": "username",
+                    "organization": False,
                 })),
                 Mock()
             ),
@@ -246,9 +257,10 @@ class UserIndexTestCase(WirecloudTestCase, TestCase):
             cleanUserResults(
                 Mock(get_stored_fields=Mock(return_value={
                     "fullname": "Organization Name",
+                    "fullname_orderby": "Organization Name",
                     "username": "username",
-                    "organization": "true",
-                    "text": "search content",
+                    "username_orderby": "username",
+                    "organization": True,
                 })),
                 Mock()
             ),
@@ -286,10 +298,22 @@ class GroupIndexTestCase(WirecloudTestCase, TestCase):
         sqs_mock().models().all().filter.assert_called_with("filter")
         buildSearchResults_mock.assert_called_with(sqs_mock().models().all().filter(), 1, 10, cleanGroupResults)
 
+    @patch("wirecloud.commons.search_indexes.ParseSQ")
+    def test_searchGroup_ordered_query(self, ParseSQ_mock, sqs_mock, buildSearchResults_mock):
+        request_mock = Mock()
+        ParseSQ_mock().parse.return_value = "filter"
+
+        searchGroup(request_mock, "query", 1, 10, orderby=('-name',))
+        ParseSQ_mock().parse.assert_called_with("query", GROUP_CONTENT_FIELDS)
+        sqs_mock().models.assert_called_with(Group)
+        sqs_mock().models().all().filter.assert_called_with("filter")
+        sqs_mock().models().all().filter().order_by.assert_called_with('-name')
+        buildSearchResults_mock.assert_called_with(sqs_mock().models().all().filter().order_by(), 1, 10, cleanGroupResults)
+
     def test_cleanGroupResults(self, sqs_mock, buildSearchResults_mock):
         self.assertEqual(
             cleanGroupResults(
-                Mock(get_stored_fields=Mock(return_value={"text": "hello", "name": "group"})),
+                Mock(get_stored_fields=Mock(return_value={"name": "group"})),
                 Mock()
             ),
             {"name": "group"}

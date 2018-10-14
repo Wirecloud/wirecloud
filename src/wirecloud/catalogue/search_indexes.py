@@ -35,15 +35,9 @@ CONTENT_FIELDS = ["name", "vendor", "version", "type", "title", "description", "
 class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
     model = CatalogueResource
 
-    # TODO: Improve this quickfix
-    try:
-        indexes.GroupField
-    except:
-        indexes.GroupField = indexes.FacetMultiValueField
+    text = indexes.CharField(document=True, stored=False)
 
-    text = indexes.CharField(document=True)
-
-    group_field = indexes.GroupField(facet_for="vendor_name")
+    group_field = indexes.FacetField(facet_for="vendor_name")
     vendor_name = indexes.CharField()
 
     vendor = indexes.EdgeNgramField(model_attr='vendor')
@@ -53,18 +47,18 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
     template_uri = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
     creation_date = indexes.DateTimeField(model_attr="creation_date")
-    public = indexes.CharField(model_attr="public")
+    public = indexes.BooleanField(model_attr="public")
 
     title = indexes.NgramField(boost=1.5)
-    endpoint_descriptions = indexes.EdgeNgramField()
+    endpoint_descriptions = indexes.EdgeNgramField(stored=False)
 
     description = indexes.NgramField()
     wiring = indexes.CharField()
     image = indexes.CharField()
     smartphoneimage = indexes.CharField()
 
-    users = indexes.MultiValueField()
-    groups = indexes.MultiValueField()
+    users = indexes.MultiValueField(stored=False)
+    groups = indexes.MultiValueField(stored=False)
     input_friendcodes = indexes.MultiValueField()
     output_friendcodes = indexes.MultiValueField()
 
@@ -76,23 +70,26 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
         resource_info = object.get_processed_info(process_urls=False)
 
         endpoint_descriptions = ''
-        input_friendcodes = []
-        output_friendcodes = []
+        input_friendcodes = set()
+        output_friendcodes = set()
 
         for endpoint in resource_info['wiring']['inputs']:
             endpoint_descriptions += endpoint['description'] + ' '
-            input_friendcodes.extend(endpoint['friendcode'].split(' '))
+            input_friendcodes.update(endpoint['friendcode'].split(' '))
 
         for endpoint in resource_info['wiring']['outputs']:
             endpoint_descriptions += endpoint['description'] + ' '
-            output_friendcodes.extend(endpoint['friendcode'].split(' '))
+            output_friendcodes.update(endpoint['friendcode'].split(' '))
         self.prepared_data["endpoint_descriptions"] = endpoint_descriptions
+        self.prepared_data["input_friendcodes"] = tuple(input_friendcodes)
+        self.prepared_data["output_friendcodes"] = tuple(output_friendcodes)
 
-        types = ["widget", "mashup", "operator"]
+        # TODO This is required as elasticsearch has problems with "operator"
+        types = ["_widget_", "_mashup_", "_operator_"]
 
         self.prepared_data["type"] = types[object.type]
-        self.prepared_data["users"] = ', '.join(map(str, object.users.all().values_list('id', flat=True)))
-        self.prepared_data["groups"] = ', '.join(map(str, object.groups.all().values_list('id', flat=True)))
+        self.prepared_data["users"] = tuple(object.users.all().values_list('id', flat=True))
+        self.prepared_data["groups"] = tuple(object.groups.all().values_list('id', flat=True))
 
         self.prepared_data["version_sortable"] = buildVersionSortable(object.version)
         self.prepared_data['vendor_name'] = '%s/%s' % (object.vendor, object.short_name)
@@ -121,13 +118,13 @@ def buildVersionSortable(version, length=5):
         code += prerelease[1] / 1000
     elif prerelease[0] == "b":
         code += (100 + prerelease[1]) / 1000
-    else: # prerelease[0:1] == "rc"
+    else:  # prerelease[0:1] == "rc"
         code += (200 + prerelease[1]) / 1000
 
     return code
 
 
-def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby='-creation_date'):
+def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None, orderby=('-creation_date',)):
     sqs = SearchQuerySet().models(CatalogueResource).all()
 
     if len(querytext) > 0:
@@ -137,16 +134,13 @@ def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, sc
         if len(query) > 0:
             sqs = sqs.filter(query)
 
-    sqs = sqs.order_by(orderby).group_by("group_field", order_by='-version_sortable')
+    sqs = sqs.order_by(*orderby).group_by("group_field", order_by='-version_sortable')
 
-    q = None
     # Filter resource type
-    if scope is not None:
+    if scope is not None and len(scope) > 0:
+        q = Q(type='_%s_' % scope.pop())
         for s in scope:
-            if q is None:
-                q = Q(type=s)
-            else:
-                q |= Q(type=s)
+            q |= Q(type='_%s_' % s)
         sqs = sqs.filter(q)
 
     # Filter available only
@@ -154,19 +148,9 @@ def searchResource(querytext, request, pagenum=1, maxresults=30, staff=False, sc
         q = Q(public=True) | Q(users=request.user.id)
 
         # Add group filters
-        groups = request.user.groups.values_list('id', flat=True)
-        if len(groups) > 0:
-            user_group_query = None
-            for group in groups:
-                if user_group_query is None:
-                    user_group_query = Q(groups=group)
-                else:
-                    user_group_query |= Q(groups=group)
-
-            q |= user_group_query
-    else:
-        q = Q(public=True) | Q(public=False)  # Without this filter it does not work (?)
-    sqs = sqs.filter(q)
+        for group in request.user.groups.values_list('id', flat=True):
+            q |= Q(groups=group)
+        sqs = sqs.filter(q)
 
     # Build response data
     return buildSearchResults(sqs, pagenum, maxresults, cleanResults, request)
@@ -184,12 +168,11 @@ def cleanResults(document, request):
 
     res["pk"] = results[0].pk
     res["others"] = others
-    res["creation_date"] = res["creation_date"].strftime("%Y-%m-%dT%H:%M:%SZ")
+    res["creation_date"] = res["creation_date"].isoformat()
+    # TODO This is required as elasticsearch has problems with "operator"
+    res["type"] = res["type"][1:-1]
     add_absolute_urls(res, request)
 
-    del res["users"]
-    del res["groups"]
-    del res["text"]
     del res["group_field"]
     del res["version_sortable"]
     return res

@@ -42,8 +42,10 @@ __test__ = False
 
 class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
 
+    # TODO this API should be moved to /api/search
+
     fixtures = ('catalogue_search_data',)
-    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium', 'wirecloud-search-api')
     populate = False
 
     WIRECLOUD_RESULTS = {'Wirecloud/TestOperator/2.0', 'Wirecloud/test-mashup/1.0.5', 'Wirecloud/Book-Reader/1.5', 'Wirecloud/Test/2.5', 'CoNWeT-Lab/Clock_Now/1.11'}

@@ -425,7 +425,7 @@ class WirecloudTestCase(object):
         if not cls.use_search_indexes:
             apps.get_app_config('haystack').signal_processor.setup()
         else:
-            if not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
+            if not cls.clear_search_indexes:
                 # If self.clear_search_indexes is True, this step is done in a per
                 # test basis in the tearDown method
                 management.call_command('clear_index', interactive=False, verbosity=0)
@@ -648,7 +648,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         if not cls.use_search_indexes:
             apps.get_app_config('haystack').signal_processor.setup()
         else:
-            if not cls.clear_search_indexes and settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine':
+            if not cls.clear_search_indexes:
                 # If self.clear_search_indexes is True, this step is done in a per
                 # test basis in the tearDown method
                 management.call_command('clear_index', interactive=False, verbosity=0)

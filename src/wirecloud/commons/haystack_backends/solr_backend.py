@@ -47,20 +47,6 @@ class GroupedSearchQuery(SolrSearchQuery):
         self.grouping_field = field_name
         self.group_order_by = [order_by]
 
-    def post_process_facets(self, results):
-        # FIXME: remove this hack once https://github.com/toastdriven/django-haystack/issues/750 lands
-        # See matches dance in _process_results below:
-        total = 0
-
-        if 'hits' in results:
-            total = int(results['hits'])
-        elif 'matches' in results:
-            total = int(results['matches'])
-
-        self._total_document_count = total
-
-        return super(GroupedSearchQuery, self).post_process_facets(results)
-
     def get_total_document_count(self):
         """Return the total number of matching documents rather than document groups
         If the query has not been run, this will execute the query and store the results.
@@ -74,11 +60,13 @@ class GroupedSearchQuery(SolrSearchQuery):
         res = super(GroupedSearchQuery, self).build_params(*args, **kwargs)
         if self.grouping_field is not None:
 
-            res.update({'group': 'true',
-                        'group.field': self.grouping_field,
-                        'group.ngroups': 'true',
-                        'group.limit': 5,
-                        'result_class': GroupedSearchResult})
+            res.update({
+                'group': 'true',
+                'group.field': self.grouping_field,
+                'group.ngroups': 'true',
+                'group.limit': 5,
+                'result_class': GroupedSearchResult
+            })
 
             if self.group_order_by is not None:
                 res['group.sort'] = build_order_param(self.group_order_by)
@@ -167,7 +155,7 @@ class GroupedSearchQuerySet(SearchQuerySet):
 class GroupedSolrSearchBackend(SolrSearchBackend):
 
     def build_search_kwargs(self, *args, **kwargs):
-        group_kwargs = [(i, kwargs.pop(i)) for i in kwargs.keys() if i.startswith("group")]
+        group_kwargs = [(i, kwargs.pop(i)) for i in list(kwargs) if i.startswith("group")]
 
         res = super(GroupedSolrSearchBackend, self).build_search_kwargs(*args, **kwargs)
 
@@ -212,6 +200,3 @@ class SolrEngine(OriginalSolrEngine):
     backend = GroupedSolrSearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
-
-
-indexes.GroupField = FacetField

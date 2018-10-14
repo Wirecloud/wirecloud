@@ -7,8 +7,12 @@ cd $TRAVIS_BUILD_DIR/src
 if [ "${TEST_SUITE}" == "js_unittests" ]; then
     grunt ci
     exit
+elif [ "${TEST_SUITE}" == "elasticsearch" ]; then
+    FLAGS="postgres django${DJANGO_VERSION} elasticsearch search-api"
+elif [ "${TEST_SUITE}" == "solr" ]; then
+    FLAGS="postgres django${DJANGO_VERSION} solr search-api"
 elif [ "${TEST_SUITE}" == "selenium" ]; then
-    FLAGS="postgres django${DJANGO_VERSION} firefox-local selenium"
+    FLAGS="postgres django${DJANGO_VERSION} firefox-local elasticsearch selenium"
 else
     FLAGS="sqlite3 django${DJANGO_VERSION} unittest"
 fi

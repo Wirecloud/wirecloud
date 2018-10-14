@@ -1,8 +1,7 @@
-import os
-
-TEST_HAYSTACK_CONNECTIONS = {
+HAYSTACK_CONNECTIONS = TEST_HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
-        'URL': os.environ['INDEX_URI'],
+        'URL': os.environ['INDEX_URI'] + '/solr/tester',
+        'ADMIN_URL': os.environ['INDEX_URI'] + '/solr/admin/cores',
     },
 }

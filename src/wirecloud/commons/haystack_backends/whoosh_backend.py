@@ -40,20 +40,6 @@ class GroupedSearchQuery(WhooshSearchQuery):
         self.grouping_field = field_name
         self.group_order_by = order_by
 
-    def post_process_facets(self, results):
-        # FIXME: remove this hack once https://github.com/toastdriven/django-haystack/issues/750 lands
-        # See matches dance in _process_results below:
-        total = 0
-
-        if 'hits' in results:
-            total = int(results['hits'])
-        elif 'matches' in results:
-            total = int(results['matches'])
-
-        self._total_document_count = total
-
-        return super(GroupedSearchQuery, self).post_process_facets(results)
-
     def get_count(self):
         if self.grouping_field is not None:
             return len(self.get_results())
@@ -348,6 +334,15 @@ class GroupedWhooshSearchBackend(WhooshSearchBackend):
                 'spelling_suggestion': spelling_suggestion,
             }
 
+    def build_schema(self, fields):
+
+        for field_name, field_class in fields.items():
+            # Convert FacetFields into FacetMultiValueFields
+            if field_class.field_type is None and hasattr(field_class, "facet_for"):
+                field_class.is_multivalued = True
+
+        return super(GroupedWhooshSearchBackend, self).build_schema(fields)
+
     def build_search_kwargs(self, *args, **kwargs):
         group_kwargs = [(i, kwargs.pop(i)) for i in kwargs.keys() if i.startswith("group")]
 
@@ -380,6 +375,3 @@ class WhooshEngine(OriginalWhooshEngine):
     backend = GroupedWhooshSearchBackend
     query = GroupedSearchQuery
     queryset = GroupedSearchQuerySet
-
-
-indexes.GroupField = FacetMultiValueField
