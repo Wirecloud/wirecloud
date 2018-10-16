@@ -64,7 +64,7 @@ def deleteTab(tab, user):
 
 def createTab(title, workspace, allow_renaming=False, name=None):
 
-    if name is None:
+    if name is None or name.strip() == '':
         name = URLify(title)
 
     visible = False
