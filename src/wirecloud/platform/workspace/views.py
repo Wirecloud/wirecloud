@@ -253,14 +253,14 @@ class TabCollection(Resource):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         data = parse_json_request(request)
 
-        if 'name' not in data and 'title' not in data:
+        tab_name = data.get('name', '').strip()
+        tab_title = data.get('title', '').strip()
+
+        if tab_name == '' and tab_title == '':
             return build_error_response(request, 422, _('Malformed tab JSON: expecting tab name or title.'))
 
         if not (request.user.is_superuser or workspace.creator == request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
-
-        tab_title = data.get('title')
-        tab_name = data.get('name')
 
         if tab_title == '':
             tab_title = tab_name

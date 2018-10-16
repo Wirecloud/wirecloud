@@ -1443,7 +1443,64 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
             self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
         check_cache_is_purged(self, 1, create_workspace_tab)
 
-    def test_tab_collection_post_title(self):
+    def test_tab_collection_post(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def create_workspace_tab():
+            data = {
+                'name': 'rest_api_test',
+                'title': 'Rest API Test'
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 201)
+
+            # Check basic response structure
+            response_data = json.loads(response.content.decode('utf-8'))
+            self.assertTrue(isinstance(response_data, dict))
+            self.assertIn("id", response_data)
+            self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+            self.assertEqual(response_data['name'], 'rest_api_test')
+            self.assertEqual(response_data['title'], 'Rest API Test')
+            self.assertEqual(response_data['iwidgets'], [])
+
+            # Tab should be created
+            self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+        check_cache_is_purged(self, 1, create_workspace_tab)
+
+    def test_tab_collection_post_only_name(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def create_workspace_tab():
+            data = {
+                'name': 'rest_api_test',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 201)
+
+            # Check basic response structure
+            response_data = json.loads(response.content.decode('utf-8'))
+            self.assertTrue(isinstance(response_data, dict))
+            self.assertIn("id", response_data)
+            self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+            self.assertEqual(response_data['name'], 'rest_api_test')
+            self.assertEqual(response_data['title'], 'rest_api_test')
+            self.assertEqual(response_data['iwidgets'], [])
+
+            # Tab should be created
+            self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+        check_cache_is_purged(self, 1, create_workspace_tab)
+
+    def test_tab_collection_post_only_title(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
 
@@ -3465,6 +3522,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api', 'wirecloud-noselenium')
     populate = False
+    use_search_indexes = False
 
     def test_iwidget_collection_get_requires_authentication(self):
 
