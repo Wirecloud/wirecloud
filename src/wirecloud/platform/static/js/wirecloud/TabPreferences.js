@@ -37,7 +37,7 @@
 
         this.tab.workspace.preferences.addEventListener('pre-commit', this._handleParentChanges);
     };
-    TabPreferences.prototype = new Wirecloud.Preferences();
+    utils.inherit(TabPreferences, Wirecloud.Preferences);
 
     TabPreferences.prototype.buildTitle = function buildTitle() {
         return utils.gettext("Settings");

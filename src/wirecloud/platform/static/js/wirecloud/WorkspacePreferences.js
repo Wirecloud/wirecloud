@@ -32,7 +32,7 @@
 
         Wirecloud.preferences.addEventListener('pre-commit', this._handleParentChanges);
     };
-    WorkspacePreferences.prototype = new Wirecloud.Preferences();
+    utils.inherit(WorkspacePreferences, Wirecloud.Preferences);
 
     WorkspacePreferences.prototype.buildTitle = function buildTitle() {
         return utils.gettext("Settings");

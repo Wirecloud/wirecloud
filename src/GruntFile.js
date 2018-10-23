@@ -115,6 +115,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/LocalCatalogue.js',
     'wirecloud/platform/static/js/wirecloud/PersistentVariableDef.js',
     'wirecloud/platform/static/js/wirecloud/PersistentVariable.js',
+    'wirecloud/platform/static/js/wirecloud/Preferences.js',
     'wirecloud/platform/static/js/wirecloud/UserPrefDef.js',
     'wirecloud/platform/static/js/wirecloud/UserPref.js',
     'wirecloud/platform/static/js/wirecloud/Version.js',

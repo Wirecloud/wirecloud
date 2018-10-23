@@ -32,7 +32,7 @@
     var PlatformPreferences = function PlatformPreferences(definitions, values) {
         Wirecloud.Preferences.call(this, definitions, values);
     };
-    PlatformPreferences.prototype = new Wirecloud.Preferences();
+    utils.inherit(PlatformPreferences, Wirecloud.Preferences);
 
     PlatformPreferences.prototype.buildTitle = function buildTitle() {
         return utils.gettext("Platform Preferences");
