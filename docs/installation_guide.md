@@ -849,9 +849,10 @@ On the WireCloud instance:
         ```python
         AUTHENTICATION_BACKENDS = (
             'wirecloud.fiware.social_auth_backend.FIWAREOAuth2',
-            'django.contrib.auth.backends.ModelBackend',
         )
         ```
+
+        > **Note**: Django supports several authentication backends (see this [link](https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#specifying-authentication-backends) for more details). For example, you can continue authenticating users using the local db by also listing `django.contrib.auth.backends.ModelBackend` in `AUTHENTICATION_BACKENDS`, although this will require extra configuration not documented in this guide.
 
     - Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g. `FIWARE_IDM_SERVER = "https://account.lab.fiware.org"`)
     - Add `SOCIAL_AUTH_FIWARE_KEY` and `SOCIAL_AUTH_FIWARE_SECRET` settings using the *Client ID* and the *Client Secret* values provided by the IdM. You should end having something like this:
