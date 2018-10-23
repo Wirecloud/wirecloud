@@ -64,6 +64,8 @@ class SearchAPITestCase(WirecloudTestCase, TestCase):
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(result_json['results']), 3)
+        for user in result_json['results']:
+            self.assertEqual(user['organization'], user['username'] == "filinberto")
 
     def test_ordered_search(self):
         response = self.client.get(self.url + '?namespace=user&orderby=username_orderby', HTTP_ACCEPT="application/json")

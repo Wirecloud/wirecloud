@@ -25,8 +25,9 @@ from django.db.models import Q
 from haystack import indexes
 
 from wirecloud.platform.models import Workspace
-from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
+from wirecloud.commons.haystack_fields import BooleanField
 from wirecloud.commons.haystack_queryparser import ParseSQ
+from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 
 
 CONTENT_FIELDS = ["owner", "name"]
@@ -41,15 +42,15 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
     description = indexes.CharField(model_attr='description')
     longdescription = indexes.CharField(model_attr='longdescription')
-    public = indexes.BooleanField(model_attr="public")
+    public = BooleanField(model_attr="public")
 
-    searchable = indexes.BooleanField(model_attr="searchable", stored=False)
+    searchable = BooleanField(model_attr="searchable", stored=False)
 
     lastmodified = indexes.CharField()
     owner = indexes.CharField()
     users = indexes.MultiValueField(stored=False)
     groups = indexes.MultiValueField(stored=False)
-    shared = indexes.BooleanField()
+    shared = BooleanField()
 
     def get_model(self):
         return self.model
