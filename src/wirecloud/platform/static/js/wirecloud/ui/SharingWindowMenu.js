@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -31,12 +32,11 @@
     // =========================================================================
 
     ns.SharingWindowMenu = function SharingWindowMenu(workspace) {
-        var builder, i, options, subtitle1, subtitle2, template;
+        var i, options, subtitle1, subtitle2;
 
         ns.WindowMenu.call(this, utils.gettext("Sharing settings"), 'wc-dashboard-share-modal');
 
         this.workspace = workspace;
-        builder = new se.GUIBuilder();
 
         subtitle1 = document.createElement('h4');
         subtitle1.textContent = utils.gettext("Visibility options");
@@ -48,10 +48,9 @@
         ];
 
         this.visibilityOptions = new se.ButtonsGroup('visibility');
-        template = Wirecloud.currentTheme.templates['wirecloud/workspace/visibility_option'];
 
         for (i = 0; i < options.length; i++) {
-            appendOption.call(this, options[i], builder, template);
+            appendOption.call(this, options[i]);
         }
 
         subtitle2 = document.createElement('h4');
@@ -64,16 +63,17 @@
         this.inputSearchTypeahead = new Wirecloud.ui.UserTypeahead({autocomplete: false});
 
         this.inputSearchTypeahead.bind(this.inputSearch);
-        this.inputSearchTypeahead.addEventListener('select', menuitem_onselect.bind(this));
+        this.inputSearchTypeahead.addEventListener('select', (typeahead, menuItem) => {
+            appendUser.call(this, menuItem.context);
+        });
 
         this.userGroup = new se.Container({class: "wc-dashboard-share-list"});
         this.userGroup.appendTo(this.windowContent);
 
-        this.sharingUsers = [];
-        template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];
+        this.sharingUsers = {};
 
         for (i = 0; i < workspace.model.users.length; i++) {
-            appendUser.call(this, workspace.model.users[i], builder, template);
+            appendUser.call(this, workspace.model.users[i]);
         }
 
         // windowmenu - footer
@@ -96,6 +96,8 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
+    var builder = new se.GUIBuilder();
+
     var on_visibility_option_change = function on_visibility_option_change() {
         this.inputSearch.setDisabled(this.visibilityOptions.value === 'public');
         this.userGroup.setDisabled(this.visibilityOptions.value === 'public');
@@ -115,22 +117,25 @@
         this.workspace.model.preferences.set({
             public: {value: this.visibilityOptions.value === "public"},
             sharelist: {value: sharelist}
-        }).then(() => {
-            this.workspace.model.users.length = 0;
+        }).then(
+            () => {
+                this.workspace.model.users.length = 0;
 
-            for (username in this.sharingUsers) {
-                this.workspace.model.users.push(this.sharingUsers[username]);
+                for (username in this.sharingUsers) {
+                    this.workspace.model.users.push(this.sharingUsers[username]);
+                }
+
+                this._closeListener();
+            }, () => {
+                this.btnAccept.enable();
+                this.btnCancel.enable();
+                this.btnAccept.removeClassName('busy');
             }
-
-            this._closeListener();
-        }, () => {
-            this.btnAccept.enable();
-            this.btnCancel.disable();
-            this.btnAccept.removeClassName('busy');
-        });
+        );
     };
 
-    var appendOption = function appendOption(data, builder, template) {
+    var appendOption = function appendOption(data) {
+        let template = Wirecloud.currentTheme.templates['wirecloud/workspace/visibility_option'];
 
         builder.parse(template, {
             radiobutton: function () {
@@ -148,16 +153,23 @@
         return this;
     };
 
-    var appendUser = function appendUser(data, builder, template) {
+    var appendUser = function appendUser(data) {
         var createdElement;
 
         if (data.username in this.sharingUsers) {
             // This user is already taken.
             return this;
         }
+        this.sharingUsers[data.username] = data;
 
+        var fullname = data.fullname;
+        if (data.username === Wirecloud.contextManager.get('username')) {
+            fullname = utils.interpolate(utils.gettext("%{fullname}s (You)"), {fullname: data.fullname});
+        }
+
+        let template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];
         createdElement = builder.parse(template, {
-            fullname: data.fullname + (data.username === Wirecloud.contextManager.get('username') ? " " + utils.gettext("(You)") : ""),
+            fullname: fullname,
             icon: function () {
                 var icon = document.createElement('i');
                 icon.className = data.organization ? "fa fa-building fa-stack-1x" : "fa fa-user fa-stack-1x";
@@ -178,8 +190,6 @@
             btndelete: function () {
                 var button = new se.Button({class: "btn-remove-user", plain: true, iconClass: "fa fa-remove", title: utils.gettext("Remove")});
 
-                this.sharingUsers[data.username] = data;
-
                 if (data.accesslevel === 'owner') {
                     button.disable();
                 } else {
@@ -196,15 +206,6 @@
         this.userGroup.appendChild(createdElement);
 
         return this;
-    };
-
-    var menuitem_onselect = function menuitem_onselect(typeahead, menuItem) {
-        var context = menuItem.context;
-
-        var builder = new se.GUIBuilder();
-        var template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];
-
-        appendUser.call(this, context, builder, template);
     };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);
