@@ -25,6 +25,7 @@ from haystack import indexes
 from haystack.query import SearchQuerySet as HaystackSearchQuerySet
 from haystack import connections
 
+from wirecloud.commons.haystack_fields import BooleanField
 from wirecloud.commons.haystack_queryparser import ParseSQ
 
 
@@ -117,7 +118,7 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
     fullname_orderby = indexes.CharField()
     username = indexes.NgramField(model_attr='username')
     username_orderby = indexes.CharField(model_attr='username')
-    organization = indexes.BooleanField()
+    organization = BooleanField()
 
     def get_model(self):
         return self.model

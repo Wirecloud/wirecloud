@@ -108,12 +108,27 @@
         "model": "auth.user",
         "fields": {
             "first_name": "Allison",
-            "last_name": "Dare",
+            "last_name": "",
             "email": "Vanessa.Turner@marianna.info",
             "username": "filinberto",
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "is_active": true,
             "is_staff": false
+        }
+    },
+    {
+        "pk": 128,
+        "model": "auth.group",
+        "fields": {
+            "name": "Allison"
+        }
+    },
+    {
+        "pk": 128,
+        "model": "platform.organization",
+        "fields": {
+            "user": 128,
+            "group": 128
         }
     },
     {

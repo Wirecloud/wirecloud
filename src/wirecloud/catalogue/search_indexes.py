@@ -24,9 +24,10 @@ from six.moves.urllib.parse import urljoin
 from haystack import indexes
 
 from wirecloud.catalogue.models import CatalogueResource, get_template_url
+from wirecloud.commons.haystack_fields import BooleanField
+from wirecloud.commons.haystack_queryparser import ParseSQ
 from wirecloud.commons.search_indexes import buildSearchResults, SearchQuerySet
 from wirecloud.commons.utils.version import Version
-from wirecloud.commons.haystack_queryparser import ParseSQ
 
 
 CONTENT_FIELDS = ["name", "vendor", "version", "type", "title", "description", "endpoint_descriptions"]
@@ -47,7 +48,7 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
     template_uri = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
     creation_date = indexes.DateTimeField(model_attr="creation_date")
-    public = indexes.BooleanField(model_attr="public")
+    public = BooleanField(model_attr="public")
 
     title = indexes.NgramField(boost=1.5)
     endpoint_descriptions = indexes.EdgeNgramField(stored=False)
