@@ -164,7 +164,7 @@ You can restore the backup using the following command:
 
         $ python manage.py migrate
         $ python manage.py populate
-        $ python manage.py resetsearchindexes
+        $ python manage.py rebuild_index
         $ python manage.py collectstatic --noinput
 
     > **NOTE**: Remember to run those commands using the user serving wirecloud
@@ -183,6 +183,16 @@ $ wirecloud-admin --version
 
 > **NOTE:** It is strongly recommended to perform a full database backup before
 > starting to migrate WireCloud to a new version.
+
+
+## From 1.1.x to 1.2.x
+
+WireCloud 1.2 has moved from directly use Whoosh for using search indexes to use
+Haystack for managing search indexes. Although Haystack has support for using
+Whoosh as search index backend, the schema used for the search indexes are
+different. You have to incorporate Haystack configuration into your
+`settings.py` file and rebuild them by running the `rebuild_index` command.
+
 
 ## From 1.0.x to 1.1.x
 

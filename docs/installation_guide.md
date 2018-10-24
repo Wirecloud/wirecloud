@@ -1,6 +1,6 @@
 ## Introduction
 
-This Installation WireCloud version 1.1 (starting from FIWARE release 6.1). Any
+This Installation WireCloud version 1.2 (starting from FIWARE release 7.4). Any
 feedback on this document is highly welcomed, including bugs, typos or things
 you think should be included but are not. Please send it to the "Contact Person"
 email that appears in the [Catalogue page for this GEi][catalogue].
@@ -320,7 +320,7 @@ the [database engines supported by Django].
 
 The following examples show you how to configure SQLite and PostgreSQL databases.
 
-[database engines supported by Django]: https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+[database engines supported by Django]: https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 
 ### SQLite
@@ -650,7 +650,7 @@ FIWARE_PORTALS = (
 Set `FORCE_DOMAIN` using an string if you want to force WireCloud to use a
 concrete domain name (without including the port) when building internal URLs.
 If this setting is `None` (the default), WireCloud will try to use the [Django's
-sites framework](https://docs.djangoproject.com/en/1.8/ref/contrib/sites/) for
+sites framework](https://docs.djangoproject.com/en/1.11/ref/contrib/sites/) for
 obtaining the domain info. If the sites framework is not used, the domain is
 extracted from the request.
 
@@ -710,9 +710,9 @@ errors to an email log handler when `DEBUG` is `False`.
 
 You can see the default logging configuration by looking in
 wirecloud/commons/utils/conf.py (or view the [online
-source](https://github.com/Wirecloud/wirecloud/blob/1.0.x/src/wirecloud/commons/utils/conf.py)).
+source](https://github.com/Wirecloud/wirecloud/blob/1.2.x/src/wirecloud/commons/utils/conf.py)).
 
-[LOGGING_CONFIG]: https://docs.djangoproject.com/es/1.8/ref/settings/#logging-config
+[LOGGING_CONFIG]: https://docs.djangoproject.com/es/1.11/ref/settings/#logging-config
 
 
 ### SERVER_EMAIL
@@ -740,7 +740,7 @@ themes](development/platform/themes).
 
 A data structure containing the middleware configuration per URL group where the URL group name are the keys of the dictionary and the value should be a tuple of middleware classes to use for that group.
 
-You should use this setting as replacement of the Django's MIDDLEWARE_CLASSES setting (See [Django's middleware documentation](https://docs.djangoproject.com/en/1.8/topics/http/middleware/))
+You should use this setting as replacement of the Django's MIDDLEWARE_CLASSES setting (See [Django's middleware documentation](https://docs.djangoproject.com/en/1.11/topics/http/middleware/))
 
 Currently available groups are "default", "api" and "proxy". For example, if you want to add a middleware class to the "api" group, you can use the following code:
 
