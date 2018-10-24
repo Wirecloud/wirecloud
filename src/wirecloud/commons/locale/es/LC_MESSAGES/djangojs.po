@@ -2,21 +2,22 @@
 # Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
 # Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.0\n"
+"Project-Id-Version: WireCloud 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 10:58+0200\n"
-"PO-Revision-Date: 2016-01-15 11:48+0100\n"
-"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"POT-Creation-Date: 2018-10-24 12:49+0200\n"
+"PO-Revision-Date: 2018-10-24 12:55+0200\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 2.2\n"
 
 #: static/js/StyledElements/FileField.js:107
 #: static/js/wirecloud/ui/MACSelectionWindowMenu.js:35
@@ -32,6 +33,7 @@ msgid "Reset"
 msgstr "Reiniciar"
 
 #: static/js/StyledElements/Form.js:94
+#: static/js/wirecloud/ui/MessageWindowMenu.js:43
 msgid "Accept"
 msgstr "Aceptar"
 
@@ -79,8 +81,8 @@ msgstr "Ordenar por %(column_name)s"
 msgid "No data available"
 msgstr "No hay datos disponibles"
 
-#: static/js/StyledElements/Notebook.js:107
-#: static/js/StyledElements/Notebook.js:110
+#: static/js/StyledElements/Notebook.js:108
+#: static/js/StyledElements/Notebook.js:111
 msgid "Add Tab"
 msgstr "Añadir pestaña"
 
@@ -90,8 +92,8 @@ msgid ""
 "\">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></div>"
 msgstr ""
 "<div class=\"se-input-group\"><t:firstBtn/><t:prevBtn/><div class=\"se-box"
-"\">Página: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/>"
-"</s:styledgui>"
+"\">Página: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:"
+"styledgui>"
 
 #: static/js/StyledElements/Typeahead.js:174
 msgid "No results found for <em><t:query/></em>"
@@ -100,6 +102,19 @@ msgstr "No se han encontrado resultados para <em><t:query/></em>"
 #: static/js/StyledElements/Utils.js:511
 msgid "N/A"
 msgstr "N/A"
+
+#: static/js/wirecloud/ui/AlertWindowMenu.js:50
+msgid "Yes"
+msgstr "Sí"
+
+#: static/js/wirecloud/ui/AlertWindowMenu.js:51
+msgid "No"
+msgstr "No"
+
+#: static/js/wirecloud/ui/AlertWindowMenu.js:59
+#: static/js/wirecloud/ui/MessageWindowMenu.js:29
+msgid "Warning"
+msgstr "Atención"
 
 #: static/js/wirecloud/ui/ExternalProcessWindowMenu.js:93
 msgid "Start"
@@ -120,19 +135,19 @@ msgstr "Borrar la seleccion actual"
 msgid "Search"
 msgstr "Buscar"
 
-#: static/js/wirecloud/ui/MACSearch.js:58
+#: static/js/wirecloud/ui/MACSearch.js:64
 msgid "Keywords..."
-msgstr "Texto de búsqueda"
+msgstr "Texto de búsqueda…"
 
-#: static/js/wirecloud/ui/MACSearch.js:134
+#: static/js/wirecloud/ui/MACSearch.js:157
 msgid "Connection error: No resource retrieved"
 msgstr "Problema de conexión: No se ha recibido ningún recurso"
 
-#: static/js/wirecloud/ui/MACSearch.js:204
+#: static/js/wirecloud/ui/MACSearch.js:227
 msgid "<p>Showing results for <b><t:corrected_query/></b></p>"
 msgstr "<p>Mostrando los resultados para <b><t:corrected_query/></b></p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:221
+#: static/js/wirecloud/ui/MACSearch.js:244
 msgid ""
 "<p>We couldn't find anything for your search - <b>%(keywords)s.</b></"
 "p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</"
@@ -143,7 +158,7 @@ msgstr ""
 "palabras estén escritas correctamente.</li><li>Prueba con otras palabras "
 "clave.</li><li>Inténtalo con palabras clave más generales.</li></ul>"
 
-#: static/js/wirecloud/ui/MACSearch.js:224
+#: static/js/wirecloud/ui/MACSearch.js:247
 msgid ""
 "<p>Currently, you do not have access to any %(scope)s component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -154,7 +169,7 @@ msgstr ""
 "recursos de forma manual usando el botón Subir en la vista de Mis Recursos.</"
 "p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:227
+#: static/js/wirecloud/ui/MACSearch.js:250
 msgid ""
 "<p>Currently, you do not have access to any component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -163,6 +178,14 @@ msgstr ""
 "<p>Actualmente no tienes acceso a ningún componente. Puedes obtener "
 "componentes usando la vista de Marketplace o subiendo recursos de forma "
 "manual usando el botón Subir en la vista de Mis Recursos.</p>"
+
+#: static/js/wirecloud/ui/MessageWindowMenu.js:29
+msgid "Error"
+msgstr "Error"
+
+#: static/js/wirecloud/ui/MessageWindowMenu.js:29
+msgid "Info"
+msgstr "Detalles"
 
 #: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:83
 msgid "Next"

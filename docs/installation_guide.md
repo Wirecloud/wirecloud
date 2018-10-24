@@ -1,6 +1,6 @@
 ## Introduction
 
-This Installation WireCloud version 1.1 (starting from FIWARE release 6.1). Any
+This Installation WireCloud version 1.2 (starting from FIWARE release 7.4). Any
 feedback on this document is highly welcomed, including bugs, typos or things
 you think should be included but are not. Please send it to the "Contact Person"
 email that appears in the [Catalogue page for this GEi][catalogue].
@@ -17,7 +17,7 @@ step, as they will be installed throughout the documentation:**
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
 - Python 2.7 or python 3.4+. In any case, the following python packages must be
   installed:
-    - Django 1.8-1.11
+    - Django 1.9-1.11
     - lxml 2.3.0+
     - django-appconf 1.0.1+
     - django_compressor 2.0+
@@ -320,7 +320,7 @@ the [database engines supported by Django].
 
 The following examples show you how to configure SQLite and PostgreSQL databases.
 
-[database engines supported by Django]: https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+[database engines supported by Django]: https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 
 ### SQLite
@@ -356,7 +356,7 @@ For production purposes, PostgreSQL database is a much better choice. To do so, 
 ```python
 DATABASES = {
       'default': {
-             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+             'ENGINE': 'django.db.backends.postgresql',
              'NAME': '${dbname}',
              'USER': '${dbuser}',
              'PASSWORD': '${dbpassword}',
@@ -447,29 +447,54 @@ $ python manage.py populate
 
 ## Search indexes configuration
 
-Wirecloud uses Haystack to handle the search indexes.
+Wirecloud uses [Haystack](http://haystacksearch.org/) to handle the search
+indexes.
 
-Currently, Solr, ElasticSearch2 and Whoosh are supported. Whoosh is enabled by default.
+Currently, [Solr][], [ElasticSearch2][] and [Whoosh][] are supported. Whoosh is enabled by
+default.
 
-To modify the search engine configuration, it is necessary to modify the `HAYSTACK_CONNECTIONS`
-configuration setting in the instance `settings.py` file (e.g.
-`/opt/wirecloud_instance/wirecloud_instance/settings.py`).
+To modify the search engine configuration, it is necessary to modify the
+`HAYSTACK_CONNECTIONS` configuration setting in the instance `settings.py` file
+(e.g. `/opt/wirecloud_instance/wirecloud_instance/settings.py`).
 
+[Solr]: http://lucene.apache.org/solr/
+[ElasticSearch2]: https://www.elastic.co/products/elasticsearch
+[Whoosh]: https://whoosh.readthedocs.io/en/latest/
 
 ### Whoosh configuration
+
+[Whoosh][] is a fast, featureful full-text indexing and searching library
+implemented in pure Python. It is very easy to configure and does not require to
+configure any service, so it is ideal for basic installations. This make this
+engine the default engine for using WireCloud, altough probably ElasticSearch2
+or Solr are better choices if you require to provide an high availablility
+installation of WireCloud.
+
+This is the default configuration:
 
 ```python
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine',
-        'PATH': path.join(path.dirname(__file__), 'whoosh_index'),
+        'PATH': path.join(BASEDIR, 'index'),
     },
 }
 ```
 
-Where `PATH` is the location where Whoosh will store the indexes.
+You can add the `HAYSTACK_CONNECTIONS` setting in the `settings.py` file to
+change the `PATH` where Whoosh indices will be stored.
+
 
 ### ElasticSearch2 configuration
+
+[ElasticSearch][] support is not installed by default, so the first thing is to
+install the python module required to connect to ElasticSearch:
+
+```
+$ pip install elasticsearch==2.4.1
+```
+
+Next step is to configure haystack to use ElasticSearch:
 
 ```python
 HAYSTACK_CONNECTIONS = {
@@ -483,24 +508,16 @@ HAYSTACK_CONNECTIONS = {
 
 Where `URL` is the URL of the ElasticSearch2 server.
 
-The only thing that remains is installing the python library for ElasticSearch:
-
-    $ pip install elasticsearch==2.4.1
-
-and configuring the `URL` parameter to point to the ElasticSearch2 server.
-
 
 ### Solr cofiguration
 
-Before being able to use Solr, you should install `pysolr`:
+Solr support is not installed by default, so the first thing is to install the python library required to connect to Solr:
 
 ```
 $ pip install pysolr
 ```
 
-Once you have Solr 6.x deployed, you have to create and configure a new Solr core to be used from WireCloud. The Solr core can be created by running the following commannd: `bin/solr create -c wirecloud_core -n basic_config` on the Solr installation, where `wirecloud_core` is the core name. Then you have to execute the `python manage.py build_solr_schema` command jointly with the `--configure-directory` option on the WireCloud installation. Ideally, you should use the `--configure-directory` to point into the configuration folder (e.g. to `${SOLR_ROOT}/server/solr/wirecloud_core/conf`) of the Solr core, so it gets configured automatically. But if this is not possible (because the folder is in a remote server), you should point it into a temporal folder and copy the generated files (`schema.xml` and `solrconfig.xml`) to the final destination. You should also ensure the configuration folder does not contain a `managed-schema.xml` file, as this file is created by default but should not be used when using the WireCloud schema.
-
-Now you can change the Haystack configuration to point to the Solr server. This is an example:
+Once installed `pysolr`, you have to change the Haystack configuration:
 
 ```python
 HAYSTACK_CONNECTIONS = {
@@ -513,6 +530,14 @@ HAYSTACK_CONNECTIONS = {
 ```
 
 Where the `URL` setting should point to the Solr core URL.
+
+Haystack provides a command for generating the solr schema (needed to create the
+solr core), but requires you to configure haystack to use the rSsolr engine before
+running that command. You can provide and invalid URL (e.g. an empty string:
+`''`) and change this configuration once you have created the core in the
+Solr server.
+
+The Solr core can be created by running the following commannd: `bin/solr create -c wirecloud_core -n basic_config` on the Solr installation, where `wirecloud_core` is the core name. Then you have to execute the `python manage.py build_solr_schema` command jointly with the `--configure-directory` option on the WireCloud installation. Ideally, you should use the `--configure-directory` to point into the configuration folder (e.g. to `${SOLR_ROOT}/server/solr/wirecloud_core/conf`) of the Solr core, so it gets configured automatically. But if this is not possible (because the folder is in a remote server), you should point it into a temporal folder and copy the generated files (`schema.xml` and `solrconfig.xml`) to the final destination. You should also ensure the configuration folder does not contain a `managed-schema.xml` file, as this file is created by default and conflicts with the configuration created by Haystack.
 
 
 ## Extra options
@@ -625,7 +650,7 @@ FIWARE_PORTALS = (
 Set `FORCE_DOMAIN` using an string if you want to force WireCloud to use a
 concrete domain name (without including the port) when building internal URLs.
 If this setting is `None` (the default), WireCloud will try to use the [Django's
-sites framework](https://docs.djangoproject.com/en/1.8/ref/contrib/sites/) for
+sites framework](https://docs.djangoproject.com/en/1.11/ref/contrib/sites/) for
 obtaining the domain info. If the sites framework is not used, the domain is
 extracted from the request.
 
@@ -685,9 +710,9 @@ errors to an email log handler when `DEBUG` is `False`.
 
 You can see the default logging configuration by looking in
 wirecloud/commons/utils/conf.py (or view the [online
-source](https://github.com/Wirecloud/wirecloud/blob/1.0.x/src/wirecloud/commons/utils/conf.py)).
+source](https://github.com/Wirecloud/wirecloud/blob/1.2.x/src/wirecloud/commons/utils/conf.py)).
 
-[LOGGING_CONFIG]: https://docs.djangoproject.com/es/1.8/ref/settings/#logging-config
+[LOGGING_CONFIG]: https://docs.djangoproject.com/es/1.11/ref/settings/#logging-config
 
 
 ### SERVER_EMAIL
@@ -715,7 +740,7 @@ themes](development/platform/themes).
 
 A data structure containing the middleware configuration per URL group where the URL group name are the keys of the dictionary and the value should be a tuple of middleware classes to use for that group.
 
-You should use this setting as replacement of the Django's MIDDLEWARE_CLASSES setting (See [Django's middleware documentation](https://docs.djangoproject.com/en/1.8/topics/http/middleware/))
+You should use this setting as replacement of the Django's MIDDLEWARE_CLASSES setting (See [Django's middleware documentation](https://docs.djangoproject.com/en/1.11/topics/http/middleware/))
 
 Currently available groups are "default", "api" and "proxy". For example, if you want to add a middleware class to the "api" group, you can use the following code:
 
@@ -824,9 +849,10 @@ On the WireCloud instance:
         ```python
         AUTHENTICATION_BACKENDS = (
             'wirecloud.fiware.social_auth_backend.FIWAREOAuth2',
-            'django.contrib.auth.backends.ModelBackend',
         )
         ```
+
+        > **Note**: Django supports several authentication backends (see this [link](https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#specifying-authentication-backends) for more details). For example, you can continue authenticating users using the local db by also listing `django.contrib.auth.backends.ModelBackend` in `AUTHENTICATION_BACKENDS`, although this will require extra configuration not documented in this guide.
 
     - Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g. `FIWARE_IDM_SERVER = "https://account.lab.fiware.org"`)
     - Add `SOCIAL_AUTH_FIWARE_KEY` and `SOCIAL_AUTH_FIWARE_SECRET` settings using the *Client ID* and the *Client Secret* values provided by the IdM. You should end having something like this:

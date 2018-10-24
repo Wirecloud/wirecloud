@@ -179,7 +179,7 @@ sections.
 
 
 [Compass]: http://compass-style.org/help/tutorials/integration/
-[Django's admin app]: https://docs.djangoproject.com/en/1.8/ref/contrib/admin/#admin-overriding-templates
+[Django's admin app]: https://docs.djangoproject.com/en/1.11/ref/contrib/admin/#admin-overriding-templates
 [Django's staticfiles app]: https://docs.djangoproject.com/en/1.6/ref/contrib/staticfiles/
 
 

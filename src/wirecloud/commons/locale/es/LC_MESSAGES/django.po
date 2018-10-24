@@ -2,78 +2,39 @@
 # Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
 # Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.0\n"
+"Project-Id-Version: WireCloud 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 10:58+0200\n"
-"PO-Revision-Date: 2016-09-21 01:36+0200\n"
-"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"POT-Creation-Date: 2018-10-24 12:45+0200\n"
+"PO-Revision-Date: 2018-10-24 12:47+0200\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.2\n"
 
 #: authentication.py:39
 msgid "Logged out"
 msgstr "Sesión cerrada"
 
-#: management/commands/resetsearchindexes.py:41
+#: management/commands/createorganization.py:35
 #, python-format
-msgid "Reseting \"%s\" index"
-msgstr "Reconstruyendo el índice \"%s\""
+msgid "Organization \"%s\" created successfully"
+msgstr "La organización “%s” ha sido creada correctamente"
 
-#: management/commands/resetsearchindexes.py:42
-#, python-format
-msgid "The \"%s\" index was updated successfully"
-msgstr "El índice \"%s\" ha sido actualizado correctamente"
+#: management/commands/createorganization.py:50
+msgid "Orgranization Name is already taken."
+msgstr "Nombre de organización ya en uso"
 
-#: management/commands/resetsearchindexes.py:43
-#, python-format
-msgid "The following indexes are not available: %s"
-msgstr "Los siguientes índices no están disponibles: %s"
-
-#: management/commands/resetsearchindexes.py:81
-#, python-format
-msgid ""
-"You have requested to reset indexes found in the location\n"
-"specified in your settings:\n"
-"\n"
-"    %s\n"
-"\n"
-msgstr ""
-"Estas pidiendo reconstruir los indices de búsqueda disponibles\n"
-"disponibles en la carpeta indicada en la configuración:\n"
-"\n"
-"  %s\n"
-"\n"
-
-#: management/commands/resetsearchindexes.py:85
-msgid "This will DELETE EXISTING FILES!\n"
-msgstr "Esta acción BORRARÁ LOS FICHEROS ACTUALES!\n"
-
-#: management/commands/resetsearchindexes.py:87
-msgid ""
-"Are you sure you want to do this?\n"
-"\n"
-"Type 'yes' to continue, or 'no' to cancel: "
-msgstr ""
-"Estas seguro de que quieres continuar?\n"
-"\n"
-"Escribe ‘yes’ para continuar o ‘no’ para cancelar: "
-
-#: management/commands/resetsearchindexes.py:92
-msgid "Reset search indexes cancelled."
-msgstr "Se ha cancelado el reinicio de los indices de búsqueda."
-
-#: management/commands/resetsearchindexes.py:105
-#, python-format
-msgid "Adding %s\n"
-msgstr "Añadiendo %s\n"
+#: management/commands/resetsearchindexes.py:44
+msgid "The indexes argument is not supported anymore."
+msgstr "El argumento indexes ya no está soportado."
 
 #: middleware.py:151 middleware.py:160
 msgid "Bad credentials"
@@ -262,6 +223,6 @@ msgstr "Valor inválido para pagenum: %s"
 msgid "Invalid maxresults value: %s"
 msgstr "Valor inválido para maxresults: %s"
 
-#: views.py:99
+#: views.py:103
 msgid "You don't have permission to switch current session user"
 msgstr "No tienes permisos para cambiar el usuario de la sesión actual"
