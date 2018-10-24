@@ -164,7 +164,7 @@
 
         var fullname = data.fullname;
         if (data.username === Wirecloud.contextManager.get('username')) {
-            fullname = utils.interpolate(utils.gettext("%{fullname}s (You)"), {fullname: data.fullname});
+            fullname = utils.interpolate(utils.gettext("%(fullname)s (You)"), {fullname: data.fullname});
         }
 
         let template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];

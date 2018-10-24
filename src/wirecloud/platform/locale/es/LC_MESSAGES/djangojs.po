@@ -1692,7 +1692,7 @@ msgstr "Variables persistentes"
 msgid "New Name"
 msgstr "Nuevo nombre"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:36
+#: static/js/wirecloud/ui/SharingWindowMenu.js:37
 msgid "Sharing settings"
 msgstr "Configuración de compartición"
 
@@ -1712,27 +1712,27 @@ msgstr "Privado"
 msgid "Shared with specific people and organizations."
 msgstr "Compartido con usuarios y organizaciones específicos."
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:58
+#: static/js/wirecloud/ui/SharingWindowMenu.js:57
 msgid "Users and groups with access"
 msgstr "Usuarios y grupos con acceso"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:61
+#: static/js/wirecloud/ui/SharingWindowMenu.js:60
 msgid "Add a person or an organization"
 msgstr "Añade una persona o una organización"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:160
-msgid "(You)"
-msgstr "(Tú)"
+#: static/js/wirecloud/ui/SharingWindowMenu.js:167
+msgid "%(fullname)s (You)"
+msgstr "%(fullname)s (Tú)"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:171
+#: static/js/wirecloud/ui/SharingWindowMenu.js:183
 msgid "Owner"
 msgstr "Dueño"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:173
+#: static/js/wirecloud/ui/SharingWindowMenu.js:185
 msgid "Can view"
 msgstr "Puede ver"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:179
+#: static/js/wirecloud/ui/SharingWindowMenu.js:191
 #: static/js/wirecloud/ui/WidgetView.js:111
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:65
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:57
