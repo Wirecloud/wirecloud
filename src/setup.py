@@ -148,6 +148,10 @@ class install(setuptools_install):
         print('A copy of the license has been installed at: ' + bcolors.WARNING + license_file + bcolors.ENDC)
 
 
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
@@ -156,7 +160,8 @@ setup(
     name='wirecloud',
     version=wirecloud.platform.__version__,
     description='Widgets Container and Mashup edition tools for composing end-user centric mashup applications.',
-    long_description='',
+    long_description=read('../README.md'),
+    long_description_content_type="text/markdown",
     author='CoNWeT Lab',
     author_email='wirecloud@conwet.com',
     url='http://github.com/Wirecloud/wirecloud',
