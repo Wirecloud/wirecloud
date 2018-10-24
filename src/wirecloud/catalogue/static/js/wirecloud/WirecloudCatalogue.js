@@ -173,9 +173,9 @@
         }, options);
 
         if (this.name !== 'local' && options.market_endpoint != null) {
-            throw new TypeError(utils.gettext("market_endpoint option can only be used on local catalogues"));
+            throw new TypeError("market_endpoint option can only be used on local catalogues");
         } else if (options.market_endpoint == null && options.file == null && options.url == null) {
-            throw new TypeError(utils.gettext("at least one of the following options has to be used: file or market_endpoint"));
+            throw new TypeError("at least one of the following options has to be used: file or market_endpoint");
         }
 
         requestHeaders = {

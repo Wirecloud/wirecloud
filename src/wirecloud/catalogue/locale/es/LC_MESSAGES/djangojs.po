@@ -2,14 +2,15 @@
 # Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
 # Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.0\n"
+"Project-Id-Version: WireCloud 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 10:46+0200\n"
+"POT-Creation-Date: 2018-10-24 12:44+0200\n"
 "PO-Revision-Date: 2016-09-21 01:34+0200\n"
-"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -18,32 +19,28 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.9\n"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:120
-#: static/js/wirecloud/WirecloudCatalogue.js:244
+#: static/js/wirecloud/WirecloudCatalogue.js:129
+#: static/js/wirecloud/WirecloudCatalogue.js:241
 msgid "Unexpected response from server"
 msgstr "Respuesta inesperada del servidor"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:136
+#: static/js/wirecloud/WirecloudCatalogue.js:144
 msgid "Doing catalogue search"
 msgstr "Buscando en el servidor"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:182
-msgid "market_endpoint option can only be used on local catalogues"
-msgstr "la opción market_endpoint solo se puede usar en el catálogo local"
-
-#: static/js/wirecloud/WirecloudCatalogue.js:201
+#: static/js/wirecloud/WirecloudCatalogue.js:198
 msgid "Uploading packaged component %(filename)s"
 msgstr "Subiendo el componente empaquetado %(filename)s"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:221
+#: static/js/wirecloud/WirecloudCatalogue.js:218
 msgid "Installing component from %(url)s"
 msgstr "Instalando componente desde %(url)s"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:270
+#: static/js/wirecloud/WirecloudCatalogue.js:267
 msgid "Deleting all versions of %(title)s (%(group_id)s)"
 msgstr "Eliminando todas las versiones de %(title)s (%(group_id)s)"
 
-#: static/js/wirecloud/WirecloudCatalogue.js:277
+#: static/js/wirecloud/WirecloudCatalogue.js:274
 msgid "Deleting %(title)s (%(uri)s)"
 msgstr "Borrando %(title)s (%(uri)s)"
 

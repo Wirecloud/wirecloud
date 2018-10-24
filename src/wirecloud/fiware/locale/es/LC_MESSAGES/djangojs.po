@@ -2,14 +2,15 @@
 # Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
 # Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2015-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.0\n"
+"Project-Id-Version: WireCloud 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 11:22+0200\n"
+"POT-Creation-Date: 2018-10-24 12:56+0200\n"
 "PO-Revision-Date: 2016-09-21 01:45+0200\n"
-"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -33,112 +34,3 @@ msgstr ""
 #: static/js/NGSI/NGSIManager.js:92
 msgid "Unexpected response from WireCloud's proxy"
 msgstr "Respuesta inesperada del proxy de WireCloud"
-
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:41
-msgid "All stores"
-msgstr "Todas las tiendas"
-
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:225
-msgid "loading..."
-msgstr "cargando..."
-
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:245
-msgid "list not available"
-msgstr "lista no disponible"
-
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:327
-msgid "Buying %(offering)s"
-msgstr "Comprando %(offering)s"
-
-#: static/js/wirecloud/FiWare/FiWareCatalogueView.js:329
-msgid ""
-"The buying process will continue in a separate window. This window will be "
-"controled by the store where the offering is hosted. After finishing the "
-"buying process, the control will return to WireCloud."
-msgstr ""
-"El proceso de compra continuará en una ventana separada. Esta ventana estará "
-"bajo el control de la tienda de la oferta. Después de que termine el proceso "
-"de compra, el control volverá a WireCloud."
-
-#: static/js/wirecloud/FiWare/Marketplace.js:90
-msgid "Unexpected response from server"
-msgstr "Respuesta inesperada del servidor"
-
-#: static/js/wirecloud/FiWare/Marketplace.js:121
-msgid "Retrieving offering info"
-msgstr "Obteniendo información de la oferta"
-
-#: static/js/wirecloud/FiWare/Offering.js:167
-msgid "Importing offering components into local repository"
-msgstr "Importando los componentes de la oferta al repositorio local"
-
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:50
-msgid "Main Info"
-msgstr "General"
-
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:53
-msgid "Legal"
-msgstr "Legal"
-
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:57
-msgid "Pricing"
-msgstr "Precios"
-
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:61
-msgid "Service level agreement"
-msgstr "Acuerdo de nivel de servicio"
-
-#: static/js/wirecloud/FiWare/ui/OfferingDetailsView.js:66
-msgid "Resources"
-msgstr "Recursos"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:59
-msgid "Uninstalling offering resources"
-msgstr "Desinstalando los recursos de la oferta"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:146
-msgid "N/A"
-msgstr "N/A"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:212
-msgid "Free"
-msgstr "Gratis"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:216
-msgid "Purchase"
-msgstr "Comprar"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:224
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:134
-msgid "Install"
-msgstr "Instalar"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:227
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:130
-msgid "Uninstall"
-msgstr "Desinstalar"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:231
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:165
-msgid "Details"
-msgstr "Detalles"
-
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:308
-msgid "No image available"
-msgstr "Imagen no disponible"
-
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:83
-msgid "Name"
-msgstr "Nombre"
-
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:94
-msgid "missing WireCloud metadata"
-msgstr "faltan los metadatos de WireCloud"
-
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:120
-msgid "Actions"
-msgstr "Acciones"
-
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:175
-msgid "Download"
-msgstr "Descargar"

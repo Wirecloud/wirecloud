@@ -2,14 +2,15 @@
 # Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
 # Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.0\n"
+"Project-Id-Version: WireCloud 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 11:22+0200\n"
+"POT-Creation-Date: 2018-10-24 12:56+0200\n"
 "PO-Revision-Date: 2016-03-31 13:09+0200\n"
-"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -18,32 +19,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.7\n"
 
-#: marketAdaptor/usdlParser.py:77
-msgid "Error the document has not a valid rdf format"
-msgstr "Error - El documento no tiene un formato RDF válido"
-
-#: marketAdaptor/usdlParser.py:83
-#, python-format
-msgid "Error parsing rdf document: %s"
-msgstr "Error pareando el documento RDF: %s"
-
-#: marketAdaptor/usdlParser.py:92
-msgid "Error the document is not a valid usdl document"
-msgstr "Error - el documento no es un documento USDL válido"
-
-#: plugins.py:250
+#: plugins.py:129
 msgid "FIWARE version"
 msgstr "Versión de FIWARE"
 
-#: plugins.py:251
+#: plugins.py:130
 msgid "FIWARE version of the platform"
 msgstr "La versión de FIWARE de la plataforma"
 
-#: plugins.py:254
+#: plugins.py:133
 msgid "FIWARE token available"
 msgstr "Token de FIWARE disponible"
 
-#: plugins.py:255
+#: plugins.py:134
 msgid ""
 "Indicates if the current user has associated a FIWARE auth token that can be "
 "used for accessing other FIWARE resources"

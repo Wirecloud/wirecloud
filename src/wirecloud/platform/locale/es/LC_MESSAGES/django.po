@@ -2,14 +2,15 @@
 # Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
 # Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.0\n"
+"Project-Id-Version: WireCloud 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 11:34+0200\n"
+"POT-Creation-Date: 2018-10-24 13:01+0200\n"
 "PO-Revision-Date: 2016-09-21 01:50+0200\n"
-"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -52,71 +53,71 @@ msgstr "equipo"
 msgid "teams"
 msgstr "equipos"
 
-#: core/plugins.py:269
+#: core/plugins.py:267
 msgid "Language"
 msgstr "Idioma"
 
-#: core/plugins.py:270
+#: core/plugins.py:268
 msgid "Current language used in the platform"
 msgstr "Idioma actualmente utilizado en la plataforma"
 
-#: core/plugins.py:273
+#: core/plugins.py:271
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: core/plugins.py:274
+#: core/plugins.py:272
 msgid "User name of the current logged user"
 msgstr "Nombre de usuario del usuario actual"
 
-#: core/plugins.py:277
+#: core/plugins.py:275
 msgid "Full name"
 msgstr "Nombre completo"
 
-#: core/plugins.py:278
+#: core/plugins.py:276
 msgid "Full name of the logged user"
 msgstr "Nombre completo del usuario actual"
 
-#: core/plugins.py:281
+#: core/plugins.py:279
 msgid "Avatar"
 msgstr "Avatar"
 
-#: core/plugins.py:282
+#: core/plugins.py:280
 msgid "URL of the avatar"
 msgstr "URL del avatar"
 
-#: core/plugins.py:285
+#: core/plugins.py:283
 msgid "Is Anonymous"
 msgstr "Es anónimo"
 
-#: core/plugins.py:286
+#: core/plugins.py:284
 msgid "Boolean. Designates whether current user is logged in the system."
 msgstr ""
 "Boleano. Indica cuando hay un usuario registrado actualmente en el sistema."
 
-#: core/plugins.py:289
+#: core/plugins.py:287
 msgid "Is Staff"
 msgstr "Es personal"
 
-#: core/plugins.py:290
+#: core/plugins.py:288
 msgid "Boolean. Designates whether current user can access the admin site."
 msgstr ""
 "Boleano. Indica cuando el usuario actual puede acceder al panel de "
 "administración."
 
-#: core/plugins.py:293
+#: core/plugins.py:291
 msgid "Is Superuser"
 msgstr "Es superusuario"
 
-#: core/plugins.py:294
+#: core/plugins.py:292
 msgid "Boolean. Designates whether current user is a super user."
 msgstr ""
 "Booleano. Indica cuando el usuario actualmente registrado es un super usuario"
 
-#: core/plugins.py:297
+#: core/plugins.py:295
 msgid "Mode"
 msgstr "Modo"
 
-#: core/plugins.py:298
+#: core/plugins.py:296
 msgid ""
 "Rendering mode used by the platform (available modes: classic, smartphone "
 "and embedded)"
@@ -124,35 +125,35 @@ msgstr ""
 "Modo de funcionamiento usado por la plataforma (modos disponibles: classic, "
 "smartphone y embedded)"
 
-#: core/plugins.py:301
+#: core/plugins.py:299
 msgid "Orientation"
 msgstr "Orientación"
 
-#: core/plugins.py:302
+#: core/plugins.py:300
 msgid "Current screen orientation"
 msgstr "Orientación actual de la plataforma"
 
-#: core/plugins.py:305
+#: core/plugins.py:303
 msgid "Theme"
 msgstr "Estilo"
 
-#: core/plugins.py:306
+#: core/plugins.py:304
 msgid "Name of the theme used by the platform"
 msgstr "Nombre del estilo usado por la plataforma"
 
-#: core/plugins.py:309
+#: core/plugins.py:307
 msgid "Version"
 msgstr "Versión"
 
-#: core/plugins.py:310
+#: core/plugins.py:308
 msgid "Version of the platform"
 msgstr "Versión de la plataforma"
 
-#: core/plugins.py:313
+#: core/plugins.py:311
 msgid "Version Hash"
 msgstr "Hash de la versión"
 
-#: core/plugins.py:314
+#: core/plugins.py:312
 msgid ""
 "Hash for the current version of the platform. This hash changes when the "
 "platform is updated or when an addon is added or removed"
@@ -160,58 +161,59 @@ msgstr ""
 "Hash asignado a la versión actual de la plataforma. Este bash cambia cuando "
 "la plataforma se actualiza o cuando un adán es activado o desactivado."
 
-#: core/plugins.py:325
+#: core/plugins.py:323
 msgid "Anonymous"
 msgstr "Anónimo"
 
-#: core/plugins.py:346 workspace/models.py:44 workspace/models.py:112
+#: core/plugins.py:344 workspace/models.py:43 workspace/models.py:111
 msgid "Title"
 msgstr "Título"
 
-#: core/plugins.py:347
+#: core/plugins.py:345
 msgid "Current title of the workspace"
 msgstr "Título actual del entorno de trabajo"
 
-#: core/plugins.py:350 iwidget/models.py:34 markets/models.py:31
+#: core/plugins.py:348 iwidget/models.py:34 markets/models.py:31
 #: markets/models.py:49 preferences/models.py:39 preferences/models.py:54
-#: preferences/models.py:70 workspace/models.py:42 workspace/models.py:111
+#: preferences/models.py:70 workspace/models.py:41 workspace/models.py:110
 msgid "Name"
 msgstr "Nombre"
 
-#: core/plugins.py:351
+#: core/plugins.py:349
 msgid "Current name of the workspace"
 msgstr "Nombre actual del entorno de trabajo"
 
-#: core/plugins.py:354
+#: core/plugins.py:352
 msgid "Owner"
 msgstr "Dueño"
 
-#: core/plugins.py:355
+#: core/plugins.py:353
 msgid "Workspace's owner username"
 msgstr "Nombre de usuario del dueño del entorno de trabajo"
 
-#: core/plugins.py:358 workspace/models.py:53
+#: core/plugins.py:356 workspace/models.py:52
 msgid "Description"
 msgstr "Descripción"
 
-#: core/plugins.py:359
+#: core/plugins.py:357
 msgid "Short description of the workspace without formating"
 msgstr "Descripción corta del dashboard sin formato"
 
-#: core/plugins.py:362 workspace/models.py:54
+#: core/plugins.py:360 workspace/models.py:53
 msgid "Long description"
 msgstr "Descripción larga"
 
-#: core/plugins.py:363
+#: core/plugins.py:361
 msgid ""
 "Detailed workspace's description. This description can contain formatting."
-msgstr "Descripción detallada del workspace. Esta descripción puede contener formato."
+msgstr ""
+"Descripción detallada del workspace. Esta descripción puede contener formato."
 
-#: core/plugins.py:378 markets/models.py:32
+#: core/plugins.py:376 markets/models.py:32
 msgid "Public"
 msgstr "Público"
 
-#: core/plugins.py:381
+#: core/plugins.py:379
 msgid ""
 "Allow any user to open this workspace (in read-only mode). (default: "
 "disabled)"
@@ -219,33 +221,33 @@ msgstr ""
 "Permite a cualquier usuario acceder a este entorno de trabajo (en modo de "
 "solo lectura). (valor por defecto: deshabilitado) "
 
-#: core/plugins.py:386
+#: core/plugins.py:384
 msgid "Share list"
 msgstr "Lista de compartidos"
 
-#: core/plugins.py:389
+#: core/plugins.py:387
 msgid "List of users with access to this workspace. (default: [])"
 msgstr ""
 "Lista de usuarios con acceso a este entorno de trabajo. (valor por defecto: "
 "[])"
 
-#: core/plugins.py:394
+#: core/plugins.py:392
 msgid "Default layout"
 msgstr "Esquema por defecto"
 
-#: core/plugins.py:397
+#: core/plugins.py:395
 msgid "Base"
 msgstr "Base"
 
-#: core/plugins.py:398
+#: core/plugins.py:396
 msgid "Free"
 msgstr "Libre"
 
-#: core/plugins.py:400
+#: core/plugins.py:398
 msgid "Default layout for the new widgets."
 msgstr "Distribución por defecto para los nuevos widgets."
 
-#: core/plugins.py:412
+#: core/plugins.py:410
 msgid "Base layout"
 msgstr "Distribución base"
 
@@ -441,7 +443,9 @@ msgstr "opción user inválida"
 #: markets/views.py:80
 msgid ""
 "You don't have permissions for adding marketplaces in name of other user"
-msgstr "No tienes permisos suficientes para añadir marketplaces en nombre de otros usuarios"
+msgstr ""
+"No tienes permisos suficientes para añadir marketplaces en nombre de otros "
+"usuarios"
 
 #: markets/views.py:102 markets/views.py:105 markets/views.py:132
 msgid "You are not allowed to delete this market"
@@ -545,11 +549,13 @@ msgstr "Las preferencias de solo lectura no se pueden actualizar"
 #: wiring/views.py:240
 msgid "Read only and hidden properties cannot be created using this API"
 msgstr ""
-"No se pueden crear variables persistentes de solo lectura u ocultas usando esta API"
+"No se pueden crear variables persistentes de solo lectura u ocultas usando "
+"esta API"
 
 #: wiring/views.py:249
 msgid "Read only and hidden properties cannot be removed"
-msgstr "Las variables persistentes de solo lectura y ocultas no se pueden eliminar"
+msgstr ""
+"Las variables persistentes de solo lectura y ocultas no se pueden eliminar"
 
 #: wiring/views.py:321 wiring/views.py:342
 msgid "Invalid JSON patch"
@@ -584,43 +590,43 @@ msgid "This is the wiring description of the merged mashup."
 msgstr ""
 "Esta es la descripción del comportamiento creado para el mashup mezclado."
 
-#: workspace/models.py:41
+#: workspace/models.py:40
 msgid "Creator"
 msgstr "Creador"
 
-#: workspace/models.py:46
+#: workspace/models.py:45
 msgid "Creation Date"
 msgstr "Fecha de creación"
 
-#: workspace/models.py:47
+#: workspace/models.py:46
 msgid "Last Modification Date"
 msgstr "Fecha de última modificación"
 
-#: workspace/models.py:49
+#: workspace/models.py:48
 msgid "Searchable"
 msgstr "Buscable"
 
-#: workspace/models.py:50
+#: workspace/models.py:49
 msgid "Available to all users"
 msgstr "Disponible para todos los usuarios"
 
-#: workspace/models.py:51
+#: workspace/models.py:50
 msgid "Users"
 msgstr "Usuarios"
 
-#: workspace/models.py:52
+#: workspace/models.py:51
 msgid "Groups"
 msgstr "Grupos"
 
-#: workspace/models.py:97
+#: workspace/models.py:96
 msgid "Manager"
 msgstr "Gestor"
 
-#: workspace/models.py:98
+#: workspace/models.py:97
 msgid "Reason Ref"
 msgstr "Referencia de razón"
 
-#: workspace/models.py:98
+#: workspace/models.py:97
 msgid ""
 "Reference to the reason why it was added. Used by Workspace Managers to sync "
 "workspaces"
@@ -628,11 +634,11 @@ msgstr ""
 "Referencia a la razón por la que fue añadido. Este campo es usado por los "
 "gestores de entornos de trabajo para sincronizar los entornos de trabajo"
 
-#: workspace/models.py:114
+#: workspace/models.py:113
 msgid "Visible"
 msgstr "Visible"
 
-#: workspace/models.py:116
+#: workspace/models.py:115
 msgid "Workspace"
 msgstr "Entorno de trabajo"
 

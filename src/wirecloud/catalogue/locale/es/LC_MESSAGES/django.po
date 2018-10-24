@@ -2,14 +2,15 @@
 # Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 # This file is distributed under the same license as the WireCloud package.
 # Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.0\n"
+"Project-Id-Version: WireCloud 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 10:46+0200\n"
+"POT-Creation-Date: 2018-10-24 12:25+0200\n"
 "PO-Revision-Date: 2016-09-15 15:25+0200\n"
-"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -43,43 +44,43 @@ msgstr ""
 "Fallo la importación del componente de aplicación mashable desde "
 "%(file_name)s"
 
-#: models.py:53
+#: models.py:47
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: models.py:54
+#: models.py:48
 msgid "Name"
 msgstr "Nombre"
 
-#: models.py:55
+#: models.py:49
 msgid "Version"
 msgstr "Versión"
 
-#: models.py:56
+#: models.py:50
 msgid "Type"
 msgstr "Tipo"
 
-#: models.py:60
+#: models.py:54
 msgid "Available to all users"
 msgstr "Disponible para todos los usuarios"
 
-#: models.py:61
+#: models.py:55
 msgid "Users"
 msgstr "Usuarios"
 
-#: models.py:62
+#: models.py:56
 msgid "Groups"
 msgstr "Grupos"
 
-#: models.py:65
+#: models.py:59
 msgid "templateURI"
 msgstr "templateURI"
 
-#: models.py:67
+#: models.py:61
 msgid "popularity"
 msgstr "popularidad"
 
-#: models.py:69
+#: models.py:63
 msgid "JSON description"
 msgstr "Descripción en JSON"
 
@@ -106,7 +107,7 @@ msgstr ""
 "El fichero %(file_name)s no está codificado usando el conjunto de caracteres "
 "indicado (%(charset)s según el fichero de descripción del widget)."
 
-#: views.py:87 views.py:242
+#: views.py:87 views.py:222
 msgid "Missing parameter: template_uri or file"
 msgstr "Faltan el parámetro template_uri o file"
 
@@ -114,49 +115,40 @@ msgstr "Faltan el parámetro template_uri o file"
 msgid "Resource already exists"
 msgstr "Ya existe el recurso"
 
-#: views.py:113
+#: views.py:114
 #, python-format
 msgid "Invalid pagenum value: %s"
 msgstr "Valor inválido para pagenum: %s"
 
-#: views.py:119
+#: views.py:120
 #, python-format
 msgid "Invalid maxresults value: %s"
 msgstr "Valor inválido para maxresults: %s"
 
-#: views.py:123
+#: views.py:124
 #, python-format
 msgid "Orderby value not supported: %s"
 msgstr "Valor para el parámetro orderby no soportado: %s"
 
-#: views.py:129
+#: views.py:132
 #, python-format
 msgid "Scope value not supported: %s"
 msgstr "Valor para el parámetro scope no soportado: %s"
 
-#: views.py:132
+#: views.py:135
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: views.py:167
+#: views.py:170
 #, python-format
 msgid "user %(username)s is not the owner of the resource %(resource_id)s"
 msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
 
-#: views.py:198
-msgid "Invalid prefix value (it cannot contain spaces)"
-msgstr "Valor inválido para el parámetro limit (no puede contener espacios)"
-
-#: views.py:205
-msgid "Invalid limit value (it must be positive integer)"
-msgstr ""
-"Valor inválido para el parámetro limit (tiene que ser un entero positivo)"
-
-#: views.py:262
+#: views.py:242
 msgid "Error opening the changelog file"
 msgstr "Error abriendo el fichero de registro de cambios"
 
-#: views.py:288
+#: views.py:268
 #, python-format
 msgid ""
 "You can find the userguide of this component in this external <a target="
@@ -165,6 +157,6 @@ msgstr ""
 "Puedes encontrar la documentación de este recurso in este <a target=\"_blank"
 "\" href=\"%s\">enlace externo</a>"
 
-#: views.py:304
+#: views.py:284
 msgid "Error opening the userguide file"
 msgstr "Error abriendo el fichero de la guía de usuario"
