@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import migrations, models
 
 from wirecloud.platform.migration_utils import workspace_and_tab_title_data_forwards
