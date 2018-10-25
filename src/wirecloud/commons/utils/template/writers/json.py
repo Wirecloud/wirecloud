@@ -21,7 +21,6 @@ from __future__ import absolute_import, unicode_literals
 
 import copy
 import json
-import six
 
 
 def remove_empty_string_fields(fields, data):
@@ -30,7 +29,7 @@ def remove_empty_string_fields(fields, data):
 
         value = data.get(field)
 
-        if value is not None and not isinstance(value, six.string_types):
+        if value is not None and not isinstance(value, str):
             raise Exception("Invalid value for field %s" % field)
 
         if field in data and (value is None or value == ''):

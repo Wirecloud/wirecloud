@@ -20,7 +20,6 @@
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
-from six import text_type
 
 from wirecloud.commons.fields import JSONField
 from wirecloud.platform.wiring.utils import remove_widget_from_wiring_status
@@ -54,7 +53,7 @@ class IWidget(models.Model):
             from wirecloud.platform.workspace.utils import encrypt_value
             value = encrypt_value(value)
         elif vardef['type'] == 'boolean':
-            if isinstance(value, text_type):
+            if isinstance(value, str):
                 value = value.strip().lower() == "true"
             else:
                 value = bool(value)

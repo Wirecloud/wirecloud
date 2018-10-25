@@ -23,7 +23,7 @@ import re
 
 from lxml import etree
 from lxml.html import fragment_fromstring, XHTMLParser
-from six.moves.urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse
 
 from wirecloud.commons.utils.version import Version
 

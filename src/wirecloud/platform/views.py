@@ -22,7 +22,7 @@ import gettext as gettext_module
 import importlib
 import json
 import os
-from six.moves.urllib.parse import urlparse, urlunparse, parse_qs
+from urllib.parse import urlparse, urlunparse, parse_qs
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login as django_redirect_to_login
@@ -39,7 +39,6 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_safe
 from django.views.i18n import render_javascript_catalog
 from user_agents import parse as ua_parse
-import six
 
 from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.git import get_git_info
@@ -106,7 +105,7 @@ def resolve_url(to, *args, **kwargs):  # pragma: no cover
         # further to some Python functions like urlparse.
         to = force_text(to)
 
-    if isinstance(to, six.string_types):
+    if isinstance(to, str):
         # Handle relative URLs
         if to.startswith(('./', '../')):
             return to
@@ -201,7 +200,7 @@ def get_javascript_catalog(locale, domain, packages):
     for k, v in t.items():
         if k == '':
             continue
-        if isinstance(k, six.string_types):
+        if isinstance(k, str):
             catalog[k] = v
         elif isinstance(k, tuple):
             msgid = k[0]

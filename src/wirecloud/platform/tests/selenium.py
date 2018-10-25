@@ -19,10 +19,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from six import text_type
-from six.moves.urllib.parse import urljoin
 import time
 import unittest
+from urllib.parse import urljoin
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -1035,7 +1034,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
 
             yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(yPosition_changes, text_type(int(initial_widget1_yPosition_changes) + 1))
+            self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
 
             height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
             self.assertEqual(height_changes, "0")
@@ -1045,7 +1044,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         with widget2:
             xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            self.assertEqual(xPosition_changes, text_type(int(initial_widget2_xPosition_changes) + 1))
+            self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 1))
 
             yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
             self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
@@ -1074,7 +1073,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
 
             yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(yPosition_changes, text_type(int(initial_widget1_yPosition_changes) + 1))
+            self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
 
             height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
             self.assertEqual(height_changes, "0")
@@ -1084,7 +1083,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         with widget2:
             xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            self.assertEqual(xPosition_changes, text_type(int(initial_widget2_xPosition_changes) + 2))
+            self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 2))
 
             yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
             self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)

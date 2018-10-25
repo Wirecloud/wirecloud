@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 import json
 import os
 import requests
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _

@@ -36,7 +36,7 @@ from __future__ import unicode_literals
 
 import base64
 import time
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 from django.conf import settings
 from social_core.backends.oauth import BaseOAuth2

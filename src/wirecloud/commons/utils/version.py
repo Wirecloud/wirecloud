@@ -21,8 +21,6 @@ from __future__ import unicode_literals
 
 import regex
 
-import six
-
 
 def cmp(a, b):
     return (a > b) - (a < b)
@@ -61,7 +59,7 @@ class Version(object):
 
     def __cmp__(self, other):
 
-        if isinstance(other, six.string_types):
+        if isinstance(other, str):
             other = Version(other)
 
         if not isinstance(other, Version):

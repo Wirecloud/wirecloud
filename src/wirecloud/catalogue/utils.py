@@ -22,8 +22,8 @@ from io import BytesIO
 import json
 import os
 import re
-from six.moves.urllib.parse import urljoin
-from six.moves.urllib.request import pathname2url, url2pathname
+from urllib.parse import urljoin
+from urllib.request import pathname2url, url2pathname
 import time
 
 from django.conf import settings

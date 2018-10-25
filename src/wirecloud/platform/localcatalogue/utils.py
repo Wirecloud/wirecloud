@@ -20,7 +20,6 @@ import re
 import sys
 
 from django.db import IntegrityError
-import six
 
 from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.catalogue.models import CatalogueResource
@@ -39,10 +38,9 @@ def add_m2m(field, item):
         field.add(item)
         return True
     except IntegrityError:
-        exc_info = sys.exc_info()
         if field.filter(pk=item.pk).exists():
             return False
-        six.reraise(*exc_info)
+        raise
 
 
 def install_resource(wgt_file, executor_user):

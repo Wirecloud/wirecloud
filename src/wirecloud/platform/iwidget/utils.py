@@ -18,7 +18,6 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext as _
-from six import text_type
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.models import IWidget, Tab
@@ -36,7 +35,7 @@ def parse_value_from_text(info, value):
             except:
                 return 0
     elif info['type'] in ('list', 'text', 'password'):
-        return text_type(value)
+        return str(value)
 
 
 def process_initial_value(vardef, initial_value=None):

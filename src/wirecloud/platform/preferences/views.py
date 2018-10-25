@@ -20,7 +20,6 @@
 from __future__ import unicode_literals
 
 import json
-import six
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -77,7 +76,7 @@ def make_tab_preferences_cache_key(tab):
 
 def serialize_default_value(value):
 
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         return value
     else:
         return json.dumps(value, ensure_ascii=False)

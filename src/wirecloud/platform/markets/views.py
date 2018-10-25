@@ -26,7 +26,6 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from six import text_type
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue import utils as catalogue
@@ -141,7 +140,7 @@ class PublishService(Service):
             try:
                 market_managers[market_endpoint['market']].publish(market_endpoint, wgt_file, request.user, request=request)
             except Exception as e:
-                errors[market_endpoint['market']] = text_type(e)
+                errors[market_endpoint['market']] = str(e)
 
         if len(errors) == 0:
             return HttpResponse(status=204)

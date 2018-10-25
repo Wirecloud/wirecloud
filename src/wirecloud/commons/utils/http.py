@@ -23,14 +23,13 @@ import json
 import os
 import posixpath
 import socket
-from six.moves.urllib.parse import urljoin, urlparse, unquote
+from urllib.parse import urljoin, urlparse, unquote
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from lxml import etree
-from six import text_type, string_types
 
 from wirecloud.commons.exceptions import HttpBadCredentials, ErrorResponse
 from wirecloud.commons.utils import mimeparser
@@ -110,7 +109,7 @@ def get_xml_error_response(request, mimetype, status_code, context):
     doc = etree.Element('error')
 
     description = etree.Element('description')
-    description.text = text_type(context['error_msg'])
+    description.text = str(context['error_msg'])
 
     doc.append(description)
 
@@ -119,7 +118,7 @@ def get_xml_error_response(request, mimetype, status_code, context):
         for key in context['details']:
             element = etree.Element(key)
 
-            if isinstance(context['details'][key], string_types):
+            if isinstance(context['details'][key], str):
                 element.text = context['details'][key]
             elif hasattr(context['details'][key], '__iter__'):
                 for value in context['details'][key]:
@@ -141,7 +140,7 @@ def get_xml_error_response(request, mimetype, status_code, context):
 
 def get_json_error_response(request, mimetype, status_code, context):
     body = {
-        'description': text_type(context['error_msg'])
+        'description': str(context['error_msg'])
     }
     if context.get('details') is not None:
         body['details'] = context['details']
@@ -355,7 +354,7 @@ def get_absolute_static_url(url, request=None, versioned=False):
 
 def validate_url_param(request, name, value, force_absolute=True, required=False):
 
-    if isinstance(value, string_types):
+    if isinstance(value, str):
         if required and value.strip() == '':
             msg = _('Missing required parameter: %(parameter)s') % {"parameter": name}
             raise ErrorResponse(build_error_response(request, 422, msg))
@@ -377,7 +376,7 @@ def validate_url_param(request, name, value, force_absolute=True, required=False
 
 def normalize_boolean_param(request, name, value):
 
-    if isinstance(value, string_types):
+    if isinstance(value, str):
         value = value.strip().lower()
         if value not in ('true', 'false'):
             msg = _('Invalid %(parameter)s value') % {"parameter": name}

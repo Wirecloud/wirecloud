@@ -19,8 +19,6 @@
 
 from __future__ import unicode_literals
 
-import six
-
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.template.base import parse_contacts_info
 from wirecloud.commons.utils.template.writers import rdf
@@ -176,13 +174,13 @@ def build_json_template_from_workspace(options, workspace, user):
         options['description'] = get_workspace_description(workspace)
 
     if 'authors' not in options:
-        options['authors'] = ({'name': six.text_type(user)},)
-    elif isinstance(options['authors'], six.text_type):
+        options['authors'] = ({'name': str(user)},)
+    elif isinstance(options['authors'], str):
         options['authors'] = parse_contacts_info(options['authors'])
 
     if 'contributors' not in options:
         options['contributors'] = ()
-    elif isinstance(options['contributors'], six.text_type):
+    elif isinstance(options['contributors'], str):
         options['contributors'] = parse_contacts_info(options['contributors'])
 
     options['requirements'] = []
@@ -246,7 +244,7 @@ def build_json_template_from_workspace(options, workspace, user):
 
     options['wiring']['version'] = '2.0'
     options['wiring']['operators'] = {}
-    for operator_id, operator in six.iteritems(wiring_status['operators']):
+    for operator_id, operator in wiring_status['operators'].items():
         operator_data = {
             'name': operator['name'],
             'preferences': {},

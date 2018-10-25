@@ -23,7 +23,7 @@ import codecs
 from django.utils.translation import ugettext as _
 import platform
 import requests
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 
 import wirecloud.platform
 

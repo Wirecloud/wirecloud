@@ -18,9 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from copy import deepcopy
-from six.moves.urllib.parse import urljoin
-
-import six
+from urllib.parse import urljoin
 
 from wirecloud.commons.utils.template.base import ObsoleteFormatError, TemplateFormatError, TemplateParseException
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
@@ -134,13 +132,13 @@ class TemplateParser(object):
                     elif use['type'] in ('vdef', 'inputendpoint', 'outputendpoint'):
                         variable = variables[use['variable']]
                         for field in variable:
-                            if isinstance(variable[field], six.string_types):
+                            if isinstance(variable[field], str):
                                 variable[field] = variable[field].replace('__MSG_' + index + '__', value)
                     elif use['type'] == 'upo':
                         variable = variables[use['variable']]
                         for option in variable['options']:
                             for field in option:
-                                if isinstance(option[field], six.string_types):
+                                if isinstance(option[field], str):
                                     option[field] = option[field].replace('__MSG_' + index + '__', value)
         del info['translations']
         del info['translation_index_usage']
@@ -197,7 +195,7 @@ class TemplateParser(object):
             for resource in tab_entry['resources']:
                 dependencies.add('/'.join([resource['vendor'], resource['name'], resource['version']]))
 
-        for id_, op in six.iteritems(info['wiring']['operators']):
+        for id_, op in info['wiring']['operators'].items():
             dependencies.add(op['name'])
 
         return dependencies

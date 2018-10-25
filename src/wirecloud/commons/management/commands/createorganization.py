@@ -20,7 +20,6 @@
 from __future__ import unicode_literals
 
 import locale
-import six
 
 from django.core.management.base import CommandError, BaseCommand
 from django.utils.translation import override, ugettext_lazy as _

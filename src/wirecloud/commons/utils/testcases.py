@@ -19,7 +19,7 @@
 
 import codecs
 import copy
-from six.moves.http_cookies import SimpleCookie
+from http.cookies import SimpleCookie
 from io import BytesIO
 import mimetypes
 import os
@@ -29,8 +29,8 @@ import stat
 import sys
 from tempfile import mkdtemp
 import time
-from six.moves.urllib.error import URLError, HTTPError
-from six.moves.urllib.parse import unquote, urlparse
+from urllib.error import URLError, HTTPError
+from urllib.parse import unquote, urlparse
 
 from django.apps import apps
 from django.contrib.auth.models import Group, User
@@ -41,7 +41,6 @@ from django.test.client import Client
 from django.utils import translation
 import mock
 import haystack
-from six import text_type
 
 from wirecloud.platform.localcatalogue.utils import fix_dev_version, install_resource
 from wirecloud.platform.widget import utils as showcase
@@ -224,7 +223,7 @@ class StreamContent(object):
 
     def __init__(self, content):
 
-        if isinstance(content, text_type):
+        if isinstance(content, str):
             content = content.encode('utf8')
 
         self._content = BytesIO(content)

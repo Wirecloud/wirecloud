@@ -20,7 +20,7 @@
 from __future__ import unicode_literals
 
 from django.db.models import Q
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 from haystack import indexes
 
 from wirecloud.catalogue.models import CatalogueResource, get_template_url

@@ -20,7 +20,7 @@
 from __future__ import unicode_literals
 
 import random
-from six.moves.urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse, urljoin
 
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache

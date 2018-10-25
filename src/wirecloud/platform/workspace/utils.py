@@ -33,7 +33,6 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 import markdown
-import six
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
@@ -232,7 +231,7 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
             value = iwidget.variables.get(vardef['name'], None)
             _process_variable("iwidget", svariwidget, vardef, value, forced_values, values_by_varname, user, workspace.creator)
 
-    for operator_id, operator in six.iteritems(workspace.wiringStatus.get('operators', {})):
+    for operator_id, operator in workspace.wiringStatus.get('operators', {}).items():
 
         values_by_varname["ioperator"][operator_id] = {}
         vendor, name, version = operator['name'].split('/')
@@ -475,7 +474,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
     data_ret['tabs'] = [get_tab_data(tab, workspace=workspaceDAO, cache_manager=cache_manager, user=user) for tab in tabs]
     data_ret['wiring'] = deepcopy(workspaceDAO.wiringStatus)
-    for operator_id, operator in six.iteritems(data_ret['wiring'].get('operators', {})):
+    for operator_id, operator in data_ret['wiring'].get('operators', {}).items():
         try:
             (vendor, name, version) = operator['name'].split('/')
         except:
@@ -494,7 +493,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
         operator_forced_values = forced_values['ioperator'].get(operator_id, {})
         # Build operator preference data
-        for preference_name, preference in six.iteritems(operator.get('preferences', {})):
+        for preference_name, preference in operator.get('preferences', {}).items():
             vardef = operator_info['variables']['preferences'].get(preference_name)
             value = preference.get('value', None)
 
@@ -514,7 +513,7 @@ def _get_global_workspace_data(workspaceDAO, user):
                 preference['value'] = "" if preference.get('value') is None or decrypt_value(preference.get('value')) == "" else "********"
 
         # Build operator property data
-        for property_name, property in six.iteritems(operator.get('properties', {})):
+        for property_name, property in operator.get('properties', {}).items():
             vardef = operator_info['variables']['properties'].get(property_name)
             value = property.get('value', None)
 
