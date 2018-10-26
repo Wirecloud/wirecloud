@@ -129,6 +129,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/KeywordSuggestion.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WorkspaceView.js',
     'wirecloud/platform/static/js/wirecloud/ui/SharingWindowMenu.js',
     'wirecloud/platform/static/js/wirecloud/wiring/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/EndpointTypeError.js',

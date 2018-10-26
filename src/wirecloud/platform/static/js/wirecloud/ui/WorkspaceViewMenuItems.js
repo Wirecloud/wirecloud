@@ -63,7 +63,7 @@
 
             item = new se.MenuItem(utils.gettext("Rename"), function () {
                 (new Wirecloud.ui.RenameWindowMenu(this, utils.gettext('Rename Workspace'))).show();
-            }.bind(this.workspace));
+            }.bind(this.workspace.model));
             item.addIconClass("fa fa-pencil");
             item.setDisabled(!this.workspace.model.isAllowed('rename'));
             items.push(item);
@@ -81,7 +81,7 @@
                         dialog.show();
                     }.bind(this)
                 });
-            }.bind(this.workspace));
+            }.bind(this.workspace.model));
             item.addIconClass("fa fa-archive");
             items.push(item);
 
@@ -105,7 +105,7 @@
                     })
                 );
                 dialog.setHandler(() => {
-                    return this.workspace.remove();
+                    return this.workspace.model.remove();
                 }).show();
             });
             item.addIconClass("fa fa-trash");

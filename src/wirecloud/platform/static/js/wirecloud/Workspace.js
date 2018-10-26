@@ -455,7 +455,7 @@
          */
         remove: function remove() {
             return Wirecloud.removeWorkspace(this).then(() => {
-                this.dispatchEvent('remove');
+                this.dispatchEvent('remove').unload();
             });
         },
 

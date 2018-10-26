@@ -209,6 +209,13 @@
         },
 
         /**
+         * Highlights this tab
+         */
+        highlight: function () {
+            this.tabElement.classList.add("highlight");
+        },
+
+        /**
          * @param {String} id
          *
          * @returns {*}
@@ -274,6 +281,10 @@
         showSettings: function showSettings() {
             (new Wirecloud.ui.PreferencesWindowMenu('tab', this.model.preferences)).show();
             return this;
+        },
+
+        unhighlight: function unhighlight() {
+            this.tabElement.classList.remove("highlight");
         }
 
     });
