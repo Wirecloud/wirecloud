@@ -122,7 +122,7 @@
         this.wrapperElement.classList.add("wc-workspace-tab-content");
         this.wrapperElement.setAttribute('data-id', this.id);
 
-        if (!this.workspace.model.restricted) {
+        if (this.workspace.model.isAllowed("edit")) {
             var button = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 class: 'icon-tab-menu',
@@ -198,14 +198,11 @@
                 return this.findWidget(this.model.createWidget(resource, options).id);
             }
 
-            return new Promise(function (resolve, reject) {
-
-                this.model.createWidget(resource, options).then(function (model) {
-                    resolve(this.findWidget(model.id));
-                }.bind(this), function (reason) {
-                    reject(reason);
-                });
-            }.bind(this));
+            return this.model.createWidget(resource, options).then(
+                (model) => {
+                    return Promise.resolve(this.findWidget(model.id));
+                }
+            );
         },
 
         /**
@@ -213,6 +210,7 @@
          */
         highlight: function () {
             this.tabElement.classList.add("highlight");
+            return this;
         },
 
         /**
@@ -224,54 +222,16 @@
             return this.widgetsById[id];
         },
 
-        /**
-         * @returns {Promise}
-         */
-        remove: function remove() {
-
-            if (privates.get(this).widgets.length) {
-                var dialog = new Wirecloud.ui.AlertWindowMenu(utils.gettext("The tab's widgets will also be removed. Would you like to continue?"));
-                dialog.setHandler(() => {
-                    _remove.call(this);
-                }).show();
-            } else {
-                _remove.call(this);
-            }
-
-            return this;
-        },
-
-        /**
-         * Renames this tab
-         *
-         * @param {String} name
-         *
-         * @returns {Promise}
-         */
-        rename: function rename(name) {
-            return this.model.rename(name).catch((reason) => {
-                this.logManager.log(reason);
-                return Promise.reject(reason);
-            });
-        },
-
         repaint: function repaint() {
             this.dragboard.paint();
             this.dragboard._notifyWindowResizeEvent();
             return this;
         },
 
-        /**
-         * @returns {Promise}
-         */
-        setInitial: function setInitial() {
-            return this.model.setInitial();
-        },
-
         show: function show() {
             se.Tab.prototype.show.call(this);
 
-            this.widgets.forEach(function (widget) {
+            privates.get(this).widgets.forEach(function (widget) {
                 widget.load();
             });
 
@@ -285,6 +245,7 @@
 
         unhighlight: function unhighlight() {
             this.tabElement.classList.remove("highlight");
+            return this;
         }
 
     });
@@ -303,10 +264,6 @@
         this.initialMessage.hidden = this.widgets.length > 0;
 
         return widget;
-    };
-
-    var _remove = function _remove() {
-        this.model.remove();
     };
 
     var clean_number = function clean_number(value, min, max) {
