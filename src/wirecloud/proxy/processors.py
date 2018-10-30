@@ -17,12 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import base64
 from io import BytesIO
 import re
-from six.moves.urllib.parse import unquote
+from urllib.parse import unquote
 
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _

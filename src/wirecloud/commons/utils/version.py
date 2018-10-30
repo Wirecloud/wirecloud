@@ -17,11 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import regex
-
-import six
 
 
 def cmp(a, b):
@@ -61,7 +57,7 @@ class Version(object):
 
     def __cmp__(self, other):
 
-        if isinstance(other, six.string_types):
+        if isinstance(other, str):
             other = Version(other)
 
         if not isinstance(other, Version):

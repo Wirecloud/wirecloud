@@ -29,7 +29,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
-import six
 
 from wirecloud.commons.utils import expected_conditions as WEC
 
@@ -937,7 +936,7 @@ class WiringComponentGroupTester(WebElementTester):
         return self.find_components()[-1]
 
     def find_component(self, id=None, title=None):
-        if id is not None and not isinstance(id, six.string_types):
+        if id is not None and not isinstance(id, str):
             id = "%s" % id
 
         for component in self.find_components():
@@ -1427,7 +1426,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
             form = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
 
-            for parameter_name, parameter_value in six.iteritems(parameters):
+            for parameter_name, parameter_value in parameters.items():
                 form.get_field(parameter_name).set_value(parameter_value)
 
             # Browsers only use the ETag/If-None-Match headers when the serve uses http 1.1+
@@ -1849,7 +1848,7 @@ class BaseWiringViewTester(object):
         return [c for c in self.find_connections() if c.has_class(extra_class)]
 
     def find_draggable_component(self, type, id=None, title=None):
-        if id is not None and not isinstance(id, six.string_types):
+        if id is not None and not isinstance(id, str):
             id = "%s" % id
 
         for component in self.find_draggable_components(type):

@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import codecs
 from collections import OrderedDict
 import os
@@ -29,7 +27,6 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.db.migrations.exceptions import IrreversibleError
 from django.test import TransactionTestCase
 from mock import Mock, create_autospec
-import six
 from unittest import TestCase
 
 from wirecloud.commons.utils.template import TemplateParser
@@ -541,7 +538,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
         element = self.get_rdf_element(graph, element, ns, predicate)
         if optional and element is None:
             return
-        element_content = six.text_type(element).lower() if caseinsensitive else six.text_type(element)
+        element_content = str(element).lower() if caseinsensitive else str(element)
         self.assertEqual(element_content, content)
 
     def assertRDFCount(self, graph, element, ns, predicate, count):
@@ -576,18 +573,18 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if six.text_type(name) == 'pref_with_val':
+                if str(name) == 'pref_with_val':
                     pref_with_val_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value1')
-                elif six.text_type(name) == 'readonly_pref':
+                elif str(name) == 'readonly_pref':
                     readonly_pref_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value2')
-                elif six.text_type(name) == 'hidden_pref':
+                elif str(name) == 'hidden_pref':
                     hidden_pref_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value3')
-                elif six.text_type(name) == 'empty_pref':
+                elif str(name) == 'empty_pref':
                     empty_pref_found = True
-                    content = six.text_type(self.get_rdf_element(graph, preference, self.WIRE, 'value'))
+                    content = str(self.get_rdf_element(graph, preference, self.WIRE, 'value'))
                     self.assertIn(content, ('', 'value4'))
                 else:
                     self.fail()
@@ -829,13 +826,13 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if six.text_type(name) == 'username':
+                if str(name) == 'username':
                     username_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
-                elif six.text_type(name) == 'password':
+                elif str(name) == 'password':
                     password_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
-                elif six.text_type(name) in ('boolean', 'list'):
+                elif str(name) in ('boolean', 'list'):
                     # Ignore boolean and list preferences
                     pass
                 else:
@@ -877,13 +874,13 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if six.text_type(name) == 'username':
+                if str(name) == 'username':
                     username_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
-                elif six.text_type(name) == 'password':
+                elif str(name) == 'password':
                     password_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
-                elif six.text_type(name) in ('boolean', 'list'):
+                elif str(name) in ('boolean', 'list'):
                     # Ignore boolean and list preferences
                     pass
                 else:
@@ -902,7 +899,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
 
-            name = six.text_type(self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title'))
+            name = str(self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title'))
 
             preferences = graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference'])
 
@@ -912,22 +909,22 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
 
                 for preference in preferences:
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                    if six.text_type(name) == 'username':
+                    if str(name) == 'username':
                         username_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'default')
-                    elif six.text_type(name) == 'password':
+                    elif str(name) == 'password':
                         password_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'initial text')
-                    elif six.text_type(name) == 'list':
+                    elif str(name) == 'list':
                         list_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'default')
-                    elif six.text_type(name) == 'boolean':
+                    elif str(name) == 'boolean':
                         boolean_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
@@ -941,17 +938,17 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
 
                 for preference in preferences:
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                    if six.text_type(name) == 'username':
+                    if str(name) == 'username':
                         username_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                         self.assertRDFCount(graph, preference, self.WIRE, 'value', 0)
-                    elif six.text_type(name) == 'password':
+                    elif str(name) == 'password':
                         password_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
-                    elif six.text_type(name) == 'boolean':
+                    elif str(name) == 'boolean':
                         boolean_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
@@ -1218,7 +1215,7 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase, TransactionTestCase
 
     def check_workspace_structure_with_old_mashup_wiring(self, workspace):
 
-        iwidgets = set(map(six.text_type, workspace.tab_set.all()[0].iwidget_set.values_list('pk', flat=True)))
+        iwidgets = set(map(str, workspace.tab_set.all()[0].iwidget_set.values_list('pk', flat=True)))
         self.assertEqual(workspace.wiringStatus['version'], '2.0')
 
         self.assertEqual(len(workspace.wiringStatus['connections']), 2)
@@ -1540,7 +1537,7 @@ class ParameterizedWorkspaceParseTestCase(WirecloudTestCase, TransactionTestCase
         fillWorkspaceUsingTemplate(self.workspace_with_iwidgets, template)
         wiring = self.workspace_with_iwidgets.wiringStatus
         self.assertEqual(len(wiring['visualdescription']['behaviours']), 2)
-        new_widgets = {six.text_type(widget_id): {} for widget_id in self.workspace_with_iwidgets.tab_set.all().order_by('id')[1].iwidget_set.values_list('id', flat=True)}
+        new_widgets = {str(widget_id): {} for widget_id in self.workspace_with_iwidgets.tab_set.all().order_by('id')[1].iwidget_set.values_list('id', flat=True)}
         self.assertEqual(wiring['visualdescription']['behaviours'][1]['components'], {'operator': {'1': {}}, 'widget': new_widgets})
 
     def test_fill_workspace_target_with_behaviours_template_with_behaviours(self):

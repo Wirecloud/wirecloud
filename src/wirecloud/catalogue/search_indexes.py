@@ -17,10 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from django.db.models import Q
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 from haystack import indexes
 
 from wirecloud.catalogue.models import CatalogueResource, get_template_url

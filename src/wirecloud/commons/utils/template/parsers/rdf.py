@@ -17,13 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import rdflib
 
 from django.utils.translation import ugettext as _
 from lxml import etree
-from six import text_type
 
 from wirecloud.commons.utils.mimeparser import parse_mime_type
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
@@ -67,7 +64,7 @@ class RDFTemplateParser(object):
             except:
                 if isinstance(template, bytes):
                     doc = etree.fromstring(template)
-                elif isinstance(template, text_type):
+                elif isinstance(template, str):
                     # Work around: ValueError: Unicode strings with encoding
                     # declaration are not supported.
                     doc = etree.fromstring(template.encode('utf-8'))
@@ -112,8 +109,8 @@ class RDFTemplateParser(object):
     def _add_translation_index(self, value, **kwargs):
 
         if value not in self._translation_indexes:
-            self._translation_indexes[text_type(value)] = []
-            self._translation_indexes[text_type(value)].append(kwargs)
+            self._translation_indexes[str(value)] = []
+            self._translation_indexes[str(value)].append(kwargs)
 
     def _get_translation_field(self, namespace, element, subject, translation_name, required=True, **kwargs):
 
@@ -130,11 +127,11 @@ class RDFTemplateParser(object):
                 translated = True
 
                 if field_element.language not in self._translations:
-                    self._translations[text_type(field_element.language)] = {}
+                    self._translations[str(field_element.language)] = {}
 
-                self._translations[text_type(field_element.language)][translation_name] = text_type(field_element)
+                self._translations[str(field_element.language)][translation_name] = str(field_element)
             else:
-                base_value = text_type(field_element)
+                base_value = str(field_element)
 
         if base_value is not None and translated is True:
             if 'en' not in self._translations:
@@ -164,7 +161,7 @@ class RDFTemplateParser(object):
         fields = self._graph.objects(subject, namespace[element])
         for field_element in fields:
             if not id_:
-                result = text_type(field_element)
+                result = str(field_element)
                 break
             else:
                 result = field_element
@@ -238,7 +235,7 @@ class RDFTemplateParser(object):
 
         license = self._get_field(DCTERMS, 'license', self._rootURI, required=False, default=None, id_=True)
         if license is not None:
-            self._info['licenseurl'] = text_type(license)
+            self._info['licenseurl'] = str(license)
             self._info['license'] = self._get_field(RDFS, 'label', license, required=False)
         else:
             self._info['licenseurl'] = ''
@@ -601,7 +598,7 @@ class RDFTemplateParser(object):
 
             for contents_node in sorted_contents:
                 contents_info = {
-                    'src': text_type(contents_node),
+                    'src': str(contents_node),
                 }
                 contents_info['scope'] = self._get_field(WIRE, 'contentsScope', contents_node, required=False)
                 contents_info['contenttype'] = 'text/html'
@@ -644,7 +641,7 @@ class RDFTemplateParser(object):
 
             self._info['js_files'] = []
             for js_element in sorted_js_files:
-                self._info['js_files'].append(text_type(js_element))
+                self._info['js_files'].append(str(js_element))
 
             if not len(self._info['js_files']) > 0:
                 raise TemplateParseException(_('Missing required field: Javascript files'))
@@ -686,7 +683,7 @@ class RDFTemplateParser(object):
                 'vendor': self._get_field(FOAF, 'name', vendor),
                 'name': self._get_field(RDFS, 'label', component),
                 'version': self._get_field(USDL, 'versionInfo', component),
-                'src': text_type(component)
+                'src': str(component)
             })
 
         ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: possible_int(self._get_field(WIRE, 'index', raw_tab, required=False)))

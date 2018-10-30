@@ -17,14 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import codecs
 from lxml import etree
 import os
 
 from django.utils.translation import ugettext as _
-from six import text_type
 
 from wirecloud.commons.utils.template.base import ObsoleteFormatError, parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
@@ -110,7 +107,7 @@ class ApplicationMashupTemplateParser(object):
 
         if isinstance(template, bytes):
             self._doc = etree.fromstring(template)
-        elif isinstance(template, text_type):
+        elif isinstance(template, str):
             # Work around: ValueError: Unicode strings with encoding
             # declaration are not supported.
             self._doc = etree.fromstring(template.encode('utf-8'))
@@ -156,7 +153,7 @@ class ApplicationMashupTemplateParser(object):
             return None
 
     def _add_translation_index(self, value, **kwargs):
-        index = get_trans_index(text_type(value))
+        index = get_trans_index(str(value))
         if not index:
             return
 
@@ -182,7 +179,7 @@ class ApplicationMashupTemplateParser(object):
 
         elements = self._xpath(xpath, element)
         if len(elements) == 1 and elements[0].text and len(elements[0].text.strip()) > 0:
-            return text_type(elements[0].text)
+            return str(elements[0].text)
         elif not required:
             return ''
         else:
@@ -190,9 +187,9 @@ class ApplicationMashupTemplateParser(object):
             raise TemplateParseException(msg % {'field': xpath})
 
     def _parse_basic_info(self):
-        self._info['vendor'] = text_type(self._doc.get('vendor', '').strip())
-        self._info['name'] = text_type(self._doc.get('name', '').strip())
-        self._info['version'] = text_type(self._doc.get('version', '').strip())
+        self._info['vendor'] = str(self._doc.get('vendor', '').strip())
+        self._info['name'] = str(self._doc.get('name', '').strip())
+        self._info['version'] = str(self._doc.get('version', '').strip())
 
         self._info['title'] = self._get_field(DISPLAY_NAME_XPATH, self._component_description, required=False)
         self._add_translation_index(self._info['title'], type='resource', field='title')
@@ -224,7 +221,7 @@ class ApplicationMashupTemplateParser(object):
         for requirement in self._xpath(FEATURE_XPATH, requirements_elements[0]):
             self._info['requirements'].append({
                 'type': u'feature',
-                'name': text_type(requirement.get('name').strip())
+                'name': str(requirement.get('name').strip())
             })
 
     def _parse_visualdescription_info(self, visualdescription_element):
@@ -238,8 +235,8 @@ class ApplicationMashupTemplateParser(object):
         for behaviour in self._xpath(BEHAVIOUR_XPATH, behaviours_element):
 
             behaviour_info = get_behaviour_skeleton()
-            behaviour_info['title'] = text_type(behaviour.get('title'))
-            behaviour_info['description'] = text_type(behaviour.get('description'))
+            behaviour_info['title'] = str(behaviour.get('title'))
+            behaviour_info['description'] = str(behaviour.get('description'))
 
             self._parse_wiring_component_view_info(behaviour_info, behaviour)
             self._parse_wiring_connection_view_info(behaviour_info, behaviour)
@@ -271,8 +268,8 @@ class ApplicationMashupTemplateParser(object):
         for connection in self._xpath(CONNECTION_XPATH, connections_element):
 
             connection_info = {
-                'sourcename': text_type(connection.get('sourcename')),
-                'targetname': text_type(connection.get('targetname')),
+                'sourcename': str(connection.get('sourcename')),
+                'targetname': str(connection.get('targetname')),
             }
 
             sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
@@ -311,27 +308,27 @@ class ApplicationMashupTemplateParser(object):
             wiring_element = wiring_elements[0]
 
             for slot in self._xpath(INPUT_ENDPOINT_XPATH, wiring_element):
-                self._add_translation_index(text_type(slot.get('label')), type='inputendpoint', variable=slot.get('name'))
-                self._add_translation_index(text_type(slot.get('actionlabel', '')), type='inputendpoint', variable=slot.get('name'))
-                self._add_translation_index(text_type(slot.get('description', '')), type='inputendpoint', variable=slot.get('name'))
+                self._add_translation_index(str(slot.get('label')), type='inputendpoint', variable=slot.get('name'))
+                self._add_translation_index(str(slot.get('actionlabel', '')), type='inputendpoint', variable=slot.get('name'))
+                self._add_translation_index(str(slot.get('description', '')), type='inputendpoint', variable=slot.get('name'))
                 self._info['wiring']['inputs'].append({
-                    'name': text_type(slot.get('name')),
-                    'type': text_type(slot.get('type')),
-                    'label': text_type(slot.get('label', '')),
-                    'description': text_type(slot.get('description', '')),
-                    'actionlabel': text_type(slot.get('actionlabel', '')),
-                    'friendcode': text_type(slot.get('friendcode', '')),
+                    'name': str(slot.get('name')),
+                    'type': str(slot.get('type')),
+                    'label': str(slot.get('label', '')),
+                    'description': str(slot.get('description', '')),
+                    'actionlabel': str(slot.get('actionlabel', '')),
+                    'friendcode': str(slot.get('friendcode', '')),
                 })
 
             for event in self._xpath(OUTPUT_ENDPOINT_XPATH, wiring_element):
-                self._add_translation_index(text_type(event.get('label')), type='outputendpoint', variable=event.get('name'))
-                self._add_translation_index(text_type(event.get('description', '')), type='outputendpoint', variable=event.get('name'))
+                self._add_translation_index(str(event.get('label')), type='outputendpoint', variable=event.get('name'))
+                self._add_translation_index(str(event.get('description', '')), type='outputendpoint', variable=event.get('name'))
                 self._info['wiring']['outputs'].append({
-                    'name': text_type(event.get('name')),
-                    'type': text_type(event.get('type')),
-                    'label': text_type(event.get('label', '')),
-                    'description': text_type(event.get('description', '')),
-                    'friendcode': text_type(event.get('friendcode', '')),
+                    'name': str(event.get('name')),
+                    'type': str(event.get('type')),
+                    'label': str(event.get('label', '')),
+                    'description': str(event.get('description', '')),
+                    'friendcode': str(event.get('friendcode', '')),
                 })
 
         if self._info['type'] == "mashup":
@@ -340,7 +337,7 @@ class ApplicationMashupTemplateParser(object):
             if mashup_wiring_element is None:
                 return
 
-            self._info['wiring']['version'] = text_type(mashup_wiring_element.get('version', "1.0"))
+            self._info['wiring']['version'] = str(mashup_wiring_element.get('version', "1.0"))
 
             self._parse_wiring_connection_info(mashup_wiring_element)
             self._parse_wiring_operator_info(mashup_wiring_element)
@@ -373,14 +370,14 @@ class ApplicationMashupTemplateParser(object):
             connection_info = {
                 'readonly': connection.get('readonly', 'false').lower() == 'true',
                 'source': {
-                    'type': text_type(source_element.get('type')),
-                    'endpoint': text_type(source_element.get('endpoint')),
-                    'id': text_type(source_element.get('id')),
+                    'type': str(source_element.get('type')),
+                    'endpoint': str(source_element.get('endpoint')),
+                    'id': str(source_element.get('id')),
                 },
                 'target': {
-                    'type': text_type(target_element.get('type')),
-                    'endpoint': text_type(target_element.get('endpoint')),
-                    'id': text_type(target_element.get('id')),
+                    'type': str(target_element.get('type')),
+                    'endpoint': str(target_element.get('endpoint')),
+                    'id': str(target_element.get('id')),
                 }
             }
 
@@ -394,17 +391,17 @@ class ApplicationMashupTemplateParser(object):
 
         for operator in self._xpath(IOPERATOR_XPATH, wiring_element):
             operator_info = {
-                'id': text_type(operator.get('id')),
-                'name': text_type('/'.join((operator.get('vendor'), operator.get('name'), operator.get('version')))),
+                'id': str(operator.get('id')),
+                'name': str('/'.join((operator.get('vendor'), operator.get('name'), operator.get('version')))),
                 'preferences': {},
             }
 
             for pref in self._xpath(PREFERENCE_VALUE_XPATH, operator):
                 pref_value = pref.get('value')
-                operator_info['preferences'][text_type(pref.get('name'))] = {
+                operator_info['preferences'][str(pref.get('name'))] = {
                     'readonly': pref.get('readonly', 'false').lower() == 'true',
                     'hidden': pref.get('hidden', 'false').lower() == 'true',
-                    'value': text_type(pref_value) if pref_value is not None else None,
+                    'value': str(pref_value) if pref_value is not None else None,
                 }
 
             self._info['wiring']['operators'][operator_info['id']] = operator_info
@@ -417,9 +414,9 @@ class ApplicationMashupTemplateParser(object):
 
         xhtml_element = self._xpath(CODE_XPATH, self._doc)[0]
         self._info['contents'] = {
-            'src': text_type(xhtml_element.get('src')),
-            'contenttype': text_type(xhtml_element.get('contenttype', 'text/html')),
-            'charset': text_type(xhtml_element.get('charset', 'utf-8')),
+            'src': str(xhtml_element.get('src')),
+            'contenttype': str(xhtml_element.get('contenttype', 'text/html')),
+            'charset': str(xhtml_element.get('charset', 'utf-8')),
             'useplatformstyle': xhtml_element.get('useplatformstyle', 'false').lower() == 'true',
             'cacheable': xhtml_element.get('cacheable', 'true').lower() == 'true'
         }
@@ -445,7 +442,7 @@ class ApplicationMashupTemplateParser(object):
 
         self._info['js_files'] = []
         for script in self._xpath(SCRIPT_XPATH, self._doc):
-            self._info['js_files'].append(text_type(script.get('src')))
+            self._info['js_files'].append(str(script.get('src')))
 
     def _parse_component_preferences(self):
 
@@ -454,12 +451,12 @@ class ApplicationMashupTemplateParser(object):
             self._add_translation_index(preference.get('label'), type='vdef', variable=preference.get('name'), field='label')
             self._add_translation_index(preference.get('description', ''), type='vdef', variable=preference.get('name'), field='description')
             preference_info = {
-                'name': text_type(preference.get('name')),
-                'type': text_type(preference.get('type')),
-                'label': text_type(preference.get('label', '')),
-                'description': text_type(preference.get('description', '')),
+                'name': str(preference.get('name')),
+                'type': str(preference.get('type')),
+                'label': str(preference.get('label', '')),
+                'description': str(preference.get('description', '')),
                 'readonly': preference.get('readonly', 'false').lower() == 'true',
-                'default': text_type(preference.get('default', '')),
+                'default': str(preference.get('default', '')),
                 'value': preference.get('value'),
                 'secure': preference.get('secure', 'false').lower() == 'true',
                 'multiuser': False,
@@ -472,7 +469,7 @@ class ApplicationMashupTemplateParser(object):
                     option_label = option.get('label', option.get('name'))
                     self._add_translation_index(option_label, type='upo', variable=preference.get('name'), option=option_index)
                     preference_info['options'].append({
-                        'label': text_type(option_label),
+                        'label': str(option_label),
                         'value': option.get('value'),
                     })
 
@@ -485,11 +482,11 @@ class ApplicationMashupTemplateParser(object):
             self._add_translation_index(prop.get('label'), type='vdef', variable=prop.get('name'))
             self._add_translation_index(prop.get('description', ''), type='vdef', variable=prop.get('name'))
             self._info['properties'].append({
-                'name': text_type(prop.get('name')),
-                'type': text_type(prop.get('type')),
-                'label': text_type(prop.get('label', '')),
-                'description': text_type(prop.get('description', '')),
-                'default': text_type(prop.get('default', '')),
+                'name': str(prop.get('name')),
+                'type': str(prop.get('type')),
+                'label': str(prop.get('label', '')),
+                'description': str(prop.get('description', '')),
+                'default': str(prop.get('default', '')),
                 'secure': prop.get('secure', 'false').lower() == 'true',
                 'multiuser': prop.get('multiuser', 'false').lower() == 'true'
             })
@@ -499,7 +496,7 @@ class ApplicationMashupTemplateParser(object):
 
         for preference in self._xpath(PREFERENCE_VALUE_XPATH, element):
             pref_value = preference.get('value')
-            values[text_type(preference.get('name'))] = text_type(pref_value) if pref_value is not None else None
+            values[str(preference.get('name'))] = str(pref_value) if pref_value is not None else None
 
         return values
 
@@ -512,12 +509,12 @@ class ApplicationMashupTemplateParser(object):
         self._info['params'] = []
         for param in self._xpath(PARAM_XPATH, self._doc):
             self._info['params'].append({
-                'name': text_type(param.get('name')),
-                'type': text_type(param.get('type')),
-                'label': text_type(param.get('label', '')),
-                'description': text_type(param.get('description', '')),
+                'name': str(param.get('name')),
+                'type': str(param.get('type')),
+                'label': str(param.get('label', '')),
+                'description': str(param.get('description', '')),
                 'readonly': param.get('readonly', 'false').lower() == 'true',
-                'default': text_type(param.get('default', '')),
+                'default': str(param.get('default', '')),
                 'value': param.get('value'),
                 'required': param.get('required', 'true').lower() == 'true',
             })
@@ -525,17 +522,17 @@ class ApplicationMashupTemplateParser(object):
         self._info['embedded'] = []
         for component in self._xpath(EMBEDDEDRESOURCE_XPATH, self._doc):
             self._info['embedded'].append({
-                'vendor': text_type(component.get('vendor')),
-                'name': text_type(component.get('name')),
-                'version': text_type(component.get('version')),
-                'src': text_type(component.get('src'))
+                'vendor': str(component.get('vendor')),
+                'name': str(component.get('name')),
+                'version': str(component.get('version')),
+                'src': str(component.get('src'))
             })
 
         tabs = []
         for tab in self._xpath(TAB_XPATH, workspace_structure):
             tab_info = {
-                'name': text_type(tab.get('name')),
-                'title': text_type(tab.get('title', '')),
+                'name': str(tab.get('name')),
+                'title': str(tab.get('title', '')),
                 'preferences': self._parse_preference_values(tab),
                 'resources': [],
             }
@@ -545,40 +542,40 @@ class ApplicationMashupTemplateParser(object):
                 rendering = self.get_xpath(RENDERING_XPATH, widget)
 
                 widget_info = {
-                    'id': text_type(widget.get('id')),
-                    'name': text_type(widget.get('name')),
-                    'vendor': text_type(widget.get('vendor')),
-                    'version': text_type(widget.get('version')),
-                    'title': text_type(widget.get('title')),
+                    'id': str(widget.get('id')),
+                    'name': str(widget.get('name')),
+                    'vendor': str(widget.get('vendor')),
+                    'version': str(widget.get('version')),
+                    'title': str(widget.get('title')),
                     'readonly': widget.get('readonly', '').lower() == 'true',
                     'properties': {},
                     'preferences': {},
                     'position': {
-                        'x': text_type(position.get('x')),
-                        'y': text_type(position.get('y')),
-                        'z': text_type(position.get('z')),
+                        'x': str(position.get('x')),
+                        'y': str(position.get('y')),
+                        'z': str(position.get('z')),
                     },
                     'rendering': {
                         'fulldragboard': rendering.get('fulldragboard', 'false').lower() == 'true',
                         'minimized': rendering.get('minimized', 'false').lower() == 'true',
-                        'width': text_type(rendering.get('width')),
-                        'height': text_type(rendering.get('height')),
-                        'layout': text_type(rendering.get('layout')),
+                        'width': str(rendering.get('width')),
+                        'height': str(rendering.get('height')),
+                        'layout': str(rendering.get('layout')),
                     },
                 }
 
                 for prop in self._xpath(PROPERTIES_XPATH, widget):
                     prop_value = prop.get('value')
-                    widget_info['properties'][text_type(prop.get('name'))] = {
+                    widget_info['properties'][str(prop.get('name'))] = {
                         'readonly': prop.get('readonly', 'false').lower() == 'true',
-                        'value': text_type(prop_value) if prop_value is not None else None,
+                        'value': str(prop_value) if prop_value is not None else None,
                     }
                 for pref in self._xpath(PREFERENCE_VALUE_XPATH, widget):
                     pref_value = pref.get('value')
-                    widget_info['preferences'][text_type(pref.get('name'))] = {
+                    widget_info['preferences'][str(pref.get('name'))] = {
                         'readonly': pref.get('readonly', 'false').lower() == 'true',
                         'hidden': pref.get('hidden', 'false').lower() == 'true',
-                        'value': text_type(pref_value) if pref_value is not None else None,
+                        'value': str(pref_value) if pref_value is not None else None,
                     }
 
                 tab_info['resources'].append(widget_info)
@@ -603,7 +600,7 @@ class ApplicationMashupTemplateParser(object):
         extra_translations = set()
 
         translations = translations_elements[0]
-        self._info['default_lang'] = text_type(translations.get('default'))
+        self._info['default_lang'] = str(translations.get('default'))
 
         for translation in self._xpath(TRANSLATION_XPATH, translations):
             current_catalogue = {}
@@ -612,7 +609,7 @@ class ApplicationMashupTemplateParser(object):
                 if msg.get('name') not in self._translation_indexes:
                     extra_translations.add(msg.get('name'))
 
-                current_catalogue[msg.get('name')] = text_type(msg.text)
+                current_catalogue[msg.get('name')] = str(msg.text)
 
             self._info['translations'][translation.get('lang')] = current_catalogue
 

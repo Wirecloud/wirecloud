@@ -17,11 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
-import six
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.db import save_alternative
@@ -112,29 +109,29 @@ def is_valid_connection(connection, id_mapping):
 def _remap_component_ids(id_mapping, components_description, isGlobal=False):
 
     operators = {}
-    for key, operator in six.iteritems(components_description['operator']):
+    for key, operator in components_description['operator'].items():
         if key in id_mapping['operator']:
-            operators[six.text_type(id_mapping['operator'][key]['id'])] = operator
+            operators[str(id_mapping['operator'][key]['id'])] = operator
     components_description['operator'] = operators
 
     widgets = {}
-    for key, widget in six.iteritems(components_description['widget']):
+    for key, widget in components_description['widget'].items():
         if key in id_mapping['widget']:
             if isGlobal:
                 widget['name'] = id_mapping['widget'][key]['name']
-            widgets[six.text_type(id_mapping['widget'][key]['id'])] = widget
+            widgets[str(id_mapping['widget'][key]['id'])] = widget
     components_description['widget'] = widgets
 
 
 def _create_new_behaviour(mashup_description, title, description):
 
     operators = {}
-    for key, operator in six.iteritems(mashup_description['components']['operator']):
-        operators[six.text_type(key)] = {}
+    for key, operator in mashup_description['components']['operator'].items():
+        operators[str(key)] = {}
 
     widgets = {}
-    for key, widget in six.iteritems(mashup_description['components']['widget']):
-        widgets[six.text_type(key)] = {}
+    for key, widget in mashup_description['components']['widget'].items():
+        widgets[str(key)] = {}
 
     connections = []
     for connection in mashup_description['connections']:
@@ -288,7 +285,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             iwidget.save()
 
             if len(iwidget_forced_values) > 0:
-                new_forced_values['iwidget'][six.text_type(iwidget.id)] = iwidget_forced_values
+                new_forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
 
             id_mapping['widget'][resource.get('id')] = {
                 'id': iwidget.id,
@@ -306,7 +303,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             max_id = int(id_)
 
     # Process operators info
-    for operator_id, operator in six.iteritems(mashup_description['wiring']['operators']):
+    for operator_id, operator in mashup_description['wiring']['operators'].items():
         max_id += 1
         new_id = "%s" % max_id
         id_mapping['operator'][operator_id] = {
@@ -320,7 +317,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         }
 
         ioperator_forced_values = {}
-        for pref_id, pref in six.iteritems(operator['preferences']):
+        for pref_id, pref in operator['preferences'].items():
             if pref.get('readonly', False):
                 ioperator_forced_values[pref_id] = {'value': pref.get('value'), 'hidden': pref.get('hidden', False)}
 

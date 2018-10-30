@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import errno
 import unittest
 
@@ -26,7 +24,6 @@ from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.test.utils import override_settings
 from mock import MagicMock, Mock, patch
-import six
 
 from wirecloud.platform.themes import ActiveThemeFinder, CORE_THEMES, DEFAULT_THEME, get_active_theme_name, get_available_themes as real_get_available_themes, get_theme_chain, get_theme_metadata, TemplateLoader
 
@@ -96,22 +93,22 @@ class ThemesTestCase(unittest.TestCase):
         self.assertIsNone(metadata.parent)
 
     def test_get_theme_metadata_syntax_error(self):
-        six.assertRaisesRegex(self, ValueError, "Error loading syntaxerrortheme theme: ", get_theme_metadata, 'syntaxerrortheme')
+        self.assertRaisesRegex(ValueError, "Error loading syntaxerrortheme theme: ", get_theme_metadata, 'syntaxerrortheme')
 
     def test_get_theme_metadata_name_error(self):
-        six.assertRaisesRegex(self, ValueError, "Error loading nameerrortheme theme: ", get_theme_metadata, 'nameerrortheme')
+        self.assertRaisesRegex(ValueError, "Error loading nameerrortheme theme: ", get_theme_metadata, 'nameerrortheme')
 
     def test_get_theme_metadata_import_error(self):
-        six.assertRaisesRegex(self, ValueError, "No module named wirecloud.missing$", get_theme_metadata, 'importerrortheme')
+        self.assertRaisesRegex(ValueError, "No module named wirecloud.missing$", get_theme_metadata, 'importerrortheme')
 
     def test_get_theme_metadata_missing_python27(self):
-        six.assertRaisesRegex(self, ValueError, "No module named missingmodule.themepython27$", get_theme_metadata, 'missingmodule.themepython27')
+        self.assertRaisesRegex(ValueError, "No module named missingmodule.themepython27$", get_theme_metadata, 'missingmodule.themepython27')
 
     def test_get_theme_metadata_missing_pypy(self):
-        six.assertRaisesRegex(self, ValueError, "No module named themepypy$", get_theme_metadata, 'missingmodule.themepypy')
+        self.assertRaisesRegex(ValueError, "No module named themepypy$", get_theme_metadata, 'missingmodule.themepypy')
 
     def test_get_theme_metadata_missing(self):
-        six.assertRaisesRegex(self, ValueError, "No module named 'missingmodule'$", get_theme_metadata, 'missingmodule.theme')
+        self.assertRaisesRegex(ValueError, "No module named 'missingmodule'$", get_theme_metadata, 'missingmodule.theme')
 
     @patch('wirecloud.platform.themes.pkg_resources')
     @override_settings(THEME_ACTIVE=DEFAULT_THEME)

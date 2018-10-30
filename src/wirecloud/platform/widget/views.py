@@ -17,12 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import errno
 import time
 import os
-from six.moves.urllib.request import url2pathname
+from urllib.request import url2pathname
 
 from django.core.cache import cache
 from django.core.urlresolvers import reverse

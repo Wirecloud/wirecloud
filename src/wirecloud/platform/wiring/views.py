@@ -25,7 +25,6 @@ from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-import six
 from copy import deepcopy
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -72,7 +71,7 @@ class WiringEntry(Resource):
         if not self.checkSameWiring(new_wiring_status, old_wiring_status):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
-        for operator_id, operator in six.iteritems(new_wiring_status['operators']):
+        for operator_id, operator in new_wiring_status['operators'].items():
             old_operator = old_wiring_status['operators'][operator_id]
 
             vendor, name, version = operator["name"].split("/")
@@ -161,7 +160,7 @@ class WiringEntry(Resource):
                 return build_error_response(request, 403, _('You are not allowed to remove or update read only connections'))
 
         # Check operator preferences and properties
-        for operator_id, operator in six.iteritems(new_wiring_status['operators']):
+        for operator_id, operator in new_wiring_status['operators'].items():
             old_operator = None
             if operator_id in old_wiring_status['operators']:
                 old_operator = old_wiring_status['operators'][operator_id]
@@ -426,10 +425,10 @@ class OperatorVariablesEntry(Resource):
             "properties": {},
         }
 
-        for preference_name, preference in six.iteritems(operator.get('preferences', {})):
+        for preference_name, preference in operator.get('preferences', {}).items():
             data["preferences"][preference_name] = cache_manager.get_variable_data("ioperator", operator_id, preference_name)
 
-        for property_name, prop in six.iteritems(operator.get('properties', {})):
+        for property_name, prop in operator.get('properties', {}).items():
             data["properties"][property_name] = cache_manager.get_variable_data("ioperator", operator_id, property_name)
 
         return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')

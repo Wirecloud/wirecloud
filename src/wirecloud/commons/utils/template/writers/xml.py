@@ -17,11 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext as _
 from lxml import etree
-import six
 
 from wirecloud.commons.utils.template.base import stringify_contact_info
 
@@ -34,7 +31,7 @@ def processOption(options, field, required=False, type='string'):
             return None
     else:
         if type == 'string':
-            return six.text_type(options[field])
+            return str(options[field])
         elif type == 'boolean':
             return 'true' if options[field] else 'false'
         elif type == 'people':
@@ -75,7 +72,7 @@ def addElements(options, element, attrs, **other_options):
 
 
 def addPreferenceValues(resource, preferences):
-    for pref_name, pref in six.iteritems(preferences):
+    for pref_name, pref in preferences.items():
         element = etree.SubElement(resource, 'preferencevalue', name=pref_name)
         addAttribute(pref, element, 'value', type='string', default=None, required=False)
         addAttributes(pref, element, ('readonly', 'hidden'), default='false', type='boolean')
@@ -115,7 +112,7 @@ def write_mashup_tree(doc, resources, options):
         if tabTitle is not None and tabTitle.strip() != "":
             tabElement.set('title', tabTitle.strip())
 
-        for preference_name, preference_value in six.iteritems(tab['preferences']):
+        for preference_name, preference_value in tab['preferences'].items():
             etree.SubElement(tabElement, 'preferencevalue', name=preference_name, value=preference_value)
 
         for iwidget in tab['resources']:
@@ -131,7 +128,7 @@ def write_mashup_tree(doc, resources, options):
 
             addPreferenceValues(resource, iwidget['preferences'])
 
-            for prop_name, prop in six.iteritems(iwidget.get('properties', {})):
+            for prop_name, prop in iwidget.get('properties', {}).items():
                 element = etree.SubElement(resource, 'variablevalue', name=prop_name)
 
                 if prop.get('value', None) is not None:
@@ -147,7 +144,7 @@ def write_mashup_wiring_tree(mashup, options):
 
     wiring.set('version', options['wiring']['version'])
 
-    for op_id, operator in six.iteritems(options['wiring']['operators']):
+    for op_id, operator in options['wiring']['operators'].items():
         (vendor, name, version) = operator['name'].split('/')
         operator_element = etree.SubElement(wiring, 'operator', id=op_id, vendor=vendor, name=name, version=version)
         addPreferenceValues(operator_element, operator['preferences'])
@@ -196,7 +193,7 @@ def write_mashup_wiring_connections_tree(target, connections):
 
 def write_mashup_wiring_components_tree(target, type, components):
 
-    for c_id, component in six.iteritems(components[type]):
+    for c_id, component in components[type].items():
         componentview = etree.SubElement(target, 'component', id=str(c_id), type=type)
 
         if component.get('collapsed', False):
@@ -240,7 +237,7 @@ def build_xml_document(options):
 
     if options['type'] == 'mashup':
         resources = etree.SubElement(template, 'structure')
-        for pref_name, pref_value in six.iteritems(options['preferences']):
+        for pref_name, pref_value in options['preferences'].items():
             etree.SubElement(resources, 'preferencevalue', name=pref_name, value=pref_value)
     else:
 
@@ -310,10 +307,10 @@ def build_xml_document(options):
 
         translations_element = etree.SubElement(template, 'translations', default=options['default_lang'])
 
-        for lang, catalogue in six.iteritems(options['translations']):
+        for lang, catalogue in options['translations'].items():
             catalogue_element = etree.SubElement(translations_element, 'translation', lang=lang)
 
-            for msg_name, msg in six.iteritems(catalogue):
+            for msg_name, msg in catalogue.items():
                 msg_element = etree.SubElement(catalogue_element, 'msg', name=msg_name)
                 msg_element.text = msg
 

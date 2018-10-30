@@ -17,13 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import re
 
 from lxml import etree
 from lxml.html import fragment_fromstring, XHTMLParser
-from six.moves.urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse
 
 from wirecloud.commons.utils.version import Version
 

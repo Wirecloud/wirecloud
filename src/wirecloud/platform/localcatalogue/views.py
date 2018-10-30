@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import errno
 from io import BytesIO
 import json
@@ -29,7 +27,6 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.utils.translation import ugettext as _
-import six
 
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
@@ -186,7 +183,7 @@ class ResourceCollection(Resource):
         except (InvalidContents, UnsupportedFeature) as e:
 
             details = e.details if hasattr(e, 'details') else None
-            return build_error_response(request, 400, e, details=six.text_type(details))
+            return build_error_response(request, 400, e, details=str(details))
 
         if install_embedded_resources:
 
@@ -292,7 +289,7 @@ class WorkspaceResourceCollection(Resource):
                 if iwidget.widget is not None and iwidget.widget.resource.is_available_for(workspace.creator):
                     resources.add(iwidget.widget.resource)
 
-        for operator_id, operator in six.iteritems(workspace.wiringStatus['operators']):
+        for operator_id, operator in workspace.wiringStatus['operators'].items():
             vendor, name, version = operator['name'].split('/')
             try:
                 resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)

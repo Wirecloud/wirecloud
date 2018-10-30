@@ -17,16 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
+from http.cookies import SimpleCookie
 import logging
 import re
 import requests
-import six
-from six.moves.http_cookies import SimpleCookie
-from six.moves.urllib.parse import unquote, urlparse
 import socket
 import sys
+from urllib.parse import unquote, urlparse
 
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
@@ -204,11 +201,11 @@ class Proxy():
         try:
             res = requests.request(request_data['method'], request_data['url'], headers=request_data['headers'], data=request_data['data'], stream=True, verify=getattr(settings, 'WIRECLOUD_HTTPS_VERIFY', True))
         except requests.exceptions.Timeout as e:
-            return build_error_response(request, 504, _('Gateway Timeout'), details=six.text_type(e))
+            return build_error_response(request, 504, _('Gateway Timeout'), details=str(e))
         except requests.exceptions.SSLError as e:
-            return build_error_response(request, 502, _('SSL Error'), details=six.text_type(e))
+            return build_error_response(request, 502, _('SSL Error'), details=str(e))
         except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError, requests.exceptions.TooManyRedirects) as e:
-            return build_error_response(request, 504, _('Connection Error'), details=six.text_type(e))
+            return build_error_response(request, 504, _('Connection Error'), details=str(e))
 
         # Build a Django response
         response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False), status=res.status_code, reason=res.reason)

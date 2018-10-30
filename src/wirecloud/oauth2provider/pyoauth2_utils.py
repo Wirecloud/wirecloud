@@ -17,16 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import string
 import random
-from six.moves import range
-from six.moves.urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
-import six
-
-UNICODE_ASCII_CHARACTERS = (six.text_type(string.ascii_letters) + six.text_type(string.digits))
+UNICODE_ASCII_CHARACTERS = (str(string.ascii_letters) + str(string.digits))
 
 
 def random_ascii_string(length):
@@ -48,7 +43,7 @@ def build_url(base, additional_params=None):
     query_params.update(parse_qsl(url.query, True))
     if additional_params is not None:
         query_params.update(additional_params)
-        for k, v in six.iteritems(additional_params):
+        for k, v in additional_params.items():
             if v is None:
                 query_params.pop(k)
 

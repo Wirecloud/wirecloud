@@ -17,10 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import regex
-from six import text_type
 
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -42,7 +39,7 @@ class TemplateParseException(Exception):
         self.msg = msg
 
     def __str__(self):
-        return text_type(self.msg)
+        return str(self.msg)
 
 
 class TemplateFormatError(TemplateParseException):
@@ -62,7 +59,7 @@ class UnsupportedFeature(Exception):
         self.msg = msg
 
     def __str__(self):
-        return text_type(self.msg)
+        return str(self.msg)
 
 
 def is_valid_name(name):
@@ -100,11 +97,11 @@ def parse_contacts_info(info):
 
     contacts = []
 
-    if isinstance(info, text_type):
+    if isinstance(info, str):
         info = regex.split(SEPARATOR_RE, info)
 
     for contact in info:
-        if isinstance(contact, text_type):
+        if isinstance(contact, str):
             contact = parse_contact_info(contact)
 
         if contact.get('name', '') != '':

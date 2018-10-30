@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from importlib import import_module
 import inspect
 import logging
@@ -28,7 +26,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import get_ns_resolver, get_resolver, get_script_prefix, NoReverseMatch
 from django.utils.encoding import force_text
 from django.utils.regex_helper import normalize
-from six import string_types, text_type
 
 from wirecloud.commons.utils.encoding import LazyEncoderXHTML
 
@@ -63,7 +60,7 @@ def find_wirecloud_plugins():
         try:
             mod = import_module(plugins_module)
         except (NameError, ImportError, SyntaxError) as exc:
-            error_message = text_type(exc)
+            error_message = str(exc)
             if error_message not in ("No module named plugins", "No module named " + plugins_module, "No module named '" + plugins_module + "'"):
                 logger.error("Error importing %(module)s (%(error_message)s). Any WireCloud plugin available through the %(app)s app will be ignored" % {"module": plugins_module, "error_message": error_message, "app": app})
             continue
@@ -105,7 +102,7 @@ def get_plugins():
         add_plugin('wirecloud.platform.WirecloudCorePlugin', WirecloudCorePlugin())
 
         for entry in modules:
-            if isinstance(entry, string_types):
+            if isinstance(entry, str):
                 i = entry.rfind('.')
                 module, attr = entry[:i], entry[i + 1:]
                 try:

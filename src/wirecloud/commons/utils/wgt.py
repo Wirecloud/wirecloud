@@ -21,11 +21,10 @@ from io import BytesIO
 import os
 import re
 from shutil import rmtree
-from six.moves.urllib.request import pathname2url
+from urllib.request import pathname2url
 import zipfile
 
 from django.utils.encoding import python_2_unicode_compatible
-import six
 
 from wirecloud.commons.utils.template import TemplateParser
 
@@ -145,7 +144,7 @@ class WgtFile(object):
     def update_config(self, contents):
 
         # Encode contents if needed
-        if isinstance(contents, six.text_type):
+        if isinstance(contents, str):
             contents = contents.encode('utf-8')
 
         new_fp = BytesIO()

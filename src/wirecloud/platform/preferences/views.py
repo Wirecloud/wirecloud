@@ -17,10 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import json
-import six
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -77,7 +74,7 @@ def make_tab_preferences_cache_key(tab):
 
 def serialize_default_value(value):
 
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         return value
     else:
         return json.dumps(value, ensure_ascii=False)

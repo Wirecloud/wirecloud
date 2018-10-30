@@ -34,8 +34,7 @@ Contents:
                           from a list of candidates.
 """
 
-import six
-from six.moves import reduce
+from functools import reduce
 
 
 class InvalidMimeType(Exception):
@@ -124,7 +123,7 @@ def fitness_and_quality_parsed(mime_type, parsed_ranges):
         if type_match and subtype_match:
             param_matches = reduce(
                 lambda x, y: x + y,
-                [1 for (key, value) in six.iteritems(target_params) if key != 'q' and key in params and value == params[key]],
+                [1 for (key, value) in target_params.items() if key != 'q' and key in params and value == params[key]],
                 0
             )
             fitness = (type == target_type) and 100 or 0

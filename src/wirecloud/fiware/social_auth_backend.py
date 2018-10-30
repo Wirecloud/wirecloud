@@ -32,11 +32,9 @@ By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
 
-from __future__ import unicode_literals
-
 import base64
 import time
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 from django.conf import settings
 from social_core.backends.oauth import BaseOAuth2

@@ -17,13 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
-
 import json
 
 from django.utils.translation import ugettext as _
-import six
-from six import text_type
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
@@ -35,7 +31,7 @@ class JSONTemplateParser(object):
     def __init__(self, template, base=None):
 
         self.base = base
-        if isinstance(template, text_type):
+        if isinstance(template, str):
             self._info = json.loads(template)
         elif isinstance(template, bytes):
             self._info = json.loads(template.decode('utf8'))
@@ -80,7 +76,7 @@ class JSONTemplateParser(object):
                     raise TemplateParseException('Missing required field: %s' % field)
 
                 place[field] = default
-            elif not isinstance(place[field], text_type):
+            elif not isinstance(place[field], str):
                 if null is True and place[field] is None:
                     continue
                 raise TemplateParseException('A string value was expected for the %s field' % field)
@@ -124,7 +120,7 @@ class JSONTemplateParser(object):
                     raise TemplateParseException('Missing required field: %s' % field)
 
                 place[field] = []
-            elif isinstance(place[field], (text_type, list, tuple)):
+            elif isinstance(place[field], (str, list, tuple)):
                 place[field] = parse_contacts_info(place[field])
             else:
                 raise TemplateParseException('%s field must be a list or string' % field)
@@ -155,7 +151,7 @@ class JSONTemplateParser(object):
 
     def _check_component_info(self, data, component_type):
 
-        for component_id, component in six.iteritems(data['components'][component_type]):
+        for component_id, component in data['components'][component_type].items():
             self._check_boolean_fields('collapsed', place=component, default=False)
             if 'endpoints' not in component:
                 component['endpoints'] = {}
@@ -176,7 +172,7 @@ class JSONTemplateParser(object):
             self._check_connection_handles(connection)
 
     def _add_translation_index(self, value, **kwargs):
-        index = get_trans_index(text_type(value))
+        index = get_trans_index(str(value))
         if not index:
             return
 

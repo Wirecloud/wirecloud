@@ -17,10 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from django.db.models import Q
-import six
 
 from wirecloud.platform.models import Market
 from wirecloud.platform.plugins import get_plugins
@@ -81,6 +78,6 @@ def get_market_managers(user):
             user = market.user.username
 
         if market.options['type'] in manager_classes:
-            managers[six.text_type(market)] = manager_classes[market.options['type']](user, market.name, market.options)
+            managers[str(market)] = manager_classes[market.options['type']](user, market.name, market.options)
 
     return managers

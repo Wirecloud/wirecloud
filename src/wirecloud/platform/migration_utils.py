@@ -17,11 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from django.db.migrations.exceptions import IrreversibleError
-
-import six
 
 
 def workspace_and_tab_title_data_forwards(apps, schema_editor):
@@ -71,14 +67,14 @@ def multiuser_variables_structure_forwards(apps, schema_editor):
         # Update operators
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
-            wiring["operators"][op]["preferences"] = {k: mutate_forwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op].get("preferences", {}))}
+            wiring["operators"][op]["preferences"] = {k: mutate_forwards_operator(v, owner) for k, v in wiring["operators"][op].get("preferences", {}).items()}
             wiring["operators"][op]["properties"] = {}  # Create properties structure
         workspace.save()
 
         # Update widgets
         for tab in workspace.tab_set.all():
             for widget in tab.iwidget_set.all():
-                widget.variables = {k: mutate_forwards_widget(v, owner) for k, v in six.iteritems(widget.variables)}
+                widget.variables = {k: mutate_forwards_widget(v, owner) for k, v in widget.variables.items()}
                 widget.save()
 
 
@@ -100,7 +96,7 @@ def multiuser_variables_structure_backwards(apps, schema_editor):
         # Update operators
         wiring = workspace.wiringStatus
         for op in wiring["operators"]:
-            wiring["operators"][op]["preferences"] = {k: mutate_backwards_operator(v, owner) for k, v in six.iteritems(wiring["operators"][op]["preferences"])}
+            wiring["operators"][op]["preferences"] = {k: mutate_backwards_operator(v, owner) for k, v in wiring["operators"][op]["preferences"].items()}
             # Remove operator properties
             if 'properties' in wiring["operators"][op]:
                 del wiring["operators"][op]['properties']
@@ -109,5 +105,5 @@ def multiuser_variables_structure_backwards(apps, schema_editor):
         # Update widgets
         for tab in workspace.tab_set.all():
             for widget in tab.iwidget_set.all():
-                widget.variables = {k: mutate_backwards_widget(v, owner) for k, v in six.iteritems(widget.variables)}
+                widget.variables = {k: mutate_backwards_widget(v, owner) for k, v in widget.variables.items()}
                 widget.save()

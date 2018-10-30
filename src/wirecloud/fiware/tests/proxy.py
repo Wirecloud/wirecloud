@@ -17,12 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import json
-import six
-from six.moves.urllib.parse import parse_qsl
 import time
+from urllib.parse import parse_qsl
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -129,7 +126,7 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
 
         if use_deprecated_code:
             request.META['HTTP_X_FI_WARE_OAUTH_TOKEN'] = 'true'
-            extra_headers = {self.deprecation_mapping[key]: value for key, value in six.iteritems(extra_headers)}
+            extra_headers = {self.deprecation_mapping[key]: value for key, value in extra_headers.items()}
         else:
             request.META['HTTP_FIWARE_OAUTH_TOKEN'] = 'true'
 
