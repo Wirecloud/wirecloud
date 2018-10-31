@@ -19,7 +19,6 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import io
-import os
 import sys
 
 from django.core.management import call_command
@@ -30,27 +29,6 @@ from mock import patch
 
 # Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
 __test__ = False
-
-
-class ResetSearchIndexesCommandTestCase(TestCase):
-
-    tags = ('wirecloud-commands', 'wirecloud-command-resetsearchindexes', 'wirecloud-noselenium')
-
-    @patch('wirecloud.commons.management.commands.resetsearchindexes.call_command')
-    def test_resetsearchindexes_command_basic_usage(self, call_command_mock):
-
-        try:
-            call_command('resetsearchindexes')
-        except SystemExit:
-            raise CommandError('')
-
-        call_command_mock.assert_called_with("rebuild_index", interactive=True)
-
-    @patch('wirecloud.commons.management.commands.resetsearchindexes.call_command')
-    def test_resetsearchindexes_command_indexes_argument(self, call_command_mock):
-
-        with self.assertRaises(CommandError):
-            call_command('resetsearchindexes', '--indexes', 'users')
 
 
 @patch('wirecloud.commons.management.commands.createorganization.locale.getdefaultlocale', return_value=("en_US",))
