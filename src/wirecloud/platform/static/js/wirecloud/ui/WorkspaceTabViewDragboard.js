@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +23,7 @@
 /* globals CSSPrimitiveValue, Wirecloud */
 
 
-(function (ns) {
+(function (ns, utils) {
 
     "use strict";
 
@@ -182,39 +183,38 @@
     };
 
     WorkspaceTabViewDragboard.prototype.update = function update(ids) {
-        return new Promise(function (resolve, reject) {
-            var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-                workspace_id: this.tab.workspace.model.id,
-                tab_id: this.tab.model.id
-            });
+        var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+            workspace_id: this.tab.workspace.model.id,
+            tab_id: this.tab.model.id
+        });
 
-            ids = ids || Object.keys(this.tab.widgetsById);
+        ids = ids || Object.keys(this.tab.widgetsById);
 
-            var content = this.widgets.filter(function (widget) {
-                return !widget.model.volatile && ids.indexOf(widget.id) !== -1;
-            });
+        var content = this.widgets.filter(function (widget) {
+            return !widget.model.volatile && ids.indexOf(widget.id) !== -1;
+        });
 
-            if (!content.length) {
-                return resolve(this);
+        if (!content.length) {
+            return Promise.resolve(this);
+        }
+
+        return Wirecloud.io.makeRequest(url, {
+            method: 'PUT',
+            requestHeaders: {'Accept': 'application/json'},
+            contentType: 'application/json',
+            postBody: JSON.stringify(content)
+        }).then((response) => {
+            if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
             }
 
-            Wirecloud.io.makeRequest(url, {
-                method: 'PUT',
-                requestHeaders: {'Accept': 'application/json'},
-                contentType: 'application/json',
-                postBody: JSON.stringify(content),
-                onComplete: function (response) {
-                    if (response.status === 204) {
-                        this.widgets.filter(function (widget) {
-                            widget.persist();
-                        });
-                        resolve(this);
-                    } else {
-                        reject(/* TODO */);
-                    }
-                }.bind(this)
+            this.widgets.filter((widget) => {
+                widget.persist();
             });
-        }.bind(this));
+            return Promise.resolve(this);
+        });
     };
 
     // =========================================================================
@@ -247,14 +247,14 @@
             } else {
                 return new Wirecloud.ui.ColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
             }
-            break;
         case 'gridlayout':
             return new Wirecloud.ui.GridLayout(this, layoutInfo.columns, layoutInfo.rows, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
         }
     };
 
     /**
-     *
+     * TODO, used by WorkspaceTabView to when the user changes the preferences
+     * for the base layout.
      */
     WorkspaceTabViewDragboard.prototype._updateBaseLayout = function _updateBaseLayout() {
         // Create the new Layout
@@ -274,11 +274,10 @@
             if (this.widgets[z] != null) {
                 this.widgets.splice(z, 1, this.widgets[z], widget);
                 this.widgets.forEach(function (value, index) {
-                    if (value != null) {
-                        value.setPosition({
-                            z: index
-                        });
-                    }
+                    // forEach skips undefined indexes
+                    value.setPosition({
+                        z: index
+                    });
                 });
             } else {
                 this.widgets[z] = widget;
@@ -297,11 +296,9 @@
 
         this.widgets.splice(z, 1);
         this.widgets.forEach(function (value, index) {
-            if (value != null) {
-                value.setPosition({
-                    z: index
-                });
-            }
+            value.setPosition({
+                z: index
+            });
         });
 
         this.tab.removeChild(widget);
@@ -361,4 +358,4 @@
 
     ns.WorkspaceTabViewDragboard = WorkspaceTabViewDragboard;
 
-})(Wirecloud.ui);
+})(Wirecloud.ui, Wirecloud.Utils);

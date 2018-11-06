@@ -30,6 +30,7 @@ const Wirecloud = {
     },
     ui: {},
     URLs: {
+        IWIDGET_COLLECTION: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/tab/%(tab_id)s/iwidgets"),
         IWIDGET_ENTRY: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/tab/%(tab_id)s/iwidget/%(iwidget_id)s"),
         IWIDGET_PREFERENCES: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/tab/%(tab_id)s/iwidget/%(iwidget_id)s/preferences"),
         IWIDGET_PROPERTIES: new StyledElements.Utils.Template("/api/workspace/%(workspace_id)s/tab/%(tab_id)s/iwidget/%(iwidget_id)s/properties"),

@@ -668,4 +668,4 @@
         }
     };
 
-})(Wirecloud, StyledElements, StyledElements.Utils);
+})(Wirecloud, StyledElements, Wirecloud.Utils);

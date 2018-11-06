@@ -540,6 +540,7 @@
                 );
 
             });
+
         });
 
         describe("findOperator(id)", function () {
