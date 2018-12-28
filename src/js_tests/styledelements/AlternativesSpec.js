@@ -181,7 +181,7 @@
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
                 });
 
-                var p = element.removeAlternative(alt2.getId(), {onComplete: listener});
+                var p = element.removeAlternative(alt2.altId, {onComplete: listener});
 
                 expect(element.alternativeList).toEqual([alt1, alt3]);
                 expect(p).toEqual(jasmine.any(Promise));
@@ -367,7 +367,7 @@
                     expect(element.visibleAlt).toBe(alt2);
                 });
 
-                var p = element.showAlternative(alt2.getId(), {
+                var p = element.showAlternative(alt2.altId, {
                     onComplete: listener
                 });
 

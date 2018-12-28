@@ -44,7 +44,7 @@ var init = function init() {
         var alternative = alternatives.createAlternative();
         alternative.appendChild(panelNotebook);
 
-        list.addEntries([[alternative.getId(), name]]);
+        list.addEntries([[alternative.altId, name]]);
 
         var preText = document.createElement("pre");
         var codeTab = panelNotebook.createTab({name: "Code", closable: false});
@@ -66,7 +66,7 @@ var init = function init() {
         var alternative = alternatives.createAlternative();
         alternative.appendChild(panelNotebook);
 
-        list.addEntries([[alternative.getId(), name]]);
+        list.addEntries([[alternative.altId, name]]);
 
         var preText = document.createElement("pre");
         var codeTab = panelNotebook.createTab({name: "HTML", closable: false});
