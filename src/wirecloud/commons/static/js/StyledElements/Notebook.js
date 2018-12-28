@@ -570,13 +570,6 @@
     };
 
     /**
-     * Devuelve el número de pestañas disponibles actualmente en este notebook.
-     */
-    Notebook.prototype.getNumberOfTabs = function getNumberOfTabs() {
-        return this.tabs.length;
-    };
-
-    /**
      * Set the focus on the indicated tab. That is, makes the tab visible on
      * the tab area of the notebook.
      *
