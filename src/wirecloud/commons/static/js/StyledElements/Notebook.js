@@ -431,18 +431,6 @@
     };
 
     /**
-     * Returns current visible tab.
-     *
-     * @name StyledElements.Notebook#getVisibleTab
-     * @deprecated since version 0.5
-     * @see {@link StyledElements.Tab#visibleTab}
-     * @returns {StyledElements.Tab}
-     */
-    Notebook.prototype.getVisibleTab = function getVisibleTab() {
-        return this.visibleTab;
-    };
-
-    /**
      * Returns the tab associated with the given index.
      *
      * @since 0.5

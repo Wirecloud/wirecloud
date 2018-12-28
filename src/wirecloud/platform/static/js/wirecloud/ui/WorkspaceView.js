@@ -73,7 +73,7 @@
         Object.defineProperties(this, {
             activeTab: {
                 get: function () {
-                    return this.notebook.getVisibleTab();
+                    return this.notebook.visibleTab;
                 }
             },
             tabs: {
