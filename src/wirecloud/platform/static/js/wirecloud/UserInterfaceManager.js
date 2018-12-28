@@ -166,18 +166,17 @@
                 return;
             }
 
-            if (state.tab == null || state.tab_id == null || state.workspace_title == null) {
-                if (state.tab == null) {
-                    state.tab = this.notebook.visibleTab.model.name;
-                }
-                if (state.tab_id == null) {
-                    state.tab_id = this.notebook.visibleTab.model.id;
-                }
-                if (state.workspace_title == null) {
-                    state.workspace_title = this.model.title;
-                }
-                Wirecloud.HistoryManager.replaceState(state);
+            if (state.tab == null) {
+                state.tab = this.notebook.visibleTab.model.name;
             }
+            if (state.tab_id == null) {
+                state.tab_id = this.notebook.visibleTab.model.id;
+            }
+            if (state.workspace_title !== this.model.title) {
+                state.workspace_title = this.model.title;
+            }
+            Wirecloud.HistoryManager.replaceState(state);
+            Wirecloud.UserInterfaceManager.header.refresh();
 
             // Handle tab changes
             this.notebook.addEventListener("changed", function (notebook, oldTab, newTab) {

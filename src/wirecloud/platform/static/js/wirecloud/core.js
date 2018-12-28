@@ -198,7 +198,15 @@
                 Wirecloud.UserInterfaceManager.changeCurrentView('workspace', true);
 
                 Wirecloud.dispatchEvent('loaded');
-                return Wirecloud.changeActiveWorkspace({owner: state.workspace_owner, name: state.workspace_name}, {initialtab: state.tab, history: "replace"});
+                return Wirecloud.changeActiveWorkspace(
+                    {
+                        owner: state.workspace_owner,
+                        name: state.workspace_name
+                    }, {
+                        initialtab: state.tab,
+                        history: "replace"
+                    }
+                );
             }, (error) => {
                 var msg = gettext("Error loading WireCloud");
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();

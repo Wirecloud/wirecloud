@@ -194,6 +194,7 @@
         this.notebook = new StyledElements.Notebook({
             'class': 'se-notebook-bottom'
         });
+        this.layout.slideOut().content.clear();
         this.notebook.appendTo(this.layout.content);
 
         loadingTab = this.notebook.createTab();
@@ -320,6 +321,7 @@
         return {
             workspace_owner: currentState.workspace_owner,
             workspace_name: currentState.workspace_name,
+            workspace_title: currentState.workspace_title,
             view: 'workspace'
         };
     };
@@ -351,7 +353,7 @@
                 {
                     'label': current_state.workspace_owner
                 }, {
-                    'label': current_state.workspace_title,
+                    'label': current_state.workspace_title || current_state.workspace_name,
                 }
             ];
         } else {
@@ -411,8 +413,7 @@
             alert_msg = document.createElement('div');
             alert_msg.className = 'alert alert-info';
             alert_msg.textContent = utils.gettext('The requested workspace is no longer available (it was deleted).');
-            this.clear();
-            this.appendChild(alert_msg);
+            this.layout.slideOut().content.clear().appendChild(alert_msg);
             Wirecloud.dispatchEvent('viewcontextchanged');
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
             Wirecloud.changeActiveWorkspace(nextWorkspace, {initialtab: newState.tab, history: 'ignore'});
@@ -464,9 +465,7 @@
     };
 
     var on_workspace_change = function on_workspace_change(workspace) {
-        var state;
-
-        state = {
+        var state = {
             workspace_owner: this.model.owner,
             workspace_name: this.model.name,
             workspace_title: this.model.title,
