@@ -467,7 +467,7 @@
             if (this.tabsById[tab.tabId] !== tab) {
                 throw new TypeError('tab is not owned by this notebook');
             }
-            tab = tab.getId();
+            tab = tab.tabId;
         }
 
         if (!this.tabsById[tab]) {

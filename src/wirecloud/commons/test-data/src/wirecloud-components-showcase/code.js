@@ -338,7 +338,7 @@ var init = function init() {
         tab.appendChild(document.createTextNode('Tab created dinamically'));\n\
         notebook.goToTab(tab);\n\
     });\n\
-    goToTab3Button.addEventListener('click', function() {notebook.goToTab(tab3.getId())});\n\
+    goToTab3Button.addEventListener('click', function() {notebook.goToTab(tab3)};);\n\
 \n";
 
     insertExample("Notebook", code);
