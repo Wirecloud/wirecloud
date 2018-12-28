@@ -23,7 +23,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -412,16 +412,31 @@
         });
 
         describe("exitFullscreen()", function () {
-            var element;
+            var element, backward;
+
+            beforeAll(() => {
+                // Check if current browser implements exitFullscreen method
+                backward = !('exitFullscreen' in document);
+            });
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
                 element.appendTo(dom);
+                if (backward) {
+                    document.exitFullscreen = jasmine.createSpy("exitFullscreen");
+                } else {
+                    spyOn(document, "exitFullscreen");
+                }
+            });
+
+            afterAll(() => {
+                if (backward) {
+                    delete document.exitFullscreen;
+                }
             });
 
             it("should do nothing if the browser is in fullscreen mode but the notebook is not in fullscreen mode", function () {
-                document.fullscreenElement = document.createElement('div');
-                document.exitFullscreen = jasmine.createSpy('exitFullscreen');
+                spyOn(utils, "getFullscreenElement").and.returnValue(document.createElement('div'));
                 expect(element.fullscreen).toBe(false);
 
                 expect(element.exitFullscreen()).toBe(element);
@@ -432,8 +447,7 @@
             });
 
             it("should exit from fullscreen if the notebook is in fullscreen mode", function () {
-                document.fullscreenElement = element.wrapperElement;
-                document.exitFullscreen = jasmine.createSpy('exitFullscreen');
+                spyOn(utils, "getFullscreenElement").and.returnValue(element.wrapperElement);
                 expect(element.fullscreen).toBe(true);
 
                 expect(element.exitFullscreen()).toBe(element);
@@ -538,4 +552,4 @@
 
     });
 
-})();
+})(StyledElements.Utils);
