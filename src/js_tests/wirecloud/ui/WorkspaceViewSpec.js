@@ -129,6 +129,7 @@
 
                 expect(ns.ComponentSidebar).toHaveBeenCalledWith();
                 expect(view.view_name).toBe("workspace");
+                expect(view.editing).toBe(false);
             });
 
             it("should allow to change the activeWorkspace through the workspace menu", () => {
@@ -424,19 +425,38 @@
             beforeEach(() => {
                 view = new ns.WorkspaceView(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = create_workspace();
-                view.loadWorkspace(workspace);
             });
 
             it("should return null if the widget is not present", () => {
+                let workspace = create_workspace();
+                view.loadWorkspace(workspace);
                 expect(view.findWidget("1")).toBe(null);
             });
 
             it("should return a widget if present", () => {
+                let workspace = create_workspace();
+                view.loadWorkspace(workspace);
                 let widget = {};
                 view.tabs[0].findWidget.and.returnValue(widget);
 
                 expect(view.findWidget("8")).toBe(widget);
+            });
+
+            it("should work while loading", () => {
+                // findWidget can be called while loading, in this case
+                // WorkspaceView will have a temporal tab to display the
+                // loading animation, this tab should be skipped
+                spyOn(StyledElements.Notebook.prototype, "goToTab").and.callFake(function () {
+                    let widget = {};
+                    view.tabs[1].findWidget.and.returnValue(widget);
+
+                    expect(view.findWidget("8")).toBe(widget);
+                    this.visibleTab = view.tabs[1];
+                });
+
+                let workspace = create_workspace();
+                view.loadWorkspace(workspace);
+                expect(view.notebook.goToTab).toHaveBeenCalled();
             });
 
         });
@@ -535,6 +555,7 @@
                     jasmine.any(StyledElements.Button),
                     jasmine.any(StyledElements.Button),
                     jasmine.any(StyledElements.Button),
+                    jasmine.any(StyledElements.Button),
                     jasmine.any(StyledElements.Button)
                 ]);
             });
@@ -553,18 +574,18 @@
                     jasmine.any(StyledElements.Button),
                     jasmine.any(StyledElements.Button),
                     jasmine.any(StyledElements.Button),
+                    jasmine.any(StyledElements.Button),
                     jasmine.any(StyledElements.Button)
                 ]);
 
-                buttons[1].click();
-                buttons[2].click();
+                buttons[2].enable().click();
                 buttons[3].click();
+                buttons[4].click();
 
                 expect(Wirecloud.UserInterfaceManager.changeCurrentView).toHaveBeenCalledWith("wiring");
                 expect(Wirecloud.UserInterfaceManager.changeCurrentView).toHaveBeenCalledWith("myresources");
                 expect(Wirecloud.UserInterfaceManager.changeCurrentView).toHaveBeenCalledWith("marketplace");
                 expect(Wirecloud.UserInterfaceManager.changeCurrentView.calls.count()).toBe(3);
-
             });
 
         });
@@ -865,6 +886,19 @@
                 callEventListener(workspace, "unload");
 
                 expect(view.model).toBe(null);
+                expect(view.editing).toBe(false);
+            });
+
+            it("should disable edit mode on unload events", () => {
+                let workspace = create_workspace();
+                workspace.isAllowed.and.returnValue(true);
+                view.loadWorkspace(workspace);
+                view.editButton.click();
+
+                callEventListener(workspace, "unload");
+
+                expect(view.model).toBe(null);
+                expect(view.editing).toBe(false);
             });
 
         });

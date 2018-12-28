@@ -38,6 +38,14 @@
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new Wirecloud.ui.WorkspaceViewMenuItems(this));
 
+        this.editButton = new se.ToggleButton({
+            class: "wc-edit-mode-button",
+            iconClass: "fa fa-pencil"
+        });
+        this.editButton.addEventListener("click", (button) => {
+            showHideTabBar.call(this, button.active);
+        });
+
         this.walletButton = this.buildAddWidgetButton();
 
         this.wiringButton = new StyledElements.Button({
@@ -71,6 +79,11 @@
         this.appendChild(this.layout);
 
         Object.defineProperties(this, {
+            editing: {
+                get: () => {
+                    return this.editButton.active;
+                }
+            },
             activeTab: {
                 get: function () {
                     return this.notebook.visibleTab;
@@ -168,6 +181,9 @@
         var i, widget;
 
         for (i = 0; i < this.notebook.tabs.length; i++) {
+            if (!(this.notebook.tabs[i] instanceof ns.WorkspaceTabView)) {
+                continue;
+            }
             widget = this.notebook.tabs[i].findWidget(id);
             if (widget != null) {
                 return widget;
@@ -241,14 +257,18 @@
         this.notebook.removeTab(loadingTab);
 
         if (this.model.isAllowed('edit')) {
-            var button = new StyledElements.Button({
+            this.addTabButton = new StyledElements.Button({
                 title: utils.gettext("New tab"),
                 iconClass: "fa fa-plus",
                 class: "wc-create-workspace-tab"
             });
-            this.notebook.addButton(button);
-            button.addEventListener('click', on_click_createtab.bind(this));
+            this.notebook.addButton(this.addTabButton);
+            this.addTabButton.addEventListener('click', on_click_createtab.bind(this));
+        } else {
+            this.addTabButton = null;
         }
+        this.editButton.enabled = this.model.isAllowed('edit');
+        this.editButton.active = false;
 
         if (Wirecloud.Utils.isFullscreenSupported()) {
             this.fullscreenButton = new StyledElements.Button({
@@ -295,6 +315,7 @@
                 window.open('http://conwet.fi.upm.es/wirecloud/', '_blank');
             });
         }
+        showHideTabBar.call(this, false);
     };
 
     WorkspaceView.prototype.buildAddWidgetButton = function buildAddWidgetButton() {
@@ -353,7 +374,7 @@
                 {
                     'label': current_state.workspace_owner
                 }, {
-                    'label': current_state.workspace_title || current_state.workspace_name,
+                    'label': current_state.workspace_title,
                 }
             ];
         } else {
@@ -390,9 +411,8 @@
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
         if (Wirecloud.contextManager && Wirecloud.contextManager.get('username') !== 'anonymous') {
-            this.walletButton.enabled = this.model != null && this.model.isAllowed('edit');
-            this.wiringButton.enabled = this.model != null && this.model.isAllowed('edit');
-            return [this.walletButton, this.wiringButton, this.myresourcesButton, this.marketButton];
+
+            return [this.editButton, this.walletButton, this.wiringButton, this.myresourcesButton, this.marketButton];
         } else {
             return [];
         }
@@ -456,6 +476,17 @@
     // EVENT HANDLERS
     // =========================================================================
 
+    const showHideTabBar = function showHideTabBar(editing) {
+        this.layout.content.toggleClassName("wc-workspace-editing", editing);
+
+        this.walletButton.enabled = editing && this.model.isAllowed('edit');
+        this.wiringButton.enabled = editing && this.model.isAllowed('edit');
+        this.notebook.tabWrapper.toggleClassName("hidden", !(editing || this.tabs.length > 1));
+        if (this.addTabButton) {
+            this.addTabButton.toggleClassName("hidden", !editing);
+        }
+    };
+
     const on_workspace_createoperator = function on_workspace_createoperator(workspace_model, operator) {
         this.layout.content.appendChild(operator.wrapperElement);
     };
@@ -487,6 +518,11 @@
     var on_workspace_unload = function on_workspace_unload(workspace) {
         // This must be always the case
         // if (this.model === workspace) {
+        this.model = null;
+        this.editButton.enabled = false;
+        this.editButton.active = false;
+        this.walletButton.enabled = false;
+        this.wiringButton.enabled = false;
         this.layout.content.clear();
         workspace.removeEventListener('remove', this.on_workspace_remove_bound);
         workspace.removeEventListener('change', this.on_workspace_change_bound);
@@ -494,6 +530,7 @@
         workspace.removeEventListener('createoperator', this.on_workspace_createoperator_bound);
         workspace.removeEventListener('removeoperator', this.on_workspace_removeoperator_bound);
         this.model = null;
+        showHideTabBar.call(this, false);
     };
 
     var on_click_createtab = function on_click_createtab(button) {

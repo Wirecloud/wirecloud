@@ -33,6 +33,11 @@
     cursor: grab;
     position: relative;
     flex-grow: 0;
+    display: none;
+
+    .wc-workspace-editing & {
+        display: block;
+    }
 
     & > span {
         display: inline-block;
@@ -97,12 +102,17 @@
     padding: 0 32px;
     position: static;
     flex-grow: 0;
+    display: none;
 
     @if ($widget-footer-bg == 'transparent') {
         color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     } @else {
         color: contrast-color($widget-footer-bg, $text-color-light, $text-color-dark, $text-color-threshold);
         background: $widget-footer-bg;
+    }
+
+    .wc-workspace-editing & {
+        display: block;
     }
 }
 

@@ -40,6 +40,7 @@
             },
             removeChild: jasmine.createSpy("removeChild"),
             workspace: {
+                editing: true,
                 model: {
                     id: 8
                 },
@@ -589,6 +590,34 @@
                     "2": widget2,
                     "3": widget3
                 };
+            });
+
+            it("should do nothing when no passing the ids parameter and not editing", (done) => {
+                spyOn(Wirecloud.io, "makeRequest");
+                let tab = create_tab();
+                tab.workspace.editing = false;
+                dragboard = new ns.WorkspaceTabViewDragboard(tab);
+
+                let p = dragboard.update();
+
+                p.then(() => {
+                    expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                    done();
+                }, fail);
+            });
+
+            it("should do nothing when passing the ids parameter and not editing", (done) => {
+                spyOn(Wirecloud.io, "makeRequest");
+                let tab = create_tab();
+                tab.workspace.editing = false;
+                dragboard = new ns.WorkspaceTabViewDragboard(tab);
+
+                let p = dragboard.update(["1"]);
+
+                p.then(() => {
+                    expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                    done();
+                }, fail);
             });
 
             it("should persist all widgets when no passing the ids parameter", (done) => {

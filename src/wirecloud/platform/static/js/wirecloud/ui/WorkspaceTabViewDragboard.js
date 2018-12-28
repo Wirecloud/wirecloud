@@ -182,7 +182,14 @@
         this.painted = true;
     };
 
+    /**
+     *
+     */
     WorkspaceTabViewDragboard.prototype.update = function update(ids) {
+        if (this.tab.workspace.editing === false) {
+            return Promise.resolve(this);
+        }
+
         var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
             workspace_id: this.tab.workspace.model.id,
             tab_id: this.tab.model.id
