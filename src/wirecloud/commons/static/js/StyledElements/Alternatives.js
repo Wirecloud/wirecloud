@@ -87,7 +87,7 @@
 
                 if (inAlternative === outAlternative) {
                     utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
-                    return false; // we are not going to process this command
+                    return {in: inAlternative, out: outAlternative}; // we are not going to process this command
                 }
 
                 p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
@@ -110,9 +110,10 @@
                 }.bind(this));
             }
 
-            return p.then(function () {
+            return p.then((result) => {
                 // Call the onComplete callback
                 utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
+                return result;
             });
         };
 
@@ -320,7 +321,7 @@
     };
 
     var build_transit_promise = function build_transit_promise(effect, outAlternative, inAlternative, context) {
-        var p = new Promise(function (fulfill) {
+        var p = new Promise((fulfill) => {
             // Throw an event notifying we are going to change the visible alternative
             context.dispatchEvent('preTransition', outAlternative, inAlternative);
             context.wrapperElement.classList.add('se-on-transition');
@@ -362,24 +363,25 @@
                 outAlternative.removeClassName('fade').hide();
             });
             // Trigger fade effects
-            setTimeout(function () {
+            setTimeout(() => {
                 inAlternative.addClassName('in');
                 outAlternative.removeClassName('in');
             }, 10);
             break;
         default:
         case StyledElements.Alternatives.NONE:
-            p = p.then(function () {
+            p = p.then(() => {
                 inAlternative.show();
                 outAlternative.hide();
             });
         }
 
-        return p.then(function () {
+        return p.then(() => {
             privates.get(context).visibleAlt = inAlternative;
             context.wrapperElement.classList.remove('se-on-transition');
             // Throw an event notifying we have changed the visible alternative
             context.dispatchEvent('postTransition', outAlternative, inAlternative);
+            return {in: inAlternative, out: outAlternative};
         });
     };
 

@@ -342,7 +342,11 @@
                 var p = element.showAlternative(alt1);
 
                 expect(p).toEqual(jasmine.any(Promise));
-                p.then(() => {
+                p.then((result) => {
+                    expect(result).toEqual({
+                        in: alt1,
+                        out: alt1
+                    });
                     expect(element.visibleAlt).toBe(alt1);
                     done();
                 });
@@ -356,7 +360,11 @@
                 });
 
                 expect(p).toEqual(jasmine.any(Promise));
-                p.then(() => {
+                p.then((result) => {
+                    expect(result).toEqual({
+                        in: alt3,
+                        out: alt1
+                    });
                     expect(element.visibleAlt).toBe(alt3);
                     done();
                 });
@@ -372,7 +380,11 @@
                 });
 
                 expect(p).toEqual(jasmine.any(Promise));
-                p.then(() => {
+                p.then((result) => {
+                    expect(result).toEqual({
+                        in: alt2,
+                        out: alt1
+                    });
                     expect(listener).toHaveBeenCalledWith(element, alt1, alt2);
                     done();
                 });
