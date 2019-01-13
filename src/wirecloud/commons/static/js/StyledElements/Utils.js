@@ -945,13 +945,19 @@ if (window.StyledElements == null) {
     };
 
     Utils.waitTransition = function waitTransition(element) {
-        return new Promise(function (fulfill) {
-            var listener = function listener(event) {
-                element.removeEventListener('transitionend', listener);
-                fulfill();
-            };
+        return new Promise((fulfill) => {
+            let w = element.ownerDocument.defaultView;
+            let display = w.getComputedStyle(element, null).getPropertyValue("display");
+            if (display !== "none") {
+                let listener = function listener(event) {
+                    element.removeEventListener('transitionend', listener);
+                    fulfill();
+                };
 
-            element.addEventListener('transitionend', listener);
+                element.addEventListener('transitionend', listener);
+            } else {
+                fulfill();
+            }
         });
     };
 
