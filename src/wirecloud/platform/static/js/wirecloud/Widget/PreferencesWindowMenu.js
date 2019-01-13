@@ -103,6 +103,8 @@
             buttonArea: this.windowBottom
         });
         this.form.insertInto(this.windowContent);
+        this.form.setdefaultsButton.addClassName('btn-set-defaults');
+        this.form.cancelButton.addClassName('btn-cancel');
         this.form.acceptButton.addClassName('btn-accept');
         this.form.addEventListener('submit', this._savePrefs.bind(this));
         this.form.addEventListener('cancel', this.hide.bind(this));

@@ -229,7 +229,7 @@
             options.effect = StyledElements.Alternatives.CROSS_DISSOLVE;
         }
         this.rootKeydownHandler = null;
-        this.alternatives.showAlternative(newView, options);
+        return this.alternatives.showAlternative(newView, options);
     };
 
     UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {
@@ -317,11 +317,10 @@
     };
 
     UserInterfaceManager.onHistoryChange = function onHistoryChange(state) {
-        this.changeCurrentView(state.view, {
-            onComplete: function (alternatives, oldView, nextView) {
-                if ('onHistoryChange' in nextView) {
-                    nextView.onHistoryChange(state);
-                }
+        this.changeCurrentView(state.view, true).then((info) => {
+            let nextView = info.in;
+            if ('onHistoryChange' in nextView) {
+                nextView.onHistoryChange(state);
             }
         });
     };

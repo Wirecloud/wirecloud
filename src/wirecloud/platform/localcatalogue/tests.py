@@ -725,11 +725,12 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(widgetT1.wait_loaded().error_count, 1)
         self.assertEqual(widgetT2.wait_loaded().error_count, 1)
 
-        # As the two Test v1.0 widgets
-        # one in the first tab and another in the second one
-        self.assertEqual(self.find_widget(title="Test 1").error_count, 1)
-        self.find_tab(title="Tab 2").click()
-        self.assertEqual(self.find_widget(title="Test 2").wait_loaded().error_count, 1)
+        with self.edit_mode as edit_session:
+            # As well as the two Test v1.0 widgets
+            # one in the first tab and another in the second one
+            self.assertEqual(self.find_widget(title="Test 1").error_count, 1)
+            self.find_tab(title="Tab 2").click()
+            self.assertEqual(self.find_widget(title="Test 2").wait_loaded().error_count, 1)
 
     @uses_extra_resources((
             'Wirecloud_Test_2.0.wgt',

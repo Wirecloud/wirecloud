@@ -65,7 +65,7 @@
                 (new Wirecloud.ui.RenameWindowMenu(this, utils.gettext('Rename Workspace'))).show();
             }.bind(this.workspace.model));
             item.addIconClass("fa fa-pencil");
-            item.setDisabled(!this.workspace.model.isAllowed('rename'));
+            item.setDisabled(!this.workspace.editing || !this.workspace.model.isAllowed('rename'));
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Share"), function () {
@@ -95,7 +95,7 @@
                 this.showSettings();
             }.bind(this.workspace));
             item.addIconClass("fa fa-cog");
-            item.setDisabled(!this.workspace.model.isAllowed('update_preferences'));
+            item.setDisabled(!this.workspace.editing || !this.workspace.model.isAllowed('update_preferences'));
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Remove"), () => {

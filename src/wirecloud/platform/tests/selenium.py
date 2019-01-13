@@ -58,27 +58,28 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username="admin", next="/admin/Workspace")
 
         # admin only have one workspace, but WireCloud should allow any workspace operation
-        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed')).close()
+        self.open_menu().check(('New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed')).close()
 
         self.create_workspace('Test')
 
-        # Now we have two workspaces, nothing should change
-        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed'), ()).close()
-        self.rename_workspace('test2')
-        tab = self.find_tab(title="Tab")
+        # Now we have two workspaces, nothing should change except that now we are on edit mode
+        with self.edit_mode as edit_session:
+            self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed'), ()).close()
+            self.rename_workspace('test2')
+            tab = self.find_tab(title="Tab")
 
-        # Only one tab => we cannot remove it
-        tab.show_preferences().check(('Rename',), must_be_disabled=('Remove',))
+            # Only one tab => we cannot remove it
+            tab.show_preferences().check(('Rename',), must_be_disabled=('Remove',))
 
-        new_tab = self.create_tab()
+            new_tab = self.create_tab()
 
-        # Now we have two tabs so we can remove any of them
-        tab.show_preferences().check(must_be=('Rename', 'Remove'))
-        new_tab.click()
-        new_tab.show_preferences().check(must_be=('Rename', 'Remove')).close()
+            # Now we have two tabs so we can remove any of them
+            tab.show_preferences().check(must_be=('Rename', 'Remove'))
+            new_tab.click()
+            new_tab.show_preferences().check(must_be=('Rename', 'Remove')).close()
 
-        # Remove the recently created one (no confirmation needed as the tab is empty)
-        new_tab.remove()
+            # Remove the recently created one (no confirmation needed as the tab is empty)
+            new_tab.remove()
 
         self.remove_workspace()
 
@@ -101,10 +102,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget = self.find_tab(id="102").widgets[0]
 
         tab = self.find_tab(title='Tab 2')
-        ActionChains(self.driver).click_and_hold(iwidget.title_element).move_to_element(tab.element).release().perform()
+        with self.edit_mode as edit_session:
+            ActionChains(self.driver).click_and_hold(iwidget.title_element).move_to_element(tab.element).release().perform()
 
-        self.assertEqual(len(self.find_tab(id="102").widgets), src_iwidget_count - 1)
-        self.assertEqual(len(self.find_tab(id="103").widgets), dst_iwidget_count + 1)
+            self.assertEqual(len(self.find_tab(id="102").widgets), src_iwidget_count - 1)
+            self.assertEqual(len(self.find_tab(id="103").widgets), dst_iwidget_count + 1)
     test_move_iwidget_between_tabs.tags = tags + ('wirecloud-dragboard',)
 
     def test_create_widget_from_component_sidebar(self):
@@ -113,34 +115,39 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_remove_widget_from_workspace(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
-        self.find_widget(title="Test 1").remove()
+        with self.edit_mode as edit_session:
+            self.find_widget(title="Test 1").remove()
 
     def test_remove_tab_from_workspace(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
         self.find_tab(title="Tab 1").remove()
 
-        with self.wiring_view as wiring:
-            self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
 
     def test_tabs_with_read_only_widgets_cannot_be_removed(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
-        tab = self.find_tab(title="Tab 2")
-        tab.show_preferences().check(must_be_disabled=('Remove',))
+        with self.edit_mode as edit_session:
+            tab = self.find_tab(title="Tab 2")
+            tab.show_preferences().check(must_be_disabled=('Remove',))
 
-        tab.click()
-        tab_widget = tab.find_widget(title="Test 2")
-        self.assertTrue(tab_widget.remove_button.is_disabled)
+            tab.click()
+            tab_widget = tab.find_widget(title="Test 2")
+            self.assertTrue(tab_widget.remove_button.is_disabled)
 
     def test_refresh_widget(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
-        tab_widget = self.find_widget(title="Test 1")
-        with tab_widget:
-            last_received_event_field = self.driver.find_element_by_id('wiringOut')
-            self.driver.execute_script('arguments[0].textContent = "hello world!!";', last_received_event_field)
+        with self.edit_mode as edit_session:
+            tab_widget = self.find_widget(title="Test 1")
+            with tab_widget:
+                last_received_event_field = self.driver.find_element_by_id('wiringOut')
+                self.driver.execute_script('arguments[0].textContent = "hello world!!";', last_received_event_field)
 
-        tab_widget.reload()
+            tab_widget.reload().wait_loaded()
+
         with tab_widget:
             last_received_event_field = self.wait_element_visible('#wiringOut')
             self.assertEqual(last_received_event_field.text, '')
@@ -149,86 +156,89 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_basic_widget_functionalities(self):
 
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
-        iwidget = self.find_widget(title="Test 1")
+        with self.edit_mode as edit_session:
+            iwidget = self.find_widget(title="Test 1")
 
-        with iwidget:
-            check_default_settings_values(self)
+            with iwidget:
+                check_default_settings_values(self)
 
-        # Open widget settings
-        modal = iwidget.show_settings()
+            # Open widget settings
+            modal = iwidget.show_settings()
 
-        # Check dialog shows correct values
-        self.assertEqual(modal.get_field('list').value, "default")
-        self.assertEqual(modal.get_field('text').value, "initial text")
-        self.assertFalse(modal.get_field('boolean').is_selected)
-        self.assertEqual(modal.get_field('number').value, "2")
-        self.assertEqual(modal.get_field('password').value, "default")
+            # Check dialog shows correct values
+            self.assertEqual(modal.get_field('list').value, "default")
+            self.assertEqual(modal.get_field('text').value, "initial text")
+            self.assertFalse(modal.get_field('boolean').is_selected)
+            self.assertEqual(modal.get_field('number').value, "2")
+            self.assertEqual(modal.get_field('password').value, "default")
 
-        # Change widget settings
-        modal.get_field('list').set_value("1")  # value1
-        modal.get_field('text').set_value("test")
-        modal.get_field('boolean').click()
-        modal.get_field('number').set_value("0")
-        modal.get_field('password').set_value("password")
+            # Change widget settings
+            modal.get_field('list').set_value("1")  # value1
+            modal.get_field('text').set_value("test")
+            modal.get_field('boolean').click()
+            modal.get_field('number').set_value("0")
+            modal.get_field('password').set_value("password")
 
-        modal.accept()
+            modal.accept()
 
-        with iwidget:
-            self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
-            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
-            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
-            self.assertEqual(self.driver.find_element_by_id('numberPref').text, '0')
-            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
+            with iwidget:
+                self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
+                self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
+                self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
+                self.assertEqual(self.driver.find_element_by_id('numberPref').text, '0')
+                self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
 
-        # Open widget settings again
-        modal = iwidget.show_settings()
+            # Open widget settings again
+            modal = iwidget.show_settings()
 
-        # Check dialog shows correct values
-        self._check_modified_widget_preferences(modal)
+            # Check dialog shows correct values
+            self._check_modified_widget_preferences(modal)
 
-        modal.accept()
+            modal.accept()
 
         self.reload()
+        self.wait_wirecloud_ready(login=True)
         WebDriverWait(self.driver, timeout=15).until(lambda driver: self.active_tab is not None)
 
-        iwidget = self.find_widget(title="Test 1")
+        with self.edit_mode as edit_session:
+            iwidget = self.find_widget(title="Test 1")
 
-        # Open widget settings again
-        modal = iwidget.show_settings()
+            # Open widget settings again
+            modal = iwidget.show_settings()
 
-        # Check dialog shows correct values
-        self._check_modified_widget_preferences(modal)
+            # Check dialog shows correct values
+            self._check_modified_widget_preferences(modal)
 
-        # Change widget settings
-        modal.get_field('text').set_value("")
-        modal.get_field('password').set_value("")
+            # Change widget settings
+            modal.get_field('text').set_value("")
+            modal.get_field('password').set_value("")
 
-        modal.accept()
+            modal.accept()
 
-        with iwidget:
-            self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
-            self.assertEqual(self.driver.find_element_by_id('textPref').text, '')
-            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
-            self.assertEqual(self.driver.find_element_by_id('numberPref').text, '0')
-            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
+            with iwidget:
+                self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
+                self.assertEqual(self.driver.find_element_by_id('textPref').text, '')
+                self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
+                self.assertEqual(self.driver.find_element_by_id('numberPref').text, '0')
+                self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
 
-        # Restore default widget settings
-        modal = iwidget.show_settings()
-        modal.find_button("Set Defaults").click()
-        modal.accept()
+            # Restore default widget settings
+            modal = iwidget.show_settings()
+            modal.find_button("Set Defaults").click()
+            modal.accept()
 
-        with iwidget:
-            check_default_settings_values(self)
+            with iwidget:
+                check_default_settings_values(self)
 
-        # Use api test widget to test other API features
-        self.network._servers['http']['example.com'].add_response('GET', '/success.html', {'content': 'remote makerequest was successful'})
-        api_test_iwidget = self.create_widget("Wirecloud API test")
-        api_test_iwidget_id = api_test_iwidget.id
+            # Use api test widget to test other API features
+            self.network._servers['http']['example.com'].add_response('GET', '/success.html', {'content': 'remote makerequest was successful'})
+            api_test_iwidget = self.create_widget("Wirecloud API test")
+            api_test_iwidget_id = api_test_iwidget.id
 
-        # Open widget settings again
-        modal = api_test_iwidget.show_settings()
-        modal.get_field('text').set_value("Success!!")
-        modal.accept()
+            # Open widget settings again
+            modal = api_test_iwidget.show_settings()
+            modal.get_field('text').set_value("Success!!")
+            modal.accept()
 
         expected_value = 'new value'
 
@@ -295,22 +305,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_resize_widgets(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
-        widget1 = self.widgets[1]
-        old_size = widget1.size
-        old_position = widget1.position
+        with self.edit_mode as edit_session:
+            widget1 = self.widgets[1]
+            old_size = widget1.size
+            old_position = widget1.position
 
-        widget1.resize('bottom_left', -30, 30)
-        new_size = widget1.size
-        new_position = widget1.position
-        self.assertNotEqual(new_size, old_size)
-        self.assertNotEqual(new_position, old_position)
+            widget1.resize('bottom_left', -30, 30)
+            new_size = widget1.size
+            new_position = widget1.position
+            self.assertNotEqual(new_size, old_size)
+            self.assertNotEqual(new_position, old_position)
 
         # Django uses http 1.0 by default
         # If-Modified-Since has a 1 second resolution
         time.sleep(1)
 
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
         widget1 = self.widgets[1]
         self.assertEqual(new_size, widget1.size)
@@ -387,21 +398,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_title(), 'Test')
 
         # Add a new tab
-        self.create_tab()
+        with self.edit_mode as edit_session:
+            self.create_tab()
 
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
         tabs = len(self.tabs)
         self.assertEqual(tabs, 2)
 
-        tab = self.find_tab(title='Tab')
+        with self.edit_mode as edit_session:
+            tab = self.find_tab(title='Tab')
 
-        # Rename the created tab
-        tab.rename('Other Name')
+            # Rename the created tab
+            tab.rename('Other Name')
 
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
         self.assertEqual(len(self.tabs), 2)
         tab = self.find_tab(title='Other Name')
@@ -410,52 +423,56 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNone(tab)
 
         # Add two widgets to the mashup
-        with self.resource_sidebar as sidebar:
-            resource = sidebar.search_component('widget', 'Test')
-            resource.create_component()
-            resource.create_component()
+        with self.edit_mode as edit_session:
+            with edit_session.resource_sidebar as sidebar:
+                resource = sidebar.search_component('widget', 'Test')
+                resource.create_component()
+                resource.create_component()
 
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
         self.assertEqual(len(self.widgets), 2)
 
         # Rename a widget
-
-        iwidget = self.widgets[1]
-        iwidget.rename('Other Test')
-
-        self.reload()
-        self.wait_wirecloud_ready()
-
-        iwidget = self.widgets[0]
-        self.assertEqual(iwidget.title, 'Test')
-
-        iwidget = self.widgets[1]
-        self.assertEqual(iwidget.title, 'Other Test')
-
-        # Remove a widget
-        iwidget.remove()
+        with self.edit_mode as edit_session:
+            iwidget = self.widgets[1]
+            iwidget.rename('Other Test')
 
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
+
+        with self.edit_mode as edit_session:
+            iwidget = self.widgets[0]
+            self.assertEqual(iwidget.title, 'Test')
+
+            iwidget = self.widgets[1]
+            self.assertEqual(iwidget.title, 'Other Test')
+
+            # Remove a widget
+            iwidget.remove()
+
+        self.reload()
+        self.wait_wirecloud_ready(login=True)
 
         self.assertEqual(len(self.widgets), 1)
 
         # Rename the workspace
-        self.rename_workspace('test2')
+        with self.edit_mode as edit_session:
+            self.rename_workspace('test2')
 
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
         self.assertEqual(self.get_current_workspace_title(), 'test2')
 
         # Remove the tab with widgets
-        tab = self.find_tab(title='Other Name')
-        tab.remove()
+        with self.edit_mode as edit_session:
+            tab = self.find_tab(title='Other Name')
+            tab.remove()
 
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
         self.assertEqual(len(self.tabs), 1)
         self.assertEqual(len(self.widgets), 0)
@@ -502,33 +519,32 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidget = self.widgets[0]
 
-        iwidget.open_menu().click_entry('Settings')
+        with self.edit_mode as edit_session:
+            iwidget.open_menu().click_entry('Settings')
 
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="list"]').get_attribute('value'), 'default')
-        text_pref = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
-        self.assertEqual(text_pref.get_attribute('disabled'), 'true')
-        self.assertEqual(text_pref.get_attribute('value'), 'parameterized value')
+            form = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
+            self.assertEqual(form.get_field('list').value, 'default')
+            text_pref = form.get_field('text')
+            self.assertTrue(text_pref.is_disabled)
+            self.assertEqual(text_pref.value, 'parameterized value')
+            self.assertFalse(form.get_field('boolean').is_selected)
+            self.assertRaises(NoSuchElementException, form.get_field, 'password')
+            form.cancel()
 
-        self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="boolean"]').is_selected())
-        password_prefs = self.driver.find_elements_by_css_selector('.window_menu [name="password"]')
-        self.assertEqual(len(password_prefs), 0)
+            with iwidget:
+                self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
+                self.assertEqual(self.driver.find_element_by_id('textPref').text, 'parameterized value')
+                self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
+                self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
+            with edit_session.wiring_view as wiring:
+                operator = wiring.find_draggable_component('operator', title="TestOperator")
 
-        with iwidget:
-            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
-            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'parameterized value')
-            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
-            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
-
-        with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', title="TestOperator")
-
-            modal = operator.show_settings()
-            prefix_field = modal.get_field('prefix')
-            self.assertEqual(prefix_field.get_attribute('disabled'), 'true')
-            self.assertEqual(prefix_field.get_attribute('value'), 'parameterized value: ')
-            modal.accept()
+                modal = operator.show_settings()
+                prefix_field = modal.get_field('prefix')
+                self.assertEqual(prefix_field.get_attribute('disabled'), 'true')
+                self.assertEqual(prefix_field.get_attribute('value'), 'parameterized value: ')
+                modal.accept()
 
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
@@ -566,9 +582,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="admin", next="/admin/Workspace")
 
-        with self.resource_sidebar as sidebar:
-            resource = sidebar.search_component('mashup', 'Test Mashup')
-            resource.merge()
+        with self.edit_mode as edit_session:
+            with edit_session.resource_sidebar as sidebar:
+                resource = sidebar.search_component('mashup', 'Test Mashup')
+                resource.merge()
 
         self.assertEqual(len(self.tabs), 3)
         tab1 = self.find_tab(name='tab')
@@ -614,14 +631,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             'readOnlyConnectables': True,
         })
         self.create_workspace(mashup='Published Workspace')
-        iwidget = self.widgets[0]
-        close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.fa-remove'))
-        self.assertTrue(close_button.is_disabled)
-        # bypass the internal call to element_be_clickable as the button is usually hidden
-        close_button.element.click()
+        with self.edit_mode as edit_session:
+            iwidget = self.widgets[0]
+            close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.fa-remove'))
+            self.assertTrue(close_button.is_disabled)
+            # bypass the internal call to element_be_clickable as the button is usually hidden
+            close_button.element.click()
 
-        with self.wiring_view as wiring:
-            self.assertEqual(len(wiring.find_connections(extra_class="readonly")), 3)
+            with edit_session.wiring_view as wiring:
+                self.assertEqual(len(wiring.find_connections(extra_class="readonly")), 3)
 
         self.assertEqual(len(self.widgets), 2)
 
@@ -661,7 +679,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         url = self.live_server_url + '/user_with_workspaces/public-workspace'
         self.driver.get(url)
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
         self.assertIsNone(self.find_navbar_button("wc-show-component-sidebar-button"))
         self.assertIsNone(self.find_navbar_button("wc-show-wiring-button"))
@@ -678,7 +696,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         form.get_field('password').set_value('admin')
         form.submit()
 
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
         self.assertEqual(self.get_current_workspace_title(), 'Public Workspace')
 
     def test_embedded_view(self):
@@ -705,12 +723,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         target_iwidget = iwidgets[0]
         source_iwidget.wait_loaded()
         target_iwidget.wait_loaded()
-        source_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Upgrade/Downgrade', 'Full Dragboard', 'Extract from grid')).close()
-        target_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Upgrade/Downgrade', 'Full Dragboard', 'Extract from grid'))
+        self.assertFalse(source_iwidget.btn_preferences.is_displayed)
+        self.assertFalse(target_iwidget.btn_preferences.is_displayed)
 
-        tab = self.find_tab(title='Tab')
+        tab = self.tabs[0]
         self.assertRaises(NoSuchElementException, tab.element.find_element_by_css_selector, '.icon-tab-menu')
-
         self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.icon-add-tab')
 
         # Check wiring works
@@ -727,8 +744,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view:
-            pass
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view:
+                pass
         with self.marketplace_view:
             pass
 
@@ -744,7 +762,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Workspace')
 
         self.driver.forward()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
         self.assertEqual(self.get_current_workspace_title(), 'Workspace')
 
         self.driver.forward()
@@ -798,7 +816,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Replay navigation history
         self.driver.forward()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
         WebDriverWait(self.driver, timeout=10).until(
             WEC.workspace(self, owner='user_with_workspaces', name='Pending Events', tab='Tab 1')
         )
@@ -835,7 +853,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         initial_workspace_tab = self.active_tab
         initial_workspace_tab_name = initial_workspace_tab.title
 
-        self.find_tab(title='Tab 2').click().rename('NewName')
+        with self.edit_mode as edit_session:
+            self.find_tab(title='Tab 2').click().rename('NewName')
 
         initial_workspace_tab.click()
         WebDriverWait(self.driver, 5).until(WEC.workspace(self, tab=initial_workspace_tab_name))
@@ -858,7 +877,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         self.change_current_workspace('Pending Events')
-        self.rename_workspace('New Name')
+        with self.edit_mode as edit_session:
+            self.rename_workspace('New Name')
 
         self.change_current_workspace('ExistingWorkspace')
 
@@ -894,8 +914,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, 10).until(WEC.workspace(self, owner='user_with_workspaces', name='Workspace'))
 
         # "Workspace" workspace should be editable
-        self.assertFalse(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
-        self.assertFalse(self.find_navbar_button("wc-show-wiring-button").is_disabled)
+        self.assertFalse(self.find_navbar_button("wc-edit-mode-button").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-component-sidebar-button").is_disabled)
+        self.assertTrue(self.find_navbar_button("wc-show-wiring-button").is_disabled)
 
     def assertElementHasFocus(self, element):
         # Workaround webkit problem with xhtml and retreiving element with focus
@@ -926,18 +947,19 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         next_button.click()
 
         WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-component-sidebar-button")))
-        with self.resource_sidebar as sidebar:
+        with self.edit_mode as edit_session:
+            with edit_session.resource_sidebar as sidebar:
 
-            # Add the youtube browser widget
-            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'YouTube Browser'))
+                # Add the youtube browser widget
+                WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'YouTube Browser'))
 
-            # Next tutorial step
-            next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
-            self.assertElementHasFocus(next_button)
-            next_button.click()
+                # Next tutorial step
+                next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+                self.assertElementHasFocus(next_button)
+                next_button.click()
 
-            # Add the input box widget
-            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'Input Box'))
+                # Add the input box widget
+                WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'Input Box'))
 
         # cancel current tutorial
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
@@ -951,15 +973,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidgets = self.widgets
 
-        self.assertEqual(iwidgets[0].layout_position, (0, 0))
-        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+        with self.edit_mode as edit_session:
+            self.assertEqual(iwidgets[0].layout_position, (0, 0))
+            self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
-        offset = iwidgets[1].element.location['x'] - iwidgets[0].element.location['x']
-        ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(offset, 0).release().perform()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (6, 0) and iwidgets[1].layout_position == (6, 24))
+            offset = iwidgets[1].element.location['x'] - iwidgets[0].element.location['x']
+            ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(offset, 0).release().perform()
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (6, 0) and iwidgets[1].layout_position == (6, 24))
 
-        ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(-offset, 300).release().perform()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
+            ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(-offset, 300).release().perform()
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
 
     test_move_widget_and_restore.tags = tags + ('wirecloud-dragboard',)
 
@@ -972,18 +995,19 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidgets = self.widgets
 
-        self.assertEqual(iwidgets[0].layout_position, (0, 0))
-        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+        with self.edit_mode as edit_session:
+            self.assertEqual(iwidgets[0].layout_position, (0, 0))
+            self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
-        iwidgets[0].wait_loaded()
+            iwidgets[0].wait_loaded()
 
-        title_location = iwidgets[0].title_element.location
-        TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(330, title_location['y'] + 10).release(990, 300).perform()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (6, 0) and iwidgets[1].layout_position == (6, 24))
+            title_location = iwidgets[0].title_element.location
+            TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(330, title_location['y'] + 10).release(990, 300).perform()
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (6, 0) and iwidgets[1].layout_position == (6, 24))
 
-        title_location = iwidgets[0].title_element.location
-        TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(0, 300).release(0, 300).perform()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
+            title_location = iwidgets[0].title_element.location
+            TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(0, 300).release(0, 300).perform()
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
 
     test_move_widget_and_restore_touch.tags = tags + ('wirecloud-dragboard',)
 
@@ -992,105 +1016,106 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="admin", next="/admin/Workspace")
 
-        with self.resource_sidebar as sidebar:
-            resource = sidebar.search_component('widget', 'Context Inspector')
-            widget1 = resource.create_component()
-            widget2 = resource.create_component()
+        with self.edit_mode as edit_session:
+            with edit_session.resource_sidebar as sidebar:
+                resource = sidebar.search_component('widget', 'Context Inspector')
+                widget1 = resource.create_component()
+                widget2 = resource.create_component()
 
-        initial_widget1_position = widget1.layout_position
-        with widget1:
-            position_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="xPosition"] .content').text),
-                int(self.driver.find_element_by_css_selector('[data-name="yPosition"] .content').text),
-            )
-            self.assertEqual(position_from_context, initial_widget1_position)
-            initial_widget1_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            initial_widget1_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+            initial_widget1_position = widget1.layout_position
+            with widget1:
+                position_from_context = (
+                    int(self.driver.find_element_by_css_selector('[data-name="xPosition"] .content').text),
+                    int(self.driver.find_element_by_css_selector('[data-name="yPosition"] .content').text),
+                )
+                self.assertEqual(position_from_context, initial_widget1_position)
+                initial_widget1_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                initial_widget1_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
 
-        with widget2:
-            initial_widget2_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            self.assertEqual(initial_widget2_xPosition_changes, '0')
+            with widget2:
+                initial_widget2_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                self.assertEqual(initial_widget2_xPosition_changes, '0')
 
-            initial_widget2_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(initial_widget2_yPosition_changes, '0')
+                initial_widget2_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                self.assertEqual(initial_widget2_yPosition_changes, '0')
 
-        # Move widget2 moving widget1 as side effect
-        self.driver.execute_script('''
-            var view = Wirecloud.UserInterfaceManager.views.workspace;
-            var layout = view.activeTab.dragboard.baseLayout;
-            var widget = view.activeTab.findWidget(%s);
-            layout.initializeMove(widget);
-            layout.moveTemporally(3, 0);
-            layout.acceptMove();
-        ''' % widget2.id)
+            # Move widget2 moving widget1 as side effect
+            self.driver.execute_script('''
+                var view = Wirecloud.UserInterfaceManager.views.workspace;
+                var layout = view.activeTab.dragboard.baseLayout;
+                var widget = view.activeTab.findWidget(%s);
+                layout.initializeMove(widget);
+                layout.moveTemporally(3, 0);
+                layout.acceptMove();
+            ''' % widget2.id)
 
-        self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
-        self.assertEqual(widget2.layout_position, (3, 0))
+            self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
+            self.assertEqual(widget2.layout_position, (3, 0))
 
-        with widget1:
-            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
+            with widget1:
+                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
 
-            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
+                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
 
-            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
-            self.assertEqual(height_changes, "0")
+                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                self.assertEqual(height_changes, "0")
 
-            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
-            self.assertEqual(width_changes, "0")
+                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                self.assertEqual(width_changes, "0")
 
-        with widget2:
-            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 1))
+            with widget2:
+                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 1))
 
-            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
+                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
 
-            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
-            self.assertEqual(height_changes, "0")
+                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                self.assertEqual(height_changes, "0")
 
-            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
-            self.assertEqual(width_changes, "0")
+                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                self.assertEqual(width_changes, "0")
 
-        # Move widget2 again without affecting widget1
-        self.driver.execute_script('''
-            var view = Wirecloud.UserInterfaceManager.views.workspace;
-            var layout = view.activeTab.dragboard.baseLayout;
-            var widget = view.activeTab.findWidget(%s);
-            layout.initializeMove(widget);
-            layout.moveTemporally(0, 3);
-            layout.acceptMove();
-        ''' % widget2.id)
+            # Move widget2 again without affecting widget1
+            self.driver.execute_script('''
+                var view = Wirecloud.UserInterfaceManager.views.workspace;
+                var layout = view.activeTab.dragboard.baseLayout;
+                var widget = view.activeTab.findWidget(%s);
+                layout.initializeMove(widget);
+                layout.moveTemporally(0, 3);
+                layout.acceptMove();
+            ''' % widget2.id)
 
-        self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
-        self.assertEqual(widget2.layout_position, (0, 0))
+            self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
+            self.assertEqual(widget2.layout_position, (0, 0))
 
-        with widget1:
-            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
+            with widget1:
+                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
 
-            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
+                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
 
-            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
-            self.assertEqual(height_changes, "0")
+                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                self.assertEqual(height_changes, "0")
 
-            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
-            self.assertEqual(width_changes, "0")
+                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                self.assertEqual(width_changes, "0")
 
-        with widget2:
-            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-            self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 2))
+            with widget2:
+                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 2))
 
-            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
+                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
 
-            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
-            self.assertEqual(height_changes, "0")
+                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                self.assertEqual(height_changes, "0")
 
-            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
-            self.assertEqual(width_changes, "0")
+                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                self.assertEqual(width_changes, "0")
     test_basic_add_and_move_widget.tags = tags + ('wirecloud-dragboard',)
 
     def test_move_widget_interchange(self):
@@ -1099,32 +1124,33 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidgets = self.widgets
 
-        self.assertEqual(iwidgets[0].layout_position, (0, 0))
-        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+        with self.edit_mode as edit_session:
+            self.assertEqual(iwidgets[0].layout_position, (0, 0))
+            self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
-        self.driver.execute_script('''
-            var view = Wirecloud.UserInterfaceManager.views.workspace;
-            var layout = view.activeTab.dragboard.baseLayout;
-            var widget = view.activeTab.findWidget(%s);
-            layout.initializeMove(widget);
-            layout.moveTemporally(6, 25);
-            layout.acceptMove();
-        ''' % iwidgets[0].id)
+            self.driver.execute_script('''
+                var view = Wirecloud.UserInterfaceManager.views.workspace;
+                var layout = view.activeTab.dragboard.baseLayout;
+                var widget = view.activeTab.findWidget(%s);
+                layout.initializeMove(widget);
+                layout.moveTemporally(6, 25);
+                layout.acceptMove();
+            ''' % iwidgets[0].id)
 
-        self.assertEqual(iwidgets[0].layout_position, (6, 24))
-        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+            self.assertEqual(iwidgets[0].layout_position, (6, 24))
+            self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
-        self.driver.execute_script('''
-            var view = Wirecloud.UserInterfaceManager.views.workspace;
-            var layout = view.activeTab.dragboard.baseLayout;
-            var widget = view.activeTab.findWidget(%s);
-            layout.initializeMove(widget);
-            layout.moveTemporally(0, 0);
-            layout.acceptMove();
-        ''' % iwidgets[1].id)
+            self.driver.execute_script('''
+                var view = Wirecloud.UserInterfaceManager.views.workspace;
+                var layout = view.activeTab.dragboard.baseLayout;
+                var widget = view.activeTab.findWidget(%s);
+                layout.initializeMove(widget);
+                layout.moveTemporally(0, 0);
+                layout.acceptMove();
+            ''' % iwidgets[1].id)
 
-        self.assertEqual(iwidgets[0].layout_position, (6, 0))
-        self.assertEqual(iwidgets[1].layout_position, (0, 0))
+            self.assertEqual(iwidgets[0].layout_position, (6, 0))
+            self.assertEqual(iwidgets[1].layout_position, (0, 0))
 
     test_move_widget_interchange.tags = tags + ('wirecloud-dragboard',)
 
@@ -1134,12 +1160,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="admin", next="/admin/GridLayoutTests")
         iwidget = self.widgets[0]
-        _, old_size = self.get_widget_sizes_from_context(iwidget)
 
-        iwidget.open_menu().click_entry('Extract from grid')
-        _, new_size = self.get_widget_sizes_from_context(iwidget.wait_still())
+        with self.edit_mode as edit_session:
+            _, old_size = self.get_widget_sizes_from_context(iwidget)
 
-        self.assertEqual(old_size, new_size)
+            iwidget.open_menu().click_entry('Extract from grid')
+            _, new_size = self.get_widget_sizes_from_context(iwidget.wait_still())
+
+            self.assertEqual(old_size, new_size)
     test_extract_widget_from_grid.tags = tags + ('wirecloud-dragboard',)
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
@@ -1148,24 +1176,25 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="user_with_workspaces", next="/user_with_workspaces/ColumnLayoutTests")
 
-        iwidget = self.widgets[0]
-        affected_iwidget = self.widgets[2]
-        old_size, old_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
-        old_affected_iwidget_position = affected_iwidget.layout_position
+        with self.edit_mode as edit_session:
+            iwidget = self.widgets[0]
+            affected_iwidget = self.widgets[2]
+            old_size, old_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
+            old_affected_iwidget_position = affected_iwidget.layout_position
 
-        iwidget.minimize()
-        minimized_size, minimized_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
-        self.assertEqual(minimized_size[0], old_size[0])
-        self.assertLess(minimized_size[1], old_size[1])
-        self.assertEqual(minimized_size_in_pixels, (old_size_in_pixels[0], 0))
-        self.assertEqual(affected_iwidget.layout_position, (0, minimized_size[1]))
+            iwidget.minimize()
+            minimized_size, minimized_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
+            self.assertEqual(minimized_size[0], old_size[0])
+            self.assertLess(minimized_size[1], old_size[1])
+            self.assertEqual(minimized_size_in_pixels, (old_size_in_pixels[0], 0))
+            self.assertEqual(affected_iwidget.layout_position, (0, minimized_size[1]))
 
-        iwidget.maximize()
-        new_size, new_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
+            iwidget.maximize()
+            new_size, new_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
 
-        self.assertEqual(old_size, new_size)
-        self.assertEqual(old_size_in_pixels, new_size_in_pixels)
-        self.assertEqual(old_affected_iwidget_position, affected_iwidget.layout_position)
+            self.assertEqual(old_size, new_size)
+            self.assertEqual(old_size_in_pixels, new_size_in_pixels)
+            self.assertEqual(old_affected_iwidget_position, affected_iwidget.layout_position)
 
     test_minimize_widget.tags = tags + ('wirecloud-dragboard',)
 
@@ -1179,18 +1208,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Check initial sizes
         with widget:
             old_width_from_context = int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text)
+            old_height_in_pixels_changes = int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text)
             self.assertEqual(old_width_from_context, 6)
 
         # Change columns to 10
-        self.open_menu().click_entry('Settings')
-        workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
+        with self.edit_mode as edit_session:
+            self.open_menu().click_entry('Settings')
+            workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
 
-        workspace_preferences_dialog.find_element('.fa-cogs').click()
-        layout_form = FormModalTester(self, self.wait_element_visible(".wc-layout-settings-modal"))
-        layout_form.get_field("columns").set_value('10')
-        layout_form.accept()
+            workspace_preferences_dialog.find_element('.fa-cogs').click()
+            layout_form = FormModalTester(self, self.wait_element_visible(".wc-layout-settings-modal"))
+            layout_form.get_field("columns").set_value('10')
+            layout_form.accept()
 
-        workspace_preferences_dialog.accept()
+            workspace_preferences_dialog.accept()
 
         # Check new sizes
         with widget:
@@ -1205,7 +1236,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             width_in_pixels_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
             self.assertEqual(width_in_pixels_changes, '0')
             height_in_pixels_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
-            self.assertEqual(height_in_pixels_changes, '0')
+            self.assertEqual(height_in_pixels_changes, "%s" % (old_height_in_pixels_changes + 1))
 
     test_basic_layout_parameter_change.tags = tags + ('wirecloud-dragboard',)
 
@@ -1234,15 +1265,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         old_size_from_context2, old_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
 
         # Change columns to 10
-        self.open_menu().click_entry('Settings')
-        workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
+        with self.edit_mode as edit_session:
+            self.open_menu().click_entry('Settings')
+            workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
 
-        workspace_preferences_dialog.find_element('.fa-cogs').click()
-        layout_form = FormModalTester(self, self.wait_element_visible(".wc-layout-settings-modal"))
-        layout_form.get_field("columns").set_value('10')
-        layout_form.accept()
+            workspace_preferences_dialog.find_element('.fa-cogs').click()
+            layout_form = FormModalTester(self, self.wait_element_visible(".wc-layout-settings-modal"))
+            layout_form.get_field("columns").set_value('10')
+            layout_form.accept()
 
-        workspace_preferences_dialog.accept()
+            workspace_preferences_dialog.accept()
 
         # Check new widget 1 sizes
         new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0].wait_still())
@@ -1271,10 +1303,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(old_size_from_context[0], 6)
 
         # Change current layout to grid
-        self.open_menu().click_entry('Settings')
-        form = FormModalTester(self, self.wait_element_visible(".wc-workspace-preferences-modal"))
-        form.get_field("baselayout-type").set_value('gridlayout')
-        form.accept()
+        with self.edit_mode as edit_session:
+            self.open_menu().click_entry('Settings')
+            form = FormModalTester(self, self.wait_element_visible(".wc-workspace-preferences-modal"))
+            form.get_field("baselayout-type").set_value('gridlayout')
+            form.accept()
 
         # Check new sizes
         new_size_from_context, new_size_in_pixels_from_context = self.get_widget_sizes_from_context(widget)
@@ -1380,51 +1413,52 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         widget, other_widget = self.widgets
 
-        # Upgrade to version 3.0
-        widget.open_menu().click_entry('Upgrade/Downgrade')
-        form = FormModalTester(self, self.wait_element_visible(".wc-upgrade-component-modal"))
-        form.accept()
+        with self.edit_mode as edit_session:
+            # Upgrade to version 3.0
+            widget.open_menu().click_entry('Upgrade/Downgrade')
+            form = FormModalTester(self, self.wait_element_visible(".wc-upgrade-component-modal"))
+            form.accept()
 
-        # Check settings
-        widget.open_menu().click_entry('Settings')
+            # Check settings
+            widget.open_menu().click_entry('Settings')
 
-        form = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
-        self.assertRaises(NoSuchElementException, form.get_field, 'list')
-        self.assertEqual(form.get_field('text').value, 'initial text')
-        self.assertRaises(NoSuchElementException, form.get_field, 'boolean')
-        self.assertRaises(NoSuchElementException, form.get_field, 'number')
-        self.assertRaises(NoSuchElementException, form.get_field, 'password')
-        self.assertEqual(form.get_field('new').value, 'initial value')
-        form.accept()
+            form = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
+            self.assertRaises(NoSuchElementException, form.get_field, 'list')
+            self.assertEqual(form.get_field('text').value, 'initial text')
+            self.assertRaises(NoSuchElementException, form.get_field, 'boolean')
+            self.assertRaises(NoSuchElementException, form.get_field, 'number')
+            self.assertRaises(NoSuchElementException, form.get_field, 'password')
+            self.assertEqual(form.get_field('new').value, 'initial value')
+            form.accept()
 
-        # Check wiring
-        self.send_basic_event(widget)
+            # Check wiring
+            self.send_basic_event(widget)
 
-        # This should work as the outputendpoint is still available on version 3.0
-        with other_widget:
-            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            # This should work as the outputendpoint is still available on version 3.0
+            with other_widget:
+                WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
 
-        self.send_basic_event(other_widget)
-        time.sleep(3)
+            self.send_basic_event(other_widget)
+            time.sleep(3)
 
-        # Instead inputendpoint has been replaced by inputendpoint2
-        with widget:
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, '')
+            # Instead inputendpoint has been replaced by inputendpoint2
+            with widget:
+                text_div = self.driver.find_element_by_id('wiringOut')
+                self.assertEqual(text_div.text, '')
 
-        # Downgrade to version 1.0
-        widget.open_menu().click_entry('Upgrade/Downgrade')
-        form = FormModalTester(self, self.wait_element_visible(".wc-upgrade-component-modal"))
-        form.accept()
+            # Downgrade to version 1.0
+            widget.open_menu().click_entry('Upgrade/Downgrade')
+            form = FormModalTester(self, self.wait_element_visible(".wc-upgrade-component-modal"))
+            form.accept()
 
-        # Check settings
-        widget.open_menu().click_entry('Settings')
+            # Check settings
+            widget.open_menu().click_entry('Settings')
 
-        form = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
-        self.assertEqual(form.get_field('list').value, 'default')
-        self.assertEqual(form.get_field('text').value, 'initial text')
-        self.assertRaises(NoSuchElementException, form.get_field, 'new')
-        form.accept()
+            form = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
+            self.assertEqual(form.get_field('list').value, 'default')
+            self.assertEqual(form.get_field('text').value, 'initial text')
+            self.assertRaises(NoSuchElementException, form.get_field, 'new')
+            form.accept()
 
         # Check wiring
         self.send_basic_event(widget, 'hello world 2!!')

@@ -44,6 +44,11 @@
         });
         this.editButton.addEventListener("click", (button) => {
             showHideTabBar.call(this, button.active);
+            if (!button.active) {
+                this.walletButton.active = false;
+                this.layout.slideOut();
+            }
+            this.activeTab.dragboard._updateIWidgetSizes(true, true);
         });
 
         this.walletButton = this.buildAddWidgetButton();
