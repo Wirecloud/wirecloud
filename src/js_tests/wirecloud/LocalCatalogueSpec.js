@@ -879,8 +879,15 @@
                 );
             });
 
-            it("doesn't make requests for anonymous users", (done) => {
-                spyOn(Wirecloud.io, 'makeRequest');
+            it("loads also public resources when running as anonymous users", (done) => {
+                var widgetdata = {
+                    "type": "widget",
+                    "vendor": "Wirecloud",
+                    "name": "Test",
+                    "version": "1.0"
+                };
+
+                mock_meta(Wirecloud, "WidgetMeta");
                 Wirecloud.contextManager = {
                     "get": jasmine.createSpy("get").and.callFake((name) => {
                         switch (name) {
@@ -889,13 +896,26 @@
                         };
                     })
                 };
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                    expect(url).toBe(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION);
+                    return new Wirecloud.Task("request", (resolve) => {
+                        resolve({
+                            responseText: JSON.stringify({
+                                "Wirecloud/Test/1.0": widgetdata
+                            })
+                        });
+                    });
+                });
 
                 var p = Wirecloud.LocalCatalogue.reload();
                 p.then(
                     () => {
-                        expect(Wirecloud.LocalCatalogue.resources).toEqual({});
-                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({});
-                        expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
+                            "Wirecloud/Test/1.0": jasmine.any(Wirecloud.WidgetMeta)
+                        });
+                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
+                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta)]
+                        });
                         done();
                     },
                     (error) => {

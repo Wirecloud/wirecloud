@@ -49,16 +49,19 @@ from wirecloud.proxy.views import parse_context_from_referer, WIRECLOUD_PROXY
 
 class ResourceCollection(Resource):
 
-    @authentication_required
     @produces(('application/json',))
     def read(self, request):
 
         process_urls = request.GET.get('process_urls', 'true') == 'true'
         resources = {}
         if request.user.is_authenticated():
-            for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all())):
-                options = resource.get_processed_info(request, process_urls=process_urls, url_pattern_name="wirecloud.showcase_media")
-                resources[resource.local_uri_part] = options
+            results = CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))
+        else:
+            results = CatalogueResource.objects.filter(public=True)
+
+        for resource in results:
+            options = resource.get_processed_info(request, process_urls=process_urls, url_pattern_name="wirecloud.showcase_media")
+            resources[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(resources, sort_keys=True), content_type='application/json; chatset=UTF-8')
 

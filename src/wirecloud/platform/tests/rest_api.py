@@ -2911,10 +2911,15 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
     populate = False
     use_search_indexes = False
 
-    def test_resource_collection_get_requires_authentication(self):
+    def test_resource_collection_allows_anonymous_queries(self):
 
         url = reverse('wirecloud.resource_collection')
-        check_get_requires_authentication(self, url)
+
+        response = check_get_request(self, url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
 
     def test_resource_collection_get(self):
 

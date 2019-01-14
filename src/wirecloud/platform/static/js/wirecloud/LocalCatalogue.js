@@ -114,16 +114,10 @@
         this.resources = {};
         this.resourceVersions = {};
 
-        if (Wirecloud.contextManager.get('isanonymous') === false) {
-            request = Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
-                method: 'GET',
-                requestHeaders: {'Accept': 'application/json'}
-            });
-        } else {
-            request = new Wirecloud.Task("", (resolve) => {
-                resolve({responseText: "[]"});
-            });
-        }
+        request = Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
+            method: 'GET',
+            requestHeaders: {'Accept': 'application/json'}
+        });
 
         return request.then((response) => {
             var resources, resource_id, msg;
