@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -84,9 +85,12 @@ def searchWorkspace(request, querytext, pagenum, maxresults, orderby=None):
         if len(query) > 0:
             sqs = sqs.filter(query)
 
-    q = Q(public=True) | Q(users=request.user.username)
-    for group in request.user.groups.values_list("name", flat=True):
-        q |= Q(groups=group)
+    q = Q(public=True)
+    if request.user.is_authenticated():
+        q |= Q(users=request.user.username)
+
+        for group in request.user.groups.values_list("name", flat=True):
+            q |= Q(groups=group)
     sqs = sqs.filter(q)
 
     if orderby is not None:
