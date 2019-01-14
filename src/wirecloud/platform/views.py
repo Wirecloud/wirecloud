@@ -331,7 +331,8 @@ def render_wirecloud(request, view_type=None, title=None, description=None):
         'description': description,
         'THEME': theme,
         'VIEW_MODE': view_type,
-        'WIRECLOUD_VERSION_HASH': get_version_hash()
+        'WIRECLOUD_VERSION_HASH': get_version_hash(),
+        'environ': os.environ
     }
 
     try:
