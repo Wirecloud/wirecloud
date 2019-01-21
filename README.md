@@ -15,6 +15,7 @@
 [![Documentation badge](https://img.shields.io/readthedocs/wirecloud.svg)](http://wirecloud.readthedocs.org/en/latest/)
 [![Build Status](https://travis-ci.org/Wirecloud/wirecloud.svg?branch=develop)](https://travis-ci.org/Wirecloud/wirecloud)
 [![Coverage Status](https://coveralls.io/repos/github/Wirecloud/wirecloud/badge.svg?branch=develop)](https://coveralls.io/github/Wirecloud/wirecloud?branch=develop)
+![Status](https://nexus.lab.fiware.org/static/badges/statuses/wirecloud.svg)
 
 WireCloud builds on cutting-edge end-user development, RIA and semantic
 technologies to offer a next-generation end-user centred web application mashup
@@ -37,6 +38,10 @@ creates the need for a tool like WireCloud.
 
 This project is part of [FIWARE](http://www.fiware.org). Check it out in the
 [Catalogue](http://catalogue.fiware.org/enablers/application-mashup-wirecloud)
+
+| :books: [Documentation](https://wirecloud.rtfd.io/) | :page_facing_up: [Site](https://conwet.fi.upm.es/wirecloud) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/wirecloud/) | 
+|---|---|---|---|
+
 
 ## Documentation
 
