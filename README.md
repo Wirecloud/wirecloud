@@ -36,8 +36,9 @@ potential for reuse. Is this "situational" character which precludes them to be
 offered as 'off-the-shelf' functionality by solution providers, and therefore
 creates the need for a tool like WireCloud.
 
-This project is part of [FIWARE](http://www.fiware.org). Check it out in the
-[Catalogue](http://catalogue.fiware.org/enablers/application-mashup-wirecloud)
+This project is part of [FIWARE](https://www.fiware.org/). For more information
+check the FIWARE Catalogue entry for
+[Context Processing, Analysis and Visualization](https://github.com/Fiware/catalogue/tree/master/processing).
 
 | :books: [Documentation](https://wirecloud.rtfd.io/) | :page_facing_up: [Site](https://conwet.fi.upm.es/wirecloud) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/wirecloud/) | :dart: [Roadmap](roadmap.md) |
 |---|---|---|---|---|
