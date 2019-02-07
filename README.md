@@ -45,6 +45,7 @@ This project is part of [FIWARE](http://www.fiware.org). Check it out in the
 ## Contents
 
 - [Install](#install)
+- [Usage](#usage)
 - [Bugs and feature requests](#bugs-and-feature-requests)
 - [Quality Assurance](#quality-assurance)
 - [Testing](#testing)
