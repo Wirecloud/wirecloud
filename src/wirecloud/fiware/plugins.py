@@ -100,7 +100,6 @@ class FiWarePlugin(WirecloudPlugin):
 
         common = (
             'js/NGSI/NGSI.min.js',
-            'js/NGSI/eventsource.js',
             'js/NGSI/NGSIManager.js',
             'js/ObjectStorage/OpenStackManager.js',
         )
