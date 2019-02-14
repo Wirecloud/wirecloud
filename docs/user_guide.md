@@ -31,14 +31,14 @@ is named admin/Workspace.
 
 <img src="../images/user_guide/create_workspace/empty_workspace.png" srcset="../images/user_guide/create_workspace/empty_workspace.png 2x" alt="Empty workspace"/>
 
-Near the workspace name there is a button that you can click on to
+Near the workspace name there is a button which you can click on to
 expand the workspace dropdown menu:
 
 <img src="../images/user_guide/create_workspace/workspace_menu.png" srcset="../images/user_guide/create_workspace/workspace_menu.png 2x" alt="Workspace menu"/>
 
 Once expanded, the menu shows a list of the already created workspaces
 (see *Workspace*, *My Multimedia Workspace* and *IssueTrouble* in the
-figure above) that allows you to quickly switch between them, followed
+figure above) which allows you to quickly switch between them, followed
 by a list of options:
 
 -   **New workspace** creates a new workspace
@@ -46,7 +46,7 @@ by a list of options:
 -   **Share** shows the sharing configuration of the current workspace
 -   **Upload to my resources** allows you to save the current
     workspace to the local catalogue for later usage
--   **Embed** shows info about how to embed current workspace in other
+-   **Embed** shows information about how to embed the current workspace in other
     web pages
 -   **Settings** changes the settings of the current workspace
 -   **Remove** deletes the current workspace
@@ -64,9 +64,9 @@ desired name and click the accept button:
 Once accepted, the name of the new workspace is shown in the upper area of
 the window:
 
-<img src="../images/user_guide/create_workspace/new_workspace.png" srcset="../images/user_guide/create_workspace/new_workspace.png 2x" alt=""History Info" workspace just after being created"/>
+<img src="../images/user_guide/create_workspace/new_workspace.png" srcset="../images/user_guide/create_workspace/new_workspace.png 2x" alt="History Info" workspace just after being created"/>
 
-The following screenshot show the "Settings" menu, where you can set
+The following screenshot shows the "Settings" menu, where you can set
 workspace features:
 
 <img src="../images/user_guide/create_workspace/workspace_settings.png" srcset="../images/user_guide/create_workspace/workspace_settings.png 2x" alt="create_workspace/WorkspaceSettings.png"/>
@@ -77,7 +77,7 @@ Browsing the Marketplace
 
 A mashup tool like WireCloud must support access to **marketplaces**, where
 people can offer and deal with services made accessible through widgets and
-operators, like goods, and finally mashup them to create value added services
+operators, like goods, and finally mash them up to create value added services
 and applications.
 
 On the marketplace you can quickly find and compare widgets and operators,
@@ -114,14 +114,14 @@ as shown in the following screenshots:
 <img src="../images/user_guide/bae/add_new_marketplace_dialog.png" srcset="../images/user_guide/bae/add_new_marketplace_dialog.png 2x" alt="*Add new marketplace* dialog"/>
 
 WireCloud offers a built-in local catalogue called *My Resources*, which allows
-you to search among the widgets, operators and mashups currently available for
+you to search among the widgets, operators and mashups currently available to
 the user. The following figure shows a screenshot of the *My Resources* for a
 user in a given instance of WireCloud.
 
 <img src="../images/user_guide/browsing_marketplace/my_resources.png" srcset="../images/user_guide/browsing_marketplace/my_resources.png 2x" alt="*My Resources* view"/>
 
 If you are a widget developer with brand new widgets to share, or you just have
-downloaded a WireCloud-compliant widget from anywhere, you can easily upload
+downloaded a WireCloud-compliant widget from somewhere, you can easily upload
 your new widgets to the built-in local catalogue through the *Upload* button
 available on the *My Resources* view.
 
@@ -140,7 +140,7 @@ point:
 
 <img src="../images/user_guide/create_workspace/new_workspace.png" srcset="../images/user_guide/create_workspace/new_workspace.png 2x" alt="Starting point"/>
 
-Go then to the Marketplace to choose among the components available in the
+Then go to the Marketplace to choose among the available components in the
 catalogue those you want to use in your mashup:
 
 <img src="../images/user_guide/building_mashup/get_more_components.png" srcset="../images/user_guide/building_mashup/get_more_components.png 2x" alt="Button for searching more components"/>
@@ -170,8 +170,8 @@ button:
 
 <img src="../images/user_guide/building_mashup/add_linear_graph.png" srcset="../images/user_guide/building_mashup/add_linear_graph.png 2x" alt="Click *Add to workspace*"/>
 
-This will add the *Linear Graph* widget into the dashboard, you can move
-and resize it until you obtain the desired layout:
+This will add the *Linear Graph* widget into the dashboard, which you can move
+and resize until you obtain the desired layout:
 
 <img src="../images/user_guide/building_mashup/initial_linear_graph_layout.png" srcset="../images/user_guide/building_mashup/initial_linear_graph_layout.png 2x" alt="Initial *Linear Graph* layout"/>
 
@@ -224,21 +224,29 @@ mark shadow radius to customise the visualisation.
 
 <img src="../images/user_guide/building_mashup/mapviewer_settings.png" srcset="../images/user_guide/building_mashup/mapviewer_settings.png 2x" alt="*Map Viewer* Settings"/>
 
-As we have configure the initial position and the initial zoom, we need to
+> Note that you need to provide an API key to be able to use the widget
+> correctly. You can get this from http://console.cloud.google.com/.
+> For all features you need to activate the following APIs:
+> -   Maps JavaScript API
+> -   Maps Geocoding API
+> See also the following documentation
+> https://developers.google.com/maps/documentation/javascript/get-api-key.
+
+As we have configured the initial position and the initial zoom, we need to
 reload the widget. To do so, we click again on the properties icon and then on
 the *Reload* option:
 
 <img src="../images/user_guide/building_mashup/mapviewer_reload_entry.png" srcset="../images/user_guide/building_mashup/mapviewer_reload_entry.png 2x" alt="Reload option"/>
 
-Now we have our widget centered in the new location, Santander, and using the
+Now we have our widget centered in the new location, Santander, using the
 configured initial zoom level.
 
 <img src="../images/user_guide/building_mashup/mapviewer_configured.png" srcset="../images/user_guide/building_mashup/mapviewer_configured.png 2x" alt="MapViewer widget after being configured"/>
 
 At this time, you have created a mashup with two individual widgets. The
-*Linear Graph* widget is empty and need to be wired with something that
+*Linear Graph* widget is empty and needs to be wired with something that
 provides information to draw, and the *Map Viewer* is a good option to
-show any kind of "Points of Interest" and allow the user to select them
+show any kind of "Points of Interest" and to allow the user to select them
 easily.
 
 <img src="../images/user_guide/building_mashup/workspace_mapviewer_configured.png" srcset="../images/user_guide/building_mashup/workspace_mapviewer_configured.png 2x" alt="Mashup with the map viewer configured"/>
@@ -269,15 +277,15 @@ One of the most important characteristics that should be intrinsic to
 the design of widgets is that they must be as generic as possible. For
 example, it makes much more sense to have a generic *Map Viewer* widget
 that can be wired through an operator to any source of information of
-your choice, than to have an specific one that has hard-coded the source
-of data. Operators represents the means to achieve this generality,
-because they represents the means to dynamically associate the widgets
+your choice, than to have a specific one that has hard-coded the data source.
+Operators represent the means to achieve this generality,
+because they represent the means to dynamically associate the widgets
 with the concrete services or sources of information you want to use in
 the context of a particular mashup.
 
 In this case, we have an *NGSI source* operator that is going to
 provide the data information to the *Map Viewer* widget. This kind of
-operators are called piping operators. So we have to add it to the
+operator is called piping operator. So we have to add it to the
 wiring.
 
 To do so, open the components side panel and search the *NGSI source* operator,
@@ -311,15 +319,15 @@ And make sure the following configuration is used:
 - **NGSI proxy URL**: `https://ngsiproxy.lab.fiware.org`
 - **Use the FIWARE credentials of the user**: Enabled
 - **Use the FIWARE credentials of the workspace owner**: Disabled
-- **NGSI tenant/service:** Emtpy
+- **NGSI tenant/service:** Empty
 - **NGSI scope:** `/`
 - **NGSI entity types**: `Node, AMMS, Regulator`
 - **Id pattern**: Empty
 - **Monitored NGSI attributes**: `Latitud, Longitud, presence, batteryCharge, illuminance, ActivePower, ReactivePower, electricPotential, electricalCurrent`
 
-Now, we have ready the source of information that is going to be presented in
-the *Map Viewer* widget. So, the next step is adding the *Map Viewer* widget to
-the wiring canvas, this way we will be able to connect them. This is
+Now, the source of information that is going to be presented in the
+*Map Viewer* widget is ready. So, the next step is adding the *Map Viewer*
+widget to the wiring canvas, this way we will be able to connect them. This is
 accomplished in the same way we did with the *NGSI Source* operator, but using
 the *Widget* tab in the sidebar:
 
@@ -340,14 +348,14 @@ something similiar to this:
 
 The wiring editor comes with a recommendation system for connections.
 For example, move the pointer to the *Provide entity* endpoint. You will
-see that the endpoint get highlighted, this means that the recommendation
+see that the endpoint getd highlighted, this means that the recommendation
 system is searching for compatible endpoints. In this case there are no
 compatible endpoints.
 
 <img src="../images/user_guide/wiring/missing_connection_recommendations.png" srcset="../images/user_guide/wiring/missing_connection_recommendations.png 2x" alt="Missing connection recommendations"/>
 
 This is because the output of the *NGSI source* cannot be connected directly
-with the *Map Viewer* widget. We can use a transform operator to convert the
+to the *Map Viewer* widget. We can use a transform operator to convert the
 event data provided by the *NGSI source* operator to the format used by the *Map
 Viewer* widget. In this example, the operator that is going to perform this
 transformation is called *NGSI Entity to PoI*:
@@ -365,12 +373,12 @@ So, we can connect it. To do so, push down the mouse button on the
 <img src="../images/user_guide/wiring/ngsientity2poi_connection_dragging.png" srcset="../images/user_guide/wiring/ngsientity2poi_connection_dragging.png 2x" alt="Dragging a connection"/>
 <img src="../images/user_guide/wiring/ngsientity2poi_connection_created.png" srcset="../images/user_guide/wiring/ngsientity2poi_connection_created.png 2x" alt="Created connection"/>
 
-We have to connect also the *PoI* endpoint of the *NGSI Entity To PoI* operator
+We also have to connect the *PoI* endpoint of the *NGSI Entity To PoI* operator
 to the *Insert/Update PoI* endpoint on the *Map Viewer* widget:
 
 <img src="../images/user_guide/wiring/wiring_after_connecting_ngsientity2poin_and_mapviewer.png" srcset="../images/user_guide/wiring/wiring_after_connecting_ngsientity2poin_and_mapviewer.png 2x" alt="Wiring diagram after connecting the *NGSI entity To PoI* operator and the *Map Viewer* widget"/>
 
-Once again, we need to configure the *NGSI Entity To PoI* operator, this is done
+Once again, we need to configure the *NGSI Entity To PoI* operator. This is done
 in the same way as we have done with the *NGSI Source*. In this case the values
 should be:
 
@@ -383,10 +391,10 @@ operator.
 
 <img src="../images/user_guide/wiring/mapviewer_with_entities.png" srcset="../images/user_guide/wiring/mapviewer_with_entities.png 2x" alt="Map Viewer widget displaying shome PoIs"/>
 
-You can use the *Map Viewer* moving the viewport, selecting PoI's, etc.
-But in really, what we have is just the *Map Viewer* widget connected to
-a source of data, but using piping and transformation operators that is
-going to give us a great flexibility.
+You can use the *Map Viewer* and moving its viewport, selecting PoI's, etc.
+But really, what we have is not just the *Map Viewer* widget connected to
+a source of data, but using piping and transformation operators which
+gives us great flexibility.
 
 <img src="../images/user_guide/wiring/mapviewer_entity_details.png" srcset="../images/user_guide/wiring/mapviewer_entity_details.png 2x" alt="Map Viewer widget displaying the details of an entity"/>
 
@@ -396,8 +404,8 @@ going to give us a great flexibility.
 
 #### Other wiring common tasks
 
-One of the most common operations is the task of getting the connections
-removed in the wiring. For example, when you make some mistake for some
+One of the most common operations is the task of removing the connections
+in the wiring. For example, when you make some mistake for some
 reason, you can fix it by clicking the *Remove* button that appears in the
 middle a of the connection:
 
@@ -436,12 +444,12 @@ in the component menu:
 <img src="../images/user_guide/wiring/minimize_option.png" srcset="../images/user_guide/wiring/minimize_option.png 2x" alt="*Collapse* option"/>
 <img src="../images/user_guide/wiring/collapsed_operators.png" srcset="../images/user_guide/wiring/collapsed_operators.png 2x" alt="Collapsed operators"/>
 
-#### Cloncluding our example
+#### Concluding our example
 
 Continue wiring the rest of the widgets in your mashup following your
 intuition, the documentation and the contextual help offered by each
-widget/operator. Anyway, just in case you have difficulties, you can see
-the final result in the following screenshot:
+widget/operator. Finally, you should get to a final result similar to
+the one in the following screenshot:
 
 <img src="../images/user_guide/wiring/final_wiring.png" srcset="../images/user_guide/wiring/final_wiring.png 2x" alt="Final wiring configuration"/>
 
@@ -456,10 +464,10 @@ Now you can play with your new workspace.
 Behaviour Oriented Wiring
 -------------------------
 
-Starting at WireCloud 0.8.0, you can create wiring configurations by means of
-compositing several *behaviours*.
+Starting with WireCloud 0.8.0, you can create wiring configurations by means of
+composing several *behaviours*.
 
-A *behaviour* is a set of components jointly with the connections established
+A *behaviour* is a set of joined components with the connections established
 between them for adding a feature or behaviour to the application mashup. For
 example, we can split the wiring configuration used by the dashboard created on
 the previous section into two behaviours:
@@ -487,11 +495,11 @@ feature WireCloud provides several benefits:
 - Splitting the wiring configuration into severals behaviours helps to provide a
   more organised and structured diagram as well as a way for documenting the
   reasons for using and connecting components in a particular way.
-- Ignoring the fact that using the behaviour oriented wiring has a harder
+- Even though using the behaviour oriented wiring has a harder
   learning curve, using it eases the development of wiring configurations as it
   allows you to develop them using several phases.
-- This documentation is also a good starting point for novice developers and
-  experiences developers wanting to replicate the behaviour of a given
+- This documentation is also a good starting point for novice and experienced
+  developers wanting to replicate the behaviour of a given
   application mashup. They only need to access the application mashups developed
   by other users and learn how the wiring configuration works by reading the
   behaviour descriptions.
@@ -530,10 +538,10 @@ enabled. Each of the panels in the *Behaviours* section represents a
 behaviour and displays the name and the description of the represented
 behaviour.
 
-Noticed that one of the behaviours is highlighted, this is because
-you can edit only a behaviour at a time, this is the active behaviour. The name
+Notice that one of the behaviours is highlighted, the currently active behaviour.
+This is because you can edit only a behaviour at a time. The name
 of the active behaviour is also displayed in the footer of the wiring editor, so
-you can know which is the active behaviour all the time (i.e. including when the
+you always see which is the active behaviour (i.e. including when the
 behaviour list panel is hidden). Changing the active behaviour is just a matter
 of clicking on the panel representing the behaviour.
 
@@ -549,14 +557,14 @@ the behaviour engine is disabled. That is, by draging them from the component
 side panel. The only thing you have to take into account is that those
 components are only added into the active behaviour.
 
-If you want to use a component already involved in other behaviour, you can use
+If you want to use a component already involved in another behaviour, you can use
 the *Add* button of the background component you want to include:
 
 <img src="../images/user_guide/behaviour_oriented_wiring/component_share_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/component_share_button.png 2x" alt="Component *Add* button"/>
 
 The same applies to the connections, if you create a new connection, that
 connection is added only into the active behaviour. If you want to include a
-connection already available on other behaviour, you can click on the *Add*
+connection already available on another behaviour, you can click on the *Add*
 button of the background connection:
 
 <img src="../images/user_guide/behaviour_oriented_wiring/connection_share_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/connection_share_button.png 2x" alt="Connection *Add* button"/>
@@ -598,7 +606,7 @@ To remove a component from a behaviour, click on the *Delete* button:
 
 <img src="../images/user_guide/behaviour_oriented_wiring/remove_component.png" srcset="../images/user_guide/behaviour_oriented_wiring/remove_component.png 2x" alt="*Remove* component button"/>
 
-Components are only totaly removed from the wiring configuration when they are
+Components are only completely removed from the wiring configuration when they are
 not used in any of the available behaviours.
 
 The same applies to connections, you can remove them from the active behaviour
@@ -606,22 +614,22 @@ using the *Delete* button:
 
 <img src="../images/user_guide/behaviour_oriented_wiring/remove_connection.png" srcset="../images/user_guide/behaviour_oriented_wiring/remove_connection.png 2x" alt="*Remove* connection button"/>
 
-Again, connections are remove from the wiring configuration when the are removed
-from all the behaviours.
+Again, connections are removed from the wiring configuration when they are removed
+from all behaviours.
 
 #### Ordering behaviours
 
 The main purpose of the behaviour engine is to be able to document the wiring
 configuration and, in that sense, humans tend to expose the ideas using a particular
-order. Said that, the Wiring Editor allows you to change the order used in the
-behaviour list, but that order will not affet to the wiring engine.
+order. With that being said, the Wiring Editor allows you to change the order used in the
+behaviour list, but that order will not affect the wiring engine.
 
 To change the behaviour order, you only have to click on the *Order behaviours*
 button:
 
 <img src="../images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png 2x" alt="*Remove* connection button"/>
 
-Once activated the ordering mode, you will be able to drag and drop the behaviour
+Once the ordering mode is activated, you will be able to drag and drop the behaviour
 boxes:
 
 <img src="../images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png" srcset="../images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png 2x" alt="Ordering behaviours"/>
@@ -638,7 +646,7 @@ Sharing your mashups
 --------------------
 
 Workspaces can be made public by means of modifying their settings as
-Follows:
+follows:
 
 1.  Click on the workspace menu button and click *Share*:
     <img src="../images/user_guide/wiring/share_workspace_entry.png" srcset="../images/user_guide/wiring/share_workspace_entry.png 2x" alt="*Share* option"/>
@@ -655,18 +663,18 @@ URL with other users.
 All workspaces can be embedded, but take into account that access rules
 are the same that applies when using the workspace directly from
 WireCloud. If you don't make the workspace public, you will require
-users to be logged in WireCloud and having enough access permission.
-This make changing sharing settings of the workspace a first step before
+users to be logged in in WireCloud and having permission to access it.
+This makes changing the sharing settings of the workspace a first step before
 embedding mashups into other web pages.
 
 You can also obtain the code you have to copy & paste into other web
-pages following those steps:
+pages by following these steps:
 
 1.  Click on the workspace menu button and click *Embed*:
     <img src="../images/user_guide/wiring/embed_workspace_entry.png" srcset="../images/user_guide/wiring/embed_workspace_entry.png 2x" alt="*Embed* workspace option"/>
 
-1.  A new window showing you the code for embedding the mashup. Copy &
-    paste it into you HTML document.
+1.  A new window appears, showing you the code for embedding the mashup. Copy &
+    paste it into your HTML document.
     <img src="../images/user_guide/wiring/embed_workspace_dialog.png" srcset="../images/user_guide/wiring/embed_workspace_dialog.png 2x" alt="Embed workspace dialog"/>
 
 Additional sources of information
@@ -675,7 +683,7 @@ Additional sources of information
 See the [Application Mashup GE fundamentals
 course](http://edu.fiware.org/course/view.php?id=53) at the FIWARE
 Academy for detailed documentation on how to use WireCloud from
-different perspectives (end-user, developer and administrators). Another
+different perspectives (end-user, developer and administrator). Another
 source of information is [the WireCloud
 website](https://conwet.fi.upm.es/wirecloud/) where you can find more
 general information and other interesting resources such as demo videos.
