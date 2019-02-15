@@ -36,8 +36,9 @@ potential for reuse. Is this "situational" character which precludes them to be
 offered as 'off-the-shelf' functionality by solution providers, and therefore
 creates the need for a tool like WireCloud.
 
-This project is part of [FIWARE](http://www.fiware.org). Check it out in the
-[Catalogue](http://catalogue.fiware.org/enablers/application-mashup-wirecloud)
+This project is part of [FIWARE](https://www.fiware.org/). For more information
+check the FIWARE Catalogue entry for
+[Context Processing, Analysis and Visualization](https://github.com/Fiware/catalogue/tree/master/processing).
 
 | :books: [Documentation](https://wirecloud.rtfd.io/) | :page_facing_up: [Site](https://conwet.fi.upm.es/wirecloud) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/wirecloud/) | :dart: [Roadmap](roadmap.md) |
 |---|---|---|---|---|
@@ -101,15 +102,45 @@ follows:
 Testing of WireCloud is based on two different frameworks. On the one side, Python code is being
 tested using Django's own testing capabilities. On the other side, JavaScript code testing is based
 on Karma and Jasmine. Both tests are run on a local copy of the
-[WireCloud repository on GitHub](https://github.com/Wirecloud/wirecloud).
+[WireCloud repository on GitHub](https://github.com/Wirecloud/wirecloud), inside
+the `src` folder.
 
-For the tests on the Python code, next command has to be executed in the `src` folder:
 
-    python manage.py test --nologcapture -v 2 -a tags='wirecloud-noselenium'
+### Python code
 
-And for testing the JavaScript code, next command has to be executed inside the `src` folder, too:
+Before running the tests, you have to ensure all the python dependencies are
+installed on the environment. To do so, execute the following commands on the
+`src` folder:
 
-    grunt
+    $ pip install -r requirements.txt
+    $ pip install -r requirements-dev.txt
+
+Once installed all the dependencies, you can run the Python tests by using the
+following command:
+
+    $ python manage.py test --nologcapture -v 2 -a tags='wirecloud-noselenium'
+
+WireCloud also comes with some selenium tests that can be executed using the
+following command:
+
+    $ python manage.py test --nologcapture -v 2 -a tags='wirecloud-selenium'
+
+In this case, you will need to have Chrome and Firefox installed as well as
+[chromedriver](http://chromedriver.chromium.org/) and [geckodriver](https://github.com/mozilla/geckodriver/releases).
+
+
+### JavaScript code
+
+Before being able to test JavaScript code, some dependencies have to be
+installed:
+
+    $ sudo npm install -g grunt-cli
+    $ npm install
+
+Once installed all the npm dependencies, tests can be executed using `grunt`:
+
+    $ grunt
+
 
 ---
 
