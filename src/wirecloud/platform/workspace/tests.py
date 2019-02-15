@@ -22,12 +22,12 @@ from collections import OrderedDict
 import os
 import rdflib
 import json
+from unittest import TestCase
+from unittest.mock import Mock, create_autospec
 
 from django.contrib.auth.models import AnonymousUser, User
 from django.db.migrations.exceptions import IrreversibleError
 from django.test import TransactionTestCase
-from mock import Mock, create_autospec
-from unittest import TestCase
 
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase

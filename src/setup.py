@@ -196,7 +196,6 @@ setup(
     ),
     tests_require=(
         'django-nose',
-        'mock>=1.0,<2.0',
     ),
     setup_requires=(
         'wheel>=0.24',

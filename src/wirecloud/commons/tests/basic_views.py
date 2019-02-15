@@ -18,11 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from unittest.mock import Mock
 
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
-from mock import Mock
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 

@@ -19,13 +19,13 @@
 
 import json
 import os
+from unittest.mock import MagicMock, Mock, patch
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.test import Client, TestCase, TransactionTestCase
 from django.test.utils import override_settings
-from mock import MagicMock, Mock, patch
 
 import wirecloud.catalogue.utils
 from wirecloud.catalogue.models import CatalogueResource

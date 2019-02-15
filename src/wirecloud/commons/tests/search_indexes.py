@@ -19,11 +19,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from mock import Mock, patch
 
 from wirecloud.commons.haystack_queryparser import NoMatchingBracketsFound, ParseSQ
 from wirecloud.commons.search_indexes import cleanUserResults, cleanGroupResults, searchGroup, searchUser, GROUP_CONTENT_FIELDS, USER_CONTENT_FIELDS

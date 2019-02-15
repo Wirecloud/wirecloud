@@ -19,11 +19,11 @@
 
 import io
 import sys
+from unittest.mock import patch
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import override_settings, TransactionTestCase
-from mock import patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.plugins import clear_cache

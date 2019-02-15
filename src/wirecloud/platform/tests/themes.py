@@ -19,11 +19,11 @@
 
 import errno
 import unittest
+from unittest.mock import MagicMock, Mock, patch
 
 from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.test.utils import override_settings
-from mock import MagicMock, Mock, patch
 
 from wirecloud.platform.themes import ActiveThemeFinder, CORE_THEMES, DEFAULT_THEME, get_active_theme_name, get_available_themes as real_get_available_themes, get_theme_chain, get_theme_metadata, TemplateLoader
 

@@ -21,9 +21,9 @@
 from copy import deepcopy
 import json
 import sys
+from unittest.mock import patch, MagicMock, Mock
 
 from django.test import TestCase
-from mock import patch, MagicMock, Mock
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 

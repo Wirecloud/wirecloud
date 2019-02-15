@@ -19,11 +19,11 @@
 
 import datetime
 import unittest
+from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.test import TransactionTestCase
-from mock import patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.models import CatalogueResource, Workspace

@@ -18,9 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import errno
+from unittest.mock import Mock, patch, DEFAULT
 
 from django.test import TestCase
-from mock import Mock, patch, DEFAULT
 
 from wirecloud.catalogue.utils import add_packaged_resource, update_resource_catalogue_cache
 from wirecloud.commons.utils.template import TemplateParseException
