@@ -43,11 +43,14 @@ check the FIWARE Catalogue entry for
 | :books: [Documentation](https://wirecloud.rtfd.io/) | :page_facing_up: [Site](https://conwet.fi.upm.es/wirecloud) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/wirecloud/) | :dart: [Roadmap](roadmap.md) |
 |---|---|---|---|---|
 
+## Contents
 
-## Documentation
-
-You can find the User & Programmer's Manual and the Install & Administration
-Guide on [Read the Docs](https://wirecloud.readthedocs.io)
+- [Install](#install)
+- [Usage](#usage)
+- [Bugs and feature requests](#bugs-and-feature-requests)
+- [Quality Assurance](#quality-assurance)
+- [Testing](#testing)
+- [License](#license)
 
 ## Install
 
@@ -58,6 +61,15 @@ $ sudo pip install wirecloud
 See the
 [installation guide](https://wirecloud.readthedocs.io/en/stable/installation_guide/)
 for more info.
+
+## Usage
+
+WireCloud is a user-development tool aimed both at users and developers. Users use the platform
+to build and/or use their interfaces using deployed widgets and developers, whereas developers do
+create such components by extending existing ones or creating them from scratch.
+
+In the former, final users can find useful information in the [User Guide](https://wirecloud.readthedocs.io/en/stable/user_guide/). In the latter,
+developers can learn how to develop components in the [Programmer Guide](https://wirecloud.readthedocs.io/en/stable/restapi/)
 
 ## Bugs and feature requests
 
@@ -84,6 +96,51 @@ follows:
     ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Scalability&url=https://fiware.github.io/catalogue/json/wirecloud.json&query=$.scalability&colorB=blue)
     ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Performance&url=https://fiware.github.io/catalogue/json/wirecloud.json&query=$.performance&colorB=blue)
     ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Stability&url=https://fiware.github.io/catalogue/json/wirecloud.json&query=$.stability&colorB=blue)
+
+## Testing
+
+Testing of WireCloud is based on two different frameworks. On the one side, Python code is being
+tested using Django's own testing capabilities. On the other side, JavaScript code testing is based
+on Karma and Jasmine. Both tests are run on a local copy of the
+[WireCloud repository on GitHub](https://github.com/Wirecloud/wirecloud), inside
+the `src` folder.
+
+
+### Python code
+
+Before running the tests, you have to ensure all the python dependencies are
+installed on the environment. To do so, execute the following commands on the
+`src` folder:
+
+    $ pip install -r requirements.txt
+    $ pip install -r requirements-dev.txt
+
+Once installed all the dependencies, you can run the Python tests by using the
+following command:
+
+    $ python manage.py test --nologcapture -v 2 -a tags='wirecloud-noselenium'
+
+WireCloud also comes with some selenium tests that can be executed using the
+following command:
+
+    $ python manage.py test --nologcapture -v 2 -a tags='wirecloud-selenium'
+
+In this case, you will need to have Chrome and Firefox installed as well as
+[chromedriver](http://chromedriver.chromium.org/) and [geckodriver](https://github.com/mozilla/geckodriver/releases).
+
+
+### JavaScript code
+
+Before being able to test JavaScript code, some dependencies have to be
+installed:
+
+    $ sudo npm install -g grunt-cli
+    $ npm install
+
+Once installed all the npm dependencies, tests can be executed using `grunt`:
+
+    $ grunt
+
 
 ---
 

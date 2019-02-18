@@ -19,13 +19,13 @@
 
 import json
 import time
+from unittest.mock import MagicMock, Mock, patch
 from urllib.parse import parse_qsl
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from mock import MagicMock, Mock, patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.proxy.views import proxy_request

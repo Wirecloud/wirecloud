@@ -18,9 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+from unittest.mock import Mock, patch, DEFAULT
 
 from django.http import HttpResponse
-from mock import Mock, patch, DEFAULT
 
 from wirecloud.fiware.views import login, logout
 

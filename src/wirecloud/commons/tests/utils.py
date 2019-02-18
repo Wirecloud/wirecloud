@@ -19,13 +19,13 @@
 
 from io import BytesIO
 import os
+from unittest.mock import DEFAULT, patch, Mock, ANY
 import zipfile
 
 import django
 from django.http import Http404, UnreadablePostError
 from django.test import TestCase
 from django.test.utils import override_settings
-from mock import DEFAULT, patch, Mock, ANY
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html, filter_changelog

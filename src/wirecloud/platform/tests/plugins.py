@@ -17,10 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from unittest.mock import DEFAULT, patch
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-from mock import DEFAULT, patch
 
 from wirecloud.platform.plugins import clear_cache, get_active_features, get_plugins, \
     get_extra_javascripts, get_widget_api_extensions, WirecloudPlugin, find_wirecloud_plugins

@@ -21,11 +21,11 @@ import io
 import os
 import shutil
 from tempfile import mkdtemp
+from unittest.mock import DEFAULT, Mock, patch
 
 import django
 from django.core.management.base import CommandError
 from django.test import TestCase
-from mock import DEFAULT, Mock, patch
 
 from wirecloud.commons.wirecloud_admin import CommandLineUtility
 from wirecloud.commons.utils.testcases import cleartree, WirecloudTestCase

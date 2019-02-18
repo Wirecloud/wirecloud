@@ -19,10 +19,10 @@
 
 import os.path
 import re
+from unittest.mock import MagicMock, Mock, patch
 
 from django.http import Http404
 from django.test import TestCase, override_settings
-from mock import MagicMock, Mock, patch
 
 from wirecloud.platform import plugins
 from wirecloud.platform.widget.utils import fix_widget_code

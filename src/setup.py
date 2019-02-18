@@ -194,12 +194,8 @@ setup(
         'pillow',
         'jsonpatch',
     ),
-    extras_require={
-        ":python_version < '3.2'": ('futures>=2.1.3',),
-    },
     tests_require=(
         'django-nose',
-        'mock>=1.0,<2.0',
     ),
     setup_requires=(
         'wheel>=0.24',

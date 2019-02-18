@@ -19,11 +19,11 @@
 
 import io
 import sys
+from unittest.mock import Mock, patch, DEFAULT
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
-from mock import Mock, patch, DEFAULT
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)

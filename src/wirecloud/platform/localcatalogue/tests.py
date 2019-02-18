@@ -20,13 +20,13 @@
 from io import BytesIO
 import os.path
 import time
+from unittest.mock import Mock
 import zipfile
 
 from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.test import Client, TransactionTestCase
-from mock import Mock
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 

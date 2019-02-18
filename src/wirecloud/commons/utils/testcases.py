@@ -29,6 +29,7 @@ import stat
 import sys
 from tempfile import mkdtemp
 import time
+from unittest import mock
 from urllib.error import URLError, HTTPError
 from urllib.parse import unquote, urlparse
 
@@ -39,7 +40,6 @@ from django.core import management
 from django.test import LiveServerTestCase, TestCase
 from django.test.client import Client
 from django.utils import translation
-import mock
 import haystack
 
 from wirecloud.platform.localcatalogue.utils import fix_dev_version, install_resource

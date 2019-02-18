@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from unittest.mock import Mock, patch
+
 from django.db.models import Q
 from django.test import TestCase
-from mock import Mock, patch
 
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.search_indexes import cleanResults, searchWorkspace, CONTENT_FIELDS
