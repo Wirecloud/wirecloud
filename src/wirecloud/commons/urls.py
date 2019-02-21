@@ -20,8 +20,18 @@
 from django.conf.urls import include, url
 from django.views.generic import TemplateView
 
+from wirecloud.commons import views
+
+
 urlpatterns = (
 
+    # i18n
+    url(r'^api/i18n/', include('django.conf.urls.i18n')),
+    url(r'^api/i18n/js_catalogue$',
+        views.cached_javascript_catalog,
+        name="wirecloud.javascript_translation_catalogue"),
+
+    # OAuth2
     url('^oauth2/default_redirect_uri$',
         TemplateView.as_view(template_name='wirecloud/oauth2/default_redirect_uri.html'),
         name='oauth.default_redirect_uri'),

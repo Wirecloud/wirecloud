@@ -46,12 +46,6 @@ urlpatterns = (
         views.version_entry,
         name='wirecloud.version'),
 
-    # i18n
-    url(r'^api/i18n/', include('django.conf.urls.i18n')),
-    url(r'^api/i18n/js_catalogue$',
-        views.cached_javascript_catalog,
-        name="wirecloud.javascript_translation_catalogue"),
-
     # Context
     url(r'^api/context/?$',
         context_views.PlatformContextCollection(permitted_methods=('GET',)),
