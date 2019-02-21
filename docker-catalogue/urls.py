@@ -16,6 +16,7 @@ admin.autodiscover()
 urlpatterns = (
 
     # Catalogue
+    url(r'^api/', include('wirecloud.catalogue.urls')),
     url(r'^catalogue/', include('wirecloud.catalogue.urls')),
 
     # Login/logout

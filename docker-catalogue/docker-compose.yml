@@ -45,7 +45,7 @@ services:
             - elasticsearch
             - memcached
         environment:
-            - DEBUG=False
+            - DEBUG=True
             - LOGLEVEL=debug
             # - DEFAULT_THEME=wirecloud.defaulttheme
             - DB_HOST=postgres
@@ -60,3 +60,5 @@ services:
         volumes:
             - ./wirecloud-data:/opt/wirecloud_instance/data
             - ./wirecloud-static:/var/www/static
+        #entrypoint: /bin/bash
+        #command: -c "sleep 500"

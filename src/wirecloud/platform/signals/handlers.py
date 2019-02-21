@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright 2008-2017 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,10 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-__version_info__ = (1, 2, 0)
-__version__ = '.'.join(map(str, __version_info__))
-__application_mashup_version_info__ = (2, 2)
-__application_mashup_version__ = '.'.join(map(str, __application_mashup_version_info__))
+from django.contrib.auth.signals import user_logged_in
+from django.dispatch import receiver
+
+from wirecloud.platform.preferences.models import update_session_lang
 
 
-default_app_config = 'wirecloud.platform.apps.WirecloudPlatformConfig'
+@receiver(user_logged_in)
+def setup_language_from_preferences(sender, **kwargs):
+    update_session_lang(kwargs['request'], kwargs['user'])
