@@ -86,12 +86,11 @@ class URLMiddleware(object):
 
             from django.conf import settings
 
-            self._path_mapping = {}
+            self._path_mapping = {
+                '/api/': 'api'
+            }
 
             if 'wirecloud.platform' in settings.INSTALLED_APPS:
-                api_path = reverse('wirecloud.features')[:-len('features')]
-                self._path_mapping[api_path] = 'api'
-
                 proxy_path = reverse('wirecloud|proxy', kwargs={'protocol': 'a', 'domain': 'a', 'path': ''})[:-len('a/a')]
                 self._path_mapping[proxy_path] = 'proxy'
 
