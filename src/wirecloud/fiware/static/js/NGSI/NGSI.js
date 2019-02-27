@@ -1228,11 +1228,12 @@
                 }
 
                 var priv = privates.get(this);
-                priv.source_url = response.getHeader('Location');
-                if (priv.source_url == null) {
-                    return Promise.reject(new NGSI.InvalidResponseError('Missing Location Header'));
+                try {
+                    priv.source_url = new URL(response.getHeader('Location'));
+                } catch (e) {
+                    privates.get(this).promise = null;
+                    return Promise.reject(new NGSI.InvalidResponseError('Invalid/missing Location Header'));
                 }
-                priv.source_url = new URL(priv.source_url);
                 return connect_to_eventsource.call(this);
             }.bind(this),
             function (error) {
@@ -1248,10 +1249,9 @@
     };
 
     var connect_to_eventsource = function connect_to_eventsource() {
+        var priv = privates.get(this);
         return new Promise(function (resolve, reject) {
             var closeTimeout;
-            var _wait_event_source_init = null;
-            var priv = privates.get(this);
             var wait_event_source_init = function wait_event_source_init(e) {
                 var data = JSON.parse(e.data);
 
@@ -1260,29 +1260,54 @@
                 priv.promise = null;
                 priv.connection_id = data.id;
 
-                priv.source.removeEventListener('init', _wait_event_source_init, true);
+                priv.source.removeEventListener('error', handle_connection_rejected, true);
+                priv.source.removeEventListener('init', wait_event_source_init, true);
+                priv.source.addEventListener('error', function (e) {
+                    priv.connected = false;
+                    priv.source = null;
+                    priv.connection_id = null;
+                    var oldCallbacks = priv.callbacks;
+                    priv.callbacks = {};
+                    priv.callbacksBySubscriptionId = {};
+
+                    for (var key in oldCallbacks) {
+                        oldCallbacks[key].method(null, null, true);
+                    }
+                }, true);
                 priv.source.addEventListener('notification', function (e) {
                     var data = JSON.parse(e.data);
                     priv.callbacks[data.callback_id].method(data.payload, data.headers);
-                }.bind(this), true);
+                }, true);
 
                 resolve();
             };
-
-            _wait_event_source_init = wait_event_source_init.bind(this);
-            priv.source = new EventSource(priv.source_url);
-            priv.source.addEventListener('init', _wait_event_source_init, true);
-
-            closeTimeout = setTimeout(function () {
+            var abort_event_source = function abort_event_source(message) {
                 priv.promise = null;
                 priv.source.close();
                 priv.source = null;
-                reject(new NGSI.ConnectionError("Connection timeout"));
-            }.bind(this), 30000);
-        }.bind(this));
+                reject(new NGSI.ConnectionError(message));
+            };
+            var handle_connection_rejected = abort_event_source.bind(null, "Connection rejected");
+            var handle_connection_timeout = abort_event_source.bind(null, "Connection timeout");
+
+            priv.source = new EventSource(priv.source_url);
+            priv.source.addEventListener('error', handle_connection_rejected, true);
+            priv.source.addEventListener('init', wait_event_source_init, true);
+
+            closeTimeout = setTimeout(handle_connection_timeout, 30000);
+        });
     };
 
     var on_callback_subscriptions_get = function on_callback_subscriptions_get() {
+        var mapping = {};
+        var callbacks = privates.get(this).callbacks;
+        for (var key in callbacks) {
+            mapping[key] = callbacks[key].subscription != null ? callbacks[key].subscription.id : null;
+        }
+        return mapping;
+    };
+
+    var on_callback_subscriptions_versioned_get = function on_callback_subscriptions_versioned_get() {
         var mapping = {};
         var callbacks = privates.get(this).callbacks;
         for (var key in callbacks) {
@@ -1342,6 +1367,9 @@
         Object.defineProperties(this, {
             callbackSubscriptions: {
                 get: on_callback_subscriptions_get
+            },
+            callbackSubscriptionsVersioned: {
+                get: on_callback_subscriptions_versioned_get
             },
             connected: {
                 get: on_connected_get
@@ -1503,9 +1531,11 @@
      *     id of the callback to associate
      * @param {String} subscription
      *     id of the subscription to associate
+     * @param {String} version
+     *     version of the API used for creating the subscription
      * @returns {NGSI.ProxyConnection}
      */
-    NGSI.ProxyConnection.prototype.associateSubscriptionId = function associateSubscriptionId(callback, subscription) {
+    NGSI.ProxyConnection.prototype.associateSubscriptionId = function associateSubscriptionId(callback, subscription, version) {
         var priv = privates.get(this);
 
         if (!(callback in priv.callbacks)) {
@@ -1517,7 +1547,10 @@
         }
 
         priv.callbacksBySubscriptionId[subscription] = priv.callbacks[callback];
-        priv.callbacks[callback].subscription = subscription;
+        priv.callbacks[callback].subscription = {
+            id: subscription,
+            version: version
+        };
 
         return this;
     };
@@ -1550,7 +1583,7 @@
         if (callback in priv.callbacks) {
             var subscription = priv.callbacks[callback].subscription;
             if (subscription != null) {
-                delete priv.callbacksBySubscriptionId[subscription];
+                delete priv.callbacksBySubscriptionId[subscription.id];
             }
             delete priv.callbacks[callback];
         }
@@ -2168,7 +2201,7 @@
 
                 var oldOnSuccess = options.onSuccess;
                 options.onSuccess = function (data) {
-                    this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, data.subscriptionId);
+                    this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, data.subscriptionId, "v1-availability");
                     if (typeof oldOnSuccess === 'function') {
                         oldOnSuccess(data);
                     }
@@ -2616,7 +2649,7 @@
 
                 var oldOnSuccess = options.onSuccess;
                 options.onSuccess = function (data) {
-                    this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, data.subscriptionId);
+                    this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, data.subscriptionId, "v1");
                     if (typeof oldOnSuccess === 'function') {
                         oldOnSuccess(data);
                     }
@@ -4873,11 +4906,15 @@
      *        }
      *    },
      *    "notification": {
-     *        "callback": function (notification) {
+     *        "callback": function (notification, headers, error) {
      *            // notification.attrsformat provides information about the format used by notification.data
      *            // notification.data contains the modified entities
      *            // notification.subscriptionId provides the associated subscription id
      *            // etc...
+     *
+     *            // In case of disconnection from the ngsi-proxy, this method
+     *            // will be called with error = true and notification and
+     *            // header being null
      *        },
      *        "attrs": [
      *            "temperature",
@@ -4953,18 +4990,23 @@
                 return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
             }
 
-            var subscription_url = response.getHeader('Location');
-            var subscription_id = subscription_url.split('/').pop();
-            subscription.id = subscription_id;
+            var location_header = response.getHeader('Location');
+            try {
+                var subscription_url = new URL(location_header, connection.url);
+                var subscription_id = subscription_url.pathname.split('/').pop();
+                subscription.id = subscription_id;
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected location header: ' + location_header, correlator));
+            }
 
             if (proxy_callback) {
-                this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, subscription_id);
+                this.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, subscription_id, "v2");
             }
 
             return Promise.resolve({
                 correlator: correlator,
                 subscription: subscription,
-                location: subscription_url
+                location: location_header
             });
         }.bind(connection), function (error) {
             if (proxy_callback) {
