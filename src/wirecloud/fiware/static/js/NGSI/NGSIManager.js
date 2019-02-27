@@ -195,8 +195,8 @@
         });
     };
 
-    WirecloudResourceProxy.prototype.associateSubscriptionId = function associateSubscriptionId(callback_id, subscription_id) {
-        privates.get(this).real_proxy.associateSubscriptionId(callback_id, subscription_id);
+    WirecloudResourceProxy.prototype.associateSubscriptionId = function associateSubscriptionId(callback_id, subscription_id, version) {
+        privates.get(this).real_proxy.associateSubscriptionId(callback_id, subscription_id, version);
         return this;
     };
 
@@ -220,12 +220,24 @@
 
     WirecloudResourceProxy.prototype.close = function close() {
         var priv = privates.get(this);
-        var callbackSubscriptions = priv.real_proxy.callbackSubscriptions;
+        var callbackSubscriptions = priv.real_proxy.callbackSubscriptionsVersioned;
 
         priv.callbacks.forEach((callback) => {
             this.closeCallback(callback);
-            if (callbackSubscriptions[callback] != null) {
-                this.connection.cancelSubscription(callbackSubscriptions[callback]);
+            let subscription = callbackSubscriptions[callback];
+            if (subscription != null) {
+                switch (subscription.version) {
+                case "v2":
+                    this.connection.v2.deleteSubscription(subscription.id);
+                    break;
+                case "v1-availability":
+                    this.connection.cancelAvailabilitySubscription(subscription.id);
+                    break;
+                default:
+                case "v1":
+                    this.connection.cancelSubscription(subscription.id);
+                    break;
+                }
             }
         });
         priv.callbacks = [];
