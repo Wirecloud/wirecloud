@@ -3420,7 +3420,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     def test_resource_collection_post_public_normuser(self):
 
-        url = reverse('wirecloud.resource_collection') + '?user_list=*'
+        url = reverse('wirecloud.resource_collection') + '?public=true'
 
         # Authenticate
         self.client.login(username='normuser', password='admin')
@@ -3434,7 +3434,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     def test_resource_collection_post_user_list(self):
 
-        url = reverse('wirecloud.resource_collection') + '?user_list=user_with_workspaces,user_with_markets'
+        url = reverse('wirecloud.resource_collection') + '?users=user_with_workspaces,user_with_markets'
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -3448,7 +3448,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin','user_with_markets','user_with_workspaces'])
 
     def test_resource_collection_post_user_list_empty(self):
-        url = reverse('wirecloud.resource_collection') + '?user_list='
+        url = reverse('wirecloud.resource_collection') + '?users='
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -3468,7 +3468,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         usr2 = User.objects.get(username='user_with_workspaces')
         usr1.groups.add(grp1)
         usr2.groups.add(grp1)
-        url = reverse('wirecloud.resource_collection') + '?group_list=grp1'
+        url = reverse('wirecloud.resource_collection') + '?groups=grp1'
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -3483,7 +3483,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['grp1'])
 
     def test_resource_collection_post_group_list_empty(self):
-        url = reverse('wirecloud.resource_collection') + '?group_list='
+        url = reverse('wirecloud.resource_collection') + '?groups='
 
         # Authenticate
         self.client.login(username='admin', password='admin')

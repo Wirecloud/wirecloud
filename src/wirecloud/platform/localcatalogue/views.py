@@ -75,8 +75,8 @@ class ResourceCollection(Resource):
         if content_type == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             public = request.POST.get('public', 'false').strip().lower() == 'true'
-            user_list = [user.strip() for user in request.POST.get('user_list', 'false').split(',')]
-            group_list = [group.strip() for group in request.POST.get('group_list', 'false').split(',')]
+            user_list = [user.strip() for user in request.POST.get('users', '').split(',')]
+            group_list = [group.strip() for group in request.POST.get('groups', '').split(',')]
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if 'file' not in request.FILES:
                 return build_error_response(request, 400, _('Missing component file in the request'))
@@ -97,8 +97,8 @@ class ResourceCollection(Resource):
 
             force_create = request.GET.get('force_create', 'false').strip().lower() == 'true'
             public = request.GET.get('public', 'false').strip().lower() == 'true'
-            user_list = [user.strip() for user in request.GET.get('user_list', 'false').split(',')]
-            group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
+            user_list = [user.strip() for user in request.GET.get('users', '').split(',')]
+            group_list = [group.strip() for group in request.GET.get('groups', '').split(',')]
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
         else:  # if content_type == 'application/json'
 
@@ -109,8 +109,8 @@ class ResourceCollection(Resource):
             install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
             force_create = data.get('force_create', False)
             public = request.GET.get('public', 'false').strip().lower() == 'true'
-            user_list = [user.strip() for user in request.GET.get('user_list', 'false').split(',')]
-            group_list = [group.strip() for group in request.GET.get('group_list', 'false').split(',')]
+            user_list = [user.strip() for user in request.GET.get('user_list', '').split(',')]
+            group_list = [group.strip() for group in request.GET.get('group_list', '').split(',')]
             templateURL = data.get('url')
             market_endpoint = data.get('market_endpoint', None)
             headers = data.get('headers', {})
