@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -26,7 +27,7 @@ from django.views.decorators.cache import cache_page
 
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.core.plugins import get_version_hash
-from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
+from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.models import CatalogueResource
 from wirecloud.platform.plugins import WirecloudPlugin
@@ -214,25 +215,25 @@ class FiWarePlugin(WirecloudPlugin):
         if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-browser", version="0.1.1", public=True).exists():
             updated = True
             log('Installing bae-browser widget... ', 1, ending='')
-            install_resource_to_all_users(file_contents=WgtFile(BAE_BROWSER_WIDGET))
+            install_component(WgtFile(BAE_BROWSER_WIDGET), public=True)
             log('DONE', 1)
 
         if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-details", version="0.1.1", public=True).exists():
             updated = True
             log('Installing bae-details widget... ', 1, ending='')
-            install_resource_to_all_users(file_contents=WgtFile(BAE_DETAILS_WIDGET))
+            install_component(WgtFile(BAE_DETAILS_WIDGET), public=True)
             log('DONE', 1)
 
         if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-search-filters", version="0.1.1", public=True).exists():
             updated = True
             log('Installing bae-search-filters widget... ', 1, ending='')
-            install_resource_to_all_users(file_contents=WgtFile(BAE_SEARCH_FILTERS_WIDGET))
+            install_component(WgtFile(BAE_SEARCH_FILTERS_WIDGET), public=True)
             log('DONE', 1)
 
         if not CatalogueResource.objects.filter(vendor="CoNWeT", short_name="bae-marketplace", version="0.1.1", public=True).exists():
             updated = True
             log('Installing bae-marketplace mashup... ', 1, ending='')
-            install_resource_to_all_users(file_contents=WgtFile(BAE_MASHUP))
+            install_component(WgtFile(BAE_MASHUP), public=True)
             log('DONE', 1)
 
         return updated

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -29,7 +29,7 @@ from django.utils.translation import get_language, ugettext_lazy as _
 from wirecloud.commons.utils.wgt import WgtFile
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user
+from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.models import CatalogueResource, IWidget, Workspace
 from wirecloud.platform.plugins import build_url_template, get_active_features_info, WirecloudPlugin
 from wirecloud.platform.themes import get_active_theme_name
@@ -678,7 +678,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         if not CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).exists():
             updated = True
             log('Installing the %(name)s widget... ' % {"name": name}, 1, ending='')
-            added, component = install_resource_to_user(wirecloud_user, file_contents=WgtFile(wgt))
+            added, component = install_component(WgtFile(wgt), executor_user=wirecloud_user, users=[wirecloud_user])
             IWidget.objects.filter(widget__resource__vendor=vendor, widget__resource__short_name=name).exclude(widget__resource__version=version).update(widget=component.widget, widget_uri=component.local_uri_part)
             log('DONE', 1)
 

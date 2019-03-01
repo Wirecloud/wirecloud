@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -26,7 +27,7 @@ from django.utils.translation import override, ugettext as _
 from wirecloud.catalogue.views import add_packaged_resource
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_group, install_resource_to_all_users
+from wirecloud.platform.localcatalogue.utils import install_component
 
 
 class Command(BaseCommand):
@@ -104,14 +105,7 @@ class Command(BaseCommand):
                 if options['redeploy']:
                     add_packaged_resource(f, None, wgt_file=wgt_file, template=template, deploy_only=True)
                 else:
-                    for user in users:
-                        install_resource_to_user(user, file_contents=wgt_file)
-
-                    for group in groups:
-                        install_resource_to_group(group, file_contents=wgt_file)
-
-                    if public:
-                        install_resource_to_all_users(file_contents=wgt_file)
+                    install_component(wgt_file, public=public, users=users, groups=groups)
 
                 wgt_file.close()
                 f.close()

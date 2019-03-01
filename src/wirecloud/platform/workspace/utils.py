@@ -44,7 +44,7 @@ from wirecloud.commons.utils.urlify import URLify
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.iwidget.utils import parse_value_from_text
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user
+from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values, update_workspace_preferences
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
@@ -621,7 +621,7 @@ def create_workspace(owner, f=None, mashup=None, new_name=None, new_title=None, 
                 resource_file = BytesIO(wgt.read(embedded_resource['src']))
 
             extra_resource_contents = WgtFile(resource_file)
-            install_resource_to_user(owner, file_contents=extra_resource_contents)
+            install_component(extra_resource_contents, executor_user=owner, users=[owner])
     else:
         values = mashup.split('/', 3)
         if len(values) != 3:

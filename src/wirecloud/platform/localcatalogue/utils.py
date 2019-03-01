@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -67,47 +68,36 @@ def install_resource(wgt_file, executor_user):
     return resource
 
 
-def install_resource_to_user(user, **kwargs):
+def install_component(file_contents, executor_user=None, public=False, users=[], groups=[]):
+    resource = install_resource(file_contents, executor_user)
+    if executor_user is not None:
+        initially_available = resource.is_available_for(executor_user)
+    installed_to_someone = False
 
-    executor_user = kwargs.get('executor_user', user)
-    downloaded_file = kwargs.get('file_contents', None)
-
-    resource = install_resource(downloaded_file, executor_user)
-    added = add_m2m(resource.users, user)
-    if added:
-        resource_installed.send(sender=resource, user=user)
-
-    return added, resource
-
-
-def install_resource_to_group(group, **kwargs):
-
-    executor_user = kwargs.get('executor_user', None)
-    downloaded_file = kwargs.get('file_contents', None)
-
-    resource = install_resource(downloaded_file, executor_user)
-    added = add_m2m(resource.groups, group)
-    if added:
-        resource_installed.send(sender=resource, group=group)
-
-    return added, resource
-
-
-def install_resource_to_all_users(**kwargs):
-
-    executor_user = kwargs.get('executor_user', None)
-    downloaded_file = kwargs.get('file_contents', None)
-
-    resource = install_resource(downloaded_file, executor_user)
-    if resource.public:
-        added = False
-    else:
-        added = True
+    change = public is True and resource.public is False
+    if change:
         resource.public = True
         resource.save()
         resource_installed.send(sender=resource)
+        installed_to_someone = True
 
-    return added, resource
+    for user in users:
+        change = add_m2m(resource.users, user)
+        installed_to_someone |= change
+        if change and not public:
+            resource_installed.send(sender=resource, user=user)
+
+    for group in groups:
+        change = add_m2m(resource.groups, group)
+        installed_to_someone |= change
+        if change and not public:
+            resource_installed.send(sender=resource, group=group)
+
+    if executor_user is not None:
+        finally_available = resource.is_available_for(executor_user)
+        return initially_available is False and finally_available is True, resource
+    else:
+        return installed_to_someone, resource
 
 
 def fix_dev_version(wgt_file, user):

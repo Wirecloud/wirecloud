@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -3416,7 +3417,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
         self.assertTrue(resource.public)
-        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), [])
 
     def test_resource_collection_post_public_normuser(self):
 
@@ -3442,10 +3443,10 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         # Make the request
         with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
 
         resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
-        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin','user_with_markets','user_with_workspaces'])
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['user_with_markets','user_with_workspaces'])
 
     def test_resource_collection_post_user_list_empty(self):
         url = reverse('wirecloud.resource_collection') + '?users='
@@ -3463,12 +3464,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
 
     def test_resource_collection_post_group_list(self):
 
-        grp1 = Group.objects.create(name='grp1')
-        usr1 = User.objects.get(username='user_with_markets')
-        usr2 = User.objects.get(username='user_with_workspaces')
-        usr1.groups.add(grp1)
-        usr2.groups.add(grp1)
-        url = reverse('wirecloud.resource_collection') + '?groups=grp1'
+        url = reverse('wirecloud.resource_collection') + '?groups=org'
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -3476,11 +3472,11 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         # Make the request
         with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
 
         resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
-        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
-        self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['grp1'])
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), [])
+        self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['org'])
 
     def test_resource_collection_post_group_list_empty(self):
         url = reverse('wirecloud.resource_collection') + '?groups='

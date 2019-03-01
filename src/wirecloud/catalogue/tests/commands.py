@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -19,7 +20,7 @@
 
 import io
 import sys
-from unittest.mock import Mock, patch, DEFAULT
+from unittest.mock import ANY, Mock, patch, DEFAULT
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -63,7 +64,7 @@ class AddToCatalogueCommandTestCase(TestCase):
             with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple(
                         'wirecloud.catalogue.management.commands.addtocatalogue',
-                        add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
+                        add_packaged_resource=DEFAULT, install_component=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
                     parser.get_resource_processed_info.return_value = {'title': "Mashable Application Component1"}
@@ -74,9 +75,9 @@ class AddToCatalogueCommandTestCase(TestCase):
 
                     # Basic assert code
                     self.assertEqual(context['add_packaged_resource'].call_count, 0)
-                    self.assertEqual(context['install_resource_to_user'].call_count, 1)
-                    self.assertEqual(context['install_resource_to_group'].call_count, 0)
-                    self.assertEqual(context['install_resource_to_all_users'].call_count, 0)
+                    self.assertEqual(context['install_component'].call_count, 1)
+                    context['User'].objects.get.assert_called_with(username="admin")
+                    context['install_component'].assert_called_with(ANY, public=False, users=[context['User'].objects.get()], groups=[])
 
         except SystemExit:
             raise CommandError('')
@@ -95,7 +96,7 @@ class AddToCatalogueCommandTestCase(TestCase):
             with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple(
                         'wirecloud.catalogue.management.commands.addtocatalogue',
-                        add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
+                        add_packaged_resource=DEFAULT, install_component=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
                     parser.get_resource_processed_info.return_value = {'title': "Mashable Application Component1"}
@@ -106,9 +107,9 @@ class AddToCatalogueCommandTestCase(TestCase):
 
                     # Basic assert code
                     self.assertEqual(context['add_packaged_resource'].call_count, 0)
-                    self.assertEqual(context['install_resource_to_user'].call_count, 0)
-                    self.assertEqual(context['install_resource_to_group'].call_count, 1)
-                    self.assertEqual(context['install_resource_to_all_users'].call_count, 0)
+                    self.assertEqual(context['install_component'].call_count, 1)
+                    context['Group'].objects.get.assert_called_with(name="group1")
+                    context['install_component'].assert_called_with(ANY, public=False, users=[], groups=[context['Group'].objects.get()])
 
         except SystemExit:
             raise CommandError('')
@@ -127,7 +128,7 @@ class AddToCatalogueCommandTestCase(TestCase):
             with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple(
                         'wirecloud.catalogue.management.commands.addtocatalogue',
-                        add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
+                        add_packaged_resource=DEFAULT, install_component=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
                     parser.get_resource_processed_info.return_value = {'title': "Mashable Application Component1"}
@@ -138,9 +139,8 @@ class AddToCatalogueCommandTestCase(TestCase):
 
                     # Basic assert code
                     self.assertEqual(context['add_packaged_resource'].call_count, 0)
-                    self.assertEqual(context['install_resource_to_user'].call_count, 0)
-                    self.assertEqual(context['install_resource_to_group'].call_count, 0)
-                    self.assertEqual(context['install_resource_to_all_users'].call_count, 1)
+                    self.assertEqual(context['install_component'].call_count, 1)
+                    context['install_component'].assert_called_with(ANY, public=True, users=[], groups=[])
 
         except SystemExit:
             raise CommandError('')
@@ -160,7 +160,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
             with patch.multiple(
                     'wirecloud.catalogue.management.commands.addtocatalogue',
-                    add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
+                    add_packaged_resource=DEFAULT, install_component=DEFAULT,
                     WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
 
                 # Make the call to addtocatalogue
@@ -168,9 +168,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
                 # Basic assert code
                 self.assertEqual(context['add_packaged_resource'].call_count, 0)
-                self.assertEqual(context['install_resource_to_user'].call_count, 0)
-                self.assertEqual(context['install_resource_to_group'].call_count, 0)
-                self.assertEqual(context['install_resource_to_all_users'].call_count, 0)
+                self.assertEqual(context['install_component'].call_count, 0)
 
         self.options['stdout'].seek(0)
         self.assertEqual(self.options['stdout'].read(), '')
