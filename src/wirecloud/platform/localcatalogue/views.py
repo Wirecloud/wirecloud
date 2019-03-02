@@ -165,7 +165,7 @@ class ResourceCollection(Resource):
         if not request.user.is_superuser:
             if public:
                 return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
-            elif len(users) > 0 and users != [request.user.username]:
+            elif len(users) > 0 and tuple(users) != (request.user,):
                 return build_error_response(request, 403, _('You are not allowed allow to install components to other users'))
             elif len(groups) > 0:
                 for group in groups:
