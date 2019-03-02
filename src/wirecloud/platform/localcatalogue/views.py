@@ -25,6 +25,7 @@ import os
 import zipfile
 
 from django.contrib.auth.models import User, Group
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -155,18 +156,32 @@ class ResourceCollection(Resource):
 
                 return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
-        if public and not request.user.is_superuser:
-            return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
+        if public is False and len(user_list) == 0 and len(group_list) == 0:
+            users = (request.user,)
+        else:
+            users = User.objects.filter(username__in=user_list)
+        groups = Group.objects.filter(name__in=group_list)
+
+        if not request.user.is_superuser:
+            if public:
+                return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
+            elif len(users) > 0 and users != [request.user.username]:
+                return build_error_response(request, 403, _('You are not allowed allow to install components to other users'))
+            elif len(groups) > 0:
+                for group in groups:
+                    try:
+                        owners = group.organization.team_set.get(name="owners")
+                    except ObjectDoesNotExist:
+                        fail = True
+                    else:
+                        fail = owners.users.filter(id=request.user.id).exists() is False
+
+                    if fail:
+                        return build_error_response(request, 403, _('You are not allowed allow to install components to non-owned organizations'))
 
         try:
 
             fix_dev_version(file_contents, request.user)
-            if public is False and len(user_list) == 0 and len(group_list) == 0:
-                users = (request.user,)
-            else:
-                users = User.objects.filter(username__in=user_list)
-            groups = Group.objects.filter(name__in=group_list)
-
             added, resource = install_component(file_contents, executor_user=request.user, public=public, users=users, groups=groups)
 
             if not added and force_create:

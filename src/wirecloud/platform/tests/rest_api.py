@@ -3448,6 +3448,19 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
         self.assertEqual(list(resource.users.values_list('username', flat=True)), ['user_with_markets','user_with_workspaces'])
 
+    def test_resource_collection_post_user_list_normuser(self):
+
+        url = reverse('wirecloud.resource_collection') + '?users=user_with_workspaces,user_with_markets'
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
+
     def test_resource_collection_post_user_list_empty(self):
         url = reverse('wirecloud.resource_collection') + '?users='
 
@@ -3477,6 +3490,50 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
         resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
         self.assertEqual(list(resource.users.values_list('username', flat=True)), [])
         self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['org'])
+
+    def test_resource_collection_post_group_normuser(self):
+
+        url = reverse('wirecloud.resource_collection') + '?groups=normusers'
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
+
+    def test_resource_collection_post_org_by_owner(self):
+
+        url = reverse('wirecloud.resource_collection') + '?groups=org'
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), [])
+        self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['org'])
+
+    def test_resource_collection_post_org_by_member(self):
+
+        url = reverse('wirecloud.resource_collection') + '?groups=org'
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
 
     def test_resource_collection_post_group_list_empty(self):
         url = reverse('wirecloud.resource_collection') + '?groups='
