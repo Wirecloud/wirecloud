@@ -122,6 +122,24 @@
         }
     },
     {
+        "pk": 1,
+        "model": "platform.team",
+        "fields": {
+            "organization": 1,
+            "name": "owners",
+            "users": [4]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.team",
+        "fields": {
+            "organization": 1,
+            "name": "members",
+            "users": [2]
+        }
+    },
+    {
         "pk": 14,
         "model": "catalogue.catalogueresource",
         "fields": {

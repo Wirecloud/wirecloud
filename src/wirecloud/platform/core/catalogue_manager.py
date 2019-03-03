@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -29,7 +30,7 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user
+from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.markets.utils import MarketManager
 
 
@@ -52,7 +53,7 @@ class WirecloudCatalogueManager(MarketManager):
             if template is None:
                 template = TemplateParser(wgt_file.get_template())
 
-            added, resource = install_resource_to_user(user, file_contents=wgt_file, packaged=True, raise_conflicts=True)
+            added, resource = install_component(wgt_file, users=[user])
             if not added:
                 raise Exception(_('Resource already exists %(resource_id)s') % {'resource_id': resource.local_uri_part})
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -23,6 +24,8 @@ import json
 import os
 import zipfile
 
+from django.contrib.auth.models import User, Group
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -37,7 +40,7 @@ from wirecloud.commons.utils.template import TemplateParseException, Unsupported
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_all_users, fix_dev_version
+from wirecloud.platform.localcatalogue.utils import fix_dev_version, install_component
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
@@ -74,6 +77,8 @@ class ResourceCollection(Resource):
         if content_type == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             public = request.POST.get('public', 'false').strip().lower() == 'true'
+            user_list = set(user.strip() for user in request.POST.get('users', '').split(',') if user != "")
+            group_list = set(group.strip() for group in request.POST.get('groups', '').split(',') if group != "")
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if 'file' not in request.FILES:
                 return build_error_response(request, 400, _('Missing component file in the request'))
@@ -94,6 +99,8 @@ class ResourceCollection(Resource):
 
             force_create = request.GET.get('force_create', 'false').strip().lower() == 'true'
             public = request.GET.get('public', 'false').strip().lower() == 'true'
+            user_list = set(user.strip() for user in request.GET.get('users', '').split(',') if user != "")
+            group_list = set(group.strip() for group in request.GET.get('groups', '').split(',') if group != "")
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
         else:  # if content_type == 'application/json'
 
@@ -104,6 +111,8 @@ class ResourceCollection(Resource):
             install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
             force_create = data.get('force_create', False)
             public = request.GET.get('public', 'false').strip().lower() == 'true'
+            user_list = set(user.strip() for user in request.GET.get('user_list', '').split(',') if user != "")
+            group_list = set(group.strip() for group in request.GET.get('group_list', '').split(',') if group != "")
             templateURL = data.get('url')
             market_endpoint = data.get('market_endpoint', None)
             headers = data.get('headers', {})
@@ -147,20 +156,38 @@ class ResourceCollection(Resource):
 
                 return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
-        if public and not request.user.is_superuser:
-            return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
+        if public is False and len(user_list) == 0 and len(group_list) == 0:
+            users = (request.user,)
+        else:
+            users = User.objects.filter(username__in=user_list)
+        groups = Group.objects.filter(name__in=group_list)
+
+        if not request.user.is_superuser:
+            if public:
+                return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
+            elif len(users) > 0 and tuple(users) != (request.user,):
+                return build_error_response(request, 403, _('You are not allowed allow to install components to other users'))
+            elif len(groups) > 0:
+                for group in groups:
+                    try:
+                        owners = group.organization.team_set.get(name="owners")
+                    except ObjectDoesNotExist:
+                        fail = True
+                    else:
+                        fail = owners.users.filter(id=request.user.id).exists() is False
+
+                    if fail:
+                        return build_error_response(request, 403, _('You are not allowed allow to install components to non-owned organizations'))
 
         try:
+
             fix_dev_version(file_contents, request.user)
-            added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
+            added, resource = install_component(file_contents, executor_user=request.user, public=public, users=users, groups=groups)
 
             if not added and force_create:
                 return build_error_response(request, 409, _('Resource already exists'))
             elif not added:
                 status_code = 200
-
-            if public:
-                install_resource_to_all_users(executor_user=request.user, file_contents=file_contents)
 
         except zipfile.BadZipfile as e:
 
@@ -197,10 +224,7 @@ class ResourceCollection(Resource):
                     resource_file = BytesIO(file_contents.read(embedded_resource['src']))
 
                     extra_resource_contents = WgtFile(resource_file)
-                    if public:
-                        extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
-                    else:
-                        extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
+                    extra_resource_added, extra_resource = install_component(extra_resource_contents, executor_user=request.user, public=public, users=users, groups=groups)
                     if extra_resource_added:
                         info['extra_resources'].append(extra_resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"))
 
