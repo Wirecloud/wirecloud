@@ -270,7 +270,8 @@ def consumes(mime_types):
 
     def wrap(func):
         def wrapper(self, request, *args, **kwargs):
-            if get_content_type(request)[0] not in mime_types:
+            request.mimetype = get_content_type(request)[0]
+            if request.mimetype not in mime_types:
                 msg = _("Unsupported request media type")
                 return build_error_response(request, 415, msg)
 

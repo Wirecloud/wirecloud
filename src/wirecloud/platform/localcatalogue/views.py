@@ -34,7 +34,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_downloadfile_response, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_downloadfile_response, build_error_response, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.structures import CaseInsensitiveDict
 from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -73,8 +73,7 @@ class ResourceCollection(Resource):
         install_embedded_resources = False
         templateURL = None
         file_contents = None
-        content_type = get_content_type(request)[0]
-        if content_type == 'multipart/form-data':
+        if request.mimetype == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             public = request.POST.get('public', 'false').strip().lower() == 'true'
             user_list = set(user.strip() for user in request.POST.get('users', '').split(',') if user != "")
@@ -89,7 +88,7 @@ class ResourceCollection(Resource):
             except zipfile.BadZipfile:
                 return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
-        elif content_type == 'application/octet-stream':
+        elif request.mimetype == 'application/octet-stream':
 
             downloaded_file = BytesIO(request.body)
             try:
@@ -102,7 +101,7 @@ class ResourceCollection(Resource):
             user_list = set(user.strip() for user in request.GET.get('users', '').split(',') if user != "")
             group_list = set(group.strip() for group in request.GET.get('groups', '').split(',') if group != "")
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
-        else:  # if content_type == 'application/json'
+        else:  # if request.mimetype == 'application/json'
 
             market_endpoint = None
 
