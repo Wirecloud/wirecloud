@@ -17,20 +17,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import errno
 from io import BytesIO
 import os
 import json
 from urllib.parse import urljoin
 from urllib.request import pathname2url, url2pathname
+import zipfile
 
-from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, get_list_or_404
-from django.utils.decorators import method_decorator
 from django.utils.translation import get_language, ugettext as _
 from django.views.decorators.http import require_GET
 import markdown
@@ -38,8 +37,8 @@ import markdown
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data, get_resource_group_data
-from wirecloud.catalogue.utils import add_packaged_resource
-from wirecloud.commons.utils.downloader import download_http_content, download_local_file
+from wirecloud.commons.utils.downloader import download_local_file
+from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.html import clean_html, filter_changelog
 from wirecloud.commons.utils.http import authentication_required, build_error_response, build_downloadfile_response, consumes, force_trailing_slash, parse_json_request, produces
@@ -47,6 +46,7 @@ from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.version import Version
 from wirecloud.commons.search_indexes import get_search_engine
+from wirecloud.platform.localcatalogue.utils import install_component
 
 
 @require_GET
@@ -63,38 +63,66 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
 
 class ResourceCollection(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
+    @consumes(('multipart/form-data', 'application/octet-stream'))
+    @produces(('application/json',))
     @commit_on_http_success
-    @consumes(('application/x-www-form-urlencoded', 'multipart/form-data'))
     def create(self, request):
 
+        templateURL = None
+        file_contents = None
+        if request.mimetype == 'multipart/form-data':
+            public = request.POST.get('public', 'true').strip().lower() == 'true'
+            if 'file' not in request.FILES:
+                return build_error_response(request, 400, _('Missing component file in the request'))
+
+            downloaded_file = request.FILES['file']
+            try:
+                file_contents = WgtFile(downloaded_file)
+            except zipfile.BadZipfile:
+                return build_error_response(request, 400, _('The uploaded file is not a zip file'))
+
+        else:  # if request.mimetype == 'application/octet-stream'
+
+            downloaded_file = BytesIO(request.body)
+            try:
+                file_contents = WgtFile(downloaded_file)
+            except zipfile.BadZipfile:
+                return build_error_response(request, 400, _('The uploaded file is not a zip file'))
+
+            public = request.GET.get('public', 'true').strip().lower() == 'true'
+
         try:
-            if 'file' in request.FILES:
 
-                request_file = request.FILES['file']
-                resource = add_packaged_resource(request_file, request.user)
+            # TODO Disallow dev versions
+            added, resource = install_component(file_contents, executor_user=request.user, public=public, users=(request.user,))
+            if not added:
+                return build_error_response(request, 409, _('Resource already exists'))
 
-            elif 'template_uri' in request.POST:
+        except zipfile.BadZipfile as e:
 
-                template_uri = request.POST['template_uri']
-                downloaded_file = download_http_content(template_uri, user=request.user)
-                resource = add_packaged_resource(BytesIO(downloaded_file), request.user)
+            return build_error_response(request, 400, _('The uploaded file is not a valid zip file'), details="{}".format(e))
 
+        except OSError as e:
+
+            if e.errno == errno.EACCES:
+                return build_error_response(request, 500, _('Error writing the resource into the filesystem. Please, contact the server administrator.'))
             else:
-
-                return build_error_response(request, 400, _("Missing parameter: template_uri or file"))
+                raise
 
         except TemplateParseException as e:
 
-            return build_error_response(request, 400, e.msg)
+            msg = "Error parsing config.xml descriptor file: %s" % e
 
-        except IntegrityError:
+            details = "%s" % e
+            return build_error_response(request, 400, msg, details=details)
 
-            return build_error_response(request, 409, _('Resource already exists'))
+        except InvalidContents as e:
 
-        resource.users.add(request.user)
+            details = e.details if hasattr(e, 'details') else None
+            return build_error_response(request, 400, e, details=str(details))
 
-        return HttpResponse(resource.json_description, content_type='application/json; charset=UTF-8')
+        return HttpResponse(status=(201 if added else 204))
 
     def read(self, request):
 
