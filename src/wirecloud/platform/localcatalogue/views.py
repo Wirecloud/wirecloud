@@ -116,6 +116,7 @@ class ResourceCollection(Resource):
             templateURL = data.get('url')
             market_endpoint = data.get('market_endpoint', None)
             headers = data.get('headers', {})
+            headers['Accept-Encoding'] = 'identity'
 
             if market_endpoint is not None:
 
