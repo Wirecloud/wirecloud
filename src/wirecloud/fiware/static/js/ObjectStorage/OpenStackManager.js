@@ -69,8 +69,8 @@
                 contentType: 'application/json',
                 requestHeaders: {
                     'Accept': 'application/json',
-                    'X-FI-WARE-OAuth-Token': 'true',
-                    'X-FI-WARE-OAuth-Token-Body-Pattern': '%idm_token%'
+                    'X-FIWARE-OAuth-Token': 'true',
+                    'X-FIWARE-OAuth-Token-Body-Pattern': '%idm_token%'
                 },
                 postBody: JSON.stringify({
                     "auth": {
