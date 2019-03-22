@@ -31,7 +31,7 @@ pages:
 markdown_extensions:
     - markdown.extensions.tables
     - pymdownx.betterem
-    - pymdownx.tilde
+    - pymdownx.tilde:
         subscript: False
     - pymdownx.superfences
     - pymdownx.magiclink:
