@@ -1,1 +1,1 @@
-wirecloud-markdown-github
+pymdown-extensions
