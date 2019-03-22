@@ -29,6 +29,8 @@
 
     var WorkspaceView = function WorkspaceView(id, options) {
         StyledElements.Alternative.call(this, id, options);
+        this.events.editmode = new StyledElements.Event(this);
+
         this.wrapperElement.classList.add("wc-workspace");
 
         this.wsMenu = new StyledElements.PopupMenu();
@@ -49,6 +51,9 @@
                 this.layout.slideOut();
             }
             this.activeTab.dragboard._updateIWidgetSizes(true, true);
+        });
+        this.editButton.addEventListener("active", (button) => {
+            this.dispatchEvent("editmode", this.editing);
         });
 
         this.walletButton = this.buildAddWidgetButton();
