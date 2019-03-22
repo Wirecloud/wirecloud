@@ -33,13 +33,20 @@
         options = utils.merge(defaultOptions, options);
 
         StyledElements.Button.call(this, options);
+        this.events.active = new StyledElements.Event(this);
 
         Object.defineProperty(this, 'active', {
             get: function get() {
                 return this.hasClassName('active');
             },
             set: function set(value) {
-                this.toggleClassName('active', value);
+                // Convert value to boolean, just in case
+                value = !!value;
+                let current = this.hasClassName('active');
+                if (current !== value) {
+                    this.toggleClassName('active', value);
+                    this.dispatchEvent('active', value);
+                }
             }
         });
 
