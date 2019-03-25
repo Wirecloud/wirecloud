@@ -184,6 +184,8 @@ class ConvertCommandTestCase(WirecloudTestCase, TestCase):
 
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
+        super(ConvertCommandTestCase, cls).tearDownClass()
+
     def setUp(self):
 
         from wirecloud.commons.commands.convert import ConvertCommand
@@ -263,6 +265,8 @@ class StartprojectCommandTestCase(WirecloudTestCase, TestCase):
     def tearDownClass(cls):
 
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
+        super(StartprojectCommandTestCase, cls).tearDownClass()
 
     def setUp(self):
 
