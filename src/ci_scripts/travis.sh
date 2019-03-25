@@ -14,7 +14,7 @@ elif [ "${TEST_SUITE}" == "solr" ]; then
 elif [ "${TEST_SUITE}" == "selenium" ]; then
     FLAGS="postgres django${DJANGO_VERSION} firefox-local elasticsearch selenium"
 else
-    FLAGS="sqlite3 django${DJANGO_VERSION} unittest"
+    FLAGS="postgres django${DJANGO_VERSION} unittest"
 fi
 
 

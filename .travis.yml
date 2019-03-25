@@ -1,4 +1,4 @@
-dist: precise
+dist: xenial
 language: python
 cache: pip
 sudo: false
@@ -10,32 +10,28 @@ python:
     - "3.4"
     - "3.5"
     - "3.6"
+services:
+    - postgresql
+    - docker
+    - xvfb
 
 matrix:
     include:
         - python: "3.6"
-          dist: trusty
-          services:
-              - docker
           env:
               - TEST_SUITE=elasticsearch
               - DJANGO_VERSION=1.11
         - python: "3.6"
-          dist: trusty
-          services:
-              - docker
           env:
               - TEST_SUITE=solr
               - DJANGO_VERSION=1.11
         - node_js: "lts/*"
-          dist: trusty
           language: node_js
           python: ""
           addons:
               firefox: "45.0"
           env: TEST_SUITE=js_unittests
         - node_js: "lts/*"
-          dist: trusty
           language: node_js
           python: ""
           addons:
@@ -43,9 +39,6 @@ matrix:
           env: TEST_SUITE=js_unittests
         - addons:
               firefox: "60.2.2esr"
-          dist: trusty
-          services:
-              - docker
           env:
               - TEST_SUITE=selenium
               - DJANGO_VERSION=1.11
