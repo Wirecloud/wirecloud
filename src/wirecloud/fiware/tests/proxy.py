@@ -142,6 +142,7 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
         return validator
 
     def check_proxy_request(self, validator=lambda response: True, path='/path', refresh=False, **kwargs):
+        self.admin_mock.social_auth.get().access_token_expired.return_value = refresh
         request = self.prepare_request_mock(**kwargs)
         response = proxy_request(request=request, protocol='http', domain='example.com', path=path)
         validator(response)
@@ -319,22 +320,6 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
 
     def test_fiware_token_is_refreshed_when_expired(self):
 
-        self.admin_mock.social_auth.get(provider='fiware').extra_data['expires_on'] = time.time()
-        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
-
-        def validator(response):
-            self.assertEqual(response.status_code, 200)
-            headers = json.loads(self.read_response(response))
-            self.assertIn('X-Auth-Token', headers)
-            self.assertEqual(headers['X-Auth-Token'], TEST_TOKEN)
-
-        self.check_proxy_request(validator=validator, data='{}', extra_headers={
-            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-        }, refresh=True)
-
-    def test_fiware_token_is_refreshed_missing_expires_on(self):
-
-        del self.admin_mock.social_auth.get(provider='fiware').extra_data['expires_on']
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
         def validator(response):
