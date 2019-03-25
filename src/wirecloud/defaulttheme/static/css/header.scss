@@ -40,20 +40,32 @@
 
 #wc-user-menu {
     display: inline-block;
-    width: 30ex;
     height: 30px;
     line-height: 30px;
     margin: 0 1ex;
 
-    & > * {
+    & .se-btn {
+        opacity: 1;
+        margin-top: -2px;
+
+        &:hover {
+            color: lighten(#990000, 10%);
+        }
+        &:active {
+            box-shadow: none;
+        }
+    }
+
+    & * {
+        line-height: 30px;
         vertical-align: middle;
     }
 
-    & > .avatar {
+    & .avatar {
         border-radius: 2px;
     }
 
-    & > span {
+    & span {
         margin: 0px 3px;
     }
 }

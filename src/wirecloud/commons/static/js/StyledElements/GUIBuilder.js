@@ -107,6 +107,16 @@
                 children[i] = component;
             } else if (child.namespaceURI === TEMPLATE_NAMESPACE) {
                 children[i] = processTComponent(child, tcomponents, context);
+
+                if (child.childNodes.length > 0) {
+                    // TODO improve, generalize?
+                    processTree(builder, child, tcomponents, context);
+                    var el = children[i].get();
+                    var childLength = child.childNodes.length;
+                    for (var ci = 0; ci < childLength; ci++) {
+                        el.appendChild(child.childNodes[0]);
+                    }
+                }
             } else {
                 processTree(builder, child, tcomponents, context);
             }
