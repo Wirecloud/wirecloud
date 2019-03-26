@@ -1,4 +1,4 @@
-Django<1.12,>=1.9
+Django<1.12,>=1.10
 lxml>=2.3
 django-appconf<2.0,>=1.0.1
 django_compressor<3.0,>=2.0

@@ -1282,7 +1282,7 @@ LOGGING['loggers']['django.security.DisallowedHost'] = {
 ```
 
 This method can be used also for disabling other `SuspiciousOperation` error mails. See the
-[Django documentation](https://docs.djangoproject.com/es/1.9/topics/logging/#django-security) for more info.
+[Django documentation](https://docs.djangoproject.com/es/1.10/topics/logging/#django-security) for more info.
 
 ### I don't remember the admin credentials. How can I recover it?
 
