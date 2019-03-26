@@ -13,7 +13,7 @@ original theme.
 However, to do so, you have to previously create a new folder with the following
 structure:
 
-```
+```text
 mytheme
 +-- __init__.py
 +-- static
@@ -102,7 +102,7 @@ folders, each of them containing the different resources used by the theme
 (templates, images, SCSS files, etc). The folder structure of a WireCloud theme
 should be similar to the following one:
 
-```
+```text
 mytheme
 +-- __init__.py
 +-- static

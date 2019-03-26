@@ -1,15 +1,15 @@
 Before running any of the tests provided by WireCloud, you need to install some
 extra dependencies:
 
-```
-$ pip install django-nose "mock>=1.0,<2.0"
+```bash
+pip install django-nose "mock>=1.0,<2.0"
 ```
 
 ## Unit tests
 
 Server unit tests are executed:
 
-```
+```bash
 python manage.py test -v 2 --noinput --nologcapture -a tags="wirecloud-noselenium"
 ```
 
@@ -22,8 +22,8 @@ configuration provided in this file when running the tests.
 There are also unit tests for the JavaScript code that is executed in the client
 side. You can tun those tests by executing the following command:
 
-```
-$ grunt karma
+```bash
+grunt karma
 ```
 
 > **Note**: JavaScript unit tests are work in progress, do not expect a great
@@ -33,8 +33,8 @@ $ grunt karma
 
 The integration tests make use of selenium, you can also install it through pip:
 
-```
-$ pip install selenium
+```bash
+pip install selenium
 ```
 
 Once installed you, you will have to install the drivers for the browsers you
@@ -87,7 +87,7 @@ WIRECLOUD_SELENIUM_TEST_BROWSERS = {
 
 Now you can pass the integration tests by running the following command:
 
-```
+```bash
 python manage.py test -v 2 --noinput --nologcapture -a tags="wirecloud-selenium"
 ```
 
