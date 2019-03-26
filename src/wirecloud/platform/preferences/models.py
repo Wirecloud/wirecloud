@@ -23,13 +23,7 @@ from django.contrib.auth.signals import user_logged_in
 from django.db import models
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import check_for_language, gettext_lazy as _
-
-try:
-    # Django 1.7+
-    from django.utils.translation import LANGUAGE_SESSION_KEY
-except:
-    LANGUAGE_SESSION_KEY = 'django_language'
+from django.utils.translation import check_for_language, gettext_lazy as _, LANGUAGE_SESSION_KEY
 
 
 @python_2_unicode_compatible
