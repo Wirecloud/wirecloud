@@ -112,7 +112,7 @@ pip install pyOpenSSL ndg-httpsclient pyasn1
 CentOS/RHEL 6 only ships python 2.6, so you have to install python 2.7 from a different repository. We recommend you to
 use the Software Collection respository:
 
-```text
+```bash
 # 1. Install a package with repository for your system:
 # On CentOS, install package centos-release-scl available in CentOS repository:
 $ sudo yum install centos-release-scl
@@ -518,18 +518,15 @@ python manage.py populate
 
 Wirecloud uses [Haystack](http://haystacksearch.org/) to handle the search indexes.
 
-Currently, [Solr][], [ElasticSearch2][] and [Whoosh][] are supported. Whoosh is enabled by default.
+Currently, [Solr](http://lucene.apache.org/solr/), [ElasticSearch2](https://www.elastic.co/products/elasticsearch) and [Whoosh](https://whoosh.readthedocs.io/en/latest/) are supported. Whoosh is enabled by default.
 
 To modify the search engine configuration, it is necessary to modify the `HAYSTACK_CONNECTIONS` configuration setting in
 the instance `settings.py` file (e.g. `/opt/wirecloud_instance/wirecloud_instance/settings.py`).
 
-[solr]: http://lucene.apache.org/solr/
-[elasticsearch2]: https://www.elastic.co/products/elasticsearch
-[whoosh]: https://whoosh.readthedocs.io/en/latest/
 
 ### Whoosh configuration
 
-[Whoosh][] is a fast, featureful full-text indexing and searching library implemented in pure Python. It is very easy to
+[Whoosh](https://whoosh.readthedocs.io/en/latest/) is a fast, featureful full-text indexing and searching library implemented in pure Python. It is very easy to
 configure and does not require to configure any service, so it is ideal for basic installations. This make this engine
 the default engine for using WireCloud, altough probably ElasticSearch2 or Solr are better choices if you require to
 provide an high availablility installation of WireCloud.
@@ -550,7 +547,7 @@ be stored.
 
 ### ElasticSearch2 configuration
 
-[ElasticSearch][] support is not installed by default, so the first thing is to install the python module required to
+[ElasticSearch](https://www.elastic.co/products/elasticsearch) support is not installed by default, so the first thing is to install the python module required to
 connect to ElasticSearch:
 
 ```bash
@@ -904,11 +901,13 @@ _OAuth2 Credentials_ section) as they are going to be used later.
 
 On the WireCloud instance:
 
--   Install the `social-auth-app-django` module (e.g. `pip install "social-auth-app-django"`)
--   Edit `settings.py`:
-    -   Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
-    -   Add `social_django` to `INSTALLED_APPS`
-    -   Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` to `AUTHENTICATION_BACKENDS`. example:
+<zbr>1.  Install the `social-auth-app-django` module (e.g. `pip install "social-auth-app-django"`)
+
+<zbr>2.   Edit `settings.py`:
+
+-   Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
+-   Add `social_django` to `INSTALLED_APPS`
+-   Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` to `AUTHENTICATION_BACKENDS`. example:
 
 ```python
 AUTHENTICATION_BACKENDS = (
@@ -922,8 +921,9 @@ AUTHENTICATION_BACKENDS = (
 > `django.contrib.auth.backends.ModelBackend` in `AUTHENTICATION_BACKENDS`, although this will require extra
 > configuration not documented in this guide.
 
--   Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g.
+ -   Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g.
     `FIWARE_IDM_SERVER = "https://account.lab.fiware.org"`)
+
 -   Add `SOCIAL_AUTH_FIWARE_KEY` and `SOCIAL_AUTH_FIWARE_SECRET` settings using the _Client ID_ and the _Client Secret_
     values provided by the IdM. You should end having something like this:
 
@@ -932,22 +932,24 @@ SOCIAL_AUTH_FIWARE_KEY = "43"
 SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
 ```
 
--   Edit `urls.py`:
+<zbr>3. Edit `urls.py`:
 
-    -   Replace the login endpoint:
-        -   Add the following import line at the beginning of the file:
-            `from wirecloud.fiware import views as wc_fiware`
-        -   Remove: `url(r'^login/?$', django_auth.login, name="login"),`
-        -   Add: `url(r'^login/?$', wc_fiware.login, name="login"),`
-    -   Add `social-auth-app-django` url endpoints at the end of the pattern list:
-        `url('', include('social_django.urls', namespace='social')),`
+-   Replace the login endpoint:
+    -   Add the following import line at the beginning of the file:
+        `from wirecloud.fiware import views as wc_fiware`
+    -   Remove: `url(r'^login/?$', django_auth.login, name="login"),`
+    -   Add: `url(r'^login/?$', wc_fiware.login, name="login"),`
+-   Add `social-auth-app-django` url endpoints at the end of the pattern list:
+    `url('', include('social_django.urls', namespace='social')),`
 
--   [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`. This theme is the one used by the
+<zbr>4.   [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`. This theme is the one used by the
     FIWARE Lab's Mashup portal.
--   [Optional]: Provide a [`FIWARE_PORTALS` setting](#fiware_portals). This setting is used for signing out from other
+
+<zbr>5.   [Optional]: Provide a [`FIWARE_PORTALS` setting](#fiware_portals). This setting is used for signing out from other
     portals at the same time the user sign out from WireCloud, providing a single sign out experience. This setting is
     also used for building the navigation bar.
--   Run `python manage.py migrate; python manage.py collectstatic --noinput`
+
+<zbr>6.  Run `python manage.py migrate; python manage.py collectstatic --noinput`
 
 [keyrock's user and programmers guide]:
     https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application
@@ -959,14 +961,15 @@ WireCloud 1.0 adds experimental support for real time synchronization through we
 
 The steps for enabling this support are the following:
 
--   Install [Django channels](https://channels.readthedocs.io/en/latest/):
+<zbr>1.   Install [Django channels](https://channels.readthedocs.io/en/latest/):
 
 ```bash
 pip install channels
 ```
 
--   Add `channels` and `wirecloud.live` into the `INSTALLED_APPS` setting in the `settings.py` file.
--   Configure the channels framework by configuring the `CHANNEL_LAYERS` setting. For example, you can make use of the
+<zbr>2.   Add `channels` and `wirecloud.live` into the `INSTALLED_APPS` setting in the `settings.py` file.
+
+<zbr>3.   Configure the channels framework by configuring the `CHANNEL_LAYERS` setting. For example, you can make use of the
     following configuration:
 
 ```python
@@ -1305,9 +1308,8 @@ If the error is similar to the following one:
 check that you python installation is correctly configured (using the python interpreter used for running WireCloud):
 
 ```bash
-$ python
-```
-```text
+python
+
 Python 2.7.6 (default, Nov 13 2013, 20:19:29)
 [GCC 4.2.1 Compatible Apple LLVM 5.0 (clang-500.2.79)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
@@ -1422,9 +1424,7 @@ It should show something similar to the following:
 
 ```bash
 ps -ewF | grep 'apache2\|postgres' | grep -v grep
-```
 
-```text
 postgres  1631     1  0 25212  9452   0 Jul03 ?        00:00:19 /usr/lib/postgresql/9.1/bin/postgres -D /var/lib/postgresql/9.1/main -c config_file=/etc/postgresql/9.1/main/postgresql.conf
 postgres  1702  1631  0 25208  3784   0 Jul03 ?        00:00:47 postgres: writer process
 postgres  1703  1631  0 25208  1452   0 Jul03 ?        00:00:39 postgres: wal writer process
