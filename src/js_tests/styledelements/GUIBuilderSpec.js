@@ -149,7 +149,6 @@
                     expect(result.elements.length).toBe(1);
                     var child = result.elements[0];
                     check_final_element(child, label, rendered_value_options);
-
                 });
 
                 it("should ignore malformed json options", function () {
@@ -306,6 +305,36 @@
             // Remove xhtml namespace
             var outerHTML = result.elements[0].outerHTML.replace(' xmlns="http://www.w3.org/1999/xhtml"', '');
             expect(outerHTML).toBe('<div><div class="se-btn" tabindex="0"><span>Save</span></div></div>');
+        });
+
+        it("should allow to nest template elements with function context and json option", function () {
+            var builder = new StyledElements.GUIBuilder();
+            var template = '<div><t:usermenu plain="true"><t:avatar/><span><t:username/></span><t:test>{"class": "fa fa-caret-down"}</t:test></t:usermenu></div>';
+            var context = {
+                avatar: document.createElement('img'),
+                username: "John Doe",
+                usermenu: (options) => {
+                    this.user_button = new StyledElements.PopupButton(options);
+                    return this.user_button;
+                },
+                test: (options) => {
+                    var testDiv = document.createElement('div');
+                    testDiv.innerHTML = 'a';
+                    if (options != null && 'class' in options) {
+                        testDiv.className = options.class;
+                    }
+                    return testDiv;
+                }
+            };
+            var result = builder.parse(builder.DEFAULT_OPENING + template + builder.DEFAULT_CLOSING, context);
+            expect(result.elements.length).toBe(1);
+            expect(result.elements[0].nodeType).toBe(Node.ELEMENT_NODE);
+            expect(result.elements[0].childNodes.length).toBe(1);
+            expect(result.elements[0].childNodes[0].nodeType).toBe(Node.ELEMENT_NODE);
+            expect(result.elements[0].childNodes[0].childNodes.length).toBe(3);
+            // Remove xhtml namespace
+            var outerHTML = result.elements[0].outerHTML.replace(' xmlns="http://www.w3.org/1999/xhtml"', '');
+            expect(outerHTML).toBe('<div><div class="se-btn plain" tabindex="0"><img /><span>John Doe</span><div class="fa fa-caret-down">a</div></div></div>');
         });
     });
 

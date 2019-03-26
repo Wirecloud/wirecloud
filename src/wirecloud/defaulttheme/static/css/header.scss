@@ -33,7 +33,7 @@
 #wirecloud_header .menu_wrapper > .menu {
     display: inline-block;
     background: #E4E6E2;
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     padding: 0 0 0 1ex;
     vertical-align: top;
 }
@@ -46,18 +46,17 @@
 
     & .se-btn {
         opacity: 1;
-        margin-top: -2px;
+        // vertical alignment doesn't center correctly
+        margin-top: -3px;
 
-        &:hover {
-            color: lighten(#990000, 10%);
-        }
         &:active {
+            // disable default button effect
             box-shadow: none;
         }
     }
 
     & * {
-        line-height: 30px;
+        line-height: 25px;
         vertical-align: middle;
     }
 
