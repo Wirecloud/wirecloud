@@ -49,10 +49,8 @@ def get_access_token(user, error_msg):
         if oauth_info.access_token is None:
             raise Exception
 
-        # Refresh the token if the token has been expired or the token expires
-        # in less than 30 seconds
-        # Also refresh the token if expires_on information does not exist yet
-        if time.time() > oauth_info.extra_data.get('expires_on', 0) - 30:
+        # Refresh the token if expired
+        if oauth_info.access_token_expired():
             oauth_info.refresh_token(STRATEGY)
 
         return oauth_info.access_token
@@ -115,7 +113,7 @@ class IDMTokenProcessor(object):
             self.openstack_manager = OpenstackTokenManager(getattr(settings, 'FIWARE_CLOUD_SERVER', FIWARE_LAB_CLOUD_SERVER))
 
     def process_request(self, request):
-        headers = ['fiware-oauth-token', 'x-fi-ware-oauth-token', 'fiware-openstack-token']
+        headers = ['fiware-oauth-token', 'fiware-openstack-token']
         filtered = [header for header in headers if header in request['headers']]
 
         if len(filtered) == 0:
@@ -135,9 +133,6 @@ class IDMTokenProcessor(object):
         if 'fiware-oauth-source' in request['headers']:
             source = request['headers']['fiware-oauth-source']
             del request['headers']['fiware-oauth-source']
-        elif 'x-fi-ware-oauth-source' in request['headers']:
-            source = request['headers']['x-fi-ware-oauth-source']
-            del request['headers']['x-fi-ware-oauth-source']
 
         if source == 'user':
             token = get_access_token(request['user'], _('Current user has not an active FIWARE profile'))
@@ -150,10 +145,10 @@ class IDMTokenProcessor(object):
         else:
             raise ValidationError(_('Invalid FIWARE OAuth token source'))
 
-        if 'fiware-oauth-token' in filtered or 'x-fi-ware-oauth-token' in filtered:
-            replace_get_parameter(request, ["fiware-oauth-get-parameter", "x-fi-ware-oauth-get-parameter"], token)
-            replace_header_name(request, ["fiware-oauth-header-name", "x-fi-ware-oauth-header-name"], token)
-            replace_body_pattern(request, ["fiware-oauth-body-pattern", "x-fi-ware-oauth-token-body-pattern"], token)
+        if 'fiware-oauth-token' in filtered:
+            replace_get_parameter(request, ["fiware-oauth-get-parameter"], token)
+            replace_header_name(request, ["fiware-oauth-header-name"], token)
+            replace_body_pattern(request, ["fiware-oauth-body-pattern"], token)
 
         if 'fiware-openstack-token' in filtered:
             replace_get_parameter(request, ["fiware-openstack-get-parameter"], openstacktoken)
