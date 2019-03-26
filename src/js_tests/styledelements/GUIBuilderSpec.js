@@ -334,7 +334,9 @@
             expect(result.elements[0].childNodes[0].childNodes.length).toBe(3);
             // Remove xhtml namespace
             var outerHTML = result.elements[0].outerHTML.replace(' xmlns="http://www.w3.org/1999/xhtml"', '');
-            expect(outerHTML).toBe('<div><div class="se-btn plain" tabindex="0"><img /><span>John Doe</span><div class="fa fa-caret-down">a</div></div></div>');
+            // "Normalize" empty tags to work with different HTML engines (Firefox 45 vs Firefox 60)
+            outerHTML = outerHTML.replace(/ \/>/g, "/>");
+            expect(outerHTML).toBe('<div><div class="se-btn plain" tabindex="0"><img/><span>John Doe</span><div class="fa fa-caret-down">a</div></div></div>');
         });
     });
 
