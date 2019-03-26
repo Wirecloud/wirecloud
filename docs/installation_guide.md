@@ -498,14 +498,12 @@ following:
 
 ```bash
 python manage.py createsuperuser
-```
 
-```text
-    Username (leave blank to use 'wirecloud'): admin
-    Email address: admin@myemaildomain.com
-    Password: ***** (admin)
-    Password (again): ***** (admin)
-    Superuser created successfully.
+Username (leave blank to use 'wirecloud'): admin
+Email address: admin@myemaildomain.com
+Password: ***** (admin)
+Password (again): ***** (admin)
+Superuser created successfully.
 ```
 
 WireCloud 1.0 added some predefined dashboards, so you have to create them by running the following command:
