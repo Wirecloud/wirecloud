@@ -106,44 +106,60 @@
     }
 }
 
-.wc-widget .wc-bottom-resize-handle {
-    position: absolute;
-    height: 12px;
-    bottom: -6px;
-    left: 34px;
-    right: 34px;
-    cursor: s-resize;
-}
-
-.wc-widget .wc-bottom-left-resize-handle {
-    position: absolute;
-    width: 40px;
-    height: 12px;
-    bottom: -6px;
-    left: -6px;
-    cursor: sw-resize;
-
-    &.inUse {
-        right: 0px;
-        top: 0px;
-        bottom: auto;
-        left: auto;
+.wc-widget {
+    .wc-bottom-resize-handle {
+        position: absolute;
+        height: 12px;
+        bottom: -6px;
+        left: 34px;
+        right: 34px;
+        cursor: s-resize;
     }
-}
 
-.wc-widget .wc-bottom-right-resize-handle {
-    position: absolute;
-    width: 40px;
-    height: 12px;
-    bottom: -6px;
-    right: -6px;
-    cursor: se-resize;
+    .wc-bottom-left-resize-handle {
+        position: absolute;
+        height: 12px;
+        width: 40px;
+        bottom: -6px;
+        left: -6px;
+        cursor: sw-resize;
+    }
 
-    &.inUse {
-        left: 0px;
-        top: 0px;
-        bottom: auto;
-        right: auto;
+    .wc-bottom-right-resize-handle {
+        position: absolute;
+        height: 12px;
+        width: 40px;
+        bottom: -6px;
+        right: -6px;
+        cursor: se-resize;
+    }
+    
+    .wc-right-side-resize-handle {
+        position: absolute;
+        width: 12px;
+        height: 100%;
+        right: -6px;
+        cursor: e-resize;
+    }
+
+    .wc-left-side-resize-handle {
+        position: absolute;
+        width: 12px;
+        height: 100%;
+        left: -6px;
+        cursor: w-resize;
+    }
+    
+    .wc-bottom-left-resize-handle,
+    .wc-bottom-right-resize-handle,
+    .wc-right-side-resize-handle,
+    .wc-left-side-resize-handle {
+        &.inUse {
+            right: 0px;
+            top: 0px;
+            bottom: auto;
+            left: auto;
+        }
     }
 }
 

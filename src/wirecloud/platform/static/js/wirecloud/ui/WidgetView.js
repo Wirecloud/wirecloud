@@ -169,6 +169,7 @@
 
                 handle.addClassName("wc-bottom-resize-handle");
                 handle.setDisabled(!view.model.isAllowed('resize'));
+                handle.get().dataset.cursor = 's-resize';
                 view.bottomresizehandle = handle;
                 return handle;
             },
@@ -177,6 +178,7 @@
 
                 handle.addClassName("wc-bottom-left-resize-handle");
                 handle.setDisabled(!view.model.isAllowed('resize'));
+                handle.get().dataset.cursor = 'sw-resize';
                 view.leftresizehandle = handle;
                 return handle;
             },
@@ -185,7 +187,26 @@
 
                 handle.addClassName("wc-bottom-right-resize-handle");
                 handle.setDisabled(!view.model.isAllowed('resize'));
+                handle.get().dataset.cursor = 'se-resize';
                 view.rightresizehandle = handle;
+                return handle;
+            },
+            'leftsideresizehandle': function (options, tcomponents, view) {
+                var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true, fixHeight: true});
+
+                handle.addClassName("wc-left-side-resize-handle");
+                handle.setDisabled(!view.model.isAllowed('resize'));
+                handle.get().dataset.cursor = 'w-resize';
+                view.leftsideresizehandle = handle;
+                return handle;
+            },
+            'rightsideresizehandle': function (options, tcomponents, view) {
+                var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: false, fixHeight: true});
+
+                handle.addClassName("wc-right-side-resize-handle");
+                handle.setDisabled(!view.model.isAllowed('resize'));
+                handle.get().dataset.cursor = 'e-resize';
+                view.rightsideresizehandle = handle;
                 return handle;
             },
             'iframe': function (options, tcomponents, view) {
@@ -193,15 +214,12 @@
             }
         }, this).children[1];
 
-        if ('bottomresizehandle' in this) {
-            this.bottomresizehandle.setResizableElement(this.wrapperElement);
-        }
-        if ('leftresizehandle' in this) {
-            this.leftresizehandle.setResizableElement(this.wrapperElement);
-        }
-        if ('rightresizehandle' in this) {
-            this.rightresizehandle.setResizableElement(this.wrapperElement);
-        }
+        ['bottomresizehandle', 'leftresizehandle', 'rightresizehandle',
+            'rightsideresizehandle', 'leftsideresizehandle'].forEach(handle => {
+                if (handle in this) {
+                    this[handle].setResizableElement(this.wrapperElement);
+                }
+            });
 
         this.wrapperElement.classList.add("wc-widget");
         this.wrapperElement.setAttribute('data-id', model.id);
