@@ -164,7 +164,7 @@ module.exports = function (grunt) {
             },
             specs: {
                 options: {
-                    configFile: ".eslintrc-jasmine",
+                    configFile: "js_tests/.eslintrc",
                 },
                 src: 'js_tests/**/*Spec.js',
             }
