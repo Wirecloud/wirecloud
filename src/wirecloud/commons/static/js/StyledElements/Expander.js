@@ -31,12 +31,12 @@
             'buttonFloat': 'left',
             'class': '',
             'expandButton': true,
-            'listenOnTitle': false,
+            'listenOnHeader': false,
             'state': 'default',
             'title': null
         };
         options = utils.merge(defaultOptions, options);
-        if (!options.expandButton && !options.listenOnTitle) {
+        if (!options.expandButton && !options.listenOnHeader) {
             throw new TypeError();
         }
 
@@ -79,9 +79,9 @@
         if (this.toggleButton) {
             this.toggleButton.addEventListener('click', callback);
         }
-        if (options.listenOnTitle) {
-            this.titleContainer.wrapperElement.style.cursor = "pointer";
-            this.titleContainer.wrapperElement.addEventListener('click', callback, false);
+        if (options.listenOnHeader) {
+            header.style.cursor = "pointer";
+            header.addEventListener('click', callback, false);
         }
     };
     utils.inherit(Expander, StyledElements.StyledElement);
