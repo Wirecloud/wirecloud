@@ -1,6 +1,6 @@
 ## Introduction
 
-This Installation WireCloud version 1.2 (starting from FIWARE release 7.4). Any feedback on this document is highly
+This Installation WireCloud version 1.3 (starting from FIWARE release 7.7). Any feedback on this document is highly
 welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact
 Person" email that appears in the [Catalogue page for this GEi][catalogue].
 
@@ -12,14 +12,13 @@ This section describes all the requirements of a basic WireCloud installation. *
 meant to be installed manually in this step, as they will be installed throughout the documentation:**
 
 -   A Database Manager (MySQL, PostgreSQL, SQLite3...)
--   Python 2.7 or python 3.4+. In any case, the following python packages must be installed:
-    -   Django 1.9-1.11
+-   Python 3.4+. In any case, the following python packages must be installed:
+    -   Django 1.10-1.11
     -   lxml 2.3.0+
     -   django-appconf 1.0.1+
     -   django_compressor 2.0+
     -   rdflib 3.2.0+
     -   requests 2.1.0+
-    -   futures 2.1.3+ (only on python 2.7)
     -   selenium 3.4+
     -   pytz
     -   django_relatives 0.3.x
@@ -1283,7 +1282,7 @@ LOGGING['loggers']['django.security.DisallowedHost'] = {
 ```
 
 This method can be used also for disabling other `SuspiciousOperation` error mails. See the
-[Django documentation](https://docs.djangoproject.com/es/1.9/topics/logging/#django-security) for more info.
+[Django documentation](https://docs.djangoproject.com/es/1.10/topics/logging/#django-security) for more info.
 
 ### I don't remember the admin credentials. How can I recover it?
 
