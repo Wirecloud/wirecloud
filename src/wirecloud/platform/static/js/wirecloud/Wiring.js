@@ -174,11 +174,8 @@
          */
         createConnection: function createConnection(source, target, options) {
 
-            var connection = new Wirecloud.wiring.Connection(this, source, target, options);
-
-            connection.addEventListener('remove', privates.get(this).on_removeconnection);
-            connection.establish();
-            privates.get(this).connections.push(connection);
+            const connection = new Wirecloud.wiring.Connection(this, source, target, options);
+            const priv = privates.get(this);
 
             // Create the conection on the server
             if (!connection.volatile) {
@@ -201,10 +198,18 @@
                         return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                     }
 
+                    connection.addEventListener('remove', priv.on_removeconnection);
+                    connection.establish();
+                    priv.connections.push(connection);
+
                     return Promise.resolve(connection);
                 });
             } else {
                 return new Wirecloud.Task("Creating connection", (resolve) => {
+                    connection.addEventListener('remove', priv.on_removeconnection);
+                    connection.establish();
+                    priv.connections.push(connection);
+
                     resolve(connection);
                 });
             }
