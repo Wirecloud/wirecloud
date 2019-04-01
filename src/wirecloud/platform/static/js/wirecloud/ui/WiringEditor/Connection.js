@@ -308,11 +308,12 @@
             if (this.established) {
                 return this;
             }
-
-            establishConnection.call(this, wiringEngine.createConnection(source, target, {
+            wiringEngine.createConnection(source, target, {
                 readonly: readonly
-            }));
-            this.refresh();
+            }).then((connection) => {
+                establishConnection.call(this, connection);
+                this.refresh();
+            });
 
             return this;
         },
