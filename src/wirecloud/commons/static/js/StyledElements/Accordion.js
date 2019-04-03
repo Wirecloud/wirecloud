@@ -46,7 +46,7 @@
         var expander;
 
         options = utils.merge({
-            'listenOnHeader': true
+            'listenOnTitle': true
         }, options);
 
         expander = new StyledElements.Expander(options);

@@ -31,12 +31,12 @@
             'buttonFloat': 'left',
             'class': '',
             'expandButton': true,
-            'listenOnHeader': false,
+            'listenOnTitle': false,
             'state': 'default',
             'title': null
         };
         options = utils.merge(defaultOptions, options);
-        if (!options.expandButton && !options.listenOnHeader) {
+        if (!options.expandButton && !options.listenOnTitle) {
             throw new TypeError();
         }
 
@@ -56,7 +56,7 @@
         this.toggleButton = null;
         if (options.expandButton) {
             this.toggleButton = new StyledElements.ToggleButton({
-                class: 'icon-expand',
+                class: 'icon-expand fa',
                 plain: true
             });
             this.toggleButton.insertInto(header);
@@ -79,7 +79,7 @@
         if (this.toggleButton) {
             this.toggleButton.addEventListener('click', callback);
         }
-        if (options.listenOnHeader) {
+        if (options.listenOnTitle) {
             header.style.cursor = "pointer";
             header.addEventListener('click', callback, false);
         }
