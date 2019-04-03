@@ -56,7 +56,7 @@
         this.toggleButton = null;
         if (options.expandButton) {
             this.toggleButton = new StyledElements.ToggleButton({
-                class: 'icon-expand',
+                class: 'icon-expand fa',
                 plain: true
             });
             this.toggleButton.insertInto(header);
@@ -80,8 +80,8 @@
             this.toggleButton.addEventListener('click', callback);
         }
         if (options.listenOnTitle) {
-            this.titleContainer.wrapperElement.style.cursor = "pointer";
-            this.titleContainer.wrapperElement.addEventListener('click', callback, false);
+            header.style.cursor = "pointer";
+            header.addEventListener('click', callback, false);
         }
     };
     utils.inherit(Expander, StyledElements.StyledElement);
