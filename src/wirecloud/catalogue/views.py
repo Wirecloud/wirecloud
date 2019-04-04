@@ -122,7 +122,9 @@ class ResourceCollection(Resource):
             details = e.details if hasattr(e, 'details') else None
             return build_error_response(request, 400, e, details=str(details))
 
-        return HttpResponse(status=(201 if added else 204))
+        response = HttpResponse(status=(201 if added else 204))
+        response['Location'] = resource.get_template_url()
+        return response
 
     def read(self, request):
 

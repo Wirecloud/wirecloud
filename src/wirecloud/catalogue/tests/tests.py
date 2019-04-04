@@ -596,7 +596,7 @@ class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
         with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
             response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertTrue(os.path.isdir(widget_path))
         self.assertTrue(os.path.exists(os.path.join(widget_path, 'images/catalogue.png')))
         self.assertTrue(os.path.exists(os.path.join(widget_path, 'images/smartphone.png')))
@@ -628,7 +628,7 @@ class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
         with open(os.path.join(os.path.dirname(__file__), '../../commons/test-data/Wirecloud_Test_1.0.wgt'), 'rb') as f:
             response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
         widget_info = get_resource_data(resource, user)
         self.assertEqual(widget_info['description'], 'This widget is used to test some of the features of the Wirecloud platform')
@@ -643,7 +643,7 @@ class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
         with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_operator.zip'), 'rb') as f:
             response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertTrue(os.path.isdir(operator_path))
         self.assertTrue(os.path.exists(os.path.join(operator_path, 'images/catalogue.png')))
         self.assertTrue(os.path.exists(os.path.join(operator_path, 'doc/images/image.png')))

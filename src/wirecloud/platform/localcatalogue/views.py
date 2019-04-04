@@ -228,11 +228,14 @@ class ResourceCollection(Resource):
                     if extra_resource_added:
                         info['extra_resources'].append(extra_resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"))
 
-            return HttpResponse(json.dumps(info, sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
+            response = HttpResponse(json.dumps(info, sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
 
         else:
 
-            return HttpResponse(json.dumps(resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"), sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
+            response = HttpResponse(json.dumps(resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"), sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
+
+        response['Location'] = resource.get_template_url()
+        return response
 
 
 class ResourceEntry(Resource):

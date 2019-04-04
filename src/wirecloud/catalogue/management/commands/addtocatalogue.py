@@ -24,7 +24,7 @@ from django.contrib.auth.models import User, Group
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import override, ugettext as _
 
-from wirecloud.catalogue.views import add_packaged_resource
+from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.localcatalogue.utils import install_component
