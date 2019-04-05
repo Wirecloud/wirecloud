@@ -332,17 +332,26 @@
             it("should allow to move to a middle tab", function () {
                 element.goToTab(tab2);
                 expect(element.visibleTab).toBe(tab2);
-                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2);
-                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
                 expect(element.focus).toHaveBeenCalledWith(tab2.tabId);
             });
 
             it("should allow to move to the last tab", function () {
                 element.goToTab(tab3);
                 expect(element.visibleTab).toBe(tab3);
-                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab3);
-                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab3);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab3, undefined);
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab3, undefined);
                 expect(element.focus).toHaveBeenCalledWith(tab3.tabId);
+            });
+
+            it("should support the context option", () => {
+                element.goToTab(tab2, {context: "mycontext"});
+
+                expect(element.visibleTab).toBe(tab2);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2, "mycontext");
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2, "mycontext");
+                expect(element.focus).toHaveBeenCalledWith(tab2.tabId);
             });
 
             it("does nothing if the passed tab is the visible tab (focusOnSetVisible: false)", () => {
@@ -372,8 +381,8 @@
                 element.goToTab(tab2);
 
                 expect(element.visibleTab).toBe(tab2);
-                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2);
-                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
                 expect(element.focus).not.toHaveBeenCalled();
             });
 

@@ -510,8 +510,10 @@
      * foco a la pestaña asociada.
      *
      * @param {Number|Tab} tab intance or tab id of the tab to make visible
+     * @param {Object.<String, *>} options
+     * - context: context data to be sent on the change and the changed events
      */
-    Notebook.prototype.goToTab = function goToTab(tab) {
+    Notebook.prototype.goToTab = function goToTab(tab, options) {
         var newTab, oldTab;
 
         if (tab instanceof StyledElements.Tab) {
@@ -527,6 +529,10 @@
         }
         oldTab = this.visibleTab;
 
+        if (options == null) {
+            options = {};
+        }
+
         if (this.visibleTab && newTab === this.visibleTab) {
             if (this.focusOnSetVisible) {
                 this.focus(newTab.tabId);
@@ -534,7 +540,7 @@
             return;
         }
 
-        this.dispatchEvent('change', oldTab, newTab);
+        this.dispatchEvent('change', oldTab, newTab, options.context);
 
         // At this point there is always a visibleTab
         // if (this.visibleTab) {
@@ -547,7 +553,7 @@
             this.focus(newTab.tabId);
         }
 
-        this.dispatchEvent('changed', oldTab, newTab);
+        this.dispatchEvent('changed', oldTab, newTab, options.context);
     };
 
     /**
