@@ -340,6 +340,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
         iwidget = self.widgets[0]
 
+        self.edit_mode.__enter__()
         iwidget.open_menu().click_entry("User's Manual")
 
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
@@ -635,8 +636,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             iwidget = self.widgets[0]
             close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.fa-remove'))
             self.assertTrue(close_button.is_disabled)
-            # bypass the internal call to element_be_clickable as the button is usually hidden
-            close_button.element.click()
 
             with edit_session.wiring_view as wiring:
                 self.assertEqual(len(wiring.find_connections(extra_class="readonly")), 3)
@@ -946,8 +945,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-component-sidebar-button")))
         with self.edit_mode as edit_session:
+            WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .wc-show-component-sidebar-button")))
             with edit_session.resource_sidebar as sidebar:
 
                 # Add the youtube browser widget
@@ -961,8 +960,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 # Add the input box widget
                 WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(sidebar, 'Input Box'))
 
-        # cancel current tutorial
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
+            # cancel current tutorial
+            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
 
         window_menues = self.driver.find_elements_by_css_selector('.window_menu')
         self.assertEqual(len(window_menues), 1)
