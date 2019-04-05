@@ -946,6 +946,10 @@ if (window.StyledElements == null) {
 
     Utils.waitTransition = function waitTransition(element) {
         return new Promise((fulfill) => {
+            if (element.parentNode === null) {
+                fulfill();
+            }
+
             let w = element.ownerDocument.defaultView;
             let display = w.getComputedStyle(element, null).getPropertyValue("display");
             if (display !== "none") {

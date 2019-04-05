@@ -483,13 +483,29 @@
         });
 
         describe("waitTransition(element)", () => {
-            var waitTransition;
+            var waitTransition, toclean = null;
 
             beforeAll(() => {
                 waitTransition = StyledElements.Utils.waitTransition;
             });
 
+            afterEach(() => {
+                if (toclean) {
+                    toclean.remove();
+                    toclean = null;
+                }
+            });
+
             it("should immediatelly resolve for display: none elements", (done) => {
+                let element = document.createElement("div");
+                element.style.display = "none";
+                document.body.appendChild(element);
+                toclean = element;
+
+                waitTransition(element).then(done, fail);
+            });
+
+            it("should immediatelly resolve for elements not in DOM", (done) => {
                 let element = document.createElement("div");
                 element.style.display = "none";
 
@@ -499,6 +515,8 @@
             it("should wait transitionend events on elements", (done) => {
                 let listener = jasmine.createSpy("listener");
                 let element = document.createElement("div");
+                document.body.appendChild(element);
+                toclean = element;
 
                 waitTransition(element).then(listener, fail);
 
