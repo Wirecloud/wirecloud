@@ -683,6 +683,14 @@ class WidgetTester(WebElementTester):
     @property
     def bottom_right_handle(self):
         return WebElementTester(self.testcase, self.find_element(".wc-bottom-right-resize-handle"))
+        
+    @property
+    def left_side_handle(self):
+        return WebElementTester(self.testcase, self.find_element(".wc-left-side-resize-handle"))
+        
+    @property
+    def right_side_handle(self):
+        return WebElementTester(self.testcase, self.find_element(".wc-right-side-resize-handle"))
 
     @property
     def content(self):

@@ -145,6 +145,7 @@
             dragboardCover.style.top = "0";
             dragboardCover.style.left = "0";
             dragboardCover.style.width = "100%";
+            dragboardCover.style.cursor = handleElement.dataset.cursor;
             dragboardCover.style.height = dragboard.scrollHeight + "px";
 
             scrollStart = dragboard.scrollTop;
