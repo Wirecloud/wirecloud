@@ -1,16 +1,20 @@
 First of all, you need to download WireCloud's source code from the github
 repository:
 
-    $ git clone https://github.com/Wirecloud/wirecloud.git
+```bash
+git clone https://github.com/Wirecloud/wirecloud.git
+```
 
 Once you have the source code to translate, next step is creating or updating
 the catalogue of messages to translate, this can be accomplished with the
 following commands:
 
-    $ cd ${wirecloud_repo_path}/src
-    $ cd ${module}
-    $ django-admin makemessages -l ${locale}
-    $ django-admin makemessages -l ${locale} -d djangojs
+```bash
+cd ${wirecloud_repo_path}/src
+cd ${module}
+django-admin makemessages -l ${locale}
+django-admin makemessages -l ${locale} -d djangojs
+```
 
 Where:
 
@@ -36,14 +40,18 @@ Once you feel comfortable with your translated message catalogue, you can
 compile it for testing purporses by running the following commands (for each
 module):
 
-    $ cd ${wirecloud_repo_path}/src
-    $ cd ${module}
-    $ django-admin compilemessages
+```bash
+cd ${wirecloud_repo_path}/src
+cd ${module}
+django-admin compilemessages
+```
 
 After compiling messages, you can test them by running WireCloud. As we're
 developing, the recommended way is by executing the runserver command:
 
-    $ python manage.py runserver --insecure
+```bash
+python manage.py runserver --insecure
+```
 
 You have several choices for contributing your translations. First, if you feel
 comfortable sending github pull request, this is the preffered way, followed by

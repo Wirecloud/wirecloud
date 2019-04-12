@@ -113,7 +113,7 @@ class compiletranslations(Command):
             from django.core.management import call_command
         except:
             import pip
-            pip.main(['install', 'Django>=1.9,<1.12'])
+            pip.main(['install', 'Django>=1.10,<1.12'])
 
             from django.core.management import call_command
 
@@ -174,7 +174,7 @@ setup(
     },
     include_package_data=True,
     install_requires=(
-        'Django>=1.9,<1.12',
+        'Django>=1.10,<1.12',
         'lxml>=2.3',
         'django-appconf>=1.0.1,<2.0',
         'django_compressor>=2.0,<3.0',
@@ -186,7 +186,7 @@ setup(
         'user-agents',
         'regex',
         'markdown',
-        'django-haystack>=2.6.0',
+        'django-haystack>=2.6.0,<2.8.0',
         'whoosh>=2.7.2',
         'pycrypto',
         'pyScss>=1.3.4,<2.0',

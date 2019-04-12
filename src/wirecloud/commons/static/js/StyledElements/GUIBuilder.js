@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var GUIBuilder, processTComponent, processTree, processRoot, extractOptions, extractOptionsFromAttributes, populateContainer, NAMESPACE, TEMPLATE_NAMESPACE;
+    var GUIBuilder, processTComponent, processChildren, processTree, processRoot, extractOptionsFromTextNode, extractOptions, extractOptionsFromAttributes, populateContainer, NAMESPACE, TEMPLATE_NAMESPACE;
 
     NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/StyledElements';
     TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
@@ -36,16 +36,7 @@
 
         tcomponent = tcomponents[element.localName];
         if (typeof tcomponent === 'function') {
-            options = element.textContent.trim();
-            if (options !== '') {
-                try {
-                    options = JSON.parse(options);
-                } catch (e) {
-                    options = {};
-                }
-            } else {
-                options = {};
-            }
+            options = extractOptionsFromTextNode(element);
             utils.merge(options, extractOptionsFromAttributes(element));
 
             new_component = tcomponent(options, tcomponents, context);
@@ -63,6 +54,55 @@
 
         return new_component;
     };
+
+    extractOptionsFromTextNode = function (element) {
+        var options = {};
+
+        for (var i = 0; i < element.childNodes.length; i++) {
+            var curNode = element.childNodes[i];
+            // find the first non-empty text node
+            if (curNode.nodeType === Node.TEXT_NODE && !(/^\s*$/.test(curNode.nodeValue))) {
+
+                try {
+                    options = JSON.parse(curNode.nodeValue);
+                } catch (e) {
+                    options = {};
+                }
+
+                // remove element to not appear as nested element in result
+                element.removeChild(curNode);
+                break;
+            }
+        }
+
+        return options;
+    };
+
+    processChildren = function processChildren(new_element, builder, element, tcomponents, context) {
+        if (element.childNodes.length > 0) {
+            processTree(builder, element, tcomponents, context);
+
+            if (new_element !== element) {
+                if (new_element instanceof StyledElements.StyledElement) {
+                    new_element = new_element.get();
+                }
+                if (typeof new_element.appendChild !== 'function') {
+                    return;
+                }
+                // because we modify the DOM and childNodes is a live collection
+                // we cannot use a regular for loop
+                var prevChild = null;
+                while (element.firstChild !== null) {
+                    // safety check, if for some unexpected reason no modification takes place
+                    if (prevChild === element.firstChild) {
+                        break;
+                    }
+                    prevChild = element.firstChild;
+                    new_element.appendChild(element.firstChild);
+                }
+            }
+        }
+    }
 
     processTree = function processTree(builder, element, tcomponents, context) {
         var i, child, component, new_component;
@@ -85,6 +125,7 @@
                     element.insertBefore(new_component, child);
                 }
                 element.removeChild(child);
+                processChildren(new_component, builder, child, tcomponents, context);
             }  else {
                 processTree(builder, child, tcomponents, context);
             }
@@ -107,6 +148,7 @@
                 children[i] = component;
             } else if (child.namespaceURI === TEMPLATE_NAMESPACE) {
                 children[i] = processTComponent(child, tcomponents, context);
+                processChildren(children[i], builder, child, tcomponents, context);
             } else {
                 processTree(builder, child, tcomponents, context);
             }

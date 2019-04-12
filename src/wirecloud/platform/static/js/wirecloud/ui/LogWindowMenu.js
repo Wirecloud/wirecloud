@@ -126,7 +126,7 @@
         entry_element.appendChild(titleElement);
 
         if (entry.details != null) {
-            expander = new se.Expander({title: utils.gettext('Details')});
+            expander = new se.Expander({title: utils.gettext('Details'), listenOnTitle: true});
             expander.insertInto(entry_element);
             if (typeof entry.details === 'string') {
                 expander.appendChild(new se.Fragment(entry.details));

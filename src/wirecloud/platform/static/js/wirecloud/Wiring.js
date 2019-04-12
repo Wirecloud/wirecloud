@@ -174,19 +174,46 @@
          * @returns {Wirecloud.Wiring.Connection}
          */
         createConnection: function createConnection(source, target, options) {
-            options = utils.merge({
-                commit: false
-            }, options);
 
-            var connection = new Wirecloud.wiring.Connection(this, source, target, options);
+            const connection = new Wirecloud.wiring.Connection(this, source, target, options);
+            const priv = privates.get(this);
 
-            if (options.commit) {
-                connection.addEventListener('remove', privates.get(this).on_removeconnection);
-                connection.establish();
-                privates.get(this).connections.push(connection);
+            // Create the conection on the server
+            if (!connection.volatile) {
+                var requestContent = [{
+                    op: "add",
+                    path: "/connections/-",
+                    value: connection
+                }];
+                return Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                    workspace_id: this.workspace.id,
+                }), {
+                    method: 'PATCH',
+                    contentType: 'application/json-patch+json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(requestContent)
+                }).then((response) => {
+                    if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                        return Promise.reject(utils.gettext("Unexpected response from server"));
+                    } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                        return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                    }
+
+                    connection.addEventListener('remove', priv.on_removeconnection);
+                    connection.establish();
+                    priv.connections.push(connection);
+
+                    return Promise.resolve(connection);
+                });
+            } else {
+                return new Wirecloud.Task("Creating connection", (resolve) => {
+                    connection.addEventListener('remove', priv.on_removeconnection);
+                    connection.establish();
+                    priv.connections.push(connection);
+
+                    resolve(connection);
+                });
             }
-
-            return connection;
         },
 
         /**

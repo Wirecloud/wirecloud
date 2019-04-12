@@ -417,27 +417,130 @@
 
             });
 
-            it("returns connection instances", function () {
-                var result = wiring.createConnection(
+            it("returns task instances", function (done) {
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});});
+                });
+
+                var p = wiring.createConnection(
                     wiring.operators[0].outputs.output,
                     wiring.operators[1].inputs.input
                 );
 
-                expect(result)
-                    .toEqual(jasmine.any(Wirecloud.wiring.Connection));
-                expect(wiring.connections).toEqual([]);
-            });
-
-            it("append connection instances when using the commit option", function () {
-                var result = wiring.createConnection(
-                    wiring.operators[0].outputs.output,
-                    wiring.operators[1].inputs.input,
-                    {commit: true}
+                expect(p).toEqual(jasmine.any(Wirecloud.Task));
+                p.then(
+                    (connection) => {
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        expect(connection)
+                            .toEqual(jasmine.any(Wirecloud.wiring.Connection));
+                        expect(wiring.connections).toEqual([connection]);
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
                 );
 
-                expect(result)
-                    .toEqual(jasmine.any(Wirecloud.wiring.Connection));
-                expect(wiring.connections).toEqual([result]);
+            });
+
+            it("allows volatile connection creation", function (done) {
+                // Convert operator 2 into a volatile operator
+                wiring.operators[1].volatile = true;
+                spyOn(Wirecloud.io, "makeRequest");
+
+                var p = wiring.createConnection(
+                    wiring.operators[0].outputs.output,
+                    wiring.operators[1].inputs.input
+                );
+
+                expect(p).toEqual(jasmine.any(Wirecloud.Task));
+                p.then(
+                    (connection) => {
+                        expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                        expect(connection)
+                            .toEqual(jasmine.any(Wirecloud.wiring.Connection));
+                        expect(wiring.connections).toEqual([connection]);
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            describe("calls reject on unexepected responses", () => {
+
+                var test = (status) => {
+                    return (done) => {
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status
+                                });
+                            });
+                        });
+
+                        var task = wiring.createConnection(
+                            wiring.operators[0].outputs.output,
+                            wiring.operators[1].inputs.input
+                        );
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            done();
+                        });
+                    };
+                };
+
+                it("200", test(200));
+                it("201", test(201));
+                it("404", test(404));
+                it("422", test(422));
+
+            });
+
+            describe("calls reject on error responses", () => {
+
+                var test = (status, details) => {
+                    return (done) => {
+                        var description = "detailed error description";
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                            return new Wirecloud.Task("Sending request", (resolve) => {
+                                resolve({
+                                    status: status,
+                                    responseText: JSON.stringify({
+                                        description: description,
+                                        details: details
+                                    })
+                                });
+                            });
+                        });
+
+                        var task = wiring.createConnection(
+                            wiring.operators[0].outputs.output,
+                            wiring.operators[1].inputs.input
+                        );
+
+                        expect(task).toEqual(jasmine.any(Wirecloud.Task));
+                        task.catch((error) => {
+                            if (details == null) {
+                                expect(error).toBe(description);
+                            } else {
+                                expect(error).toEqual({
+                                    description: description,
+                                    details: details
+                                });
+                            }
+
+                            done();
+                        });
+                    };
+                };
+
+                it("401", test(401));
+                it("403", test(403));
+                it("500", test(500));
+
             });
 
         });

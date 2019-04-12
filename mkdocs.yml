@@ -33,7 +33,6 @@ markdown_extensions:
     - pymdownx.betterem
     - pymdownx.tilde:
         subscript: False
-    - pymdownx.superfences
     - pymdownx.magiclink:
         repo_url_shortener: True
         repo_url_shorthand: True
@@ -41,8 +40,6 @@ markdown_extensions:
         user: "Wirecloud"
         repo: "wirecloud"
     - pymdownx.tasklist
-    - codehilite:
-        guess_lang: False
     - toc:
         permalink: True
         separator: "-"

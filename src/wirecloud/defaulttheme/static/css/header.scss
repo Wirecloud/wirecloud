@@ -33,27 +33,38 @@
 #wirecloud_header .menu_wrapper > .menu {
     display: inline-block;
     background: #E4E6E2;
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     padding: 0 0 0 1ex;
     vertical-align: top;
 }
 
 #wc-user-menu {
     display: inline-block;
-    width: 30ex;
     height: 30px;
     line-height: 30px;
     margin: 0 1ex;
 
-    & > * {
+    & .se-btn {
+        opacity: 1;
+        // vertical alignment doesn't center correctly
+        margin-top: -3px;
+
+        &:active {
+            // disable default button effect
+            box-shadow: none;
+        }
+    }
+
+    & * {
+        line-height: 25px;
         vertical-align: middle;
     }
 
-    & > .avatar {
+    & .avatar {
         border-radius: 2px;
     }
 
-    & > span {
+    & span {
         margin: 0px 3px;
     }
 }

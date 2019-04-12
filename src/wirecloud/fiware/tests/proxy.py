@@ -96,7 +96,7 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
         else:
             return response.content.decode('utf-8')
 
-    def prepare_request_mock(self, data=None, referer='http://localhost/user_with_workspaces/public-workspace', user=None, extra_headers={}, GET='', use_deprecated_code=False):
+    def prepare_request_mock(self, data=None, referer='http://localhost/user_with_workspaces/public-workspace', user=None, extra_headers={}, GET=''):
 
         request = Mock()
         request.get_host.return_value = 'localhost'
@@ -124,11 +124,7 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
         else:
             request.method = 'GET'
 
-        if use_deprecated_code:
-            request.META['HTTP_X_FI_WARE_OAUTH_TOKEN'] = 'true'
-            extra_headers = {self.deprecation_mapping[key]: value for key, value in extra_headers.items()}
-        else:
-            request.META['HTTP_FIWARE_OAUTH_TOKEN'] = 'true'
+        request.META['HTTP_FIWARE_OAUTH_TOKEN'] = 'true'
 
         request.META.update(extra_headers)
         if user is None:
@@ -138,13 +134,6 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
 
         return request
 
-    deprecation_mapping = {
-        "HTTP_FIWARE_OAUTH_BODY_PATTERN": "HTTP_X_FI_WARE_OAUTH_TOKEN_BODY_PATTERN",
-        "HTTP_FIWARE_OAUTH_GET_PARAMETER": "HTTP_X_FI_WARE_OAUTH_GET_PARAMETER",
-        "HTTP_FIWARE_OAUTH_HEADER_NAME": "HTTP_X_FI_WARE_OAUTH_HEADER_NAME",
-        "HTTP_FIWARE_OAUTH_SOURCE": "HTTP_X_FI_WARE_OAUTH_SOURCE",
-    }
-
     def invalid_request_validator(self):
         def validator(response):
             self.assertEqual(response.status_code, 422)
@@ -153,19 +142,12 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
         return validator
 
     def check_proxy_request(self, validator=lambda response: True, path='/path', refresh=False, **kwargs):
-        request = self.prepare_request_mock(use_deprecated_code=False, **kwargs)
+        self.admin_mock.social_auth.get().access_token_expired.return_value = refresh
+        request = self.prepare_request_mock(**kwargs)
         response = proxy_request(request=request, protocol='http', domain='example.com', path=path)
         validator(response)
 
-        request = self.prepare_request_mock(use_deprecated_code=True, **kwargs)
-        response = proxy_request(request=request, protocol='http', domain='example.com', path=path)
-        validator(response)
-
-        if refresh:
-            # We do two calls to the API
-            self.assertEqual(self.admin_mock.social_auth.get(provider='fiware').refresh_token.call_count, 2)
-        else:
-            self.assertEqual(self.admin_mock.social_auth.get(provider='fiware').refresh_token.call_count, 0)
+        self.assertEqual(self.admin_mock.social_auth.get(provider='fiware').refresh_token.call_count, 1 if refresh else 0)
 
     def test_normal_request(self):
         request = self.prepare_request_mock()
@@ -338,22 +320,6 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
 
     def test_fiware_token_is_refreshed_when_expired(self):
 
-        self.admin_mock.social_auth.get(provider='fiware').extra_data['expires_on'] = time.time()
-        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
-
-        def validator(response):
-            self.assertEqual(response.status_code, 200)
-            headers = json.loads(self.read_response(response))
-            self.assertIn('X-Auth-Token', headers)
-            self.assertEqual(headers['X-Auth-Token'], TEST_TOKEN)
-
-        self.check_proxy_request(validator=validator, data='{}', extra_headers={
-            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-        }, refresh=True)
-
-    def test_fiware_token_is_refreshed_missing_expires_on(self):
-
-        del self.admin_mock.social_auth.get(provider='fiware').extra_data['expires_on']
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
         def validator(response):

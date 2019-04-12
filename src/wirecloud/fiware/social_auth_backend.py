@@ -88,16 +88,8 @@ class FIWAREOAuth2(BaseOAuth2):
     EXTRA_DATA = [
         ('username', 'username'),
         ('refresh_token', 'refresh_token'),
-        ('expires_in', 'expires_in'),
+        ('expires_in', 'expires'),
     ]
-
-    def extra_data(self, user, uid, response, details=None, *args, **kwargs):
-        """Return access_token and extra defined names to store in
-        extra_data field"""
-        data = super(FIWAREOAuth2, self).extra_data(user, uid, response, details, *args, **kwargs)
-        # Save the expiration time
-        data['expires_on'] = time.time() + data['expires_in']
-        return data
 
     def auth_headers(self):
         token = base64.urlsafe_b64encode(('{0}:{1}'.format(*self.get_key_and_secret()).encode())).decode()
@@ -107,8 +99,6 @@ class FIWAREOAuth2(BaseOAuth2):
 
     def refresh_token(self, token, *args, **kwargs):
         data = super(FIWAREOAuth2, self).refresh_token(token, *args, **kwargs)
-        # Save the expiration time
-        data['expires_on'] = time.time() + data['expires_in']
         data['openstack_token'] = None
         return data
 
