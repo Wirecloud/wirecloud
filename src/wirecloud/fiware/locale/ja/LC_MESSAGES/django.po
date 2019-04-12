@@ -1,0 +1,153 @@
+# Japanese/Japan translation of WireCloud.
+# Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (C) 2019 Kazuhito Suda
+# This file is distributed under the same license as the WireCloud package.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
+# Kazuhito Suda <k@fisuda.jp>, 2019
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WireCloud 1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-15 00:00+0900\n"
+"PO-Revision-Date: 2019-03-15 00:00+0900\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
+"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: plugins.py:129
+msgid "FIWARE version"
+msgstr "FIWARE のバージョン"
+
+#: plugins.py:130
+msgid "FIWARE version of the platform"
+msgstr "プラットフォームの FIWARE バージョン"
+
+#: plugins.py:133
+msgid "FIWARE token available"
+msgstr "FIWARE トークンが利用可能です"
+
+#: plugins.py:134
+msgid ""
+"Indicates if the current user has associated a FIWARE auth token that can be "
+"used for accessing other FIWARE resources"
+msgstr ""
+"現在のユーザが他の FIWARE リソースへのアクセスに使用できる FIWARE 認証トーク"
+"ンを関連付けたかどうかを示します"
+
+#: proxy.py:126
+msgid "IdM support not enabled"
+msgstr "IdM サポートが有効になっていません"
+
+#: proxy.py:128
+msgid ""
+"IdM tokens can only be inyected on Ajax requests coming from authorized "
+"widgets"
+msgstr ""
+"IdM トークンは、許可されたウィジェットからの Ajax リクエストに対してのみ注入"
+"できます"
+
+#: proxy.py:138
+msgid "Current user has not an active FIWARE profile"
+msgstr "現在のユーザはアクティブな FIWARE プロファイルを持っていません"
+
+#: proxy.py:142
+msgid "Workspace owner has not an active FIWARE profile"
+msgstr ""
+"ワークスペースの所有者はアクティブな FIWARE プロファイルを持っていません"
+
+#: proxy.py:146
+msgid "Invalid FIWARE OAuth token source"
+msgstr "無効な FIWARE OAuth トークン・ソース"
+
+#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:2
+msgid "Legal Conditions"
+msgstr "法的条件"
+
+#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:6
+msgid "Clauses:"
+msgstr "条項:"
+
+#: templates/wirecloud/fiware/marketplace/main_resource_details.html:3
+msgid "Description"
+msgstr "説明"
+
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:4
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:5
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:6
+msgid "Description:"
+msgstr "説明:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:5
+msgid "Value:"
+msgstr "値:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:2
+msgid "Price plan:"
+msgstr "価格プラン:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:4
+msgid "Title:"
+msgstr "タイトル:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:6
+msgid "Components:"
+msgstr "コンポーネント:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:7
+msgid "Taxes:"
+msgstr "税金:"
+
+#: templates/wirecloud/fiware/marketplace/resource_details.html:13
+msgid "Store"
+msgstr "ストア"
+
+#: templates/wirecloud/fiware/marketplace/resource_details.html:15
+msgid "Owner"
+msgstr "所有者"
+
+#: templates/wirecloud/fiware/marketplace/resource_details.html:17
+msgid "Version"
+msgstr "バージョン"
+
+#: templates/wirecloud/fiware/marketplace/resource_details.html:19
+msgid "Publication date"
+msgstr "発行日"
+
+#: templates/wirecloud/fiware/marketplace/search_interface.html:8
+msgid "Filtering"
+msgstr "フィルタリング"
+
+#: templates/wirecloud/fiware/marketplace/search_interface.html:11
+msgid "Keywords:"
+msgstr "キーワード:"
+
+#: templates/wirecloud/fiware/marketplace/search_interface.html:16
+msgid "Store:"
+msgstr "ストア:"
+
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:2
+msgid "Service level:"
+msgstr "サービスレベル:"
+
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:4
+msgid "Obligated party:"
+msgstr "債務者:"
+
+#: templates/wirecloud/fiware/marketplace/sla/sla_expresion_template.html:3
+msgid "Expresion variables"
+msgstr "エクスプレッション変数"
+
+#: templates/wirecloud/fiware/store/buy_success.html:4
+msgid ""
+"The buying process has finished successfully. The process flow should return "
+"automatically to Wirecloud. You can close this window."
+msgstr ""
+"購入プロセスは正常に終了しました。プロセス・フローは自動的に Wirecloud に戻る"
+"はずです。このウィンドウを閉じることができます。"

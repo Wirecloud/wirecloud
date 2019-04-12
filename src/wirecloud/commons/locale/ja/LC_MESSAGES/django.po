@@ -1,0 +1,219 @@
+# Japanese/Japan translation of WireCloud.
+# Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (C) 2019 Kazuhito Suda
+# This file is distributed under the same license as the WireCloud package.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+# Álvaro Arranz García <aarranz@ficodes.com>, 2018.
+# Kazuhito Suda <k@fisuda.jp>, 2019
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WireCloud 1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-15 00:00+0900\n"
+"PO-Revision-Date: 2019-03-15 00:00+0900\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
+"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: authentication.py:39
+msgid "Logged out"
+msgstr "ログアウト"
+
+#: management/commands/createorganization.py:32
+#, python-format
+msgid "Organization \"%s\" created successfully"
+msgstr "組織 \"%s\" は正常に作成されました"
+
+#: management/commands/createorganization.py:47
+msgid "Orgranization Name is already taken."
+msgstr "組織名は既に使用されています。"
+
+#: middleware.py:149 middleware.py:158
+msgid "Bad credentials"
+msgstr "不正な資格情報"
+
+#: templates/wirecloud/oauth2/default_redirect_uri.html:6
+msgid "Application authorized successfully"
+msgstr "承認されたアプリケーション"
+
+#: templates/wirecloud/oauth2/default_redirect_uri.html:8
+msgid "Error authorizing the application"
+msgstr "アプリケーションの許可エラー"
+
+#: templates/wirecloud/oauth2/default_redirect_uri.html:14
+#, python-format
+msgid ""
+"The application was successfully authorized to access Wirecloud in your name "
+"(%(username)s)."
+msgstr ""
+"あなたの名前 (%(username)s) で Wirecloud へのアクセスを許可されました。"
+
+#: templates/wirecloud/oauth2/default_redirect_uri.html:18
+#, python-format
+msgid ""
+"Error authorizing the application to access Wirecloud in your name "
+"(%(username)s)."
+msgstr ""
+"アプリケーションであなたの名前 (%(username)s) で Wirecloud へのアクセスを許可"
+"中にエラーが発生しました。"
+
+#: utils/downloader.py:47 utils/http.py:365
+#, python-format
+msgid "Invalid schema: %(schema)s"
+msgstr "スキーマが無効です: %(schema)s"
+
+#: utils/http.py:259
+msgid ""
+"The requested resource is only capable of generating content not acceptable "
+"according to the Accept headers sent in the request"
+msgstr ""
+"要求されたリソースは、要求で送信された Accept ヘッダーに従って受け入れられな"
+"いコンテンツのみを生成することができます"
+
+#: utils/http.py:274
+msgid "Unsupported request media type"
+msgstr "サポートされていない要求メディア・タイプ"
+
+#: utils/http.py:357 utils/http.py:368
+#, python-format
+msgid "Missing required parameter: %(parameter)s"
+msgstr "必要なパラメータがありません: %(parameter)s"
+
+#: utils/http.py:362
+#, python-format
+msgid "%(parameter)s must be an absolute URL"
+msgstr "%(parameter)s は絶対 URL でなければなりません"
+
+#: utils/http.py:371 utils/http.py:384
+#, python-format
+msgid "Invalid %(parameter)s type"
+msgstr "%(parameter)s タイプが無効です"
+
+#: utils/http.py:380
+#, python-format
+msgid "Invalid %(parameter)s value"
+msgstr "%(parameter)s 値が無効です"
+
+#: utils/http.py:406
+#, python-format
+msgid "\"%(path)s\" does not exist"
+msgstr "\"%(path)s\" が存在しません"
+
+#: utils/http.py:429
+#, python-format
+msgid "malformed json data: %s"
+msgstr "不正な形式の json データ: %s"
+
+#: utils/template/parsers/json.py:44
+msgid "Missing component type."
+msgstr "コンポーネントタイプがありません。"
+
+#: utils/template/parsers/json.py:47
+#, python-format
+msgid "Invalid component type: %s"
+msgstr "無効なコンポーネントタイプ: %s"
+
+#: utils/template/parsers/json.py:332 utils/template/parsers/rdf.py:226
+msgid "The format of the vendor is invalid."
+msgstr "ベンダーのフォーマットが無効です。"
+
+#: utils/template/parsers/json.py:335 utils/template/parsers/rdf.py:230
+msgid "The format of the name is invalid."
+msgstr "名前の形式が無効です。"
+
+#: utils/template/parsers/json.py:338 utils/template/parsers/rdf.py:234
+msgid ""
+"The format of the version number is invalid. Format: X.X.X where X is an "
+"integer. Ex. \"0.1\", \"1.11\" NOTE: \"1.01\" should be changed to \"1.0.1\" "
+"or \"1.1\""
+msgstr ""
+"バージョン番号の形式が無効です。形式: X.X.X ここでの X は整数です例: "
+"\"0.1\", \"1.11\" 注: \"1.01\" は、\"1.0.1\" または \"1.1\" に変更するべきで"
+"す\""
+
+#: utils/template/parsers/rdf.py:123
+#, python-format
+msgid "invalid content for field: %(field)s"
+msgstr "フィールドの内容が無効です: %(field)s"
+
+#: utils/template/parsers/rdf.py:148 utils/template/parsers/rdf.py:171
+#: utils/template/parsers/xml.py:186
+#, python-format
+msgid "missing required field: %(field)s"
+msgstr "フィールドの内容が無効です: %(field)s"
+
+#: utils/template/parsers/rdf.py:354
+msgid "missing required field: source"
+msgstr "必須フィールドがありません: source"
+
+#: utils/template/parsers/rdf.py:364
+msgid "missing required field: target"
+msgstr "必須フィールドがありません: target"
+
+#: utils/template/parsers/rdf.py:447
+msgid "missing required field: hasSourceEndpoint"
+msgstr "必須フィールドがありません: hasSourceEndpoint"
+
+#: utils/template/parsers/rdf.py:455
+msgid "missing required field: hasTargetEndpoint"
+msgstr "必須フィールドがありません: hasTargetEndpoint"
+
+#: utils/template/parsers/rdf.py:647
+msgid "Missing required field: Javascript files"
+msgstr "必須フィールドがありません: Javascript files"
+
+#: utils/template/parsers/xml.py:617
+#, python-format
+msgid ""
+"There isn't a translation element for the default translation language: "
+"(%(default_lang)s)"
+msgstr "デフォルトの翻訳言語の翻訳要素がありません: (%(default_lang)s)"
+
+#: utils/template/parsers/xml.py:624
+#, python-format
+msgid "The following translation indexes need a default value: %(indexes)s."
+msgstr "次の変換インデックスにはデフォルト値が必要です: %(indexes)s."
+
+#: utils/template/parsers/xml.py:628
+#, python-format
+msgid "The following translation indexes are not used: %(indexes)s."
+msgstr "次の変換インデックスは使用されません: %(indexes)s."
+
+#: utils/template/writers/xml.py:29
+#, python-format
+msgid "Missing %s option"
+msgstr "%s オプションがありません"
+
+#: utils/template/writers/xml.py:222
+#, python-format
+msgid "Unsupported resource type: %s"
+msgstr "サポートされていないリソースタイプ: %s"
+
+#: views.py:68
+msgid "Missing namespace GET parameter providing a search namespace"
+msgstr "検索名前空間を提供する名前空間 GET パラメータがありません"
+
+#: views.py:72
+#, python-format
+msgid "Invalid search namespace: %s"
+msgstr "無効な検索名前空間: %s"
+
+#: views.py:78
+#, python-format
+msgid "Invalid pagenum value: %s"
+msgstr "無効な pagenum 値: %s"
+
+#: views.py:84
+#, python-format
+msgid "Invalid maxresults value: %s"
+msgstr "無効な maxresults 値: %s"
+
+#: views.py:103
+msgid "You don't have permission to switch current session user"
+msgstr "現在のセッションユーザーを切り替える権限がありません"
