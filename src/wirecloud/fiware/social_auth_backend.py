@@ -75,8 +75,8 @@ class FIWAREOAuth2(BaseOAuth2):
     name = 'fiware'
     ID_KEY = 'username'
 
-    if hasattr(settings, 'FIWARE_IDM_URL'):
-        AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_URL', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
+    if hasattr(settings, 'FIWARE_IDM_PUBLIC_URL'):
+        AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_PUBLIC_URL', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
     else:
         AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
     
