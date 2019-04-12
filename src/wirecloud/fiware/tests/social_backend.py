@@ -307,6 +307,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertIn('FIWARE_PORTALS', constants)
         self.assertIn('FIWARE_OFFICIAL_PORTAL', constants)
         self.assertIn('FIWARE_IDM_SERVER', constants)
+        self.assertIn('FIWARE_IDM_PUBLIC_URL', constants)
 
     @patch('wirecloud.fiware.plugins.IDM_SUPPORT_ENABLED', new=False)
     def test_plugin_idm_disabled(self):
@@ -323,6 +324,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertIn('FIWARE_PORTALS', constants)
         self.assertNotIn('FIWARE_OFFICIAL_PORTAL', constants)
         self.assertNotIn('FIWARE_IDM_SERVER', constants)
+        self.assertNotIn('FIWARE_IDM_PUBLIC_URL', constants)
 
     def test_organizations_are_created(self):
         backend = Mock()
