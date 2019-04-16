@@ -589,11 +589,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             ActionChains(self.driver).move_by_offset(0, 50).perform()
-            self.wait_element_visible('.wiring-view .se-alert-static-top')
+            self.wait_element_visible('.wc-workspace-wiring .se-alert-static-top')
             time.sleep(0.2)
             imgp = take_capture(self.driver, 'empty_wiring')
             crop_down(
-                imgp, self.driver.find_element_by_css_selector(".wiring-view .se-alert-static-top"), 40)
+                imgp, self.driver.find_element_by_css_selector(".wc-workspace-view .se-alert-static-top"), 40)
 
             # Click in Find Components
             btn = self.find_navbar_button('we-show-component-sidebar-button')
@@ -966,7 +966,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             add_pointer(imgp, get_position(btnbehav, 0.8, 0.5))
             crop_down(imgp, btnbehav, 30)
 
-            self.driver.execute_script("document.querySelector('.wiring-view .wiring-diagram').style.cssText = 'box-shadow: none; border: none;'")
+            self.driver.execute_script("document.querySelector('.wc-workspace-view .wiring-diagram').style.cssText = 'box-shadow: none; border: none;'")
             wc = self.driver.find_element_by_css_selector(".we-connections-layer")
 
             with wiring.behaviour_sidebar as sidebar:

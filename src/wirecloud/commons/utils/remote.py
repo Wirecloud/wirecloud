@@ -2090,7 +2090,7 @@ class WiringViewTester(BaseWiringViewTester):
 
     @property
     def disabled(self):
-        return 'disabled' in self.testcase.driver.find_element_by_css_selector(".wiring-view").get_attribute('class').split()
+        return 'disabled' in self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring").get_attribute('class').split()
 
     def select(self, components=(), key=Keys.CONTROL):
         actions = ActionChains(self.testcase.driver)
