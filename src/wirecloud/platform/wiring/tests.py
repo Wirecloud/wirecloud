@@ -2755,6 +2755,9 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
                 self.assertNotIn('TestOperator', modal.body.text)
                 modal.accept()
 
+                # Wait until the browser reacts
+                time.sleep(0.4)
+
                 self.assertIsNone(wiring.find_draggable_component('widget', title="Test 2"))
                 self.assertTrue(wiring.find_draggable_component('operator', id=1).has_class('background'))
                 self.assertTrue(wiring.find_draggable_component('widget', title="Test 1").has_class('background'))
