@@ -33,49 +33,30 @@
     cursor: grab;
     position: relative;
     flex-grow: 0;
+    display: none;
+    width: 100%;
+
+    .wc-workspace-editing &,
+    .wc-floating-widget > & {
+        display: flex;
+    }
+
+    & > h4 {
+        flex-grow: 1;
+    }
 
     & > span {
         display: inline-block;
     }
 
     & .se-btn {
-        font-size: 75%;
         color: rgb(136, 136, 136);
         transition: color 1s ease-in;
     }
-}
 
-.wc-widget-buttons {
-    display: block;
-    position: absolute;
-    top: $panel-padding-vertical;
-    right: 0px;
-    background-image: linear-gradient(to right, rgba($panel-default-heading-bg, 0), $panel-default-heading-bg 38px, $panel-default-heading-bg);
-    padding: 0px $panel-padding-horizontal 0px 38px;
-    opacity: 0;
-    white-space: nowrap;
-    transition: opacity 1s ease-in;
-    font-size: $font-size-h4;
-    line-height: $headings-line-height;
-
-    .wc-widget-heading:hover > & {
-        opacity: 1;
+    & .se-btn.disabled {
+        display: none;
     }
-}
-
-.wc-widget-infobuttons {
-    padding: 0px 38px 0px $panel-padding-horizontal;
-    background-image: linear-gradient(to left, rgba($panel-default-heading-bg, 0), $panel-default-heading-bg 38px, $panel-default-heading-bg);
-    position: absolute;
-    top: $panel-padding-vertical;
-    left: 0px;
-    margin: 0px;
-    font-size: $font-size-h4;
-    line-height: $headings-line-height;
-}
-
-.wc-widget-heading .errorbutton.disabled {
-    display: none;
 }
 
 .wc-widget-body {
@@ -97,12 +78,18 @@
     padding: 0 32px;
     position: static;
     flex-grow: 0;
+    display: none;
 
     @if ($widget-footer-bg == 'transparent') {
         color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     } @else {
         color: contrast-color($widget-footer-bg, $text-color-light, $text-color-dark, $text-color-threshold);
         background: $widget-footer-bg;
+    }
+
+    .wc-workspace-editing &,
+    .wc-floating-widget > & {
+        display: block;
     }
 }
 
@@ -195,14 +182,6 @@
 .wc-widget-highlight {
     @include z-depth(2, $color: $state-success-border);
     @include animation(highlight_iwidget 5s linear);
-
-    & .wc-widget-buttons {
-        background-image: linear-gradient(to right, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg);
-    }
-
-    & .wc-widget-infobuttons{
-        background-image: linear-gradient(to left, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg);
-    }
 }
 
 .wc-minimized-widget {

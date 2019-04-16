@@ -126,7 +126,7 @@
             data.resource = this.currentEntry.uri;
 
             if (this.currentNotebook) {
-                data.tab = this.currentNotebook.getVisibleTab().label;
+                data.tab = this.currentNotebook.visibleTab.label;
             }
         }
     };

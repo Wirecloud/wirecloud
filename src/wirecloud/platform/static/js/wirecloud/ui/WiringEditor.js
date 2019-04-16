@@ -51,7 +51,7 @@ Wirecloud.ui = Wirecloud.ui || {};
      */
     ns.WiringEditor = function WiringEditor(id, options) {
         options = utils.merge({}, options);
-        options.class = "wiring-view wc-workspace-wiring";
+        options.class = "wc-workspace-wiring";
 
         se.Alternative.call(this, id, options);
 

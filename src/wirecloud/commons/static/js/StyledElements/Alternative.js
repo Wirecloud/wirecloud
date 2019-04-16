@@ -71,10 +71,6 @@
         return !this.hidden;
     };
 
-    Alternative.prototype.getId = function getId() {
-        return this.altId;
-    };
-
     se.Alternative = Alternative;
 
 })(StyledElements, StyledElements.Utils);

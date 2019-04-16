@@ -74,6 +74,8 @@
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/input-box/1.0')},
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/youtube-browser/3.0')},
             {'type': 'simpleDescription', 'title': utils.gettext('WireCloud Basic Tutorial'), 'msg': utils.gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
+            {'type': 'userAction', 'msg': utils.gettext("Click the <em>Edit</em> button"), 'elem': BS.toolbar_button('wc-edit-mode-button'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('wc-edit-mode-button'), 'action': BA.sleep(500)},
             {'type': 'userAction', 'msg': utils.gettext("Click the <em>Add components</em> button"), 'elem': BS.toolbar_button('wc-show-component-sidebar-button'), 'pos': 'downLeft'},
             {'type': 'autoAction', 'elem': BS.toolbar_button('wc-show-component-sidebar-button'), 'action': BA.sleep(500)},
             {'type': 'autoAction', 'msg': utils.gettext('By typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('browser', {send: true})},

@@ -395,6 +395,8 @@
          * @returns {Wirecloud.Widget}
          */
         reload: function reload() {
+            let priv = privates.get(this);
+            priv.status = STATUS.UNLOADING;
             this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
             this.wrapperElement.contentWindow.location.reload();
 
@@ -593,7 +595,8 @@
     var STATUS = {
         CREATED: 0,
         LOADING: 1,
-        RUNNING: 2
+        RUNNING: 2,
+        UNLOADING: 3
     };
 
     var build_endpoints = function build_endpoints() {
@@ -791,11 +794,15 @@
 
     var on_unload = function on_unload() {
 
-        if (!this.loaded) {
+        let priv = privates.get(this);
+
+        if (priv.status !== STATUS.RUNNING && priv.status !== STATUS.UNLOADING) {
             return;
         }
 
-        privates.get(this).status = STATUS.CREATED;
+        // Currently, the only scenario where current status can be "unloading"
+        // is when reloading the widget
+        priv.status = priv.status === STATUS.RUNNING ? STATUS.CREATED : STATUS.LOADING;
         this.prefCallback = null;
 
         remove_context_callbacks.call(this);

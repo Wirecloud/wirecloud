@@ -181,7 +181,7 @@
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
                 });
 
-                var p = element.removeAlternative(alt2.getId(), {onComplete: listener});
+                var p = element.removeAlternative(alt2.altId, {onComplete: listener});
 
                 expect(element.alternativeList).toEqual([alt1, alt3]);
                 expect(p).toEqual(jasmine.any(Promise));
@@ -342,7 +342,11 @@
                 var p = element.showAlternative(alt1);
 
                 expect(p).toEqual(jasmine.any(Promise));
-                p.then(() => {
+                p.then((result) => {
+                    expect(result).toEqual({
+                        in: alt1,
+                        out: alt1
+                    });
                     expect(element.visibleAlt).toBe(alt1);
                     done();
                 });
@@ -356,7 +360,11 @@
                 });
 
                 expect(p).toEqual(jasmine.any(Promise));
-                p.then(() => {
+                p.then((result) => {
+                    expect(result).toEqual({
+                        in: alt3,
+                        out: alt1
+                    });
                     expect(element.visibleAlt).toBe(alt3);
                     done();
                 });
@@ -367,12 +375,16 @@
                     expect(element.visibleAlt).toBe(alt2);
                 });
 
-                var p = element.showAlternative(alt2.getId(), {
+                var p = element.showAlternative(alt2.altId, {
                     onComplete: listener
                 });
 
                 expect(p).toEqual(jasmine.any(Promise));
-                p.then(() => {
+                p.then((result) => {
+                    expect(result).toEqual({
+                        in: alt2,
+                        out: alt1
+                    });
                     expect(listener).toHaveBeenCalledWith(element, alt1, alt2);
                     done();
                 });

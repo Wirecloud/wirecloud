@@ -44,6 +44,11 @@
             };
         });
 
+        afterAll(() => {
+            // TODO
+            Wirecloud.contextManager = null;
+        });
+
         describe("new SharingWindowMenu(workspace)", () => {
 
             it("requires the workspace parameter", () => {

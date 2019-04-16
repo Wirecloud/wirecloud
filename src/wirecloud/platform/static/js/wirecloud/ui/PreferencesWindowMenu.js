@@ -191,6 +191,7 @@
 
         // Reset button
         this.resetButton = new se.Button({
+            class: 'btn-set-defaults',
             text: utils.gettext('Set Defaults'),
         });
         this.resetButton.addEventListener("click", function () {

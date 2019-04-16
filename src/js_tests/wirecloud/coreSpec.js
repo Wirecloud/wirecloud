@@ -49,6 +49,7 @@
                     id: 1,
                     owner: "wirecloud",
                     name: "home",
+                    title: "Home",
                     contextManager: {
                         addCallback: jasmine.createSpy()
                     }
@@ -114,7 +115,8 @@
                 // Act
                 var task = Wirecloud.changeActiveWorkspace({
                     owner: "wirecloud",
-                    name: "home"
+                    name: "home",
+                    title: "Home"
                 });
 
                 // Assert
@@ -165,6 +167,7 @@
                     expect(Wirecloud.HistoryManager.pushState).toHaveBeenCalledWith({
                         workspace_owner: "wirecloud",
                         workspace_name: "home",
+                        workspace_title: "Home",
                         view: "workspace",
                         tab: "MyTab"
                     });
@@ -190,6 +193,7 @@
                     expect(Wirecloud.HistoryManager.replaceState).toHaveBeenCalledWith({
                         workspace_owner: "wirecloud",
                         workspace_name: "home",
+                        workspace_title: "Home",
                         view: "workspace"
                     });
                     expect(Wirecloud.activeWorkspace).toBe(initworkspace);
@@ -465,6 +469,7 @@
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
                     workspace_name: "home",
+                    workspace_title: "Home",
                     view: "workspace"
                 });
 
@@ -498,6 +503,7 @@
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
                     workspace_name: "home",
+                    workspace_title: "Home",
                     view: "workspace"
                 });
 
@@ -526,6 +532,7 @@
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
                     workspace_name: "home",
+                    workspace_title: "Home",
                     view: "workspace"
                 });
                 Wirecloud.ContextManager.and.throwError("invalid data");
@@ -553,6 +560,7 @@
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
                     workspace_name: "home",
+                    workspace_title: "Home",
                     view: "workspace"
                 });
 
@@ -626,7 +634,7 @@
                     });
                 });
 
-                var task = Wirecloud.loadWorkspace({owner: "wirecloud", name: "home"});
+                var task = Wirecloud.loadWorkspace({owner: "wirecloud", name: "home", title: "Home"});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function (workspace) {
@@ -954,7 +962,8 @@
                 var workspace = {
                     id: 1,
                     owner: "wirecloud",
-                    name: "home"
+                    name: "home",
+                    title: "Home"
                 };
                 Wirecloud.workspaceInstances = {
                     1: workspace
@@ -974,7 +983,7 @@
                     });
                 });
 
-                var task = Wirecloud.removeWorkspace({owner: "wirecloud", name: "home"});
+                var task = Wirecloud.removeWorkspace({owner: "wirecloud", name: "home", title: "Home"});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function () {
@@ -988,7 +997,8 @@
                 var workspace = {
                     id: 100,
                     owner: "wirecloud",
-                    name: "home"
+                    name: "home",
+                    title: "Home"
                 };
                 Wirecloud.workspaceInstances = {
                     100: workspace
@@ -1022,7 +1032,8 @@
                 var workspace = {
                     id: 100,
                     owner: "wirecloud",
-                    name: "home"
+                    name: "home",
+                    title: "Home"
                 };
                 Wirecloud.workspaceInstances = {
                     100: workspace

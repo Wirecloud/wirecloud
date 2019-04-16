@@ -31,7 +31,7 @@
 
         this.handler = handler;
     };
-    WorkspaceListItems.prototype = new StyledElements.DynamicMenuItems();
+    utils.inherit(WorkspaceListItems, StyledElements.DynamicMenuItems);
 
     WorkspaceListItems.prototype.build = function () {
         var workspace_name, items, workspace, username, user_workspaces;

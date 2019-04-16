@@ -881,22 +881,46 @@
 
         describe("reload()", () => {
 
-            it("should reload widget view", () => {
+            it("should reload widget view", (done) => {
                 var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
                     title: "old title"
                 });
+                let listener = jasmine.createSpy("listener");
+                let element = widget.wrapperElement;
                 widget.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
                     contentWindow: {
                         location: {
-                            reload: jasmine.createSpy("reload")
+                            href: widget.codeurl,
+                            reload: jasmine.createSpy("reload").and.callFake(() => {
+                                // call unload event
+                                widget.wrapperElement.contentDocument.defaultView.addEventListener.calls.argsFor(0)[1]();
+                            }),
+                            replace: jasmine.createSpy("replace")
                         }
                     },
                     setAttribute: jasmine.createSpy("setAttribute")
                 };
-                expect(widget.reload()).toBe(widget);
+                widget.addEventListener("unload", listener);
+                widget.addEventListener("load", () => {
+                    setTimeout(() => {
+                        expect(listener).not.toHaveBeenCalled();
+                        expect(widget.reload()).toBe(widget);
+                        expect(widget.wrapperElement.contentWindow.location.reload).toHaveBeenCalledWith();
 
-                expect(widget.wrapperElement.contentWindow.location.reload).toHaveBeenCalledWith();
+                        setTimeout(() => {
+                            expect(listener).toHaveBeenCalledTimes(1);
+                            done();
+                        }, 0);
+                    }, 0);
+                });
+                widget.load();
+                element.dispatchEvent(new Event("load"));
             });
 
         });

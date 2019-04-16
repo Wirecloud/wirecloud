@@ -111,7 +111,7 @@
                     title: utils.gettext("Remove")
                 });
 
-                button.setDisabled(!view.model.isAllowed('close'));
+                view.closebutton = button;
                 button.addEventListener('click', function () {
                     view.remove();
                 });
@@ -138,6 +138,7 @@
                     title: utils.gettext("Menu")
                 });
 
+                view.menubutton = button;
                 button.popup_menu.append(new ns.WidgetViewMenuItems(view));
                 return button;
             },
@@ -148,7 +149,7 @@
                     title: utils.gettext("Minimize")
                 });
 
-                button.setDisabled(!view.model.isAllowed('minimize'));
+                button.enable = view.model.isAllowed('minimize');
                 button.addEventListener('click', function (button) {
                     view.toggleMinimizeStatus(true);
                 });
@@ -168,7 +169,6 @@
                 var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
 
                 handle.addClassName("wc-bottom-resize-handle");
-                handle.setDisabled(!view.model.isAllowed('resize'));
                 view.bottomresizehandle = handle;
                 return handle;
             },
@@ -176,7 +176,6 @@
                 var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true});
 
                 handle.addClassName("wc-bottom-left-resize-handle");
-                handle.setDisabled(!view.model.isAllowed('resize'));
                 view.leftresizehandle = handle;
                 return handle;
             },
@@ -184,7 +183,6 @@
                 var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: false});
 
                 handle.addClassName("wc-bottom-right-resize-handle");
-                handle.setDisabled(!view.model.isAllowed('resize'));
                 view.rightresizehandle = handle;
                 return handle;
             },
@@ -259,7 +257,9 @@
             this.repaint();
         }.bind(this));
 
+        this.tab.workspace.addEventListener('editmode', update_buttons.bind(this));
         model.addEventListener('remove', on_remove.bind(this));
+        update_buttons.call(this);
     };
 
     // =========================================================================
@@ -560,6 +560,15 @@
 
     var privates = new WeakMap();
 
+    var update_buttons = function update_buttons() {
+        this.closebutton.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('close');
+        this.menubutton.enabled = this.tab.workspace.editing;
+
+        this.bottomresizehandle.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('resize');
+        this.leftresizehandle.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('resize');
+        this.rightresizehandle.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('resize');
+    };
+
     var update_className = function update_className() {
         if (this.model.missing) {
             this.wrapperElement.classList.add('wc-missing-widget');
@@ -608,7 +617,7 @@
 
     var on_add_log = function on_add_log() {
         var label, errorCount = this.model.logManager.errorCount;
-        this.errorbutton.setDisabled(errorCount === 0);
+        this.errorbutton.enabled = errorCount !== 0;
 
         label = utils.ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
         label = utils.interpolate(label, {errorCount: errorCount}, true);

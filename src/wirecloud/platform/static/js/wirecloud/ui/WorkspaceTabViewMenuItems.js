@@ -54,15 +54,15 @@
 
             items = [];
 
-            item = new se.MenuItem(utils.gettext("Rename"), function () {
-                (new Wirecloud.ui.RenameWindowMenu(this, utils.gettext('Rename Workspace Tab'))).show();
-            }.bind(this.tab));
+            item = new se.MenuItem(utils.gettext("Rename"), () => {
+                (new Wirecloud.ui.RenameWindowMenu(this.tab.model, utils.gettext('Rename Workspace Tab'))).show();
+            });
             item.addIconClass("fa fa-pencil");
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Set as initial"), function () {
-                this.setInitial();
-            }.bind(this.tab));
+                this.tab.model.setInitial();
+            });
             item.addIconClass("fa fa-home");
             item.setDisabled(this.tab.model.initial);
             items.push(item);
@@ -73,9 +73,16 @@
             item.addIconClass("fa fa-cog");
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("Remove"), function () {
-                this.remove();
-            }.bind(this.tab));
+            item = new se.MenuItem(utils.gettext("Remove"), () => {
+                if (this.tab.widgets.length) {
+                    var dialog = new Wirecloud.ui.AlertWindowMenu(utils.gettext("The tab's widgets will also be removed. Would you like to continue?"));
+                    dialog.setHandler(() => {
+                        this.tab.model.remove();
+                    }).show();
+                } else {
+                    this.tab.model.remove();
+                }
+            });
             item.addIconClass("fa fa-trash");
             item.setDisabled(!this.tab.model.isAllowed('remove'));
             items.push(item);

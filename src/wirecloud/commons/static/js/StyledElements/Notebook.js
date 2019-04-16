@@ -280,6 +280,7 @@
         this.moveRightButton.setDisabled(last_tab_visible);
 
         if (this.new_tab_button_tabs != null) {
+            first_tab_visible = isTabVisible.call(this, 0, true);
             if (first_tab_visible && last_tab_visible) {
                 this.new_tab_button_tabs.enable();
                 this.new_tab_button_left.disable();
@@ -292,13 +293,7 @@
     };
 
     var getFirstVisibleTab = function getFirstVisibleTab() {
-        var i;
-        for (i = 0; i < this.tabs.length; i += 1) {
-            if (isTabVisible.call(this, i)) {
-                return i;
-            }
-        }
-        return null;
+        return this.tabs.findIndex((element, index) => {return isTabVisible.call(this, index);});
     };
 
     /**
@@ -399,6 +394,7 @@
      * Returns the tab associated with the given ids.
      *
      * @since 0.5
+     * @deprecated since version 1.0
      * @name StyledElements.Notebook#getTab
      *
      * @param {Object} id
@@ -431,21 +427,10 @@
     };
 
     /**
-     * Returns current visible tab.
-     *
-     * @name StyledElements.Notebook#getVisibleTab
-     * @deprecated since version 0.5
-     * @see {@link StyledElements.Tab#visibleTab}
-     * @returns {StyledElements.Tab}
-     */
-    Notebook.prototype.getVisibleTab = function getVisibleTab() {
-        return this.visibleTab;
-    };
-
-    /**
      * Returns the tab associated with the given index.
      *
      * @since 0.5
+     * @deprecated since version 1.0
      * @name StyledElements.Notebook#getTabByIndex
      * @param {Number} index index of the tab to recover.
      *
@@ -482,7 +467,7 @@
             if (this.tabsById[tab.tabId] !== tab) {
                 throw new TypeError('tab is not owned by this notebook');
             }
-            tab = tab.getId();
+            tab = tab.tabId;
         }
 
         if (!this.tabsById[tab]) {
@@ -525,6 +510,8 @@
      * foco a la pestaña asociada.
      *
      * @param {Number|Tab} tab intance or tab id of the tab to make visible
+     * @param {Object.<String, *>} options
+     * - context: context data to be sent on the change and the changed events
      */
     Notebook.prototype.goToTab = function goToTab(tab, options) {
         var newTab, oldTab;
@@ -555,9 +542,9 @@
 
         this.dispatchEvent('change', oldTab, newTab, options.context);
 
-        if (this.visibleTab) {
-            this.visibleTab.setVisible(false);
-        }
+        // At this point there is always a visibleTab
+        // if (this.visibleTab) {
+        this.visibleTab.setVisible(false);
 
         this.visibleTab = newTab;
         this.visibleTab.setVisible(true);
@@ -567,13 +554,6 @@
         }
 
         this.dispatchEvent('changed', oldTab, newTab, options.context);
-    };
-
-    /**
-     * Devuelve el número de pestañas disponibles actualmente en este notebook.
-     */
-    Notebook.prototype.getNumberOfTabs = function getNumberOfTabs() {
-        return this.tabs.length;
     };
 
     /**

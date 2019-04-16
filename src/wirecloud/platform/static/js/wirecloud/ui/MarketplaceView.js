@@ -197,9 +197,11 @@
     };
 
     MarketplaceView.prototype.onHistoryChange = function onHistoryChange(state) {
-        this.changeCurrentMarket(state.market, {history: "ignore"});
-        if ('onHistoryChange' in this.viewsByName[state.market]) {
-            this.viewsByName[state.market].onHistoryChange(state);
+        if (this.loading === false && state.market in this.viewsByName) {
+            this.changeCurrentMarket(state.market, {history: "ignore"});
+            if ('onHistoryChange' in this.viewsByName[state.market]) {
+                this.viewsByName[state.market].onHistoryChange(state);
+            }
         }
     };
 

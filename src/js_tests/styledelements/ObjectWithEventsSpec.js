@@ -107,11 +107,10 @@
                 expect(eventListener3).toHaveBeenCalledWith(eventTarget);
             });
 
-            it("should call all eventListener list despite whether an event listener thrown an error", function () {
+            it("should call all eventListener listeners despite whether one of them thrown an error", function () {
+                spyOn(window.console, "error");
                 var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener1 = function (element) {
-                    throw Error();
-                };
+                var eventListener1 = jasmine.createSpy('eventListener1').and.throwError();
                 var eventListener2 = jasmine.createSpy('eventListener2');
 
                 eventTarget.addEventListener('click', eventListener1);
@@ -119,7 +118,9 @@
 
                 eventTarget.dispatchEvent('click');
 
+                expect(eventListener1).toHaveBeenCalledWith(eventTarget);
                 expect(eventListener2).toHaveBeenCalledWith(eventTarget);
+                expect(window.console.error).toHaveBeenCalledWith(jasmine.any(Error));
             });
         });
 

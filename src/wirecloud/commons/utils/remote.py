@@ -300,6 +300,10 @@ class ButtonTester(WebElementTester):
 class FieldTester(WebElementTester):
 
     @property
+    def is_disabled(self):
+        return self.get_attribute('disabled').strip().lower() == "true"
+
+    @property
     def is_selected(self):
         return self.element.is_selected()
 
@@ -474,9 +478,10 @@ class WorkspaceMixinTester(object):
         return WebDriverWait(self.driver, timeout=5).until(tab_created)
 
     def create_widget(self, query, new_title=None, version=None):
-        with self.resource_sidebar as sidebar:
-            resource = sidebar.search_component('widget', query)
-            tab_widget = resource.create_component(version=version)
+        with self.edit_mode as edit_session:
+            with edit_session.resource_sidebar as sidebar:
+                resource = sidebar.search_component('widget', query)
+                tab_widget = resource.create_component(version=version)
 
         if new_title is not None:
             tab_widget.rename(new_title)
@@ -494,6 +499,34 @@ class WorkspaceMixinTester(object):
             if (id is not None and widget.id == id) or (title is not None and widget.title == title):
                 return widget
         return None
+
+
+class EditModeSession(object):
+
+    def __init__(self, testcase):
+        self.resource_sidebar = WorkspaceComponentSidebarTester(testcase)
+        self.wiring_view = WiringViewTester(testcase)
+
+
+class EditMode(object):
+
+    def __init__(self, testcase):
+        self.testcase = testcase
+        self.nestinglevel = 0
+
+    def __enter__(self):
+        if self.nestinglevel == 0:
+            edit_mode_button = self.testcase.find_navbar_button("wc-edit-mode-button")
+            edit_mode_button.click()
+        self.nestinglevel += 1
+
+        return EditModeSession(self.testcase)
+
+    def __exit__(self, type, value, traceback):
+        self.nestinglevel -= 1
+        if self.nestinglevel == 0:
+            edit_mode_button = self.testcase.find_navbar_button("wc-edit-mode-button")
+            edit_mode_button.click()
 
 
 class WorkspaceComponentSidebarTester(object):
@@ -824,6 +857,7 @@ class WidgetTester(WebElementTester):
 
     def reload(self):
         self.open_menu().click_entry('Reload')
+        return self
 
     def remove(self, timeout=10):
         old_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget"))
@@ -1112,7 +1146,7 @@ class WiringEndpointTester(WebElementTester):
     def create_connection(self, endpoint, must_recommend=(), must_expand=()):
         ActionChains(self.testcase.driver).click_and_hold(self.element).perform()
         # Wait until the browser reacts
-        time.sleep(0.2)
+        time.sleep(0.4)
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.is_active)
         for endpoint in must_recommend:
             self.testcase.assertTrue(endpoint.is_active)
@@ -1120,7 +1154,7 @@ class WiringEndpointTester(WebElementTester):
             self.testcase.assertFalse(component.has_class('collapsed'))
 
         ActionChains(self.testcase.driver).move_to_element(endpoint.element).release().perform()
-        return self.find_connection(endpoint)
+        return WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.find_connection(endpoint))
 
     def find_connection(self, endpoint):
         for connection in self.find_connections():
@@ -1287,10 +1321,9 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def setUp(self):
 
-        self.resource_sidebar = WorkspaceComponentSidebarTester(self)
+        self.edit_mode = EditMode(self)
         self.marketplace_view = MarketplaceViewTester(self)
         self.myresources_view = MyResourcesViewTester(self)
-        self.wiring_view = WiringViewTester(self)
 
     def tearDown(self):
 
@@ -1333,21 +1366,29 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             loading_window = self.wait_element_visible('#loading-window')
             WebDriverWait(self.driver, timeout).until(EC.staleness_of(loading_window))
 
-    def wait_wirecloud_ready(self, start_timeout=20, timeout=20, embedded=False):
+    def wait_wirecloud_ready(self, start_timeout=20, timeout=20, login=False, embedded=False):
 
         loading_window = None
 
         def wait_loading_window_fadding(driver):
             return 'in' not in loading_window.get_attribute('class').strip()
 
-        loading_window = self.wait_element_visible('#loading-window')
-        WebDriverWait(self.driver, timeout).until(wait_loading_window_fadding)
-
-        loading_message = loading_window.find_element_by_id('loading-message')
         try:
-            self.driver.execute_script("arguments[0].click();", loading_message)
-        except:
-            pass
+            loading_window = self.wait_element_visible('#loading-window')
+        except TimeoutException:
+            # On page load, selenium sometimes waits until the loading process
+            # ends completely. In that case, the loading window element won't be
+            # visible, but because WireCloud is already ready.
+            if not login:
+                raise
+        else:
+            WebDriverWait(self.driver, timeout).until(wait_loading_window_fadding)
+
+            loading_message = loading_window.find_element_by_id('loading-message')
+            try:
+                self.driver.execute_script("arguments[0].click();", loading_message)
+            except:
+                pass
 
         if embedded:
             self.wait_element_visible('.wc-body:not(.se-on-transition)')
@@ -1372,7 +1413,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         form.get_field('password').set_value(password)
         form.submit()
 
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
     def get_current_view(self):
 
@@ -2049,7 +2090,7 @@ class WiringViewTester(BaseWiringViewTester):
 
     @property
     def disabled(self):
-        return 'disabled' in self.testcase.driver.find_element_by_css_selector(".wiring-view").get_attribute('class').split()
+        return 'disabled' in self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring").get_attribute('class').split()
 
     def select(self, components=(), key=Keys.CONTROL):
         actions = ActionChains(self.testcase.driver)

@@ -23,7 +23,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -44,18 +44,42 @@
         });
 
         it("should support adding new tabs through a user interface button", function () {
-            var element, tab, btnCreate;
+            var element, tabs = [];
 
             element = new StyledElements.Notebook();
-            element.addEventListener('newTab', function (notebook) {tab = notebook.createTab();});
-            btnCreate = element.new_tab_button_tabs;
+            element.appendTo(dom);
+            element.addEventListener('newTab', (notebook) => {tabs.push(notebook.createTab({label: "DynamicTab"}));});
+            element.tabArea.style({width: "40px"});
 
-            btnCreate.click();
+            // Use the button inside the tab area
+            element.new_tab_button_tabs.click();
 
-            expect(element.visibleTab).toBe(tab);
-            expect(element.tabs).toEqual([tab]);
-            expect(element.tabArea.wrapperElement.children[0]).toBe(tab.getTabElement());
-            expect(element.tabArea.wrapperElement.children[1]).toBe(btnCreate.wrapperElement);
+            expect(element.visibleTab).toBe(tabs[0]);
+            expect(element.tabs).toEqual(tabs);
+            expect(element.tabArea.wrapperElement.children[0]).toBe(tabs[0].getTabElement());
+            expect(element.tabArea.wrapperElement.children[1]).toBe(element.new_tab_button_tabs.wrapperElement);
+            expect(element.new_tab_button_tabs.enabled).toBe(false);
+            expect(element.new_tab_button_left.enabled).toBe(true);
+
+            // Should be possible to register more than one listener
+            element.addEventListener('newTab', () => {});
+
+            // Allocate space for a second tab
+            element.tabArea.style({width: "140px"});
+
+            // Use the button at the left of the tab area
+            element.new_tab_button_left.click();
+            expect(element.tabs).toEqual(tabs);
+            expect(element.tabArea.wrapperElement.children[0]).toBe(tabs[0].getTabElement());
+            expect(element.tabArea.wrapperElement.children[1]).toBe(tabs[1].getTabElement());
+            expect(element.tabArea.wrapperElement.children[2]).toBe(element.new_tab_button_tabs.wrapperElement);
+            expect(element.new_tab_button_tabs.enabled).toBe(true);
+            expect(element.new_tab_button_left.enabled).toBe(false);
+
+            // Add a new tab so the space is not enough
+            element.createTab({name: "another tab"});
+            expect(element.new_tab_button_tabs.enabled).toBe(false);
+            expect(element.new_tab_button_left.enabled).toBe(true);
         });
 
         it("should provide fullscreen status through the fullscreen property", function () {
@@ -71,6 +95,30 @@
         it("should support the id option", function () {
             var element = new StyledElements.Notebook({id: 'myid'});
             expect(element.wrapperElement.id).toBe('myid');
+        });
+
+        describe("destroy()", () => {
+
+            it("works on empty notebooks", () => {
+                let element = new StyledElements.Notebook();
+                spyOn(element, "remove");
+
+                expect(element.destroy()).toBe(undefined);
+
+                expect(element.remove).toHaveBeenCalledWith();
+            });
+
+            it("works on non-empty notebooks", () => {
+                let element = new StyledElements.Notebook();
+                element.createTab();
+                element.createTab();
+                spyOn(element, "remove");
+
+                expect(element.destroy()).toBe(undefined);
+
+                expect(element.remove).toHaveBeenCalledWith();
+            });
+
         });
 
         describe("createTab([options])", function () {
@@ -122,46 +170,220 @@
                 expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.getTabElement());
             });
 
+            it("should allow to create new tabs using custom classes", () => {
+                const MyTab = function MyTab() {
+                    StyledElements.Tab.apply(this, arguments);
+                };
+                utils.inherit(MyTab, StyledElements.Tab);
+
+                let tab = element.createTab({tab_constructor: MyTab});
+
+                expect(element.tabs).toEqual([tab]);
+                expect(tab).toEqual(jasmine.any(MyTab));
+            });
+
+            it("throws a TypeError when trying to use an invalid custom class", () => {
+                const MyTab = function MyTab() {};
+
+                expect(() => {
+                    element.createTab({tab_constructor: MyTab});
+                }).toThrowError(TypeError);
+            });
+
+        });
+
+        describe("enable events", () => {
+
+            var element;
+
+            beforeEach(() => {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                element.createTab();
+                element.createTab();
+            });
+
+            it("should add a disable layer when disabled", () => {
+                element.enabled = false;
+
+                expect(element.disabledLayer).not.toEqual(null);
+            });
+
+            it("should remove the disable layer when reenabling", () => {
+                element.enabled = false;
+                element.enabled = true;
+
+                expect(element.disabledLayer).toEqual(null);
+            });
+
+        });
+
+        // Deprecated
+        describe("getTab(id)", () => {
+
+            var element, tab;
+
+            beforeEach(() => {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                element.createTab();
+                tab = element.createTab();
+            });
+
+            it("should return tab", () => {
+                expect(element.getTab(tab.tabId)).toBe(tab);
+            });
+
+            it("should return undefined if there is no tab with the passed id", () => {
+                expect(element.getTab("10004")).toBe(undefined);
+            });
+
+        });
+
+        // Deprecated
+        describe("getTabByIndex(index)", () => {
+
+            var element, tab;
+
+            beforeEach(() => {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                element.createTab();
+                tab = element.createTab();
+            });
+
+            it("should return tab", () => {
+                expect(element.getTabByIndex(1)).toBe(tab);
+            });
+
+            it("should return undefined if there is no tab with the given index", () => {
+                expect(element.getTabByIndex("10004")).toBe(undefined);
+            });
+
+        });
+
+        describe("getTabIndex(id)", () => {
+
+            var element, tab;
+
+            beforeEach(() => {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                element.createTab();
+                tab = element.createTab();
+                element.createTab();
+            });
+
+            it("should return tab index", () => {
+                expect(element.getTabIndex(tab.tabId)).toBe(1);
+            });
+
+            it("should return null if there is no tab with the passed id", () => {
+                expect(element.getTabIndex("10004")).toBe(null);
+            });
+
         });
 
         describe("goToTab(tab)", function () {
-            var element, tab1, tab2, tab3;
+            var element, tab1, tab2, tab3, changelistener, changedlistener;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 element = new StyledElements.Notebook();
                 element.appendTo(dom);
                 tab1 = element.createTab();
                 tab2 = element.createTab();
                 tab3 = element.createTab();
+                changelistener = jasmine.createSpy("changelistener");
+                changedlistener = jasmine.createSpy("changedlistener");
+                element.addEventListener("change", changelistener);
+                element.addEventListener("changed", changedlistener);
+                spyOn(element, "focus");
             });
 
             it("throws an exception if tab is null", function () {
                 expect(function () {element.goToTab(null);}).toThrow(jasmine.any(TypeError));
+                expect(changelistener).not.toHaveBeenCalled();
+                expect(changedlistener).not.toHaveBeenCalled();
             });
 
             it("throws an exception if tab is not a valid tab id", function () {
                 expect(function () {element.goToTab("mytab4");}).toThrow(jasmine.any(TypeError));
+                expect(changelistener).not.toHaveBeenCalled();
+                expect(changedlistener).not.toHaveBeenCalled();
             });
 
             it("should raise an exception if the passed tab is not owned by the notebook", function () {
                 var other_notebook = new StyledElements.Notebook();
                 var other_tab = other_notebook.createTab();
                 expect(function () {element.goToTab(other_tab);}).toThrow(jasmine.any(TypeError));
+                expect(changelistener).not.toHaveBeenCalled();
+                expect(changedlistener).not.toHaveBeenCalled();
             });
 
-            it("does nothing if the passed tab is the visible tab", function () {
+            it("does focus the tab if the passed tab is the visible tab (focusOnSetVisible: true)", function () {
                 element.goToTab(tab1);
+
                 expect(element.tabArea.wrapperElement.children[2]).toBe(tab3.getTabElement());
+                expect(changelistener).not.toHaveBeenCalled();
+                expect(changedlistener).not.toHaveBeenCalled();
+                expect(element.focus).toHaveBeenCalledWith(tab1.tabId);
             });
 
             it("should allow to move to a middle tab", function () {
                 element.goToTab(tab2);
                 expect(element.visibleTab).toBe(tab2);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
+                expect(element.focus).toHaveBeenCalledWith(tab2.tabId);
             });
 
             it("should allow to move to the last tab", function () {
                 element.goToTab(tab3);
                 expect(element.visibleTab).toBe(tab3);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab3, undefined);
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab3, undefined);
+                expect(element.focus).toHaveBeenCalledWith(tab3.tabId);
+            });
+
+            it("should support the context option", () => {
+                element.goToTab(tab2, {context: "mycontext"});
+
+                expect(element.visibleTab).toBe(tab2);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2, "mycontext");
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2, "mycontext");
+                expect(element.focus).toHaveBeenCalledWith(tab2.tabId);
+            });
+
+            it("does nothing if the passed tab is the visible tab (focusOnSetVisible: false)", () => {
+                element = new StyledElements.Notebook({focusOnSetVisible: false});
+                element.appendTo(dom);
+                tab1 = element.createTab();
+                element.addEventListener("change", changelistener);
+                element.addEventListener("changed", changedlistener);
+                spyOn(element, "focus");
+
+                element.goToTab(tab1);
+
+                expect(changelistener).not.toHaveBeenCalled();
+                expect(changedlistener).not.toHaveBeenCalled();
+                expect(element.focus).not.toHaveBeenCalled();
+            });
+
+            it("should no focus tabs when focusOnSetVisible is false", () => {
+                element = new StyledElements.Notebook({focusOnSetVisible: false});
+                element.appendTo(dom);
+                tab1 = element.createTab();
+                tab2 = element.createTab();
+                element.addEventListener("change", changelistener);
+                element.addEventListener("changed", changedlistener);
+                spyOn(element, "focus");
+
+                element.goToTab(tab2);
+
+                expect(element.visibleTab).toBe(tab2);
+                expect(changelistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
+                expect(changedlistener).toHaveBeenCalledWith(element, tab1, tab2, undefined);
+                expect(element.focus).not.toHaveBeenCalled();
             });
 
         });
@@ -196,7 +418,7 @@
             });
 
             it("should allow removing tabs by id", function () {
-                expect(element.removeTab(tab2.getId())).toBe(element);
+                expect(element.removeTab(tab2.tabId)).toBe(element);
 
                 expect(element.tabs).toEqual([tab1, tab3]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
@@ -392,6 +614,21 @@
                     done();
                 });
             });
+
+            it("should do nothing if the tab to focus is removed before processing the focus command", (done) => {
+                element.appendTo(dom);
+                var tab1 = element.createTab({name: "Tab 1"});
+                var tab2 = element.createTab({name: "mytab"});
+                element.focus(tab2);
+                var p = element.focus(tab1);
+                element.removeTab(tab1);
+
+                p.then(() => {
+                    // this number depends on CSS
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(0);
+                    done();
+                });
+            });
         });
 
         describe("requestFullscreen()", function () {
@@ -412,16 +649,31 @@
         });
 
         describe("exitFullscreen()", function () {
-            var element;
+            var element, backward;
+
+            beforeAll(() => {
+                // Check if current browser implements exitFullscreen method
+                backward = !('exitFullscreen' in document);
+            });
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
                 element.appendTo(dom);
+                if (backward) {
+                    document.exitFullscreen = jasmine.createSpy("exitFullscreen");
+                } else {
+                    spyOn(document, "exitFullscreen");
+                }
+            });
+
+            afterAll(() => {
+                if (backward) {
+                    delete document.exitFullscreen;
+                }
             });
 
             it("should do nothing if the browser is in fullscreen mode but the notebook is not in fullscreen mode", function () {
-                document.fullscreenElement = document.createElement('div');
-                document.exitFullscreen = jasmine.createSpy('exitFullscreen');
+                spyOn(utils, "getFullscreenElement").and.returnValue(document.createElement('div'));
                 expect(element.fullscreen).toBe(false);
 
                 expect(element.exitFullscreen()).toBe(element);
@@ -432,8 +684,7 @@
             });
 
             it("should exit from fullscreen if the notebook is in fullscreen mode", function () {
-                document.fullscreenElement = element.wrapperElement;
-                document.exitFullscreen = jasmine.createSpy('exitFullscreen');
+                spyOn(utils, "getFullscreenElement").and.returnValue(element.wrapperElement);
                 expect(element.fullscreen).toBe(true);
 
                 expect(element.exitFullscreen()).toBe(element);
@@ -538,4 +789,4 @@
 
     });
 
-})();
+})(StyledElements.Utils);

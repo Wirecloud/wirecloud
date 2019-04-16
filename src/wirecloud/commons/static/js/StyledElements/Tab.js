@@ -240,20 +240,6 @@
     };
 
     /**
-     * Returns the id of this Tab.
-     *
-     * @name StyledElements.Tab#getId
-     * @deprecated since version 0.5
-     * @see {@link StyledElements.Tab#tabId}
-     *
-     * @returns {String}
-     *      id of the tab
-     */
-    Tab.prototype.getId = function getId() {
-        return this.tabId;
-    };
-
-    /**
      * TODO change this.
      *
      * @private

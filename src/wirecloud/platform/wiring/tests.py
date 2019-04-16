@@ -2143,105 +2143,110 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_component_dropped_out_of_bounds_should_be_added(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                self.assertIsNotNone(sidebar.add_component('operator', "Wirecloud/TestOperator", y=-20))
-                self.assertIsNotNone(sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-4))
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    self.assertIsNotNone(sidebar.add_component('operator', "Wirecloud/TestOperator", y=-20))
+                    self.assertIsNotNone(sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-4))
     test_component_dropped_out_of_bounds_should_be_added.tags = tags + ('wirecloud-wiring-draggable-component',)
 
     @uses_extra_resources(('Wirecloud_TestOperator_2.0.zip',), shared=True)
     def test_upgrade_operator(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                operator = sidebar.find_component('operator', "Wirecloud/TestOperator", id=0)
-                operator.change_version("2.0")
-                modal = operator.show_logs()
-                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The operator was upgraded to v2.0 successfully.")) == 1)
-                modal.accept()
-            draggable_operator = wiring.find_draggable_component('operator', id=operator.id)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    operator = sidebar.find_component('operator', "Wirecloud/TestOperator", id=0)
+                    operator.change_version("2.0")
+                    modal = operator.show_logs()
+                    WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The operator was upgraded to v2.0 successfully.")) == 1)
+                    modal.accept()
+                draggable_operator = wiring.find_draggable_component('operator', id=operator.id)
 
-            self.assertEqual(len(draggable_operator.find_endpoints('target')), 2)
-            target = draggable_operator.find_endpoint('target', "input")
-            self.assertFalse(target.has_class('missing'))
-            self.assertTrue(len(target.find_connections()), 1)
+                self.assertEqual(len(draggable_operator.find_endpoints('target')), 2)
+                target = draggable_operator.find_endpoint('target', "input")
+                self.assertFalse(target.has_class('missing'))
+                self.assertTrue(len(target.find_connections()), 1)
 
-            self.assertEqual(len(draggable_operator.find_endpoints('source')), 2)
-            source = draggable_operator.find_endpoint('source', "output")
-            self.assertTrue(source.has_class('missing'))
-            self.assertTrue(len(source.find_connections()), 1)
+                self.assertEqual(len(draggable_operator.find_endpoints('source')), 2)
+                source = draggable_operator.find_endpoint('source', "output")
+                self.assertTrue(source.has_class('missing'))
+                self.assertTrue(len(source.find_connections()), 1)
 
-            self.assertEqual(len(wiring.find_connections(extra_class="missing")), 1)
-            connection = wiring.find_connections(extra_class="missing")[0]
-            self.assertEqual(connection.source_id, source.id)
+                self.assertEqual(len(wiring.find_connections(extra_class="missing")), 1)
+                connection = wiring.find_connections(extra_class="missing")[0]
+                self.assertEqual(connection.source_id, source.id)
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_and_downgrade_widget(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            # Upgrade to v3 on the sidebar
-            with wiring.component_sidebar as sidebar:
-                widget = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
-                widget.change_version("3.0")
-                WebDriverWait(self.driver, timeout=3).until(lambda driver: widget.version == "v3.0")
-                modal = widget.show_logs()
-                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was upgraded to v3.0 successfully.")) == 1)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                # Upgrade to v3 on the sidebar
+                with wiring.component_sidebar as sidebar:
+                    widget = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
+                    widget.change_version("3.0")
+                    WebDriverWait(self.driver, timeout=3).until(lambda driver: widget.version == "v3.0")
+                    modal = widget.show_logs()
+                    WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was upgraded to v3.0 successfully.")) == 1)
+                    modal.accept()
+
+                draggable_widget = wiring.find_draggable_component('widget', id=widget.id)
+
+                self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)
+                target = draggable_widget.find_endpoint('target', "inputendpoint")
+                self.assertTrue(target.has_class('missing'))
+                self.assertTrue(len(target.find_connections()), 1)
+
+                self.assertEqual(len(wiring.find_connections(extra_class="missing")), 1)
+                connection = wiring.find_connections(extra_class="missing")[0]
+                self.assertEqual(connection.target_id, target.id)
+
+                self.assertEqual(len(draggable_widget.find_endpoints('source')), 1)
+                source = draggable_widget.find_endpoint('source', "outputendpoint")
+                self.assertFalse(source.has_class('missing'))
+                self.assertTrue(len(source.find_connections()), 1)
+
+                # Downgrade to v1 using the widget preferences
+                draggable_widget.change_version("1.0")
+                modal = draggable_widget.show_logs()
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was downgraded to v1.0 successfully.")) == 1)
                 modal.accept()
 
-            draggable_widget = wiring.find_draggable_component('widget', id=widget.id)
+                self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)
+                target = draggable_widget.find_endpoint('target', "inputendpoint")
+                self.assertFalse(target.has_class('missing'))
+                self.assertTrue(len(target.find_connections()), 1)
 
-            self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)
-            target = draggable_widget.find_endpoint('target', "inputendpoint")
-            self.assertTrue(target.has_class('missing'))
-            self.assertTrue(len(target.find_connections()), 1)
-
-            self.assertEqual(len(wiring.find_connections(extra_class="missing")), 1)
-            connection = wiring.find_connections(extra_class="missing")[0]
-            self.assertEqual(connection.target_id, target.id)
-
-            self.assertEqual(len(draggable_widget.find_endpoints('source')), 1)
-            source = draggable_widget.find_endpoint('source', "outputendpoint")
-            self.assertFalse(source.has_class('missing'))
-            self.assertTrue(len(source.find_connections()), 1)
-
-            # Downgrade to v1 using the widget preferences
-            draggable_widget.change_version("1.0")
-            modal = draggable_widget.show_logs()
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was downgraded to v1.0 successfully.")) == 1)
-            modal.accept()
-
-            self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)
-            target = draggable_widget.find_endpoint('target', "inputendpoint")
-            self.assertFalse(target.has_class('missing'))
-            self.assertTrue(len(target.find_connections()), 1)
-
-            self.assertEqual(len(wiring.find_connections(extra_class="missing")), 0)
+                self.assertEqual(len(wiring.find_connections(extra_class="missing")), 0)
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_remove_missing_endpoint_with_no_connections(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
-            draggable_widget.change_version("3.0")
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
+                draggable_widget.change_version("3.0")
 
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: len(wiring.find_connections(extra_class="missing")) == 1)
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(wiring.find_connections(extra_class="missing")) == 1)
 
-            connection = wiring.find_connections(extra_class="missing")[0]
-            connection.remove()
+                connection = wiring.find_connections(extra_class="missing")[0]
+                connection.remove()
 
-            self.assertIsNone(draggable_widget.find_endpoint('target', "inputendpoint"))
+                self.assertIsNone(draggable_widget.find_endpoint('target', "inputendpoint"))
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_missing_endpoints_cannot_be_ordered(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
-            draggable_widget.change_version("3.0")
-            draggable_widget.show_preferences().check(must_be_disabled=("Order endpoints",))
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
+                draggable_widget.change_version("3.0")
+                draggable_widget.show_preferences().check(must_be_disabled=("Order endpoints",))
 
     def test_widget_uninstalled_with_tradeinfo(self):
 
@@ -2249,8 +2254,9 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            self.assertEqual(len(wiring.find_draggable_components('widget', extra_class='missing')), 2)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                self.assertEqual(len(wiring.find_draggable_components('widget', extra_class='missing')), 2)
 
     def test_widget_with_visualinfo_and_connections_is_not_in_workspace(self):
 
@@ -2267,9 +2273,10 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
         # status
         self.assertIsNone(self.find_navbar_button("wc-show-wiring-button").badge)
 
-        with self.wiring_view as wiring:
-            # Check the Wiring Editor only display the valid widgets
-            self.assertEqual(len(wiring.find_draggable_components('widget')), 2)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                # Check the Wiring Editor only display the valid widgets
+                self.assertEqual(len(wiring.find_draggable_components('widget')), 2)
 
     def _check_operator_missing(self, wiring, component_id, source_length, target_length):
         operator = wiring.find_draggable_component('operator', id=component_id)
@@ -2288,11 +2295,12 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
         self.check_wiring_badge("1")
 
-        with self.wiring_view as wiring:
-            self._check_operator_missing(wiring, 1, 0, 0)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                self._check_operator_missing(wiring, 1, 0, 0)
 
-        with self.wiring_view as wiring:
-            self._check_operator_missing(wiring, 1, 0, 0)
+            with edit_session.wiring_view as wiring:
+                self._check_operator_missing(wiring, 1, 0, 0)
 
     def test_operator_uninstalled_with_tradeinfo_and_connections(self):
         workspace = Workspace.objects.get(id=2)
@@ -2302,9 +2310,10 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
         self.check_wiring_badge("4")
 
-        with self.wiring_view as wiring:
-            self._check_operator_missing(wiring, 1, 1, 1)
-            self.assertEqual(len(wiring.find_connections(extra_class="missing")), 3)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                self._check_operator_missing(wiring, 1, 1, 1)
+                self.assertEqual(len(wiring.find_connections(extra_class="missing")), 3)
 
     @uses_extra_resources(('Wirecloud_TestOperator_2.0.zip',), shared=True)
     def test_upgrade_missing_operator(self):
@@ -2314,15 +2323,16 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
 
-            # Check operator is marked as missing
-            operator = wiring.find_draggable_component('operator', id=0)
-            self.assertTrue(operator.has_class('missing'))
+                # Check operator is marked as missing
+                operator = wiring.find_draggable_component('operator', id=0)
+                self.assertTrue(operator.has_class('missing'))
 
-            # Upgrade it to version 2.0 and check it leaves the missing status
-            operator.change_version("2.0")
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: not operator.has_class('missing'))
+                # Upgrade it to version 2.0 and check it leaves the missing status
+                operator.change_version("2.0")
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: not operator.has_class('missing'))
 
     def test_operator_install_uninstall(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
@@ -2330,18 +2340,20 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
 
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                self.assertIsNotNone(sidebar.find_component_group('operator', "Wirecloud/TestOperatorSelenium"))
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    self.assertIsNotNone(sidebar.find_component_group('operator', "Wirecloud/TestOperatorSelenium"))
 
         with self.myresources_view as myresources:
             myresources.uninstall_resource("TestOperator")
 
-        with self.wiring_view as wiring:
-            self.assertTrue(wiring.find_draggable_component('operator', id=0).has_class('missing'))
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                self.assertTrue(wiring.find_draggable_component('operator', id=0).has_class('missing'))
 
-            with wiring.component_sidebar as sidebar:
-                self.assertIsNone(sidebar.find_component_group('operator', "Wirecloud/TestOperator"))
+                with wiring.component_sidebar as sidebar:
+                    self.assertIsNone(sidebar.find_component_group('operator', "Wirecloud/TestOperator"))
     test_operator_install_uninstall.tags = tags + ('wirecloud-wiring-components',)
 
     def test_operator_not_usable_after_being_deleted(self):
@@ -2350,9 +2362,10 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.delete_resource('TestOperator')
 
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                self.assertIsNone(sidebar.find_component_group('operator', "Wirecloud/TestOperator"))
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    self.assertIsNone(sidebar.find_component_group('operator', "Wirecloud/TestOperator"))
     test_operator_not_usable_after_being_deleted.tags = tags + ('wirecloud-wiring-components',)
 
     @uses_extra_resources(('Wirecloud_Test_NoImage_3.0.wgt',), shared=True)
@@ -2360,10 +2373,11 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
         # Add a widget with no image included.
         self.login(username="admin", next="admin/Workspace")
 
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                # The current version displayed should show the default no-image.
-                self.assertFalse(sidebar.find_component_group('widget', "Wirecloud/Test_NoImage").has_image())
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    # The current version displayed should show the default no-image.
+                    self.assertFalse(sidebar.find_component_group('widget', "Wirecloud/Test_NoImage").has_image())
     test_widget_with_no_image.tags = tags + ('wirecloud-wiring-components',)
 
     def test_operator_can_be_used_after_being_reinstalled(self):
@@ -2420,12 +2434,13 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
             WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('wiringOut').text == prefix + event)
 
         # Check preference values has been restored to the values used before uninstalling the widget and not to the default ones
-        with self.wiring_view as wiring:
-            modal = wiring.find_draggable_component('operator', id=0).show_settings()
-            self.assertEqual(modal.get_field('prefix').value, "test_")
-            self.assertFalse(modal.get_field('exception_on_event').is_selected)
-            self.assertTrue(modal.get_field('test_logging').is_selected)
-            modal.accept()
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                modal = wiring.find_draggable_component('operator', id=0).show_settings()
+                self.assertEqual(modal.get_field('prefix').value, "test_")
+                self.assertFalse(modal.get_field('exception_on_event').is_selected)
+                self.assertTrue(modal.get_field('test_logging').is_selected)
+                modal.accept()
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
@@ -2455,19 +2470,20 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
         # the connection between the volatile operator and the volatile widget
         WebDriverWait(self.driver, timeout=5).until(lambda driver: len(self.widgets) == (iwidgets_count + 2))
 
-        with self.wiring_view as wiring:
-            self.assertEqual(len(wiring.find_draggable_components('operator')), 1)
-            self.assertEqual(len(wiring.find_draggable_components('widget')), 3)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                self.assertEqual(len(wiring.find_draggable_components('operator')), 1)
+                self.assertEqual(len(wiring.find_draggable_components('widget')), 3)
 
-            with wiring.component_sidebar as sidebar:
-                # The dasboard management test creates a volatile operator,
-                self.assertEqual(len(sidebar.find_components('operator', "Wirecloud/TestOperator", state='volatile')), 1)
-                # two volatile widgets
-                self.assertEqual(len(sidebar.find_components('widget', "Wirecloud/api-test", state='volatile')), 2)
+                with wiring.component_sidebar as sidebar:
+                    # The dasboard management test creates a volatile operator,
+                    self.assertEqual(len(sidebar.find_components('operator', "Wirecloud/TestOperator", state='volatile')), 1)
+                    # two volatile widgets
+                    self.assertEqual(len(sidebar.find_components('widget', "Wirecloud/api-test", state='volatile')), 2)
 
-            # and a volatile connection between the operator and one the volatile widgets
-            # Wiring Editor should only display the initial connections
-            self.assertEqual(len(wiring.find_connections()), 2)
+                # and a volatile connection between the operator and one the volatile widgets
+                # Wiring Editor should only display the initial connections
+                self.assertEqual(len(wiring.find_connections()), 2)
 
         # Check dynamic connections created by the dashboard_management_button works as expected
         with iwidgets[1]:
@@ -2508,13 +2524,14 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
         tab_widget1, tab_widget2, _ = self.widgets
 
         # Create a new connection and check it works
-        with self.wiring_view as wiring:
-            widget1 = wiring.find_draggable_component('widget', id=tab_widget1.id)
-            widget2 = wiring.find_draggable_component('widget', id=tab_widget2.id)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                widget1 = wiring.find_draggable_component('widget', id=tab_widget1.id)
+                widget2 = wiring.find_draggable_component('widget', id=tab_widget2.id)
 
-            source = widget1.find_endpoint('source', "outputendpoint")
-            target = widget2.find_endpoint('target', "inputendpoint")
-            source.create_connection(target)
+                source = widget1.find_endpoint('source', "outputendpoint")
+                target = widget2.find_endpoint('target', "inputendpoint")
+                source.create_connection(target)
 
         self.send_basic_event(tab_widget1, event)
 
@@ -2525,9 +2542,10 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
             )
 
         # Now remove the connection
-        with self.wiring_view as wiring:
-            for connection in wiring.find_connections():
-                connection.remove()
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                for connection in wiring.find_connections():
+                    connection.remove()
 
         self.send_basic_event(tab_widget1, "other")
         # Wait 5 seconds before checking no event is received
@@ -2539,23 +2557,25 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_component_preferences_in_wiring_editor(self):
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
-        tab_widget = self.find_widget(title="Test 1")
         pref_prefix = "prefix: "
 
-        with self.wiring_view as wiring:
-            widget = wiring.find_draggable_component('widget', id=tab_widget.id)
-            operator = wiring.find_draggable_component('operator', id=0)
-            operator.wait_to_be_loaded()
+        with self.edit_mode as edit_session:
+            tab_widget = self.find_widget(title="Test 1")
 
-            # Update widget preferences using the wiring editor interface
-            modal = widget.show_settings()
-            modal.get_field('text').set_value("test")
-            modal.accept()
+            with edit_session.wiring_view as wiring:
+                widget = wiring.find_draggable_component('widget', id=tab_widget.id)
+                operator = wiring.find_draggable_component('operator', id=0)
+                operator.wait_to_be_loaded()
 
-            # Update operator preferences using the wiring editor interface
-            modal = operator.show_settings()
-            modal.get_field('prefix').set_value(pref_prefix)
-            modal.accept()
+                # Update widget preferences using the wiring editor interface
+                modal = widget.show_settings()
+                modal.get_field('text').set_value("test")
+                modal.accept()
+
+                # Update operator preferences using the wiring editor interface
+                modal = operator.show_settings()
+                modal.get_field('prefix').set_value(pref_prefix)
+                modal.accept()
 
         # Check the widget has received an event with the new values
         with tab_widget:
@@ -2596,15 +2616,16 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
 
         # Modify connection between widget1 and widget2
         # so widget1 is connected to widget3 instead
-        with self.wiring_view as wiring:
-            widget2 = wiring.find_draggable_component('widget', title="Test (2)")
-            widget3 = wiring.find_draggable_component('widget', title="Test (3)")
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                widget2 = wiring.find_draggable_component('widget', title="Test (2)")
+                widget3 = wiring.find_draggable_component('widget', title="Test (3)")
 
-            old_target = widget2.find_endpoint('target', "inputendpoint")
-            new_target = widget3.find_endpoint('target', "inputendpoint")
+                old_target = widget2.find_endpoint('target', "inputendpoint")
+                new_target = widget3.find_endpoint('target', "inputendpoint")
 
-            connection = wiring.find_connection("widget/7/outputendpoint", "widget/8/inputendpoint")
-            connection.change_endpoint(old_target, new_target)
+                connection = wiring.find_connection("widget/7/outputendpoint", "widget/8/inputendpoint")
+                connection.change_endpoint(old_target, new_target)
 
         # Check new wiring configuration
         self.send_basic_event(widgets[0], event2)
@@ -2619,81 +2640,85 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', id=0)
-            operator.wait_to_be_loaded()
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                operator = wiring.find_draggable_component('operator', id=0)
+                operator.wait_to_be_loaded()
 
-            modal = operator.show_logs()
-            self.assertEqual(len(modal.find_alerts(state='error')), 0)
-            modal.accept()
+                modal = operator.show_logs()
+                self.assertEqual(len(modal.find_alerts(state='error')), 0)
+                modal.accept()
 
-            # Make test operator log some errors
-            modal = operator.show_settings()
-            modal.get_field('test_logging').click()
-            modal.accept()
+                # Make test operator log some errors
+                modal = operator.show_settings()
+                modal.get_field('test_logging').click()
+                modal.accept()
 
-            # Check operator registered correctly the errors raised by the operator
-            modal = operator.show_logs()
-            self.assertEqual(len(modal.find_alerts(state='error')), 2)
-            modal.accept()
+                # Check operator registered correctly the errors raised by the operator
+                modal = operator.show_logs()
+                self.assertEqual(len(modal.find_alerts(state='error')), 2)
+                modal.accept()
 
-        with self.find_widget(title="Test 1"):
-            self.assertEqual(self.driver.find_element_by_id('wiringOut').text, 'preferences changed: test_logging')
+            with self.find_widget(title="Test 1"):
+                self.assertEqual(self.driver.find_element_by_id('wiringOut').text, 'preferences changed: test_logging')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
     def test_wiring_status_change_events_from_components(self):
         self.login(username="admin", next="admin/api-test-mashup")
-        tab_widget = self.find_widget(title="Wirecloud API test")
 
-        with tab_widget:
-            self.assertEqual(self.driver.find_element_by_id('wiring_hasinputconnections_test').text, "true")
-            self.assertEqual(self.driver.find_element_by_id('wiring_hasoutputconnections_test').text, "false")
+        with self.edit_mode as edit_session:
+            tab_widget = self.find_widget(title="Wirecloud API test")
 
-        with self.wiring_view as wiring:
+            with tab_widget:
+                self.assertEqual(self.driver.find_element_by_id('wiring_hasinputconnections_test').text, "true")
+                self.assertEqual(self.driver.find_element_by_id('wiring_hasoutputconnections_test').text, "false")
 
-            # Make modifications into the wiring
-            for connection in wiring.find_connections():
-                connection.remove()
+            with edit_session.wiring_view as wiring:
 
-            widget = wiring.find_draggable_component('widget', id=tab_widget.id)
-            operator = wiring.find_draggable_component('operator', id=1)
+                # Make modifications into the wiring
+                for connection in wiring.find_connections():
+                    connection.remove()
 
-            target = operator.find_endpoint('target', "input")
-            source = widget.find_endpoint('source', "outputendpoint")
-            source.create_connection(target)
+                widget = wiring.find_draggable_component('widget', id=tab_widget.id)
+                operator = wiring.find_draggable_component('operator', id=1)
 
-            # Create another connection between the operator and the output widget
-            widget2 = wiring.find_draggable_component('widget', title="Test (connected to the test operator)")
+                target = operator.find_endpoint('target', "input")
+                source = widget.find_endpoint('source', "outputendpoint")
+                source.create_connection(target)
 
-            source = operator.find_endpoint('source', "output")
-            target = widget2.find_endpoint('target', "inputendpoint")
-            source.create_connection(target)
+                # Create another connection between the operator and the output widget
+                widget2 = wiring.find_draggable_component('widget', title="Test (connected to the test operator)")
 
-        with tab_widget:
-            self.assertEqual(self.driver.find_element_by_id('wiring_hasinputconnections_test').text, "false")
-            self.assertEqual(self.driver.find_element_by_id('wiring_hasoutputconnections_test').text, "true")
+                source = operator.find_endpoint('source', "output")
+                target = widget2.find_endpoint('target', "inputendpoint")
+                source.create_connection(target)
 
-        # The operator automatically sends a "wiring modified" event when it detects a wiring change
-        with self.find_widget(title="Test (connected to the test operator)"):
-            element = self.driver.find_element_by_id('wiringOut')
-            WebDriverWait(self.driver, timeout=2).until(
-                lambda driver: element.text == "wiring modified"
-            )
+            with tab_widget:
+                self.assertEqual(self.driver.find_element_by_id('wiring_hasinputconnections_test').text, "false")
+                self.assertEqual(self.driver.find_element_by_id('wiring_hasoutputconnections_test').text, "true")
+
+            # The operator automatically sends a "wiring modified" event when it detects a wiring change
+            with self.find_widget(title="Test (connected to the test operator)"):
+                element = self.driver.find_element_by_id('wiringOut')
+                WebDriverWait(self.driver, timeout=2).until(
+                    lambda driver: element.text == "wiring modified"
+                )
 
     def test_remove_components_with_endpoint_attached_to_more_than_one_connection(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            # Ready an endpoint with more than one connection
-            operator = wiring.find_draggable_component('operator', id=0)
-            target = operator.find_endpoint('source', "output")
-            source = wiring.find_draggable_component('widget', title="Test 1").find_endpoint('target', "nothandled")
-            source.create_connection(target)
-            self.assertEqual(len(target.find_connections()), 2)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                # Ready an endpoint with more than one connection
+                operator = wiring.find_draggable_component('operator', id=0)
+                target = operator.find_endpoint('source', "output")
+                source = wiring.find_draggable_component('widget', title="Test 1").find_endpoint('target', "nothandled")
+                source.create_connection(target)
+                self.assertEqual(len(target.find_connections()), 2)
 
-            operator.remove()
-            self.assertEqual(len(wiring.find_connections()), 1)
+                operator.remove()
+                self.assertEqual(len(wiring.find_connections()), 1)
     test_remove_components_with_endpoint_attached_to_more_than_one_connection.tags = tags + ('wirecloud-wiring-draggable-component',)
 
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
@@ -2711,57 +2736,62 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
-        with self.wiring_view as wiring:
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
 
-            # Select the components using the command key
-            widget1 = wiring.find_draggable_component('widget', title="Test 1")
-            widget2 = wiring.find_draggable_component('widget', title="Test 2")
-            operator = wiring.find_draggable_component('operator', id=1)
+                # Select the components using the command key
+                widget1 = wiring.find_draggable_component('widget', title="Test 1")
+                widget2 = wiring.find_draggable_component('widget', title="Test 2")
+                operator = wiring.find_draggable_component('operator', id=1)
 
-            wiring.select(components=(widget1, widget2, operator), key=Keys.COMMAND)
+                wiring.select(components=(widget1, widget2, operator), key=Keys.COMMAND)
 
-            # Remove the selection using the backspace key
-            send_basic_key_event(self.driver, 8)
+                # Remove the selection using the backspace key
+                send_basic_key_event(self.driver, 8)
 
-            modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
-            self.assertIn('Test 2', modal.body.text)
-            self.assertNotIn('Test 1', modal.body.text)
-            self.assertNotIn('TestOperator', modal.body.text)
-            modal.accept()
+                modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
+                self.assertIn('Test 2', modal.body.text)
+                self.assertNotIn('Test 1', modal.body.text)
+                self.assertNotIn('TestOperator', modal.body.text)
+                modal.accept()
 
-            self.assertIsNone(wiring.find_draggable_component('widget', title="Test 2"))
-            self.assertTrue(wiring.find_draggable_component('operator', id=1).has_class('background'))
-            self.assertTrue(wiring.find_draggable_component('widget', title="Test 1").has_class('background'))
+                # Wait until the browser reacts
+                time.sleep(0.4)
+
+                self.assertIsNone(wiring.find_draggable_component('widget', title="Test 2"))
+                self.assertTrue(wiring.find_draggable_component('operator', id=1).has_class('background'))
+                self.assertTrue(wiring.find_draggable_component('widget', title="Test 1").has_class('background'))
     test_remove_components_using_key_delete_when_behaviour_engine_is_enabled.tags = tags + ('wirecloud-wiring-draggable-component',)
 
     def test_rename_widget_from_component_preferences(self):
         new_title = "New title"
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                # Rename the widget available in sidebar.
-                component = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
-                component.scroll().rename(new_title)
-            # Check if the widget draggable's title is changed too.
-            self.assertIsNotNone(wiring.find_draggable_component('widget', title=new_title))
-        # Check if the widget interface's title is changed too.
-        self.assertIsNotNone(self.find_widget(title=new_title))
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    # Rename the widget available in sidebar.
+                    component = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
+                    component.scroll().rename(new_title)
+                # Check if the widget draggable's title is changed too.
+                self.assertIsNotNone(wiring.find_draggable_component('widget', title=new_title))
+            # Check if the widget interface's title is changed too.
+            self.assertIsNotNone(self.find_widget(title=new_title))
 
-        #
-        # Now rename the widget from the draggable component instead
-        #
-        with self.wiring_view as wiring:
-            # Rename the widget draggable available in wiring diagram.
-            component = wiring.find_draggable_component('widget', title=new_title)
-            new_title = "Other Name"
-            component.rename(new_title)
+            #
+            # Now rename the widget from the draggable component instead
+            #
+            with edit_session.wiring_view as wiring:
+                # Rename the widget draggable available in wiring diagram.
+                component = wiring.find_draggable_component('widget', title=new_title)
+                new_title = "Other Name"
+                component.rename(new_title)
 
-            with wiring.component_sidebar as sidebar:
-                # Check if the widget 's title of in sidebar is changed too.
-                self.assertIsNotNone(sidebar.find_component('widget', "Wirecloud/Test", title=new_title))
-        # Check if the widget interface's title has changed too
-        self.assertIsNotNone(self.find_widget(title=new_title))
+                with wiring.component_sidebar as sidebar:
+                    # Check if the widget 's title of in sidebar is changed too.
+                    self.assertIsNotNone(sidebar.find_component('widget', "Wirecloud/Test", title=new_title))
+            # Check if the widget interface's title has changed too
+            self.assertIsNotNone(self.find_widget(title=new_title))
     test_rename_widget_from_component_preferences.tags = tags + ('wirecloud-wiring-draggable-component',)
 
     def test_components_with_readonly_connections_cannot_be_deleted(self):
@@ -2772,114 +2802,118 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
 
-        with self.wiring_view as wiring:
-            # Such connection should be readonly and its button 'delete'
-            # should be disabled
-            connection = wiring.find_connection("widget/2/outputendpoint", "operator/0/input")
-            self.assertTrue(connection.has_class('readonly'))
-            self.assertTrue(connection.btn_remove.is_disabled)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                # Such connection should be readonly and its button 'delete'
+                # should be disabled
+                connection = wiring.find_connection("widget/2/outputendpoint", "operator/0/input")
+                self.assertTrue(connection.has_class('readonly'))
+                self.assertTrue(connection.btn_remove.is_disabled)
 
-            # Both components of the readonly connection should also be readonly and
-            # their buttons 'delete' should be disabled
-            widget = wiring.find_draggable_component('widget', id=2)
-            self.assertTrue(widget.has_class('readonly'))
-            self.assertTrue(widget.btn_remove.is_disabled)
-            operator = wiring.find_draggable_component('operator', id=0)
-            self.assertTrue(operator.has_class('readonly'))
-            self.assertTrue(operator.btn_remove.is_disabled)
+                # Both components of the readonly connection should also be readonly and
+                # their buttons 'delete' should be disabled
+                widget = wiring.find_draggable_component('widget', id=2)
+                self.assertTrue(widget.has_class('readonly'))
+                self.assertTrue(widget.btn_remove.is_disabled)
+                operator = wiring.find_draggable_component('operator', id=0)
+                self.assertTrue(operator.has_class('readonly'))
+                self.assertTrue(operator.btn_remove.is_disabled)
     test_components_with_readonly_connections_cannot_be_deleted.tags = tags + ('wirecloud-wiring-connection-management',)
 
     def test_modify_connection_on_active_behaviours(self):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
 
-        with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', id=0)
-            target1 = operator.find_endpoint('target', 'input')
-            target2 = operator.find_endpoint('target', 'nothandled')
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                operator = wiring.find_draggable_component('operator', id=0)
+                target1 = operator.find_endpoint('target', 'input')
+                target2 = operator.find_endpoint('target', 'nothandled')
 
-            # The button 'cancel' corresponds to modify such connection only in the active behaviour
-            connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/input')
-            connection.change_endpoint(target1, target2)
-            modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
-            modal.cancel()
+                # The button 'cancel' corresponds to modify such connection only in the active behaviour
+                connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/input')
+                connection.change_endpoint(target1, target2)
+                modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
+                modal.cancel()
 
-            self.assertTrue(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input').has_class('background'))
-            connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled')
-            self.assertIsNotNone(connection)
-            self.assertTrue(connection.has_class('active'))
+                self.assertTrue(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input').has_class('background'))
+                connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled')
+                self.assertIsNotNone(connection)
+                self.assertTrue(connection.has_class('active'))
 
-            # Connections on the background cannot be modified
-            # In this case, a new connection is created
-            source = operator.find_endpoint('source', 'output')
+                # Connections on the background cannot be modified
+                # In this case, a new connection is created
+                source = operator.find_endpoint('source', 'output')
 
-            widget = wiring.find_draggable_component('widget', title="Test 1")
-            target = widget.find_endpoint('target', 'nothandled')
+                widget = wiring.find_draggable_component('widget', title="Test 1")
+                target = widget.find_endpoint('target', 'nothandled')
 
-            connection1 = wiring.find_connection('operator/0/output', 'widget/10/inputendpoint')
-            # Remove connection1 from the current behaviour (convert into a
-            # background connection)
-            connection1.remove().click()
-            connection2 = source.create_connection(target)
+                connection1 = wiring.find_connection('operator/0/output', 'widget/10/inputendpoint')
+                # Remove connection1 from the current behaviour (convert into a
+                # background connection)
+                connection1.remove().click()
+                connection2 = source.create_connection(target)
 
-            self.assertTrue(connection1.has_class('background'))
-            self.assertFalse(connection1.has_class('active'))
-            self.assertIsNotNone(connection2)
+                self.assertTrue(connection1.has_class('background'))
+                self.assertFalse(connection1.has_class('active'))
+                self.assertIsNotNone(connection2)
     test_modify_connection_on_active_behaviours.tags = tags + ('wirecloud-wiring-connection-management',)
 
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_test-mashup-recommendations_1.0.wgt', shared=True)
     def test_endpoints_are_recommended(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/test-mashup-recommendations')
 
-        with self.wiring_view as wiring:
-            # Check endpoints are recommended on mouse over
-            widget1 = wiring.find_draggable_component('widget', id=self.widgets[0].id)
-            widget2 = wiring.find_draggable_component('widget', id=self.widgets[1].id)
-            widget3 = wiring.find_draggable_component('widget', id=self.widgets[2].id)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                # Check endpoints are recommended on mouse over
+                widget1 = wiring.find_draggable_component('widget', id=self.widgets[0].id)
+                widget2 = wiring.find_draggable_component('widget', id=self.widgets[1].id)
+                widget3 = wiring.find_draggable_component('widget', id=self.widgets[2].id)
 
-            target1 = widget1.find_endpoint('target', 'inputendpoint')
-            source2 = widget2.find_endpoint('source', 'outputendpoint')
-            target3 = widget3.find_endpoint('target', 'inputendpoint')
-            source3 = widget3.find_endpoint('source', 'outputendpoint')
+                target1 = widget1.find_endpoint('target', 'inputendpoint')
+                source2 = widget2.find_endpoint('source', 'outputendpoint')
+                target3 = widget3.find_endpoint('target', 'inputendpoint')
+                source3 = widget3.find_endpoint('source', 'outputendpoint')
 
-            source2.mouse_over(must_recommend=(target1, target3))
-            target1.mouse_over(must_recommend=(source2, source3))
+                source2.mouse_over(must_recommend=(target1, target3))
+                target1.mouse_over(must_recommend=(source2, source3))
 
-            # Check endpoints are recommended on connection creation
-            source2.create_connection(target3, must_recommend=(target1, target3))
-            target1.create_connection(source3, must_recommend=(source2, source3))
+                # Check endpoints are recommended on connection creation
+                source2.create_connection(target3, must_recommend=(target1, target3))
+                target1.create_connection(source3, must_recommend=(source2, source3))
     test_endpoints_are_recommended.tags = tags + ('wirecloud-wiring-endpoint-management',)
 
     def test_components_can_be_collapsed_and_expanded(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
         # Collapse a widget and an operator
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                operators = sidebar.find_components('operator', 'Wirecloud/TestOperator', state='in use')
-                widgets = sidebar.find_components('widget', 'Wirecloud/Test', state='in use')
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    operators = sidebar.find_components('operator', 'Wirecloud/TestOperator', state='in use')
+                    widgets = sidebar.find_components('widget', 'Wirecloud/Test', state='in use')
 
-            operator = wiring.find_draggable_component('operator', id=operators[0].id)
-            operator.collapse_endpoints()
+                operator = wiring.find_draggable_component('operator', id=operators[0].id)
+                operator.collapse_endpoints()
 
-            widget1 = wiring.find_draggable_component('widget', id=widgets[0].id)
-            widget1.collapse_endpoints()
+                widget1 = wiring.find_draggable_component('widget', id=widgets[0].id)
+                widget1.collapse_endpoints()
 
-            # Check the components are expanded while creating a connection
-            widget2 = wiring.find_draggable_component('widget', id=widgets[1].id)
+                # Check the components are expanded while creating a connection
+                widget2 = wiring.find_draggable_component('widget', id=widgets[1].id)
 
-            source = widget2.find_endpoint('source', "outputendpoint")
-            target = widget1.find_endpoint('target', "inputendpoint")
-            source.create_connection(target, must_expand=(operator, widget1))
+                source = widget2.find_endpoint('source', "outputendpoint")
+                target = widget1.find_endpoint('target', "inputendpoint")
+                source.create_connection(target, must_expand=(operator, widget1))
 
-        # Expand the components
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                operators = sidebar.find_components('operator', 'Wirecloud/TestOperator', state='in use')
-                widgets = sidebar.find_components('widget', 'Wirecloud/Test', state='in use')
+            # Expand the components
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    operators = sidebar.find_components('operator', 'Wirecloud/TestOperator', state='in use')
+                    widgets = sidebar.find_components('widget', 'Wirecloud/Test', state='in use')
 
-            wiring.find_draggable_component('operator', id=operators[0].id).expand_endpoints()
-            wiring.find_draggable_component('widget', id=widgets[0].id).expand_endpoints()
+                wiring.find_draggable_component('operator', id=operators[0].id).expand_endpoints()
+                wiring.find_draggable_component('widget', id=widgets[0].id).expand_endpoints()
     test_components_can_be_collapsed_and_expanded.tags = tags + ('wirecloud-wiring-endpoint-management',)
 
     def check_input_endpoint_exceptions(self):
@@ -2909,13 +2943,14 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
         self.send_basic_event(source_iwidget)
         self.check_wiring_badge("1")
 
-        with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
-                operators = sidebar.find_components('operator', 'Wirecloud/TestOperator', state='in use')
-            operator = wiring.find_draggable_component('operator', id=operators[0].id)
-            modal = operator.show_logs()
-            self.assertEqual(len(modal.find_alerts(state='error')), 1)
-            modal.accept()
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    operators = sidebar.find_components('operator', 'Wirecloud/TestOperator', state='in use')
+                operator = wiring.find_draggable_component('operator', id=operators[0].id)
+                modal = operator.show_logs()
+                self.assertEqual(len(modal.find_alerts(state='error')), 1)
+                modal.accept()
 
     def test_input_endpoint_exceptions(self):
         user = User.objects.get(pk=4)
@@ -2956,11 +2991,12 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.check_wiring_badge("4")
 
-        with self.wiring_view as wiring:
-            connections = wiring.find_connections(extra_class='has-error')
-            self.assertEqual(len(connections), 2)
-            self._check_connection_errors(connections[0], 2)
-            self._check_connection_errors(connections[1], 2)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                connections = wiring.find_connections(extra_class='has-error')
+                self.assertEqual(len(connections), 2)
+                self._check_connection_errors(connections[0], 2)
+                self._check_connection_errors(connections[1], 2)
 
     def test_input_endpoint_no_handler_exceptions(self):
 
@@ -2985,55 +3021,57 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Workspace')
 
-        with self.wiring_view as wiring:
-            self.assertEqual(len(wiring.find_connections(extra_class='missing')), 2)
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                self.assertEqual(len(wiring.find_connections(extra_class='missing')), 2)
     test_missing_input_and_output_endpoints.tags = tags + ('wirecloud-wiring-endpoint-management',)
 
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_test-mashup-multiendpoint_1.0.wgt', shared=True)
     def test_ordering_component_endpoints(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/test-mashup-multiendpoint')
 
-        with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', title="TestOp. Multiendpoint")
-            widget = wiring.find_draggable_component('widget', title="Test_Multiendpoint")
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                operator = wiring.find_draggable_component('operator', title="TestOp. Multiendpoint")
+                widget = wiring.find_draggable_component('widget', title="Test_Multiendpoint")
 
-            source = widget.find_endpoint('source', 'output1')
-            target = operator.find_endpoint('target', 'input2')
-            connection = source.create_connection(target)
+                source = widget.find_endpoint('source', 'output1')
+                target = operator.find_endpoint('target', 'input2')
+                connection = source.create_connection(target)
 
-            operator_targets_count = len(operator.find_endpoints('target'))
-            operator_sources_count = len(operator.find_endpoints('target'))
-            widget_targets_count = len(widget.find_endpoints('target'))
-            widget_sources_count = len(widget.find_endpoints('target'))
+                operator_targets_count = len(operator.find_endpoints('target'))
+                operator_sources_count = len(operator.find_endpoints('target'))
+                widget_targets_count = len(widget.find_endpoints('target'))
+                widget_sources_count = len(widget.find_endpoints('target'))
 
-            with operator.order_endpoints as component_editable:
-                component_editable.move_endpoint('source', 'output1', 'output2')
-                component_editable.move_endpoint('target', 'input2', 'input3', must_change=(connection,))
+                with operator.order_endpoints as component_editable:
+                    component_editable.move_endpoint('source', 'output1', 'output2')
+                    component_editable.move_endpoint('target', 'input2', 'input3', must_change=(connection,))
 
-            with widget.order_endpoints as component_editable:
-                component_editable.move_endpoint('source', 'output1', 'output2', must_change=(connection,))
-                component_editable.move_endpoint('target', 'input1', 'input3')
+                with widget.order_endpoints as component_editable:
+                    component_editable.move_endpoint('source', 'output1', 'output2', must_change=(connection,))
+                    component_editable.move_endpoint('target', 'input1', 'input3')
 
-            self.assertEqual(operator_targets_count, len(operator.find_endpoints('target')))
-            self.assertEqual(operator_sources_count, len(operator.find_endpoints('source')))
-            self.assertEqual(widget_targets_count, len(widget.find_endpoints('target')))
-            self.assertEqual(widget_sources_count, len(widget.find_endpoints('source')))
+                self.assertEqual(operator_targets_count, len(operator.find_endpoints('target')))
+                self.assertEqual(operator_sources_count, len(operator.find_endpoints('source')))
+                self.assertEqual(widget_targets_count, len(widget.find_endpoints('target')))
+                self.assertEqual(widget_sources_count, len(widget.find_endpoints('source')))
 
-        with self.wiring_view as wiring:
-            operator = wiring.find_draggable_component('operator', id=operator.id)
-            widget = wiring.find_draggable_component('widget', id=widget.id)
+            with edit_session.wiring_view as wiring:
+                operator = wiring.find_draggable_component('operator', id=operator.id)
+                widget = wiring.find_draggable_component('widget', id=widget.id)
 
-            self.assertEqual(operator_targets_count, len(operator.find_endpoints('target')))
-            self.assertEqual(operator_sources_count, len(operator.find_endpoints('source')))
-            self.assertEqual(widget_targets_count, len(widget.find_endpoints('target')))
-            self.assertEqual(widget_sources_count, len(widget.find_endpoints('source')))
+                self.assertEqual(operator_targets_count, len(operator.find_endpoints('target')))
+                self.assertEqual(operator_sources_count, len(operator.find_endpoints('source')))
+                self.assertEqual(widget_targets_count, len(widget.find_endpoints('target')))
+                self.assertEqual(widget_sources_count, len(widget.find_endpoints('source')))
 
-            # Ordering endpoints should be disabled for collapsed components
-            operator.collapse_endpoints()
+                # Ordering endpoints should be disabled for collapsed components
+                operator.collapse_endpoints()
 
-            menu_dropdown = operator.show_preferences()
-            menu_dropdown.check(must_be_disabled=("Order endpoints",))
-            menu_dropdown.close()
+                menu_dropdown = operator.show_preferences()
+                menu_dropdown.check(must_be_disabled=("Order endpoints",))
+                menu_dropdown.close()
     test_ordering_component_endpoints.tags = tags + ('wirecloud-wiring-endpoint-management',)
 
     def test_behaviour_engine_basic_features(self):
@@ -3042,30 +3080,32 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
         # Enable it
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
-        with self.wiring_view as wiring:
-            with wiring.behaviour_sidebar as sidebar:
-                sidebar.btn_enable.click()
-                self.assertFalse(sidebar.disabled)
-                # Check that there is an initial behaviour
-                self.assertEqual(len(sidebar.find_behaviours()), 1)
-                sidebar.active_behaviour.check_info("New behaviour", "No description provided.")
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.behaviour_sidebar as sidebar:
+                    sidebar.btn_enable.click()
+                    self.assertFalse(sidebar.disabled)
+                    # Check that there is an initial behaviour
+                    self.assertEqual(len(sidebar.find_behaviours()), 1)
+                    sidebar.active_behaviour.check_info("New behaviour", "No description provided.")
 
         # Check the change is correctly persisted
         self.reload()
-        self.wait_wirecloud_ready()
+        self.wait_wirecloud_ready(login=True)
 
-        with self.wiring_view as wiring:
-            with wiring.behaviour_sidebar as sidebar:
-                self.assertFalse(sidebar.disabled)
-                self.assertEqual(len(sidebar.find_behaviours()), 1)
-                sidebar.active_behaviour.check_info("New behaviour", "No description provided.")
-                behaviour1 = sidebar.active_behaviour
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.behaviour_sidebar as sidebar:
+                    self.assertFalse(sidebar.disabled)
+                    self.assertEqual(len(sidebar.find_behaviours()), 1)
+                    sidebar.active_behaviour.check_info("New behaviour", "No description provided.")
+                    behaviour1 = sidebar.active_behaviour
 
-                # Create a new behaviour
-                behaviour2 = sidebar.create_behaviour("Title", "Description")
+                    # Create a new behaviour
+                    behaviour2 = sidebar.create_behaviour("Title", "Description")
 
-                # Change behaviour order
-                sidebar.btn_order.click()
-                behaviour1.change_position(behaviour2)
-                sidebar.btn_order.click()
+                    # Change behaviour order
+                    sidebar.btn_order.click()
+                    behaviour1.change_position(behaviour2)
+                    sidebar.btn_order.click()
     test_behaviour_engine_basic_features.tags = tags + ('wirecloud-wiring-behaviour-management',)

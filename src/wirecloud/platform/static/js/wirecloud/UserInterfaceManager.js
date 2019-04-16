@@ -166,18 +166,17 @@
                 return;
             }
 
-            if (state.tab == null || state.tab_id == null || state.workspace_title == null) {
-                if (state.tab == null) {
-                    state.tab = this.notebook.visibleTab.model.name;
-                }
-                if (state.tab_id == null) {
-                    state.tab_id = this.notebook.visibleTab.model.id;
-                }
-                if (state.workspace_title == null) {
-                    state.workspace_title = this.model.title;
-                }
-                Wirecloud.HistoryManager.replaceState(state);
+            if (state.tab == null) {
+                state.tab = this.notebook.visibleTab.model.name;
             }
+            if (state.tab_id == null) {
+                state.tab_id = this.notebook.visibleTab.model.id;
+            }
+            if (state.workspace_title !== this.model.title) {
+                state.workspace_title = this.model.title;
+            }
+            Wirecloud.HistoryManager.replaceState(state);
+            Wirecloud.UserInterfaceManager.header.refresh();
 
             // Handle tab changes
             this.notebook.addEventListener("changed", function (notebook, oldTab, newTab) {
@@ -230,7 +229,7 @@
             options.effect = StyledElements.Alternatives.CROSS_DISSOLVE;
         }
         this.rootKeydownHandler = null;
-        this.alternatives.showAlternative(newView, options);
+        return this.alternatives.showAlternative(newView, options);
     };
 
     UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {
@@ -318,11 +317,10 @@
     };
 
     UserInterfaceManager.onHistoryChange = function onHistoryChange(state) {
-        this.changeCurrentView(state.view, {
-            onComplete: function (alternatives, oldView, nextView) {
-                if ('onHistoryChange' in nextView) {
-                    nextView.onHistoryChange(state);
-                }
+        this.changeCurrentView(state.view, true).then((info) => {
+            let nextView = info.in;
+            if ('onHistoryChange' in nextView) {
+                nextView.onHistoryChange(state);
             }
         });
     };
