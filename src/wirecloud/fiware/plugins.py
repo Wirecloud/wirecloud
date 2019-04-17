@@ -155,10 +155,10 @@ class FiWarePlugin(WirecloudPlugin):
         }
 
         if IDM_SUPPORT_ENABLED:
+            global FIWARE_SOCIAL_AUTH_BACKEND
             import wirecloud.fiware.social_auth_backend
             constants["FIWARE_OFFICIAL_PORTAL"] = getattr(settings, "FIWARE_OFFICIAL_PORTAL", False)
-            constants["FIWARE_IDM_SERVER"] = getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FIWARE_LAB_IDM_SERVER)
-            constants["FIWARE_IDM_PUBLIC_URL"] = getattr(settings, "FIWARE_IDM_PUBLIC_URL", wirecloud.fiware.social_auth_backend.FIWARE_LAB_IDM_SERVER)
+            constants["FIWARE_IDM_SERVER"] = FIWARE_SOCIAL_AUTH_BACKEND.FIWARE_IDM_SERVER
 
         return constants
 

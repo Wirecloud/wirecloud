@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2015-2017 Conwet Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -23,7 +23,7 @@ import json
 import sys
 from unittest.mock import patch, MagicMock, Mock
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
@@ -136,6 +136,30 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
 
         self.module_patcher.stop()
         super(TestSocialAuthBackend, self).tearDown()
+
+    @override_settings(
+        FIWARE_IDM_SERVER="http://idm:3000",
+        FIWARE_IDM_PUBLIC_URL="http://localhost:3000"
+    )
+    def test_authorization_url_internal(self):
+        self.instance = self.fiwareauth_module()
+        self.assertEqual(self.instance.FIWARE_IDM_SERVER, "http://localhost:3000")
+
+    @override_settings(
+        FIWARE_IDM_SERVER="https://accounts.example.org",
+        FIWARE_IDM_PUBLIC_URL=None
+    )
+    def test_authorization_url_public(self):
+        self.instance = self.fiwareauth_module()
+        self.assertEqual(self.instance.FIWARE_IDM_SERVER, "https://accounts.example.org")
+
+    @override_settings(
+        FIWARE_IDM_SERVER="https://accounts.example.org",
+        FIWARE_IDM_PUBLIC_URL="    "
+    )
+    def test_authorization_url_public_empty_string(self):
+        self.instance = self.fiwareauth_module()
+        self.assertEqual(self.instance.FIWARE_IDM_SERVER, "https://accounts.example.org")
 
     def test_get_user_data_old_version(self):
 
@@ -293,7 +317,8 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         })
 
     @patch('wirecloud.fiware.plugins.IDM_SUPPORT_ENABLED', new=True)
-    def test_plugin_idm_enabled(self):
+    @patch('wirecloud.fiware.plugins.FIWARE_SOCIAL_AUTH_BACKEND', create=True)
+    def test_plugin_idm_enabled(self, social_backend):
 
         from wirecloud.fiware.plugins import FiWarePlugin
 
@@ -307,7 +332,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertIn('FIWARE_PORTALS', constants)
         self.assertIn('FIWARE_OFFICIAL_PORTAL', constants)
         self.assertIn('FIWARE_IDM_SERVER', constants)
-        self.assertIn('FIWARE_IDM_PUBLIC_URL', constants)
+        self.assertNotIn('FIWARE_IDM_PUBLIC_URL', constants)
 
     @patch('wirecloud.fiware.plugins.IDM_SUPPORT_ENABLED', new=False)
     def test_plugin_idm_disabled(self):
