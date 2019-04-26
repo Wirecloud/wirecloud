@@ -27,6 +27,8 @@ pages:
         - 'Contributing': 'CONTRIBUTING.md'
         - 'Testing': 'development/platform/testing.md'
         - 'Translations': 'development/platform/translation.md'
+- 'Appendix: Widgets': 'widgets.md'
+
 
 markdown_extensions:
     - markdown.extensions.tables
