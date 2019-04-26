@@ -3,7 +3,6 @@
 The following free open-source Wirecloud widgets are available
 for download directly from this documentation
 
-
 ### AND Filter
 
 Filter lists. Conditions are treated in an AND manner.
@@ -477,6 +476,20 @@ Homepage: [https://github.com/Wirecloud/markdown-viewer-widget](https://github.c
 **[Download CoNWeT\_markdown-viewer\_0.1.2.wgt](widgets/CoNWeT_markdown-viewer_0.1.2.wgt)**
 
 
+### NGSI browser
+
+Browse available entities on a given Orio context broker server
+
+* Vendor: CoNWeT
+* Version: 2.0.1
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ngsi-browser-widget](https://github.com/wirecloud-fiware/ngsi-browser-widget)
+
+
+**[Download CoNWeT\_ngsi-browser\_2.0.1.wgt](widgets/CoNWeT_ngsi-browser_2.0.1.wgt)**
+
+
 ### FIWARE data model To PoI
 
 Convert NGSI entities using any of the available FIWARE data models into Point of Interests (usable by map widgets).
@@ -503,6 +516,48 @@ Homepage: [https://github.com/wirecloud-fiware/ngsi-source](https://github.com/w
 
 
 **[Download CoNWeT\_ngsi-source\_4.0.0.wgt](widgets/CoNWeT_ngsi-source_4.0.0.wgt)**
+
+
+### NGSI Subscription browser
+
+Browse the available subscriptions of a given Orio context broker server
+
+* Vendor: CoNWeT
+* Version: 1.0.2
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ngsi-subscription-browser-widget](https://github.com/wirecloud-fiware/ngsi-subscription-browser-widget)
+
+
+**[Download CoNWeT\_ngsi-subscription-browser\_1.0.2.wgt](widgets/CoNWeT_ngsi-subscription-browser_1.0.2.wgt)**
+
+
+### NGSI target
+
+Retrieve Orion Context Broker entities and their updates in real time.
+
+* Vendor: CoNWeT
+* Version: 3.0.7
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ngsi-target-operator](https://github.com/wirecloud-fiware/ngsi-target-operator)
+
+
+**[Download CoNWeT\_ngsi-target\_3.0.7.wgt](widgets/CoNWeT_ngsi-target_3.0.7.wgt)**
+
+
+### NGSI Type browser
+
+Browse the available entity types of a given Orio context broker server
+
+* Vendor: CoNWeT
+* Version: 1.0.4
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ngsi-type-browser-widget](https://github.com/wirecloud-fiware/ngsi-type-browser-widget)
+
+
+**[Download CoNWeT\_ngsi-type-browser\_1.0.4.wgt](widgets/CoNWeT_ngsi-type-browser_1.0.4.wgt)**
 
 
 ### NGSI Entity To PoI
