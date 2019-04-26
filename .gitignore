@@ -1,1 +1,5 @@
 /site/
+/marketplace/widgets/*.wgt
+/marketplace/texts
+/marketplace/temp
+
