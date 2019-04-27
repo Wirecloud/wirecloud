@@ -257,6 +257,12 @@ class LocalCatalogueTestCase(WirecloudTestCase, TransactionTestCase):
 
         install_resource(file_contents, self.user2, restricted=True)
 
+    def test_install_dev_resource(self):
+        widgetT2 = self.build_simple_wgt('devwidget.json', b'code')
+        r1 = install_resource(widgetT2, self.user2)
+        r2 = install_resource(widgetT2, self.user2)
+        self.assertNotEqual(r1, r2)
+
     def test_install_resource_to_group(self):
 
         wgt_file = self.build_simple_wgt('template1.xml', b'code', other_files=('doc/index.html',))
@@ -698,7 +704,8 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='normuser')
         self.check_multiversioned_widget(admin=False)
 
-    @uses_extra_resources((
+    @uses_extra_resources(
+        (
             'Wirecloud_Test_2.0.wgt',
             'Wirecloud_Test_3.0.wgt',
             'Wirecloud_Test_Selenium_1.0.wgt',
@@ -722,8 +729,6 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next="/user_with_workspaces/pending-events")
 
-        initial_widgets = self.widgets
-
         # add a widget using Test v3.0
         widgetV3 = self.create_widget('Test')
         widgetT1 = self.create_widget('Test_Selenium', version='1.0')
@@ -745,14 +750,15 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(widgetT1.wait_loaded().error_count, 1)
         self.assertEqual(widgetT2.wait_loaded().error_count, 1)
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             # As well as the two Test v1.0 widgets
             # one in the first tab and another in the second one
             self.assertEqual(self.find_widget(title="Test 1").error_count, 1)
             self.find_tab(title="Tab 2").click()
             self.assertEqual(self.find_widget(title="Test 2").wait_loaded().error_count, 1)
 
-    @uses_extra_resources((
+    @uses_extra_resources(
+        (
             'Wirecloud_Test_2.0.wgt',
             'Wirecloud_Test_3.0.wgt',
             'Wirecloud_Test_Selenium_1.0.wgt',

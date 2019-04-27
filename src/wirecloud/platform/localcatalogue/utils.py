@@ -74,7 +74,7 @@ def install_resource(wgt_file, executor_user, restricted=False):
 
     # Create/recreate/recover catalogue resource
     if '-dev' in resource_version and len(resources) == 1:
-        # TODO: Update widget visually
+        # dev version are automatically overwritten
         resources[0].delete()
         resource = add_packaged_resource(file_contents, executor_user, wgt_file=wgt_file)
     elif len(resources) == 1:

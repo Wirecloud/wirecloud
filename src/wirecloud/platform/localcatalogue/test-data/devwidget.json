@@ -1,0 +1,26 @@
+{
+    "changelog": "",
+    "contents": {
+        "cacheable": true,
+        "charset": "utf-8",
+        "contenttype": "text/html",
+        "src": "test.html",
+        "useplatformstyle": false
+    },
+    "default_lang": "en",
+    "email": "test@example.com",
+    "name": "test",
+    "preferences": [],
+    "properties": [],
+    "requirements": [],
+    "translations": {},
+    "type": "widget",
+    "vendor": "Wirecloud",
+    "version": "0.1-dev",
+    "widget_height": "24",
+    "widget_width": "10",
+    "wiring": {
+        "inputs": [],
+        "outputs": []
+    }
+}
