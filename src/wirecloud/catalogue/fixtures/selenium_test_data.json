@@ -115,7 +115,7 @@
     },
     {
         "pk": 1,
-        "model": "platform.organization",
+        "model": "commons.organization",
         "fields": {
             "user": 6,
             "group": 2
@@ -123,7 +123,7 @@
     },
     {
         "pk": 1,
-        "model": "platform.team",
+        "model": "commons.team",
         "fields": {
             "organization": 1,
             "name": "owners",
@@ -132,7 +132,7 @@
     },
     {
         "pk": 2,
-        "model": "platform.team",
+        "model": "commons.team",
         "fields": {
             "organization": 1,
             "name": "members",

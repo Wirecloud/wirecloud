@@ -125,7 +125,7 @@
     },
     {
         "pk": 128,
-        "model": "platform.organization",
+        "model": "commons.organization",
         "fields": {
             "user": 128,
             "group": 128

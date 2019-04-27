@@ -22,7 +22,7 @@ import locale
 from django.core.management.base import CommandError, BaseCommand
 from django.utils.translation import override, ugettext_lazy as _
 
-from wirecloud.platform.models import Organization
+from wirecloud.commons.models import Organization
 
 
 class Command(BaseCommand):

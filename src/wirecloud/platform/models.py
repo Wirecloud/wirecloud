@@ -1,4 +1,3 @@
-from wirecloud.platform.core.models import *  # noqa
 from wirecloud.platform.context.models import *  # noqa
 from wirecloud.platform.iwidget.models import *  # noqa
 from wirecloud.platform.markets.models import *  # noqa

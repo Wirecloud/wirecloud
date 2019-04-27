@@ -18,18 +18,17 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import re
-import sys
 
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 
 from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.commons.models import Organization
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.commons.utils.template.writers.json import write_json_description
 from wirecloud.platform.localcatalogue.signals import resource_installed
-from wirecloud.platform.models import Organization
 
 
 def add_m2m(field, item):

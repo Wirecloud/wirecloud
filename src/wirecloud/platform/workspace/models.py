@@ -21,7 +21,6 @@ import time
 
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.db.models.signals import post_delete
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
@@ -38,7 +37,7 @@ class Workspace(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
     name = models.CharField(_('Name'), max_length=30)
 
-    title = models.CharField(_('Title'), max_length=255, blank=False, null=True)
+    title = models.CharField(_('Title'), max_length=255, blank=False, null=False)
 
     creation_date = models.BigIntegerField(_('Creation Date'), null=False, blank=False, default=now_timestamp)
     last_modified = models.BigIntegerField(_('Last Modification Date'), null=True, blank=True)
@@ -106,7 +105,7 @@ class UserWorkspace(models.Model):
 class Tab(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    title = models.CharField(_('Title'), max_length=30, null=True)
+    title = models.CharField(_('Title'), max_length=30, null=False)
 
     visible = models.BooleanField(_('Visible'), default=False, null=False)
     position = models.IntegerField(null=True, blank=True)

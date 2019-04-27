@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,4 +17,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-default_app_config = 'wirecloud.commons.apps.WirecloudCommonsConfig'
+from django.contrib import admin
+
+from wirecloud.commons import models
+
+
+class TeamInline(admin.StackedInline):
+
+    model = models.Team
+    fields = ('name', 'users')
+    ordering = ('name',)
+    extra = 0
+
+
+class OrganizationAdmin(admin.ModelAdmin):
+
+    list_display = ('user',)
+    list_display_links = ('user',)
+    ordering = ('user',)
+    inlines = (TeamInline,)
+
+
+admin.site.register(models.Organization, OrganizationAdmin)

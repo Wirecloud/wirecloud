@@ -25,7 +25,8 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.platform.models import Workspace, Organization
+from wirecloud.commons.models import Organization
+from wirecloud.platform.models import Workspace
 
 
 class WirecloudSignalProcessor(signals.BaseSignalProcessor):

@@ -26,10 +26,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.models import Organization
 from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.plugins import get_tab_preferences, get_workspace_preferences
-from wirecloud.platform.models import Organization, PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
+from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 
 
 def update_preferences(user, preferences_json):
