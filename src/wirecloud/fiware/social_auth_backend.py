@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 Conwet Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -75,11 +75,6 @@ class FIWAREOAuth2(BaseOAuth2):
     name = 'fiware'
     ID_KEY = 'username'
 
-    if hasattr(settings, 'FIWARE_IDM_PUBLIC_URL'):
-        AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_PUBLIC_URL', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
-    else:
-        AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
-    
     ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
     USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
     REDIRECT_STATE = False
@@ -90,6 +85,16 @@ class FIWAREOAuth2(BaseOAuth2):
         ('refresh_token', 'refresh_token'),
         ('expires_in', 'expires'),
     ]
+
+    def __init__(self):
+        internal_url = getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER)
+        public_url = getattr(settings, 'FIWARE_IDM_PUBLIC_URL', internal_url)
+        if public_url is None or str(public_url).strip() == "":
+            public_url = internal_url
+
+        self.FIWARE_IDM_SERVER = public_url
+        self.AUTHORIZATION_URL = urljoin(public_url, FIWARE_AUTHORIZATION_ENDPOINT)
+        super(FIWAREOAuth2, self).__init__()
 
     def auth_headers(self):
         token = base64.urlsafe_b64encode(('{0}:{1}'.format(*self.get_key_and_secret()).encode())).decode()
