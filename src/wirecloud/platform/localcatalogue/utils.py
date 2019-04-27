@@ -20,14 +20,16 @@
 import re
 import sys
 
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 
 from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.platform.localcatalogue.signals import resource_installed
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.commons.utils.template.writers.json import write_json_description
+from wirecloud.platform.localcatalogue.signals import resource_installed
+from wirecloud.platform.models import Organization
 
 
 def add_m2m(field, item):
@@ -44,7 +46,7 @@ def add_m2m(field, item):
         raise
 
 
-def install_resource(wgt_file, executor_user):
+def install_resource(wgt_file, executor_user, restricted=False):
 
     if not isinstance(wgt_file, WgtFile):
         raise TypeError('wgt_file must be a WgtFile')
@@ -53,10 +55,26 @@ def install_resource(wgt_file, executor_user):
     template_contents = wgt_file.get_template()
 
     template = TemplateParser(template_contents)
+    resource_version = template.get_resource_version()
+    if restricted:
+        if '-dev' in resource_version:
+            raise PermissionDenied("dev versions cannot be published")
+        vendor = template.get_resource_vendor().strip()
+        options = [executor_user.username]
+        for group in executor_user.groups.all():
+            try:
+                group.organization
+            except Organization.DoesNotExist:
+                continue
+            else:
+                options.append(group.name)
+        if vendor.lower() not in options:
+            raise PermissionDenied("You don't have persmissions to publish in name of {}".format(vendor))
+
     resources = CatalogueResource.objects.filter(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())[:1]
 
     # Create/recreate/recover catalogue resource
-    if '-dev' in template.get_resource_version() and len(resources) == 1:
+    if '-dev' in resource_version and len(resources) == 1:
         # TODO: Update widget visually
         resources[0].delete()
         resource = add_packaged_resource(file_contents, executor_user, wgt_file=wgt_file)
@@ -68,8 +86,8 @@ def install_resource(wgt_file, executor_user):
     return resource
 
 
-def install_component(file_contents, executor_user=None, public=False, users=[], groups=[]):
-    resource = install_resource(file_contents, executor_user)
+def install_component(file_contents, executor_user=None, public=False, users=[], groups=[], restricted=False):
+    resource = install_resource(file_contents, executor_user, restricted=restricted)
     if executor_user is not None:
         initially_available = resource.is_available_for(executor_user)
     installed_to_someone = False

@@ -25,6 +25,7 @@ from unittest.mock import Mock
 import zipfile
 
 from django.contrib.auth.models import User, Group
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.test import Client, TransactionTestCase
@@ -237,6 +238,24 @@ class LocalCatalogueTestCase(WirecloudTestCase, TransactionTestCase):
     def test_install_resource_requires_wgt_instance(self):
 
         self.assertRaises(TypeError, install_resource, None, self.user)
+
+    def test_install_resource_restricted_dev(self):
+
+        file_contents = WgtFile(BytesIO(self.read_file("..", "..", "..", "commons", "test-data", "Wirecloud_Test_Selenium_1.0-dev.wgt")))
+
+        self.assertRaises(PermissionDenied, install_resource, file_contents, self.user, restricted=True)
+
+    def test_install_resource_restricted_not_authorized_user(self):
+
+        file_contents = WgtFile(BytesIO(self.read_file("..", "..", "..", "commons", "test-data", "Wirecloud_Test_Selenium_1.0.wgt")))
+
+        self.assertRaises(PermissionDenied, install_resource, file_contents, self.user, restricted=True)
+
+    def test_install_resource_restricted_authorized_user(self):
+
+        file_contents = WgtFile(BytesIO(self.read_file("..", "..", "..", "commons", "test-data", "Wirecloud_Test_Selenium_1.0.wgt")))
+
+        install_resource(file_contents, self.user2, restricted=True)
 
     def test_install_resource_to_group(self):
 

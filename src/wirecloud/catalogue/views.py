@@ -95,7 +95,7 @@ class ResourceCollection(Resource):
         try:
 
             # TODO Disallow dev versions
-            added, resource = install_component(file_contents, executor_user=request.user, public=public, users=(request.user,))
+            added, resource = install_component(file_contents, executor_user=request.user, public=public, users=(request.user,), restricted=True)
             if not added:
                 return build_error_response(request, 409, _('Resource already exists'))
 
@@ -112,10 +112,8 @@ class ResourceCollection(Resource):
 
         except TemplateParseException as e:
 
-            msg = "Error parsing config.xml descriptor file: %s" % e
-
-            details = "%s" % e
-            return build_error_response(request, 400, msg, details=details)
+            msg = "Error parsing config.xml descriptor file"
+            return build_error_response(request, 400, msg, details=str(e))
 
         except InvalidContents as e:
 

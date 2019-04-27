@@ -7,6 +7,13 @@
         }
     },
     {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "wirecloud"
+        }
+    },
+    {
         "model": "auth.User",
         "pk": "2",
         "fields": {
@@ -35,7 +42,7 @@
             "is_superuser": false,
             "is_staff": false,
             "last_login": "2011-03-17T17:21:19Z",
-            "groups": [1],
+            "groups": [1, 2],
             "user_permissions": [],
             "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
             "email": "",
@@ -58,6 +65,41 @@
             "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
             "email": "",
             "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "5",
+        "fields": {
+            "username": "wirecloud",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [2],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.organization",
+        "fields": {
+            "user": 5,
+            "group": 2
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.team",
+        "fields": {
+            "organization": 1,
+            "name": "owners",
+            "users": [3, 5]
         }
     },
     {
