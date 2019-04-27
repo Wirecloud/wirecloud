@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -69,7 +70,6 @@ class ResourceCollection(Resource):
     @commit_on_http_success
     def create(self, request):
 
-        templateURL = None
         file_contents = None
         if request.mimetype == 'multipart/form-data':
             public = request.POST.get('public', 'true').strip().lower() == 'true'
@@ -77,31 +77,21 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 400, _('Missing component file in the request'))
 
             downloaded_file = request.FILES['file']
-            try:
-                file_contents = WgtFile(downloaded_file)
-            except zipfile.BadZipfile:
-                return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
         else:  # if request.mimetype == 'application/octet-stream'
-
             downloaded_file = BytesIO(request.body)
-            try:
-                file_contents = WgtFile(downloaded_file)
-            except zipfile.BadZipfile:
-                return build_error_response(request, 400, _('The uploaded file is not a zip file'))
-
             public = request.GET.get('public', 'true').strip().lower() == 'true'
 
         try:
+            file_contents = WgtFile(downloaded_file)
+        except zipfile.BadZipfile:
+            return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
-            # TODO Disallow dev versions
+        try:
+
             added, resource = install_component(file_contents, executor_user=request.user, public=public, users=(request.user,), restricted=True)
             if not added:
                 return build_error_response(request, 409, _('Resource already exists'))
-
-        except zipfile.BadZipfile as e:
-
-            return build_error_response(request, 400, _('The uploaded file is not a valid zip file'), details="{}".format(e))
 
         except OSError as e:
 
@@ -148,7 +138,8 @@ class ResourceCollection(Resource):
 
         if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
             return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])
-        # This api only supports ordering by one field, but the searcher supports ordering by multiple fields
+
+        # This API only supports ordering by one field, but the searcher supports ordering by multiple fields
         filters['orderby'] = [filters['orderby']]
 
         if filters['scope']:
@@ -244,7 +235,7 @@ class ResourceChangelogEntry(Resource):
         if from_version is not None:
             try:
                 from_version = Version(from_version)
-            except:
+            except ValueError:
                 return build_error_response(request, 422, _("Missing parameter: template_uri or file"))
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
@@ -261,10 +252,10 @@ class ResourceChangelogEntry(Resource):
 
         try:
             doc_code = download_local_file(localized_doc_path).decode('utf-8')
-        except:
+        except Exception:
             try:
                 doc_code = download_local_file(doc_path).decode('utf-8')
-            except:
+            except Exception:
                 msg = _('Error opening the changelog file')
                 doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
@@ -303,10 +294,10 @@ class ResourceDocumentationEntry(Resource):
 
             try:
                 doc_code = download_local_file(localized_doc_path).decode('utf-8')
-            except:
+            except Exception:
                 try:
                     doc_code = download_local_file(doc_path).decode('utf-8')
-                except:
+                except Exception:
                     msg = _('Error opening the userguide file')
                     doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 

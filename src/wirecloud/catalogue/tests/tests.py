@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,6 +18,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import errno
+from io import BytesIO
 import json
 import os
 from unittest.mock import MagicMock, Mock, patch
@@ -31,7 +34,9 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.views import serve_catalogue_media
+from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
+from wirecloud.commons.utils.wgt import InvalidContents
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
@@ -578,6 +583,7 @@ class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
         super(WGTDeploymentTestCase, self).setUp()
 
         self.resource_collection_url = reverse('wirecloud_catalogue.resource_collection')
+        self.user = User.objects.create_user('wirecloud', 'test@example.com', 'test')
 
     def test_wgt_uploading_requires_login(self):
         c = Client()
@@ -587,8 +593,69 @@ class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
 
         self.assertFalse(response.status_code > 200 and response.status_code < 300)
 
+    def test_wgt_upload_invalid_component_multipart_form(self):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        response = c.post(self.resource_collection_url, {'file': BytesIO(b"invalidcontent")}, HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 400)
+
+    def test_wgt_upload_missing_component_multipart_form(self):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        response = c.post(self.resource_collection_url, {}, HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 400)
+
+    def test_wgt_upload_invalid_component_octet_stream(self):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        response = c.post(self.resource_collection_url, "invalidcontent", content_type='application/octet-stream', HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 400)
+
+    @patch("wirecloud.catalogue.views.install_component")
+    def test_wgt_upload_parse_exception(self, install_component):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        install_component.side_effect = TemplateParseException('test')
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 400)
+
+    @patch("wirecloud.catalogue.views.install_component")
+    def test_wgt_upload_invalid_contents(self, install_component):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        install_component.side_effect = InvalidContents('test')
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 400)
+
+    @patch("wirecloud.catalogue.views.install_component")
+    def test_wgt_upload_oserror(self, install_component):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        install_component.side_effect = OSError()
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
+            self.assertRaises(OSError, c.post, self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
+
+    @patch("wirecloud.catalogue.views.install_component")
+    def test_wgt_upload_oserror_eacces(self, install_component):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        install_component.side_effect = OSError(errno.EACCES, "a")
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 500)
+
+    @patch("wirecloud.catalogue.views.install_component")
+    def test_wgt_upload_already_published(self, install_component):
+        c = Client()
+        c.login(username='wirecloud', password='test')
+        install_component.return_value = (False, None)
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 409)
+
     def test_upload_of_basic_packaged_widget(self):
-        User.objects.create_user('wirecloud', 'test@example.com', 'test')
         widget_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Wirecloud', 'Test', '0.1')
         c = Client()
 
@@ -621,7 +688,6 @@ class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
 
     def test_upload_of_packaged_widget(self):
 
-        user = User.objects.create_user('wirecloud', 'test@example.com', 'test')
         c = Client()
 
         c.login(username='wirecloud', password='test')
@@ -630,12 +696,11 @@ class WGTDeploymentTestCase(WirecloudTestCase, TransactionTestCase):
 
         self.assertEqual(response.status_code, 201)
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
-        widget_info = get_resource_data(resource, user)
+        widget_info = get_resource_data(resource, self.user)
         self.assertEqual(widget_info['description'], 'This widget is used to test some of the features of the Wirecloud platform')
         self.assertEqual(widget_info['longdescription'], '<p>This widget is used for <strong>testing</strong> some of the features provided by Wirecloud</p>')
 
     def test_upload_of_packaged_operators(self):
-        User.objects.create_user('wirecloud', 'test@example.com', 'test')
         operator_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Wirecloud', 'basic-operator', '0.1')
         c = Client()
 
