@@ -28,7 +28,7 @@ Homepage: [<xsl:value-of select="details/homepage"/>](<xsl:value-of select="deta
         <xsl:with-param name="text" select="substring-after($WIDGET, 'widgets/')"/>
         <xsl:with-param name="search" select="'_'"/>
         <xsl:with-param name="replace" select="'\_'"/>
-    </xsl:call-template>](<xsl:value-of select="details/homepage"/>/releases/download/<xsl:value-of select="@version"/>/<xsl:value-of select="$WIDGET"/>)**
+    </xsl:call-template>](<xsl:value-of select="details/homepage"/>/releases/download/<xsl:value-of select="@version"/>/<xsl:value-of select="substring-after($WIDGET, 'widgets/')"/>)**
 </xsl:if>
 
 
