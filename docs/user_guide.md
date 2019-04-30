@@ -58,19 +58,9 @@ The following screenshot show the "Settings" menu, where you can set workspace f
 
 <img src="../images/user_guide/create_workspace/workspace_settings.png" srcset="../images/user_guide/create_workspace/workspace_settings.png 2x" alt="create_workspace/WorkspaceSettings.png"/>
 
-## Browsing existing open source Widgets on GitHub
-
-Many widgets are freely available to download from GitHub. The following search query will retrieve all repositories tagged `wirecloud-widget`
-
-```text
-https://github.com/search?q=wirecloud-widget&type=Repositories
-```
-
-The [appendix](widgets.md) lists more details and links to the latest version of a series of over fifty open-source widgets available on GitHub.
-
 ## Browsing the Marketplace
 
-A mashup tool like WireCloud also supports access to **marketplaces**, where people can offer and deal with services made
+A mashup tool like WireCloud must support access to **marketplaces**, where people can offer and deal with services made
 accessible through widgets and operators, like goods, and finally mashup them to create value added services and
 applications.
 
@@ -113,6 +103,17 @@ available on the _My Resources_ view.
 <img src="../images/user_guide/browsing_marketplace/upload_button.png" srcset="../images/user_guide/browsing_marketplace/upload_button.png 2x" alt="Click *Upload*"/>
 
 <img src="../images/user_guide/browsing_marketplace/upload_dialog.png" srcset="../images/user_guide/browsing_marketplace/upload_dialog.png 2x" alt="MAC upload dialog"/>
+
+## Browsing existing open source Widgets on GitHub
+
+Many widgets are freely available to download from GitHub. The following search query will retrieve all repositories tagged `wirecloud-widget`
+
+```text
+https://github.com/search?q=wirecloud-widget&type=Repositories
+```
+
+The [appendix](widgets.md) lists more details and links to the latest version of a series of over open-source widgets available on GitHub. You can
+also `git clone` and build the latest development sources directly.
 
 ## Building a new mashup
 
