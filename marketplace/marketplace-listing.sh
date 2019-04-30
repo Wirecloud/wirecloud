@@ -13,9 +13,13 @@ mkdir -p temp
 for D in widgets/*.wgt; do
 	if [ -f "${D}" ]; then
 
+		#echo "${D}"
+
 		unzip -qq -o -j "${D}" "config.xml" -d "temp" 
+
+
 		sed 's/xmlns=/xxxx=/g' temp/config.xml > temp/config2.xml
-		xsltproc --stringparam WIDGET "${D}" widget-builder/marketplace.xsl temp/config2.xml
+		xsltproc --stringparam WIDGET "${D}" builder/marketplace.xsl temp/config2.xml
 
 	fi
 done

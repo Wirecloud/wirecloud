@@ -22,13 +22,16 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:if test="details/homepage != ''" >
 
 Homepage: [<xsl:value-of select="details/homepage"/>](<xsl:value-of select="details/homepage"/>)
-</xsl:if>
+
 
 **[Download <xsl:call-template name="replace">
         <xsl:with-param name="text" select="substring-after($WIDGET, 'widgets/')"/>
         <xsl:with-param name="search" select="'_'"/>
         <xsl:with-param name="replace" select="'\_'"/>
-    </xsl:call-template>](<xsl:value-of select="$WIDGET"/>)**
+    </xsl:call-template>](<xsl:value-of select="details/homepage"/>/releases/download/<xsl:value-of select="@version"/>/<xsl:value-of select="$WIDGET"/>)**
+</xsl:if>
+
+
 <xsl:text>
 </xsl:text>
 </xsl:template>
