@@ -4,6 +4,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output omit-xml-declaration="yes" indent="no"  method="text"/>
 
 <xsl:param name="WIDGET" select="'widget'"/>
+<xsl:param name="AGILE_DASHBOARDS_VERSION" select="'v0.3'"/>
 
 <xsl:template match="/*">
 <xsl:text>
@@ -21,14 +22,28 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:if test="details/homepage != ''" >
 
-Homepage: [<xsl:value-of select="details/homepage"/>](<xsl:value-of select="details/homepage"/>)
-
-
-**[Download <xsl:call-template name="replace">
+    <xsl:text>Homepage: [</xsl:text>
+    <xsl:value-of select="details/homepage"/>
+    <xsl:text>](</xsl:text>
+    <xsl:value-of select="details/homepage"/>)
+    <xsl:text>**[Download </xsl:text>
+    <xsl:call-template name="replace">
         <xsl:with-param name="text" select="substring-after($WIDGET, 'widgets/')"/>
         <xsl:with-param name="search" select="'_'"/>
         <xsl:with-param name="replace" select="'\_'"/>
-    </xsl:call-template>](<xsl:value-of select="details/homepage"/>/releases/download/<xsl:value-of select="@version"/>/<xsl:value-of select="substring-after($WIDGET, 'widgets/')"/>)**
+    </xsl:call-template>](<xsl:value-of select="details/homepage"/>
+    <xsl:text>/releases/download/</xsl:text>
+    <xsl:choose>
+        <xsl:when test="contains(details/homepage, 'agile-dashboards')">
+            <xsl:value-of select="$AGILE_DASHBOARDS_VERSION"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="@version"/>
+        </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>/</xsl:text>
+    <xsl:value-of select="substring-after($WIDGET, 'widgets/')"/>
+    <xsl:text>)**</xsl:text>
 </xsl:if>
 
 
