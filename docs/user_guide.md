@@ -112,7 +112,7 @@ Many widgets are freely available to download from GitHub. The following search 
 https://github.com/search?q=wirecloud-widget&type=Repositories
 ```
 
-The [appendix](widgets.md) lists more details and links to the latest version of a series of over open-source widgets available on GitHub. You can
+The [appendix](widgets.md) lists more details and links to the latest version of a series of over eighty open-source widgets available on GitHub. You can
 also `git clone` and build the latest development sources directly.
 
 ## Building a new mashup
@@ -371,7 +371,7 @@ _Collapse_ option that appears in the component menu:
 <img src="../images/user_guide/wiring/minimize_option.png" srcset="../images/user_guide/wiring/minimize_option.png 2x" alt="*Collapse* option"/>
 <img src="../images/user_guide/wiring/collapsed_operators.png" srcset="../images/user_guide/wiring/collapsed_operators.png 2x" alt="Collapsed operators"/>
 
-#### Cloncluding our example
+#### Concluding our example
 
 Continue wiring the rest of the widgets in your mashup following your intuition, the documentation and the contextual
 help offered by each widget/operator. Anyway, just in case you have difficulties, you can see the final result in the
