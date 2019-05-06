@@ -21,7 +21,7 @@ pullWidget () {
 	echo ""
 	# OUTPUT=`curl --silent "https://api.github.com/repos/${1}/${2}/releases/latest?client_id=xxxx&client_secret=yyyy" | grep browser_download_url`
 
-	OUTPUT=`curl --silent "https://api.github.com/repos/${1}/${2}/releases/latest?client_id=31a71f8f9737b0159c94&client_secret=c46f82485eb188683c2288e556f6bd93e8bbd655" | grep browser_download_url`
+	OUTPUT=`curl --silent "https://api.github.com/repos/${1}/${2}/releases/latest" | grep browser_download_url`
 
 	X="${OUTPUT:31: $((${#OUTPUT} - 31 - 1))}"
 
