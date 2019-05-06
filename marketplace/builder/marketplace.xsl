@@ -21,12 +21,15 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 * License: <xsl:value-of select="details/license"/> 
 
 <xsl:if test="details/homepage != ''" >
+<xsl:text>
 
-    <xsl:text>Homepage: [</xsl:text>
+Homepage: [</xsl:text>
     <xsl:value-of select="details/homepage"/>
-    <xsl:text>](</xsl:text>
-    <xsl:value-of select="details/homepage"/>)
-    <xsl:text>**[Download </xsl:text>
+    <xsl:text>](</xsl:text><xsl:value-of select="details/homepage"/>
+    <xsl:text>)</xsl:text>
+<xsl:text>
+
+**[Download </xsl:text>
     <xsl:call-template name="replace">
         <xsl:with-param name="text" select="substring-after($WIDGET, 'widgets/')"/>
         <xsl:with-param name="search" select="'_'"/>
