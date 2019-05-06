@@ -18,6 +18,48 @@ Homepage: [https://github.com/Wirecloud/bae-details-widget](https://github.com/W
 **[Download CoNWeT\_bae-details\_0.1.1.wgt](https://github.com/Wirecloud/bae-details-widget/releases/download/0.1.1/CoNWeT_bae-details_0.1.1.wgt)**
 
 
+### CKAN Source From URL
+
+An operator to retrieve data from a CKAN dataset
+
+* Vendor: CoNWeT
+* Version: 0.4.5
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ckan-source-operator](https://github.com/wirecloud-fiware/ckan-source-operator)
+
+
+**[Download CoNWeT\_ckan-source-from-url\_0.4.5.wgt](https://github.com/wirecloud-fiware/ckan-source-operator/releases/download/0.4.5/CoNWeT_ckan-source-from-url_0.4.5.wgt)**
+
+
+### CKAN Source
+
+An operator to retrieve data from a CKAN dataset
+
+* Vendor: CoNWeT
+* Version: 0.4.5
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ckan-source-operator](https://github.com/wirecloud-fiware/ckan-source-operator)
+
+
+**[Download CoNWeT\_ckan-source\_0.4.5.wgt](https://github.com/wirecloud-fiware/ckan-source-operator/releases/download/0.4.5/CoNWeT_ckan-source_0.4.5.wgt)**
+
+
+### CKAN to PoIs
+
+Convert data from CKAN into Point of Interests (usable by map widgets).
+
+* Vendor: CoNWeT
+* Version: 1.0.1
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ckan2poi-operator](https://github.com/wirecloud-fiware/ckan2poi-operator)
+
+
+**[Download CoNWeT\_ckan2poi\_1.0.1.wgt](https://github.com/wirecloud-fiware/ckan2poi-operator/releases/download/1.0.1/CoNWeT_ckan2poi_1.0.1.wgt)**
+
+
 ### Context Broker Admin Panel
 
 Browse and manage a context broker server
@@ -124,6 +166,20 @@ Homepage: [https://github.com/wirecloud-fiware/ngsi-source](https://github.com/w
 **[Download CoNWeT\_ngsi-source\_4.0.0.wgt](https://github.com/wirecloud-fiware/ngsi-source/releases/download/4.0.0/CoNWeT_ngsi-source_4.0.0.wgt)**
 
 
+### NGSI target
+
+Retrieve Orion Context Broker entities and their updates in real time.
+
+* Vendor: CoNWeT
+* Version: 4.0.0
+* License: Apache License 2.0
+
+Homepage: [https://github.com/wirecloud-fiware/ngsi-target-operator](https://github.com/wirecloud-fiware/ngsi-target-operator)
+
+
+**[Download CoNWeT\_ngsi-target\_4.0.0.wgt](https://github.com/wirecloud-fiware/ngsi-target-operator/releases/download/4.0.0/CoNWeT_ngsi-target_4.0.0.wgt)**
+
+
 ### NGSI Type browser
 
 Browse the available entity types of a given Orio context broker server
@@ -220,6 +276,20 @@ Homepage: [https://github.com/Wirecloud/value-list-filter-operator](https://gith
 
 
 **[Download CoNWeT\_value-list-filter\_0.1.2.wgt](https://github.com/Wirecloud/value-list-filter-operator/releases/download/0.1.2/CoNWeT_value-list-filter_0.1.2.wgt)**
+
+
+### ECharts widget
+
+ECharts widget
+
+* Vendor: Ficodes
+* Version: 0.0.2
+* License: Apache License 2.0
+
+Homepage: [https://github.com/Wirecloud/echarts-widget](https://github.com/Wirecloud/echarts-widget)
+
+
+**[Download Ficodes\_echarts\_0.0.2.wgt](https://github.com/Wirecloud/echarts-widget/releases/download/0.0.2/Ficodes_echarts_0.0.2.wgt)**
 
 
 ### Workspace Browser
