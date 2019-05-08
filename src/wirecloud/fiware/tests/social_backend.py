@@ -95,9 +95,9 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         "organizations": [{
             "id": "04ac28b2-54c7-46a7-a606-c62fdc4f1513",
             "name": "Mi organization",
-            "description":"dafsdf",
+            "description": "dafsdf",
             "website": None,
-            "roles":[{"id": "4a923351-b767-4fef-bc92-4a4fa996e88e", "name":"one_role"}]
+            "roles": [{"id": "4a923351-b767-4fef-bc92-4a4fa996e88e", "name": "one_role"}]
         }]
     }
 
@@ -194,11 +194,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertIn('Basic ', headers['Authorization'])
         self.assertEqual(headers['Authorization'], 'Basic Y2xpZW50OnNlY3JldA==')
 
-    @patch("wirecloud.fiware.social_auth_backend.time.time")
-    def test_extra_data(self, time_mock):
-
-        time_mock.return_value = 10000
-
+    def test_extra_data(self):
         data = self.instance.extra_data("user", "uid", "response")
 
         self.assertEqual(data, {
@@ -246,11 +242,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
 
         self.assertEqual(data, self.NEW_USER_DATA_ADMIN)
 
-    @patch("wirecloud.fiware.social_auth_backend.time.time")
-    def test_refresh_token_normalizes_token_expiration_time(self, time_mock):
-
-        time_mock.return_value = 10000
-
+    def test_refresh_token(self):
         data = self.instance.refresh_token("old_access_token")
 
         self.assertEqual(data, {
