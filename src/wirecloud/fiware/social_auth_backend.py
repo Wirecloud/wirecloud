@@ -33,7 +33,6 @@ field, check OAuthBackend class for details on how to extend it.
 """
 
 import base64
-import time
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -86,7 +85,7 @@ class FIWAREOAuth2(BaseOAuth2):
         ('expires_in', 'expires'),
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         internal_url = getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER)
         public_url = getattr(settings, 'FIWARE_IDM_PUBLIC_URL', internal_url)
         if public_url is None or str(public_url).strip() == "":
@@ -94,7 +93,7 @@ class FIWAREOAuth2(BaseOAuth2):
 
         self.FIWARE_IDM_SERVER = public_url
         self.AUTHORIZATION_URL = urljoin(public_url, FIWARE_AUTHORIZATION_ENDPOINT)
-        super(FIWAREOAuth2, self).__init__()
+        super(FIWAREOAuth2, self).__init__(*args, **kwargs)
 
     def auth_headers(self):
         token = base64.urlsafe_b64encode(('{0}:{1}'.format(*self.get_key_and_secret()).encode())).decode()
