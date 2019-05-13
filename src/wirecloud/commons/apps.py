@@ -24,3 +24,6 @@ class WirecloudCommonsConfig(AppConfig):
 
     name = "wirecloud.commons"
     verbose_name = "WireCloud Core"
+
+    def ready(self):
+        import wirecloud.catalogue.signals.handlers  # noqa

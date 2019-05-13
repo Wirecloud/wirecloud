@@ -22,9 +22,8 @@ import re
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 
-from wirecloud.catalogue.utils import add_packaged_resource
+from wirecloud.catalogue.utils import add_packaged_resource, check_vendor_permissions
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.models import Organization
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.commons.utils.template.writers.json import write_json_description
@@ -58,16 +57,8 @@ def install_resource(wgt_file, executor_user, restricted=False):
     if restricted:
         if '-dev' in resource_version:
             raise PermissionDenied("dev versions cannot be published")
-        vendor = template.get_resource_vendor().strip()
-        options = [executor_user.username]
-        for group in executor_user.groups.all():
-            try:
-                group.organization
-            except Organization.DoesNotExist:
-                continue
-            else:
-                options.append(group.name)
-        if vendor.lower() not in options:
+        vendor = template.get_resource_vendor()
+        if check_vendor_permissions(executor_user, vendor) is False:
             raise PermissionDenied("You don't have persmissions to publish in name of {}".format(vendor))
 
     resources = CatalogueResource.objects.filter(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())[:1]

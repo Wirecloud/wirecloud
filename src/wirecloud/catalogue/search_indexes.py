@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,8 +18,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Q
 from urllib.parse import urljoin
+
+from django.db.models import Q
 from haystack import indexes
 
 from wirecloud.catalogue.models import CatalogueResource, get_template_url
@@ -63,6 +65,11 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     def get_model(self):
         return self.model
+
+    def should_update(self, instance, **kwargs):
+        if instance.template_uri == "":
+            self.remove_object(instance, **kwargs)
+        return instance.template_uri != ""
 
     def prepare(self, object):
         self.prepared_data = super(ResourceIndex, self).prepare(object)

@@ -467,6 +467,47 @@ class CatalogueAPITestCase(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['affectedVersions']), 1)
 
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, creator="test")
+    def test_resource_entry_delete_unauthorized(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        # Authenticate
+        self.client.login(username='otheruser', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, creator="test")
+    def test_resource_entry_delete_organization_member(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        # Authenticate
+        self.client.login(username='test2', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['affectedVersions']), 1)
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt', 'Wirecloud_Test_2.0.wgt'), shared=True, creator="test")
+    def test_resource_entry_delete_all_versions_unauthorized(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
+
+        # Authenticate
+        self.client.login(username='otheruser', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+
     @uses_extra_resources(('Wirecloud_Test_1.0.wgt', 'Wirecloud_Test_2.0.wgt'), shared=True, creator="test")
     def test_resource_entry_delete_all_versions(self):
 
@@ -484,7 +525,7 @@ class CatalogueAPITestCase(WirecloudTestCase, TransactionTestCase):
 
     @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, creator="test")
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, creator="test2")
-    def test_resource_entry_delete_all_versions_mixed_owners(self):
+    def test_resource_entry_delete_all_versions_mixed_creators(self):
 
         url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
 
@@ -496,7 +537,7 @@ class CatalogueAPITestCase(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(response_data['affectedVersions']), 1)
+        self.assertEqual(len(response_data['affectedVersions']), 2)
 
     def test_resource_userguide_entry_missing_component(self):
 

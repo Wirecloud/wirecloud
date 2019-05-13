@@ -159,14 +159,15 @@ class ResourceCollection(Resource):
 class ResourceEntry(Resource):
 
     def read(self, request, vendor, name, version=None):
+        objects = CatalogueResource.objects.exclude(template_uri="")
         if version is not None:
-            resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+            resource = get_object_or_404(objects, vendor=vendor, short_name=name, version=version)
             data = get_resource_data(resource, request.user, request)
         else:
             if request.user.is_authenticated():
-                resources = get_list_or_404(CatalogueResource.objects.filter(Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))).distinct())
+                resources = get_list_or_404(objects.filter(Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))).distinct())
             else:
-                resources = get_list_or_404(CatalogueResource.objects.filter(Q(vendor=vendor) & Q(short_name=name) & Q(public=True)))
+                resources = get_list_or_404(objects.filter(Q(vendor=vendor) & Q(short_name=name) & Q(public=True)))
             data = get_resource_group_data(resources, request.user, request)
 
         return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')
@@ -183,9 +184,8 @@ class ResourceEntry(Resource):
             resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
             # Check the user has permissions
-            if not resource.is_removable_by(request.user):
+            if not resource.is_removable_by(request.user, vendor=True):
                 msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': request.user.username, 'resource_id': resource.id}
-
                 raise PermissionDenied(msg)
 
             resources = (resource,)
@@ -193,14 +193,15 @@ class ResourceEntry(Resource):
             # Delete all versions of the widget
             resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
 
-            # Filter all the resources not remobable by the user
-            resources = tuple(resource for resource in resources if resource.is_removable_by(request.user))
-
-            if len(resources) == 0:
-                raise Http404
+            # Check the user has permissions (we only require to check this with one of the resources)
+            if not resources[0].is_removable_by(request.user, vendor=True):
+                msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': request.user.username, 'resource_id': '{}/{}'.format(vendor, name)}
+                raise PermissionDenied(msg)
 
         for resource in resources:
-            resource.delete()
+            # Mark as not available
+            resource.template_uri = ""
+            resource.save()
             response_json['affectedVersions'].append(resource.version)
 
         return HttpResponse(json.dumps(response_json), content_type='application/json; charset=UTF-8')

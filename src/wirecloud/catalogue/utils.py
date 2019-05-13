@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -32,6 +33,7 @@ from django.utils.translation import get_language, ugettext as _
 import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.commons.models import Organization
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.http import get_absolute_reverse_url, force_trailing_slash
@@ -86,17 +88,17 @@ def check_invalid_doc_entry(wgt_file, doc_path):
 
     try:
         doc_code = wgt_file.read(doc_path)
-    except:
+    except Exception:
         raise InvalidContents('missing file: %s' % doc_path)
 
     try:
         doc_code = doc_code.decode('utf-8')
-    except:
+    except Exception:
         raise InvalidContents('file is not encoded using UTF-8: %s' % doc_path)
 
     try:
         markdown.markdown(doc_code, output_format='xhtml5', extensions=['markdown.extensions.codehilite', 'markdown.extensions.fenced_code'])
-    except:
+    except Exception:
         raise InvalidContents("file cannot be parsed as markdown: %s" % doc_path)
 
 
@@ -111,7 +113,7 @@ def check_invalid_doc_content(wgt_file, resource_info, key):
 
         # Check localized versions
         (doc_filename_root, doc_filename_ext) = os.path.splitext(doc_path)
-        pattern = re.escape(doc_filename_root) + '\.\w\w(?:-\w\w)?' + re.escape(doc_filename_ext)
+        pattern = re.escape(doc_filename_root) + r'\.\w\w(?:-\w\w)?' + re.escape(doc_filename_ext)
         for filename in wgt_file.namelist():
             if re.match(pattern, filename):
                 check_invalid_doc_entry(wgt_file, filename)
@@ -157,7 +159,7 @@ def check_packaged_resource(wgt_file, resource_info=None):
         except ObsoleteFormatError as e:
             msg = _('Unable to process component description file: %s')
             raise InvalidContents(msg % e)
-        except TemplateFormatError as e:
+        except TemplateFormatError:
             raise InvalidContents(_('Unable to process component description file'))
         except TemplateParseException as e:
             msg = _('Unable to process component description file: %s')
@@ -270,11 +272,11 @@ def get_resource_data(resource, user, request=None):
         try:
             description_code = download_local_file(localized_longdescription_path).decode('utf-8')
             longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'), base_url=longdescription_base_url)
-        except:
+        except Exception:
             try:
                 description_code = download_local_file(longdescription_path).decode('utf-8')
                 longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'), base_url=longdescription_base_url)
-            except:
+            except Exception:
                 longdescription = resource_info['description']
 
     else:
@@ -382,3 +384,16 @@ def update_resource_catalogue_cache(orm=None):
     for resource in resources_to_remove:
         print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
         resource.delete()
+
+
+def check_vendor_permissions(user, vendor):
+    vendor = vendor.strip()
+    options = [user.username]
+    for group in user.groups.all():
+        try:
+            group.organization
+        except Organization.DoesNotExist:
+            continue
+        else:
+            options.append(group.name)
+    return vendor.lower() in options
