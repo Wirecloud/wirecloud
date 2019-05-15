@@ -146,7 +146,9 @@
     };
 
     /**
-     * Makes unavaliable a component for the logged user
+     * Makes unavaliable a component for the logged user. If the allusers option
+     * is true, this method removes this component from the server, making it
+     * unavaliable to all users.
      *
      * @param {Wirecloud.MashableApplicationComponent} component
      *
@@ -157,13 +159,15 @@
      * Object with extra options:
      *
      * - `allversions`: uninstall all versions of the component
+     * - `allusers`: fully remove resource from server
      *
      * @returns {Wirecloud.Task}
      */
-    LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
+    LocalCatalogue.deleteResource = function deleteResource(resource, options) {
         var url, msg;
 
         options = utils.merge({
+            allusers: false,
             allversions: false
         }, options);
 
@@ -172,19 +176,31 @@
                 vendor: resource.vendor,
                 name: resource.name
             });
-            msg = utils.interpolate(utils.gettext("Uninstalling all versions of %(title)s (%(group_id)s)"), resource);
+            if (options.allusers) {
+                msg = utils.interpolate(utils.gettext("Deleting all versions of %(title)s (%(group_id)s)"), resource);
+            } else {
+                msg = utils.interpolate(utils.gettext("Uninstalling all versions of %(title)s (%(group_id)s)"), resource);
+            }
         } else {
             url = Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate({
                 vendor: resource.vendor,
                 name: resource.name,
                 version: resource.version.text
             });
-            msg = utils.interpolate(utils.gettext("Uninstalling %(title)s (%(uri)s)"), resource);
+            if (options.allusers) {
+                msg = utils.interpolate(utils.gettext("Deleting %(title)s (%(uri)s)"), resource);
+            } else {
+                msg = utils.interpolate(utils.gettext("Uninstalling %(title)s (%(uri)s)"), resource);
+            }
         }
 
         // Send request to uninstall de widget
-        return Wirecloud.io.makeRequest(url + '?affected=true', {
+        return Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
+            parameters: {
+                affected: 'true',
+                allusers: options.allusers
+            },
             requestHeaders: {'Accept': 'application/json'}
         }).then(function (response) {
             if (response.status !== 200) {
@@ -203,17 +219,6 @@
         }).then(unload_affected_components.bind(this, resource))
         .then(purge_component_info.bind(this, resource))
         .toTask(msg);
-    };
-
-    /**
-     * Removes this component from the server, making it unavaliable for all the users.
-     *
-     * @returns {Wirecloud.Task}
-     */
-    LocalCatalogue.deleteResource = function deleteResource(resource, options) {
-        return Wirecloud.WirecloudCatalogue.prototype.deleteResource.call(this, resource, options)
-            .then(unload_affected_components.bind(this, resource))
-            .then(purge_component_info.bind(this, resource));
     };
 
     /**

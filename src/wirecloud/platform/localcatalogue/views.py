@@ -135,7 +135,7 @@ class ResourceCollection(Resource):
 
                 try:
                     context = parse_context_from_referer(request)
-                except:
+                except Exception:
                     context = {}
 
                 try:
@@ -145,7 +145,7 @@ class ResourceCollection(Resource):
                         raise Exception()
 
                     downloaded_file = b''.join(response)
-                except:
+                except Exception:
                     return build_error_response(request, 409, _('Content cannot be downloaded from the specified url'))
 
             try:
@@ -257,22 +257,32 @@ class ResourceEntry(Resource):
     @commit_on_http_success
     def delete(self, request, vendor, name, version=None):
 
+        allusers = request.GET.get('allusers', 'false').lower() == 'true'
+        if allusers and not request.user.is_superuser:
+            return build_error_response(request, 403, _('You are not allowed to delete resources'))
+
+        extra_conditions = {"users": request.user} if not request.user.is_superuser else {}
         if version is not None:
-            resources = [get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version, users=request.user)]
+            resources = [get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version, **extra_conditions)]
         else:
-            resources = get_list_or_404(CatalogueResource, vendor=vendor, short_name=name, users=request.user)
+            resources = get_list_or_404(CatalogueResource, vendor=vendor, short_name=name, **extra_conditions)
 
         result = {
             "affectedVersions": []
         } if request.GET.get('affected', 'false').lower() == 'true' else None
 
         for resource in resources:
-            resource.users.remove(request.user)
-            resource_uninstalled.send(sender=resource, user=request.user)
+            if allusers:
+                resource.delete()
+                resource_uninstalled.send(sender=resource)
+            else:
+                resource.users.remove(request.user)
+                resource_uninstalled.send(sender=resource, user=request.user)
+
             if result is not None:
                 result['affectedVersions'].append(resource.version)
 
-            if resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
+            if not allusers and resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
                 resource.delete()
 
         if result is not None:

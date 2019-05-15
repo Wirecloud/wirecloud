@@ -76,7 +76,7 @@
                 options.allVersions = true;
             }
             if (component) {
-                Wirecloud.LocalCatalogue.uninstallResource(component, options).then(
+                Wirecloud.LocalCatalogue.deleteResource(component, options).then(
                     resolve.bind(null, undefined),
                     reject
                 );
