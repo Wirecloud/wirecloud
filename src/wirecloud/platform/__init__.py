@@ -21,3 +21,6 @@ __version_info__ = (1, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 __application_mashup_version_info__ = (2, 2)
 __application_mashup_version__ = '.'.join(map(str, __application_mashup_version_info__))
+
+
+default_app_config = 'wirecloud.platform.apps.WirecloudPlatformConfig'

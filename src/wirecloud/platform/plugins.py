@@ -98,8 +98,9 @@ def get_plugins():
 
             plugins.append(plugin)
 
-        from wirecloud.platform.core.plugins import WirecloudCorePlugin
-        add_plugin('wirecloud.platform.WirecloudCorePlugin', WirecloudCorePlugin())
+        if 'wirecloud.platform' in settings.INSTALLED_APPS:
+            from wirecloud.platform.core.plugins import WirecloudCorePlugin
+            add_plugin('wirecloud.platform.WirecloudCorePlugin', WirecloudCorePlugin())
 
         for entry in modules:
             if isinstance(entry, str):

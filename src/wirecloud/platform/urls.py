@@ -18,8 +18,8 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import include, url
-from django.views.generic import TemplateView
 
+import wirecloud.commons.urls
 from wirecloud.commons.views import ResourceSearch, SwitchUserService
 from wirecloud.platform import views
 from wirecloud.platform.context import views as context_views
@@ -45,12 +45,6 @@ urlpatterns = (
     url(r'^api/version$',
         views.version_entry,
         name='wirecloud.version'),
-
-    # i18n
-    url(r'^api/i18n/', include('django.conf.urls.i18n')),
-    url(r'^api/i18n/js_catalogue$',
-        views.cached_javascript_catalog,
-        name="wirecloud.javascript_translation_catalogue"),
 
     # Context
     url(r'^api/context/?$',
@@ -172,11 +166,7 @@ urlpatterns = (
         SwitchUserService(),
         name='wirecloud.switch_user_service'),
 
-    url('^oauth2/default_redirect_uri$',
-        TemplateView.as_view(template_name='wirecloud/oauth2/default_redirect_uri.html'),
-        name='oauth.default_redirect_uri'),
-
-) + get_plugin_urls() + (
+) + wirecloud.commons.urls.urlpatterns + get_plugin_urls() + (
 
     url(r'^(?P<owner>[^/]+)/(?P<name>[^/]+)/?$', views.render_workspace_view, name='wirecloud.workspace_view'),
 

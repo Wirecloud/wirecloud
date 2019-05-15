@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,4 +17,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-default_app_config = 'wirecloud.commons.apps.WirecloudCommonsConfig'
+from django.conf.urls import include, url
+from django.views.generic import TemplateView
+
+from wirecloud.commons import views
+
+
+urlpatterns = (
+
+    # i18n
+    url(r'^api/i18n/', include('django.conf.urls.i18n')),
+    url(r'^api/i18n/js_catalogue$',
+        views.cached_javascript_catalog,
+        name="wirecloud.javascript_translation_catalogue"),
+
+    # OAuth2
+    url('^oauth2/default_redirect_uri$',
+        TemplateView.as_view(template_name='wirecloud/oauth2/default_redirect_uri.html'),
+        name='oauth.default_redirect_uri'),
+
+)

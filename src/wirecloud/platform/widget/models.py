@@ -17,18 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import random
 
 from django.core.cache import cache
 from django.db import models
-from django.db.models.signals import pre_delete, post_save
-from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
-
-from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.utils.wgt import WgtFile
 
 
 @python_2_unicode_compatible
@@ -106,36 +100,3 @@ class Widget(models.Model):
 
     def __str__(self):
         return self.uri
-
-
-@receiver(post_save, sender=CatalogueResource)
-def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs):
-
-    from wirecloud.catalogue import utils as catalogue
-    from wirecloud.platform.widget.utils import create_widget_from_wgt
-
-    if not created or raw:
-        return
-
-    resource = instance
-    if resource.resource_type() == 'widget':
-        try:
-            resource.widget
-        except Widget.DoesNotExist:
-            base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-            wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-            resource.widget = create_widget_from_wgt(wgt_file, resource.creator)
-
-        # Restore any iwidget associated with this widget
-        from wirecloud.platform.iwidget.models import IWidget
-
-        IWidget.objects.filter(widget_uri=resource.local_uri_part).update(widget=resource.widget)
-
-
-@receiver(pre_delete, sender=CatalogueResource)
-def delete_widget_on_resource_deletion(sender, instance, using, **kwargs):
-    if instance.resource_type() == 'widget':
-        try:
-            instance.widget.delete()
-        except Widget.DoesNotExist:
-            pass

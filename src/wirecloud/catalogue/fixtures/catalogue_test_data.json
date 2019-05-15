@@ -10,7 +10,7 @@
             "is_superuser": false,
             "is_staff": false,
             "last_login": "2011-03-17T17:21:19Z",
-            "groups": [],
+            "groups": [4],
             "user_permissions": [],
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "email": "",
@@ -28,11 +28,82 @@
             "is_superuser": false,
             "is_staff": false,
             "last_login": "2011-03-17T17:21:19Z",
+            "groups": [4],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "4",
+        "fields": {
+            "username": "wirecloud",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
             "email": "",
             "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "5",
+        "fields": {
+            "username": "otheruser",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.Group",
+        "pk": "4",
+        "fields": {
+            "name": "wirecloud"
+        }
+    },
+    {
+        "model": "commons.organization",
+        "pk": "4",
+        "fields": {
+            "user": 4,
+            "group": 4
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.team",
+        "model": "commons.team",
+        "fields": {
+            "organization": 4,
+            "name": "owners",
+            "users": [2]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.team",
+        "model": "commons.team",
+        "fields": {
+            "organization": 4,
+            "name": "members",
+            "users": [3]
         }
     },
     {

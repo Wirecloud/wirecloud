@@ -34,7 +34,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_downloadfile_response, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_downloadfile_response, build_error_response, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.structures import CaseInsensitiveDict
 from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -73,8 +73,7 @@ class ResourceCollection(Resource):
         install_embedded_resources = False
         templateURL = None
         file_contents = None
-        content_type = get_content_type(request)[0]
-        if content_type == 'multipart/form-data':
+        if request.mimetype == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             public = request.POST.get('public', 'false').strip().lower() == 'true'
             user_list = set(user.strip() for user in request.POST.get('users', '').split(',') if user != "")
@@ -89,7 +88,7 @@ class ResourceCollection(Resource):
             except zipfile.BadZipfile:
                 return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
-        elif content_type == 'application/octet-stream':
+        elif request.mimetype == 'application/octet-stream':
 
             downloaded_file = BytesIO(request.body)
             try:
@@ -102,7 +101,7 @@ class ResourceCollection(Resource):
             user_list = set(user.strip() for user in request.GET.get('users', '').split(',') if user != "")
             group_list = set(group.strip() for group in request.GET.get('groups', '').split(',') if group != "")
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
-        else:  # if content_type == 'application/json'
+        else:  # if request.mimetype == 'application/json'
 
             market_endpoint = None
 
@@ -116,6 +115,7 @@ class ResourceCollection(Resource):
             templateURL = data.get('url')
             market_endpoint = data.get('market_endpoint', None)
             headers = data.get('headers', {})
+            headers['Accept-Encoding'] = 'identity'
 
             if market_endpoint is not None:
 
@@ -135,7 +135,7 @@ class ResourceCollection(Resource):
 
                 try:
                     context = parse_context_from_referer(request)
-                except:
+                except Exception:
                     context = {}
 
                 try:
@@ -145,7 +145,7 @@ class ResourceCollection(Resource):
                         raise Exception()
 
                     downloaded_file = b''.join(response)
-                except:
+                except Exception:
                     return build_error_response(request, 409, _('Content cannot be downloaded from the specified url'))
 
             try:
@@ -228,11 +228,14 @@ class ResourceCollection(Resource):
                     if extra_resource_added:
                         info['extra_resources'].append(extra_resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"))
 
-            return HttpResponse(json.dumps(info, sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
+            response = HttpResponse(json.dumps(info, sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
 
         else:
 
-            return HttpResponse(json.dumps(resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"), sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
+            response = HttpResponse(json.dumps(resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"), sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
+
+        response['Location'] = resource.get_template_url()
+        return response
 
 
 class ResourceEntry(Resource):
@@ -254,22 +257,32 @@ class ResourceEntry(Resource):
     @commit_on_http_success
     def delete(self, request, vendor, name, version=None):
 
+        allusers = request.GET.get('allusers', 'false').lower() == 'true'
+        if allusers and not request.user.is_superuser:
+            return build_error_response(request, 403, _('You are not allowed to delete resources'))
+
+        extra_conditions = {"users": request.user} if not request.user.is_superuser else {}
         if version is not None:
-            resources = [get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version, users=request.user)]
+            resources = [get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version, **extra_conditions)]
         else:
-            resources = get_list_or_404(CatalogueResource, vendor=vendor, short_name=name, users=request.user)
+            resources = get_list_or_404(CatalogueResource, vendor=vendor, short_name=name, **extra_conditions)
 
         result = {
             "affectedVersions": []
         } if request.GET.get('affected', 'false').lower() == 'true' else None
 
         for resource in resources:
-            resource.users.remove(request.user)
-            resource_uninstalled.send(sender=resource, user=request.user)
+            if allusers:
+                resource.delete()
+                resource_uninstalled.send(sender=resource)
+            else:
+                resource.users.remove(request.user)
+                resource_uninstalled.send(sender=resource, user=request.user)
+
             if result is not None:
                 result['affectedVersions'].append(resource.version)
 
-            if resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
+            if not allusers and resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
                 resource.delete()
 
         if result is not None:

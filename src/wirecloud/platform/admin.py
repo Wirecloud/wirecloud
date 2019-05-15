@@ -26,28 +26,14 @@ from wirecloud.platform import models
 
 def get_workspace(iwidget):
     return iwidget.tab.workspace
+
+
 get_workspace.short_description = 'Workspace'
 
 
 class IWidgetAdmin(admin.ModelAdmin):
 
     list_display = ('id', get_workspace, 'tab', 'widget', 'name')
-
-
-class TeamInline(admin.StackedInline):
-
-    model = models.Team
-    fields = ('name', 'users')
-    ordering = ('name',)
-    extra = 0
-
-
-class OrganizationAdmin(admin.ModelAdmin):
-
-    list_display = ('user',)
-    list_display_links = ('user',)
-    ordering = ('user',)
-    inlines = (TeamInline,)
 
 
 class MarketAdmin(admin.ModelAdmin):
@@ -100,7 +86,6 @@ class WorkspaceAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Constant)
 admin.site.register(models.IWidget, IWidgetAdmin)
-admin.site.register(models.Organization, OrganizationAdmin)
 admin.site.register(models.Market, MarketAdmin)
 admin.site.register(models.MarketUserData, MarketUserDataAdmin)
 admin.site.register(models.Widget)

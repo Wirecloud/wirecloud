@@ -39,8 +39,8 @@ from django.conf import settings
 from social_core.backends.oauth import BaseOAuth2
 from social_django.models import UserSocialAuth
 
+from wirecloud.commons.models import Organization
 from wirecloud.fiware import FIWARE_LAB_IDM_SERVER
-from wirecloud.platform.models import Organization
 
 
 FIWARE_AUTHORIZATION_ENDPOINT = 'oauth2/authorize'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,18 +17,30 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import gettext as gettext_module
+import importlib
 import json
+import os
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext_lazy as _
+from django.utils._os import upath
+from django.utils.translation import check_for_language, get_language, to_locale, ugettext_lazy as _
+from django.views.decorators.cache import cache_page
+from django.views.i18n import render_javascript_catalog
 
 from wirecloud.commons.baseviews import Resource, Service
+from wirecloud.platform.plugins import get_plugins
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes, parse_json_request, produces
 from wirecloud.commons.search_indexes import get_search_engine, is_available
+from wirecloud.platform.core.plugins import get_version_hash
+from wirecloud.platform.themes import get_available_themes
 
+
+LANGUAGE_QUERY_PARAMETER = 'language'
 
 extra_formatters = {
     'text/html; charset=utf-8': get_html_basic_error_response,
@@ -54,6 +66,111 @@ def page_not_found(request):
 def server_error(request):
 
     return build_error_response(request, 500, 'Internal Server Error', extra_formatters)
+
+
+def get_javascript_catalog(locale, domain, packages):
+    default_locale = to_locale(settings.LANGUAGE_CODE)
+    t = {}
+    paths = []
+    en_selected = locale.startswith('en')
+    en_catalog_missing = True
+    # paths of requested packages
+    for package in packages:
+        p = importlib.import_module(package)
+        path = os.path.join(os.path.dirname(upath(p.__file__)), 'locale')
+        paths.append(path)
+    # add the filesystem paths listed in the LOCALE_PATHS setting
+    paths.extend(reversed(settings.LOCALE_PATHS))
+    # first load all english languages files for defaults
+    for path in paths:
+        try:
+            catalog = gettext_module.translation(domain, path, ['en'])
+            t.update(catalog._catalog)
+        except IOError:
+            pass
+        else:
+            # 'en' is the selected language and at least one of the packages
+            # listed in `packages` has an 'en' catalog
+            if en_selected:
+                en_catalog_missing = False
+    # next load the settings.LANGUAGE_CODE translations if it isn't english
+    if default_locale != 'en':
+        for path in paths:
+            try:
+                catalog = gettext_module.translation(domain, path, [default_locale])
+            except IOError:
+                catalog = None
+            if catalog is not None:
+                t.update(catalog._catalog)
+    # last load the currently selected language, if it isn't identical to the default.
+    if locale != default_locale:
+        # If the currently selected language is English but it doesn't have a
+        # translation catalog (presumably due to being the language translated
+        # from) then a wrong language catalog might have been loaded in the
+        # previous step. It needs to be discarded.
+        if en_selected and en_catalog_missing:
+            t = {}
+        else:
+            locale_t = {}
+            for path in paths:
+                try:
+                    catalog = gettext_module.translation(domain, path, [locale])
+                except IOError:
+                    catalog = None
+                if catalog is not None:
+                    locale_t.update(catalog._catalog)
+            if locale_t:
+                t = locale_t
+    plural = None
+    if '' in t:
+        for l in t[''].split('\n'):
+            if l.startswith('Plural-Forms:'):
+                plural = l.split(':', 1)[1].strip()
+    if plural is not None:
+        # this should actually be a compiled function of a typical plural-form:
+        # Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 :
+        #               n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;
+        plural = [el.strip() for el in plural.split(';') if el.strip().startswith('plural=')][0].split('=', 1)[1]
+
+    pdict = {}
+    maxcnts = {}
+    catalog = {}
+    for k, v in t.items():
+        if k == '':
+            continue
+        if isinstance(k, str):
+            catalog[k] = v
+        elif isinstance(k, tuple):
+            msgid = k[0]
+            cnt = k[1]
+            maxcnts[msgid] = max(cnt, maxcnts.get(msgid, 0))
+            pdict.setdefault(msgid, {})[cnt] = v
+        else:
+            raise TypeError(k)
+    for k, v in pdict.items():
+        catalog[k] = [v.get(i, '') for i in range(maxcnts[msgid] + 1)]
+
+    return catalog, plural
+
+
+@cache_page(60 * 60 * 24, key_prefix='js18n-%s' % get_version_hash())
+def cached_javascript_catalog(request):
+
+    language = request.GET.get(LANGUAGE_QUERY_PARAMETER)
+    if not (language and check_for_language(language)):
+        language = get_language()
+    locale = to_locale(language)
+
+    packages = ['wirecloud.commons', 'wirecloud.catalogue', 'wirecloud.platform']
+
+    for plugin in get_plugins():
+        packages.append(plugin.__module__.rsplit('.', 1)[0])
+
+    for theme in get_available_themes():
+        packages.append(theme)
+
+    catalog, plural = get_javascript_catalog(locale, 'djangojs', packages)
+    return render_javascript_catalog(catalog, plural)
 
 
 class ResourceSearch(Resource):

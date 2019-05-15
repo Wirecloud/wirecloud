@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,8 +18,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Q
 from urllib.parse import urljoin
+
+from django.db.models import Q
 from haystack import indexes
 
 from wirecloud.catalogue.models import CatalogueResource, get_template_url
@@ -43,7 +45,7 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
     name = indexes.EdgeNgramField(model_attr="short_name", boost=1.5)
     version = indexes.CharField(model_attr='version')
     version_sortable = indexes.FloatField()
-    template_uri = indexes.CharField(model_attr="template_uri")
+    description_url = indexes.CharField(model_attr="template_uri")
     type = indexes.CharField(model_attr='type')
     creation_date = indexes.DateTimeField(model_attr="creation_date")
     public = BooleanField(model_attr="public")
@@ -63,6 +65,11 @@ class ResourceIndex(indexes.SearchIndex, indexes.Indexable):
 
     def get_model(self):
         return self.model
+
+    def should_update(self, instance, **kwargs):
+        if instance.template_uri == "":
+            self.remove_object(instance, **kwargs)
+        return instance.template_uri != ""
 
     def prepare(self, object):
         self.prepared_data = super(ResourceIndex, self).prepare(object)
@@ -179,7 +186,8 @@ def cleanResults(document, request):
 
 def add_absolute_urls(hit, request=None):
 
-    base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
+    base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['description_url'], request=request)
     hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
     hit['image'] = "" if not hit['image'] or hit['image'] == '' else urljoin(base_url, hit['image'])
     hit['smartphoneimage'] = "" if not hit['smartphoneimage'] or hit['smartphoneimage'] == '' else urljoin(base_url, hit['smartphoneimage'])
+    hit['description_url'] = urljoin(base_url, hit['description_url'])

@@ -63,11 +63,12 @@ class Organization(models.Model):
 
     objects = OrganizationManager()
 
-    class Meta:
-        app_label = "platform"
-
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        app_label = 'commons'
+        db_table = 'wirecloud_organization'
 
 
 class TeamManager(models.Manager):
@@ -92,10 +93,10 @@ class Team(models.Model):
     objects = TeamManager()
 
     class Meta:
-        app_label = "platform"
         unique_together = ('organization', 'name')
         verbose_name = _('team')
         verbose_name_plural = _('teams')
+        db_table = 'wirecloud_team'
 
     def __str__(self):
         return self.name

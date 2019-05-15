@@ -212,7 +212,7 @@
     MyResourcesView.prototype.ui_commands.uninstall = function uninstall(resource, catalogue_source) {
         return function () {
             Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.uninstallResource(resource).then(
+                this.catalogue.deleteResource(resource).then(
                     function () {
                         this.refresh_search_results();
 
@@ -230,7 +230,7 @@
     MyResourcesView.prototype.ui_commands.uninstallall = function uninstallall(resource, catalogue_source) {
         return function () {
             Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.uninstallResource(resource, {
+                this.catalogue.deleteResource(resource, {
                     allversions: true
                 }).then(
                     function () {
@@ -338,7 +338,7 @@
 
         doRequest = function () {
             Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.deleteResource(resource).then(
+                this.catalogue.deleteResource(resource, {allusers: true}).then(
                     () => {
                         this.home();
                         this.refresh_search_results();
@@ -367,7 +367,7 @@
 
         doRequest = function () {
             Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.deleteResource(resource, {allversions: true}).then(
+                this.catalogue.deleteResource(resource, {allusers: true, allversions: true}).then(
                     success_callback,
                     logerror
                 )

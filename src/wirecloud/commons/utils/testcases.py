@@ -48,7 +48,7 @@ from wirecloud.platform.workspace.utils import create_workspace
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.http import REASON_PHRASES
 from wirecloud.commons.utils.remote import WirecloudRemoteTestCase, FieldTester
-from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
+from wirecloud.commons.utils.wgt import WgtFile
 
 
 def cleartree(path):
@@ -304,16 +304,16 @@ def prepare_temporal_resource_directories(cls):
     cls.tmp_dir = mkdtemp()
 
     # catalogue deployer
-    cls.old_catalogue_deployer = catalogue.wgt_deployer
+    cls.old_catalogue_deployer = catalogue.wgt_deployer._root_dir
     cls.catalogue_tmp_dir_backup = os.path.join(cls.tmp_dir, 'catalogue_backup')
     cls.catalogue_tmp_dir = os.path.join(cls.tmp_dir, 'catalogue')
-    catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+    catalogue.wgt_deployer._root_dir = cls.catalogue_tmp_dir
 
     # showcase deployer
-    cls.old_deployer = showcase.wgt_deployer
+    cls.old_deployer = showcase.wgt_deployer._root_dir
     cls.localcatalogue_tmp_dir_backup = os.path.join(cls.tmp_dir, 'localcatalogue_backup')
     cls.localcatalogue_tmp_dir = os.path.join(cls.tmp_dir, 'localcatalogue')
-    showcase.wgt_deployer = WgtDeployer(cls.localcatalogue_tmp_dir)
+    showcase.wgt_deployer._root_dir = cls.localcatalogue_tmp_dir
 
     # deploy resource files
     for resource_file in cls.base_resources:
@@ -391,7 +391,7 @@ class WirecloudTestCase(object):
                 # Update whoosh index dir if not set by user
                 if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
                     settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
-            except:
+            except Exception:
                 settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
                 settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
 
@@ -410,8 +410,8 @@ class WirecloudTestCase(object):
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
         # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        showcase.wgt_deployer = cls.old_deployer
+        catalogue.wgt_deployer._root_dir = cls.old_catalogue_deployer
+        showcase.wgt_deployer._root_dir = cls.old_deployer
 
         # Restore previous language configuration
         from django.conf import settings
@@ -449,7 +449,7 @@ class WirecloudTestCase(object):
         # clean example.com responses
         try:
             self.network._servers['http']['example.com'].clear()
-        except:
+        except Exception:
             pass
 
         # cache
@@ -603,7 +603,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
                 # Update whoosh index dir if not set by user
                 if settings.HAYSTACK_CONNECTIONS['default']['ENGINE'] == 'wirecloud.commons.haystack_backends.whoosh_backend.WhooshEngine' and settings.HAYSTACK_CONNECTIONS['default'].get("PATH") is None:
                     settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
-            except:
+            except Exception:
                 settings.HAYSTACK_CONNECTIONS = copy.deepcopy(DEFAULT_TEST_HAYSTACK_CONNECTIONS)
                 settings.HAYSTACK_CONNECTIONS['default']['PATH'] = os.path.join(cls.tmp_dir, 'test_whoosh_indexes')
 
@@ -636,8 +636,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
         # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        showcase.wgt_deployer = cls.old_deployer
+        catalogue.wgt_deployer._root_dir = cls.old_catalogue_deployer
+        showcase.wgt_deployer._root_dir = cls.old_deployer
 
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
@@ -668,7 +668,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         cache.clear()
         try:
             self.network._servers['http']['example.com'].clear()
-        except:
+        except Exception:
             pass
 
         LiveServerTestCase.setUp(self)
