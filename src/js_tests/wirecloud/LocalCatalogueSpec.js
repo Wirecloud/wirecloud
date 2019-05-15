@@ -134,20 +134,120 @@
                 );
             });
 
+            describe("restore missing components", () => {
+
+                let workspace;
+
+                beforeEach(() => {
+                    workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
+                    Wirecloud.activeWorkspace = workspace;
+                });
+
+                afterEach(() => {
+                    Wirecloud.activeWorkspace = null;
+                });
+
+                it("should restore missing widgets", (done) => {
+                    spyOn(Wirecloud.WirecloudCatalogue.prototype, 'addComponent').and.callFake(function () {
+                        return new Wirecloud.Task("", (resolve) => {
+                            resolve({
+                                type: "widget",
+                                vendor: "Wirecloud",
+                                name: "Test",
+                                version: "1.1"
+                            });
+                        });
+                    });
+                    spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+                    let uri = "Wirecloud/Test/1.1";
+                    let widget1 = {
+                        meta: {
+                            uri: uri,
+                        },
+                        missing: true,
+                        upgrade: jasmine.createSpy('upgrade')
+                    };
+                    workspace.widgets.push(widget1);
+                    let widget2 = {meta: {uri: "a"}, missing: false};
+                    workspace.widgets.push(widget2);
+
+                    Wirecloud.LocalCatalogue.addComponent().then(
+                        () => {
+                            expect(widget1.upgrade).toHaveBeenCalled();
+                            expect(workspace.resources.restore).toHaveBeenCalled();
+                            done();
+                        },
+                        (error) => {
+                        }
+                    );
+                });
+
+                it("should restore missing operators", (done) => {
+                    spyOn(Wirecloud.WirecloudCatalogue.prototype, 'addComponent').and.callFake(function () {
+                        return new Wirecloud.Task("", (resolve) => {
+                            resolve({
+                                type: "operator",
+                                vendor: "Wirecloud",
+                                name: "TestOperator",
+                                version: "1.1"
+                            });
+                        });
+                    });
+                    spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+                    let uri = "Wirecloud/TestOperator/1.1";
+                    let operator1 = {
+                        meta: {
+                            uri: uri,
+                        },
+                        missing: true,
+                        upgrade: jasmine.createSpy('upgrade')
+                    };
+                    workspace.wiring.operators.push(operator1);
+                    let operator2 = {meta: {uri: "a"}, missing: false};
+                    workspace.wiring.operators.push(operator2);
+
+                    Wirecloud.LocalCatalogue.addComponent().then(
+                        () => {
+                            expect(operator1.upgrade).toHaveBeenCalled();
+                            expect(workspace.resources.restore).toHaveBeenCalled();
+                            done();
+                        },
+                        (error) => {
+                        }
+                    );
+                });
+
+            });
+
         });
 
-        describe("deleteResource", () => {
+        describe("deleteResource(component[, options])", () => {
 
             beforeEach(function (done) {
                 setup(done);
             });
 
-            it("delete widgets", (done) => {
+            it("throws a TypeError exception if not passing the component parameter", () => {
+                expect(() => {
+                    Wirecloud.LocalCatalogue.uninstallResource();
+                }).toThrowError(TypeError);
+            });
+
+            it("uninstall widgets", (done) => {
                 var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
 
-                spyOn(Wirecloud.WirecloudCatalogue.prototype, "deleteResource").and.callFake(function () {
+                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        vendor: "Wirecloud",
+                        name: "Test",
+                        version: "1.0"
+                    });
                     return new Wirecloud.Task("Sending request", function (resolve) {
-                        resolve({affectedVersions: ["1.0"]});
+                        resolve({
+                            status: 200,
+                            responseText: '{}'
+                        });
                     });
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
@@ -180,10 +280,434 @@
                 );
             });
 
+            it("uninstall last widget version", (done) => {
+                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
+
+                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        vendor: "Wirecloud",
+                        name: "OtherWidget",
+                        version: "1.0"
+                    });
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)]
+                        ]);
+                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
+                            "Wirecloud/Test/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent),
+                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
+                        });
+                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
+                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta), jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)],
+                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
+                        });
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("uninstall all widget versions", (done) => {
+                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
+
+                spyOn(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY, "evaluate");
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    expect(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        vendor: "Wirecloud",
+                        name: "Test"
+                    });
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{"affectedVersions": ["1.0", "2.0"]}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component, {allversions: true});
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)],
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)]
+                        ]);
+                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
+                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent),
+                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
+                        });
+                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
+                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)],
+                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
+                        });
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("uninstall operators", (done) => {
+                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestOperator/1.0"];
+
+                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        vendor: "Wirecloud",
+                        name: "TestOperator",
+                        version: "1.0"
+                    });
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)]
+                        ]);
+                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
+                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/Test/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent)
+                        });
+                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
+                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta), jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)]
+                        });
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("uninstall mashups", (done) => {
+                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestMashup/1.0"];
+
+                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        vendor: "Wirecloud",
+                        name: "TestMashup",
+                        version: "1.0"
+                    });
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)]
+                        ]);
+                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
+                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/Test/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
+                        });
+                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
+                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta), jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
+                        });
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            describe("calls reject on unexepected responses", () => {
+
+                var test = (status) => {
+                    return (done) => {
+                        var component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
+
+                        spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
+                        Wirecloud.io.makeRequest.and.callFake(function () {
+                            expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                                vendor: "Wirecloud",
+                                name: "OtherWidget",
+                                version: "1.0"
+                            });
+                            return new Wirecloud.Task("Sending request", function (resolve) {
+                                resolve({
+                                    status: status,
+                                    responseText: "response from other server"
+                                });
+                            });
+                        });
+
+                        var t = Wirecloud.LocalCatalogue.deleteResource(component);
+
+                        expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                        t.catch((error) => {
+                            done();
+                        });
+                    };
+                };
+
+                it("200 (invalid response body)", test(200));
+                it("201", test(201));
+                it("204", test(204));
+                it("422", test(422));
+            });
+
+            it("delete widgets", (done) => {
+                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
+
+                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        vendor: "Wirecloud",
+                        name: "Test",
+                        version: "1.0"
+                    });
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{"affectedVersions": ["1.0"]}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component, {allusers: true});
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)]
+                        ]);
+                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
+                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent),
+                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
+                        });
+                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
+                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)],
+                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
+                        });
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("delete all widgets", (done) => {
+                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
+
+                spyOn(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY, "evaluate");
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    expect(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
+                        vendor: "Wirecloud",
+                        name: "Test"
+                    });
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{"affectedVersions": ["1.0", "2.0"]}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component, {allusers: true, allversions: true});
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)],
+                            ["uninstall", jasmine.any(Object)],
+                            ["change", "uninstall", jasmine.any(Object)]
+                        ]);
+                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
+                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
+                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent),
+                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
+                        });
+                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
+                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
+                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)],
+                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
+                        });
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("purges operators", (done) => {
+                let uri = "Wirecloud/TestOperator/1.0";
+                var component = Wirecloud.LocalCatalogue.resources[uri];
+
+                let workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
+                let new_meta = {uri: uri};
+                workspace.resources.remove.and.returnValue(new_meta);
+                let operator1 = {
+                    meta: {
+                        uri: uri,
+                    },
+                    upgrade: jasmine.createSpy('upgrade')
+                };
+                workspace.wiring.operators.push(operator1);
+                let operator2 = {meta: {uri: "a"}};
+                workspace.wiring.operators.push(operator2);
+
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(workspace.resources.remove).toHaveBeenCalledWith("Wirecloud/TestOperator/1.0");
+                        expect(operator1.upgrade).toHaveBeenCalledWith(new_meta);
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("purges widgets", (done) => {
+                let uri = "Wirecloud/Test/1.0";
+                var component = Wirecloud.LocalCatalogue.resources[uri];
+
+                let workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
+                let new_meta = {uri: uri};
+                workspace.resources.remove.and.returnValue(new_meta);
+                let widget1 = {
+                    meta: {
+                        uri: uri,
+                    },
+                    upgrade: jasmine.createSpy('upgrade')
+                };
+                workspace.widgets.push(widget1);
+                let widget2 = {meta: {uri: "a"}};
+                workspace.widgets.push(widget2);
+
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(workspace.resources.remove).toHaveBeenCalledWith(uri);
+                        expect(widget1.upgrade).toHaveBeenCalledWith(new_meta);
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("handles purging of untracked components", (done) => {
+                let uri = "Wirecloud/Test/1.0";
+                var component = Wirecloud.LocalCatalogue.resources[uri];
+
+                let workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
+                workspace.resources.remove.and.returnValue(null);
+
+                Wirecloud.io.makeRequest.and.callFake(function () {
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200,
+                            responseText: '{}'
+                        });
+                    });
+                });
+                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
+
+                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                t.then(
+                    () => {
+                        expect(workspace.resources.remove).toHaveBeenCalledWith(uri);
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
 
         });
 
-        describe("getResourceId", () => {
+        describe("getResourceId(id)", () => {
 
             beforeEach(function (done) {
                 setup(done);
@@ -197,7 +721,7 @@
 
         });
 
-        describe("getResource", () => {
+        describe("getResource(vendor, name, version)", () => {
 
             beforeEach(function (done) {
                 setup(done);
@@ -424,286 +948,6 @@
 
         });
 
-        describe("uninstallResource(component[, options])", function () {
-
-            beforeEach(function (done) {
-                setup(done);
-            });
-
-            it("throws a TypeError exception if not passing the component parameter", () => {
-                expect(() => {
-                    Wirecloud.LocalCatalogue.uninstallResource();
-                }).toThrowError(TypeError);
-            });
-
-            it("uninstall widgets", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
-
-                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
-                Wirecloud.io.makeRequest.and.callFake(function () {
-                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
-                        vendor: "Wirecloud",
-                        name: "Test",
-                        version: "1.0"
-                    });
-                    return new Wirecloud.Task("Sending request", function (resolve) {
-                        resolve({
-                            status: 200,
-                            responseText: '{}'
-                        });
-                    });
-                });
-                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
-
-                var t = Wirecloud.LocalCatalogue.uninstallResource(component);
-                expect(t).toEqual(jasmine.any(Wirecloud.Task));
-                t.then(
-                    () => {
-                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
-                            ["uninstall", jasmine.any(Object)],
-                            ["change", "uninstall", jasmine.any(Object)]
-                        ]);
-                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
-                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent),
-                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
-                        });
-                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
-                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)],
-                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
-                        });
-                        done();
-                    },
-                    (error) => {
-                        fail("error callback called");
-                    }
-                );
-            });
-
-            it("uninstall last widget version", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
-
-                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
-                Wirecloud.io.makeRequest.and.callFake(function () {
-                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
-                        vendor: "Wirecloud",
-                        name: "OtherWidget",
-                        version: "1.0"
-                    });
-                    return new Wirecloud.Task("Sending request", function (resolve) {
-                        resolve({
-                            status: 200,
-                            responseText: '{}'
-                        });
-                    });
-                });
-                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
-
-                var t = Wirecloud.LocalCatalogue.uninstallResource(component);
-                expect(t).toEqual(jasmine.any(Wirecloud.Task));
-                t.then(
-                    () => {
-                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
-                            ["uninstall", jasmine.any(Object)],
-                            ["change", "uninstall", jasmine.any(Object)]
-                        ]);
-                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
-                            "Wirecloud/Test/1.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent),
-                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
-                        });
-                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
-                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta), jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)],
-                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
-                        });
-                        done();
-                    },
-                    (error) => {
-                        fail("error callback called");
-                    }
-                );
-            });
-
-            it("uninstall all widget versions", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
-
-                spyOn(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY, "evaluate");
-                Wirecloud.io.makeRequest.and.callFake(function () {
-                    expect(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
-                        vendor: "Wirecloud",
-                        name: "Test"
-                    });
-                    return new Wirecloud.Task("Sending request", function (resolve) {
-                        resolve({
-                            status: 200,
-                            responseText: '{"affectedVersions": ["1.0", "2.0"]}'
-                        });
-                    });
-                });
-                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
-
-                var t = Wirecloud.LocalCatalogue.uninstallResource(component, {allversions: true});
-                expect(t).toEqual(jasmine.any(Wirecloud.Task));
-                t.then(
-                    () => {
-                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
-                            ["uninstall", jasmine.any(Object)],
-                            ["change", "uninstall", jasmine.any(Object)],
-                            ["uninstall", jasmine.any(Object)],
-                            ["change", "uninstall", jasmine.any(Object)]
-                        ]);
-                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
-                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent),
-                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
-                        });
-                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
-                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)],
-                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
-                        });
-                        done();
-                    },
-                    (error) => {
-                        fail("error callback called");
-                    }
-                );
-            });
-
-            it("uninstall operators", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestOperator/1.0"];
-
-                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
-                Wirecloud.io.makeRequest.and.callFake(function () {
-                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
-                        vendor: "Wirecloud",
-                        name: "TestOperator",
-                        version: "1.0"
-                    });
-                    return new Wirecloud.Task("Sending request", function (resolve) {
-                        resolve({
-                            status: 200,
-                            responseText: '{}'
-                        });
-                    });
-                });
-                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
-
-                var t = Wirecloud.LocalCatalogue.uninstallResource(component);
-                expect(t).toEqual(jasmine.any(Wirecloud.Task));
-                t.then(
-                    () => {
-                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
-                            ["uninstall", jasmine.any(Object)],
-                            ["change", "uninstall", jasmine.any(Object)]
-                        ]);
-                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
-                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/Test/1.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/TestMashup/1.0": jasmine.any(Wirecloud.MashableApplicationComponent)
-                        });
-                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
-                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta), jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/TestMashup": [jasmine.any(Wirecloud.MashableApplicationComponent)]
-                        });
-                        done();
-                    },
-                    (error) => {
-                        fail("error callback called");
-                    }
-                );
-            });
-
-            it("uninstall mashups", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestMashup/1.0"];
-
-                spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
-                Wirecloud.io.makeRequest.and.callFake(function () {
-                    expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
-                        vendor: "Wirecloud",
-                        name: "TestMashup",
-                        version: "1.0"
-                    });
-                    return new Wirecloud.Task("Sending request", function (resolve) {
-                        resolve({
-                            status: 200,
-                            responseText: '{}'
-                        });
-                    });
-                });
-                spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
-
-                var t = Wirecloud.LocalCatalogue.uninstallResource(component);
-                expect(t).toEqual(jasmine.any(Wirecloud.Task));
-                t.then(
-                    () => {
-                        expect(Wirecloud.LocalCatalogue.dispatchEvent.calls.allArgs()).toEqual([
-                            ["uninstall", jasmine.any(Object)],
-                            ["change", "uninstall", jasmine.any(Object)]
-                        ]);
-                        expect(Wirecloud.LocalCatalogue.resources).toEqual({
-                            "Wirecloud/OtherWidget/1.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/Test/1.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/Test/2.0": jasmine.any(Wirecloud.WidgetMeta),
-                            "Wirecloud/TestOperator/1.0": jasmine.any(Wirecloud.wiring.OperatorMeta)
-                        });
-                        expect(Wirecloud.LocalCatalogue.resourceVersions).toEqual({
-                            "Wirecloud/OtherWidget": [jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/Test": [jasmine.any(Wirecloud.WidgetMeta), jasmine.any(Wirecloud.WidgetMeta)],
-                            "Wirecloud/TestOperator": [jasmine.any(Wirecloud.wiring.OperatorMeta)]
-                        });
-                        done();
-                    },
-                    (error) => {
-                        fail("error callback called");
-                    }
-                );
-            });
-
-            describe("calls reject on unexepected responses", () => {
-
-                var test = (status) => {
-                    return (done) => {
-                        var component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
-
-                        spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
-                        Wirecloud.io.makeRequest.and.callFake(function () {
-                            expect(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate).toHaveBeenCalledWith({
-                                vendor: "Wirecloud",
-                                name: "OtherWidget",
-                                version: "1.0"
-                            });
-                            return new Wirecloud.Task("Sending request", function (resolve) {
-                                resolve({
-                                    status: status,
-                                    responseText: "response from other server"
-                                });
-                            });
-                        });
-
-                        var t = Wirecloud.LocalCatalogue.uninstallResource(component);
-
-                        expect(t).toEqual(jasmine.any(Wirecloud.Task));
-                        t.catch((error) => {
-                            done();
-                        });
-                    };
-                };
-
-                it("200 (invalid response body)", test(200));
-                it("201", test(201));
-                it("204", test(204));
-                it("422", test(422));
-            });
-        });
-
     });
 
     var setup = function setup(done) {
@@ -769,12 +1013,19 @@
                 widgets: [],
                 wiring: {
                     operators: []
-                },
-                resources: {
-                    remove: jasmine.createSpy("remove")
                 }
             }
         };
+        spyOn(Wirecloud, "Workspace").and.callFake(function () {
+            this.widgets = [];
+            this.wiring = {
+                operators: []
+            };
+            this.resources = {
+                remove: jasmine.createSpy("remove"),
+                restore: jasmine.createSpy("restore")
+            };
+        });
         Wirecloud.LocalCatalogue.reload().then(done);
     };
 
@@ -785,6 +1036,7 @@
             this.name = data.name;
             this.version = new Wirecloud.Version(data.version);
             this.group_id = data.vendor + '/' + data.name;
+            this.uri = this.group_id + '/' + data.version;
             this.is = function (other) {
                 return this === other;
             };
