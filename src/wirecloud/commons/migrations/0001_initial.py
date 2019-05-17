@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('auth', '0008_alter_user_username_max_length'),
     ]
-    if global_apps.is_installed('platform'):
+    if global_apps.is_installed('wirecloud.platform'):
         dependencies.append(('platform', '0015_remove_organization_models'))
 
     operations = [
