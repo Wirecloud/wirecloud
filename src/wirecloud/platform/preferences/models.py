@@ -19,13 +19,10 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.auth.signals import user_logged_in
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import check_for_language, gettext_lazy as _, LANGUAGE_SESSION_KEY
 
 
-@python_2_unicode_compatible
 class PlatformPreference(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -40,7 +37,6 @@ class PlatformPreference(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class WorkspacePreference(models.Model):
 
     workspace = models.ForeignKey('platform.Workspace', on_delete=models.CASCADE)
@@ -56,7 +52,6 @@ class WorkspacePreference(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class TabPreference(models.Model):
 
     tab = models.ForeignKey('platform.Tab', on_delete=models.CASCADE)

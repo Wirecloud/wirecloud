@@ -19,13 +19,11 @@
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.fields import JSONField
 
 
-@python_2_unicode_compatible
 class Market(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), blank=True)
     name = models.CharField(_('Name'), max_length=50)
@@ -41,7 +39,6 @@ class Market(models.Model):
         return self.user.username + '/' + self.name
 
 
-@python_2_unicode_compatible
 class MarketUserData(models.Model):
 
     market = models.ForeignKey(Market, on_delete=models.CASCADE, verbose_name=_('Market'), blank=False, null=False)

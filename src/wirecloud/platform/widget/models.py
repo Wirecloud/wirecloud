@@ -21,11 +21,9 @@ import random
 
 from django.core.cache import cache
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 
-@python_2_unicode_compatible
 class XHTML(models.Model):
 
     uri = models.CharField(_('URI'), max_length=255, unique=True)
@@ -66,7 +64,6 @@ class WidgetManager(models.Manager):
         return super(WidgetManager, self).get_query_set().select_related('resource')
 
 
-@python_2_unicode_compatible
 class Widget(models.Model):
 
     resource = models.OneToOneField('catalogue.CatalogueResource')

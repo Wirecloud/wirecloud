@@ -21,7 +21,6 @@ import time
 
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.fields import JSONField
@@ -31,7 +30,6 @@ def now_timestamp():
     return time.time() * 1000
 
 
-@python_2_unicode_compatible
 class Workspace(models.Model):
 
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
@@ -85,7 +83,6 @@ class Workspace(models.Model):
         return self.public or self.users.count() > 1 or self.groups.count() > 1
 
 
-@python_2_unicode_compatible
 class UserWorkspace(models.Model):
 
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
@@ -101,7 +98,6 @@ class UserWorkspace(models.Model):
         return "%s - %s" % (self.workspace, self.user)
 
 
-@python_2_unicode_compatible
 class Tab(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)

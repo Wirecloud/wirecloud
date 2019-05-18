@@ -18,11 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import gettext_lazy as _
 
 
-@python_2_unicode_compatible
 class Constant(models.Model):
 
     concept = models.CharField(_('Concept'), max_length=255, unique=True, null=False, blank=False)
