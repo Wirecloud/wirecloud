@@ -141,7 +141,8 @@ STYLED_ELEMENTS_FILES = (
 
 
 BASE_CSS = (
-    'css/font-awesome.css',
+    'css/fontawesome.min.css',
+    'css/fontawesome-v4-shims.min.css',
     'css/base/utils.scss',
     'css/base/body.scss',
     'css/base/fade.css',
@@ -676,7 +677,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def populate_component(self, wirecloud_user, log, vendor, name, version, wgt):
 
         if not CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).exists():
-            updated = True
             log('Installing the %(name)s widget... ' % {"name": name}, 1, ending='')
             added, component = install_component(WgtFile(wgt), executor_user=wirecloud_user, users=[wirecloud_user])
             IWidget.objects.filter(widget__resource__vendor=vendor, widget__resource__short_name=name).exclude(widget__resource__version=version).update(widget=component.widget, widget_uri=component.local_uri_part)
