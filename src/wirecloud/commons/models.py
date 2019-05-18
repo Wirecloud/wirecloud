@@ -21,7 +21,6 @@ from uuid import uuid4
 
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from markdown.extensions.toc import slugify
 
@@ -55,7 +54,6 @@ class OrganizationManager(models.Manager):
         return org
 
 
-@python_2_unicode_compatible
 class Organization(models.Model):
 
     user = models.OneToOneField(User)
@@ -79,7 +77,6 @@ class TeamManager(models.Manager):
         return self.get(organization=organization, name=name)
 
 
-@python_2_unicode_compatible
 class Team(models.Model):
     """
     Teams are a generic way of categorizing users to apply permissions, or

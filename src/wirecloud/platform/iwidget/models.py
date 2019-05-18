@@ -18,14 +18,12 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.fields import JSONField
 from wirecloud.platform.wiring.utils import remove_widget_from_wiring_status
 
 
-@python_2_unicode_compatible
 class IWidget(models.Model):
 
     widget = models.ForeignKey('platform.Widget', on_delete=models.SET_NULL, verbose_name=_('Widget'), null=True)

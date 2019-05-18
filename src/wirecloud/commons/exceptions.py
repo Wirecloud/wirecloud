@@ -17,10 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.encoding import python_2_unicode_compatible
 
-
-@python_2_unicode_compatible
 class HttpBadCredentials(Exception):
 
     def __init__(self, message, error_info=None):

@@ -23,7 +23,6 @@ import operator
 
 from haystack.query import SQ
 from django.conf import settings
-from django.utils.encoding import python_2_unicode_compatible
 
 
 PATTERN_FIELD_QUERY = re.compile(r"^(\w+):", re.U)
@@ -42,7 +41,6 @@ OP = {
 }
 
 
-@python_2_unicode_compatible
 class NoMatchingBracketsFound(Exception):
 
     def __init__(self, value=''):

@@ -19,8 +19,6 @@
 
 import regex
 
-from django.utils.encoding import python_2_unicode_compatible
-
 
 __all__ = ('is_valid_name', 'is_valid_vendor', 'is_valid_version')
 
@@ -32,7 +30,6 @@ VERSION_RE = regex.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9
 CONTACT_RE = regex.compile(r'([^<(\s]+(?:\s+[^<()\s]+)*)(?:\s*<([^>]*)>)?(?:\s*\(([^)]*)\))?')
 
 
-@python_2_unicode_compatible
 class TemplateParseException(Exception):
 
     def __init__(self, msg):
@@ -52,7 +49,6 @@ class ObsoleteFormatError(TemplateFormatError):
         super(ObsoleteFormatError, self).__init__('Component description uses a no longer supported format')
 
 
-@python_2_unicode_compatible
 class UnsupportedFeature(Exception):
 
     def __init__(self, msg):

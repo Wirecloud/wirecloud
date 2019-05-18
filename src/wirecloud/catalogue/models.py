@@ -24,7 +24,6 @@ from urllib.parse import urlparse
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from wirecloud.commons.fields import JSONField
@@ -32,7 +31,6 @@ from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
 
 
-@python_2_unicode_compatible
 class CatalogueResource(models.Model):
 
     RESOURCE_TYPES = ('widget', 'mashup', 'operator')

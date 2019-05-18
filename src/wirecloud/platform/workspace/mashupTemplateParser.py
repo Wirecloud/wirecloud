@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -66,7 +65,6 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=No
     return (workspace, user_workspace)
 
 
-@python_2_unicode_compatible
 class MissingDependencies(Exception):
 
     def __init__(self, missing_dependencies):

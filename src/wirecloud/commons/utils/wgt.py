@@ -24,12 +24,9 @@ from shutil import rmtree
 from urllib.request import pathname2url
 import zipfile
 
-from django.utils.encoding import python_2_unicode_compatible
-
 from wirecloud.commons.utils.template import TemplateParser
 
 
-@python_2_unicode_compatible
 class InvalidContents(Exception):
 
     def __init__(self, message, details=None):
@@ -82,7 +79,7 @@ class WgtFile(object):
     def extract_localized_files(self, file_name, output_dir):
 
         (file_root, ext) = os.path.splitext(file_name)
-        search_re = re.compile(re.escape(file_root) + '(?:.\w\w(?:-\w\w)?)?' + re.escape(ext))
+        search_re = re.compile(re.escape(file_root) + r'(?:.\w\w(?:-\w\w)?)?' + re.escape(ext))
         for name in self._zip.namelist():
             if search_re.match(name):
                 self.extract_file(name, os.path.join(output_dir, os.path.basename(name)))
