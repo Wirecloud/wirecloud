@@ -7,23 +7,21 @@
     font-style: normal;
 }
 
-.rating > .star {
+.rating > span {
     margin: 2px;
     display: inline-block;
     vertical-align: middle;
-}
 
-.rating > .star.off:before {
-    color: rgb(102, 102, 102);
-    content: "\f006";
-}
+    &.off {
+        color: rgb(102, 102, 102);
+    }
 
-.rating > .star.on:before {
-    color: $rating-on-color;
-    content: "\f005";
-}
+    &.middle {
+        color: $rating-middle-color;
+    }
 
-.rating > .star.middle:before {
-    color: $rating-middle-color;
-    content: "\f123";
+    &.on {
+        color: $rating-on-color;
+    }
+
 }

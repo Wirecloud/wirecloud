@@ -107,7 +107,8 @@
             'closebutton': function (options, tcomponents, view) {
                 var button = new se.Button({
                     plain: true,
-                    class: 'wc-remove fa fa-remove',
+                    class: 'wc-remove',
+                    iconClass: 'fas fa-times',
                     title: utils.gettext("Remove")
                 });
 
@@ -120,7 +121,8 @@
             'errorbutton': function (options, tcomponents, view) {
                 var button = new StyledElements.Button({
                     plain: true,
-                    class: 'errorbutton fa fa-warning'
+                    class: 'errorbutton',
+                    iconClass: 'fas fa-exclamation-triangle'
                 });
 
                 button.addEventListener('click', function (button) {
@@ -133,7 +135,8 @@
             },
             'menubutton': function (options, tcomponents, view) {
                 var button = new StyledElements.PopupButton({
-                    class: 'wc-menu-button fa fa-cogs',
+                    class: 'wc-menu-button',
+                    iconClass: 'fas fa-cogs',
                     plain: true,
                     title: utils.gettext("Menu")
                 });
@@ -144,7 +147,7 @@
             },
             'minimizebutton': function (options, tcomponents, view) {
                 var button = new StyledElements.Button({
-                    class: 'fa fa-minus',
+                    iconClass: 'fas fa-minus',
                     plain: true,
                     title: utils.gettext("Minimize")
                 });
@@ -284,7 +287,7 @@
 
             if (this.minimized) {
                 this.minimizebutton.setTitle(utils.gettext("Maximize"));
-                this.minimizebutton.replaceClassName("fa-minus", "fa-plus");
+                this.minimizebutton.replaceIconClassName("fa-minus", "fa-plus");
                 this.wrapperElement.classList.add('wc-minimized-widget');
                 this.wrapperElement.style.height = "";
                 privates.get(this).minimized_shape = {
@@ -293,7 +296,7 @@
                 };
             } else {
                 this.minimizebutton.setTitle(utils.gettext("Minimize"));
-                this.minimizebutton.replaceClassName("fa-plus", "fa-minus");
+                this.minimizebutton.replaceIconClassName("fa-plus", "fa-minus");
                 this.wrapperElement.classList.remove('wc-minimized-widget');
                 this.wrapperElement.style.height = this.layout.getHeightInPixels(privates.get(this).shape.height) + 'px';
                 privates.get(this).minimized_shape = null;

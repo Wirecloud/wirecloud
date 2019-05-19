@@ -54,7 +54,12 @@
                 return this.windowContent;
             }.bind(this),
             'closebutton': function (options) {
-                var button = new StyledElements.Button({plain: true, class: 'fa fa-remove', title: utils.gettext("Close")});
+                var button = new StyledElements.Button({
+                    plain: true,
+                    class: 'fa-remove',
+                    iconClass: 'fa fa-remove',
+                    title: utils.gettext("Close")
+                });
                 button.addEventListener('click', this._closeListener);
                 return button;
             }.bind(this),

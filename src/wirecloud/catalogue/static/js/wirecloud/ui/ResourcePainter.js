@@ -118,7 +118,7 @@
 
                 button = new se.Button({
                     plain: true,
-                    class: 'fa fa-home',
+                    iconClass: 'fa fa-home',
                     title: utils.gettext('Home page')
                 });
                 if (resource.homepage != null && resource.homepage !== '') {
@@ -136,7 +136,7 @@
 
                 button = new se.Button({
                     plain: true,
-                    class: 'fa fa-bug',
+                    iconClass: 'fa fa-bug',
                     title: utils.gettext('Issue tracker')
                 });
                 if (resource.issuetracker != null && resource.issuetracker !== '') {
@@ -155,7 +155,7 @@
 
                 button = new se.Button({
                     plain: true,
-                    class: 'fa fa-legal',
+                    iconClass: 'fa fa-legal',
                     title: utils.gettext('License details')
                 });
 
@@ -376,20 +376,20 @@
         // "On" stars
         for (i = 0; i < on_stars; i += 1) {
             star = document.createElement('span');
-            star.className = 'on star';
+            star.className = 'on fas fa-star';
             stars.appendChild(star);
         }
 
         if (md_star) {
             star = document.createElement('span');
-            star.className = 'middle star';
+            star.className = 'middle fas fa-star-half-alt';
             stars.appendChild(star);
         }
 
         // "Off" stars
         for (i = 0; i < Math.floor(off_stars); i += 1) {
             star = document.createElement('span');
-            star.className = 'off star';
+            star.className = 'off far fa-star';
             stars.appendChild(star);
         }
 
