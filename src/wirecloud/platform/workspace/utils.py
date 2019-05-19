@@ -34,6 +34,7 @@ import markdown
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.commons.models import Organization
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.downloader import download_http_content
@@ -103,7 +104,7 @@ def decrypt_value(value):
     try:
         value = cipher.decrypt(base64.b64decode(value))
         return json.loads(value.decode('utf8'))
-    except:
+    except Exception:
         return ''
 
 
@@ -436,7 +437,7 @@ def _get_global_workspace_data(workspaceDAO, user):
     for u in workspaceDAO.users.all():
         try:
             is_organization = u.organization is not None
-        except:
+        except Organization.DoesNotExist:
             is_organization = False
 
         data_ret['users'].append({
@@ -475,7 +476,7 @@ def _get_global_workspace_data(workspaceDAO, user):
     for operator_id, operator in data_ret['wiring'].get('operators', {}).items():
         try:
             (vendor, name, version) = operator['name'].split('/')
-        except:
+        except ValueError:
             continue
 
         try:
@@ -582,6 +583,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'readonly': iwidget.readOnly,
         'preferences': {},
         'properties': {},
+        'titlevisible': iwidget.positions['widget'].get('titlevisible', True),
     }
 
     if iwidget.widget is None or not iwidget.widget.resource.is_available_for(workspace.creator):

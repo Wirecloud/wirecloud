@@ -100,6 +100,11 @@
                 get: function () {
                     return this.model.title;
                 }
+            },
+            titlevisible: {
+                get: () => {
+                    return this.titlevisibilitybutton.hasIconClassName('fa-eye');
+                }
             }
         });
 
@@ -132,6 +137,11 @@
                 button.disable();
                 view.errorbutton = button;
                 return button;
+            },
+            'grip': (options, tcomponents, view) => {
+                view.grip = document.createElement("i");
+                view.grip.className = "fas fa-grip-vertical";
+                return view.grip;
             },
             'menubutton': function (options, tcomponents, view) {
                 var button = new StyledElements.PopupButton({
@@ -167,6 +177,19 @@
                 });
                 view.titleelement = element;
                 return element;
+            },
+            'titlevisibilitybutton': (options, tcomponents, view) => {
+                var button = new StyledElements.Button({
+                    plain: true,
+                    class: 'wc-titlevisibilitybutton',
+                    iconClass: 'fa-fw fas fa-eye-slash'
+                });
+
+                button.addEventListener('click', (button) => {
+                    view.toggleTitleVisibility(true);
+                });
+                view.titlevisibilitybutton = button;
+                return button;
             },
             'bottomresizehandle': function (options, tcomponents, view) {
                 var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
@@ -228,6 +251,7 @@
         layout.addWidget(this, true);
 
         this.setMinimizeStatus(model.minimized, false, true);
+        this.setTitleVisibility(model.titlevisible, false);
 
         // Mark as draggable
         this.draggable = new Wirecloud.ui.WidgetViewDraggable(this);
@@ -315,6 +339,44 @@
             }
 
             return this;
+        },
+
+        /**
+         * Changes title visibility for this widget
+         *
+         * @param {Boolean} newStatus new title visibility status for this widget
+         * @param {Boolean} persistence save change on server
+         */
+        setTitleVisibility: function setTitleVisibility(newStatus, persistence) {
+
+            if (newStatus === this.titlevisible) {
+                return this;
+            }
+
+            let p = persistence ? this.model.setTitleVisibility(newStatus) : Promise.resolve();
+
+            return p.then(
+                () => {
+                    this.titlevisibilitybutton.setTitle(newStatus ? utils.gettext("Hide title") : utils.gettext("Show title"));
+                    this.wrapperElement.classList.toggle('wc-titled-widget', newStatus);
+                    if (newStatus) {
+                        this.titlevisibilitybutton.replaceIconClassName("fa-eye-slash", "fa-eye");
+                    } else {
+                        this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
+                    }
+                },
+                () => {
+                }
+            );
+        },
+
+        /**
+         * Toggles title visibility
+         *
+         * @param {Boolean} persistence save change on server
+         */
+        toggleTitleVisibility: function toggleTitleVisibility(persistence) {
+            this.setTitleVisibility(!this.titlevisible, persistence);
         },
 
         setPosition: function setPosition(position) {
@@ -564,12 +626,16 @@
     var privates = new WeakMap();
 
     var update_buttons = function update_buttons() {
-        this.closebutton.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('close');
-        this.menubutton.enabled = this.tab.workspace.editing;
+        var editing = this.tab.workspace.editing;
+        this.grip.classList.toggle("disabled", !editing && (this.layout == null || !(this.layout instanceof Wirecloud.ui.FreeLayout)));
 
-        this.bottomresizehandle.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('resize');
-        this.leftresizehandle.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('resize');
-        this.rightresizehandle.enabled = (this.model.volatile || this.tab.workspace.editing) && this.model.isAllowed('resize');
+        this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
+        this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close');
+        this.menubutton.enabled = editing;
+
+        this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
+        this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
+        this.rightresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
     };
 
     var update_className = function update_className() {

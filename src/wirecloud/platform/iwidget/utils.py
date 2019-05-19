@@ -29,10 +29,10 @@ def parse_value_from_text(info, value):
     elif info['type'] == 'number':
         try:
             return float(value)
-        except:
+        except ValueError:
             try:
                 return float(info['default'])
-            except:
+            except ValueError:
                 return 0
     elif info['type'] in ('list', 'text', 'password'):
         return str(value)
@@ -121,6 +121,7 @@ def update_position(iwidget, key, data):
     update_position_value(position, data, 'left')
     update_position_value(position, data, 'zIndex')
     update_boolean_value(position, data, 'minimized')
+    update_boolean_value(position, data, 'titlevisible')
     update_boolean_value(position, data, 'fulldragboard')
 
 
@@ -169,6 +170,7 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
             'height': 0,
             'width': 0,
             'minimized': False,
+            'titlevisible': True,
             'fulldragboard': False,
         },
         'icon': {

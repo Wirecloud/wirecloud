@@ -55,7 +55,8 @@
         data = utils.merge({
             title: meta.title,
             preferences: {},
-            properties: {}
+            properties: {},
+            titlevisible: true
         }, data);
 
         this.pending_events = [];
@@ -90,6 +91,7 @@
             },
             status: STATUS.CREATED,
             tab: tab,
+            titlevisible: !!data.titlevisible,
             on_preremovetab: on_preremovetab.bind(this)
         });
 
@@ -225,6 +227,15 @@
             shape: {
                 get: function () {
                     return utils.clone(privates.get(this).shape);
+                }
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Boolean}
+             */
+            titlevisible: {
+                get: () => {
+                    return privates.get(this).titlevisible;
                 }
             }
         });
@@ -506,6 +517,43 @@
             // TODO: is minimized
             utils.update(privates.get(this).shape, shape);
             return this;
+        },
+
+        /**
+         * Set title visibility on persistence
+         *
+         * @returns {Promise}
+         */
+        setTitleVisibility: function setTitleVisibilitye(visibility) {
+            visibility = !!visibility;
+
+            if (this.volatile) {
+                throw new TypeError();
+            } else {
+                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                    workspace_id: this.tab.workspace.id,
+                    tab_id: this.tab.id,
+                    iwidget_id: this.id
+                });
+
+                var payload = {
+                    titlevisible: visibility
+                };
+
+                return Wirecloud.io.makeRequest(url, {
+                    method: 'POST',
+                    requestHeaders: {'Accept': 'application/json'},
+                    contentType: 'application/json',
+                    postBody: JSON.stringify(payload)
+                }).then((response) => {
+                    if (response.status === 204) {
+                        privates.get(this).titlevisible = visibility;
+                        return Promise.resolve(this);
+                    } else {
+                        return Promise.reject(new Error("Unexpected response from server"));
+                    }
+                });
+            }
         },
 
         /**
