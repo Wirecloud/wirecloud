@@ -256,6 +256,22 @@
         return text ? addLabel.call(this, text) : removeLabel.call(this);
     };
 
+    /**
+     * Returns `true` if this Button is usig the CSS class name
+     * `className` for the icon element, otherwise `false`
+     *
+     * @param {String} className
+     *      A class name to search for.
+     * @returns {Boolean}
+     *      `true` if this Button is usig the CSS class name `className` for the
+     *      icon element, otherwise `false`
+     */
+    Button.prototype.hasIconClassName = function hasIconClassName(className) {
+        className = className == null ? "" : className.toString().trim();
+
+        return this.icon != null && this.icon.classList.contains(className);
+    };
+
     Button.prototype.addIconClassName = function addIconClassName(classList) {
         if (!Array.isArray(classList)) {
             classList = classList == null ? "" : classList.toString().trim();

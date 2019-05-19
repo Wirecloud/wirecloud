@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -341,6 +342,30 @@
                 spyOn(element.wrapperElement, 'focus');
                 expect(element.focus()).toBe(element);
                 expect(element.wrapperElement.focus.calls.count()).toBe(1);
+            });
+
+        });
+
+        describe("hasIconClassName(className)", () => {
+
+            it("should return false for undefined class name", () => {
+                let element = new StyledElements.Button();
+                expect(element.hasIconClassName()).toBe(false);
+            });
+
+            it("should return false for empty class name", () => {
+                let element = new StyledElements.Button();
+                expect(element.hasIconClassName("")).toBe(false);
+            });
+
+            it("should return false if the class name is not present", () => {
+                let element = new StyledElements.Button({class: "fas fa-bars", iconClass: "icon"});
+                expect(element.hasIconClassName("fa-bars")).toBe(false);
+            });
+
+            it("should return true if the class name is present", () => {
+                let element = new StyledElements.Button({iconClass: "fas fa-bars"});
+                expect(element.hasIconClassName("fa-bars")).toBe(true);
             });
 
         });
