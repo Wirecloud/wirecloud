@@ -36,10 +36,22 @@
                 }).toThrowError(TypeError);
             });
 
-            it("should throw a TypeError if the passed version is not valid", function () {
-                expect(function () {
-                    new Wirecloud.Version('invalid version');
-                }).toThrowError(TypeError);
+            describe("should throw a TypeError if the passed version is not valid", function () {
+                const test = (version) => {
+                    it(version, () => {
+                        expect(() => {
+                            new Wirecloud.Version(version);
+                        }).toThrowError(TypeError);
+                    });
+                };
+
+                test('invalid version');
+                test('1abc');
+                test('1.01');
+                test('1.0a01');
+                test('1.0b01');
+                test('1.0rc01');
+                test('1.0rcc1');
             });
 
         });
@@ -65,7 +77,11 @@
 
                 it("(1.0 < 1.0.1)", test.bind(null, new Wirecloud.Version("1.0"), new Wirecloud.Version("1.0.1")));
                 it("(1.0a1 < 1.0)", test.bind(null, new Wirecloud.Version("1.0a1"), new Wirecloud.Version("1.0")));
+                it("(1.0a2 < 1.0a10)", test.bind(null, new Wirecloud.Version("1.0a2"), new Wirecloud.Version("1.0a10")));
+                it("(1.0a2 < 1.0b1)", test.bind(null, new Wirecloud.Version("1.0a2"), new Wirecloud.Version("1.0b1")));
+                it("(1.0b2 < 1.0b10)", test.bind(null, new Wirecloud.Version("1.0b2"), new Wirecloud.Version("1.0b10")));
                 it("(1.0b9 < 1.0rc1)", test.bind(null, new Wirecloud.Version("1.0b9"), new Wirecloud.Version("1.0rc1")));
+                it("(1.0rc2 < 1.0rc10)", test.bind(null, new Wirecloud.Version("1.0rc2"), new Wirecloud.Version("1.0rc10")));
                 it("(1.0rc9 < 1.0-dev)", test.bind(null, new Wirecloud.Version("1.0rc9"), new Wirecloud.Version("1.0-dev")));
                 it("(1.0-dev < 1.0)", test.bind(null, new Wirecloud.Version("1.0-dev"), new Wirecloud.Version("1.0")));
             });
@@ -78,6 +94,8 @@
                 it("(1.0 == 1.0.0)", test.bind(null, new Wirecloud.Version("1.0"), new Wirecloud.Version("1.0.0")));
                 it("(1.0.0 == 1.0)", test.bind(null, new Wirecloud.Version("1.0.0"), new Wirecloud.Version("1.0")));
                 it("(1.0a1 == 1.0.0a1)", test.bind(null, new Wirecloud.Version("1.0a1"), new Wirecloud.Version("1.0.0a1")));
+                it("(1.0b1 == 1.0.0b1)", test.bind(null, new Wirecloud.Version("1.0b1"), new Wirecloud.Version("1.0.0b1")));
+                it("(1.0rc1 == 1.0.0rc1)", test.bind(null, new Wirecloud.Version("1.0rc1"), new Wirecloud.Version("1.0.0rc1")));
                 it("(1.0-dev == 1.0.0-dev)", test.bind(null, new Wirecloud.Version("1.0-dev"), new Wirecloud.Version("1.0.0-dev")));
                 it("(1.0-deva == 1.0.0-deva)", test.bind(null, new Wirecloud.Version("1.0-deva"), new Wirecloud.Version("1.0.0-deva")));
             });
@@ -88,8 +106,11 @@
                 };
 
                 it("(1.0 > 0.9)", test.bind(null, new Wirecloud.Version("1.0"), new Wirecloud.Version("0.9")));
+                it("(1.0a10 > 1.0a9)", test.bind(null, new Wirecloud.Version("1.0a10"), new Wirecloud.Version("1.0a9")));
                 it("(1.0b1 > 1.0a9)", test.bind(null, new Wirecloud.Version("1.0b1"), new Wirecloud.Version("1.0a9")));
+                it("(1.0b10 > 1.0b9)", test.bind(null, new Wirecloud.Version("1.0b10"), new Wirecloud.Version("1.0b9")));
                 it("(1.0rc1 > 1.0b9)", test.bind(null, new Wirecloud.Version("1.0rc1"), new Wirecloud.Version("1.0b9")));
+                it("(1.0rc10 > 1.0rc9)", test.bind(null, new Wirecloud.Version("1.0rc10"), new Wirecloud.Version("1.0rc9")));
                 it("(1.0 > 1.0rc9)", test.bind(null, new Wirecloud.Version("1.0"), new Wirecloud.Version("1.0rc9")));
                 it("(1.0rc1 > 1.0rc1-dev)", test.bind(null, new Wirecloud.Version("1.0rc1"), new Wirecloud.Version("1.0rc1-dev")));
                 it("(1.0-dev > 1.0b9)", test.bind(null, new Wirecloud.Version("1.0-dev"), new Wirecloud.Version("1.0b9")));
