@@ -504,12 +504,13 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     &:before {
         animation: se-busy-spin 2s infinite linear;
         content: "\f110";
-        font: normal normal normal 14px / 1 FontAwesome;
+        font-family: "Font Awesome 5 Free";
         font-size: 120%;
         position: absolute;
         text-align: center;
         top: 50%;
         left: 50%;
+        font-weight: 900;
     }
 
     & > * {
