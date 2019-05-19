@@ -29,21 +29,13 @@
 }
 
 .se-select-arrow {
-    height:   $line-height-base;
+    height:      $line-height-base;
+    line-height: $line-height-base;
     position: absolute;
     right:    6px;
     top:      $padding-vertical-base;
     padding:  0px 5px;
     z-index:  2;
-}
-
-.se-select-arrow:before {
-    font-family: FontAwesome;
-    font-weight: normal;
-    font-style: normal;
-    display: inline-block;
-    text-decoration: inherit;
-    content: "\f0d7";
 }
 
 .se-select > select {

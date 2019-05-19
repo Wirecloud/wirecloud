@@ -69,7 +69,7 @@
         this.addClassName(options.class);
 
         var div =  document.createElement("div");
-        div.className = "se-select-arrow";
+        div.className = "se-select-arrow fas fa-caret-down";
         this.inputElement = document.createElement("select");
 
         if (options.name) {
