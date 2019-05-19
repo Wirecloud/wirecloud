@@ -634,7 +634,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.create_workspace(mashup='Published Workspace')
         with self.edit_mode as edit_session:
             iwidget = self.widgets[0]
-            close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.fa-remove'))
+            close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.wc-remove'))
             self.assertTrue(close_button.is_disabled)
 
             with edit_session.wiring_view as wiring:
