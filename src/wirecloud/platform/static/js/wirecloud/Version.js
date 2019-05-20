@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?(-dev(.+)?)?$/; // Hangs if it doesn't match the RE
+    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((a|b|rc)([1-9]\d*))?(-dev(.+)?)?$/; // Hangs if it doesn't match the RE
 
     /**
      * Creates a Version object. This kind of instance allows you to:
@@ -48,7 +48,7 @@
                 throw new TypeError(utils.interpolate(msg, {version: version}));
             }
 
-            this.array = groups[1].split('.').map(function (x) { return parseInt(x, 10); });
+            this.array = groups[1].split('.').map((x) => {return parseInt(x, 10);});
             /**
              * Pre-version part of the version, `null` if this version has not a
              * pre-version part.
@@ -60,12 +60,22 @@
              */
             this.pre_version = groups[2] != null ? groups[2] : null;
             /**
+             * Pre-version part of the version in array format, `null` if this
+             * version has not a pre-version part.
+             *
+             * **Example**: ["a", 1]
+             *
+             * @name Wirecloud.Version#pre_version_array
+             * @type {Array}
+             */
+            this.pre_version_array = groups[2] != null ? [groups[3], parseInt(groups[4], 10)] : null;
+            /**
              * Indicates if this version is a development version
              *
              * @name Wirecloud.Version#dev
              * @type {Boolean}
              */
-            this.dev = groups[3] != null;
+            this.dev = groups[5] != null;
             /**
              * Dev user part of the version, `null` if this version has not a
              * dev user part.
@@ -75,7 +85,7 @@
              * @name Wirecloud.Version#devtext
              * @type {String}
              */
-            this.devtext = groups[4];
+            this.devtext = groups[6];
             /**
              * String representing this version.
              *
@@ -129,18 +139,18 @@
             }
         }
 
-        pre_version1 = this.pre_version;
+        pre_version1 = this.pre_version_array;
         if (pre_version1 == null) {
-            pre_version1 = "z";
+            pre_version1 = ["z", 1];
         }
-        pre_version2 = version.pre_version;
+        pre_version2 = version.pre_version_array;
         if (pre_version2 == null) {
-            pre_version2 = "z";
+            pre_version2 = ["z", 1];
         }
 
-        if (pre_version1 < pre_version2) {
+        if (pre_version1[0] < pre_version2[0] || (pre_version1[0] === pre_version2[0]) && pre_version1[1] < pre_version2[1]) {
             return -1;
-        } else if (pre_version1 > pre_version2) {
+        } else if (pre_version1[0] > pre_version2[0] || (pre_version1[0] === pre_version2[0]) && pre_version1[1] > pre_version2[1]) {
             return 1;
         } else {
             if (this.dev === version.dev) {
