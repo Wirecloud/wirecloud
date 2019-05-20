@@ -341,13 +341,16 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 }
 
 /* File buttons */
-.se-btn > input[type="file"] {
+.se-btn > input[type="file"],
+.se-btn > input[type="file"]::-webkit-file-upload-button {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     opacity: 0;
+    height: 100%;
+    width: 100%;
     cursor: pointer;
 }
 
@@ -501,12 +504,13 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     &:before {
         animation: se-busy-spin 2s infinite linear;
         content: "\f110";
-        font: normal normal normal 14px / 1 FontAwesome;
+        font-family: "Font Awesome 5 Free";
         font-size: 120%;
         position: absolute;
         text-align: center;
         top: 50%;
         left: 50%;
+        font-weight: 900;
     }
 
     & > * {

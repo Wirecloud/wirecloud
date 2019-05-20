@@ -256,12 +256,6 @@
         return text ? addLabel.call(this, text) : removeLabel.call(this);
     };
 
-    Button.prototype.clearClassName = function clearClassName() {
-        this.wrapperElement.className = 'se-btn';
-
-        return this;
-    };
-
     Button.prototype.addIconClassName = function addIconClassName(classList) {
         if (!Array.isArray(classList)) {
             classList = classList == null ? "" : classList.toString().trim();

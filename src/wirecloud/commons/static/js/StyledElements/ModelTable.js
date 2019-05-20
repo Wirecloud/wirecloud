@@ -180,7 +180,7 @@
             var priv = privates.get(this);
             clearTable.call(this);
             var message = document.createElement('div');
-            message.className = "alert alert-danger";
+            message.className = "alert alert-danger se-model-table-msg";
             message.textContent = error;
             priv.tableBody.appendChild(message);
         }

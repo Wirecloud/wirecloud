@@ -321,6 +321,11 @@
     });
     StyledElements.StyledButton = StyledElements.Button; // Alias for backward compatibility
 
+    /* FileButton */
+    StyledElements.FileButton = extend(RealStyledElements.FileButton, {
+        Tooltip: StyledElements.Tooltip
+    });
+
     /* ToggleButton */
     StyledElements.ToggleButton = extend(RealStyledElements.ToggleButton, {
         Tooltip: StyledElements.Tooltip
