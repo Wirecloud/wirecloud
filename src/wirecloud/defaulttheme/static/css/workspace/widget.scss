@@ -37,8 +37,16 @@
     width: 100%;
 
     .wc-workspace-editing &,
-    .wc-floating-widget > & {
+    .wc-floating-widget > &,
+    .wc-titled-widget > & {
         display: flex;
+    }
+
+    & > i {
+        vertical-align: baseline;
+        line-height: inherit;
+        margin-right: 5px;
+        color: rgb(136, 136, 136);
     }
 
     & > h4 {
@@ -54,7 +62,7 @@
         transition: color 1s ease-in;
     }
 
-    & .se-btn.disabled {
+    & .disabled {
         display: none;
     }
 }
