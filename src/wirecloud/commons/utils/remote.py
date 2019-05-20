@@ -936,7 +936,7 @@ class WiringComponentTester(BaseComponentTester):
 
     def change_version(self, version):
         super(WiringComponentTester, self).change_version(version)
-        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.version ==  "v" + version)
+        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.version == "v" + version)
         return self
 
 
@@ -1138,7 +1138,7 @@ class WiringEndpointTester(WebElementTester):
 
     def change_position(self, endpoint):
         new_index = endpoint.index
-        actions = ActionChains(self.testcase.driver).click_and_hold(self.element).move_to_element(endpoint.element).release().perform()
+        ActionChains(self.testcase.driver).click_and_hold(self.element).move_to_element(endpoint.element).release().perform()
 
         WebDriverWait(self.testcase.driver, 3).until(lambda driver: self.index == new_index)
         return self
@@ -1677,7 +1677,7 @@ class MarketplaceViewTester(object):
             if window_menus != 1:
                 self.testcase.fail('Error: marketplace was not deleted')
 
-            self.testcase.assertNotEqual(self.get_current_marketplace_name(), market)
+            WebDriverWait(self.testcase.driver, 3).until(lambda driver: self.get_current_marketplace_name() != market)
 
     def search(self, keyword):
         catalogue_base_element = self.wait_catalogue_ready()
