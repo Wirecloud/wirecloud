@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -524,7 +525,7 @@
          *
          * @returns {Promise}
          */
-        setTitleVisibility: function setTitleVisibilitye(visibility) {
+        setTitleVisibility: function setTitleVisibility(visibility) {
             visibility = !!visibility;
 
             if (this.volatile) {

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -1211,6 +1211,75 @@
                     width: 2,
                     height: 3
                 });
+            });
+
+        });
+
+        describe("setTitleVisibility(visibility)", () => {
+
+            it("throws a TypeError exception for volatile widgets", () => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1/1",
+                    title: "old title",
+                    volatile: true
+                });
+
+                expect(() => {
+                    widget.setTitleVisibility(true)
+                }).toThrowError(TypeError);
+            });
+
+            it("updates titlevisible property on the server", (done) => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    titlevisible: false
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("POST");
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+                expect(widget.titlevisible).toBe(false);
+
+                let p = widget.setTitleVisibility(true);
+                p.then(
+                    (value) => {
+                        expect(widget.titlevisible).toBe(true);
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("handles unexpected responses", (done) => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1"
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("POST");
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200
+                        });
+                    });
+                });
+
+                let p = widget.setTitleVisibility(true)
+                p.then(
+                    (value) => {
+                        fail("success callback called");
+                    },
+                    (error) => {
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        done();
+                    }
+                );
             });
 
         });
