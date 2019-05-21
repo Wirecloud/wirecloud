@@ -123,7 +123,7 @@
         this.wrapperElement.setAttribute('data-id', this.id);
 
         if (this.workspace.model.isAllowed("edit")) {
-            var button = new se.PopupButton({
+            this.prefbutton = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 class: 'icon-tab-menu',
                 iconClass: 'fa fa-caret-up',
@@ -132,8 +132,10 @@
                     position: ['top-left', 'top-right']
                 }
             });
-            button.popup_menu.append(new ns.WorkspaceTabViewMenuItems(this));
-            button.insertInto(this.tabElement);
+            this.prefbutton.popup_menu.append(new ns.WorkspaceTabViewMenuItems(this));
+            this.prefbutton.insertInto(this.tabElement);
+            this.workspace.addEventListener('editmode', update_pref_button.bind(this));
+            update_pref_button.call(this);
         }
 
         this.dragboard = new ns.WorkspaceTabViewDragboard(this);
@@ -325,6 +327,10 @@
     var on_removewidget = function on_removewidget(widget) {
         privates.get(this).widgets.splice(privates.get(this).widgets.indexOf(widget), 1);
         this.initialMessage.hidden = this.widgets.length > 0;
+    };
+
+    var update_pref_button = function update_pref_button() {
+        this.prefbutton.enabled = this.workspace.editing;
     };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

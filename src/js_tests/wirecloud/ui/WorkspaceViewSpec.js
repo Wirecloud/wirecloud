@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -899,6 +899,26 @@
 
                 expect(view.model).toBe(null);
                 expect(view.editing).toBe(false);
+            });
+
+            it("should slide out component panel when leaving edit mode", () => {
+                let workspace = create_workspace();
+                workspace.isAllowed.and.returnValue(true);
+                view.loadWorkspace(workspace);
+
+                // Enable edit mode
+                view.editButton.click();
+
+                // Open component panel
+                spyOn(view.layout, "slideOut");
+
+                view.walletButton.active = true;
+                view.walletButton.click();
+
+                // Close edit mode
+                view.editButton.click();
+
+                expect(view.layout.slideOut).toHaveBeenCalledWith();
             });
 
         });

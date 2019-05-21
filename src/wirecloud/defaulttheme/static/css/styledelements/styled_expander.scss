@@ -23,11 +23,11 @@
     display: inline-block;
 }
 
-.se-expander > .panel-heading > .icon-expand.active:before {
+.se-expander > .panel-heading > .icon-expand.active > .se-icon:before {
     content: "\f0d7";
 }
 
-.se-expander > .panel-heading > .icon-expand:before {
+.se-expander > .panel-heading > .icon-expand > .se-icon:before {
     content: "\f0da";
 }
 
