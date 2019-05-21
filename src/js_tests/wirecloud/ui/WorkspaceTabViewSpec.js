@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -76,6 +76,7 @@
         workspace.removeEventListener = jasmine.createSpy("removeEventListener");
 
         return {
+            addEventListener: jasmine.createSpy("addEventListener"),
             buildAddWidgetButton: jasmine.createSpy("buildAddWidgetButton").and.returnValue(),
             model: workspace
         };
@@ -481,6 +482,24 @@
                 expect(tab.widgetsById).toEqual({
                     "9": jasmine.any(ns.WidgetView)
                 });
+            });
+
+            it("should handle edit mode change events", () => {
+                let workspace = create_workspace();
+                workspace.model.isAllowed.and.returnValue(true);
+                let model = create_tab({
+                    widgets: [{id: "9"}, {id: "5"}]
+                });
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                expect(tab.prefbutton.enabled).toBe(false);
+
+                workspace.editing = true;
+                callEventListener(workspace, "editmode", true);
+
+                expect(tab.prefbutton.enabled).toBe(true);
             });
 
         });
