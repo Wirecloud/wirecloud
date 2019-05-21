@@ -283,7 +283,6 @@ def get_resource_data(resource, user, request=None):
         longdescription = resource_info['description']
 
     return {
-        'id': resource.pk,
         'vendor': resource.vendor,
         'name': resource.short_name,
         'version': resource.version,

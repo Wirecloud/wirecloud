@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -40,7 +41,13 @@
                     details = new StyledElements.Notebook();
                     details.addEventListener('changed', function (notebook, oldTab, newTab, context) {
                         if (context == null || context.init !== true) {
-                            var new_status = this.mainview.buildStateData();
+                            let new_status;
+                            if ('mainview' in this.mainview) {
+                                new_status = this.mainview.mainview.buildStateData();
+                            } else {
+                                new_status = this.mainview.buildStateData();
+                            }
+
                             Wirecloud.HistoryManager.pushState(new_status);
                         }
                         Wirecloud.dispatchEvent('viewcontextchanged');

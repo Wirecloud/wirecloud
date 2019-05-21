@@ -41,7 +41,7 @@
         this.appendChild(this.alternatives);
 
         resource_extra_context = {
-            'mainbutton': function (options, context, resource) {
+            'mainbutton': (options, context, resource) => {
                 var button, local_catalogue_view;
 
                 local_catalogue_view = Wirecloud.UserInterfaceManager.views.myresources;
@@ -50,18 +50,18 @@
                         'class': 'btn-danger',
                         'text': utils.gettext('Uninstall')
                     });
-                    button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue));
+                    button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this));
                 } else {
                     button = new StyledElements.Button({
                         'class': 'btn-success',
                         'text': utils.gettext('Install')
                     });
 
-                    button.addEventListener('click', local_catalogue_view.createUserCommand('install', resource, this.catalogue));
+                    button.addEventListener('click', local_catalogue_view.createUserCommand('install', resource, this));
                 }
                 button.addClassName('mainbutton');
                 return button;
-            }.bind(this)
+            }
         };
 
         this.viewsByName = {
@@ -155,22 +155,6 @@
 
     CatalogueView.prototype.ui_commands = {};
 
-    CatalogueView.prototype.ui_commands.install = function install(resource, catalogue_source) {
-        return function () {
-            Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.addComponent({url: resource.description_url}).then(
-                    () => {
-                        this.refresh_search_results();
-
-                        catalogue_source.home();
-                        catalogue_source.refresh_search_results();
-                    },
-                    logerror
-                )
-            );
-        }.bind(this);
-    };
-
     CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource, options) {
         options = utils.merge({
             history: "push"
@@ -206,31 +190,6 @@
                     onComplete.bind(this)
                 );
             }
-        }.bind(this);
-    };
-
-    CatalogueView.prototype.ui_commands.delete = function (resource) {
-        var doRequest, msg;
-
-        doRequest = function () {
-            Wirecloud.UserInterfaceManager.monitorTask(
-                this.catalogue.deleteResource(resource).then(
-                    () => {
-                        this.home();
-                        this.refresh_search_results();
-                    },
-                    logerror
-                )
-            );
-        };
-
-        // First ask the user
-        msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") component?');
-        msg = utils.interpolate(msg, resource, true);
-        return function () {
-            var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
-            dialog.setHandler(doRequest.bind(this));
-            dialog.show();
         }.bind(this);
     };
 

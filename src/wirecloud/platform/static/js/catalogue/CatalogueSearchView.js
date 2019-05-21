@@ -59,7 +59,7 @@
             'scope': 'all',
             'requestFunc': this._search.bind(this),
             'processFunc': function (elements, search_info) {
-                var i, msg;
+                var msg;
 
                 this.resource_list.clear();
 
@@ -71,9 +71,11 @@
                     }));
                 }
 
-                for (i = 0; i < elements.length; i += 1) {
-                    this.resource_list.appendChild(this.resource_painter.paint(elements[i]));
-                }
+                elements.forEach((element) => {
+                    element.version = new Wirecloud.Version(element.version);
+                    element.group_id = element.vendor_name;
+                    this.resource_list.appendChild(this.resource_painter.paint(element));
+                });
             }.bind(this)
         });
         this.source.addEventListener('optionsChanged', function (source, options) {
