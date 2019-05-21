@@ -120,9 +120,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_remove_tab_from_workspace(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
-        self.find_tab(title="Tab 1").remove()
 
         with self.edit_mode as edit_session:
+            self.find_tab(title="Tab 1").remove()
             with edit_session.wiring_view as wiring:
                 self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
 
