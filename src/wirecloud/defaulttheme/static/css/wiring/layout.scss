@@ -1,6 +1,9 @@
 @import "compass/css3/user-interface";
 @import "variables";
 
+.wc-workspace-wiring {
+    padding: 0px $margin-horizontal-small;
+}
 
 .wiring-diagram {
     background-color: $wiring-content-bg;

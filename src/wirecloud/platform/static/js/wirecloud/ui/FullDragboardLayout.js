@@ -50,11 +50,11 @@
     };
 
     FullDragboardLayout.prototype.getWidthInPixels = function getWidthInPixels(cells) {
-        return this.getWidth();
+        return null;
     };
 
     FullDragboardLayout.prototype.getHeightInPixels = function getHeightInPixels(cells) {
-        return this.getHeight();
+        return null;
     };
 
     FullDragboardLayout.prototype.fromPixelsToHCells = function fromPixelsToHCells(pixels) {
@@ -70,11 +70,11 @@
     };
 
     FullDragboardLayout.prototype.getColumnOffset = function getColumnOffset(column) {
-        return this.dragboard.tab.wrapperElement.getBoundingClientRect().left + this.dragboardLeftMargin;
+        return 0;
     };
 
     FullDragboardLayout.prototype.getRowOffset = function getRowOffset(row) {
-        return this.dragboard.tab.wrapperElement.getBoundingClientRect().top;
+        return 0;
     };
 
     FullDragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {

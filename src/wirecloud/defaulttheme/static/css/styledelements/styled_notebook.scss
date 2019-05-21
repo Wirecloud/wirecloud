@@ -200,9 +200,14 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     overflow: hidden;
 }
 
+.se-notebook-top > .se-notebook-tabs-wrapper {
+    margin-top: $margin-vertical-small;
+}
+
 .se-notebook-bottom {
 
     > .se-notebook-tabs-wrapper {
+        margin-bottom: $margin-vertical-small;
         margin-top: -1px;
         order: 2;
 
@@ -228,18 +233,6 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
         border-bottom: 1px solid $nav-tabs-border-color;
     }
 
-}
-
-.se-notebook-content-wrapper:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    pointer-events: none;
-    box-shadow: inset 0px 10px 10px -10px $body-bg, inset 0px -10px 10px -10px $body-bg;
 }
 
 $arrow-width: floor(($tabs-wrapper-height - 1) / 2);

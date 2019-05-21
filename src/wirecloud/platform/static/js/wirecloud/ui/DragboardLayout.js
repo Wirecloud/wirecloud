@@ -175,6 +175,11 @@
         return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
     };
 
+    DragboardLayout.prototype.updatePosition = function updatePosition(widget, element) {
+        element.style.left = this.getColumnOffset(widget.position.x) + "px";
+        element.style.top = this.getRowOffset(widget.position.y) + "px";
+    };
+
     DragboardLayout.prototype.padWidth = function padWidth(width) {
         return width;
     };
@@ -220,6 +225,7 @@
     });
 
     Object.defineProperty(DragboardLayout.prototype, "dragboardLeftMargin", {
+        configurable: true,
         get: function () {
             return this.dragboard.leftMargin;
         }
