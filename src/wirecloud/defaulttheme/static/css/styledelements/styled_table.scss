@@ -69,23 +69,25 @@
 .se-model-table-headrow > .se-model-table-cell.ascending:before {
     float: right;
     content: "\f0d8";
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
     font-weight: normal;
     font-style: normal;
     display: inline-block;
     text-decoration: inherit;
     margin-left: 8px;
+    font-weight: 900;
 }
 
 .se-model-table-headrow > .se-model-table-cell.descending:before {
     float: right;
     content: "\f0d7";
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
     font-weight: normal;
     font-style: normal;
     display: inline-block;
     text-decoration: inherit;
     margin-left: 8px;
+    font-weight: 900;
 }
 
 .se-model-table-body {
