@@ -605,8 +605,13 @@
                 data.top = this.previousPosition.y;
                 data.left = this.previousPosition.x;
                 data.zIndex = this.previousPosition.z;
-                data.width = this.previousShape.width;
-                data.height = this.previousShape.height;
+                if (this.previousShape != null) {
+                    data.width = this.previousShape.width;
+                    data.height = this.previousShape.height;
+                } else {
+                    data.width = this.shape.width;
+                    data.height = this.shape.height;
+                }
                 data.fulldragboard = true;
             }
 
