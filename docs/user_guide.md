@@ -104,6 +104,17 @@ available on the _My Resources_ view.
 
 <img src="../images/user_guide/browsing_marketplace/upload_dialog.png" srcset="../images/user_guide/browsing_marketplace/upload_dialog.png 2x" alt="MAC upload dialog"/>
 
+## Browsing existing open source Widgets on GitHub
+
+Many widgets are freely available to download from GitHub. The following search query will retrieve all repositories tagged `wirecloud-widget`
+
+```text
+https://github.com/search?q=wirecloud-widget&type=Repositories
+```
+
+The [appendix](widgets.md) lists more details and links to the latest version of a series of over eighty open-source widgets available on GitHub. You can
+also `git clone` and build the latest development sources directly.
+
 ## Building a new mashup
 
 If you followed the instructions documented in the "[Creating a new workspace](#creating-a-new-workspace)" section, you
@@ -360,7 +371,7 @@ _Collapse_ option that appears in the component menu:
 <img src="../images/user_guide/wiring/minimize_option.png" srcset="../images/user_guide/wiring/minimize_option.png 2x" alt="*Collapse* option"/>
 <img src="../images/user_guide/wiring/collapsed_operators.png" srcset="../images/user_guide/wiring/collapsed_operators.png 2x" alt="Collapsed operators"/>
 
-#### Cloncluding our example
+#### Concluding our example
 
 Continue wiring the rest of the widgets in your mashup following your intuition, the documentation and the contextual
 help offered by each widget/operator. Anyway, just in case you have difficulties, you can see the final result in the
