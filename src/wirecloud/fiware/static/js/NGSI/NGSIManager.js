@@ -122,7 +122,7 @@
                 options.request_headers = {};
             }
             options.request_headers['FIWARE-OAuth-Token'] = 'true';
-            options.request_headers['FIWARE-OAuth-Header-Name'] = 'X-Auth-Token';
+            options.request_headers['FIWARE-OAuth-Header-Name'] = 'Authorization';
         }
 
         NGSI.Connection.call(this, url, options);
