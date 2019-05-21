@@ -11,16 +11,10 @@
     background: white;
 }
 
-.wc-workspace {
-    .se-offcanvas {
-        padding-bottom: ($margin-vertical-base / 2);
-    }
-}
-
 .wc-workspace-tab-content {
-    padding-left: 0px;
-    padding-right: 0px;
-    overflow-x: visible;
+    padding-left: $margin-horizontal-small;
+    padding-right: $margin-horizontal-small;
+    overflow-x: hidden;
     overflow-y: auto;
 
     &.dragging {

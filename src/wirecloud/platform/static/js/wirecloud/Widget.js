@@ -177,6 +177,7 @@
                 value: !!data.volatile
             }
         });
+        this.fulldragboard = data.fulldragboard;
 
         this.wrapperElement = document.createElement('iframe');
         this.wrapperElement.className = "wc-widget-content";

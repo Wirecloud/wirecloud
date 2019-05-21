@@ -35,8 +35,10 @@ $line-height-large:        floor($font-size-large * $line-height-factor-large) !
 $line-height-small:        floor($font-size-small * $line-height-factor-small) !default; // ~18px
 $line-height-xs:           floor($font-size-xs * $line-height-factor-xs) !default;       // ~16px
 
-$margin-vertical-base: 10px !default;
-$margin-horizontal-small: 5px !default;
+$margin-vertical-base:     10px !default;
+$margin-vertical-small:     3px !default;
+$margin-horizontal-base:   12px !default;
+$margin-horizontal-small:   5px !default;
 
 $padding-vertical-base:     6px !default;
 $padding-horizontal-base:  12px !default;
