@@ -104,8 +104,9 @@ button::-moz-focus-inner, input::-moz-focus-inner {
         text-shadow: none;
     }
 
-    .se-icon {
+    > .se-icon {
         position: relative;
+        line-height: $line-height-base;
     }
 
     .se-icon + span {
