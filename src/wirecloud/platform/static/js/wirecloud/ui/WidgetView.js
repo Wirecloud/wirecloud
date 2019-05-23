@@ -647,7 +647,9 @@
 
     var update_buttons = function update_buttons() {
         var editing = this.tab.workspace.editing;
-        this.grip.classList.toggle("disabled", !editing && (this.layout == null || !(this.layout instanceof Wirecloud.ui.FreeLayout)));
+        if (this.grip) {
+            this.grip.classList.toggle("disabled", !this.draggable.canDrag(null, {widget: this}));
+        }
 
         this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
         this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close');
