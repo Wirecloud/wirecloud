@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -50,7 +51,7 @@
     };
 
     WidgetViewDraggable.prototype.canDrag = function canDrag(draggable, context) {
-        return context.widget.model.isAllowed('move') && !(context.widget.layout instanceof Wirecloud.ui.FullDragboardLayout);
+        return (context.widget.model.volatile || context.widget.tab.workspace.editing) && context.widget.model.isAllowed('move') && !(context.widget.layout instanceof Wirecloud.ui.FullDragboardLayout);
     };
 
     WidgetViewDraggable.prototype.ondragstart = function ondragstart(draggable, context) {
@@ -78,21 +79,11 @@
     };
 
     WidgetViewDraggable.prototype.ondrag = function ondrag(event, draggable, context, xDelta, yDelta) {
-        var x, y, clientX, clientY;
-
         context.widget.wrapperElement.style.left = (context.x + xDelta) + 'px';
         context.widget.wrapperElement.style.top = (context.y + yDelta) + 'px';
 
-        x = context.x + xDelta + context.xOffset;
-        y = context.y + yDelta + context.yOffset;
-
-        if ('touches' in event) {
-            clientX = event.touches[0].clientX;
-            clientY = event.touches[0].clientY;
-        } else {
-            clientX = event.clientX;
-            clientY = event.clientY;
-        }
+        const x = context.x + xDelta + context.xOffset;
+        const y = context.y + yDelta + context.yOffset;
 
         // Check if the mouse is over a tab
         if (context.tab != null) {
