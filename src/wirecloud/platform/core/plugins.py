@@ -238,7 +238,7 @@ STYLED_ELEMENTS_CSS = (
 
 
 BASE_PATH = os.path.dirname(__file__)
-WORKSPACE_BROWSER_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.2.wgt')
+WORKSPACE_BROWSER_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.3.wgt')
 INITIAL_HOME_DASHBOARD_FILE = os.path.join(BASE_PATH, 'initial', 'initial_home_dashboard.wgt')
 MARKDOWN_VIEWER_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-viewer_0.1.1.wgt')
 MARKDOWN_EDITOR_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-editor_0.1.0.wgt')
@@ -681,11 +681,13 @@ class WirecloudCorePlugin(WirecloudPlugin):
             added, component = install_component(WgtFile(wgt), executor_user=wirecloud_user, users=[wirecloud_user])
             IWidget.objects.filter(widget__resource__vendor=vendor, widget__resource__short_name=name).exclude(widget__resource__version=version).update(widget=component.widget, widget_uri=component.local_uri_part)
             log('DONE', 1)
+            return True
+        return False
 
     def populate(self, wirecloud_user, log):
         updated = False
 
-        self.populate_component(wirecloud_user, log, "WireCloud", "workspace-browser", "0.1.2", WORKSPACE_BROWSER_FILE)
+        updated |= self.populate_component(wirecloud_user, log, "WireCloud", "workspace-browser", "0.1.3", WORKSPACE_BROWSER_FILE)
 
         if not Workspace.objects.filter(creator__username="wirecloud", name="home").exists():
             updated = True
@@ -694,8 +696,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 create_workspace(wirecloud_user, f, public=True, searchable=False)
             log('DONE', 1)
 
-        self.populate_component(wirecloud_user, log, "CoNWeT", "markdown-viewer", "0.1.1", MARKDOWN_VIEWER_FILE)
-        self.populate_component(wirecloud_user, log, "CoNWeT", "markdown-editor", "0.1.0", MARKDOWN_EDITOR_FILE)
+        updated |= self.populate_component(wirecloud_user, log, "CoNWeT", "markdown-viewer", "0.1.1", MARKDOWN_VIEWER_FILE)
+        updated |= self.populate_component(wirecloud_user, log, "CoNWeT", "markdown-editor", "0.1.0", MARKDOWN_EDITOR_FILE)
 
         if not Workspace.objects.filter(creator__username="wirecloud", name="landing").exists():
             updated = True
