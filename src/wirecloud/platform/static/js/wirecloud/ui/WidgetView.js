@@ -255,6 +255,7 @@
         } else {
             layout = model.layout === 0 ? tab.dragboard.baseLayout : tab.dragboard.freeLayout
         }
+        layout.addWidget(this, true);
 
         // Mark as draggable
         this.draggable = new Wirecloud.ui.WidgetViewDraggable(this);
@@ -292,7 +293,6 @@
 
         this.tab.workspace.addEventListener('editmode', update.bind(this));
         model.addEventListener('remove', on_remove.bind(this));
-        layout.addWidget(this, true);
     };
 
     // =========================================================================
@@ -324,6 +324,7 @@
                     height: this.layout.adaptHeight(this.wrapperElement.offsetHeight + 'px').inLU,
                     width: privates.get(this).shape.width
                 };
+                this.setTitleVisibility(true, false);
             } else {
                 this.minimizebutton.setTitle(utils.gettext("Minimize"));
                 this.minimizebutton.replaceIconClassName("fa-plus", "fa-minus");
@@ -650,7 +651,7 @@
     var update_buttons = function update_buttons() {
         var editing = this.tab.workspace.editing;
         if (this.grip) {
-            this.grip.classList.toggle("disabled", !this.draggable.canDrag(null, {widget: this}));
+            this.grip.classList.toggle("disabled", this.draggable == null || !this.draggable.canDrag(null, {widget: this}));
         }
 
         if (this.titlevisibilitybutton) {
@@ -667,7 +668,7 @@
     var update_className = function update_className() {
         this.wrapperElement.classList.toggle('wc-missing-widget', this.model.missing);
         this.wrapperElement.classList.toggle('wc-floating-widget', this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout);
-        this.wrapperElement.classList.toggle('wc-moveable-widget', this.draggable.canDrag(null, {widget: this}));
+        this.wrapperElement.classList.toggle('wc-moveable-widget', this.draggable != null && this.draggable.canDrag(null, {widget: this}));
     };
 
     var update = function update() {
