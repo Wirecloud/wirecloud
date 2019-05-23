@@ -70,7 +70,7 @@
                 },
                 set: function (new_layout) {
                     privates.get(this).layout = new_layout;
-                    update_className.call(this);
+                    update.call(this);
                 }
             },
             minimized: {
@@ -230,19 +230,19 @@
         this.wrapperElement.classList.add("wc-widget");
         this.wrapperElement.setAttribute('data-id', model.id);
 
-        model.addEventListener('change', function (widget, changes) {
+        model.addEventListener('change', (widget, changes) => {
             if (changes.indexOf('title') !== -1) {
                 this.titleelement.setTextContent(widget.title);
             }
 
             if (changes.indexOf('meta') !== -1) {
-                update_className.call(this);
+                update.call(this);
             }
-        }.bind(this));
+        });
 
-        model.addEventListener('unload', function (widget) {
+        model.addEventListener('unload', (widget) => {
             this.unhighlight();
-        }.bind(this));
+        });
 
         this.heading = this.wrapperElement.getElementsByClassName('wc-widget-heading')[0];
 
@@ -255,15 +255,14 @@
         } else {
             layout = model.layout === 0 ? tab.dragboard.baseLayout : tab.dragboard.freeLayout
         }
-        layout.addWidget(this, true);
-
-        this.setMinimizeStatus(model.minimized, false, true);
-        this.setTitleVisibility(model.titlevisible, false);
 
         // Mark as draggable
         this.draggable = new Wirecloud.ui.WidgetViewDraggable(this);
 
-        update_className.call(this);
+        // Init minimized and title visibility options
+        this.setMinimizeStatus(model.minimized, false, true);
+        this.setTitleVisibility(model.titlevisible, false);
+
         this.model.logManager.addEventListener('newentry', on_add_log.bind(this));
 
         this.wrapperElement.addEventListener('transitionend', function (e) {
@@ -291,9 +290,9 @@
             this.repaint();
         }.bind(this));
 
-        this.tab.workspace.addEventListener('editmode', update_buttons.bind(this));
+        this.tab.workspace.addEventListener('editmode', update.bind(this));
         model.addEventListener('remove', on_remove.bind(this));
-        update_buttons.call(this);
+        layout.addWidget(this, true);
     };
 
     // =========================================================================
@@ -345,6 +344,7 @@
                 this.layout._notifyResizeEvent(this, this.shape.width, oldHeight, this.shape.width,  this.shape.height, false, persist, reserveSpace);
             }
 
+            update.call(this);
             return this;
         },
 
@@ -569,6 +569,7 @@
             this.model.fulldragboard = enable;
 
             dragboard.update([this.model.id]);
+            update.call(this);
         },
 
         toggleLayout: function toggleLayout() {
@@ -614,6 +615,7 @@
                 }
                 data.fulldragboard = true;
             }
+            data.titlevisible = this.titlevisible;
 
             return data;
         },
@@ -651,7 +653,9 @@
             this.grip.classList.toggle("disabled", !this.draggable.canDrag(null, {widget: this}));
         }
 
-        this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
+        if (this.titlevisibilitybutton) {
+            this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
+        }
         this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close');
         this.menubutton.enabled = editing;
 
@@ -661,17 +665,14 @@
     };
 
     var update_className = function update_className() {
-        if (this.model.missing) {
-            this.wrapperElement.classList.add('wc-missing-widget');
-        } else {
-            this.wrapperElement.classList.remove('wc-missing-widget');
-        }
+        this.wrapperElement.classList.toggle('wc-missing-widget', this.model.missing);
+        this.wrapperElement.classList.toggle('wc-floating-widget', this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout);
+        this.wrapperElement.classList.toggle('wc-moveable-widget', this.draggable.canDrag(null, {widget: this}));
+    };
 
-        if (this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout) {
-            this.wrapperElement.classList.add('wc-floating-widget');
-        } else {
-            this.wrapperElement.classList.remove('wc-floating-widget');
-        }
+    var update = function update() {
+        update_className.call(this);
+        update_buttons.call(this);
     };
 
     var update_position = function update_position() {
