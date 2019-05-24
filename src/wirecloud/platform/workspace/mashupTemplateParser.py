@@ -233,16 +233,17 @@ def fillWorkspaceUsingTemplate(workspace, template):
             iwidget_data = {
                 "widget": widget.uri,
                 "title": resource.get('title'),
-                "left": int(position.get('x')),
-                "top": int(position.get('y')),
+                "left": float(position.get('x')),
+                "top": float(position.get('y')),
                 "icon_left": 0,
                 "icon_top": 0,
                 "zIndex": int(position.get('z')),
-                "width": int(rendering.get('width')),
-                "height": int(rendering.get('height')),
+                "width": float(rendering.get('width')),
+                "height": float(rendering.get('height')),
                 "layout": int(rendering.get('layout')),
                 "minimized": rendering['minimized'],
                 "fulldragboard": rendering['fulldragboard'],
+                "titlevisible": rendering['titlevisible'],
             }
 
             iwidget = SaveIWidget(iwidget_data, user, tab, commit=False)
