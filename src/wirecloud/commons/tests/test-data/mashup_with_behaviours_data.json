@@ -63,7 +63,8 @@
                         "height": "10",
                         "layout": "0",
                         "fulldragboard": false,
-                        "minimized": false
+                        "minimized": false,
+                        "titlevisible": true
                     }
                 },
                 {
@@ -89,7 +90,8 @@
                         "height": "10",
                         "layout": "0",
                         "fulldragboard": true,
-                        "minimized": true
+                        "minimized": true,
+                        "titlevisible": true
                     }
                 }
             ]

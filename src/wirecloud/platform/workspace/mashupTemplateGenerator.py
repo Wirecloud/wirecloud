@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -155,6 +156,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             'layout': str(iwidget.layout),
             'fulldragboard': bool(iwidget.positions['widget']['fulldragboard']),
             'minimized': bool(iwidget.positions['widget']['minimized']),
+            'titlevisible': bool(iwidget.positions['widget'].get('titlevisible', True)),
         },
     }
 
