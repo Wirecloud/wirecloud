@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -125,6 +126,7 @@ def write_mashup_tree(doc, resources, options):
             rendering = etree.SubElement(resource, 'rendering')
             addAttributes(iwidget['rendering'], rendering, ('height', 'width', 'layout'), required=True)
             addAttributes(iwidget['rendering'], rendering, ('minimized', 'fulldragboard'), default='false', type='boolean')
+            addAttributes(iwidget['rendering'], rendering, ('titlevisible',), default='true', type='boolean')
 
             addPreferenceValues(resource, iwidget['preferences'])
 

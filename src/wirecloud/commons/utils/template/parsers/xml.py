@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -561,6 +562,7 @@ class ApplicationMashupTemplateParser(object):
                         'width': str(rendering.get('width')),
                         'height': str(rendering.get('height')),
                         'layout': str(rendering.get('layout')),
+                        'titlevisible': rendering.get('titlevisible', 'true').lower() == 'true',
                     },
                 }
 

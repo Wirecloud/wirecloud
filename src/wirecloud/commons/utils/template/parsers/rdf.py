@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -723,8 +724,9 @@ class RDFTemplateParser(object):
                         'width': self._get_field(WIRE, 'renderingWidth', rendering),
                         'height': self._get_field(WIRE, 'renderingHeight', rendering),
                         'layout': self._get_field(WIRE_M, 'layout', rendering),
-                        'fulldragboard': self._get_field(WIRE_M, 'fullDragboard', rendering).lower() == 'true',
-                        'minimized': self._get_field(WIRE_M, 'minimized', rendering).lower() == 'true',
+                        'fulldragboard': self._get_field(WIRE_M, 'fullDragboard', rendering, required=False).lower() == 'true',
+                        'minimized': self._get_field(WIRE_M, 'minimized', rendering, required=False).lower() == 'true',
+                        'titlevisible': self._get_field(WIRE_M, 'titlevisible', rendering, default="true", required=False).lower() == 'true',
                     },
                 }
 

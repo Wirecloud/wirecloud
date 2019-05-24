@@ -751,6 +751,7 @@
                                 <xs:attribute name="layout" type="xs:string" use="required" />
                                 <xs:attribute name="height" type="xs:string" use="required" />
                                 <xs:attribute name="fulldragboard" type="xs:boolean" use="optional" />
+                                <xs:attribute name="titlevisible" type="xs:boolean" use="optional" />
                             </xs:complexType>
                         </xs:element>
                     </xs:choice>

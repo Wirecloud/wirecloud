@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -249,6 +250,7 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
             graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(iwidget['rendering']['layout']))))
             graph.add((rend, WIRE_M['fullDragboard'], rdflib.Literal(str(iwidget['rendering']['fulldragboard']))))
             graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(iwidget['rendering']['minimized']))))
+            graph.add((rend, WIRE_M['titlevisible'], rdflib.Literal(str(iwidget['rendering']['titlevisible']))))
 
             # iWidget preferences
             for pref_name, pref in iwidget.get('preferences', {}).items():

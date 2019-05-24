@@ -565,7 +565,8 @@ class TemplateUtilsTestCase(TestCase):
                                 'height': '10',
                                 'layout': '0',
                                 'fulldragboard': False,
-                                'minimized': False
+                                'minimized': False,
+                                'titlevisible': True
                             }
                         },
                         {
@@ -592,7 +593,8 @@ class TemplateUtilsTestCase(TestCase):
                                 'height': '10',
                                 'layout': '0',
                                 'fulldragboard': True,
-                                'minimized': True
+                                'minimized': True,
+                                'titlevisible': True
                             }
                         }
                     ]
@@ -769,7 +771,8 @@ class TemplateUtilsTestCase(TestCase):
                                 'height': '10',
                                 'layout': '0',
                                 'fulldragboard': False,
-                                'minimized': False
+                                'minimized': False,
+                                'titlevisible': False
                             }
                         },
                         {
@@ -795,7 +798,8 @@ class TemplateUtilsTestCase(TestCase):
                                 'height': '10',
                                 'layout': '0',
                                 'fulldragboard': True,
-                                'minimized': True
+                                'minimized': True,
+                                'titlevisible': False
                             }
                         }
                     ]
@@ -1003,7 +1007,8 @@ class TemplateUtilsTestCase(TestCase):
                                 'height': '10',
                                 'layout': '0',
                                 'fulldragboard': False,
-                                'minimized': False
+                                'minimized': False,
+                                'titlevisible': False
                             }
                         },
                         {
@@ -1029,7 +1034,8 @@ class TemplateUtilsTestCase(TestCase):
                                 'height': '10',
                                 'layout': '0',
                                 'fulldragboard': True,
-                                'minimized': True
+                                'minimized': True,
+                                'titlevisible': True
                             }
                         }
                     ]

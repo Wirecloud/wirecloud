@@ -516,7 +516,6 @@
             </wire-m:hasiWidgetPreference>
             <wire-m:hasiWidgetRendering>
               <wire-m:iWidgetRendering rdf:nodeID="N0926434a489349b495e73a29ae85f37c">
-                <wire-m:minimized>False</wire-m:minimized>
                 <wire:renderingHeight>10</wire:renderingHeight>
                 <wire:renderingWidth>10</wire:renderingWidth>
                 <wire-m:fullDragboard>False</wire-m:fullDragboard>
