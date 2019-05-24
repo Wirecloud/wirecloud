@@ -28,16 +28,19 @@
 }
 
 .wc-widget-heading {
-    cursor: -webkit-grab;
-    cursor: -moz-grab;
-    cursor: grab;
     position: relative;
     flex-grow: 0;
     display: none;
     width: 100%;
 
+    .wc-moveable-widget > & {
+        cursor: -webkit-grab;
+        cursor: -moz-grab;
+        cursor: grab;
+    }
+
     .wc-workspace-editing &,
-    .wc-floating-widget > &,
+    .wc-minimized-widget &,
     .wc-titled-widget > & {
         display: flex;
     }
@@ -95,8 +98,7 @@
         background: $widget-footer-bg;
     }
 
-    .wc-workspace-editing &,
-    .wc-floating-widget > & {
+    .wc-workspace-editing & {
         display: block;
     }
 }
