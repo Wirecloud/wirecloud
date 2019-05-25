@@ -46,61 +46,61 @@ msgstr ""
 "マッシュアップ・アプリケーションのコンポーネントを %(file_name)s からイン"
 "ポートできませんでした"
 
-#: models.py:45
+#: models.py:44
 msgid "Vendor"
 msgstr "ベンダー"
 
-#: models.py:46
+#: models.py:45
 msgid "Name"
 msgstr "名前"
 
-#: models.py:47
+#: models.py:46
 msgid "Version"
 msgstr "バージョン"
 
-#: models.py:48
+#: models.py:47
 msgid "Type"
 msgstr "タイプ"
 
-#: models.py:52
+#: models.py:51
 msgid "Available to all users"
-msgstr "すべてのユーザーが利用可能"
+msgstr "すべてのユーザが利用可能"
 
-#: models.py:53
+#: models.py:52
 msgid "Users"
 msgstr "ユーザ"
 
-#: models.py:54
+#: models.py:53
 msgid "Groups"
 msgstr "グループ"
 
-#: models.py:57
+#: models.py:62
 msgid "templateURI"
 msgstr "templateURI"
 
-#: models.py:59
+#: models.py:64
 msgid "popularity"
 msgstr "人気"
 
-#: models.py:61
+#: models.py:66
 msgid "JSON description"
 msgstr "JSON の説明"
 
-#: utils.py:158 utils.py:163
+#: utils.py:160 utils.py:165
 #, python-format
 msgid "Unable to process component description file: %s"
 msgstr "コンポーネント記述ファイルを処理できません: %s"
 
-#: utils.py:161
+#: utils.py:163
 msgid "Unable to process component description file"
 msgstr "コンポーネント記述ファイルを処理できません"
 
-#: utils.py:173
+#: utils.py:175
 #, python-format
 msgid "Missing contents file: %(file_name)s."
 msgstr "コンテンツ・ファイルがありません: %(file_name)s."
 
-#: utils.py:179
+#: utils.py:181
 #, python-format
 msgid ""
 "%(file_name)s was not encoded using the specified charset (%(charset)s "
@@ -109,48 +109,69 @@ msgstr ""
 "%(file_name)s は、指定された文字セットを使用してエンコードされませんでした "
 "(ウィジェット記述子ファイルに従った %(charset)s)."
 
-#: views.py:85 views.py:220
-msgid "Missing parameter: template_uri or file"
-msgstr "パラメータがありません: template_uri または file"
+#: views.py:77
+msgid "Missing component file in the request"
+msgstr "リクエストにコンポーネント・ファイルがありません"
 
-#: views.py:93
+#: views.py:88
+msgid "The uploaded file is not a zip file"
+msgstr "アップロードされたファイルは zip ファイルではありません"
+
+#: views.py:94
 msgid "Resource already exists"
 msgstr "リソースは既に存在します"
+
+#: views.py:99
+msgid ""
+"Error writing the resource into the filesystem. Please, contact the server "
+"administrator."
+msgstr ""
+"ファイル・システムへのリソースの書き込み中にエラーが発生しました。"
+"サーバ管理者に連絡してください。"
 
 #: views.py:112
 #, python-format
 msgid "Invalid pagenum value: %s"
 msgstr "無効な pagenum 値: %s"
 
-#: views.py:118
+#: views.py:130
 #, python-format
 msgid "Invalid maxresults value: %s"
 msgstr "無効な maxresults 値: %s"
 
-#: views.py:122
+#: views.py:136
 #, python-format
 msgid "Orderby value not supported: %s"
 msgstr "Orderby 値はサポートされていません: %s"
 
-#: views.py:130
+#: views.py:140
 #, python-format
 msgid "Scope value not supported: %s"
 msgstr "スコープ値はサポートされていません: %s"
 
-#: views.py:133
+#: views.py:149
+#, python-format
+msgid "Scope value not supported: %s"
+msgstr "スコープ値はサポートされていません: %s"
+
+#: views.py:152
 msgid "Forbidden"
 msgstr "禁止"
 
-#: views.py:168
+#: views.py:188 views.py:198
 #, python-format
 msgid "user %(username)s is not the owner of the resource %(resource_id)s"
 msgstr "ユーザ %(username)s はリソース %(resource_id)s の所有者ではありません"
 
 #: views.py:240
+msgid "Missing parameter: template_uri or file"
+msgstr "パラメータがありません : template_uri または file"
+
+#: views.py:260
 msgid "Error opening the changelog file"
 msgstr "変更履歴ファイルを開く際にエラーが発生しました"
 
-#: views.py:266
+#: views.py:286
 #, python-format
 msgid ""
 "You can find the userguide of this component in this external <a target="
@@ -159,6 +180,6 @@ msgstr ""
 "このコンポーネントのユーザ・ガイドは、この<a target=\"_blank\" href=\"%s\">"
 "リンク</a>で見つけることができます"
 
-#: views.py:282
+#: views.py:302
 msgid "Error opening the userguide file"
 msgstr "ユーザ・ガイドのファイルを開く際にエラーが発生しました"

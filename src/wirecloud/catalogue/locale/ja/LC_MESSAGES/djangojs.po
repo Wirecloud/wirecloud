@@ -97,15 +97,15 @@ msgid "No image available"
 msgstr ""
 "使用可能なイメージはありません"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:67
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:74
 msgid "Main Info"
 msgstr "メイン情報"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:71
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:78
 msgid "Documentation"
 msgstr "ドキュメンテーション"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:92
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:99
 msgid "Change Log"
 msgstr "変更ログ"
 
