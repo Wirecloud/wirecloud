@@ -39,7 +39,8 @@ try:
     from social_django.utils import BACKENDS, get_backend, load_strategy
     FIWARE_SOCIAL_AUTH_BACKEND = get_backend(BACKENDS, 'fiware')(load_strategy())
 
-    IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_django' in settings.INSTALLED_APPS
+    IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_django' in settings.INSTALLED_APPS \
+        and getattr(settings, 'IDM_BACKEND', '') == 'fiware'
 except:
     IDM_SUPPORT_ENABLED = False
 
