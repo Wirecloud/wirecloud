@@ -187,6 +187,9 @@ class FiWarePlugin(WirecloudPlugin):
         return files
 
     def get_proxy_processors(self):
+        if not IDM_SUPPORT_ENABLED:
+            return ()
+
         return ('wirecloud.fiware.proxy.IDMTokenProcessor',)
 
     def get_django_template_context_processors(self):
