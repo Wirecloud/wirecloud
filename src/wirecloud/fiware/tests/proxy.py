@@ -19,13 +19,14 @@
 
 import json
 import time
+from importlib import import_module
 from unittest.mock import MagicMock, Mock, patch
 from urllib.parse import parse_qsl
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.proxy.views import proxy_request
@@ -48,7 +49,6 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
 
     @classmethod
     def setUpClass(cls):
-
         super(ProxyTestCase, cls).setUpClass()
 
         def echo_headers_response(method, url, *args, **kwargs):
@@ -81,12 +81,26 @@ class ProxyTestCase(WirecloudTestCase, TestCase):
         self.normuser_mock = Mock()
         self.normuser_mock.social_auth.get.side_effect = Exception
 
+        from wirecloud.proxy.views import get_request_proxy_processors
+        proc_list = list(get_request_proxy_processors())
+
+        mod = import_module('wirecloud.fiware.proxy')
+        token_proc = getattr(mod, 'IDMTokenProcessor')()
+        proc_list.append(token_proc)
+
+        proxy_processors = MagicMock(
+            return_value=tuple(proc_list)
+        )
         self.patcher = patch('wirecloud.fiware.proxy.IDM_SUPPORT_ENABLED', new=True)
         self.patcher.start()
+
+        self.patcher_proc = patch('wirecloud.proxy.views.get_request_proxy_processors', new=proxy_processors)
+        self.patcher_proc.start()
         super(ProxyTestCase, self).setUp()
 
     def tearDown(self):
         self.patcher.stop()
+        self.patcher_proc.stop()
         super(ProxyTestCase, self).tearDown()
 
     def read_response(self, response):
