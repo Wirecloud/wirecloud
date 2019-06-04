@@ -79,7 +79,7 @@ class Command(BaseCommand):
         groups_string = options['groups'].strip()
 
         if redeploy is False and public is False and users_string == '' and groups_string == '':
-            raise CommandError(_('You must use at least one of the following flags: --redeploy, --users, --groups or --public '))
+            raise CommandError(_('You must use at least one of the following flags: --redeploy, --users, --groups or --public'))
 
         if not options['redeploy']:
 

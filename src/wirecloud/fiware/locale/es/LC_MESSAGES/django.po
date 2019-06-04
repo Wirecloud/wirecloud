@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.2\n"
+"Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 12:56+0200\n"
-"PO-Revision-Date: 2016-03-31 13:09+0200\n"
+"POT-Creation-Date: 2019-06-04 10:35+0200\n"
+"PO-Revision-Date: 2019-06-04 10:36+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 2.2\n"
 
 #: plugins.py:129
 msgid "FIWARE version"
@@ -39,11 +39,11 @@ msgstr ""
 "Indica si el usuario actual tiene asociado un token de autenticación de "
 "FIWARE que puede ser usado para acceder a otros servicios de FIWARE"
 
-#: proxy.py:128
+#: proxy.py:126
 msgid "IdM support not enabled"
 msgstr "Integración con el IdM no activado"
 
-#: proxy.py:130
+#: proxy.py:128
 msgid ""
 "IdM tokens can only be inyected on Ajax requests coming from authorized "
 "widgets"
@@ -51,15 +51,15 @@ msgstr ""
 "Los tokens del IdM solo pueden ser inyectados en las peticiones Ajax que "
 "venga de widget autorizados"
 
-#: proxy.py:143
+#: proxy.py:138
 msgid "Current user has not an active FIWARE profile"
 msgstr "El usuario actual no tiene un perfil de FIWARE activo"
 
-#: proxy.py:147
+#: proxy.py:142
 msgid "Workspace owner has not an active FIWARE profile"
 msgstr "El dueño del entorno de trabajo no tiene un perfil de FIWARE activo"
 
-#: proxy.py:151
+#: proxy.py:146
 msgid "Invalid FIWARE OAuth token source"
 msgstr "Token OAuth de FIWARE inválido"
 
@@ -79,7 +79,7 @@ msgstr "Descripción"
 #: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:5
 #: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:6
 msgid "Description:"
-msgstr "Descripción"
+msgstr "Descripción:"
 
 #: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:5
 msgid "Value:"

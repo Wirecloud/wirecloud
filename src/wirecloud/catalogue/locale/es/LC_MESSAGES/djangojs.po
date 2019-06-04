@@ -6,9 +6,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.2\n"
+"Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 12:44+0200\n"
+"POT-Creation-Date: 2019-06-04 10:19+0200\n"
 "PO-Revision-Date: 2016-09-21 01:34+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
@@ -92,15 +92,15 @@ msgstr "N/A"
 msgid "No image available"
 msgstr "Imagen no disponible"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:67
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:74
 msgid "Main Info"
 msgstr "General"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:71
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:78
 msgid "Documentation"
 msgstr "Documentación"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:92
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:99
 msgid "Change Log"
 msgstr "Registro de cambios"
 
