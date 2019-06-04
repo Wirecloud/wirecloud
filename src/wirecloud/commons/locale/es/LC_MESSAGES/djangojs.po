@@ -6,9 +6,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.2\n"
+"Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 12:49+0200\n"
+"POT-Creation-Date: 2019-06-04 10:28+0200\n"
 "PO-Revision-Date: 2018-10-24 12:55+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
@@ -123,7 +123,7 @@ msgstr "Iniciar"
 #: static/js/wirecloud/ui/HTMLWindowMenu.js:48
 #: static/js/wirecloud/ui/MACSelectionWindowMenu.js:45
 #: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:145
-#: static/js/wirecloud/ui/WindowMenu.js:57
+#: static/js/wirecloud/ui/WindowMenu.js:61
 msgid "Close"
 msgstr "Cerrar"
 

@@ -180,7 +180,7 @@ class ResourceCollection(Resource):
                         fail = owners.users.filter(id=request.user.id).exists() is False
 
                     if fail:
-                        return build_error_response(request, 403, _('You are not allowed allow to install components to non-owned organizations'))
+                        return build_error_response(request, 403, _('You are not allowed to install components to non-owned organizations'))
 
         try:
 

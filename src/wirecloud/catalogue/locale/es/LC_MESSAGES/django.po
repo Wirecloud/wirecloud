@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WireCloud 1.2\n"
+"Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 12:25+0200\n"
-"PO-Revision-Date: 2016-09-15 15:25+0200\n"
+"POT-Creation-Date: 2019-06-04 10:19+0200\n"
+"PO-Revision-Date: 2019-06-04 10:21+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -17,88 +17,88 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 2.2\n"
 
-#: management/commands/addtocatalogue.py:83
+#: management/commands/addtocatalogue.py:82
 msgid ""
 "You must use at least one of the following flags: --redeploy, --users, --"
-"groups or --public "
+"groups or --public"
 msgstr ""
 "Al menos una de las siguientes opciones tiene que ser usada: --redeploy, --"
 "users, --groups ó --public"
 
-#: management/commands/addtocatalogue.py:100
+#: management/commands/addtocatalogue.py:99
 #, python-format
 msgid "Failed to read from %(file_name)s"
 msgstr "Error al leer desde el fichero %(file_name)s"
 
-#: management/commands/addtocatalogue.py:120
+#: management/commands/addtocatalogue.py:112
 #, python-format
 msgid "Successfully imported \"%(name)s\" from \"%(file_name)s\""
 msgstr "Importado \"%(name)s\" desde \"%(file_name)s\" de forma correcta"
 
-#: management/commands/addtocatalogue.py:122
+#: management/commands/addtocatalogue.py:114
 #, python-format
 msgid "Failed to import the mashable application component from %(file_name)s"
 msgstr ""
 "Fallo la importación del componente de aplicación mashable desde "
 "%(file_name)s"
 
-#: models.py:47
+#: models.py:44
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: models.py:48
+#: models.py:45
 msgid "Name"
 msgstr "Nombre"
 
-#: models.py:49
+#: models.py:46
 msgid "Version"
 msgstr "Versión"
 
-#: models.py:50
+#: models.py:47
 msgid "Type"
 msgstr "Tipo"
 
-#: models.py:54
+#: models.py:51
 msgid "Available to all users"
 msgstr "Disponible para todos los usuarios"
 
-#: models.py:55
+#: models.py:52
 msgid "Users"
 msgstr "Usuarios"
 
-#: models.py:56
+#: models.py:53
 msgid "Groups"
 msgstr "Grupos"
 
-#: models.py:59
+#: models.py:62
 msgid "templateURI"
 msgstr "templateURI"
 
-#: models.py:61
+#: models.py:64
 msgid "popularity"
 msgstr "popularidad"
 
-#: models.py:63
+#: models.py:66
 msgid "JSON description"
 msgstr "Descripción en JSON"
 
-#: utils.py:158 utils.py:163
+#: utils.py:160 utils.py:165
 #, python-format
 msgid "Unable to process component description file: %s"
 msgstr "Fue imposible procesar el fichero de descripción del componente: %s"
 
-#: utils.py:161
+#: utils.py:163
 msgid "Unable to process component description file"
 msgstr "Fue imposible procesar el fichero de descripción del componente"
 
-#: utils.py:173
+#: utils.py:175
 #, python-format
 msgid "Missing contents file: %(file_name)s."
 msgstr "Falta el fichero con los contenidos: %(file_name)s."
 
-#: utils.py:179
+#: utils.py:181
 #, python-format
 msgid ""
 "%(file_name)s was not encoded using the specified charset (%(charset)s "
@@ -107,48 +107,64 @@ msgstr ""
 "El fichero %(file_name)s no está codificado usando el conjunto de caracteres "
 "indicado (%(charset)s según el fichero de descripción del widget)."
 
-#: views.py:87 views.py:222
-msgid "Missing parameter: template_uri or file"
-msgstr "Faltan el parámetro template_uri o file"
+#: views.py:77
+msgid "Missing component file in the request"
+msgstr "Falta el fichero con los contenidos en la petición"
 
-#: views.py:95
+#: views.py:88
+msgid "The uploaded file is not a zip file"
+msgstr "El fichero subido no es un fichero zip"
+
+#: views.py:94
 msgid "Resource already exists"
 msgstr "Ya existe el recurso"
 
-#: views.py:114
+#: views.py:99
+msgid ""
+"Error writing the resource into the filesystem. Please, contact the server "
+"administrator."
+msgstr ""
+"Error guardando el recurso en el sistema de ficheros. Por favor, contacta "
+"con el administrador del servidor."
+
+#: views.py:130
 #, python-format
 msgid "Invalid pagenum value: %s"
 msgstr "Valor inválido para pagenum: %s"
 
-#: views.py:120
+#: views.py:136
 #, python-format
 msgid "Invalid maxresults value: %s"
 msgstr "Valor inválido para maxresults: %s"
 
-#: views.py:124
+#: views.py:140
 #, python-format
 msgid "Orderby value not supported: %s"
 msgstr "Valor para el parámetro orderby no soportado: %s"
 
-#: views.py:132
+#: views.py:149
 #, python-format
 msgid "Scope value not supported: %s"
 msgstr "Valor para el parámetro scope no soportado: %s"
 
-#: views.py:135
+#: views.py:152
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: views.py:170
+#: views.py:188 views.py:198
 #, python-format
 msgid "user %(username)s is not the owner of the resource %(resource_id)s"
 msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
 
-#: views.py:242
+#: views.py:240
+msgid "Missing parameter: template_uri or file"
+msgstr "Faltan el parámetro template_uri o file"
+
+#: views.py:260
 msgid "Error opening the changelog file"
 msgstr "Error abriendo el fichero de registro de cambios"
 
-#: views.py:268
+#: views.py:286
 #, python-format
 msgid ""
 "You can find the userguide of this component in this external <a target="
@@ -157,6 +173,6 @@ msgstr ""
 "Puedes encontrar la documentación de este recurso in este <a target=\"_blank"
 "\" href=\"%s\">enlace externo</a>"
 
-#: views.py:284
+#: views.py:302
 msgid "Error opening the userguide file"
 msgstr "Error abriendo el fichero de la guía de usuario"
