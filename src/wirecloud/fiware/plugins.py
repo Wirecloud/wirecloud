@@ -39,7 +39,9 @@ try:
     from social_django.utils import BACKENDS, get_backend, load_strategy
     FIWARE_SOCIAL_AUTH_BACKEND = get_backend(BACKENDS, 'fiware')(load_strategy())
 
-    IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_django' in settings.INSTALLED_APPS
+    IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_django' in settings.INSTALLED_APPS \
+        and getattr(settings, 'SOCIAL_AUTH_FIWARE_KEY', None) is not None and getattr(settings, 'SOCIAL_AUTH_FIWARE_SECRET', None) is not None
+
 except:
     IDM_SUPPORT_ENABLED = False
 
@@ -185,6 +187,9 @@ class FiWarePlugin(WirecloudPlugin):
         return files
 
     def get_proxy_processors(self):
+        if not IDM_SUPPORT_ENABLED:
+            return ()
+
         return ('wirecloud.fiware.proxy.IDMTokenProcessor',)
 
     def get_django_template_context_processors(self):
