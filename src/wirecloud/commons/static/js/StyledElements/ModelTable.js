@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,7 +31,11 @@
 
         var priv = privates.get(this);
 
+        priv.header = document.createElement('div');
+        priv.header.className = 'se-model-table-headrow';
+
         priv.headerCells = [];
+        priv.columnTemplate = [];
         for (i = 0; i < this.columns.length; i += 1) {
             column = this.columns[i];
 
@@ -42,10 +47,9 @@
                 cell.classList.add(column.class);
             }
             if (column.width != null && column.width !== "css") {
-                cell.style.width = column.width;
-                cell.style.flexGrow = 0;
-            } else if (column.width === "css") {
-                cell.style.flexGrow = 0;
+                priv.columnTemplate.push(column.width);
+            } else {
+                priv.columnTemplate.push("1fr");
             }
             cell.textContent = label;
             if (column.sortable !== false) {
@@ -61,6 +65,8 @@
             priv.header.appendChild(cell);
             priv.headerCells.push(cell);
         }
+        priv.tableBody.appendChild(priv.header);
+        priv.tableBody.wrapperElement.style.gridTemplateColumns = priv.columnTemplate.join(" ");
     };
 
     var highlight_selection = function highlight_selection() {
@@ -78,6 +84,7 @@
 
         var priv = privates.get(this);
         clearTable.call(this);
+        priv.tableBody.appendChild(priv.header);
 
         for (i = 0; i < items.length; i += 1) {
             item = items[i];
@@ -100,12 +107,6 @@
                 cell = document.createElement('div');
                 cell.className = 'se-model-table-cell';
                 priv.columnsCells[j].push(cell);
-                if (typeof column.width === 'string' && column.width !== "css") {
-                    cell.style.width = column.width;
-                    cell.style.flexGrow = 0;
-                } else if (column.width === "css") {
-                    cell.style.flexGrow = 0;
-                }
 
                 if (typeof column.class === 'string') {
                     cell.classList.add(column.class);
@@ -307,7 +308,7 @@
             }
 
             // Only deselect if no modifier key is pressed
-            if (!evt.shiftKey && !evt.ctrlKey) {
+            if (!evt.shiftKey && !evt.ctrlKey && !evt.metaKey) {
                 this.select([]);
                 // this.trigger("select", []);
                 this.events.select.dispatch([]);
@@ -316,20 +317,13 @@
         }.bind(this));
 
         /*
-         * Header
-         */
-        priv.header = priv.layout.north;
-        priv.header.addClassName('se-model-table-headrow');
-
-        buildHeader.call(this);
-
-        /*
          * Table body
          */
         priv.components = [];
         priv.listeners = [];
         priv.tableBody = priv.layout.center;
         priv.tableBody.addClassName('se-model-table-body');
+        buildHeader.call(this);
 
         /*
          * Status bar
@@ -547,7 +541,7 @@
         var selected, data, lastSelectedIndex, lower, upper, j;
         var id = priv.extractIdFunc(row);
 
-        if (priv.selectionType === "multiple" && event.ctrlKey && event.shiftKey) {
+        if (priv.selectionType === "multiple" && (event.ctrlKey || event.metaKey) && event.shiftKey) {
             // Control + shift behaviour
             data = this.source.getCurrentPage();
             lastSelectedIndex = data.indexOf(priv.lastSelected);
@@ -589,7 +583,7 @@
                 event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
             }
 
-        } else if (priv.selectionType === "multiple" && event.ctrlKey) {
+        } else if (priv.selectionType === "multiple" && (event.ctrlKey || event.metaKey)) {
             // control behaviour
             priv.lastSelected = row;
             selected = this.selection.slice();

@@ -130,14 +130,12 @@
                 "field": "size",
                 "type": "number",
                 "label": utils.gettext("Size"),
-                "width": "css",
-                "class": "wc-upload-mac-size-column",
+                "width": "fit-content(0)",
                 "contentBuilder": function (file) {return utils.formatSize(file.size);}
             },
             {
                 "label": "",
-                "width": "css",
-                "class": "wc-upload-mac-button-column",
+                "width": "fit-content(0)",
                 "sortable": false,
                 "contentBuilder": function (entry) {
                     var button = new se.Button({iconClass: "fa fa-remove", plain: true, title: utils.gettext("Remove this file")});
