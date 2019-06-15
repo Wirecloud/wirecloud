@@ -47,13 +47,6 @@ the following systems:
 -   Debian Jessie
 -   Mac OS 10.9+
 
-> **NOTE**: WireCloud can make use of the [Marketplace](http://catalogue.fiware.org/enablers/marketplace-wmarket), the
-> [Store](http://catalogue.fiware.org/enablers/store-wstore) and the
-> [Repository](http://catalogue.fiware.org/enablers/repository-repository-ri) GEs, but take into account that those GEs
-> has been deprecated in favor of the Bussiness API Ecosystem GE.
->
-> [http://catalogue.fiware.org](http://catalogue.fiware.org)).
-
 ## Installing basic dependencies
 
 Before installing WireCloud, you will need to have some basic dependencies installed: python and
