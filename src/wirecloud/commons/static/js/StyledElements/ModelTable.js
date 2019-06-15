@@ -121,7 +121,7 @@
                         if (!today) {
                             today = new Date();
                         }
-                        cellContent = formatDate.call(this, item, column.field, today, column.dateparser);
+                        cellContent = formatDate.call(this, item, column, today);
                     }
                 } else if (column.type === 'number') {
                     cellContent = getFieldValue(item, column.field);
@@ -475,42 +475,62 @@
         return currentNode;
     };
 
-    var formatDate = function formatDate(item, field, today, dateparser) {
-        var date, m, shortVersion, fullVersion, element, tooltip;
+    var renderDate = function renderDate(format, m) {
+        if (format === "relative") {
+            return m.fromNow();
+        } else if (format === "calendar") {
+            let timezone = m.format(" z");
+            return (m.calendar() + timezone).trim();
+        } else {
+            return m.format(format).trim();
+        }
+    };
 
-        date = getFieldValue(item, field);
+    var formatDate = function formatDate(item, column, today) {
+        var date, m, fullVersion, element, tooltip;
+
+        date = getFieldValue(item, column.field);
 
         // Convert the input to a Date object
-        if (typeof dateparser === 'function') {
-            date = dateparser(date);
+        if (typeof column.dateparser === 'function') {
+            date = column.dateparser(date);
         } else if (!(date instanceof Date)) {
             date = new Date(date);
         }
 
         m = moment(date);
-        shortVersion = m.fromNow(); // Relative date
-        fullVersion = m.format('LLLL'); // Complete date
+        if (column.timezone != null) {
+            m.tz(column.timezone);
+        }
+        const format = column.format != null ? column.format : "relative";
+        const tooltipFormat = column.tooltip != null ? column.tooltip : "LLLL z";
+        const shortVersion = renderDate(format, m);
 
         element = document.createElement('span');
         element.textContent = shortVersion;
-        tooltip = new this.Tooltip({
-            content: fullVersion,
-            placement: ['bottom', 'top', 'right', 'left']
-        });
-        tooltip.bind(element);
+        if (tooltipFormat !== "none") {
+            fullVersion = m.format(tooltipFormat);
+            tooltip = new this.Tooltip({
+                content: fullVersion,
+                placement: ['bottom', 'top', 'right', 'left']
+            });
+            tooltip.bind(element);
+        }
 
-        // Update the realite date
-        var timer = setInterval(function () {
-            // Clear timer if deleted.
-            if (!element.ownerDocument.body.contains(element)) {
-                clearInterval(timer);
-            }
+        if (format === "relative" || format === "calendar") {
+            // Update rendered date form time to time
+            var timer = setInterval(function () {
+                // Clear timer if deleted.
+                if (!element.ownerDocument.body.contains(element)) {
+                    clearInterval(timer);
+                }
 
-            var newTime = m.fromNow();
-            if (element.textContent !== newTime) {
-                element.textContent = newTime;
-            }
-        }, 1000);
+                const newTime = renderDate(format, m);
+                if (element.textContent !== newTime) {
+                    element.textContent = newTime;
+                }
+            }, 1000);
+        }
 
         return element;
     };
