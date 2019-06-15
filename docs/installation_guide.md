@@ -1,10 +1,7 @@
 ## Introduction
 
-This Installation WireCloud version 1.3 (starting from FIWARE release 7.7). Any feedback on this document is highly
-welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact
-Person" email that appears in the [Catalogue page for this GEi][catalogue].
-
-[catalogue]: http://catalogue.fiware.org/enablers/application-mashup-wirecloud
+This document describes how to install WireCloud version 1.3 (starting from FIWARE release 7.7). Any feedback on this
+document is highly welcomed, including bugs, typos or things you think should be included but are not.
 
 ## Requirements
 
@@ -235,7 +232,7 @@ This puts you back to the system’s default Python interpreter with all its ins
 
 To delete a virtual environment, just delete its folder.
 
-## Installing WireCloud using pip (recommended)
+## Installing WireCloud using pip
 
 You can always install the latest stable version of WireCloud using pip:
 
@@ -284,7 +281,7 @@ Where `${version}` is the version of WireCloud to install.
 
 [latest_docs]: https://wirecloud.readthedocs.org/en/latest/installation_guide/
 
-## Installing WireCloud using Docker
+## Installing WireCloud using Docker (recommended)
 
 WireCloud can also be deployed using [Docker](https://www.docker.com/), the images can be found on
 [docker hub](https://hub.docker.com/r/fiware/wirecloud/). This guide doesn't cover WireCloud installation using docker,
