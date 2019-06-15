@@ -62,7 +62,7 @@
 
     Object.defineProperty(window.MashupPlatform.widget, 'drawAttention', {
         value: function drawAttention() {
-            view.workspace.drawAttention(model.id);
+            view.tab.workspace.drawAttention(model.id);
         }
     });
 

@@ -466,7 +466,8 @@
         var widget = this.findWidget(id);
 
         if (widget !== null) {
-            widget.raiseToTop().highlight().tab.highlight();
+            widget.tab.dragboard.raiseToTop(widget);
+            widget.highlight().tab.highlight();
         }
 
         return this;
