@@ -770,7 +770,7 @@ Among other things, the default logging configuration passes HTTP 500 server err
 is `False`.
 
 You can see the default logging configuration by looking in wirecloud/commons/utils/conf.py (or view the
-[online source](https://github.com/Wirecloud/wirecloud/blob/1.2.x/src/wirecloud/commons/utils/conf.py)).
+[online source](https://github.com/Wirecloud/wirecloud/blob/1.3.x/src/wirecloud/commons/utils/conf.py)).
 
 [logging_config]: https://docs.djangoproject.com/es/1.11/ref/settings/#logging-config
 

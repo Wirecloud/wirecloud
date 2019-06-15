@@ -7,7 +7,7 @@ WireCloud 1.3 supports the following desktop browsers:
 -   Safari 10.1+
 -   Opera 43+
 
-WireCloud 1.2 also works on the mobile version of the previous browsers, except the wiring editor currently does not
+WireCloud 1.3 also works on the mobile version of the previous browsers, except the wiring editor currently does not
 work with touch screens.
 
 > **Note:** Although WireCloud supports those browsers, some widgets and operators may not support all of them. Read
