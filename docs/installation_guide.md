@@ -1,10 +1,7 @@
 ## Introduction
 
-This Installation WireCloud version 1.3 (starting from FIWARE release 7.7). Any feedback on this document is highly
-welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact
-Person" email that appears in the [Catalogue page for this GEi][catalogue].
-
-[catalogue]: http://catalogue.fiware.org/enablers/application-mashup-wirecloud
+This document describes how to install WireCloud version 1.3 (starting from FIWARE release 7.7). Any feedback on this
+document is highly welcomed, including bugs, typos or things you think should be included but are not.
 
 ## Requirements
 
@@ -46,13 +43,6 @@ the following systems:
 -   Debian Wheezy
 -   Debian Jessie
 -   Mac OS 10.9+
-
-> **NOTE**: WireCloud can make use of the [Marketplace](http://catalogue.fiware.org/enablers/marketplace-wmarket), the
-> [Store](http://catalogue.fiware.org/enablers/store-wstore) and the
-> [Repository](http://catalogue.fiware.org/enablers/repository-repository-ri) GEs, but take into account that those GEs
-> has been deprecated in favor of the Bussiness API Ecosystem GE.
->
-> [http://catalogue.fiware.org](http://catalogue.fiware.org)).
 
 ## Installing basic dependencies
 
@@ -242,7 +232,7 @@ This puts you back to the system’s default Python interpreter with all its ins
 
 To delete a virtual environment, just delete its folder.
 
-## Installing WireCloud using pip (recommended)
+## Installing WireCloud using pip
 
 You can always install the latest stable version of WireCloud using pip:
 
@@ -291,7 +281,7 @@ Where `${version}` is the version of WireCloud to install.
 
 [latest_docs]: https://wirecloud.readthedocs.org/en/latest/installation_guide/
 
-## Installing WireCloud using Docker
+## Installing WireCloud using Docker (recommended)
 
 WireCloud can also be deployed using [Docker](https://www.docker.com/), the images can be found on
 [docker hub](https://hub.docker.com/r/fiware/wirecloud/). This guide doesn't cover WireCloud installation using docker,
@@ -770,7 +760,7 @@ Among other things, the default logging configuration passes HTTP 500 server err
 is `False`.
 
 You can see the default logging configuration by looking in wirecloud/commons/utils/conf.py (or view the
-[online source](https://github.com/Wirecloud/wirecloud/blob/1.2.x/src/wirecloud/commons/utils/conf.py)).
+[online source](https://github.com/Wirecloud/wirecloud/blob/1.3.x/src/wirecloud/commons/utils/conf.py)).
 
 [logging_config]: https://docs.djangoproject.com/es/1.11/ref/settings/#logging-config
 

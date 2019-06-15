@@ -82,18 +82,6 @@ python manage.py rebuild_index
 
 [haystack_rebuild_index]: http://django-haystack.readthedocs.io/en/master/management_commands.html#rebuild-index
 
-### resetsearchindexes (deprecated)
-
-Rebuilds Haystack indexes used by the search engine of WireCloud. To be removed in Wirecloud WireCloud v1.3.
-
--   **--noinput** Tells Django to NOT prompt the user for input of any kind.
-
-Example usage:
-
-```bash
-python manage.py resetsearchindexes
-```
-
 ## Creating WireCloud backups and restoring them
 
 1.  Create a backup of your instance folder. For example:
@@ -185,6 +173,13 @@ wirecloud-admin --version
 > **NOTE:** It is strongly recommended to perform a full database backup before starting to migrate WireCloud to a new
 > version.
 
+## From 1.2.x to 1.3.x
+
+WireCloud 1.3 has done minor changes to the search index schemas, so you have to update search indexes by running the
+`rebuild_index` command. Also, there are new versions of the predefined dashboards and widgets, so you have use to the
+`populate` command to update them.
+
+
 ## From 1.1.x to 1.2.x
 
 WireCloud 1.2 has moved from directly use Whoosh for using search indexes to use Haystack for managing search indexes.
@@ -199,159 +194,9 @@ connecting to a `ngsi-proxy`. The downside is that WireCloud is unable to detect
 had to drop support for `ngsi-proxy` version `v1.0.0` and below.
 
 WireCloud 1.1 has changed the schema of the workspace search index, you have to update this index by running the
-`resetsearchindexes` command. Also, there are new predefined dashboards, so you have to the `populate` command.
+`resetsearchindexes` command. Also, there are new predefined dashboards, so you have use to the `populate` command.
 
 IdM integration has migrated from `python-social-auth` to `social-auth-app-django` (see this [link][migrating_to_social]
 for more info about this change)
 
 [migrating_to_social]: https://github.com/omab/python-social-auth/blob/master/MIGRATING_TO_SOCIAL.md
-
-## From 0.9.x to 1.0.x
-
-> **NOTE**: Support for Django 1.6 and Django 1.7 were removed in this version. Please, follow the steps described in
-> the [Upgrading to Django 1.7+](#upgrading-to-django-17) section before upgrading to WireCloud 1.0.
->
-> You can determine your currently installed version of Django by running the following command:
->
-> ```
-> $ django-admin --version
-> 1.9.9
-> ```
-
-WireCloud 1.0 has changed some url definitions to remove some django warnings, so you should update your `urls.py` file.
-In particular, you have to change the following lines:
-
-```python
-...
-
-    # Catalogue
-    url(r'^catalogue', include('wirecloud.catalogue.urls')),
-
-    # Proxy
-    url(r'^cdp', include('wirecloud.proxy.urls')),
-
-...
-```
-
-To:
-
-```python
-...
-
-    # Catalogue
-    url(r'^catalogue/', include('wirecloud.catalogue.urls')),
-
-    # Proxy
-    url(r'^cdp/', include('wirecloud.proxy.urls')),
-
-...
-```
-
-> **NOTE**: If you plan to upgrade to Django 1.10, take into account that there were some deprecations regarding the
-> syntax of the `url.py` file. We have updated the `urls.py` template in WireCloud 1.0 to support Django 1.8-1.10 but if
-> you created your WireCloud instance using an older version, you will have to update it manually. You can find the
-> current template at
-> [github](https://github.com/Wirecloud/wirecloud/blob/develop/src/wirecloud/commons/conf/platform_project_template/project_name/urls.py)
-
-WireCloud 1.0 has also added a search index for workspaces, you have to initialize it by running the
-`resetsearchindexes` command. The db should be migrated before running this command.
-
-```bash
-python manage.py migrate
-python manage.py resetsearchindexes
-```
-
-WireCloud 1.0 added some predefined dashboards, so you have to create them by running the following command:
-
-```bash
-python manage.py populate
-```
-
-Also, WireCloud 1.0 provides support for real-time synchronization using web sockets, see the
-[Enabling the real-time synchronization support](installation_guide#enabling-the-real-time-synchronization-support)
-section for instructions on how to enable it.
-
-## From 0.8.x to 0.9.x
-
-### IdM integration changes
-
-`FIWARE_PORTALS` has been change to be empty by default. You can add the following code into your `settings.py` file for
-obtaining the previous behaviour:
-
-```python
-from wirecloud.fiware import FIWARE_LAB_PORTALS
-FIWARE_PORTALS = FIWARE_LAB_PORTALS
-```
-
-See the [`FIWARE_PORTALS` documentation](installation_guide#fiware_portals) for more info.
-
-### Upgrading to Django 1.7+
-
-Wirecloud 0.9.0+ adds support for Django 1.7-1.9 and next version of WireCloud (1.0) will drop support for Django 1.6
-and Django 1.7. Moreover, at the time of releasing WireCloud 0.9.0, Django 1.6 and 1.7 were unsupported by the Django
-community.
-
-The only thing to take into account when upgrading your WireCloud installation to use Django 1.7+ is that you need to
-migrate your db to Wirecloud 0.9.0 using Django 1.6 and South before upgrading to the new version of Django.
-
-Once migrated the database and installed the new version of Django, run the following command for initializing the
-Django db migration framework:
-
-```bash
-python manage.py migrate --fake-initial
-```
-
-## From 0.7.x to 0.8.x
-
-### Migrate from `django-social-auth` to `python-social-auth`
-
-WireCloud 0.8.x migrated FIWARE IdM code to use `python-social-auth` instead of using `django-social-auth` due to the
-later being deprecated. Please, follow these instructions if you are using the IdM integration:
-
--   Install `python-social-auth` (e.g. `pip install python-social-auth`)
--   Edit your `settings.py` making the following changes:
-    1. replace `social_auth` with `social.apps.django_app.default` in the `INSTALLED_APPS` setting
-    2. replace `wirecloud.fiware.social_auth_backend.FiwareBackend` with
-       `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` in the `AUTHENTICATION_BACKENDS` setting.
-    3. rename `FIWARE_APP_ID` to `SOCIAL_AUTH_FIWARE_KEY` and `FIWARE_APP_SECRET` to `SOCIAL_AUTH_FIWARE_SECRET`
--   Edit your `urls.py` file and replace:
-
-```python
-url(r'', include('social_auth.urls')),
-```
-
-<span>&nbsp;&nbsp;&nbsp;</span> with
-
-```python
-url('', include('social.apps.django_app.urls', namespace='social'))
-```
-
--   Fake `python-social-auth` migrations (it uses the same dabase schema than `django-social-auth`):
-
-```bash
-python manage.py migrate default --fake
-```
-
--   Now you can remove django-social-auth :). E.g.:
-
-```bash
-pip uninstall django-social-auth
-```
-
-### Migrate the user search index
-
-WireCloud 0.8.2 updated the information stored in the user search index, so you should run the following command for
-updating this index:
-
-```bash
-python manage.py resetsearchindexes --indexes=user
-```
-
-## From 0.6.x to 0.7.x
-
-WireCloud 0.7.x adds support for using Whoosh indexes for searching, as WireCloud 0.6.x didn't use Whoosh, you need to
-run an extra step when migrating from 0.6.x to 0.7.x for creating a initial version of those indexes:
-
-```bash
-python manage.py resetsearchindexes
-```
