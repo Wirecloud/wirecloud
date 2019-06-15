@@ -162,12 +162,10 @@
                 table.source.changeElements(data);
 
                 var column = table.wrapperElement.querySelectorAll(".se-model-table-cell");
+                var tablebody = table.wrapperElement.querySelector(".se-model-table-body");
 
                 expect(column.length).toBe(3);
-                for (var i = 0; i < column.length; i++) {
-                    expect(column[i].style.width).toBe("100px");
-                }
-
+                expect(tablebody.style.gridTemplateColumns).toBe("100px");
             });
 
             it("can be created using the initialSortColumn option", function () {

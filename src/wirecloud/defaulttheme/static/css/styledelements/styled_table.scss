@@ -9,26 +9,30 @@
 
     .se-model-table-row-$state {
 
-        background-color: $background-color;
-        color: $text-color;
+        & > * {
+            background-color: $background-color;
+            color: $text-color;
+        }
 
-        &:hover {
+        &:hover > * {
             background-color: darken($background-color, 12%);
         }
 
-        &.highlight, &.highlight:hover {
+        &.highlight > *, &.highlight:hover > *{
             background-color: mix($background-color, #08C, 80%);
         }
     }
 
     .table-striped .se-model-table-row-$state:nth-child(odd) {
-        background-color: darken($background-color, 7%);
+        & > * {
+            background-color: darken($background-color, 7%);
+        }
 
-        &:hover {
+        &:hover > * {
             background-color: darken($background-color, 12%);
         }
 
-        &.highlight, &.highlight:hover {
+        &.highlight > *, &.highlight:hover > * {
             background-color: mix(darken($background-color, 12%), #08C, 80%);
         }
     }
@@ -40,37 +44,39 @@
 }
 
 .se-model-table-headrow {
-    font-weight: bold;
-    border-bottom: 1px solid #DDD;
-    white-space: nowrap;
-    display: flex;
+    display: contents;
+
+    & > * {
+        font-weight: bold;
+        border-bottom: 1px solid #DDD;
+        white-space: nowrap;
+        position: sticky;
+        top: 0px;
+        z-index: 1;
+    }
+
+    & > .se-model-table-cell.sortable {
+        cursor: pointer;
+    }
+
+    & > .se-model-table-cell.ascending, & > .se-model-table-cell.descending {
+        background-color: rgb(226, 239, 246);
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    }
+
 }
 
 .se-model-table-cell {
     padding: 4px 8px;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: middle;
-    flex-grow: 1;
-    width: 0;
+    background: $body-bg;
 }
 
-.se-model-table-headrow > .se-model-table-cell.sortable {
-    cursor: pointer;
-}
 
-.se-model-table-headrow > .se-model-table-cell.ascending, .se-model-table-headrow > .se-model-table-cell.descending {
-    background-color: rgba(141, 192, 219, 0.25);
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-}
-
-.se-model-table-headrow > .se-model-table-cell.ascending:before {
-    float: right;
+.se-model-table-headrow > .se-model-table-cell.ascending:after {
     content: "\f0d8";
     font-family: "Font Awesome 5 Free";
-    font-weight: normal;
     font-style: normal;
     display: inline-block;
     text-decoration: inherit;
@@ -78,11 +84,9 @@
     font-weight: 900;
 }
 
-.se-model-table-headrow > .se-model-table-cell.descending:before {
-    float: right;
+.se-model-table-headrow > .se-model-table-cell.descending:after {
     content: "\f0d7";
     font-family: "Font Awesome 5 Free";
-    font-weight: normal;
     font-style: normal;
     display: inline-block;
     text-decoration: inherit;
@@ -93,40 +97,50 @@
 .se-model-table-body {
     overflow-y: auto;
     color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    display: grid;
+    grid-auto-rows: max-content;
 }
 
 .se-model-table-msg {
     text-align: center;
     margin: $padding-vertical-base $padding-horizontal-base;
+    grid-column: 1/-1;
 }
 
 .se-model-table-row {
-    border-bottom: 1px solid #DDD;
+    display: contents;
     white-space: nowrap;
-    display: flex;
-    &:hover {
+
+    .table-striped &:nth-child(odd) {
+
+        & > * {
+            background-color: darken($body-bg, 7%);
+        }
+
+        &:hover > * {
+            background-color: darken($body-bg, 12%);
+        }
+    }
+
+    & > * {
+        border-bottom: 1px solid #DDD;
+    }
+
+    &:hover > * {
         background-color: darken($body-bg, 12%);
     }
-}
 
-.se-model-table-row.highlight {
-    background-color: #08C;
-    color: contrast-color(#08C, $text-color-light, $text-color-dark, $text-color-threshold);
-}
+    &.highlight > *,
+    .table-striped &.highlight > *,
+    &.highlight:hover > *,
+    .table-striped &.highlight:hover > *,
+    {
+        background-color: #08C;
+        color: contrast-color(#08C, $text-color-light, $text-color-dark, $text-color-threshold);
+    }
 
-.se-model-table-row.highlight:hover {
-    background-color: #08C;
-}
-
-.se-model-table-row:last-child {
-    border-bottom: 0 none;
-}
-
-.table-striped .se-model-table-row:nth-child(odd) {
-    background-color: darken($body-bg, 7%);
-
-    &:hover {
-        background-color: darken($body-bg, 12%);
+    &:last-child > *{
+        border-bottom: 0 none;
     }
 }
 
