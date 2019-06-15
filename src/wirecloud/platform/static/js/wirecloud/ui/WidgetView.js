@@ -464,6 +464,8 @@
                     this.wrapperElement.classList.add('wc-widget-highlight');
                 }.bind(this));
             }
+
+            return this;
         },
 
         unhighlight: function unhighlight() {
@@ -473,6 +475,8 @@
                 this.wrapperElement.classList.remove('wc-widget-highlight');
                 this.dispatchEvent('unhighlight');
             }
+
+            return this;
         },
 
         moveToLayout: function moveToLayout(newLayout) {
