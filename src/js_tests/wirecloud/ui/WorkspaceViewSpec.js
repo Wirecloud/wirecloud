@@ -348,13 +348,14 @@
 
             it("should highlight the widget if present", () => {
                 let widget = {
-                    raiseToTop: jasmine.createSpy("raiseToTop"),
                     highlight: jasmine.createSpy("highlight"),
                     tab: {
+                        dragboard: {
+                            raiseToTop: jasmine.createSpy("raiseToTop")
+                        },
                         highlight: jasmine.createSpy("highlight")
                     }
                 };
-                widget.raiseToTop.and.returnValue(widget);
                 widget.highlight.and.returnValue(widget);
                 view.tabs[0].findWidget.and.returnValue(widget);
 
