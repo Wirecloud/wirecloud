@@ -97,7 +97,7 @@ msgid ""
 msgstr ""
 "Te recomendamos actualizar tu navegador a la versión más reciente tanto de "
 "<a href=\"https://www.mozilla.org/firefox\">Firefox</a> como de <a "
-"href=“https://www.google.com/chrome\">Google Chrome</a> dado que estos "
+"href=\"https://www.google.com/chrome\">Google Chrome</a> dado que estos "
 "navegadores son los que actualmente soporta WireCloud."
 
 #: templates/registration/login.html:40
