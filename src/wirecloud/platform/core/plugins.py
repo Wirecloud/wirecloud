@@ -378,6 +378,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "description": _("Allow any user to open this workspace (in read-only mode). (default: disabled)")
             },
             {
+                "name": "requireauth",
+                "defaultValue": False,
+                "label": _("Required registered user"),
+                "type": "boolean",
+                "hidden": True,
+                "description": _("Require users to be logged in to access the workspace (This option has only effect if the workspace is public). (default: disabled)")
+            },
+            {
                 "name": "sharelist",
                 "defaultValue": [],
                 "label": _("Share list"),

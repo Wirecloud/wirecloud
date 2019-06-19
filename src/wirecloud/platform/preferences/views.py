@@ -235,6 +235,7 @@ class WorkspacePreferencesCollection(Resource):
 
         preferences_json = parse_json_request(request)
 
+        save_workspace = False
         if 'sharelist' in preferences_json:
             workspace.users.clear()
             workspace.groups.clear()
@@ -253,9 +254,17 @@ class WorkspacePreferencesCollection(Resource):
             del preferences_json['sharelist']
 
         if 'public' in preferences_json:
+            save_workspace = True
             workspace.public = preferences_json['public']['value'].strip().lower() == 'true'
-            workspace.save()
             del preferences_json['public']
+
+        if 'requestauth' in preferences_json:
+            save_workspace = True
+            workspace.requireauth = preferences_json['requireauth']['value'].strip().lower() == 'true'
+            del preferences_json['requireauth']
+
+        if save_workspace:
+            workspace.save()
 
         update_workspace_preferences(workspace, preferences_json)
 
