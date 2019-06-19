@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -133,7 +134,7 @@ class WorkspaceCollection(Resource):
             else:
 
                 from_ws = get_object_or_404(Workspace, id=workspace_id)
-                if from_ws.public is False and not request.user.is_superuser and from_ws.creator != request.user:
+                if not from_ws.is_accessible_by(request.user):
                     return build_error_response(request, 403, _('You are not allowed to read from workspace %s') % workspace_id)
 
                 options = {
@@ -183,7 +184,7 @@ class WorkspaceEntry(Resource):
         else:
             workspace = get_object_or_404(Workspace, creator__username=owner, name=name)
 
-        if not workspace.is_available_for(request.user):
+        if not workspace.is_accessible_by(request.user):
             return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
         workspace_data = get_global_workspace_data(workspace, request.user)
@@ -300,7 +301,7 @@ class TabEntry(Resource):
     def read(self, request, workspace_id, tab_id):
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not tab.workspace.is_available_for(request.user):
+        if not tab.workspace.is_accessible_by(request.user):
             return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
         data = json.dumps(get_tab_data(tab, user=request.user), sort_keys=True)

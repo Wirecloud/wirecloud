@@ -76,8 +76,11 @@ class Workspace(models.Model):
 
         super(Workspace, self).save(*args, **kwargs)
 
-    def is_available_for(self, user):
+    def is_accessible_by(self, user):
         return self.public or user.is_authenticated() and (user.is_superuser or self.creator == user or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0)
+
+    def is_editable_by(self, user):
+        return user.is_superuser or self.creator == user
 
     def is_shared(self):
         return self.public or self.users.count() > 1 or self.groups.count() > 1

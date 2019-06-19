@@ -105,7 +105,7 @@ def parse_context_from_referer(request, request_method="GET"):
     if referer_view_info.url_name == 'wirecloud.workspace_view':
 
         workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
-        if not workspace.is_available_for(request.user):
+        if not workspace.is_accessible_by(request.user):
             raise Exception()
 
     elif referer_view_info.url_name == 'wirecloud.showcase_media' or referer_view_info.url_name == 'wirecloud|proxy':
@@ -251,7 +251,7 @@ def proxy_request(request, protocol, domain, path):
 
         context = parse_context_from_referer(request, request_method)
 
-    except:
+    except Exception:
         return build_error_response(request, 403, _("Invalid request"))
 
     url = protocol + '://' + domain + path

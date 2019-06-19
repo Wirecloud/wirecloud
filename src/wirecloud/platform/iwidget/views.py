@@ -38,7 +38,7 @@ class IWidgetCollection(Resource):
     def read(self, request, workspace_id, tab_id):
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not tab.workspace.is_available_for(request.user):
+        if not tab.workspace.is_accessible_by(request.user):
             return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
         cache_manager = VariableValueCacheManager(tab.workspace, request.user)
@@ -57,7 +57,7 @@ class IWidgetCollection(Resource):
 
         # iWidget creation
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not request.user.is_superuser and tab.workspace.creator != request.user:
+        if not tab.workspace.is_editable_by(request.user):
             msg = _('You have not enough permission for adding iwidgets to the workspace')
             return build_error_response(request, 403, msg)
 
@@ -82,7 +82,7 @@ class IWidgetCollection(Resource):
         iwidgets = parse_json_request(request)
 
         tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
-        if not request.user.is_superuser and tab.workspace.creator != request.user:
+        if not tab.workspace.is_editable_by(request.user):
             msg = _('You have not enough permission for updating the iwidgets of this workspace')
             return build_error_response(request, 403, msg)
 
@@ -123,7 +123,7 @@ class IWidgetEntry(Resource):
         iwidget = parse_json_request(request)
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not request.user.is_superuser and tab.workspace.creator != request.user:
+        if not tab.workspace.is_editable_by(request.user):
             msg = _('You have not enough permission for updating the iwidget')
             return build_error_response(request, 403, msg)
 
@@ -150,7 +150,7 @@ class IWidgetEntry(Resource):
 
         # Gets Iwidget, if it does not exist, a http 404 error is returned
         iwidget = get_object_or_404(IWidget.objects.select_related('tab__workspace'), tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
-        if not request.user.is_superuser and iwidget.tab.workspace.creator != request.user:
+        if not iwidget.tab.workspace.is_editable_by(request.user):
             msg = _('You have not enough permission for removing iwidgets from the workspace')
             return build_error_response(request, 403, msg)
 
@@ -194,12 +194,15 @@ class IWidgetPreferences(Resource):
                 msg = _('"%s" preference is read only.') % var_name
                 return build_error_response(request, 403, msg)
 
-            # Check if its multiuser
             if not vardef.get("multiuser", False):
-                # No multiuser -> Check permisisons
-                if not request.user.is_superuser and workspace.creator != request.user:
+                # No multiuser -> User must have editing permissisons over the workspace
+                if not workspace.is_editable_by(request.user):
                     msg = _('You have not enough permission for updating the preferences of the iwidget')
                     return build_error_response(request, 403, msg)
+            elif not workspace.is_accessible_by(request.user):
+                # Multiuser pref -> User must have access permissions over the workspace
+                msg = _('You have not enough permission for updating the preferences of the iwidget')
+                return build_error_response(request, 403, msg)
 
             iwidget.set_variable_value(var_name, new_values[var_name], request.user)
 
@@ -210,7 +213,7 @@ class IWidgetPreferences(Resource):
     def read(self, request, workspace_id, tab_id, iwidget_id):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
 
-        if not workspace.is_available_for(request.user):
+        if not workspace.is_accessible_by(request.user):
             msg = _("You don't have permission to access this workspace")
             return build_error_response(request, 403, msg)
 
@@ -257,17 +260,15 @@ class IWidgetProperties(Resource):
                 msg = _('Invalid persistent variable: "%s"') % var_name
                 return build_error_response(request, 422, msg)
 
-            # Check if its multiuser
             if not iwidget_info['variables']['properties'][var_name].get("multiuser", False):
-                # No multiuser -> Check permissions
-                if workspace.creator != request.user:
+                # No multiuser -> User must have editing permissisons over the workspace
+                if not workspace.is_editable_by(request.user):
                     msg = _('You have not enough permission for updating the persistent variables of this widget')
                     return build_error_response(request, 403, msg)
-            else:
-                # Multiuser -> Check permissions
-                if not workspace.is_available_for(request.user):
-                    msg = _('You have not enough permission for updating the persistent variables of this widget')
-                    return build_error_response(request, 403, msg)
+            elif not workspace.is_accessible_by(request.user):
+                # Multiuser pref -> User must have access permissions over the workspace
+                msg = _('You have not enough permission for updating the persistent variables of this widget')
+                return build_error_response(request, 403, msg)
 
             iwidget.set_variable_value(var_name, new_values[var_name], request.user)
 
@@ -278,7 +279,7 @@ class IWidgetProperties(Resource):
     def read(self, request, workspace_id, tab_id, iwidget_id):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
 
-        if not workspace.is_available_for(request.user):
+        if not workspace.is_accessible_by(request.user):
             msg = _("You don't have permission to access this workspace")
             return build_error_response(request, 403, msg)
 
