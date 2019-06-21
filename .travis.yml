@@ -28,7 +28,7 @@ matrix:
           language: node_js
           python: ""
           addons:
-              firefox: "45.0"
+              firefox: "52.0.2esr"
           env: TEST_SUITE=js_unittests
         - node_js: "lts/*"
           language: node_js
