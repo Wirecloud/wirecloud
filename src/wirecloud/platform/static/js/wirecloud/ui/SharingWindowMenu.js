@@ -109,16 +109,10 @@
     };
 
     var accept = function accept() {
-        var username, sharelist = [];
-
-        this.btnAccept.addClassName('busy');
-
-        for (username in this.sharingUsers) {
-            sharelist.push({type: 'user', name: username});
-        }
-
-        this.btnAccept.disable();
+        this.btnAccept.disable().addClassName('busy');
         this.btnCancel.disable();
+
+        const sharelist = Object.values(this.sharingUsers);
         this.workspace.model.preferences.set({
             public: {value: this.visibilityOptions.value === "public" || this.visibilityOptions.value === "public-auth"},
             requireauth: {value: this.visibilityOptions.value !== "public"},
@@ -126,16 +120,14 @@
         }).then(
             () => {
                 this.workspace.model.users.length = 0;
-
-                for (username in this.sharingUsers) {
-                    this.workspace.model.users.push(this.sharingUsers[username]);
-                }
+                sharelist.forEach((user) => {
+                    this.workspace.model.users.push(user);
+                });
 
                 this._closeListener();
             }, () => {
-                this.btnAccept.enable();
+                this.btnAccept.enable().removeClassName('busy');
                 this.btnCancel.enable();
-                this.btnAccept.removeClassName('busy');
             }
         );
     };
@@ -171,6 +163,9 @@
         var fullname = data.fullname;
         if (data.username === Wirecloud.contextManager.get('username')) {
             fullname = utils.interpolate(utils.gettext("%(fullname)s (You)"), {fullname: data.fullname});
+            data.accesslevel = "owner";
+        } else {
+            data.accesslevel = "read";
         }
 
         let template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];

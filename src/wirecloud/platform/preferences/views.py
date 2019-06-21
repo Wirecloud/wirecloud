@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -34,10 +35,7 @@ from wirecloud.platform.models import PlatformPreference, WorkspacePreference, T
 
 
 def update_preferences(user, preferences_json):
-    _currentPreferences = PlatformPreference.objects.filter(user=user)
-    currentPreferences = {}
-    for currentPreference in _currentPreferences:
-        currentPreferences[currentPreference.name] = currentPreference
+    currentPreferences = {pref.name: pref for pref in PlatformPreference.objects.filter(user=user)}
 
     for name in preferences_json.keys():
         preference_data = preferences_json[name]
@@ -47,8 +45,10 @@ def update_preferences(user, preferences_json):
         else:
             preference = PlatformPreference(user=user, name=name)
 
-        preference.value = preference_data['value']
-        preference.save()
+        new_value = preference_data if type(preference_data) == str else preference_data.get('value')
+        if new_value is not None and preference.value != new_value:
+            preference.value = new_value
+            preference.save()
 
 
 def parseValues(values):
@@ -96,28 +96,49 @@ def get_tab_preference_values(tab):
 
 
 def update_tab_preferences(tab, preferences_json):
-    _currentPreferences = TabPreference.objects.filter(tab=tab)
+
+    changes = False
+
+    # Create a preference instance dict
     currentPreferences = {}
-    for currentPreference in _currentPreferences:
+    for currentPreference in TabPreference.objects.filter(tab=tab):
         currentPreferences[currentPreference.name] = currentPreference
 
+    # Update preference values
     for name in preferences_json.keys():
         preference_data = preferences_json[name]
+        pref_changes = False
 
         if name in currentPreferences:
             preference = currentPreferences[name]
         else:
             preference = TabPreference(tab=tab, name=name)
+            changes = pref_changes = True
 
-        if 'value' in preference_data:
-            preference.value = preference_data['value']
+        if isinstance(preference_data, dict):
+            if 'value' in preference_data and preference.value != preference_data['value']:
+                preference.value = preference_data['value']
+                changes = pref_changes = True
 
-        if 'inherit' in preference_data:
-            preference.inherit = preference_data['inherit']
+            if 'inherit' in preference_data and preference.inherit != preference_data['inherit']:
+                preference.inherit = preference_data['inherit']
+                changes = pref_changes = True
+        else:
+            if preference.value != preference_data:
+                preference.value = preference_data
+                changes = pref_changes = True
 
-        preference.save()
+            if preference.inherit is not False:
+                preference.inherit = False
+                changes = pref_changes = True
 
-    tab.workspace.save()  # Invalidate workspace cache
+        if pref_changes:
+            preference.save()
+
+    if changes:
+        cache_key = make_tab_preferences_cache_key(tab)
+        cache.delete(cache_key)
+        tab.workspace.save()  # Invalidate workspace cache
 
 
 def make_workspace_preferences_cache_key(workspace):
@@ -201,6 +222,17 @@ class PlatformPreferencesCollection(Resource):
     def create(self, request):
 
         preferences_json = parse_json_request(request)
+        if not type(preferences_json) == dict:
+            return build_error_response(request, 422, _('Invalid payload: root type must be object'))
+
+        for pref_name, pref in preferences_json.items():
+            if type(pref) not in (str, dict):
+                return build_error_response(request, 422, _('Invalid type for pref value: {}'.format(pref_name)))
+            if type(pref) == dict and len(set(pref.keys()) - set(("value",))) != 0:
+                return build_error_response(request, 422, _('Invalid structure for pref: {}'.format(pref_name)))
+
+            if type(pref) == dict and "value" in pref and type(pref['value']) != str:
+                return build_error_response(request, 422, _('Invalid value for pref: {}'.format(pref_name)))
         update_preferences(request.user, preferences_json)
 
         if 'language' in preferences_json:
@@ -234,15 +266,30 @@ class WorkspacePreferencesCollection(Resource):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         preferences_json = parse_json_request(request)
+        if not type(preferences_json) == dict:
+            return build_error_response(request, 422, _('Invalid payload: root type must be object'))
+
+        for pref_name, pref in preferences_json.items():
+            if type(pref) not in (str, dict):
+                return build_error_response(request, 422, _('Invalid type for pref value: {}'.format(pref_name)))
+            if type(pref) == dict and len(set(pref.keys()) - set(("inherit", "value"))) != 0:
+                return build_error_response(request, 422, _('Invalid structure for pref: {}'.format(pref_name)))
+
+            if type(pref) == dict and "value" in pref and type(pref['value']) != str:
+                return build_error_response(request, 422, _('Invalid value for pref: {}'.format(pref_name)))
 
         save_workspace = False
         if 'sharelist' in preferences_json:
             workspace.users.clear()
             workspace.groups.clear()
-            sharelist = json.loads(preferences_json['sharelist']['value'])
+            if type(preferences_json['sharelist']) == dict:
+                sharelist = json.loads(preferences_json['sharelist']['value'])
+            else:
+                sharelist = json.loads(preferences_json['sharelist'])
+
             for item in sharelist:
                 try:
-                    user = User.objects.get(username=item['name'])
+                    user = User.objects.get(username=item['username'])
                 except User.DoesNotExist:
                     continue
 
@@ -253,14 +300,20 @@ class WorkspacePreferencesCollection(Resource):
                     pass
             del preferences_json['sharelist']
 
-        if 'public' in preferences_json:
+        if 'public' in preferences_json and (type(preferences_json['public']) or "value" in preferences_json['public']):
             save_workspace = True
-            workspace.public = preferences_json['public']['value'].strip().lower() == 'true'
+            if type(preferences_json['public']) == str:
+                workspace.public = preferences_json['public'].strip().lower() == 'true'
+            else:
+                workspace.public = preferences_json['public']['value'].strip().lower() == 'true'
             del preferences_json['public']
 
-        if 'requestauth' in preferences_json:
+        if 'requireauth' in preferences_json and (type(preferences_json['requireauth']) or "value" in preferences_json['requireauth']):
             save_workspace = True
-            workspace.requireauth = preferences_json['requireauth']['value'].strip().lower() == 'true'
+            if type(preferences_json['requireauth']) == str:
+                workspace.requireauth = preferences_json['requireauth'].strip().lower() == 'true'
+            else:
+                workspace.requireauth = preferences_json['requireauth']['value'].strip().lower() == 'true'
             del preferences_json['requireauth']
 
         if save_workspace:
@@ -292,10 +345,21 @@ class TabPreferencesCollection(Resource):
 
         # Check Tab existance and owned by this user
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not (request.user.is_superuser or tab.workspace.users.filter(pk=request.user.pk).exists()):
+        if not tab.workspace.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         preferences_json = parse_json_request(request)
+        if not type(preferences_json) == dict:
+            return build_error_response(request, 422, _('Invalid payload: root type must be object'))
+
+        for pref_name, pref in preferences_json.items():
+            if type(pref) not in (str, dict):
+                return build_error_response(request, 422, _('Invalid type for pref value: {}'.format(pref_name)))
+            if type(pref) == dict and len(set(pref.keys()) - set(("inherit", "value"))) != 0:
+                return build_error_response(request, 422, _('Invalid structure for pref: {}'.format(pref_name)))
+
+            if type(pref) == dict and "value" in pref and type(pref['value']) != str:
+                return build_error_response(request, 422, _('Invalid value for pref: {}'.format(pref_name)))
 
         update_tab_preferences(tab, preferences_json)
         return HttpResponse(status=204)
