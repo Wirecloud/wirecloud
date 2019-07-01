@@ -83,6 +83,6 @@ WireCloud provides the following tools to ease this process:
 # What next?
 
 We recommend you to continue following the
-[WireCloud course at the FIWARE Academy](http://edu.fiware.org/course/view.php?id=53), as we think that it's easier to
+[WireCloud course at the FIWARE Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud/index.html), as we think that it's easier to
 learn by examples. Anyway, the following sections will provide the reference documentation for developing widgets and
 operators for WireCloud.

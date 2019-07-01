@@ -105,7 +105,7 @@ Once created the project, you will obtain the following features in addition to 
     ![](../images/user_guide/WireCloudIDE/import_widget2.png) ![](../images/user_guide/WireCloudIDE/import_widget3.png)
 
 -   Follow the _3.1.3. Making requests and wiring_ tutorial available on the
-    [WireCloud's course @ FIWARE Academy](http://edu.fiware.org/course/view.php?id=53#section-3).
+    [WireCloud's course @ FIWARE Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud/index.html).
 -   Add the widget to the WireCloud server using the Servers view (see the
     [Adding WireCloud servers](#adding-wirecloud-servers) sections for more info). The first step is opening the "Add
     and remove ..." view:

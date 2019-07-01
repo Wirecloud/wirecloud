@@ -566,7 +566,7 @@ You can also obtain the code you have to copy & paste into other web pages follo
 
 ## Additional sources of information
 
-See the [Application Mashup GE fundamentals course](http://edu.fiware.org/course/view.php?id=53) at the FIWARE Academy
+See the [Application Mashup GE fundamentals course](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud/index.html) at the FIWARE Academy
 for detailed documentation on how to use WireCloud from different perspectives (end-user, developer and administrators).
 Another source of information is [the WireCloud website](https://conwet.fi.upm.es/wirecloud/) where you can find more
 general information and other interesting resources such as demo videos.
