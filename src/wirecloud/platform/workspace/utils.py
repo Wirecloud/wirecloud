@@ -48,7 +48,6 @@ from wirecloud.platform.iwidget.utils import parse_value_from_text
 from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values, update_workspace_preferences
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
-from wirecloud.platform.workspace.managers import get_workspace_managers
 
 
 def deleteTab(tab, user):
@@ -108,59 +107,10 @@ def decrypt_value(value):
         return ''
 
 
-def sync_base_workspaces(user):
-
-    reload_showcase = False
-    managers = get_workspace_managers()
-
-    workspaces_by_manager = {}
-    workspaces_by_ref = {}
-    for manager in managers:
-        workspaces_by_manager[manager.get_id()] = []
-        workspaces_by_ref[manager.get_id()] = {}
-
-    workspaces = UserWorkspace.objects.filter(user=user)
-    for workspace in workspaces:
-        if workspace.manager != '':
-            workspaces_by_manager[workspace.manager].append(workspace.reason_ref)
-            workspaces_by_ref[workspace.manager][workspace.reason_ref] = workspace
-
-    for manager in managers:
-        current_workspaces = workspaces_by_manager[manager.get_id()]
-        result = manager.update_base_workspaces(user, current_workspaces)
-
-        for workspace_to_remove in result[0]:
-            user_workspace = workspaces_by_ref[manager.get_id()][workspace_to_remove]
-            workspace = user_workspace.workspace
-            user_workspace.delete()
-
-            if workspace.userworkspace_set.count() == 0:
-                workspace.delete()
-
-        for workspace_to_add in result[1]:
-            from_workspace = workspace_to_add[1]
-
-            if isinstance(from_workspace, CatalogueResource):
-                # TODO
-                continue
-            else:
-                # TODO warning
-                continue
-
-            user_workspace.manager = manager.get_id()
-            user_workspace.reason_ref = workspace_to_add[0]
-            user_workspace.save()
-            reload_showcase = True
-
-    return reload_showcase
-
-
 def get_workspace_list(user):
 
     if not user.is_authenticated():
         return Workspace.objects.filter(public=True, searchable=True)
-
-    sync_base_workspaces(user)
 
     # Now we can fetch all the workspaces for the user
     workspaces = Workspace.objects.filter(Q(public=True, searchable=True) | Q(users__id=user.id))
