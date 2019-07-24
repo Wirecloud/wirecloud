@@ -83,7 +83,7 @@ Highcharts ウィジェットのバーンダウン・チャートを生成しま
 * バージョン : 0.3.1
 * ライセンス : Apache2
 
-ホームページ : [https://github.com/Wirecloud/agile-dashboards](https://github.com/Wirecloud/agile-dashboards）
+ホームページ : [https://github.com/Wirecloud/agile-dashboards](https://github.com/Wirecloud/agile-dashboards)
 
 **[Download CoNWeT\_calculate-tendency\_0.3.1.wgt](https://github.com/Wirecloud/agile-dashboards/releases/download/v0.3/CoNWeT_calculate-tendency_0.3.1.wgt)**
 
@@ -133,7 +133,7 @@ CKAN から PoIs (Point of Interests : 関心のあるポイント) にデータ
 
 ホームページ : [https://github.com/wirecloud-fiware/ckan2poi-operator](https://github.com/wirecloud-fiware/ckan2poi-operator)
 
-**[Download CoNWeT\_ckan2poi\_1.0.1.wgt](https://github.com/wirecloud-fiware/ckan2poi-operator/releases/download/1.0.1/CoNWeT_ckan2poi_1.0.1.wgt)**
+**[Download CoNWeT\_ckan2poi\_1.0.1.wgt](https://github.com/wirecloud-fiware/ckan2poi-operator/releases/download/v1.0.1/CoNWeT_ckan2poi_1.0.1.wgt)**
 
 ### Column chart generator
 
@@ -163,9 +163,9 @@ Context Broker サーバをブラウズおよび管理します。
 * バージョン : 0.1.0
 * ライセンス : Apache2
 
-ホームページ : [https://github.com/Wirecloud/create-table-operator](https://github.com/Wirecloud/create-table-operator)
+ホームページ : [https://github.com/Wirecloud/agile-dashboards](https://github.com/Wirecloud/agile-dashboards)
 
-**[Download CoNWeT\_create-table\_0.1.0.wgt](https://github.com/Wirecloud/create-table-operator/releases/download/0.1.0/CoNWeT_create-table_0.1.0.wgt)**
+**[Download CoNWeT\_create-table\_0.1.0.wgt](https://github.com/Wirecloud/agile-dashboards/releases/download/v0.3/CoNWeT_create-table_0.1.0.wgt)**
 
 ### Detailed Jenkins test report data
 
@@ -293,7 +293,7 @@ Highcharts フレームワークを使用してインタラクティブなチャ
 
 * ベンダー : CoNWeT
 * バージョン : 0.1.3
-* ライセンス : CC、BY-NC、3.0
+* ライセンス : CC, BY-NC, 3.0
 
 ホームページ : [https://github.com/Wirecloud/highcharts-widget](https://github.com/Wirecloud/highcharts-widget)
 
@@ -435,13 +435,13 @@ Markdown を編集することができるウィジェットです。
 * バージョン : 0.1.0
 * ライセンス : Apache-2.0
 
-ホームページ : [https://github.com/mognom/markdown-editor-widget](https://github.com/mognom/markdown-editor-widget)
+ホームページ : [https://github.com/Wirecloud/markdown-editor-widget](https://github.com/Wirecloud/markdown-editor-widget)
 
-**[Download CoNWeT\_markdown-editor\_0.1.0.wgt](https://github.com/mognom/markdown-editor-widget/releases/download/0.1.0/CoNWeT_markdown-editor_0.1.0.wgt)**
+**[Download CoNWeT\_markdown-editor\_0.1.0.wgt](https://github.com/Wirecloud/markdown-editor-widget/releases/download/0.1.0/CoNWeT_markdown-editor_0.1.0.wgt)**
 
 ### Markdown viewer widget
 
-マークダウンテキストを表示する
+Markdown テキストを表示します。
 
 * ベンダー : CoNWeT
 * バージョン : 0.1.1
@@ -497,7 +497,7 @@ Orion Context Broker エンティティとその更新をリアルタイムで�
 
 ホームページ : [https://github.com/wirecloud-fiware/ngsi-target-operator](https://github.com/wirecloud-fiware/ngsi-target-operator)
 
-**[Download CoNWeT\_ngsi-target\_4.0.0.wgt](https://github.com/wirecloud-fiware/ngsi-target-operator/releases/download/4.0.0/CoNWeT_ngsi-target_4.0.0.wgt)**
+**[Download CoNWeT\_ngsi-target\_4.0.0.wgt](https://github.com/wirecloud-fiware/ngsi-target-operator/releases/download/v4.0.0/CoNWeT_ngsi-target_4.0.0.wgt)**
 
 ### NGSI Type browser
 
@@ -513,7 +513,7 @@ Orion Context Broker サーバの利用可能なエンティティ型をブラ�
 
 ### NGSI Entity To PoI
 
-Orion Context Broker サーバから来た、NGSI エンティティを Point of Interestsに変換します (マップ・ウィジェットで使用可能)。
+Orion Context Broker サーバから来た、NGSI エンティティを Point of Interests に変換します (マップ・ウィジェットで使用可能)。
 
 * ベンダー : CoNWeT
 * バージョン : 3.1.2
@@ -533,7 +533,7 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 ホームページ : [https://github.com/Wirecloud/ol3-map-widget](https://github.com/Wirecloud/ol3-map-widget)
 
-**[Download CoNWeT\_ol3-map\_1.1.2.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.1.2/CoNWeT_ol3-map_1.1.2.wgt)**
+**[Download CoNWeT\_ol3-map\_1.1.2.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/v1.1.2/CoNWeT_ol3-map_1.1.2.wgt)**
 
 ### Open item webpage
 
@@ -545,7 +545,7 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 ホームページ : [https://github.com/Wirecloud/agile-dashboards](https://github.com/Wirecloud/agile-dashboards)
 
-**[Download CoNWeT\_open-item-webpage\_0.3.1.wgt](https://github.com/Wirecloud/agile-dashboards/releases/download/v0.3/CoNWeT_open-item-webpage_0.3.1.wgt)*
+**[Download CoNWeT\_open-item-webpage\_0.3.1.wgt](https://github.com/Wirecloud/agile-dashboards/releases/download/v0.3/CoNWeT_open-item-webpage_0.3.1.wgt)**
 
 ### Packlist operator
 
@@ -569,7 +569,7 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 ホームページ : [https://github.com/Wirecloud/panel-widget](https://github.com/Wirecloud/panel-widget)
 
-**[Download CoNWeT\_panel\_1.1.0.wgt](https://github.com/Wirecloud/panel-widget/releases/download/1.1.0/CoNWeT_panel_1.1.0.wgt)**
+**[Download CoNWeT\_panel\_1.1.0.wgt](https://github.com/Wirecloud/panel-widget/releases/download/v1.1.0/CoNWeT_panel_1.1.0.wgt)**
 
 ### Pie Chart Generator
 
@@ -645,7 +645,7 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 ### <Test Report> Splitter
 
-テスト・レポート情報を複数のエンドポイントに分割します
+テスト・レポート情報を複数のエンドポイントに分割します。
 
 * ベンダー : CoNWeT
 * バージョン : 0.1.9
@@ -657,7 +657,7 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 ### Trend Chart Generator
 
-トレンドチャートのデータモデルを生成します
+トレンドチャートのデータモデルを生成します。
 
 * ベンダー : CoNWeT
 * バージョン : 0.3.2
@@ -669,7 +669,7 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 ### Union List Operator
 
-2つのリストの結合
+2つのリストを結合します。
 
 * ベンダー : CoNWeT
 * バージョン : 0.3.1
@@ -737,7 +737,7 @@ ECharts ウィジェットです。
 
 ホームページ : [https://github.com/Wirecloud/echarts-widget](https://github.com/Wirecloud/echarts-widget)
 
-**[Download Ficodes\_echarts\_0.0.2.wgt](https://github.com/Wirecloud/echarts-widget/releases/download/0.0.2/Ficodes_echarts_0.0.2.wgt)**
+**[Download Ficodes\_echarts\_0.0.2.wgt](https://github.com/Wirecloud/echarts-widget/releases/download/v0.0.2/Ficodes_echarts_0.0.2.wgt)**
 
 ### Workspace Browser
 
