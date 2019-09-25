@@ -134,7 +134,7 @@ Convert data from CKAN into Point of Interests (usable by map widgets).
 
 Homepage: [https://github.com/wirecloud-fiware/ckan2poi-operator](https://github.com/wirecloud-fiware/ckan2poi-operator)
 
-**[Download CoNWeT\_ckan2poi\_1.0.1.wgt](https://github.com/wirecloud-fiware/ckan2poi-operator/releases/download/1.0.1/CoNWeT_ckan2poi_1.0.1.wgt)**
+**[Download CoNWeT\_ckan2poi\_1.0.1.wgt](https://github.com/wirecloud-fiware/ckan2poi-operator/releases/download/v1.0.1/CoNWeT_ckan2poi_1.0.1.wgt)**
 
 ### Column chart generator
 
@@ -164,9 +164,9 @@ Create a popup table
 * Version: 0.1.0
 * License: Apache2
 
-Homepage: [https://github.com/Wirecloud/create-table-operator](https://github.com/Wirecloud/create-table-operator)
+Homepage: [https://github.com/Wirecloud/agile-dashboards](https://github.com/Wirecloud/agile-dashboards)
 
-**[Download CoNWeT\_create-table\_0.1.0.wgt](https://github.com/Wirecloud/create-table-operator/releases/download/0.1.0/CoNWeT_create-table_0.1.0.wgt)**
+**[Download CoNWeT\_create-table\_0.1.0.wgt](https://github.com/Wirecloud/agile-dashboards/releases/download/v0.3/CoNWeT_create-table_0.1.0.wgt)**
 
 ### Detailed Jenkins test report data
 
@@ -436,9 +436,9 @@ This widget allows users to edit markdown
 * Version: 0.1.0
 * License: Apache-2.0
 
-Homepage: [https://github.com/mognom/markdown-editor-widget](https://github.com/mognom/markdown-editor-widget)
+Homepage: [https://github.com/Wirecloud/markdown-editor-widget](https://github.com/Wirecloud/markdown-editor-widget)
 
-**[Download CoNWeT\_markdown-editor\_0.1.0.wgt](https://github.com/mognom/markdown-editor-widget/releases/download/0.1.0/CoNWeT_markdown-editor_0.1.0.wgt)**
+**[Download CoNWeT\_markdown-editor\_0.1.0.wgt](https://github.com/Wirecloud/markdown-editor-widget/releases/download/0.1.0/CoNWeT_markdown-editor_0.1.0.wgt)**
 
 ### Markdown viewer widget
 
@@ -498,7 +498,7 @@ Retrieve Orion Context Broker entities and their updates in real time.
 
 Homepage: [https://github.com/wirecloud-fiware/ngsi-target-operator](https://github.com/wirecloud-fiware/ngsi-target-operator)
 
-**[Download CoNWeT\_ngsi-target\_4.0.0.wgt](https://github.com/wirecloud-fiware/ngsi-target-operator/releases/download/4.0.0/CoNWeT_ngsi-target_4.0.0.wgt)**
+**[Download CoNWeT\_ngsi-target\_4.0.0.wgt](https://github.com/wirecloud-fiware/ngsi-target-operator/releases/download/v4.0.0/CoNWeT_ngsi-target_4.0.0.wgt)**
 
 ### NGSI Type browser
 
@@ -534,7 +534,7 @@ Map viewer widget using OpenLayers.
 
 Homepage: [https://github.com/Wirecloud/ol3-map-widget](https://github.com/Wirecloud/ol3-map-widget)
 
-**[Download CoNWeT\_ol3-map\_1.1.2.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.1.2/CoNWeT_ol3-map_1.1.2.wgt)**
+**[Download CoNWeT\_ol3-map\_1.1.2.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/v1.1.2/CoNWeT_ol3-map_1.1.2.wgt)**
 
 ### Open item webpage
 
@@ -570,7 +570,7 @@ Displaying simple texts messages, like measures, in an easy way
 
 Homepage: [https://github.com/Wirecloud/panel-widget](https://github.com/Wirecloud/panel-widget)
 
-**[Download CoNWeT\_panel\_1.1.0.wgt](https://github.com/Wirecloud/panel-widget/releases/download/1.1.0/CoNWeT_panel_1.1.0.wgt)**
+**[Download CoNWeT\_panel\_1.1.0.wgt](https://github.com/Wirecloud/panel-widget/releases/download/v1.1.0/CoNWeT_panel_1.1.0.wgt)**
 
 ### Pie Chart Generator
 
@@ -738,7 +738,7 @@ ECharts widget
 
 Homepage: [https://github.com/Wirecloud/echarts-widget](https://github.com/Wirecloud/echarts-widget)
 
-**[Download Ficodes\_echarts\_0.0.2.wgt](https://github.com/Wirecloud/echarts-widget/releases/download/0.0.2/Ficodes_echarts_0.0.2.wgt)**
+**[Download Ficodes\_echarts\_0.0.2.wgt](https://github.com/Wirecloud/echarts-widget/releases/download/v0.0.2/Ficodes_echarts_0.0.2.wgt)**
 
 ### Workspace Browser
 
