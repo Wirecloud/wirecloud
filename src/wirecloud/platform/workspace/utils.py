@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -335,6 +336,7 @@ def get_workspace_data(workspace, user):
         'title': workspace.title,
         'public': workspace.public,
         'shared': workspace.is_shared(),
+        'requireauth': workspace.requireauth,
         'owner': workspace.creator.username,
         'removable': workspace.creator == user and (user_workspace is None or user_workspace.manager == ''),
         'lastmodified': workspace.last_modified,
