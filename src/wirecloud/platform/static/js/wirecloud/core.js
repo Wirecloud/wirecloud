@@ -259,10 +259,10 @@
                     }).catch(function (error) {}));
                 }
             });
-            Promise.all(promises).then(() => {window.location = Wirecloud.URLs.LOGOUT_VIEW;});
+            Promise.all(promises).then(_logout(), _logout());
 
         } else {
-            window.location = Wirecloud.URLs.LOGOUT_VIEW;
+            _logout();
         }
 
     };
@@ -644,6 +644,18 @@
                 get: on_url_get
             });
         }
+    };
+
+    const _logout = function _logout() {
+        var logout_url = Wirecloud.URLs.LOGOUT_VIEW;
+        var publicdashboard = Wirecloud.activeWorkspace.preferences.get("public");
+        var requireauth = Wirecloud.activeWorkspace.preferences.get("requireauth");
+
+        if (publicdashboard && !requireauth) {
+            var next_url = window.location.pathname + window.location.search + window.location.hash;
+            logout_url += '?next=' + encodeURIComponent(next_url);
+        }
+        window.location = logout_url;
     };
 
 })(Wirecloud.Utils);

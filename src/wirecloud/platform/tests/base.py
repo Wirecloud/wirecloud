@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -23,7 +24,6 @@ import json
 from lxml import etree
 from unittest.mock import Mock, patch
 
-import django
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.test import Client, TransactionTestCase
@@ -35,7 +35,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.commons.authentication import logout
 from wirecloud.commons.middleware import get_api_user
-from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.remote import FormTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selenium_test_case, WirecloudSeleniumTestCase
 from wirecloud.commons.exceptions import HttpBadCredentials
@@ -64,7 +63,7 @@ class BasicViewsAPI(WirecloudTestCase, TransactionTestCase):
     def setUpClass(cls):
         super(BasicViewsAPI, cls).setUpClass()
         factory = RequestFactory()
-        request = factory.get(reverse('login'))
+        factory.get(reverse('login'))
         cls.login_url = reverse('login')
 
     def test_workspace_view_redirects_to_login(self):
@@ -264,10 +263,58 @@ class BasicViewsAPI(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data['platform']['language']['value'], 'es')
 
-    def test_logout_obey_next_page_parameter(self):
+    def test_logout(self):
 
         # logout without next_page
         request = Mock()
+        request.GET = {}
+        request.session.get.return_value = None
+        with patch('wirecloud.commons.authentication.render') as render_mock:
+            logout(request, next_page=None)
+            self.assertTrue(render_mock.called)
+        self.assertTrue(request.session.cycle_key.called)
+
+    def test_logout_obey_next_page_parameter(self):
+
+        # logout with next_page
+        request = Mock()
+        request.GET = {}
+        request.session.get.return_value = None
+        with patch('wirecloud.commons.authentication.render') as render_mock:
+            response = logout(request, next_page='newurl')
+            self.assertFalse(render_mock.called)
+        self.assertTrue(request.session.cycle_key.called)
+        self.assertTrue(response['Location'], 'newurl')
+
+    @patch('wirecloud.commons.authentication.is_safe_url', return_value=True)
+    def test_logout_obey_next_get_parameter(self, is_safe_url):
+
+        # logout without next_page
+        request = Mock()
+        request.GET = {"next": "newgeturl"}
+        request.session.get.return_value = None
+        with patch('wirecloud.commons.authentication.render') as render_mock:
+            response = logout(request, next_page=None)
+            self.assertFalse(render_mock.called)
+        self.assertTrue(request.session.cycle_key.called)
+        self.assertTrue(response['Location'], 'newgeturl')
+
+        # logout with next_page
+        request = Mock()
+        request.GET = {"next": "newgeturl"}
+        request.session.get.return_value = None
+        with patch('wirecloud.commons.authentication.render') as render_mock:
+            response = logout(request, next_page='newurl')
+            self.assertFalse(render_mock.called)
+        self.assertTrue(request.session.cycle_key.called)
+        self.assertTrue(response['Location'], 'newgeturl')
+
+    @patch('wirecloud.commons.authentication.is_safe_url', return_value=False)
+    def test_logout_ignores_next_get_parameter_if_invalid(self, is_safe_url):
+
+        # logout without next_page
+        request = Mock()
+        request.GET = {"next": "newgeturl"}
         request.session.get.return_value = None
         with patch('wirecloud.commons.authentication.render') as render_mock:
             response = logout(request, next_page=None)
@@ -276,6 +323,7 @@ class BasicViewsAPI(WirecloudTestCase, TransactionTestCase):
 
         # logout with next_page
         request = Mock()
+        request.GET = {"next": "newgeturl"}
         request.session.get.return_value = None
         with patch('wirecloud.commons.authentication.render') as render_mock:
             response = logout(request, next_page='newurl')
