@@ -116,16 +116,9 @@
                     var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
                     typeahead.bind(dialog.form.fieldInterfaces.username.inputElement);
 
-                    dialog.executeOperation = function (data) {
-                        Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {
-                            method: 'POST',
-                            contentType: 'application/json',
-                            postBody: JSON.stringify({username: data.username}),
-                            onSuccess: function () {
-                                document.location.assign(Wirecloud.URLs.ROOT_URL);
-                            }
-                        });
-                    }.bind(this);
+                    dialog.executeOperation = (data) => {
+                        Wirecloud.switchUser(data.username);
+                    };
 
                     dialog.show();
                 });

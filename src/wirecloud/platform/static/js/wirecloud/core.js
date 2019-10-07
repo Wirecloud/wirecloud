@@ -557,6 +557,44 @@
         });
     };
 
+    /**
+     * Logs in as another user/organization using current user
+     * credentials/permissions
+     *
+     * @since 1.4
+     *
+     * @param {String} targetuser
+     *     Username of the user to change to. Current user should be and
+     *     administrator or being owner of the target organization.
+     *
+     * @returns {Wirecloud.Task}
+     *
+     * @example
+     * Wirecloud.switchUser("usertoimpersonate").then(
+     *   () => {
+     *     // User switched successfully
+     *   },
+     *   (error) => {
+     *     // Error switching current user
+     *   };
+     */
+    Wirecloud.switchUser = function switchUser(targetuser) {
+        return Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {
+            method: 'POST',
+            contentType: 'application/json',
+            postBody: JSON.stringify({username: targetuser})
+        }).then(
+            (response) => {
+                if ([401, 403, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                } else if (response.status !== 204) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                }
+                const location = response.getHeader('Location');
+                document.location.assign(location != null ? location : Wirecloud.URLs.ROOT_URL);
+            }
+        );
+    };
 
     var process_workspace_data = function process_workspace_data(response, options) {
 

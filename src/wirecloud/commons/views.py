@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -21,10 +22,12 @@ import gettext as gettext_module
 import importlib
 import json
 import os
+from urllib.parse import unquote, urlparse
 
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
+from django.core.urlresolvers import resolve
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils._os import upath
@@ -37,6 +40,7 @@ from wirecloud.platform.plugins import get_plugins
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes, parse_json_request, produces
 from wirecloud.commons.search_indexes import get_search_engine, is_available
 from wirecloud.platform.core.plugins import get_version_hash
+from wirecloud.platform.models import Workspace
 from wirecloud.platform.themes import get_available_themes
 
 
@@ -229,7 +233,7 @@ class SwitchUserService(Service):
         for backend in auth.get_backends():
             try:
                 target_user = backend.get_user(user_id)
-            except:
+            except Exception:
                 continue
             if target_user is None:
                 continue
@@ -240,6 +244,31 @@ class SwitchUserService(Service):
         if target_user is None:
             raise Http404
 
+        # Check if the target user has permission to access current dashboard
+        location = request.META.get("HTTP_REFERER")
+        parsed_referer = urlparse(location)
+        if request.get_host() != "" and request.get_host() != parsed_referer[1]:
+
+            location = None
+
+        else:
+
+            referer_view_info = resolve(parsed_referer.path)
+            if referer_view_info.url_name == 'wirecloud.workspace_view':
+
+                workspace = Workspace.objects.get(
+                    creator__username=unquote(referer_view_info.kwargs['owner']),
+                    name=unquote(referer_view_info.kwargs['name'])
+                )
+                if not workspace.is_accessible_by(target_user):
+                    location = None
+            else:
+                location = None
+
+        response = HttpResponse(status=204)
+        if location is not None:
+            response['Location'] = location
+
         auth.login(request, target_user)
 
-        return HttpResponse(status=204)
+        return response

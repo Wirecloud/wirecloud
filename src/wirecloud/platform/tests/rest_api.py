@@ -25,7 +25,7 @@ import os
 from unittest.mock import Mock, patch
 
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.test import Client, TestCase, TransactionTestCase
 
 from wirecloud.catalogue import utils as catalogue
@@ -1411,35 +1411,6 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
             'name': 'rest_api_test',
         }
         check_post_requires_permission(self, url, json.dumps(data))
-
-    def test_tab_collection_post(self):
-
-        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Make the request
-        def create_workspace_tab():
-            data = {
-                'name': 'rest_api_test',
-                'title': 'rest_api_test'
-            }
-            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-            self.assertEqual(response.status_code, 201)
-
-            # Check basic response structure
-            response_data = json.loads(response.content.decode('utf-8'))
-            self.assertTrue(isinstance(response_data, dict))
-            self.assertIn("id", response_data)
-            self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
-            self.assertEqual(response_data['name'], 'rest_api_test')
-            self.assertEqual(response_data['title'], 'rest_api_test')
-            self.assertEqual(response_data['iwidgets'], [])
-
-            # Tab should be created
-            self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
-        check_cache_is_purged(self, 1, create_workspace_tab)
 
     def test_tab_collection_post(self):
 
@@ -3450,8 +3421,8 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
-        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['user_with_markets','user_with_workspaces'])
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['user_with_markets', 'user_with_workspaces'])
 
     def test_resource_collection_post_user_list_normuser(self):
 
@@ -3477,7 +3448,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
         self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
 
     def test_resource_collection_post_group_list(self):
@@ -3492,7 +3463,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
         self.assertEqual(list(resource.users.values_list('username', flat=True)), [])
         self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['org'])
 
@@ -3522,7 +3493,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
         self.assertEqual(list(resource.users.values_list('username', flat=True)), [])
         self.assertEqual(list(resource.groups.values_list('name', flat=True)), ['org'])
 
@@ -3551,7 +3522,7 @@ class ResourceManagementAPI(WirecloudTestCase, TransactionTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test_Selenium', version='1.0')
         self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
         self.assertEqual(list(resource.groups.values_list('name', flat=True)), [])
 
@@ -4812,13 +4783,89 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
         self.assertTrue(isinstance(response_data, dict))
         self.assertEqual(response_data['platform']['username']['value'], user)
 
-    def test_switch_user(self):
+    def test_switch_user_no_referer(self):
 
         self.client.login(username='admin', password='admin')
 
         response = self.client.post(self.su_url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.check_current_user('user_with_workspaces')
+
+        # We should not have a location header as we have not provided a referer
+        self.assertNotIn('Location', response)
+
+    def test_switch_user_invalid_referer(self):
+
+        self.client.login(username='admin', password='admin')
+
+        referer = 'http://myserver/user_with_workspaces/Workspace'
+        response = self.client.post(
+            self.su_url,
+            '{"username": "user_with_workspaces"}',
+            content_type='application/json; charset=UTF-8',
+            HTTP_ACCEPT='application/json',
+            HTTP_REFERER=referer
+        )
+        self.assertEqual(response.status_code, 204)
+        self.check_current_user('user_with_workspaces')
+
+        # We should not have a location header as we have provided an invalid referer
+        self.assertNotIn('Location', response)
+
+    def test_switch_user_no_dashboard_referer(self):
+
+        self.client.login(username='admin', password='admin')
+
+        referer = 'http://testserver/admin/'
+        response = self.client.post(
+            self.su_url,
+            '{"username": "user_with_workspaces"}',
+            content_type='application/json; charset=UTF-8',
+            HTTP_ACCEPT='application/json',
+            HTTP_REFERER=referer
+        )
+        self.assertEqual(response.status_code, 204)
+        self.check_current_user('user_with_workspaces')
+
+        # We should not have a location header as we have provided an invalid referer
+        self.assertNotIn('Location', response)
+
+    def test_switch_user_not_having_dashboard_access(self):
+
+        self.client.login(username='admin', password='admin')
+
+        referer = 'http://testserver/admin/Workspace'
+        response = self.client.post(
+            self.su_url,
+            '{"username": "user_with_workspaces"}',
+            content_type='application/json; charset=UTF-8',
+            HTTP_ACCEPT='application/json',
+            HTTP_REFERER=referer
+        )
+        self.assertEqual(response.status_code, 204)
+        self.check_current_user('user_with_workspaces')
+
+        # We should not have a location header as user_with_workspaces has not
+        # permission for accessing admin/Workspace
+        self.assertNotIn('Location', response)
+
+    def test_switch_user_having_dashboard_access(self):
+
+        self.client.login(username='admin', password='admin')
+
+        referer = 'http://testserver/user_with_workspaces/Workspace'
+        response = self.client.post(
+            self.su_url,
+            '{"username": "user_with_workspaces"}',
+            content_type='application/json; charset=UTF-8',
+            HTTP_ACCEPT='application/json',
+            HTTP_REFERER=referer
+        )
+        self.assertEqual(response.status_code, 204)
+        self.check_current_user('user_with_workspaces')
+
+        self.assertIn('Location', response)
+        self.assertEqual(response['Location'], referer)
 
     def test_switch_user_inexistent_user(self):
 
