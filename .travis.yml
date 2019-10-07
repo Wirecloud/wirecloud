@@ -6,9 +6,9 @@ env:
     - DJANGO_VERSION=1.10
     - DJANGO_VERSION=1.11
 python:
-    - "3.4"
     - "3.5"
     - "3.6"
+    - "3.7"
 services:
     - postgresql
     - docker
@@ -28,7 +28,7 @@ matrix:
           language: node_js
           python: ""
           addons:
-              firefox: "45.0"
+              firefox: "52.0.2esr"
           env: TEST_SUITE=js_unittests
         - node_js: "lts/*"
           language: node_js

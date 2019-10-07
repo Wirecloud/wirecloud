@@ -130,20 +130,20 @@ class ProxyTests(ProxyTestsBase):
         self.client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
         self.client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
 
-        self.check_basic_requests('http://localhost/test/publicworkspace')
+        self.check_basic_requests('http://localhost/test/publicworkspace', True)
 
     def test_basic_proxy_requests(self):
 
         self.client.login(username='test', password='test')
 
-        self.check_basic_requests('http://localhost/test/publicworkspace')
+        self.check_basic_requests('http://localhost/test/publicworkspace', True)
 
     def test_basic_proxy_requests_from_widget(self):
 
         self.client.login(username='test', password='test')
 
         widget_url = reverse('wirecloud.showcase_media', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0", "file_path": "/index.html"})
-        self.check_basic_requests('http://localhost' + widget_url)
+        self.check_basic_requests('http://localhost' + widget_url, False)
 
     def test_basic_proxy_requests_from_widget_restricted_to_get_post(self):
 
@@ -183,9 +183,9 @@ class ProxyTests(ProxyTestsBase):
         self.client.login(username='test', password='test')
 
         proxied_url = 'http://localhost' + reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
-        self.check_basic_requests(proxied_url)
+        self.check_basic_requests(proxied_url, False)
 
-    def check_basic_requests(self, referer):
+    def check_basic_requests(self, referer, session):
         def echo_headers_response(method, url, *args, **kwargs):
             data = kwargs['data'].read()
             if method == 'GET':
@@ -220,6 +220,8 @@ class ProxyTests(ProxyTestsBase):
             'Content-Length': "%s" % len(json.dumps(expected_response_body)),
             'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
         }
+        if session:
+            expected_response_headers['Vary'] = 'Cookie'
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', echo_headers_response)
         # Using "request" to work around https://code.djangoproject.com/ticket/20596
@@ -243,6 +245,8 @@ class ProxyTests(ProxyTestsBase):
             'Content-Length': "%s" % len(json.dumps(expected_response_body)),
             'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
         }
+        if session:
+            expected_response_headers['Vary'] = 'Cookie'
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_headers_response)
         response = self.client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER=referer)

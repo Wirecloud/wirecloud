@@ -196,6 +196,7 @@ setup(
     ),
     tests_require=(
         'django-nose',
+        'parameterized',
     ),
     setup_requires=(
         'wheel>=0.24',

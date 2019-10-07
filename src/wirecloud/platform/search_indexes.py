@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -42,6 +42,7 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
     description = indexes.CharField(model_attr='description')
     longdescription = indexes.CharField(model_attr='longdescription')
     public = BooleanField(model_attr="public")
+    requireauth = BooleanField(model_attr="requireauth")
 
     searchable = BooleanField(model_attr="searchable", stored=False)
 

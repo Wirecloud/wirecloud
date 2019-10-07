@@ -27,6 +27,7 @@ from wirecloud.platform.tests.selenium import *  # noqa
 from wirecloud.platform.tests.themes import ThemesTestCase  # noqa
 from wirecloud.platform.localcatalogue.tests import *  # noqa
 from wirecloud.platform.markets.tests import *  # noqa
+from wirecloud.platform.preferences.tests import *  # noqa
 from wirecloud.platform.wiring.tests import *  # noqa
 from wirecloud.platform.widget.tests import CodeTransformationTestCase, WidgetModuleTestCase  # noqa
 from wirecloud.platform.workspace.tests import WorkspaceMigrationsTestCase, WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase  # noqa

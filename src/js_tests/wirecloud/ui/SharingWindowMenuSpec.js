@@ -57,7 +57,7 @@
                 }).toThrowError(TypeError);
             });
 
-            it("load sharing configuration from workspaces", () => {
+            it("load sharing configuration from workspaces (public)", () => {
                 let workspace = {
                     model: {
                         users: [
@@ -82,12 +82,42 @@
                         }
                     }
                 };
-                workspace.model.preferences.get.and.returnValue(true);
+                workspace.model.preferences.get.and.callFake((pref) => {
+                    return pref === "public";
+                });
 
                 let dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
 
                 expect(dialog.visibilityOptions.getValue()).toBe("public");
                 expect(Object.keys(dialog.sharingUsers).length).toBe(3);
+            });
+
+            it("load sharing configuration from workspaces (public-auth)", () => {
+                let workspace = {
+                    model: {
+                        users: [
+                            {
+                                username: "currentuser",
+                                organization: false,
+                                accesslevel: "owner"
+                            },
+                            {
+                                username: "org",
+                                organization: true,
+                                accesslevel: "read"
+                            }
+                        ],
+                        preferences: {
+                            get: jasmine.createSpy("get")
+                        }
+                    }
+                };
+                workspace.model.preferences.get.and.returnValue(true);
+
+                let dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
+
+                expect(dialog.visibilityOptions.getValue()).toBe("public-auth");
+                expect(Object.keys(dialog.sharingUsers).length).toBe(2);
             });
 
         });

@@ -238,7 +238,7 @@ STYLED_ELEMENTS_CSS = (
 
 
 BASE_PATH = os.path.dirname(__file__)
-WORKSPACE_BROWSER_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.3.wgt')
+WORKSPACE_BROWSER_FILE = os.path.join(BASE_PATH, 'initial', 'WireCloud_workspace-browser_0.1.4a1.wgt')
 INITIAL_HOME_DASHBOARD_FILE = os.path.join(BASE_PATH, 'initial', 'initial_home_dashboard.wgt')
 MARKDOWN_VIEWER_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-viewer_0.1.1.wgt')
 MARKDOWN_EDITOR_FILE = os.path.join(BASE_PATH, 'initial', 'CoNWeT_markdown-editor_0.1.0.wgt')
@@ -376,6 +376,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "type": "boolean",
                 "hidden": True,
                 "description": _("Allow any user to open this workspace (in read-only mode). (default: disabled)")
+            },
+            {
+                "name": "requireauth",
+                "defaultValue": False,
+                "label": _("Required registered user"),
+                "type": "boolean",
+                "hidden": True,
+                "description": _("Require users to be logged in to access the workspace (This option has only effect if the workspace is public). (default: disabled)")
             },
             {
                 "name": "sharelist",
@@ -687,7 +695,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def populate(self, wirecloud_user, log):
         updated = False
 
-        updated |= self.populate_component(wirecloud_user, log, "WireCloud", "workspace-browser", "0.1.3", WORKSPACE_BROWSER_FILE)
+        updated |= self.populate_component(wirecloud_user, log, "WireCloud", "workspace-browser", "0.1.4a1", WORKSPACE_BROWSER_FILE)
 
         if not Workspace.objects.filter(creator__username="wirecloud", name="home").exists():
             updated = True

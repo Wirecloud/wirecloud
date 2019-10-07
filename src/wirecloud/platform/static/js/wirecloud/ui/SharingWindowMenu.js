@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -44,6 +44,7 @@
 
         options = [
             {name: 'public', iconClass: "fa fa-globe", title: utils.gettext("Public"), description: utils.gettext("Anyone on the Internet can find and access this dashboard.")},
+            {name: 'public-auth', iconClass: "fas fa-id-card", title: utils.gettext("Registered User"), description: utils.gettext("Anyone on the Internet can find this dashboard. Only registered users can access it.")},
             {name: 'private', iconClass: "fa fa-lock", title: utils.gettext("Private"), description: utils.gettext("Shared with specific people and organizations.")}
         ];
 
@@ -86,7 +87,11 @@
         this.btnCancel.appendTo(this.windowBottom);
         this.btnCancel.addEventListener('click', this._closeListener);
 
-        this.visibilityOptions.setValue(workspace.model.preferences.get('public') ? 'public' : 'private');
+        if (!workspace.model.preferences.get('public')) {
+            this.visibilityOptions.setValue('private');
+        } else {
+            this.visibilityOptions.setValue(workspace.model.preferences.get('requireauth') ? 'public-auth' : 'public');
+        }
         this.visibilityOptions.addEventListener('change', on_visibility_option_change.bind(this));
         on_visibility_option_change.call(this);
     };
@@ -99,37 +104,30 @@
     var builder = new se.GUIBuilder();
 
     var on_visibility_option_change = function on_visibility_option_change() {
-        this.inputSearch.setDisabled(this.visibilityOptions.value === 'public');
-        this.userGroup.setDisabled(this.visibilityOptions.value === 'public');
+        this.inputSearch.setDisabled(this.visibilityOptions.value !== 'private');
+        this.userGroup.setDisabled(this.visibilityOptions.value !== 'private');
     };
 
     var accept = function accept() {
-        var username, sharelist = [];
-
-        this.btnAccept.addClassName('busy');
-
-        for (username in this.sharingUsers) {
-            sharelist.push({type: 'user', name: username});
-        }
-
-        this.btnAccept.disable();
+        this.btnAccept.disable().addClassName('busy');
         this.btnCancel.disable();
+
+        const sharelist = Object.values(this.sharingUsers);
         this.workspace.model.preferences.set({
-            public: {value: this.visibilityOptions.value === "public"},
+            public: {value: this.visibilityOptions.value === "public" || this.visibilityOptions.value === "public-auth"},
+            requireauth: {value: this.visibilityOptions.value !== "public"},
             sharelist: {value: sharelist}
         }).then(
             () => {
                 this.workspace.model.users.length = 0;
-
-                for (username in this.sharingUsers) {
-                    this.workspace.model.users.push(this.sharingUsers[username]);
-                }
+                sharelist.forEach((user) => {
+                    this.workspace.model.users.push(user);
+                });
 
                 this._closeListener();
             }, () => {
-                this.btnAccept.enable();
+                this.btnAccept.enable().removeClassName('busy');
                 this.btnCancel.enable();
-                this.btnAccept.removeClassName('busy');
             }
         );
     };
@@ -165,6 +163,9 @@
         var fullname = data.fullname;
         if (data.username === Wirecloud.contextManager.get('username')) {
             fullname = utils.interpolate(utils.gettext("%(fullname)s (You)"), {fullname: data.fullname});
+            data.accesslevel = "owner";
+        } else {
+            data.accesslevel = "read";
         }
 
         let template = Wirecloud.currentTheme.templates['wirecloud/workspace/sharing_user'];

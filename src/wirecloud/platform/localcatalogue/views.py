@@ -320,7 +320,7 @@ class WorkspaceResourceCollection(Resource):
     def read(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
-        if not workspace.is_available_for(request.user):
+        if not workspace.is_accessible_by(request.user):
             return build_error_response(request, 403, _("You don't have access to this workspace"))
 
         resources = set()

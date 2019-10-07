@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -42,6 +43,7 @@ class Workspace(models.Model):
 
     searchable = models.BooleanField(_('Searchable'), default=True)
     public = models.BooleanField(_('Available to all users'), default=False)
+    requireauth = models.BooleanField(_('Require users to be logged in to access the workspace (This option has only effect if the workspace is public)'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkspace')
     groups = models.ManyToManyField(Group, verbose_name=_('Groups'), blank=True)
     description = models.TextField(_('Description'), max_length=140, blank=True)
@@ -76,8 +78,16 @@ class Workspace(models.Model):
 
         super(Workspace, self).save(*args, **kwargs)
 
-    def is_available_for(self, user):
-        return self.public or user.is_authenticated() and (user.is_superuser or self.creator == user or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0)
+    def is_accessible_by(self, user):
+        return (
+            user.is_superuser or
+            self.public and not self.requireauth or
+            self.public and user.is_authenticated() or
+            user.is_authenticated() and (self.creator == user or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0)
+        )
+
+    def is_editable_by(self, user):
+        return user.is_superuser or self.creator == user
 
     def is_shared(self):
         return self.public or self.users.count() > 1 or self.groups.count() > 1

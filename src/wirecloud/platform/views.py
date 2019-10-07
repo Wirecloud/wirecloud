@@ -163,7 +163,7 @@ def render_workspace_view(request, owner, name):
     get_workspace_list(request.user)
 
     workspace = get_object_or_404(Workspace, creator__username=owner, name=name)
-    if not workspace.is_available_for(request.user):
+    if not workspace.is_accessible_by(request.user):
         if request.user.is_authenticated():
             return build_error_response(request, 403, 'forbidden')
         else:
