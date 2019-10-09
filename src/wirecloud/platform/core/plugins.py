@@ -298,6 +298,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Orientation'),
                 'description': _('Current screen orientation'),
             },
+            'realuser': {
+                'label': _('Real User Username'),
+                'description': _('User name of the real logged user'),
+            },
             'theme': {
                 'label': _('Theme'),
                 'description': _('Name of the theme used by the platform'),
@@ -312,7 +316,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             },
         }
 
-    def get_platform_context_current_values(self, user):
+    def get_platform_context_current_values(self, user, session):
         if user.is_authenticated():
             username = user.username
             fullname = user.get_full_name()
@@ -321,6 +325,9 @@ class WirecloudCorePlugin(WirecloudPlugin):
             username = 'anonymous'
             fullname = _('Anonymous')
             avatar = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?s=25'
+
+        if session is None:
+            session = {}
 
         return {
             'language': get_language(),
@@ -332,6 +339,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
             'mode': 'unknown',
+            'realuser': session.get("realuser"),
             'theme': get_active_theme_name(),
             'version': wirecloud.platform.__version__,
             'version_hash': get_version_hash(),

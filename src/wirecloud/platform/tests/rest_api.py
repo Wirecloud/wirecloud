@@ -4774,7 +4774,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
         super(AdministrationAPI, cls).setUpClass()
         cls.su_url = reverse('wirecloud.switch_user_service')
 
-    def check_current_user(self, user):
+    def check_current_user(self, user, realuser):
 
         url = reverse('wirecloud.platform_context_collection')
         response = self.client.get(url, HTTP_ACCEPT='application/json')
@@ -4782,6 +4782,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertEqual(response_data['platform']['username']['value'], user)
+        self.assertEqual(response_data['platform']['realuser']['value'], realuser)
 
     def test_switch_user_no_referer(self):
 
@@ -4789,10 +4790,22 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
 
         response = self.client.post(self.su_url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
-        self.check_current_user('user_with_workspaces')
+        self.check_current_user('user_with_workspaces', 'admin')
 
         # We should not have a location header as we have not provided a referer
         self.assertNotIn('Location', response)
+
+    def test_switch_user_allows_return_to_original_user(self):
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.post(self.su_url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.check_current_user('user_with_workspaces', 'admin')
+
+        response = self.client.post(self.su_url, '{"username": "admin"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.check_current_user('admin', None)
 
     def test_switch_user_invalid_referer(self):
 
@@ -4807,7 +4820,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
             HTTP_REFERER=referer
         )
         self.assertEqual(response.status_code, 204)
-        self.check_current_user('user_with_workspaces')
+        self.check_current_user('user_with_workspaces', 'admin')
 
         # We should not have a location header as we have provided an invalid referer
         self.assertNotIn('Location', response)
@@ -4825,7 +4838,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
             HTTP_REFERER=referer
         )
         self.assertEqual(response.status_code, 204)
-        self.check_current_user('user_with_workspaces')
+        self.check_current_user('user_with_workspaces', 'admin')
 
         # We should not have a location header as we have provided an invalid referer
         self.assertNotIn('Location', response)
@@ -4843,7 +4856,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
             HTTP_REFERER=referer
         )
         self.assertEqual(response.status_code, 204)
-        self.check_current_user('user_with_workspaces')
+        self.check_current_user('user_with_workspaces', 'admin')
 
         # We should not have a location header as user_with_workspaces has not
         # permission for accessing admin/Workspace
@@ -4862,7 +4875,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
             HTTP_REFERER=referer
         )
         self.assertEqual(response.status_code, 204)
-        self.check_current_user('user_with_workspaces')
+        self.check_current_user('user_with_workspaces', 'admin')
 
         self.assertIn('Location', response)
         self.assertEqual(response['Location'], referer)
@@ -4873,7 +4886,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
 
         response = self.client.post(self.su_url, '{"username": "inexistentuser"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 404)
-        self.check_current_user('admin')
+        self.check_current_user('admin', None)
 
     def test_switch_user_requires_permissions(self):
 
@@ -4881,7 +4894,7 @@ class AdministrationAPI(WirecloudTestCase, TestCase):
 
         response = self.client.post(self.su_url, '{"username": "admin"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 403)
-        self.check_current_user('user_with_workspaces')
+        self.check_current_user('user_with_workspaces', None)
 
     def test_switch_user_bad_request_syntax(self):
 

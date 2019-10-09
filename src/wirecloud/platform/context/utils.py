@@ -44,21 +44,21 @@ def get_platform_context_definitions():
     return _wirecloud_platform_context_definitions
 
 
-def get_platform_context_current_values(user):
+def get_platform_context_current_values(user, session=None):
 
     plugins = get_plugins()
     values = {}
 
     for plugin in plugins:
-        values.update(plugin.get_platform_context_current_values(user))
+        values.update(plugin.get_platform_context_current_values(user, session=session))
 
     return values
 
 
-def get_platform_context(user):
+def get_platform_context(user, session=None):
 
     context = copy.deepcopy(get_platform_context_definitions())
-    values = get_platform_context_current_values(user)
+    values = get_platform_context_current_values(user, session=session)
     for key in values:
         context[key]['value'] = values[key]
 
@@ -102,7 +102,7 @@ def get_constant_context_values():
     return res
 
 
-def get_context_values(workspace, user):
+def get_context_values(workspace, user, session=None):
     cache_key = 'constant_context/' + str(user.id)
     constant_context = cache.get(cache_key)
     if constant_context is None:
@@ -110,7 +110,7 @@ def get_context_values(workspace, user):
         cache.set(cache_key, constant_context)
 
     platform_context = constant_context
-    platform_context.update(get_platform_context_current_values(user))
+    platform_context.update(get_platform_context_current_values(user, session=session))
 
     return {
         'platform': platform_context,

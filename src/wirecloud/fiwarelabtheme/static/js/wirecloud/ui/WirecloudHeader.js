@@ -23,7 +23,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -109,6 +109,11 @@
                 user_menu.append(item);
             }
 
+            item = new Wirecloud.ui.TutorialSubMenu();
+            user_menu.append(item);
+
+            user_menu.append(new se.Separator());
+
             if (Wirecloud.contextManager.get('issuperuser') === true) {
                 item = new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
                     var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
@@ -122,13 +127,18 @@
 
                     dialog.show();
                 });
-                item.addIconClass('fa fa-exchange');
-                user_menu.append(item);
+                user_menu.append(item.addIconClass('fa fa-exchange'));
             }
 
-            item = new Wirecloud.ui.TutorialSubMenu();
-            user_menu.append(item);
-            user_menu.append(new StyledElements.Separator());
+            const realuser = Wirecloud.contextManager.get('realuser');
+            if (realuser != null) {
+                item = new StyledElements.MenuItem(
+                    utils.interpolate(utils.gettext('Become %(user)s again'), {user: realuser}),
+                    () => {Wirecloud.switchUser(realuser);}
+                );
+                user_menu.append(item.addIconClass('fas fa-undo'));
+            }
+
             item = new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout);
             item.addIconClass('fa fa-sign-out');
             user_menu.append(item);
@@ -275,4 +285,4 @@
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
 
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.Utils);

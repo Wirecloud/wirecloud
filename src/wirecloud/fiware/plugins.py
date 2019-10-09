@@ -42,7 +42,7 @@ try:
     IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_django' in settings.INSTALLED_APPS \
         and getattr(settings, 'SOCIAL_AUTH_FIWARE_KEY', None) is not None and getattr(settings, 'SOCIAL_AUTH_FIWARE_SECRET', None) is not None
 
-except:
+except Exception:
     IDM_SUPPORT_ENABLED = False
 
 
@@ -137,7 +137,7 @@ class FiWarePlugin(WirecloudPlugin):
             },
         }
 
-    def get_platform_context_current_values(self, user):
+    def get_platform_context_current_values(self, user, **kwargs):
         # Work around bug when running manage.py compress
         import wirecloud.fiware
 

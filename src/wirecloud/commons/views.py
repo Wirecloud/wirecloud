@@ -220,9 +220,7 @@ class SwitchUserService(Service):
     @consumes(('application/json',))
     def process(self, request):
 
-        if not request.user.is_superuser:
-            return build_error_response(request, 403, _("You don't have permission to switch current session user"))
-
+        realuser = get_object_or_404(User, username=request.session['realuser']) if "realuser" in request.session else request.user
         user_info = parse_json_request(request)
 
         if "username" not in user_info:
@@ -243,6 +241,9 @@ class SwitchUserService(Service):
 
         if target_user is None:
             raise Http404
+
+        if target_user != realuser and not realuser.is_superuser:
+            return build_error_response(request, 403, _("You don't have permission to switch current session user"))
 
         # Check if the target user has permission to access current dashboard
         location = request.META.get("HTTP_REFERER")
@@ -265,10 +266,14 @@ class SwitchUserService(Service):
             else:
                 location = None
 
+        # Switch User
+        auth.login(request, target_user)
+        if realuser != target_user:
+            request.session["realuser"] = realuser.username
+            request.session["realfullname"] = realuser.get_full_name()
+
         response = HttpResponse(status=204)
         if location is not None:
             response['Location'] = location
-
-        auth.login(request, target_user)
 
         return response
