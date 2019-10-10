@@ -34,15 +34,11 @@
      * @extends Wirecloud.ui.DragboardLayout
      */
     var FreeLayout = function FreeLayout(dragboard, scrollbarSpace) {
-        if (arguments.length === 0) {
-            return; // Allow empty constructor (allowing hierarchy)
-        }
-
         this.initialized = false;
         this.iwidgetToMove = null;
         Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
     };
-    FreeLayout.prototype = new Wirecloud.ui.DragboardLayout();
+    utils.inherit(FreeLayout, Wirecloud.ui.DragboardLayout);
 
     FreeLayout.prototype.MAX_HLU = 1000000;
 

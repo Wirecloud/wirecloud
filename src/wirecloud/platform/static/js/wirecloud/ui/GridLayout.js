@@ -36,10 +36,6 @@
      * @param horizontalMargin horizontal margin between iwidgets in pixels
      */
     var GridLayout = function GridLayout(dragboard, columns, rows, verticalMargin, horizontalMargin) {
-        if (arguments.length === 0) {
-            return; // Allow empty constructor (allowing hierarchy)
-        }
-
         this.initialized = false;
         this._buffers = {"base": {}};
         Object.defineProperties(this, {
@@ -72,11 +68,7 @@
 
         Wirecloud.ui.DragboardLayout.call(this, dragboard);
     };
-
-    /*
-     * GridLayout extends Wirecloud.ui.DragboardLayout
-     */
-    GridLayout.prototype = new Wirecloud.ui.DragboardLayout();
+    utils.inherit(GridLayout, Wirecloud.ui.DragboardLayout);
 
     GridLayout.prototype.fromPixelsToVCells = function fromPixelsToVCells(pixels) {
         var cells = pixels / this.fromVCellsToPixels(1);

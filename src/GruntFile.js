@@ -134,6 +134,11 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/WorkspaceTabView.js',
     'wirecloud/platform/static/js/wirecloud/ui/WorkspaceTabViewDragboard.js',
     'wirecloud/platform/static/js/wirecloud/ui/SharingWindowMenu.js',
+
+    'wirecloud/platform/static/js/wirecloud/ui/DragboardLayout.js',
+    'wirecloud/platform/static/js/wirecloud/ui/ColumnLayout.js',
+    'wirecloud/platform/static/js/wirecloud/ui/SmartColumnLayout.js',
+    'wirecloud/platform/static/js/wirecloud/ui/SidebarLayout.js',
     'wirecloud/platform/static/js/wirecloud/wiring/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/EndpointTypeError.js',
     'wirecloud/platform/static/js/wirecloud/wiring/EndpointValueError.js',

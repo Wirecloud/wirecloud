@@ -468,6 +468,9 @@
         if (widget !== null) {
             widget.tab.dragboard.raiseToTop(widget);
             widget.highlight().tab.highlight();
+            if (widget.layout instanceof Wirecloud.ui.SidebarLayout) {
+                widget.layout.active = true;
+            }
         }
 
         return this;

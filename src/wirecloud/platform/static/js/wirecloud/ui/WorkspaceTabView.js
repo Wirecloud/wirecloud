@@ -178,7 +178,17 @@
                 width: resource.default_width
             }, options);
 
-            layout = options.layout === 1 ? this.dragboard.freeLayout : this.dragboard.baseLayout;
+            switch (options.layout) {
+            case 0:
+                layout = this.dragboard.baseLayout;
+                break;
+            case 1:
+                layout = this.dragboard.freeLayout;
+                break;
+            case 2:
+                layout = this.dragboard.leftLayout;
+                break;
+            }
 
             options.left = options.left != null ? layout.adaptColumnOffset(options.left).inLU : undefined;
             options.top = options.top != null ? layout.adaptRowOffset(options.top).inLU : undefined;

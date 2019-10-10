@@ -253,7 +253,20 @@
             this.previousLayout = model.layout === 0 ? tab.dragboard.baseLayout : tab.dragboard.freeLayout;
             this.previousPosition = model.position;
         } else {
-            layout = model.layout === 0 ? tab.dragboard.baseLayout : tab.dragboard.freeLayout
+            switch (model.layout) {
+            case 0:
+                layout = tab.dragboard.baseLayout;
+                break;
+            case 1:
+                layout = tab.dragboard.freeLayout;
+                break;
+            case 2:
+                layout = tab.dragboard.leftLayout;
+                break;
+            case 3:
+                layout = tab.dragboard.rightLayout;
+                break;
+            }
         }
         layout.addWidget(this, true);
 

@@ -22,20 +22,22 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
     var SmartColumnLayout = function SmartColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace) {
-        Wirecloud.ui.ColumnLayout.call(this,
-                          dragboard,
-                          columns,
-                          cellHeight,
-                          verticalMargin,
-                          horizontalMargin,
-                          scrollbarSpace);
+        Wirecloud.ui.ColumnLayout.call(
+            this,
+            dragboard,
+            columns,
+            cellHeight,
+            verticalMargin,
+            horizontalMargin,
+            scrollbarSpace
+        );
     };
-    SmartColumnLayout.prototype = new Wirecloud.ui.ColumnLayout();
+    utils.inherit(SmartColumnLayout, Wirecloud.ui.ColumnLayout);
 
     SmartColumnLayout.prototype._realSearchInsertPoint = function (_matrix, x, y, width, height) {
         var widthDiff, lastY, offsetX;
@@ -52,7 +54,7 @@
         */
         if (y === 0) {
             return 0;
-        } else if ((_matrix[x][y - 1] != null) && (_matrix[x][y - 1] != _matrix[x][y])) {
+        } else if ((_matrix[x][y - 1] != null) && (_matrix[x][y - 1] !== _matrix[x][y])) {
             return y;
         } else if (_matrix[x][y]) {
             widthDiff = _matrix[x][y].shape.width - width;
@@ -69,7 +71,7 @@
             } else if (widthDiff !== 0) {
                 for (;y > 1; y--) {
                     for (offsetX = 0; offsetX < width; offsetX++) {
-                        if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
+                        if (_matrix[x + offsetX][y] !== _matrix[x + offsetX][y - 1]) {
                             if (_matrix[x + offsetX][y - 1]) {
                                 // Edge detected
                                 return y;
@@ -89,12 +91,12 @@
         while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
             y--;
         }
-        if (y != lastY) {
+        if (y !== lastY) {
             y++;
         } else {
             for (;y > 1; y--) {
                 for (offsetX = 0; offsetX < width; offsetX++) {
-                    if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
+                    if (_matrix[x + offsetX][y] !== _matrix[x + offsetX][y - 1]) {
                         if (_matrix[x + offsetX][y - 1]) {
                             // Edge detected
                             return y;
@@ -176,9 +178,12 @@
                 widget.setPosition(position);
 
                 // Reserve the new space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x, position.y,
-                                                 widthDiff, newHeight);
+                this._reserveSpace2(
+                    this.matrix,
+                    widget,
+                    position.x, position.y,
+                    widthDiff, newHeight
+                );
             } else {
                 // Move affected iwidgets
                 for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
@@ -192,9 +197,12 @@
                 }
 
                 // Reserve this space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x + oldWidth, position.y,
-                                                 newWidth - oldWidth, newHeight);
+                this._reserveSpace2(
+                    this.matrix,
+                    widget,
+                    position.x + oldWidth, position.y,
+                    newWidth - oldWidth, newHeight
+                );
             }
 
         } else if (newWidth < oldWidth) {
@@ -311,4 +319,4 @@
 
     Wirecloud.ui.SmartColumnLayout = SmartColumnLayout;
 
-})();
+})(Wirecloud.Utils);

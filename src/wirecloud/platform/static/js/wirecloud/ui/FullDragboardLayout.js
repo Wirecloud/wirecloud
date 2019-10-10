@@ -22,7 +22,7 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -32,14 +32,10 @@
      * @extends Wirecloud.ui.DragboardLayout
      */
     var FullDragboardLayout = function FullDragboardLayout(dragboard, scrollbarSpace) {
-        if (arguments.length === 0) {
-            return; // Allow empty constructor (allowing hierarchy)
-        }
-
         this.initialized = false;
         Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
     };
-    FullDragboardLayout.prototype = new Wirecloud.ui.DragboardLayout();
+    utils.inherit(FullDragboardLayout, Wirecloud.ui.DragboardLayout);
 
     FullDragboardLayout.prototype.fromPixelsToVCells = function fromPixelsToVCells(pixels) {
         return 1;
@@ -132,4 +128,4 @@
 
     Wirecloud.ui.FullDragboardLayout = FullDragboardLayout;
 
-})();
+})(Wirecloud.Utils);

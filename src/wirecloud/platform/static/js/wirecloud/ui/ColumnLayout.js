@@ -29,6 +29,11 @@
     /**
      * Represents a dragboard layout to be used to place iwidgets into the dragboard.
      *
+     * @name Wirecloud.ui.ColumnLayout
+     *
+     * @extends {Wirecloud.ui.DragboardLayout}
+     * @constructor
+     *
      * @param dragboard        associated dragboard
      * @param columns          number of columns of the layout
      * @param cellHeight       the height of the layout's cells in pixels
@@ -37,9 +42,6 @@
      * @param scrollbarSpace   space reserved for the right scroll bar in pixels
      */
     var ColumnLayout = function ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace) {
-        if (arguments.length === 0) {
-            return; // Allow empty constructor (allowing hierarchy)
-        }
 
         this.initialized = false;
         this._buffers = {"base": {}};
@@ -71,11 +73,7 @@
 
         Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
     };
-
-    /*
-     * ColumnLayout extends Wirecloud.ui.DragboardLayout
-     */
-    ColumnLayout.prototype = new Wirecloud.ui.DragboardLayout();
+    utils.inherit(ColumnLayout, Wirecloud.ui.DragboardLayout);
 
     /**
      * Returns the numbers of columns of this layout.
@@ -424,9 +422,12 @@
                 widget.setPosition(position);
 
                 // Reserve the new space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x, position.y,
-                                                 widthDiff, newHeight);
+                this._reserveSpace2(
+                    this.matrix,
+                    widget,
+                    position.x, position.y,
+                    widthDiff, newHeight
+                );
             } else {
                 // Move affected iwidgets
                 for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
@@ -440,9 +441,12 @@
                 }
 
                 // Reserve this space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x + oldWidth, position.y,
-                                                 newWidth - oldWidth, newHeight);
+                this._reserveSpace2(
+                    this.matrix,
+                    widget,
+                    position.x + oldWidth, position.y,
+                    newWidth - oldWidth, newHeight
+                );
             }
 
         } else if (newWidth < oldWidth) {
@@ -576,8 +580,10 @@
         if (iWidgetsToReinsert.length > 0) {
             // Reinsert the iwidgets that didn't fit in their positions
             for (i = 0; i < iWidgetsToReinsert.length; i++) {
-                position = this._searchFreeSpace(iWidgetsToReinsert[i].shape.width,
-                                                 iWidgetsToReinsert[i].shape.height);
+                position = this._searchFreeSpace(
+                    iWidgetsToReinsert[i].shape.width,
+                    iWidgetsToReinsert[i].shape.height
+                );
                 iWidgetsToReinsert[i].setPosition(position);
                 this._reserveSpace(this.matrix, iWidgetsToReinsert[i]);
             }

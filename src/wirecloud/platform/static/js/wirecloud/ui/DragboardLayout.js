@@ -40,10 +40,6 @@
      * @param {Dragboard} dragboard      associated dragboard
      */
     var DragboardLayout = function DragboardLayout(dragboard) {
-        if (arguments.length === 0) {
-            return; // Allow empty constructor (allowing hierarchy)
-        }
-
         this.dragboard = dragboard;
         this.widgets = {};
 

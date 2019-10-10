@@ -51,6 +51,8 @@
         this.baseLayout = this._buildLayoutFromPreferences();
         this.freeLayout = new Wirecloud.ui.FreeLayout(this);
         this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
+        this.leftLayout = new Wirecloud.ui.SidebarLayout(this);
+        this.rightLayout = new Wirecloud.ui.SidebarLayout(this, {position: "right"});
 
         if (this.tab.workspace.restricted) {
             this.tab.wrapperElement.classList.add("fixed");
@@ -361,6 +363,8 @@
         this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
         this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
         this.fulldragboardLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+        this.leftLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+        this.rightLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
     };
 
     ns.WorkspaceTabViewDragboard = WorkspaceTabViewDragboard;

@@ -93,7 +93,7 @@
             Wirecloud.ui.SmartColumnLayout = jasmine.createSpy("SmartColumnLayout").and.callFake(layout_constructor);
             Wirecloud.ui.FreeLayout = jasmine.createSpy("FreeLayout").and.callFake(layout_constructor);
             Wirecloud.ui.FullDragboardLayout = jasmine.createSpy("FullDragboardLayout").and.callFake(layout_constructor);
-            Wirecloud.ui.SidebarLayout = jasmine.createSpy("SidebarLayout");
+            Wirecloud.ui.SidebarLayout = jasmine.createSpy("SidebarLayout").and.callFake(layout_constructor);
         });
 
         describe("new WorkspaceTabViewDragboard", () => {
