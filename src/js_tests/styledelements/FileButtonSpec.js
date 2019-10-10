@@ -18,7 +18,7 @@
  *
  */
 
-/* globals FocusEvent, KeyboardEvent, MouseEvent, StyledElements */
+/* globals MouseEvent, StyledElements */
 
 
 (function () {

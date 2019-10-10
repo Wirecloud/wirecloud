@@ -42,10 +42,12 @@
      */
     ButtonsGroup.prototype.insertButton = function insertButton(button) {
         this.buttons[this.buttons.length] = button;
-        button.addEventListener('change',
-                                function () {
-                                    this.dispatchEvent('change');
-                                }.bind(this));
+        button.addEventListener(
+            'change',
+            () => {
+                this.dispatchEvent('change');
+            }
+        );
 
         return this;
     };
