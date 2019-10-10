@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-__version_info__ = (1, 3, 1)
-__version__ = '.'.join(map(str, __version_info__))
+__version_info__ = (1, 4, 0)
+__version__ = '.'.join(map(str, __version_info__)) + 'a1'
 __application_mashup_version_info__ = (2, 2)
 __application_mashup_version__ = '.'.join(map(str, __application_mashup_version_info__))
 
