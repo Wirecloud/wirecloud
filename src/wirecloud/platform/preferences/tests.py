@@ -59,8 +59,9 @@ class WorkspacePreferencesTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
 
     @parameterized.expand([
-        ({"value": '[{"username": "user1", "accessLevel": "read"}, {"username": "org1"}]'},),
-        ('[{"username": "user1", "accessLevel": "read"}, {"username": "org1"}]',),
+        ({"value": '[{"name": "user1", "accessLevel": "read"}, {"name": "org1"}]'},),
+        ('[{"name": "user1", "accessLevel": "read"}, {"name": "org1"}]',),
+        ('[{"name": "user1", "accessLevel": "read"}, {"name": "org1"}, {"name": "inexistent"}, {"username": false}]',),
     ])
     def test_workspace_preference_collection_post_sharelist(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404, value):
         workspace = get_object_or_404()
@@ -75,7 +76,7 @@ class WorkspacePreferencesTestCase(TestCase):
         User.DoesNotExist = Exception
         user1 = Mock()
         org1 = Mock()
-        User.objects.get.side_effect = (user1, org1)
+        User.objects.get.side_effect = (user1, org1, User.DoesNotExist)
         type(user1.organization).group = PropertyMock(side_effect=Organization.DoesNotExist)
 
         response = self.restapi.create(request, "1")
@@ -89,7 +90,7 @@ class WorkspacePreferencesTestCase(TestCase):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = {
-            "sharelist": '[{"username": "user1", "accessLevel": "write"}]',
+            "sharelist": '[{"name": "user1", "accessLevel": "write"}]',
         }
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
