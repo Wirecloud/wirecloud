@@ -35,11 +35,15 @@
         context._on_mouseenter_tab = on_mouseenter_tab.bind(context);
         context._on_mouseleave_tab = on_mouseleave_tab.bind(context);
 
-        Wirecloud.ui.Draggable.call(this, widget.heading, context,
-                             WidgetViewDraggable.prototype.ondragstart,
-                             WidgetViewDraggable.prototype.ondrag,
-                             WidgetViewDraggable.prototype.ondragend,
-                             WidgetViewDraggable.prototype.canDrag);
+        Wirecloud.ui.Draggable.call(
+            this,
+            widget.heading,
+            context,
+            WidgetViewDraggable.prototype.ondragstart,
+            WidgetViewDraggable.prototype.ondrag,
+            WidgetViewDraggable.prototype.ondragend,
+            WidgetViewDraggable.prototype.canDrag
+        );
 
         this.setXOffset = function (xOffset) {
             context.xOffset = xOffset;

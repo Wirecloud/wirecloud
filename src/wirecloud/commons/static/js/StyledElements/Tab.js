@@ -110,12 +110,13 @@
         this.wrapperElement.classList.add("se-notebook-tab-content");
         this.wrapperElement.classList.add("hidden");
 
-        priv.tabElement.addEventListener("click",
-                                    function () {
-                                        this.notebook.goToTab(this.tabId);
-                                    }.bind(this),
-                                    false);
-
+        priv.tabElement.addEventListener(
+            "click",
+            () => {
+                this.notebook.goToTab(this.tabId);
+            },
+            false
+        );
 
         /* Process options */
         if (options.closable) {
@@ -126,9 +127,7 @@
             });
             closeButton.insertInto(priv.tabElement);
 
-            closeButton.addEventListener("click",
-                                         this.close.bind(this),
-                                         false);
+            closeButton.addEventListener("click", this.close.bind(this), false);
         }
 
         // Support deprecated options.name

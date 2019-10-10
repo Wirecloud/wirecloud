@@ -211,8 +211,8 @@
             }
             return Promise.resolve(result);
         }).then(unload_affected_components.bind(this, resource))
-        .then(purge_component_info.bind(this, resource))
-        .toTask(msg);
+            .then(purge_component_info.bind(this, resource))
+            .toTask(msg);
     };
 
     /**

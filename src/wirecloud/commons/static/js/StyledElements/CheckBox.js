@@ -75,16 +75,18 @@
         /* Internal events */
         this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
         this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('change',
-                                    function () {
-                                        if (this.enabled) {
-                                            if (this.secondInput != null) {
-                                                this.secondInput.setDisabled(!this.inputElement.checked);
-                                            }
-                                            this.dispatchEvent('change');
-                                        }
-                                    }.bind(this),
-                                    true);
+        this.inputElement.addEventListener(
+            'change',
+            () => {
+                if (this.enabled) {
+                    if (this.secondInput != null) {
+                        this.secondInput.setDisabled(!this.inputElement.checked);
+                    }
+                    this.dispatchEvent('change');
+                }
+            },
+            true
+        );
     };
 
     utils.inherit(CheckBox, StyledElements.InputElement);
