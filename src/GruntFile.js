@@ -135,6 +135,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/WorkspaceTabViewDragboard.js',
     'wirecloud/platform/static/js/wirecloud/ui/SharingWindowMenu.js',
 
+    'wirecloud/platform/static/js/wirecloud/DragboardPosition.js',
     'wirecloud/platform/static/js/wirecloud/ui/MultiValuedSize.js',
     'wirecloud/platform/static/js/wirecloud/ui/DragboardLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/ColumnLayout.js',

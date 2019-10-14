@@ -260,10 +260,6 @@
         }
     };
 
-    GridLayout.prototype._searchInsertPoint = function _searchInsertPoint(_matrix, x, y, width, height) {
-        return y;
-    };
-
     GridLayout.prototype._moveSpaceDown = function _moveSpaceDown(buffer, widget, offsetY) {
         var affectedIWidgets, position, finalPosition, edgeY, iwidget, x, y, key, matrix;
 

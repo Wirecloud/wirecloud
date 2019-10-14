@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -71,21 +72,18 @@
         this.dragboardCursor = null;
         this.iwidgetToMove = null;
 
+        Object.defineProperties(this, {
+            columns: {value: columns},
+            rows: {get: on_rows_get}
+        });
         Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
     };
     utils.inherit(ColumnLayout, Wirecloud.ui.DragboardLayout);
 
     /**
-     * Returns the numbers of columns of this layout.
-     */
-    ColumnLayout.prototype.getColumns = function () {
-        return this.columns;
-    };
-
-    /**
      * Returns the number of rows currently present in this layout.
      */
-    ColumnLayout.prototype.getRows = function () {
+    var on_rows_get = function on_rows_get() {
         var x, rows = 0;
         for (x = 0; x < this.columns; x += 1) {
             rows = Math.max(rows, this.matrix[x].length);
@@ -184,6 +182,12 @@
         return this.dragboardTopMargin + this.fromVCellsToPixels(row) + this.topMargin;
     };
 
+    ColumnLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
+        if (widthChanged) {
+            Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
+        }
+    };
+
     ColumnLayout.prototype._getPositionOn = function _getPositionOn(buffer, widget) {
         if (buffer === this.matrix || buffer === "base") {
             return widget.position;
@@ -204,7 +208,7 @@
         this.matrix = [];
         this._buffers.base.matrix = this.matrix;
 
-        for (var x = 0; x < this.getColumns(); x++) {
+        for (var x = 0; x < this.columns; x++) {
             this.matrix[x] = [];
         }
     };
@@ -227,7 +231,7 @@
         return true;
     };
 
-    ColumnLayout.prototype._reserveSpace = function (_matrix, widget) {
+    ColumnLayout.prototype._reserveSpace = function _reserveSpace(_matrix, widget) {
         var x, y;
         var position = this._getPositionOn(_matrix, widget);
         var width = widget.shape.width;
@@ -274,10 +278,6 @@
                 _matrix[x + i].pop();
             }
         }
-    };
-
-    ColumnLayout.prototype._searchInsertPoint = function _searchInsertPoint(_matrix, x, y, width, height) {
-        return y;
     };
 
     ColumnLayout.prototype._moveSpaceDown = function _moveSpaceDown(buffer, widget, offsetY) {
@@ -563,11 +563,11 @@
 
             widget.repaint();
 
-            if (widget.shape.width > this.getColumns()) {
-                widget.contentWidth = this.getColumns();
+            if (widget.shape.width > this.columns) {
+                widget.contentWidth = this.columns;
             }
 
-            if (widget.shape.width + position.x > this.getColumns()) {
+            if (widget.shape.width + position.x > this.columns) {
                 iWidgetsToReinsert.push(widget);
             } else if (this._hasSpaceFor(this.matrix, position.x, position.y, widget.shape.width, widget.shape.height)) {
                 this._reserveSpace(this.matrix, widget);
@@ -598,7 +598,7 @@
      * Calculate what cell is at a given position in pixels
      */
     ColumnLayout.prototype.getCellAt = function (x, y) {
-        var columnWidth = this.getWidth() / this.getColumns();
+        var columnWidth = this.getWidth() / this.columns;
 
         return new Wirecloud.DragboardPosition(Math.floor(x / columnWidth),
             Math.floor(y / this.getCellHeight()));
@@ -620,14 +620,14 @@
             return;
         }
 
-        if (widget.shape.width > this.getColumns()) {
-            widget.setShape({width: this.getColumns()});
+        if (widget.shape.width > this.columns) {
+            widget.setShape({width: this.columns});
             // TODO: persist
         }
 
         var position = widget.position;
         if (position) {
-            var diff = widget.shape.width + position.x - this.getColumns();
+            var diff = widget.shape.width + position.x - this.columns;
             if (diff > 0) {
                 position.x -= diff;
             }
@@ -666,8 +666,8 @@
 
         movedWidgets = {};
         orderedWidgets = [];
-        columns = this.getColumns();
-        rows = this.getRows();
+        columns = this.columns;
+        rows = this.rows;
         for (y = 0; y < rows; y += 1) {
             for (x = 0; x < columns; x += 1) {
                 widget = this.matrix[x][y];
@@ -795,7 +795,7 @@
             return;
         }
 
-        var maxX = this.getColumns() - this.iwidgetToMove.shape.width;
+        var maxX = this.columns - this.iwidgetToMove.shape.width;
         if (x > maxX) {
             x = maxX;
         }
