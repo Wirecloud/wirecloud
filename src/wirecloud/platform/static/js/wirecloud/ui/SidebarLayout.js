@@ -31,7 +31,7 @@
         "left": "right"
     };
 
-    var SidebarLayout = function SmartColumnLayout(dragboard, options) {
+    var SidebarLayout = function SidebarLayout(dragboard, options) {
         options = utils.merge({
             position: "left"
         }, options);

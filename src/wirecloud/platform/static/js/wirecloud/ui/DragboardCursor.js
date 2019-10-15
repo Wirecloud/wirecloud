@@ -37,27 +37,25 @@
      *                cursor
      */
     var DragboardCursor = function DragboardCursor(widget) {
-        this.refIWidget = widget;
+        this.widget = widget;
 
         this.id = 'cursor';
         this.position = widget.position;
         this.shape = widget.shape;
         this.layout = widget.layout;
 
-        var dragboardCursor = document.createElement("div");
-        dragboardCursor.setAttribute("class", "dragboardcursor");
+        this.element = document.createElement("div");
+        this.element.setAttribute("class", "dragboardcursor");
 
         // Set width and height
-        dragboardCursor.style.height = widget.wrapperElement.offsetHeight + "px";
-        dragboardCursor.style.width = widget.wrapperElement.offsetWidth + "px";
+        this.element.style.height = widget.wrapperElement.offsetHeight + "px";
+        this.element.style.width = widget.wrapperElement.offsetWidth + "px";
 
         // Set position
-        dragboardCursor.style.left = (this.layout.getColumnOffset(this.position.x) - 2) + "px"; // TODO -2 px for borders
-        dragboardCursor.style.top = (this.layout.getRowOffset(this.position.y) - 2) + "px"; // TODO -2 px for borders
+        this.layout.updatePosition(this.widget, this.element);
 
         // assign the created element
-        widget.tab.wrapperElement.insertBefore(dragboardCursor, widget.wrapperElement);
-        this.element = dragboardCursor;
+        widget.tab.wrapperElement.insertBefore(this.element, widget.wrapperElement);
     };
 
     /**
@@ -72,8 +70,7 @@
         this.position = position;
 
         if (this.element !== null) { // if visible
-            this.element.style.left = (this.layout.getColumnOffset(position.x) - 2) + "px"; // TODO -2 px for borders
-            this.element.style.top = (this.layout.getRowOffset(position.y) - 2) + "px"; // TODO -2 px for borders
+            this.layout.updatePosition({position: position}, this.element);
         }
     };
 
