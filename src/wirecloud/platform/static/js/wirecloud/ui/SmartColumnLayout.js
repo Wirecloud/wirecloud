@@ -55,7 +55,7 @@
             this.dragboard.update(keys);
         }
 
-        return this;
+        return modified;
     };
 
     SmartColumnLayout.prototype._notifyResizeEvent = function _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {

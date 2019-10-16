@@ -72,21 +72,29 @@
     utils.inherit(SidebarLayout, Wirecloud.ui.SmartColumnLayout);
 
     SidebarLayout.prototype.addWidget = function addWidget(widget, affectsDragboard) {
-        Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, widget, affectsDragboard);
+        Wirecloud.ui.SmartColumnLayout.prototype.addWidget.call(this, widget, affectsDragboard);
 
         if (this.handle.classList.contains("hidden")) {
             this.handle.classList.remove("hidden");
-            widget.wrapperElement.appendChild(this.handle);
+        }
+        if (this.initialized) {
+            this.matrix[0][0].wrapperElement.appendChild(this.handle);
         }
     };
 
     SidebarLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
-        Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
+        Wirecloud.ui.SmartColumnLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
 
         if (Object.keys(this.widgets).length === 0) {
             this.handle.classList.add("hidden");
             this.handle.remove();
+        } else {
+            this.matrix[0][0].wrapperElement.appendChild(this.handle);
         }
+    };
+
+    SidebarLayout.prototype.adaptColumnOffset = function adaptColumnOffset(value) {
+        return new Wirecloud.ui.MultiValuedSize(0, 0);
     };
 
     SidebarLayout.prototype.adaptWidth = function adaptWidth(size) {
@@ -95,6 +103,14 @@
 
     SidebarLayout.prototype.getWidth = function getWidth() {
         return 497;
+    };
+
+    SidebarLayout.prototype.initialize = function initialize() {
+        let modified = Wirecloud.ui.SmartColumnLayout.prototype.initialize.call(this);
+        if (this.matrix[0][0] != null) {
+            this.matrix[0][0].wrapperElement.appendChild(this.handle);
+        }
+        return modified;
     };
 
     SidebarLayout.prototype.updatePosition = function updatePosition(widget, element) {
@@ -106,6 +122,7 @@
         }
 
         element.style.top = this.getRowOffset(widget.position.y) + "px";
+        element.style.bottom = "";
         if (this.position === "left") {
             element.style.left = offset + "px";
             element.style.right = "";

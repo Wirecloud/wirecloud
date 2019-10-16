@@ -100,6 +100,8 @@
             item.setDisabled(this.widget.model.meta.doc === '');
             items.push(item);
 
+            items.push(new StyledElements.Separator());
+
             if (this.widget.layout === this.widget.tab.dragboard.fulldragboardLayout) {
                 item_icon = "fa fa-compress";
                 item_title = utils.gettext("Exit Full Dragboard");
@@ -116,20 +118,44 @@
             item.setDisabled(!this.widget.model.isAllowed('move'));
             items.push(item);
 
-            if (this.widget.layout !== this.widget.tab.dragboard.fulldragboardLayout) {
-                if (this.widget.layout === this.widget.tab.dragboard.freeLayout) {
-                    item_icon = "fa fa-sign-in";
-                    item_title = utils.gettext("Snap to grid");
-                } else {
-                    item_icon = "fa fa-sign-out";
-                    item_title = utils.gettext("Extract from grid");
-                }
+            if (this.widget.layout === this.widget.tab.dragboard.fulldragboardLayout) {
+                // Other options require exiting first from the full dragboard mode
+                return items;
+            }
 
-                item = new se.MenuItem(item_title, function () {
-                    this.toggleLayout();
-                }.bind(this.widget));
-                item.addIconClass(item_icon);
+            if (this.widget.layout !== this.widget.tab.dragboard.freeLayout) {
+                item = new se.MenuItem(utils.gettext("Extract from grid"), () => {
+                    this.widget.moveToLayout(this.widget.tab.dragboard.freeLayout);
+                });
+                item.addIconClass("fas fa-sign-out-alt");
                 item.setDisabled(!this.widget.model.isAllowed('move'));
+                items.push(item);
+            }
+
+            if (this.widget.layout !== this.widget.tab.dragboard.baseLayout) {
+                item = new se.MenuItem(utils.gettext("Snap to grid"), () => {
+                    this.widget.moveToLayout(this.widget.tab.dragboard.baseLayout);
+                });
+                item.addIconClass("fas fa-sign-in-alt");
+                item.setDisabled(!this.widget.model.isAllowed('move'));
+                items.push(item);
+            }
+
+            if (this.widget.layout !== this.widget.tab.dragboard.leftLayout) {
+                item = new se.MenuItem(utils.gettext("Move to the left sidebar"), () => {
+                    this.widget.moveToLayout(this.widget.tab.dragboard.leftLayout);
+                });
+                item.addIconClass("fas fa-caret-square-left")
+                    .setDisabled(!this.widget.model.isAllowed('move'));
+                items.push(item);
+            }
+
+            if (this.widget.layout !== this.widget.tab.dragboard.rightLayout) {
+                item = new se.MenuItem(utils.gettext("Move to the right sidebar"), () => {
+                    this.widget.moveToLayout(this.widget.tab.dragboard.rightLayout);
+                });
+                item.addIconClass("fas fa-caret-square-right")
+                    .setDisabled(!this.widget.model.isAllowed('move'));
                 items.push(item);
             }
 

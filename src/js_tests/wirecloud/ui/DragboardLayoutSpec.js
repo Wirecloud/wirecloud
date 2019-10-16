@@ -273,6 +273,7 @@
                 expect(widget.repaint).toHaveBeenCalled();
                 expect(dragboard._addWidget).toHaveBeenCalledWith(widget);
             });
+
         });
 
         describe("getHeight()", () => {

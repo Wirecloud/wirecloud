@@ -178,6 +178,8 @@
         this.baseLayout.initialize();
         this.freeLayout.initialize();
         this.fulldragboardLayout.initialize();
+        this.leftLayout.initialize();
+        this.rightLayout.initialize();
 
         refresh_zindex.call(this);
 
@@ -272,7 +274,6 @@
 
         // Change our base layout
         this.baseLayout.moveTo(newBaseLayout);
-        this.baseLayout.destroy();
         this.baseLayout = newBaseLayout;
     };
 

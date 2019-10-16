@@ -101,6 +101,19 @@
 
         });
 
+        describe("adaptColumnOffset(value)", () => {
+
+            it("should always return 0 cell size", () => {
+                let layout = new ns.SidebarLayout({});
+
+                let value = layout.adaptColumnOffset(50);
+
+                expect(value.inLU).toBe(0);
+                expect(value.inPixels).toBe(0);
+            });
+
+        });
+
         describe("adaptWidth(size)", () => {
 
             it("should always return 1 cell size", () => {
@@ -117,7 +130,7 @@
         describe("addWidget(widget, element)", () => {
 
             it("should enable layout handle on first addition", () => {
-                spyOn(Wirecloud.ui.DragboardLayout.prototype, "addWidget");
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "addWidget");
                 let layout = new ns.SidebarLayout({});
                 let widget = {
                     wrapperElement: document.createElement('div')
@@ -126,10 +139,27 @@
                 layout.addWidget(widget, true);
 
                 expect(layout.handle.classList.contains("hidden")).toBe(false);
+                expect(layout.handle.parentElement).toBe(null);
+            });
+
+            it("should enable layout handle on first addition", () => {
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "addWidget").and.callFake(function (widget) {
+                    this.matrix[0][0] = widget;
+                });
+                let layout = new ns.SidebarLayout({});
+                let widget = {
+                    wrapperElement: document.createElement('div')
+                };
+                layout.initialize();
+
+                layout.addWidget(widget, true);
+
+                expect(layout.handle.classList.contains("hidden")).toBe(false);
+                expect(layout.handle.parentElement).not.toBe(null);
             });
 
             it("should work on next additions", () => {
-                spyOn(Wirecloud.ui.DragboardLayout.prototype, "addWidget");
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "addWidget");
                 let layout = new ns.SidebarLayout({});
                 let widget = {
                     wrapperElement: document.createElement('div')
@@ -143,21 +173,46 @@
 
         });
 
+        describe("initialize()", () => {
+
+            it("should work on empty layouts", () => {
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "initialize");
+                let layout = new ns.SidebarLayout({});
+
+                layout.initialize();
+            });
+
+            it("should enable layout handle if there are widget", () => {
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "initialize");
+                let layout = new ns.SidebarLayout({});
+                let widget = {
+                    wrapperElement: document.createElement('div')
+                };
+
+                layout.matrix[0][0] = widget;
+                layout.initialize();
+            });
+
+        });
+
         describe("removeWidget(widget, element)", () => {
 
             it("should work on previous removals", () => {
-                spyOn(Wirecloud.ui.DragboardLayout.prototype, "removeWidget");
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "removeWidget");
                 let layout = new ns.SidebarLayout({});
-                let widget = {};
+                let widget = {
+                    wrapperElement: document.createElement('div')
+                };
 
                 layout.widgets["1"] = true;
+                layout.matrix[0][0] = widget;
                 layout.removeWidget(widget, true);
 
                 expect(layout.handle.classList.contains("hidden")).toBe(true);
             });
 
             it("should disable layout handle on last removal", () => {
-                spyOn(Wirecloud.ui.DragboardLayout.prototype, "removeWidget");
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "removeWidget");
                 let layout = new ns.SidebarLayout({});
                 let widget = {};
 

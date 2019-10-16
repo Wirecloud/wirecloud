@@ -140,6 +140,8 @@
     DragboardLayout.prototype.updatePosition = function updatePosition(widget, element) {
         element.style.left = this.getColumnOffset(widget.position.x) + "px";
         element.style.top = this.getRowOffset(widget.position.y) + "px";
+        element.style.bottom = "";
+        element.style.right = "";
     };
 
     DragboardLayout.prototype.padWidth = function padWidth(width) {

@@ -61,7 +61,7 @@
                     10
                 );
 
-                expect(layout.initialize()).toBe(layout);
+                expect(layout.initialize()).toBe(false);
             });
 
             it("should not save widget positions if is not needed to move widgets", () => {
@@ -83,8 +83,7 @@
                 };
                 layout.addWidget(widget);
 
-                // Check initial values
-                expect(layout.initialize()).toBe(layout);
+                expect(layout.initialize()).toBe(false);
             });
 
             it("should save widget positions if widget positions have been modified", () => {
@@ -108,8 +107,7 @@
                 };
                 layout.addWidget(widget);
 
-                // Check initial values
-                expect(layout.initialize()).toBe(layout);
+                expect(layout.initialize()).toBe(true);
                 expect(layout.dragboard.update).toHaveBeenCalledWith([widget.id]);
             });
 

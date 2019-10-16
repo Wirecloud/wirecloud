@@ -254,6 +254,7 @@
             this.previousPosition = model.position;
         } else {
             switch (model.layout) {
+            default:
             case 0:
                 layout = tab.dragboard.baseLayout;
                 break;
@@ -590,23 +591,22 @@
             update.call(this);
         },
 
-        toggleLayout: function toggleLayout() {
-            if (this.layout === this.tab.dragboard.freeLayout) {
-                this.moveToLayout(this.layout.dragboard.baseLayout);
-            } else {
-                this.moveToLayout(this.layout.dragboard.freeLayout);
-            }
-        },
-
         update: function update() {
             return this.model.changeTab(this.tab.model);
         },
 
         toJSON: function toJSON() {
+            const layouts = [
+                this.tab.dragboard.baseLayout,
+                this.tab.dragboard.freeLayout,
+                this.tab.dragboard.leftLayout,
+                this.tab.dragboard.rightLayout
+            ];
+
             var data = {
                 id: this.id,
                 tab: this.tab.id,
-                layout: this.layout === this.tab.dragboard.freeLayout ? 1 : 0
+                layout: layouts.indexOf(this.layout)
             };
 
             if (!this.tab.workspace.restricted) {

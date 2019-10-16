@@ -678,7 +678,6 @@
     };
 
     GridLayout.prototype.initializeMove = function (widget, draggable) {
-        var msg, i, lastWidget, lastY, tmp;
 
         draggable = draggable || null; // default value of draggable argument
 
@@ -688,7 +687,7 @@
 
         // Check for pendings moves
         if (this.iwidgetToMove !== null) {
-            msg = "Dragboard: There was a pending move that was cancelled because initializedMove function was called before it was finished.";
+            let msg = "Dragboard: There was a pending move that was cancelled because initializedMove function was called before it was finished.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             this.cancelMove();
         }
@@ -704,26 +703,8 @@
 
         // Shadow matrix = current matrix without the widget to move
         // Initialize shadow matrix and searchInsertPointCache
-        lastY = 0;
         this._buffers.backup.matrix = this._cloneMatrix(this.matrix);
         this._removeFromMatrix("backup", widget);
-
-        this.searchInsertPointCache = [];
-        // search bottommost row
-        for (i = 0; i < this.columns; i++) {
-            this.searchInsertPointCache[i] = [];
-            lastWidget = this.matrix[i][this.matrix[i].length - 1];
-
-            if (!lastWidget) {
-                continue;
-            }
-
-            tmp = lastWidget.position.y + lastWidget.shape.height;
-            if (tmp > lastY) {
-                lastY = tmp;
-            }
-        }
-        this.searchInsertPointYLimit = lastY + 1;
 
         // Create dragboard cursor
         this.dragboardCursor = new Wirecloud.ui.DragboardCursor(widget);
@@ -760,7 +741,7 @@
 
     GridLayout.prototype.moveTemporally = function moveTemporally(x, y) {
         if (this.iwidgetToMove == null) {
-            var msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
+            let msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
         }

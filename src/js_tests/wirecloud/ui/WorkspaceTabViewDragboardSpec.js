@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -79,7 +79,6 @@
     };
 
     const layout_constructor = function () {
-        this.destroy = jasmine.createSpy("destroy");
         this.initialize = jasmine.createSpy("initialize");
         this.moveTo = jasmine.createSpy("moveTo");
         this._notifyWindowResizeEvent = jasmine.createSpy("_notifyWindowResizeEvent");
@@ -88,12 +87,12 @@
     describe("WorkspaceTabViewDragboard", () => {
 
         beforeAll(() => {
-            Wirecloud.ui.ColumnLayout = jasmine.createSpy("ColumnLayout").and.callFake(layout_constructor);
+            spyOn(Wirecloud.ui, "ColumnLayout").and.callFake(layout_constructor);
             Wirecloud.ui.GridLayout = jasmine.createSpy("GridLayout").and.callFake(layout_constructor);
-            Wirecloud.ui.SmartColumnLayout = jasmine.createSpy("SmartColumnLayout").and.callFake(layout_constructor);
+            spyOn(Wirecloud.ui, "SmartColumnLayout").and.callFake(layout_constructor);
             Wirecloud.ui.FreeLayout = jasmine.createSpy("FreeLayout").and.callFake(layout_constructor);
             Wirecloud.ui.FullDragboardLayout = jasmine.createSpy("FullDragboardLayout").and.callFake(layout_constructor);
-            Wirecloud.ui.SidebarLayout = jasmine.createSpy("SidebarLayout").and.callFake(layout_constructor);
+            spyOn(Wirecloud.ui, "SidebarLayout").and.callFake(layout_constructor);
         });
 
         describe("new WorkspaceTabViewDragboard", () => {
@@ -552,7 +551,6 @@
                 expect(dragboard.baseLayout).not.toBe(initial_base_layout);
                 expect(dragboard.baseLayout.initialize).toHaveBeenCalledWith();
                 expect(initial_base_layout.moveTo).toHaveBeenCalledWith(dragboard.baseLayout);
-                expect(initial_base_layout.destroy).toHaveBeenCalledWith();
             });
 
         });
