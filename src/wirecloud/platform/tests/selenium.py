@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -63,7 +64,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.create_workspace('Test')
 
         # Now we have two workspaces, nothing should change except that now we are on edit mode
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove', 'Share', 'Embed'), ()).close()
             self.rename_workspace('test2')
             tab = self.find_tab(title="Tab")
@@ -102,7 +103,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget = self.find_tab(id="102").widgets[0]
 
         tab = self.find_tab(title='Tab 2')
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             ActionChains(self.driver).click_and_hold(iwidget.title_element).move_to_element(tab.element).release().perform()
 
             self.assertEqual(len(self.find_tab(id="102").widgets), src_iwidget_count - 1)
@@ -115,7 +116,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_remove_widget_from_workspace(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.find_widget(title="Test 1").remove()
 
     def test_remove_tab_from_workspace(self):
@@ -129,7 +130,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_tabs_with_read_only_widgets_cannot_be_removed(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             tab = self.find_tab(title="Tab 2")
             tab.show_preferences().check(must_be_disabled=('Remove',))
 
@@ -140,7 +141,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_refresh_widget(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             tab_widget = self.find_widget(title="Test 1")
             with tab_widget:
                 last_received_event_field = self.driver.find_element_by_id('wiringOut')
@@ -156,7 +157,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_basic_widget_functionalities(self):
 
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             iwidget = self.find_widget(title="Test 1")
 
             with iwidget:
@@ -200,7 +201,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready(login=True)
         WebDriverWait(self.driver, timeout=15).until(lambda driver: self.active_tab is not None)
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             iwidget = self.find_widget(title="Test 1")
 
             # Open widget settings again
@@ -305,7 +306,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_resize_widgets(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             widget1 = self.widgets[1]
             old_size = widget1.size
             old_position = widget1.position
@@ -399,7 +400,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_title(), 'Test')
 
         # Add a new tab
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.create_tab()
 
         self.reload()
@@ -408,7 +409,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tabs = len(self.tabs)
         self.assertEqual(tabs, 2)
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             tab = self.find_tab(title='Tab')
 
             # Rename the created tab
@@ -436,14 +437,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(len(self.widgets), 2)
 
         # Rename a widget
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             iwidget = self.widgets[1]
             iwidget.rename('Other Test')
 
         self.reload()
         self.wait_wirecloud_ready(login=True)
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             iwidget = self.widgets[0]
             self.assertEqual(iwidget.title, 'Test')
 
@@ -459,7 +460,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(len(self.widgets), 1)
 
         # Rename the workspace
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.rename_workspace('test2')
 
         self.reload()
@@ -503,7 +504,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
-            except:
+            except Exception:
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -852,7 +853,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         initial_workspace_tab = self.active_tab
         initial_workspace_tab_name = initial_workspace_tab.title
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.find_tab(title='Tab 2').click().rename('NewName')
 
         initial_workspace_tab.click()
@@ -876,7 +877,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
 
         self.change_current_workspace('Pending Events')
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.rename_workspace('New Name')
 
         self.change_current_workspace('ExistingWorkspace')
@@ -972,7 +973,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidgets = self.widgets
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.assertEqual(iwidgets[0].layout_position, (0, 0))
             self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
@@ -994,7 +995,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidgets = self.widgets
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.assertEqual(iwidgets[0].layout_position, (0, 0))
             self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
@@ -1123,7 +1124,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidgets = self.widgets
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.assertEqual(iwidgets[0].layout_position, (0, 0))
             self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
@@ -1160,7 +1161,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username="admin", next="/admin/GridLayoutTests")
         iwidget = self.widgets[0]
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             _, old_size = self.get_widget_sizes_from_context(iwidget)
 
             iwidget.open_menu().click_entry('Extract from grid')
@@ -1175,7 +1176,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="user_with_workspaces", next="/user_with_workspaces/ColumnLayoutTests")
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             iwidget = self.widgets[0]
             affected_iwidget = self.widgets[2]
             old_size, old_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
@@ -1204,14 +1205,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         widget = self.create_widget('Context Inspector')
 
-        # Check initial sizes
-        with widget:
-            old_width_from_context = int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text)
-            old_height_in_pixels_changes = int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text)
-            self.assertEqual(old_width_from_context, 6)
+        with self.edit_mode:
+            # Check initial sizes
+            with widget:
+                old_width_from_context = int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text)
+                old_height_in_pixels_changes = int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text)
+                self.assertEqual(old_width_from_context, 6)
 
-        # Change columns to 10
-        with self.edit_mode as edit_session:
+            # Change columns to 10
             self.open_menu().click_entry('Settings')
             workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
 
@@ -1264,7 +1265,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         old_size_from_context2, old_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
 
         # Change columns to 10
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.open_menu().click_entry('Settings')
             workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
 
@@ -1302,7 +1303,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(old_size_from_context[0], 6)
 
         # Change current layout to grid
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             self.open_menu().click_entry('Settings')
             form = FormModalTester(self, self.wait_element_visible(".wc-workspace-preferences-modal"))
             form.get_field("baselayout-type").set_value('gridlayout')
@@ -1412,7 +1413,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         widget, other_widget = self.widgets
 
-        with self.edit_mode as edit_session:
+        with self.edit_mode:
             # Upgrade to version 3.0
             widget.open_menu().click_entry('Upgrade/Downgrade')
             form = FormModalTester(self, self.wait_element_visible(".wc-upgrade-component-modal"))
