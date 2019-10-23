@@ -46,13 +46,13 @@
 
             it("should throw a TypeError exception if lookup option is missing", () => {
                 expect(() => {
-                    var typeahead = new StyledElements.Typeahead();
+                    new StyledElements.Typeahead();
                 }).toThrowError(TypeError);
             });
 
             it("should throw a TypeError exception if lookup option is not a function", () => {
                 expect(() => {
-                    var typeahead = new StyledElements.Typeahead({
+                    new StyledElements.Typeahead({
                         build: function () {},
                         lookup: 5
                     });
@@ -61,7 +61,7 @@
 
             it("should throw a TypeError exception if compare option is not a function", () => {
                 expect(() => {
-                    var typeahead = new StyledElements.Typeahead({
+                    new StyledElements.Typeahead({
                         build: function () {},
                         lookup: function () {},
                         compare: 5

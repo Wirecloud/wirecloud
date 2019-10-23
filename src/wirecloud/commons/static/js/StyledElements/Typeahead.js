@@ -155,7 +155,7 @@
     };
 
     var filterData = function filterData(data) {
-        return data.filter((entry) => {return this.compare(this.userQuery, entry) == 0;});
+        return data.filter((entry) => {return this.compare(this.userQuery, entry) === 0;});
     };
 
     var sortResult = function sortResult(data) {
