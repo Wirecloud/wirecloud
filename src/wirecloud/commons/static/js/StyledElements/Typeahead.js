@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -43,25 +44,34 @@
      */
     se.Typeahead = function Typeahead(options) {
         options = utils.merge(utils.clone(defaults), options);
+
+        if (typeof options.build !== "function") {
+            throw new TypeError("build option must be a function");
+        }
+        if (typeof options.lookup !== "function") {
+            throw new TypeError("lookup option must be a function");
+        }
+        if (options.compare != null && typeof options.compare !== "function") {
+            throw new TypeError("compare option must be a function");
+        }
         se.ObjectWithEvents.call(this, events);
 
-        this.lookup = options.lookup;
-        this.compare = options.compare;
-        this.build = options.build;
         this.notFoundMessage = options.notFoundMessage;
 
         this.timeout = null;
         this.currentRequest = null;
+        var popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
+        popupMenu.addEventListener('click', popupMenu_onselect.bind(this));
 
         Object.defineProperties(this, {
             autocomplete: {value: options.autocomplete},
+            build: {value: options.build},
             cleanedQuery: {get: property_cleanedQuery_get},
-            dataFiltered: {value: options.dataFiltered},
-            minLength: {value: options.minLength}
+            compare: {value: options.compare},
+            lookup: {value: options.lookup},
+            minLength: {value: options.minLength},
+            popupMenu: {value: popupMenu}
         });
-
-        this.popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
-        this.popupMenu.addEventListener('click', popupMenu_onselect.bind(this));
     };
 
     // =========================================================================
@@ -110,7 +120,6 @@
 
     var defaults = {
         autocomplete: true,
-        dataFiltered: false,
         minLength: 1
     };
 
@@ -119,6 +128,10 @@
     };
 
     var textField_onchange = function textField_onchange() {
+        if (this.disableChangeEvents) {
+            return;
+        }
+
         if (this.timeout != null) {
             clearTimeout(this.timeout);
         }
@@ -129,10 +142,12 @@
         this.timeout = null;
         this.userQuery = this.cleanedQuery;
 
+        if (this.currentRequest != null && 'abort' in this.currentRequest) {
+            this.currentRequest.abort();
+            this.currentRequest = null;
+        }
+
         if (this.userQuery.length >= this.minLength) {
-            if (this.currentRequest != null && 'abort' in this.currentRequest) {
-                this.currentRequest.abort();
-            }
             this.currentRequest = this.lookup(this.userQuery, sortResult.bind(this));
         } else {
             this.popupMenu.hide();
@@ -140,20 +155,7 @@
     };
 
     var filterData = function filterData(data) {
-        var i, result = [];
-
-        for (i = 0; i < data.length; i++) {
-            switch (this.compare(this.userQuery, data[i])) {
-            case 0:
-                result.push(data[i]);
-                break;
-            default:
-                // do nothing yet.
-                break;
-            }
-        }
-
-        return result;
+        return data.filter((entry) => {return this.compare(this.userQuery, entry) == 0;});
     };
 
     var sortResult = function sortResult(data) {
@@ -163,7 +165,7 @@
         this.popupMenu.clear();
 
         if (data.length > 0) {
-            if (!this.dataFiltered) {
+            if (this.compare) {
                 data = filterData.call(this, data);
             }
 
@@ -184,9 +186,11 @@
     };
 
     var popupMenu_onselect = function popupMenu_onselect(popupMenu, menuItem) {
-        // TODO: this is needed to not firing the change event on the Text Field. Search another way
-        this.textField.inputElement.value = this.autocomplete ? menuItem.context.value : "";
+        // Disable change events to avoid
+        this.disableChangeEvents = true;
+        this.textField.setValue(this.autocomplete ? menuItem.context.value : "");
         this.textField.focus();
+        this.disableChangeEvents = false;
 
         menuItem.context = menuItem.context.context;
         this.dispatchEvent('select', menuItem);

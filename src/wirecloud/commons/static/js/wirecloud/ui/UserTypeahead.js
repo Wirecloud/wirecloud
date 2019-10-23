@@ -31,7 +31,6 @@
 
         se.Typeahead.call(this, {
             autocomplete: options.autocomplete,
-            dataFiltered: true,
             lookup: searchForUser,
             build: function build(typeahead, data) {
                 return {

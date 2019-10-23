@@ -89,7 +89,8 @@ var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/Form.js',
     'wirecloud/commons/static/js/StyledElements/PaginationInterface.js',
     'wirecloud/commons/static/js/StyledElements/Popover.js',
-    'wirecloud/commons/static/js/StyledElements/Panel.js'
+    'wirecloud/commons/static/js/StyledElements/Panel.js',
+    'wirecloud/commons/static/js/StyledElements/Typeahead.js'
 ];
 
 var wc_dependencies = [

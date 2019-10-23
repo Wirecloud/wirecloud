@@ -308,7 +308,9 @@
         var baseelement = utils.getFullscreenElement() || document.body;
         baseelement.appendChild(this.wrapperElement);
 
-        Wirecloud.UserInterfaceManager._registerPopup(this);
+        if ('Wirecloud' in window) {
+            Wirecloud.UserInterfaceManager._registerPopup(this);
+        }
         this.dispatchEvent("visibilityChange");
 
         if (!('left' in refPosition) && 'x' in refPosition && 'y' in refPosition) {
@@ -441,7 +443,9 @@
         hideContent.call(this);
 
         this.wrapperElement.remove();
-        Wirecloud.UserInterfaceManager._unregisterPopup(this);
+        if ('Wirecloud' in window) {
+            Wirecloud.UserInterfaceManager._unregisterPopup(this);
+        }
 
         return this.dispatchEvent('visibilityChange');
     };
