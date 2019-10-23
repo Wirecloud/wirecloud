@@ -31,7 +31,7 @@ class PlatformContextCollection(Resource):
     def read(self, request):
 
         context = {
-            'platform': get_platform_context(request.user),
+            'platform': get_platform_context(request.user, session=request.session),
             'workspace': get_workspace_context_definitions()
         }
 

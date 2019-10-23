@@ -440,7 +440,7 @@ class WirecloudPlugin(object):
     def get_platform_context_definitions(self):
         return {}
 
-    def get_platform_context_current_values(self, user):
+    def get_platform_context_current_values(self, user, session):
         return {}
 
     def get_tab_preferences(self):

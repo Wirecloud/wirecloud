@@ -1,3 +1,24 @@
+## Administration tools
+
+WireCloud provides some extra features on the user interface when signed in as an administrator. This section
+describes where and how to use those extra features.
+
+
+### Impersonating other users
+
+WireCloud allows admin users to impersonate other users. This is meant to check WireCloud behaviour when signed in as a
+specific user. This feature does not require you to know the credentials of the user to impersonate him, and it's very
+useful for debugging problems and helping other users to do some tasks.
+
+This feature can be found on the global menu:
+
+<img src="../images/administration_guide/switchuser/menu.png" srcset="../images/administration_guide/switchuser/menu.png 2x" alt="Menu entry for impersonating other users"/>
+
+Once you're done, you can directly sign out or, alternatively, sign in back as the initial admin user:
+
+<img src="../images/administration_guide/switchuser/logout.png" srcset="../images/administration_guide/switchuser/logout.png 2x" alt="Menu entry for leaving user impersonation"/>
+
+
 ## Administration commands
 
 WireCloud provides a set of command line tools that can be used from the command line (manually or by scripts) on the
