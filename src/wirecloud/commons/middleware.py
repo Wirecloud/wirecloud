@@ -20,7 +20,8 @@
 from importlib import import_module
 
 from django.contrib.auth.middleware import get_user
-from django.core.urlresolvers import reverse
+from django.urls import reverse
+from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import SimpleLazyObject
 from django.utils.http import http_date, parse_http_date_safe
 from django.utils.translation import ugettext as _
@@ -28,7 +29,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.commons.exceptions import HttpBadCredentials
 
 
-class URLMiddleware(object):
+class URLMiddleware(MiddlewareMixin):
 
     _middleware = {}
     _path_mapping = None

@@ -209,7 +209,7 @@ def update_workspace_preferences(workspace, preferences_json, invalidate_cache=T
 class PlatformPreferencesCollection(Resource):
 
     def read(self, request):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             result = parseValues(PlatformPreference.objects.filter(user=request.user))
         else:
             result = {}

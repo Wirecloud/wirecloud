@@ -20,9 +20,9 @@
 import json
 from unittest.mock import Mock
 
-from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 

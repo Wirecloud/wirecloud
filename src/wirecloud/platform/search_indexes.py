@@ -87,7 +87,7 @@ def searchWorkspace(request, querytext, pagenum, maxresults, orderby=None):
             sqs = sqs.filter(query)
 
     q = Q(public=True)
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         q |= Q(users=request.user.id)
 
         for group in request.user.groups.values_list("id", flat=True):

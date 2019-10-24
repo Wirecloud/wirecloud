@@ -26,9 +26,9 @@ import zipfile
 
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.test import Client, TransactionTestCase
+from django.urls import reverse
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 

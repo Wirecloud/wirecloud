@@ -111,9 +111,9 @@ class compiletranslations(Command):
 
         try:
             from django.core.management import call_command
-        except:
+        except Exception:
             import pip
-            pip.main(['install', 'Django>=1.10,<1.12'])
+            pip.main(['install', 'Django>=2.0,<2.3'])
 
             from django.core.management import call_command
 
@@ -140,9 +140,9 @@ class install(setuptools_install):
         print('')
         print(bcolors.HEADER + 'License' + bcolors.ENDC)
         print('')
-        print("WireCloud is licensed under a AGPLv3+ license with a classpath-like exception \n" +
-              "that allows widgets/operators and mashups to be licensed under any propietary or \n" +
-              "open source license.")
+        print("WireCloud is licensed under a AGPLv3+ license with a classpath-like exception")
+        print("that allows widgets/operators and mashups to be licensed under any propietary or")
+        print("open source license.")
         print('')
         license_file = os.path.join(self.install_purelib, 'wirecloud', 'LICENSE')
         print('A copy of the license has been installed at: ' + bcolors.WARNING + license_file + bcolors.ENDC)
@@ -174,7 +174,7 @@ setup(
     },
     include_package_data=True,
     install_requires=(
-        'Django>=1.10,<1.12',
+        'Django>=2.0,<2.3',
         'lxml>=2.3',
         'django-appconf>=1.0.1,<2.0',
         'django_compressor>=2.0,<2.3',
@@ -182,11 +182,11 @@ setup(
         'requests>=2.1.0',
         'selenium>=3.4',
         'pytz',
-        'django_relatives<1.0.0',
+        'django_relatives>1.0.0,<2.0.0',
         'user-agents',
         'regex',
         'markdown',
-        'django-haystack>=2.6.0,<2.8.0',
+        'django-haystack>=2.8.0,<2.9.0',
         'whoosh>=2.7.2',
         'pycrypto',
         'pyScss>=1.3.4,<2.0',

@@ -18,15 +18,14 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import time
 from importlib import import_module
 from unittest.mock import MagicMock, Mock, patch
 from urllib.parse import parse_qsl
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
-from django.core.urlresolvers import reverse
-from django.test import TestCase, override_settings
+from django.test import TestCase
+from django.urls import reverse
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.proxy.views import proxy_request

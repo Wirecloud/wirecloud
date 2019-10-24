@@ -54,7 +54,7 @@ class ResourceCollection(Resource):
 
         process_urls = request.GET.get('process_urls', 'true') == 'true'
         resources = {}
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             results = CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))
         else:
             results = CatalogueResource.objects.filter(public=True)

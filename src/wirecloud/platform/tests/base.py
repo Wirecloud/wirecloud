@@ -25,11 +25,11 @@ from lxml import etree
 from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import Group, User
-from django.core.urlresolvers import reverse
 from django.test import Client, TransactionTestCase
 from django.test.client import RequestFactory
 from django.test.utils import override_settings
 from django.template import TemplateDoesNotExist
+from django.urls import reverse
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 

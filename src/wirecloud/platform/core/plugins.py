@@ -317,7 +317,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         }
 
     def get_platform_context_current_values(self, user, session):
-        if user.is_authenticated():
+        if user.is_authenticated:
             username = user.username
             fullname = user.get_full_name()
             avatar = 'https://www.gravatar.com/avatar/' + md5(user.email.strip().lower().encode('utf8')).hexdigest() + '?s=25'
@@ -335,7 +335,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'username': username,
             'fullname': fullname,
             'avatar': avatar,
-            'isanonymous': user.is_anonymous(),
+            'isanonymous': user.is_anonymous,
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
             'mode': 'unknown',

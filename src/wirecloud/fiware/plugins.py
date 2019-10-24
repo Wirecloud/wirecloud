@@ -141,7 +141,7 @@ class FiWarePlugin(WirecloudPlugin):
         # Work around bug when running manage.py compress
         import wirecloud.fiware
 
-        fiware_token_available = IDM_SUPPORT_ENABLED and user.is_authenticated() and user.social_auth.filter(provider='fiware').exists()
+        fiware_token_available = IDM_SUPPORT_ENABLED and user.is_authenticated and user.social_auth.filter(provider='fiware').exists()
         return {
             'fiware_version': wirecloud.fiware.__version__,
             'fiware_token_available': fiware_token_available

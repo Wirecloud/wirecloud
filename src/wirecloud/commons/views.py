@@ -27,13 +27,13 @@ from urllib.parse import unquote, urlparse
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.core.urlresolvers import resolve
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.urls import resolve
 from django.utils._os import upath
 from django.utils.translation import check_for_language, get_language, to_locale, ugettext_lazy as _
 from django.views.decorators.cache import cache_page
-from django.views.i18n import render_javascript_catalog
+from django.views.i18n import get_formats, JavaScriptCatalog
 
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.platform.plugins import get_plugins
@@ -52,17 +52,17 @@ extra_formatters = {
 }
 
 
-def bad_request(request, exception=None):
+def bad_request(request, exception):
 
     return build_error_response(request, 400, 'Bad Request', extra_formatters, context={'request_path': request.path})
 
 
-def permission_denied(request, exception=None):
+def permission_denied(request, exception):
 
     return build_error_response(request, 403, 'Forbidden', extra_formatters, context={'request_path': request.path})
 
 
-def page_not_found(request):
+def page_not_found(request, exception):
 
     return build_error_response(request, 404, 'Page Not Found', extra_formatters, context={'request_path': request.path})
 
@@ -174,7 +174,8 @@ def cached_javascript_catalog(request):
         packages.append(theme)
 
     catalog, plural = get_javascript_catalog(locale, 'djangojs', packages)
-    return render_javascript_catalog(catalog, plural)
+    view = JavaScriptCatalog()
+    return view.render_to_response({"catalog": catalog, "formats": get_formats(), "plural": plural})
 
 
 class ResourceSearch(Resource):

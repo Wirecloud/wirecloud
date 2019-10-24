@@ -23,7 +23,7 @@ import posixpath
 import socket
 from urllib.parse import urljoin, urlparse, unquote
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
@@ -227,7 +227,7 @@ def authentication_required(func):
 
     def wrapper(self, request, *args, **kwargs):
         try:
-            if request.user.is_anonymous():
+            if request.user.is_anonymous:
                 return build_auth_error_response(request)
         except HttpBadCredentials as e:
             return build_auth_error_response(request, e.message, e.error_info)
@@ -294,7 +294,7 @@ def get_current_domain(request=None):
     else:
         try:
             servername = get_current_site(request).domain.split(':', 1)[0]
-        except:
+        except Exception:
             global _servername
             if _servername is None:
                 _servername = socket.getfqdn()
@@ -308,7 +308,7 @@ def get_current_domain(request=None):
     else:
         try:
             port = int(get_current_site(request).domain.split(':', 1)[1])
-        except:
+        except Exception:
             port = 80 if scheme == 'http' else 443
 
     if (scheme == 'http' and port != 80) or (scheme == 'https' and port != 443):
