@@ -48,7 +48,7 @@ from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.iwidget.utils import parse_value_from_text
 from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values, update_workspace_preferences
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
+from wirecloud.platform.models import IWidget, Tab, Workspace
 
 
 def deleteTab(tab, user):
@@ -266,14 +266,6 @@ class VariableValueCacheManager():
 
 def get_workspace_data(workspace, user):
 
-    user_workspace = None
-
-    if user.is_authenticated():
-        try:
-            user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
-        except UserWorkspace.DoesNotExist:
-            pass
-
     longdescription = workspace.longdescription
     if longdescription != '':
         longdescription = clean_html(markdown.markdown(longdescription, output_format='xhtml5'))
@@ -288,7 +280,7 @@ def get_workspace_data(workspace, user):
         'shared': workspace.is_shared(),
         'requireauth': workspace.requireauth,
         'owner': workspace.creator.username,
-        'removable': workspace.creator == user and (user_workspace is None or user_workspace.manager == ''),
+        'removable': workspace.is_editable_by(user),
         'lastmodified': workspace.last_modified,
         'description': workspace.description,
         'longdescription': longdescription,

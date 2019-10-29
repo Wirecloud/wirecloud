@@ -80,10 +80,14 @@ class Workspace(models.Model):
 
     def is_accessible_by(self, user):
         return (
-            user.is_superuser or
-            self.public and not self.requireauth or
-            self.public and user.is_authenticated() or
-            user.is_authenticated() and (self.creator == user or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0)
+            user.is_superuser
+            or self.public and not self.requireauth
+            or self.public and user.is_authenticated()
+            or user.is_authenticated() and (
+                self.creator == user
+                or self.users.filter(id=user.id).exists()
+                or len(set(self.groups.all()) & set(user.groups.all())) > 0
+            )
         )
 
     def is_editable_by(self, user):
@@ -93,16 +97,23 @@ class Workspace(models.Model):
         return self.public or self.users.count() > 1 or self.groups.count() > 1
 
 
+ACCESS_LEVEL_CHOICES = (
+    (0, 'Owner'),
+    (1, 'Can Access'),
+    (2, 'Can Edit'),
+)
+
+
 class UserWorkspace(models.Model):
 
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    manager = models.CharField(_('Manager'), max_length=100, blank=True)
-    reason_ref = models.CharField(_('Reason Ref'), max_length=100, help_text=_('Reference to the reason why it was added. Used by Workspace Managers to sync workspaces'), blank=True)
+    accesslevel = models.SmallIntegerField(_('Access Level'), choices=ACCESS_LEVEL_CHOICES, default=1, null=False, blank=False)
 
     class Meta:
         app_label = 'platform'
         db_table = 'wirecloud_userworkspace'
+        unique_together = ('workspace', 'user')
 
     def __str__(self):
         return "%s - %s" % (self.workspace, self.user)
