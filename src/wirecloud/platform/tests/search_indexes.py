@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,10 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 from unittest.mock import Mock, patch
 
-from django.db.models import Q
-from django.test import TestCase
+from django.core.urlresolvers import reverse
+from django.test import Client, TestCase
 
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.search_indexes import cleanResults, searchWorkspace, CONTENT_FIELDS
@@ -30,15 +31,13 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 @patch("wirecloud.platform.search_indexes.buildSearchResults")
 @patch("wirecloud.platform.search_indexes.Q")
 @patch("wirecloud.platform.search_indexes.SearchQuerySet")
-class WorkspaceIndexTestCase(WirecloudTestCase, TestCase):
+class WorkspaceIndexTestCase(TestCase):
 
-    fixtures = ()
     tags = ('wirecloud-search-api', 'wirecloud-noselenium')
-    populate = False
 
     def test_searchWorkspace_emptyquery(self, sqs_mock, q_mock, buildSearchResults_mock):
         request_mock = Mock(user=Mock(is_authenticated=Mock(return_value=True)))
-        request_mock.user.groups.values_list.return_value=("onegroup",)
+        request_mock.user.groups.values_list.return_value = ("onegroup",)
         searchWorkspace(request_mock, "", 1, 10)
         sqs_mock().models.assert_called_with(Workspace)
         sqs_mock().models().all().filter.assert_called_with(searchable=1)
@@ -93,3 +92,54 @@ class WorkspaceIndexTestCase(WirecloudTestCase, TestCase):
             ),
             {"name": "workspace"}
         )
+
+
+class WorkspaceSearchTestCase(WirecloudTestCase, TestCase):
+
+    fixtures = ('workspace_search_data',)
+    tags = ('wirecloud-search-api', 'wirecloud-noselenium')
+    populate = False
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(WorkspaceSearchTestCase, cls).setUpClass()
+        cls.base_url = reverse('wirecloud.search_service')
+
+    def setUp(self):
+
+        super(WorkspaceSearchTestCase, self).setUp()
+        self.client = Client()
+
+    def test_search_by_emptyuser(self):
+
+        self.client.login(username='emptyuser', password='admin')
+
+        response = self.client.get(self.base_url + '?namespace=workspace')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+
+        workspaces = set(result['name'] for result in result_json['results'])
+        self.assertEqual(workspaces, {"public-workspace"})
+
+    def test_search_by_normuser(self):
+
+        self.client.login(username='normuser', password='admin')
+
+        response = self.client.get(self.base_url + '?namespace=workspace')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+
+        workspaces = set(result['name'] for result in result_json['results'])
+        self.assertEqual(workspaces, {"public-workspace", "org-workspace"})
+
+    def test_search_by_user_with_workspaces(self):
+
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(self.base_url + '?namespace=workspace')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+
+        workspaces = set(result['name'] for result in result_json['results'])
+        self.assertEqual(workspaces, {"public-workspace", "org-workspace", "priv-workspace"})
