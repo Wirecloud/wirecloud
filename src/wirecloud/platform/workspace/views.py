@@ -313,11 +313,7 @@ class TabEntry(Resource):
     def create(self, request, workspace_id, tab_id):
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if tab.workspace.creator != request.user:
-            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
-
-        user_workspace = UserWorkspace.objects.get(user__id=request.user.id, workspace__id=workspace_id)
-        if user_workspace.manager != '':
+        if not tab.workspace.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         data = parse_json_request(request)
