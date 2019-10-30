@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -26,7 +27,7 @@ from django.db import models
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.models import Organization
-from wirecloud.platform.models import Workspace
+from wirecloud.platform.models import UserWorkspace, Workspace
 
 
 class WirecloudSignalProcessor(signals.BaseSignalProcessor):
@@ -51,6 +52,11 @@ class WirecloudSignalProcessor(signals.BaseSignalProcessor):
         kwargs["sender"] = User
         self.handle_save(*args, **kwargs)
 
+    def handle_user_workspace(self, *args, **kwargs):
+        kwargs["instance"] = kwargs['instance'].workspace
+        kwargs["sender"] = Workspace
+        self.handle_save(*args, **kwargs)
+
     def setup(self):
 
         from django.conf import settings
@@ -67,7 +73,7 @@ class WirecloudSignalProcessor(signals.BaseSignalProcessor):
             models.signals.m2m_changed.connect(self.handle_m2m_change, sender=CatalogueResource.groups.through)
 
         if "wirecloud.platform" in settings.INSTALLED_APPS:
-            models.signals.m2m_changed.connect(self.handle_m2m_change, sender=Workspace.users.through)
+            models.signals.post_save.connect(self.handle_user_workspace, sender=UserWorkspace)
             models.signals.m2m_changed.connect(self.handle_m2m_change, sender=Workspace.groups.through)
 
     def teardown(self):
@@ -76,7 +82,7 @@ class WirecloudSignalProcessor(signals.BaseSignalProcessor):
 
         # TODO manual list of m2m relations => automate field discovering
         if "wirecloud.platform" in settings.INSTALLED_APPS:
-            models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=Workspace.users.through)
+            models.signals.post_save.disconnect(self.handle_user_workspace, sender=UserWorkspace)
             models.signals.m2m_changed.disconnect(self.handle_m2m_change, sender=Workspace.groups.through)
 
         if "wirecloud.catalogue" in settings.INSTALLED_APPS:

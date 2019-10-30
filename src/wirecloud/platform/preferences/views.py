@@ -289,7 +289,7 @@ class WorkspacePreferencesCollection(Resource):
 
             for item in sharelist:
                 try:
-                    user = User.objects.get(username=item['name'])
+                    user = User.objects.get(username=item['username'])
                 except (KeyError, User.DoesNotExist):
                     continue
 
