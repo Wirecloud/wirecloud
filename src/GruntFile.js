@@ -205,6 +205,13 @@ module.exports = function (grunt) {
                     }
                 }
             },
+            styledelementsdebug: {
+                options: {
+                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/*Spec.js']),
+                    browsers: ['Firefox'],
+                    singleRun: false
+                }
+            },
             wirecloud: {
                 options: {
                     coverageReporter: {
@@ -220,6 +227,13 @@ module.exports = function (grunt) {
                         "wirecloud/commons/static/js/wirecloud/**/*.js": ['coverage'],
                         "wirecloud/platform/static/js/wirecloud/**/*.js": ['coverage']
                     }
+                }
+            },
+            wireclouddebug: {
+                options: {
+                    files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/**/*Spec.js']),
+                    browsers: ['Firefox'],
+                    singleRun: false
                 }
             }
         },
@@ -270,7 +284,8 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', [
         'eslint',
-        'karma'
+        'karma:styledelements',
+        'karma:wirecloud',
     ]);
 
     grunt.registerTask('ci', ['test', 'lcovMerge', 'coveralls']);
