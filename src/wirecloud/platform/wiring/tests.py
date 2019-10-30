@@ -34,10 +34,11 @@ import selenium
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.remote import FormModalTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 from wirecloud.platform import plugins
-from wirecloud.platform.models import CatalogueResource, IWidget, Workspace
+from wirecloud.platform.models import IWidget, Workspace
 from wirecloud.platform.workspace.utils import encrypt_value
 
 
@@ -2060,7 +2061,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase, TestCase):
     use_search_indexes = False
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
-    COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\.js')
+    COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\\.js')
 
     @classmethod
     def setUpClass(cls):

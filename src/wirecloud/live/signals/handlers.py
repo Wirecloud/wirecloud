@@ -23,8 +23,9 @@ from channels import Group
 from django.dispatch import receiver
 from django.db.models.signals import m2m_changed, post_save
 
-from wirecloud.platform.models import CatalogueResource, Workspace
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.live.utils import build_group_name
+from wirecloud.platform.models import Workspace
 
 
 def notify(data, affected_users):

@@ -26,11 +26,12 @@ import os
 from django.conf import settings
 from django.utils.translation import get_language, ugettext_lazy as _
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.wgt import WgtFile
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
 from wirecloud.platform.localcatalogue.utils import install_component
-from wirecloud.platform.models import CatalogueResource, IWidget, Workspace
+from wirecloud.platform.models import IWidget, Workspace
 from wirecloud.platform.plugins import build_url_template, get_active_features_info, WirecloudPlugin
 from wirecloud.platform.themes import get_active_theme_name
 from wirecloud.platform.workspace.utils import create_workspace
