@@ -41,7 +41,7 @@ class WorkspaceIndexTestCase(TestCase):
         searchWorkspace(request_mock, "", 1, 10)
         sqs_mock().models.assert_called_with(Workspace)
         sqs_mock().models().all().filter.assert_called_with(searchable=1)
-        self.assertEqual(q_mock.call_args_list, [({"public": True},), ({"users": request_mock.user.username},), ({"groups": "onegroup"},)])
+        self.assertEqual(q_mock.call_args_list, [({"public": True},), ({"users": request_mock.user.id},), ({"groups": "onegroup"},)])
         buildSearchResults_mock.assert_called_with(sqs_mock().models().all().filter().filter(), 1, 10, cleanResults)
 
     @patch("wirecloud.platform.search_indexes.ParseSQ")
@@ -54,7 +54,7 @@ class WorkspaceIndexTestCase(TestCase):
         sqs_mock().models.assert_called_with(Workspace)
         sqs_mock().models().all().filter.assert_called_with(searchable=1)
         sqs_mock().models().all().filter().filter.assert_called_with("filter")
-        self.assertEqual(q_mock.call_args_list, [({"public": True},), ({"users": request_mock.user.username},)])
+        self.assertEqual(q_mock.call_args_list, [({"public": True},), ({"users": request_mock.user.id},)])
         buildSearchResults_mock.assert_called_with(sqs_mock().models().all().filter().filter().filter(), 1, 10, cleanResults)
 
     @patch("wirecloud.platform.search_indexes.ParseSQ")
@@ -80,7 +80,7 @@ class WorkspaceIndexTestCase(TestCase):
         sqs_mock().models.assert_called_with(Workspace)
         sqs_mock().models().all().filter.assert_called_with(searchable=1)
         sqs_mock().models().all().filter().filter.assert_called_with("filter")
-        self.assertEqual(q_mock.call_args_list, [({"public": True},), ({"users": request_mock.user.username},)])
+        self.assertEqual(q_mock.call_args_list, [({"public": True},), ({"users": request_mock.user.id},)])
         sqs_mock().models().all().filter().filter().filter().order_by.assert_called_with('title')
         buildSearchResults_mock.assert_called_with(sqs_mock().models().all().filter().filter().filter().order_by(), 1, 10, cleanResults)
 

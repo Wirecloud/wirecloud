@@ -65,8 +65,8 @@ class WorkspaceIndex(indexes.SearchIndex, indexes.Indexable):
 
         self.prepared_data["lastmodified"] = lastmodified
         self.prepared_data["owner"] = object.creator.username
-        self.prepared_data["users"] = tuple(object.users.all().values_list('username', flat=True))
-        self.prepared_data["groups"] = tuple(object.groups.all().values_list('name', flat=True))
+        self.prepared_data["users"] = tuple(object.users.all().values_list('id', flat=True))
+        self.prepared_data["groups"] = tuple(object.groups.all().values_list('id', flat=True))
         self.prepared_data["shared"] = object.is_shared()
 
         return self.prepared_data
@@ -88,9 +88,9 @@ def searchWorkspace(request, querytext, pagenum, maxresults, orderby=None):
 
     q = Q(public=True)
     if request.user.is_authenticated():
-        q |= Q(users=request.user.username)
+        q |= Q(users=request.user.id)
 
-        for group in request.user.groups.values_list("name", flat=True):
+        for group in request.user.groups.values_list("id", flat=True):
             q |= Q(groups=group)
     sqs = sqs.filter(q)
 

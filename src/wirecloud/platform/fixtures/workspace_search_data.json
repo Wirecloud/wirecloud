@@ -1,6 +1,6 @@
 [
     {
-        "pk": 2,
+        "pk": 20000000,
         "model": "auth.user",
         "fields": {
             "username": "normuser",
@@ -11,13 +11,13 @@
             "is_staff": false,
             "is_active": true,
             "is_superuser": false,
-            "groups": [1, 2],
+            "groups": [10000000, 20000000],
             "last_login": "2011-10-10T11:27:12+01:00",
             "date_joined": "2011-10-10T11:27:12+01:00"
         }
     },
     {
-        "pk": 4,
+        "pk": 40000000,
         "model": "auth.user",
         "fields": {
             "username": "user_with_workspaces",
@@ -28,13 +28,13 @@
             "is_staff": false,
             "is_active": true,
             "is_superuser": false,
-            "groups": [2],
+            "groups": [20000000],
             "last_login": "2011-10-10T11:27:12+01:00",
             "date_joined": "2011-10-10T11:27:12+01:00"
         }
     },
     {
-        "pk": 5,
+        "pk": 50000000,
         "model": "auth.user",
         "fields": {
             "username": "emptyuser",
@@ -45,16 +45,16 @@
             "is_staff": false,
             "is_active": true,
             "is_superuser": false,
-            "groups": [1],
+            "groups": [10000000],
             "last_login": "2011-10-10T11:27:12+01:00",
             "date_joined": "2011-10-10T11:27:12+01:00"
         }
     },
     {
-        "pk": 6,
+        "pk": 60000000,
         "model": "auth.user",
         "fields": {
-            "username": "org",
+            "username": "organization",
             "first_name": "",
             "last_name": "",
             "email": "admin@c.com",
@@ -62,31 +62,31 @@
             "is_staff": false,
             "is_active": true,
             "is_superuser": false,
-            "groups": [2],
+            "groups": [20000000],
             "last_login": "2011-10-10T11:27:12+01:00",
             "date_joined": "2011-10-10T11:27:12+01:00"
         }
     },
     {
-        "pk": 1,
+        "pk": 10000000,
         "model": "auth.group",
         "fields": {
             "name": "normusers"
         }
     },
     {
-        "pk": 2,
+        "pk": 20000000,
         "model": "auth.group",
         "fields": {
-            "name": "org"
+            "name": "organization"
         }
     },
     {
         "pk": 1,
         "model": "commons.organization",
         "fields": {
-            "user": 6,
-            "group": 2
+            "user": 60000000,
+            "group": 20000000
         }
     },
     {
@@ -95,7 +95,7 @@
         "fields": {
             "organization": 1,
             "name": "owners",
-            "users": [4]
+            "users": [40000000]
         }
     },
     {
@@ -104,7 +104,7 @@
         "fields": {
             "organization": 1,
             "name": "members",
-            "users": [2]
+            "users": [20000000]
         }
     },
     {
@@ -113,9 +113,9 @@
         "fields": {
             "name": "org-workspace",
             "title": "Organization Workspace",
-            "creator": 6,
+            "creator": 60000000,
             "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}",
-            "groups": [2]
+            "groups": [20000000]
         }
     },
     {
@@ -124,7 +124,7 @@
         "fields": {
             "name": "priv-workspace",
             "title": "Private Workspace",
-            "creator": 4,
+            "creator": 40000000,
             "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
         }
     },
@@ -132,7 +132,7 @@
         "model": "platform.userworkspace",
         "pk": 2,
         "fields": {
-            "user": 4,
+            "user": 40000000,
             "workspace": 4
         }
     },
@@ -142,11 +142,9 @@
         "fields": {
             "name": "public-workspace",
             "title": "Public Workspace",
-            "creator": 4,
+            "creator": 40000000,
             "public": true,
             "requireauth": false,
-            "description": "This is an <b>example</b> of workspace",
-            "longdescription": "This is an **example** of workspace",
             "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
         }
     }
