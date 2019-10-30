@@ -200,7 +200,7 @@ class WorkspaceEntry(Resource):
         fields = []
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
+        if not workspace.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         if 'name' in ts:
@@ -232,7 +232,7 @@ class WorkspaceEntry(Resource):
     def delete(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        if not (request.user.is_superuser or workspace.creator == request.user):
+        if not workspace.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to delete this workspace'))
 
         delete_workspace(workspace=workspace)
@@ -257,7 +257,7 @@ class TabCollection(Resource):
         if tab_name == '' and tab_title == '':
             return build_error_response(request, 422, _('Malformed tab JSON: expecting tab name or title.'))
 
-        if not (request.user.is_superuser or workspace.creator == request.user):
+        if not workspace.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
         if tab_title == '':
@@ -280,7 +280,7 @@ class TabOrderService(Service):
     def process(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        if not (request.user.is_superuser or workspace.creator == request.user):
+        if not workspace.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
         order = parse_json_request(request)
@@ -354,7 +354,7 @@ class TabEntry(Resource):
 
         # Get tab, if it does not exist, an http 404 error is returned
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not request.user.is_superuser and not tab.workspace.users.filter(id=request.user.id).exists():
+        if not tab.workspace.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to remove this tab'))
 
         tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')[::1]
@@ -391,7 +391,7 @@ class MashupMergeService(Service):
     def process(self, request, to_ws_id):
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
-        if not request.user.is_superuser and to_ws.creator != request.user:
+        if not to_ws.is_editable_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         data = parse_json_request(request)
@@ -424,7 +424,7 @@ class MashupMergeService(Service):
         else:
 
             from_ws = get_object_or_404(Workspace, id=workspace_id)
-            if not request.user.is_superuser and from_ws.creator != request.user:
+            if not from_ws.is_accessible_by(request.user):
                 return build_error_response(request, 403, _('You are not allowed to read from workspace %s') % workspace_id)
 
             options = {
