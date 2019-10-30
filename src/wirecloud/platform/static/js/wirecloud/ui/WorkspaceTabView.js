@@ -178,12 +178,18 @@
                 width: resource.default_width
             }, options);
 
-            layout = options.layout === 1 ? this.dragboard.freeLayout : this.dragboard.baseLayout;
+            var layouts = [
+                this.dragboard.baseLayout,
+                this.dragboard.freeLayout,
+                this.dragboard.leftLayout,
+                this.dragboard.rightLayout
+            ];
+            layout = layouts[options.layout];
 
             options.left = options.left != null ? layout.adaptColumnOffset(options.left).inLU : undefined;
             options.top = options.top != null ? layout.adaptRowOffset(options.top).inLU : undefined;
-            options.height = clean_number(layout.adaptHeight(options.height).inLU, 0, layout.rows);
-            options.width = clean_number(layout.adaptWidth(options.width).inLU, 0, layout.columns);
+            options.height = clean_number(layout.adaptHeight(options.height).inLU, 1);
+            options.width = clean_number(layout.adaptWidth(options.width).inLU, 1, layout.columns);
 
             if (options.left == null || options.top == null) {
                 if ("_searchFreeSpace" in layout) {
@@ -210,7 +216,7 @@
         /**
          * Highlights this tab
          */
-        highlight: function () {
+        highlight: function highlight() {
             this.tabElement.classList.add("highlight");
             return this;
         },

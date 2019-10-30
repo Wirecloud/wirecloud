@@ -105,6 +105,18 @@
                     adaptColumnOffset: jasmine.createSpy("adaptColumnOffset").and.returnValue({inLU: 0}),
                     adaptRowOffset: jasmine.createSpy("adaptRowOffset").and.returnValue({inLU: 0})
                 };
+                this.leftLayout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({inLU: 0}),
+                    adaptWidth: jasmine.createSpy("adaptWidth").and.returnValue({inLU: 0}),
+                    adaptColumnOffset: jasmine.createSpy("adaptColumnOffset").and.returnValue({inLU: 0}),
+                    adaptRowOffset: jasmine.createSpy("adaptRowOffset").and.returnValue({inLU: 0})
+                };
+                this.rightLayout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({inLU: 0}),
+                    adaptWidth: jasmine.createSpy("adaptWidth").and.returnValue({inLU: 0}),
+                    adaptColumnOffset: jasmine.createSpy("adaptColumnOffset").and.returnValue({inLU: 0}),
+                    adaptRowOffset: jasmine.createSpy("adaptRowOffset").and.returnValue({inLU: 0})
+                };
                 this.paint = jasmine.createSpy("paint");
                 this._notifyWindowResizeEvent = jasmine.createSpy("_notifyWindowResizeEvent");
                 this._updateBaseLayout = jasmine.createSpy("_updateBaseLayout");
@@ -274,6 +286,66 @@
                     default_height: "120px",
                     default_width: "33%"
                 });
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
+            it("should allow to create widgets on the left sidebar layout", (done) => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                let p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        layout: 2
+                    }
+                );
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
+            it("should allow to create widgets on the right sidebar layout", (done) => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                let p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        layout: 3
+                    }
+                );
 
                 p.then((created_widget) => {
                     expect(created_widget).toBe(widget);

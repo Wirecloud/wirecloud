@@ -74,8 +74,8 @@
             }
         });
 
-        context.y = context.widget.wrapperElement.style.top === "" ? 0 : parseInt(context.widget.wrapperElement.style.top, 10);
-        context.x = context.widget.wrapperElement.style.left === "" ? 0 : parseInt(context.widget.wrapperElement.style.left, 10);
+        context.y = context.widget.wrapperElement.offsetTop;
+        context.x = context.widget.wrapperElement.offsetLeft;
 
         return {
             dragboard: context.widget.tab.wrapperElement
@@ -85,6 +85,8 @@
     WidgetViewDraggable.prototype.ondrag = function ondrag(event, draggable, context, xDelta, yDelta) {
         context.widget.wrapperElement.style.left = (context.x + xDelta) + 'px';
         context.widget.wrapperElement.style.top = (context.y + yDelta) + 'px';
+        context.widget.wrapperElement.style.bottom = "";
+        context.widget.wrapperElement.style.right = "";
 
         const x = context.x + xDelta + context.xOffset;
         const y = context.y + yDelta + context.yOffset;

@@ -253,7 +253,21 @@
             this.previousLayout = model.layout === 0 ? tab.dragboard.baseLayout : tab.dragboard.freeLayout;
             this.previousPosition = model.position;
         } else {
-            layout = model.layout === 0 ? tab.dragboard.baseLayout : tab.dragboard.freeLayout
+            switch (model.layout) {
+            default:
+            case 0:
+                layout = tab.dragboard.baseLayout;
+                break;
+            case 1:
+                layout = tab.dragboard.freeLayout;
+                break;
+            case 2:
+                layout = tab.dragboard.leftLayout;
+                break;
+            case 3:
+                layout = tab.dragboard.rightLayout;
+                break;
+            }
         }
         layout.addWidget(this, true);
 
@@ -577,23 +591,22 @@
             update.call(this);
         },
 
-        toggleLayout: function toggleLayout() {
-            if (this.layout === this.tab.dragboard.freeLayout) {
-                this.moveToLayout(this.layout.dragboard.baseLayout);
-            } else {
-                this.moveToLayout(this.layout.dragboard.freeLayout);
-            }
-        },
-
         update: function update() {
             return this.model.changeTab(this.tab.model);
         },
 
         toJSON: function toJSON() {
+            const layouts = [
+                this.tab.dragboard.baseLayout,
+                this.tab.dragboard.freeLayout,
+                this.tab.dragboard.leftLayout,
+                this.tab.dragboard.rightLayout
+            ];
+
             var data = {
                 id: this.id,
                 tab: this.tab.id,
-                layout: this.layout === this.tab.dragboard.freeLayout ? 1 : 0
+                layout: layouts.indexOf(this.layout)
             };
 
             if (!this.tab.workspace.restricted) {

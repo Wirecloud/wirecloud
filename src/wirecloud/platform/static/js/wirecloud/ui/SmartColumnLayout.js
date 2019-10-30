@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,110 +23,27 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
     var SmartColumnLayout = function SmartColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace) {
-        Wirecloud.ui.ColumnLayout.call(this,
-                          dragboard,
-                          columns,
-                          cellHeight,
-                          verticalMargin,
-                          horizontalMargin,
-                          scrollbarSpace);
+        Wirecloud.ui.ColumnLayout.call(
+            this,
+            dragboard,
+            columns,
+            cellHeight,
+            verticalMargin,
+            horizontalMargin,
+            scrollbarSpace
+        );
     };
-    SmartColumnLayout.prototype = new Wirecloud.ui.ColumnLayout();
+    utils.inherit(SmartColumnLayout, Wirecloud.ui.ColumnLayout);
 
-    SmartColumnLayout.prototype._realSearchInsertPoint = function (_matrix, x, y, width, height) {
-        var widthDiff, lastY, offsetX;
-
-        /* Check for special cases
-           y == 0                             => we are on the topmost position
-                                              so this is the insert point
-           _matrix[x][y - 1] != _matrix[x][y] => we are in a edge, so this is
-                                              the insert point.
-           _matrix[x][y] != null              => there is already a widget in
-                                              this position, so we have to
-                                              search an insert point ignoring
-                                              it.
-        */
-        if (y === 0) {
-            return 0;
-        } else if ((_matrix[x][y - 1] != null) && (_matrix[x][y - 1] != _matrix[x][y])) {
-            return y;
-        } else if (_matrix[x][y]) {
-            widthDiff = _matrix[x][y].shape.width - width;
-            widthDiff -= x - this._getPositionOn(_matrix, _matrix[x][y]).x;
-            if (widthDiff > 0) {
-                // The widget at (x,y) has the same or a bigger width
-                // than the widget to move, so as the widget to move
-                // fits there, so at least we can insert here.
-                y = this._getPositionOn(_matrix, _matrix[x][y]).y - 1;
-                while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
-                    y--;
-                }
-                return ++y;
-            } else if (widthDiff !== 0) {
-                for (;y > 1; y--) {
-                    for (offsetX = 0; offsetX < width; offsetX++) {
-                        if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
-                            if (_matrix[x + offsetX][y - 1]) {
-                                // Edge detected
-                                return y;
-                            }
-                        }
-                    }
-                }
-
-                // edges not found
-                return 0;
-            } else {
-                return this._getPositionOn(_matrix, _matrix[x][y]).y;
-            }
-        }
-
-        lastY = y;
-        while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
-            y--;
-        }
-        if (y != lastY) {
-            y++;
-        } else {
-            for (;y > 1; y--) {
-                for (offsetX = 0; offsetX < width; offsetX++) {
-                    if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
-                        if (_matrix[x + offsetX][y - 1]) {
-                            // Edge detected
-                            return y;
-                        }
-                    }
-                }
-            }
-
-            return 0;
-        }
-        return y;
-    };
-
-    SmartColumnLayout.prototype._searchInsertPoint = function (_matrix, x, y, width, height) {
-        // Search the topmost position for the widget
-
-        if (y > this.searchInsertPointYLimit) {
-            y = this.searchInsertPointYLimit;
-        }
-
-        if (!this.searchInsertPointCache[x][y]) {
-            this.searchInsertPointCache[x][y] = this._realSearchInsertPoint(_matrix, x, y, width, height);
-        }
-
-        return this.searchInsertPointCache[x][y];
-    };
-
-    SmartColumnLayout.prototype.initialize = function () {
+    SmartColumnLayout.prototype.initialize = function initialize() {
         var modified = Wirecloud.ui.ColumnLayout.prototype.initialize.call(this);
 
-        // remove holes moving iwidgets to the topmost positions
+        // remove holes by moving widgets to the topmost position available
         var widget, key, keys = [];
         for (key in this.widgets) {
             keys.push(key);
@@ -136,15 +54,11 @@
             // save these changes in the server side
             this.dragboard.update(keys);
         }
+
+        return modified;
     };
 
-    SmartColumnLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
-        if (widthChanged) {
-            Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
-        }
-    };
-
-    SmartColumnLayout.prototype._notifyResizeEvent = function (widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+    SmartColumnLayout.prototype._notifyResizeEvent = function _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
         var x, y;
         var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
         var position = widget.position;
@@ -176,9 +90,12 @@
                 widget.setPosition(position);
 
                 // Reserve the new space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x, position.y,
-                                                 widthDiff, newHeight);
+                this._reserveSpace2(
+                    this.matrix,
+                    widget,
+                    position.x, position.y,
+                    widthDiff, newHeight
+                );
             } else {
                 // Move affected iwidgets
                 for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
@@ -192,9 +109,12 @@
                 }
 
                 // Reserve this space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x + oldWidth, position.y,
-                                                 newWidth - oldWidth, newHeight);
+                this._reserveSpace2(
+                    this.matrix,
+                    widget,
+                    position.x + oldWidth, position.y,
+                    newWidth - oldWidth, newHeight
+                );
             }
 
         } else if (newWidth < oldWidth) {
@@ -287,7 +207,7 @@
         this._clearSpace(buffer, widget);
 
         var modified = false, affectedIWidgets = {};
-        var affectedwidget, x, y, columnsize;
+        var affectedwidget, x;
         var position = this._getPositionOn(buffer, widget);
         var edgeY = position.y + widget.shape.height;
 
@@ -295,15 +215,11 @@
 
         // check if we have to update the representations of the widget instances
         for (x = 0; x < widget.shape.width; x++) {
-            columnsize = _matrix[position.x + x].length;
-            for (y = edgeY; y < columnsize; y++) {
-                affectedwidget = _matrix[position.x + x][y];
-                if ((affectedwidget != null) && (typeof affectedIWidgets[affectedwidget.id] !== true)) {
-                    affectedIWidgets[affectedwidget.id] = true;
-                    modified = true;
-                    this._moveSpaceUp(buffer, affectedwidget);
-                    break;
-                }
+            affectedwidget = _matrix[position.x + x][edgeY];
+            if ((affectedwidget != null) && (typeof affectedIWidgets[affectedwidget.id] !== true)) {
+                affectedIWidgets[affectedwidget.id] = true;
+                modified = this._moveSpaceUp(buffer, affectedwidget);
+                break;
             }
         }
         return modified;
@@ -311,4 +227,4 @@
 
     Wirecloud.ui.SmartColumnLayout = SmartColumnLayout;
 
-})();
+})(Wirecloud.Utils);

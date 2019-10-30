@@ -533,6 +533,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/FullDragboardLayout.js',
                 'js/wirecloud/ui/ColumnLayout.js',
                 'js/wirecloud/ui/SmartColumnLayout.js',
+                'js/wirecloud/ui/SidebarLayout.js',
                 'js/wirecloud/ui/GridLayout.js',
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/MarketplaceViewMenuItems.js',

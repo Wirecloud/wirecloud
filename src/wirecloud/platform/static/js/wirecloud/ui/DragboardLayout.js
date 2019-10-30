@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -40,10 +41,6 @@
      * @param {Dragboard} dragboard      associated dragboard
      */
     var DragboardLayout = function DragboardLayout(dragboard) {
-        if (arguments.length === 0) {
-            return; // Allow empty constructor (allowing hierarchy)
-        }
-
         this.dragboard = dragboard;
         this.widgets = {};
 
@@ -55,52 +52,15 @@
      */
     DragboardLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
         // Notify each iwidget
-        var iwidget_key, iWidget;
-        for (iwidget_key in this.widgets) {
-            iWidget = this.widgets[iwidget_key];
-            iWidget.repaint();
-        }
+        Object.values(this.widgets).forEach((widget) => {
+            widget.repaint();
+        });
     };
 
     /**
      *
      */
     DragboardLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
-    };
-
-    /**
-     * Returns the size of the menu bar.
-     *
-     * @returns {Wirecloud.ui.MultiValuedSize} the size of the menu bar
-     */
-    DragboardLayout.prototype.getMenubarSize = function getMenubarSize() {
-        var sizeInPixels = 18; // TODO calculate this
-        var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-        return new Wirecloud.ui.MultiValuedSize(sizeInPixels, sizeInLU);
-    };
-
-    /**
-     * Returns the size of the status bar.
-     *
-     * @returns {Wirecloud.ui.MultiValuedSize} the size of the menu bar
-     */
-    DragboardLayout.prototype.getStatusbarSize = function getStatusbarSize() {
-        var sizeInPixels = 16; // TODO calculate this
-        var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-        return new Wirecloud.ui.MultiValuedSize(sizeInPixels, sizeInLU);
-    };
-
-    /**
-     * Returns the total vertical extra size that will have an iWidget. For now,
-     * thats includes the menu bar and the status bar sizes.
-     *
-     * @returns {Wirecloud.ui.MultiValuedSize} vertical extra size
-     */
-    DragboardLayout.prototype.getExtraSize = function getExtraSize() {
-        var sizeInPixels = this.getMenubarSize().inPixels +
-                           this.getStatusbarSize().inPixels;
-        var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-        return new Wirecloud.ui.MultiValuedSize(sizeInPixels, sizeInLU);
     };
 
     // =========================================================================
@@ -155,6 +115,7 @@
             }
             sizeInLU = Math.round(this.fromPixelsToVCells(pixels));
         }
+        sizeInLU = Math.max(1, sizeInLU);
         return new Wirecloud.ui.MultiValuedSize(this.getHeightInPixels(sizeInLU), sizeInLU);
     };
 
@@ -172,12 +133,15 @@
             }
             sizeInLU = Math.round(this.fromPixelsToHCells(pixels));
         }
+        sizeInLU = Math.max(1, sizeInLU);
         return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
     };
 
     DragboardLayout.prototype.updatePosition = function updatePosition(widget, element) {
         element.style.left = this.getColumnOffset(widget.position.x) + "px";
         element.style.top = this.getRowOffset(widget.position.y) + "px";
+        element.style.bottom = "";
+        element.style.right = "";
     };
 
     DragboardLayout.prototype.padWidth = function padWidth(width) {
@@ -252,25 +216,25 @@
      *
      * This function should be called at the end of the implementation of addWidget.
      */
-    DragboardLayout.prototype._adaptIWidget = function _adaptIWidget(iWidget) {
-        if (iWidget.element !== null) {
-            this._ensureMinimalSize(iWidget, false);
+    DragboardLayout.prototype._adaptIWidget = function _adaptIWidget(widget) {
+        if (widget.element != null) {
+            ensureMinimalSize.call(this, widget, false);
         }
     };
 
     /**
      * @private
      *
-     * Checks that the given iWidget has a minimal size. This check is performed using
-     * iWidget content size.
+     * Checks that the given widget has a minimal size. This check is performed using
+     * widget content size.
      */
-    DragboardLayout.prototype._ensureMinimalSize = function _ensureMinimalSize(iWidget, persist) {
+    var ensureMinimalSize = function ensureMinimalSize(widget, persist) {
         var minWidth = Math.ceil(this.fromPixelsToHCells(80));
         var minHeight = Math.ceil(this.fromPixelsToVCells(80));
 
         var sizeChange = false;
-        var newWidth = iWidget.shape.width;
-        var newHeight = iWidget.shape.height;
+        var newWidth = widget.shape.width;
+        var newHeight = widget.shape.height;
 
         if (newWidth < minWidth) {
             sizeChange = true;
@@ -283,7 +247,7 @@
         }
 
         if (sizeChange) {
-            iWidget.setShape({width: newWidth, height: newHeight});
+            widget.setShape({width: newWidth, height: newHeight});
         }
     };
 
@@ -306,18 +270,17 @@
     };
 
     /**
-     * Moves this layout to another layout.
+     * Moves all widget in this layout to another layout.
      *
      * @param {DragboardLayout} destLayout Layout where the iWidgets are going to be
      *        moved.
      */
     DragboardLayout.prototype.moveTo = function moveTo(destLayout) {
-        var iwidget_key, iWidget;
+        Object.values(this.widgets).forEach((widget) => {
+            widget.moveToLayout(destLayout);
+        });
 
-        for (iwidget_key in this.widgets) {
-            iWidget = this.widgets[iwidget_key];
-            iWidget.moveToLayout(destLayout);
-        }
+        return this;
     };
 
     // =========================================================================
@@ -379,62 +342,6 @@
      * does nothing.
      */
     DragboardLayout.prototype.disableCursor = function disableCursor() {
-    };
-
-    // =========================================================================
-    // CSS UNIT CONVERSIONS
-    // =========================================================================
-
-    /**
-     * Measure the given test elmenet in the specified css units.
-     *
-     * @param testElement element to measure
-     * @param units units to use in the measure
-     *
-     * @returns the horizontal and vertical size of the test element converted
-     *          to the target css units.
-     *
-     * @see CSSPrimitiveValue
-     */
-    DragboardLayout.prototype.measure = function measure(testElement, units) {
-        var res, cssStyle;
-
-        testElement.style.visibility = "hidden";
-        this.dragboard.tab.appendChild(testElement);
-
-        // Retrieve target measurements
-        res = [];
-        cssStyle = document.defaultView.getComputedStyle(testElement, null);
-        res[0] = cssStyle.getPropertyCSSValue("width").getFloatValue(units);
-        res[1] = cssStyle.getPropertyCSSValue("height").getFloatValue(units);
-
-        // Remove the test element
-        testElement.remove();
-
-        return res;
-    };
-
-    /**
-     * Converts a value from its initial units to the especified css units.
-     *
-     * @param {String} value css value to convert
-     * @param newUnits units to convert to
-     *
-     * @returns the value converted to the target css units in horizontal and
-     *          vertical
-     *
-     * @see CSSPrimitiveValue
-     *
-     * @example
-     * layout.unitConvert("1cm", CSSPrimitiveValue.CSS_PX);
-     */
-    DragboardLayout.prototype.unitConvert = function unitConvert(value, newUnits) {
-        // Create a square div using the given value
-        var testDiv = document.createElement("div");
-        testDiv.style.height = value;
-        testDiv.style.width = value;
-
-        return this.measure(testDiv, newUnits);
     };
 
     var on_remove_widget = function on_remove_widget(widget) {

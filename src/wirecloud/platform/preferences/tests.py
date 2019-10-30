@@ -361,7 +361,7 @@ class TabPreferencesTestCase(TestCase):
 @patch('wirecloud.platform.preferences.views.PlatformPreference')
 class PlatformPreferencesTestCase(TestCase):
 
-    tags = ('wirecloud-noselenium', 'wirecloud-preferences', 'current')
+    tags = ('wirecloud-noselenium', 'wirecloud-preferences')
 
     @classmethod
     def setUpClass(cls):

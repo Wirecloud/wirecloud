@@ -109,6 +109,9 @@
                 this.createWidget = jasmine.createSpy("createWidget");
                 this.findWidget = jasmine.createSpy("findWidget");
                 this.widgets = [];
+                this.dragboard = {
+                    _updateIWidgetSizes: jasmine.createSpy("_updateIWidgetSizes")
+                };
             });
             utils.inherit(ns.WorkspaceTabView, StyledElements.Tab);
 
@@ -362,6 +365,24 @@
                 expect(view.drawAttention("14")).toBe(view);
             });
 
+            it("should activate sidebar layouts", () => {
+                spyOn(Wirecloud.ui, "SidebarLayout");
+                let widget = {
+                    highlight: jasmine.createSpy("highlight"),
+                    layout: new Wirecloud.ui.SidebarLayout(),
+                    tab: {
+                        dragboard: {
+                            raiseToTop: jasmine.createSpy("raiseToTop")
+                        },
+                        highlight: jasmine.createSpy("highlight")
+                    }
+                };
+                widget.highlight.and.returnValue(widget);
+                view.tabs[0].findWidget.and.returnValue(widget);
+
+                expect(view.drawAttention("14")).toBe(view);
+                expect(widget.layout.active).toBe(true);
+            });
         });
 
         describe("buildAddWidgetButton()", () => {
