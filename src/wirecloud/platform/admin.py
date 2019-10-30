@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -52,6 +53,12 @@ class WorkspacePreferenceInline(admin.TabularInline):
     extra = 1
 
 
+class WorkspaceUsersInline(admin.TabularInline):
+
+    model = models.UserWorkspace
+    extra = 1
+
+
 class TabPreferenceInline(admin.TabularInline):
 
     model = models.TabPreference
@@ -81,7 +88,7 @@ class WorkspaceAdmin(admin.ModelAdmin):
     search_fields = ('creator__username', 'name', 'description')
     list_display = ('creator', 'name', 'description')
     ordering = ('creator', 'name')
-    inlines = (WorkspacePreferenceInline, TabInline,)
+    inlines = (WorkspaceUsersInline, WorkspacePreferenceInline, TabInline,)
 
 
 admin.site.register(models.Constant)
@@ -93,4 +100,3 @@ admin.site.register(models.XHTML)
 admin.site.register(models.PlatformPreference)
 admin.site.register(models.Workspace, WorkspaceAdmin)
 admin.site.register(models.Tab, TabAdmin)
-admin.site.register(models.UserWorkspace)
