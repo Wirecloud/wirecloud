@@ -111,7 +111,7 @@ CKAN データセットからデータを取得するためのオペレータで
 
 **[Download CoNWeT\_ckan-source-from-url\_0.4.5.wgt](https://github.com/wirecloud-fiware/ckan-source-operator/releases/download/0.4.5/CoNWeT_ckan-source-from-url_0.4.5.wgt)**
 
-### CKAN のソース
+### CKAN Source
 
 CKAN データセットからデータを取得するためのオペレータです。
 
