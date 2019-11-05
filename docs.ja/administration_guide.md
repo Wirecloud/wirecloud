@@ -16,7 +16,7 @@ WireCloud の動作を確認するためのものです。この機能では、�
 
 完了したら、直接サインアウトするか、最初の管理ユーザとしてサインインします :
 
-<img src="../docs/images/administration_guide/switchuser/logout.png" srcset="../docs/images/administration_guide/switchuser/logout.png 2x" alt="ユーザのなりすましをやめるためのメニュー・エントリ"/>
+<img src="../docs/images/administration_guide/switchuser/signout.png" srcset="../docs/images/administration_guide/switchuser/signout.png 2x" alt="ユーザのなりすましをやめるためのメニュー・エントリ"/>
 
 
 ## 管理コマンド
