@@ -1,3 +1,24 @@
+## 管理ツール
+
+WireCloud は、管理者としてサインインすると、ユーザ・インターフェイスにいくつかの追加機能を提供します。
+このセクションでは、これらの追加機能の場所と使用方法について説明します。
+
+
+### 他のユーザになりすます (切り替え)
+
+WireCloud では、管理者ユーザが他のユーザになりすますことができます。これは、特定のユーザとしてサインインしたときの
+WireCloud の動作を確認するためのものです。この機能では、ユーザになりすますためにユーザの資格情報を知っている
+必要はなく、問題のデバッグや他のユーザがタスクを実行するのに役立ちます。
+
+この機能は、グローバル・メニューにあります :
+
+<img src="../docs/images/administration_guide/switchuser/menu.png" srcset="../docs/images/administration_guide/switchuser/menu.png 2x" alt="他のユーザになりすますためのメニュー・エントリ"/>
+
+完了したら、直接サインアウトするか、最初の管理ユーザとしてサインインします :
+
+<img src="../docs/images/administration_guide/switchuser/signout.png" srcset="../docs/images/administration_guide/switchuser/signout.png 2x" alt="ユーザのなりすましをやめるためのメニュー・エントリ"/>
+
+
 ## 管理コマンド
 
 WireCloud は、コマンドラインから、手動またはスクリプトによって、WireCloud インスタンスのフォルダ上で使用できる

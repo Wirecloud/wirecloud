@@ -16,7 +16,7 @@ This feature can be found on the global menu:
 
 Once you're done, you can directly sign out or, alternatively, sign in back as the initial admin user:
 
-<img src="../images/administration_guide/switchuser/logout.png" srcset="../images/administration_guide/switchuser/logout.png 2x" alt="Menu entry for leaving user impersonation"/>
+<img src="../images/administration_guide/switchuser/signout.png" srcset="../images/administration_guide/switchuser/signout.png 2x" alt="Menu entry for leaving user impersonation"/>
 
 
 ## Administration commands
