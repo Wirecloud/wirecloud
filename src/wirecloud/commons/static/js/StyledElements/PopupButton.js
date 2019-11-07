@@ -51,13 +51,13 @@
             this._owned_popup_menu = true;
         }
 
-        this.addEventListener('click', function () {
+        this.addEventListener('click', () => {
             if (this.popup_menu.isVisible()) {
                 this.popup_menu.hide();
             } else {
-                this.popup_menu.show(this.getBoundingClientRect());
+                this.popup_menu.show(this);
             }
-        }.bind(this));
+        });
 
         this._visibilityChangeListener = visibilityChangeListener.bind(this);
         this.popup_menu.addEventListener('visibilityChange', this._visibilityChangeListener);

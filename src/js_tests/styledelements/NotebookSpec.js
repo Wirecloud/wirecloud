@@ -33,7 +33,6 @@
         beforeEach(function () {
             dom = document.createElement('div');
             document.body.appendChild(dom);
-            dom.innerHTML = "<style>.se-notebook-tab-area {overflow: hidden;padding:0px 12px;white-space: nowrap;width: 50px;} li {display:inline-block;text-align:center;width: 50px;margin:0px 1px;}</style>";
         });
 
         afterEach(function () {
@@ -49,7 +48,7 @@
             element = new StyledElements.Notebook();
             element.appendTo(dom);
             element.addEventListener('newTab', (notebook) => {tabs.push(notebook.createTab({label: "DynamicTab"}));});
-            element.tabArea.style({width: "40px"});
+            element.tabArea.style({width: "25px"});
 
             // Use the button inside the tab area
             element.new_tab_button_tabs.click();
@@ -596,7 +595,7 @@
 
                 p.then(() => {
                     // this number depends on CSS
-                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(9);
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(1);
                     done();
                 });
             });
@@ -750,7 +749,7 @@
 
                 p.then(() => {
                     // this number depends on CSS
-                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(9);
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(1);
                     done();
                 });
             });

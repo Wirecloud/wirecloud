@@ -26,18 +26,29 @@
 
     "use strict";
 
-    var POPUP_POSITIONS = ['left-bottom', 'right-bottom', 'top-left', 'top-right', 'bottom-right', 'bottom-left'];
-    Object.freeze(POPUP_POSITIONS);
+    var POPUP_POSITION_CLASSES = [
+        'se-popup-menu-left-bottom',
+        'se-popup-menu-right-bottom',
+        'se-popup-menu-top-left',
+        'se-popup-menu-top-right',
+        'se-popup-menu-bottom-right',
+        'se-popup-menu-bottom-left'
+    ];
+    Object.freeze(POPUP_POSITION_CLASSES);
 
     var DEFAULT_PLACEMENT = ['bottom-left', 'bottom-right', 'top-left', 'top-right'];
     Object.freeze(DEFAULT_PLACEMENT);
 
 
     var setPosition = function setPosition(refPosition, placement) {
-        var i = 0;
-        for (i = 0; i < POPUP_POSITIONS.length; i++) {
-            this.wrapperElement.classList.remove('se-popup-menu-' + POPUP_POSITIONS[i]);
-        }
+        this.wrapperElement.classList.remove.apply(
+            this.wrapperElement.classList,
+            POPUP_POSITION_CLASSES
+        );
+        this.wrapperElement.style.top = "";
+        this.wrapperElement.style.left = "";
+        this.wrapperElement.style.bottom = "";
+        this.wrapperElement.style.right = "";
 
         this.wrapperElement.classList.add('se-popup-menu-' + placement);
         switch (placement) {
@@ -80,6 +91,13 @@
         return element_area - visible_area;
     };
 
+    const FIX_PLANS = {
+        "bottom": ["left", "right", "top", "bottom"],
+        "left": ["right", "top", "bottom", "left"],
+        "right": ["left", "top", "bottom", "right"],
+        "top": ["left", "right", "bottom", "top"],
+    };
+
     var fixPosition = function fixPosition(refPosition, weights, placements) {
         var best_weight = Math.min.apply(Math, weights);
         var index = weights.indexOf(best_weight);
@@ -90,15 +108,16 @@
         var parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
         var element_box = this.wrapperElement.getBoundingClientRect();
 
-        if (element_box.bottom > parent_box.bottom) {
-            this.wrapperElement.style.top = "";
-            this.wrapperElement.style.bottom = "10px";
-            element_box = this.wrapperElement.getBoundingClientRect();
-        }
-
-        if (element_box.top < parent_box.top) {
-            this.wrapperElement.style.top = "10px";
-        }
+        var plan = FIX_PLANS[placement.split('-')[0]];
+        plan.forEach((placement) => {
+            if (
+                (placement === "top" || placement === "left") && element_box[placement] < parent_box[placement]
+                || (placement === "bottom" || placement === "right") && element_box[placement] > parent_box[placement]
+            ) {
+                this.wrapperElement.style[placement] = "10px";
+                this.wrapperElement_box = this.wrapperElement.getBoundingClientRect();
+            }
+        });
     };
 
     /**
@@ -284,6 +303,28 @@
         }
     };
 
+    var searchBestPosition = function searchBestPosition(refPosition, positions) {
+        if (!('left' in refPosition) && 'x' in refPosition && 'y' in refPosition) {
+            this.wrapperElement.style.top = refPosition.y + "px";
+            this.wrapperElement.style.left = refPosition.x + "px";
+            return;
+        } else if ("getBoundingClientRect" in refPosition) {
+            refPosition = refPosition.getBoundingClientRect();
+        }
+
+        let i = 0;
+        var weights = [];
+        do {
+            setPosition.call(this, refPosition, positions[i]);
+            weights.push(standsOut.call(this));
+            i += 1;
+        } while (weights[i - 1] > 0 && i < positions.length);
+
+        if (weights[i - 1] > 0) {
+            fixPosition.call(this, refPosition, weights, positions);
+        }
+    };
+
     PopupMenuBase.prototype.show = function show(refPosition) {
         var i;
 
@@ -313,26 +354,17 @@
         }
         this.dispatchEvent("visibilityChange");
 
-        if (!('left' in refPosition) && 'x' in refPosition && 'y' in refPosition) {
-
-            this.wrapperElement.style.top = refPosition.y + "px";
-            this.wrapperElement.style.left = refPosition.x + "px";
-        } else {
-            i = 0;
-            var weights = [];
-            do {
-                setPosition.call(this, refPosition, this._placement[i]);
-                weights.push(standsOut.call(this));
-                i += 1;
-            } while (weights[i - 1] > 0 && i < this._placement.length);
-
-            if (weights[i - 1] > 0) {
-                fixPosition.call(this, refPosition, weights, this._placement);
-            }
-        }
+        this.refPosition = refPosition;
+        searchBestPosition.call(this, this.refPosition, this._placement);
 
         if (this.useRefElementWidth) {
-            this.wrapperElement.style.width = refPosition.width + "px";
+            this.wrapperElement.style.width = this.refPosition.width + "px";
+        }
+    };
+
+    PopupMenuBase.prototype.repaint = function repaint() {
+        if (this.refPosition) {
+            searchBestPosition.call(this, this.refPosition, this._placement);
         }
     };
 
@@ -434,6 +466,7 @@
 
     PopupMenuBase.prototype.hide = function hide() {
 
+        this.refPosition = null;
         if (this.hidden) {
             return this;
         }
