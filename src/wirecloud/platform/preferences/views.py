@@ -248,7 +248,7 @@ class WorkspacePreferencesCollection(Resource):
 
         # Check Workspace existance and owned by this user
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
+        if not workspace.is_accessible_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to read this workspace'))
 
         result = get_workspace_preference_values(workspace)
@@ -331,7 +331,7 @@ class TabPreferencesCollection(Resource):
 
         # Check Tab existance and owned by this user
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not tab.workspace.is_editable_by(request.user):
+        if not tab.workspace.is_accessible_by(request.user):
             return build_error_response(request, 403, _('You are not allowed to read this workspace'))
 
         result = get_tab_preference_values(tab)

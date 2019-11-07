@@ -404,15 +404,7 @@ def _get_global_workspace_data(workspaceDAO, user):
     # Tabs processing
     # Check if the workspace's tabs have order
     tabs = Tab.objects.filter(workspace=workspaceDAO).order_by('position')
-    if tabs.count() > 0:
-        if tabs[0].position is not None:
-            tabs = tabs.order_by('position')
-        else:
-            # set default order
-            for i in range(len(tabs)):
-                tabs[i].position = i
-                tabs[i].save()
-    else:
+    if tabs.count() == 0:
         tabs = [createTab(_('Tab'), workspaceDAO)]
 
     data_ret['tabs'] = [get_tab_data(tab, workspace=workspaceDAO, cache_manager=cache_manager, user=user) for tab in tabs]

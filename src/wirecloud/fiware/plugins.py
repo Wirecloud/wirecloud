@@ -25,11 +25,11 @@ from django.conf.urls import url
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.markets.utils import MarketManager
-from wirecloud.platform.models import CatalogueResource
 from wirecloud.platform.plugins import WirecloudPlugin
 from wirecloud.platform.workspace.utils import create_workspace, delete_workspace
 

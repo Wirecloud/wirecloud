@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -51,7 +51,8 @@ class NoMatchingBracketsFound(Exception):
 
 
 def head(string):
-    return string.split()[0]
+    parts = string.split(maxsplit=1)
+    return parts[0] if len(parts) > 0 else ""
 
 
 def tail(string):
@@ -90,6 +91,10 @@ class ParseSQ(object):
             self.query, n = re.subn(PATTERN_QUOTED_Text, '', self.query, 1)
         else:
             word = head(self.query)
+            if word == "":
+                self.query = search_field + " " + self.query
+                return self.handle_normal_query()
+
             self.sq = self.apply_operand(SQ(**{search_field: word}))
             self.query = tail(self.query)
 

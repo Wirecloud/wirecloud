@@ -137,7 +137,7 @@ class ResourceCollection(Resource):
             return build_error_response(request, 422, message)
 
         if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
-            return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])
+            return build_error_response(request, 422, _('Orderby value not supported: %s') % filters['orderby'])
 
         # This API only supports ordering by one field, but the searcher supports ordering by multiple fields
         filters['orderby'] = [filters['orderby']]
@@ -146,7 +146,7 @@ class ResourceCollection(Resource):
             filters['scope'] = filters['scope'].split(',')
             for scope in filters['scope']:
                 if scope not in ['mashup', 'operator', 'widget']:
-                    return build_error_response(request, 400, _('Scope value not supported: %s') % scope)
+                    return build_error_response(request, 422, _('Scope value not supported: %s') % scope)
 
         if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))

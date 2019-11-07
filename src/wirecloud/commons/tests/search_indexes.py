@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -121,23 +121,22 @@ class QueryParserTestCase(WirecloudTestCase, TestCase):
     def test_searchUser_emptyquery(self):
         parser = ParseSQ()
         query = parser.parse("", ["fullname", "username"])
+        self.assertEqual(clean(query), "(AND: )")
 
     def test_normal_query(self):
         parser = ParseSQ()
         query = parser.parse("normal", ["fullname", "username"])
         self.assertEqual(clean(query), "(OR: ('fullname', 'normal'), ('username', 'normal'))")
 
+    def test_empty_field_query(self):
+        parser = ParseSQ()
+        query = parser.parse("normal:", ["fullname", "username"])
+        self.assertEqual(clean(query), "(OR: ('fullname', 'normal'), ('username', 'normal'))")
+
     def test_field_query(self):
         parser = ParseSQ()
         query = parser.parse("fullname:normal", ["fullname", "username"])
         self.assertEqual(clean(query), "(AND: ('fullname', 'normal'))")
-
-    # TODO
-    #def test_field_query_injection(self):
-    #    parser = ParseSQ()
-    #    query = parser.parse("fullname__exact:normal", ["fullname", "username"])
-    #    import ipdb; ipdb.sset_trace()
-    #    self.assertEqual(clean(query), "(AND: ('fullname', 'normal'))")
 
     def test_field_query_exact(self):
         parser = ParseSQ()
@@ -189,17 +188,17 @@ class QueryParserTestCase(WirecloudTestCase, TestCase):
         query = parser.parse("one two", ["fullname", "username"])
         self.assertEqual(clean(query), "(AND: (OR: ('fullname', 'one'), ('username', 'one')), (OR: ('fullname', 'two'), ('username', 'two')))")
 
-    def test_field_query_brakets(self):
+    def test_field_query_brackets(self):
         parser = ParseSQ()
         query = parser.parse("(one OR two) AND three", ["fullname", "username"])
         self.assertEqual(clean(query), "(AND: (OR: ('fullname', 'one'), ('username', 'one'), ('fullname', 'two'), ('username', 'two')), (OR: ('fullname', 'three'), ('username', 'three')))")
 
-    def test_field_query_nested_brakets(self):
+    def test_field_query_nested_brackets(self):
         parser = ParseSQ()
         query = parser.parse("(one OR (two AND NOT four)) AND three", ["fullname", "username"])
         self.assertEqual(clean(query), "(AND: (OR: ('fullname', 'one'), ('username', 'one'), (AND: (OR: ('fullname', 'two'), ('username', 'two')), (NOT (AND: (OR: ('fullname', 'four'), ('username', 'four')))))), (OR: ('fullname', 'three'), ('username', 'three')))")
 
-    def test_field_query_unbalanced_braket(self):
+    def test_field_query_unbalanced_bracket(self):
         parser = ParseSQ()
         with self.assertRaises(NoMatchingBracketsFound) as cm:
             parser.parse("(one OR two AND three", ["fullname", "username"])

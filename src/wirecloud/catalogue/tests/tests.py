@@ -100,7 +100,7 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 7)
 
-    def test_basic_search_with_args_not_supported(self):
+    def test_basic_search_with_not_supported_args(self):
 
         self.client.login(username='emptyuser', password='admin')
 
@@ -108,10 +108,10 @@ class CatalogueSearchTestCase(WirecloudTestCase, TestCase):
         self.assertEqual(response.status_code, 403)
 
         response = self.client.get(self.base_url + '?scope=application')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 422)
 
         response = self.client.get(self.base_url + '?orderby=type')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 422)
 
     def test_basic_search_with_orderby(self):
 

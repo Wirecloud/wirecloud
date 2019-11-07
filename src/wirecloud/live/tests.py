@@ -25,8 +25,9 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.test import TransactionTestCase
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import WirecloudTestCase
-from wirecloud.platform.models import CatalogueResource, Workspace
+from wirecloud.platform.models import Workspace
 
 
 @unittest.skipIf('wirecloud.live' not in settings.INSTALLED_APPS, 'wirecloud.live not installed')
