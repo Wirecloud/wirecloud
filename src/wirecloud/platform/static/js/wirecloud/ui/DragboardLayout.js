@@ -70,7 +70,7 @@
     /**
      * Converters
      */
-    var UNIT_RE = /^(\d+(?:\.\d+)?)\s*(px|%|)$/;
+    var UNIT_RE = /^([-+]?\d+(?:\.\d+)?)\s*(px|%|)$/;
     DragboardLayout.prototype.parseSize = function parseSize(value) {
         var matches;
 

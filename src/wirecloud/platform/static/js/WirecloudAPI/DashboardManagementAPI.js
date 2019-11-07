@@ -171,12 +171,6 @@
             throw new TypeError('invalid widget ref');
         }
 
-        // default options
-        options = Wirecloud.Utils.merge({
-            top: "0px",
-            left: "0px",
-        }, options);
-
         options.permissions = Wirecloud.Utils.merge({
             close: true,
             rename: false
@@ -185,17 +179,12 @@
         var tab = workspaceview.activeTab;
         var layout = tab.dragboard.freeLayout;
 
-        if (options.refposition != null) {
-            var current_position = Wirecloud.Utils.getRelativePosition(resource_element, tab.wrapperElement);
-            options.left = (current_position.x + options.refposition.left - layout.dragboardLeftMargin) + "px";
-            options.top = (current_position.y + options.refposition.bottom - layout.dragboardTopMargin) + "px";
-        }
-
         options = Wirecloud.Utils.merge(options, {
             id: resource.id + '/' + counter++,
             commit: false,
             layout: 1,
-            volatile: true
+            volatile: true,
+            refiframe: resource_element
         });
 
         var widget = tab.createWidget(widget_def, options);

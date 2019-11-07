@@ -45,12 +45,14 @@
             WidgetViewDraggable.prototype.canDrag
         );
 
-        this.setXOffset = function (xOffset) {
+        this.setXOffset = function setXOffset(xOffset) {
             context.xOffset = xOffset;
+            return this;
         };
 
-        this.setYOffset = function (yOffset) {
+        this.setYOffset = function setYOffset(yOffset) {
             context.yOffset = yOffset;
+            return this;
         };
     };
 
@@ -99,12 +101,6 @@
         // The mouse is not over a tab
         // The cursor must allways be inside the dragboard
         var position = context.layout.getCellAt(x, y);
-        if (position.y < 0) {
-            position.y = 0;
-        }
-        if (position.x < 0) {
-            position.x = 0;
-        }
         context.layout.moveTemporally(position.x, position.y);
         return;
     };
