@@ -323,7 +323,7 @@ Issueのスプリッタです。
 
 **[Download CoNWeT\_issue-splitter\_0.3.2.wgt](https://github.com/Wirecloud/agile-dashboards/releases/download/v0.3/CoNWeT_issue-splitter_0.3.2.wgt)**
 
-### Issue テーブル・ジェネレータ
+### Issue table generator
 
 入力アジャイル問題のデータ・テーブルを生成します。
 
