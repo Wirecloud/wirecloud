@@ -637,12 +637,12 @@ Homepage: [https://github.com/Wirecloud/agile-dashboards](https://github.com/Wir
 Capture wiring events, modify them or/and replay them
 
 * Vendor: CoNWeT
-* Version: 1.0.2
+* Version: 1.0.3
 * License: Apache License 2.0
 
 Homepage: [https://github.com/Wirecloud/spy-wiring-widget](https://github.com/Wirecloud/spy-wiring-widget)
 
-**[Download CoNWeT\_spy-wiring\_1.0.2.wgt](https://github.com/Wirecloud/spy-wiring-widget/releases/download/1.0.2/CoNWeT_spy-wiring_1.0.2.wgt)**
+**[Download CoNWeT\_spy-wiring\_1.0.3.wgt](https://github.com/Wirecloud/spy-wiring-widget/releases/download/1.0.3/CoNWeT_spy-wiring_1.0.3.wgt)**
 
 ### <Test Report> Splitter
 
@@ -697,12 +697,12 @@ Homepage: [https://github.com/Wirecloud/value-filter-operator](https://github.co
 Transform lists of objects into lists of values
 
 * Vendor: CoNWeT
-* Version: 0.1.2
+* Version: 1.0.3
 * License: MIT
 
 Homepage: [https://github.com/Wirecloud/value-list-filter-operator](https://github.com/Wirecloud/value-list-filter-operator)
 
-**[Download CoNWeT\_value-list-filter\_0.1.2.wgt](https://github.com/Wirecloud/value-list-filter-operator/releases/download/0.1.2/CoNWeT_value-list-filter_0.1.2.wgt)**
+**[Download CoNWeT\_value-list-filter\_1.0.3.wgt](https://github.com/Wirecloud/value-list-filter-operator/releases/download/1.0.3/CoNWeT_value-list-filter_0.1.3.wgt)**
 
 ### Workload Chart Generator
 
@@ -745,9 +745,9 @@ Homepage: [https://github.com/Wirecloud/echarts-widget](https://github.com/Wirec
 Browse and discover the available workspaces
 
 * Vendor: WireCloud
-* Version: 0.1.2
+* Version: 0.1.3
 * License: Apache-2.0
 
 Homepage: [https://github.com/Wirecloud/workspace-browser-widget](https://github.com/Wirecloud/workspace-browser-widget)
 
-**[Download WireCloud\_workspace-browser\_0.1.2.wgt](https://github.com/Wirecloud/workspace-browser-widget/releases/download/0.1.2/WireCloud_workspace-browser_0.1.2.wgt)**
+**[Download WireCloud\_workspace-browser\_0.1.3.wgt](https://github.com/Wirecloud/workspace-browser-widget/releases/download/v0.1.3/WireCloud_workspace-browser_0.1.3.wgt)**
