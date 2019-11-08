@@ -171,6 +171,7 @@
             throw new TypeError('invalid widget ref');
         }
 
+        options = options != null ? options : {};
         options.permissions = Wirecloud.Utils.merge({
             close: true,
             rename: false
