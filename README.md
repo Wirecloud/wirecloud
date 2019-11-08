@@ -74,7 +74,7 @@ developers can learn how to develop components in the [Programmer Guide](https:/
 ## Bugs and feature requests
 
 Have a bug or a feature request? Please first read the
-[issue guidelines](CONTRIBUTING.md#using-the-issue-tracker) and search for
+[issue guidelines](docs/CONTRIBUTING.md#using-the-issue-tracker) and search for
 existing and closed issues. If your problem or idea is not addressed yet,
 [please open a new issue](https://github.com/Wirecloud/wirecloud/issues/new).
 
