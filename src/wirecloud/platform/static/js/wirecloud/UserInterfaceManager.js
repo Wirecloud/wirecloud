@@ -28,12 +28,12 @@
 
     var UserInterfaceManager = {
         rootKeydownHandler: null,
-        currentWindowMenu: null,
-        currentPopups: [],
         workspaceviews: {}
     };
 
     var coverLayerElement = null;
+    var currentWindowMenu = null;
+    const currentPopups = [];
     var currentTooltip = null;
 
     /**
@@ -78,7 +78,7 @@
             key = utils.normalizeKey(event);
 
             // if there are not modals, check if the current view can consume this keydown event
-            if (UserInterfaceManager.currentWindowMenu == null) {
+            if (currentWindowMenu == null) {
                 consumed = utils.callCallback(UserInterfaceManager.rootKeydownHandler, key, modifiers);
             } else if (key === "Backspace") {
                 // Ignore backspace keydown events if we are in a modals
@@ -233,8 +233,8 @@
     };
 
     UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {
-        if (this.currentPopups.length > 0) {
-            this.currentPopups[this.currentPopups.length - 1].hide();
+        if (currentPopups.length > 0) {
+            currentPopups[currentPopups.length - 1].hide();
         }
     };
 
@@ -244,7 +244,7 @@
      */
     UserInterfaceManager._unregisterRootWindowMenu = function _unregisterRootWindowMenu(window_menu) {
         this._unregisterPopup(window_menu);
-        this.currentWindowMenu = null;
+        currentWindowMenu = null;
         hideCover();
     };
 
@@ -258,12 +258,12 @@
             throw new TypeError('window_menu must be a WindowMenu instance');
         }
 
-        if (this.currentWindowMenu != null) {
-            this.currentWindowMenu.hide();
+        if (currentWindowMenu != null) {
+            currentWindowMenu.hide();
             hideCover();
         }
 
-        this.currentWindowMenu = window_menu;
+        currentWindowMenu = window_menu;
         this._registerPopup(window_menu);
         showCover();
     };
@@ -275,9 +275,9 @@
     };
 
     UserInterfaceManager._unregisterPopup = function _unregisterPopup(popup) {
-        var index = this.currentPopups.indexOf(popup);
+        var index = currentPopups.indexOf(popup);
         if (index !== -1) {
-            this.currentPopups.splice(index, 1);
+            currentPopups.splice(index, 1);
         }
     };
 
@@ -298,7 +298,7 @@
         }
 
         this._unregisterPopup(popup);
-        this.currentPopups.push(popup);
+        currentPopups.push(popup);
     };
 
     UserInterfaceManager.monitorTask = function monitorTask(task) {
@@ -359,9 +359,15 @@
     var resizeUI = function resizeUI() {
         this.alternatives.repaint();
         // Recalculate menu positions
-        if (this.currentWindowMenu) {
-            this.currentWindowMenu.calculatePosition();
+        if (currentWindowMenu) {
+            currentWindowMenu.calculatePosition();
         }
+        if (currentTooltip != null) {
+            currentTooltip.repaint();
+        }
+        currentPopups.forEach((popup) => {
+            popup.repaint();
+        });
     };
 
     var notifyPlatformReady = function notifyPlatformReady() {

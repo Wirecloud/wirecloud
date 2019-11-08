@@ -691,9 +691,8 @@
     };
 
     ColumnLayout.prototype.initializeMove = function initializeMove(widget, draggable) {
-        draggable = draggable || null; // default value of draggable argument
 
-        if (!(widget instanceof Wirecloud.ui.WidgetView)) {
+        if (widget == null || !(widget instanceof Wirecloud.ui.WidgetView)) {
             throw new TypeError("widget must be an WidgetView instance");
         }
 
@@ -721,10 +720,7 @@
         // Create dragboard cursor
         this.dragboardCursor = new Wirecloud.ui.DragboardCursor(widget);
 
-        if (draggable) {
-            draggable.setXOffset(this.fromHCellsToPixels(1) / 2);
-            draggable.setYOffset(this.cellHeight);
-        }
+        draggable.setXOffset(this.fromHCellsToPixels(1) / 2).setYOffset(this.cellHeight);
     };
 
     ColumnLayout.prototype.disableCursor = function () {
@@ -754,9 +750,16 @@
             return;
         }
 
-        var maxX = this.columns - this.iwidgetToMove.shape.width;
-        if (x > maxX) {
-            x = maxX;
+        if (y < 0) {
+            y = 0;
+        }
+        if (x < 0) {
+            x = 0;
+        } else {
+            var maxX = this.columns - this.iwidgetToMove.shape.width;
+            if (x > maxX) {
+                x = maxX;
+            }
         }
 
         if (this.dragboardCursor != null) {

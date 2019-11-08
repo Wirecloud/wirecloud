@@ -134,6 +134,8 @@
 
         describe("initializeMove(widget, draggable)", () => {
 
+            const return_this = function () {return this;};
+            const draggable = {setXOffset: return_this, setYOffset: return_this};
             var layout;
 
             const createWidgetMock = function createWidgetMock(data) {
@@ -164,11 +166,21 @@
             beforeEach(() => {
                 var dragboard = {
                     _notifyWindowResizeEvent: jasmine.createSpy("_notifyWindowResizeEvent"),
-                    update: jasmine.createSpy("update")
+                    update: jasmine.createSpy("update"),
+                    getWidth: jasmine.createSpy("getWidth").and.returnValue(800)
                 };
                 layout = new ns.ColumnLayout(dragboard, 4, 13, 4, 4, 10);
                 spyOn(layout, "updatePosition");
                 layout.initialize();
+            });
+
+            it("should throw an exception if widget is not a widget instance", () => {
+                expect(() => {
+                    layout.initializeMove();
+                }).toThrowError(TypeError);
+                expect(() => {
+                    layout.initializeMove("patata");
+                }).toThrowError(TypeError);
             });
 
             it("should ignore not initialized movements", () => {
@@ -183,17 +195,28 @@
                 layout.acceptMove();
             });
 
+            it("should cancel current move operation", () => {
+                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                spyOn(layout, "cancelMove");
+
+                layout.initializeMove(widget, draggable);
+                expect(layout.cancelMove).toHaveBeenCalledWith();
+            });
+
+
             it("should work on empty layouts (no real move)", () => {
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
-                layout.initializeMove(widget, null);
+                layout.initializeMove(widget, draggable);
                 layout.acceptMove();
             });
 
             it("should work on empty layouts (basic move)", () => {
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 3, height: 1});
                 layout.addWidget(widget);
-                layout.initializeMove(widget, null);
+                layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
                 layout.moveTemporally(2, 0);
                 layout.acceptMove();
@@ -202,10 +225,33 @@
                 expect(layout.dragboard.update).toHaveBeenCalledWith();
             });
 
+            it("should work on empty layouts (move outside layout - right side)", () => {
+                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 2, height: 1});
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(10, 0);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({x: 2, y: 0});
+                expect(layout.dragboard.update).toHaveBeenCalledWith();
+            });
+
+            it("should work on empty layouts (move outside layout - top left side)", () => {
+                let width = 700 * layout.MAX_HLU / 800;
+                let widget = createWidgetMock({id: "1", x: 400, y: 600, width: width, height: 1});
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(-100, -100);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({x: 0, y: 0});
+                expect(layout.dragboard.update).toHaveBeenCalledWith();
+            });
+
             it("should work on empty layouts (move between tabs)", () => {
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
-                layout.initializeMove(widget, null);
+                layout.initializeMove(widget, draggable);
                 layout.disableCursor();
                 layout.moveTemporally(1, 0);
                 layout.acceptMove();
@@ -214,7 +260,7 @@
             it("should work on empty layouts (cancel move)", () => {
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
-                layout.initializeMove(widget, null);
+                layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
                 layout.cancelMove();
             });
@@ -769,6 +815,28 @@
                 });
 
                 layout._notifyResizeEvent(widget, 2, 4, 1, 4, true, true);
+            });
+
+        });
+
+        describe("_notifyWindowResizeEvent(widthChanged, heightChanged)", () => {
+
+            it("should call parent on width change", () => {
+                var layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
+
+                layout._notifyWindowResizeEvent(true, false);
+
+                expect(Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent).toHaveBeenCalledWith(true, false);
+            });
+
+            it("should ignore changes not affecting view width", () => {
+                var layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
+
+                layout._notifyWindowResizeEvent(false, false);
+
+                expect(Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent).not.toHaveBeenCalled();
             });
 
         });
