@@ -5,6 +5,13 @@ html, body {
     width: 100%;
 }
 
+li {
+    display: inline-block;
+    text-align: center;
+    width: 50px;
+    margin: 0px 1px;
+}
+
 .fade {
     opacity: 0;
     transition: opacity 0.15s linear;
@@ -37,9 +44,6 @@ html, body {
     width: 50px;
 }
 
-li {
-    display: inline-block;
-    text-align: center;
-    width: 50px;
-    margin: 0px 1px;
+.se-popup-menu {
+    position: absolute;
 }
