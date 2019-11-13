@@ -252,6 +252,7 @@
                     disable: jasmine.createSpy("disable"),
                     enable: jasmine.createSpy("enable")
                 };
+                spyOn(Wirecloud.ui.WindowMenu.prototype, "show");
                 callEventListener(sidebar, "create", group, button);
                 expect(button.disable).toHaveBeenCalledWith();
 
@@ -281,6 +282,7 @@
                     disable: jasmine.createSpy("disable"),
                     enable: jasmine.createSpy("enable")
                 };
+                spyOn(Wirecloud.ui.WindowMenu.prototype, "show");
                 callEventListener(sidebar, "create", group, button);
                 expect(button.disable).toHaveBeenCalledWith();
 

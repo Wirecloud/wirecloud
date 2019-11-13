@@ -66,7 +66,7 @@
         var workspace_url = this.workspace.model.url + '?mode=embedded&theme=' + encodeURIComponent(this.theme.getValue());
         var code = '<iframe src="' + workspace_url + '" style="width: 100%; height: 450px; border: 0px none;" frameborder="0" allowfullscreen></iframe>';
         this.code.setValue(code);
-        this.calculatePosition();
+        this.repaint();
     };
 
 })(StyledElements, Wirecloud.Utils);
