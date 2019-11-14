@@ -36,14 +36,14 @@
         }
 
         options = utils.merge({
-            'position': ['right-bottom', 'left-bottom']
+            placement: ['right-bottom', 'left-bottom']
         }, options);
 
         StyledElements.PopupMenuBase.call(this, options);
         this.wrapperElement.classList.add('se-popup-submenu');
 
         this.menuItem = new StyledElements.MenuItem(text, function () {
-            this.submenu.show(this.getBoundingClientRect());
+            this.submenu.show(this);
         });
         this.menuItem.addClassName('submenu');
         this.menuItem.submenu = this;
@@ -72,7 +72,7 @@
 
         this.parentMenu.addEventListener('itemOver', function (popupMenu, item) {
             if (item === this.menuItem) {
-                this.show(this.menuItem.getBoundingClientRect());
+                this.show(this.menuItem);
             } else {
                 this.hide();
             }
