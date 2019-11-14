@@ -47,3 +47,8 @@ li {
 .se-popup-menu {
     position: absolute;
 }
+
+.se-tooltip {
+    position: absolute;
+    opacity: 1;
+}
