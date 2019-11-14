@@ -323,7 +323,7 @@ Issueのスプリッタです。
 
 **[Download CoNWeT\_issue-splitter\_0.3.2.wgt](https://github.com/Wirecloud/agile-dashboards/releases/download/v0.3/CoNWeT_issue-splitter_0.3.2.wgt)**
 
-### Issue テーブル・ジェネレータ
+### Issue table generator
 
 入力アジャイル問題のデータ・テーブルを生成します。
 
@@ -636,12 +636,12 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 ワイヤーリング・イベントをキャプチャし、それらを修正し、それらを再生できます。
 
 * ベンダー : CoNWeT
-* バージョン : 1.0.2
+* バージョン : 1.0.3
 * ライセンス : Apache License 2.0
 
 ホームページ : [https://github.com/Wirecloud/spy-wiring-widget](https://github.com/Wirecloud/spy-wiring-widget)
 
-**[Download CoNWeT\_spy-wiring\_1.0.2.wgt](https://github.com/Wirecloud/spy-wiring-widget/releases/download/1.0.2/CoNWeT_spy-wiring_1.0.2.wgt)**
+**[Download CoNWeT\_spy-wiring\_1.0.3.wgt](https://github.com/Wirecloud/spy-wiring-widget/releases/download/1.0.3/CoNWeT_spy-wiring_1.0.3.wgt)**
 
 ### <Test Report> Splitter
 
@@ -696,12 +696,12 @@ OpenLayers を使用したマップ・ビューア・ウィジェットです。
 オブジェクトのリストを値のリストに変換します。
 
 * ベンダー : CoNWeT
-* バージョン : 0.1.2
+* バージョン : 1.0.3
 * ライセンス : MIT
 
 ホームページ : [https://github.com/Wirecloud/value-list-filter-operator](https://github.com/Wirecloud/value-list-filter-operator)
 
-**[Download CoNWeT\_value-list-filter\_0.1.2.wgt](https://github.com/Wirecloud/value-list-filter-operator/releases/download/0.1.2/CoNWeT_value-list-filter_0.1.2.wgt)**
+**[Download CoNWeT\_value-list-filter\_1.0.3.wgt](https://github.com/Wirecloud/value-list-filter-operator/releases/download/1.0.3/CoNWeT_value-list-filter_0.1.3.wgt)**
 
 ### Workload Chart Generator
 
@@ -744,9 +744,9 @@ ECharts ウィジェットです。
 利用可能なワークスペースをブラウズして見つけます。
 
 * ベンダー：WireCloud
-* バージョン : 0.1.2
+* バージョン : 0.1.3
 * ライセンス : Apache-2.0
 
 ホームページ : [https://github.com/Wirecloud/workspace-browser-widget](https://github.com/Wirecloud/workspace-browser-widget)
 
-**[Download WireCloud\_workspace-browser\_0.1.2.wgt](https://github.com/Wirecloud/workspace-browser-widget/releases/download/0.1.2/WireCloud_workspace-browser_0.1.2.wgt)**
+**[Download WireCloud\_workspace-browser\_0.1.3.wgt](https://github.com/Wirecloud/workspace-browser-widget/releases/download/v0.1.3/WireCloud_workspace-browser_0.1.3.wgt)**
