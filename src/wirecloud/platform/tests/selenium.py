@@ -1044,7 +1044,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 var view = Wirecloud.UserInterfaceManager.views.workspace;
                 var layout = view.activeTab.dragboard.baseLayout;
                 var widget = view.activeTab.findWidget(%s);
-                layout.initializeMove(widget);
+                const return_this = function () {return this;};
+                const draggable = {setXOffset: return_this, setYOffset: return_this};
+                layout.initializeMove(widget, draggable);
                 layout.moveTemporally(3, 0);
                 layout.acceptMove();
             ''' % widget2.id)
@@ -1083,7 +1085,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 var view = Wirecloud.UserInterfaceManager.views.workspace;
                 var layout = view.activeTab.dragboard.baseLayout;
                 var widget = view.activeTab.findWidget(%s);
-                layout.initializeMove(widget);
+                const return_this = function () {return this;};
+                const draggable = {setXOffset: return_this, setYOffset: return_this};
+                layout.initializeMove(widget, draggable);
                 layout.moveTemporally(0, 3);
                 layout.acceptMove();
             ''' % widget2.id)
@@ -1132,7 +1136,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 var view = Wirecloud.UserInterfaceManager.views.workspace;
                 var layout = view.activeTab.dragboard.baseLayout;
                 var widget = view.activeTab.findWidget(%s);
-                layout.initializeMove(widget);
+                const return_this = function () {return this;};
+                const draggable = {setXOffset: return_this, setYOffset: return_this};
+                layout.initializeMove(widget, draggable);
                 layout.moveTemporally(6, 25);
                 layout.acceptMove();
             ''' % iwidgets[0].id)
@@ -1144,7 +1150,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 var view = Wirecloud.UserInterfaceManager.views.workspace;
                 var layout = view.activeTab.dragboard.baseLayout;
                 var widget = view.activeTab.findWidget(%s);
-                layout.initializeMove(widget);
+                const return_this = function () {return this;};
+                const draggable = {setXOffset: return_this, setYOffset: return_this};
+                layout.initializeMove(widget, draggable);
                 layout.moveTemporally(0, 0);
                 layout.acceptMove();
             ''' % iwidgets[1].id)

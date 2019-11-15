@@ -64,7 +64,7 @@
             this.msgElement.textContent = msg;
         }
 
-        this.calculatePosition();
+        this.repaint();
     };
 
     MessageWindowMenu.prototype.setFocus = function setFocus() {

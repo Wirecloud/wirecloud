@@ -61,7 +61,7 @@
             method: 'GET',
             onSuccess: function (response) {
                 this.windowContent.innerHTML = response.responseText;
-                this.calculatePosition();
+                this.repaint();
             }.bind(this),
             onFailure: function (response) {
                 this.windowContent.innerHTML = '<div class="alert alert-danger">Error processing resource documentation</div>';

@@ -53,9 +53,7 @@
     PopupMenu.prototype.show = function show(refPosition) {
         document.addEventListener("click", this._disableCallback, true);
 
-        StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
-
-        return this;
+        return StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
     };
 
     PopupMenu.prototype.hide = function hide() {

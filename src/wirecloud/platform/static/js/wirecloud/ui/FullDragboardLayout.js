@@ -61,10 +61,6 @@
         return this.getWidth();
     };
 
-    FullDragboardLayout.prototype.fromHCellsToPercentage = function fromHCellsToPercentage(cells) {
-        return this.getHeight();
-    };
-
     FullDragboardLayout.prototype.getColumnOffset = function getColumnOffset(column) {
         return 0;
     };

@@ -141,6 +141,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/MultiValuedSize.js',
     'wirecloud/platform/static/js/wirecloud/ui/DragboardLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/ColumnLayout.js',
+    'wirecloud/platform/static/js/wirecloud/ui/FreeLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/SmartColumnLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/SidebarLayout.js',
     'wirecloud/platform/static/js/wirecloud/wiring/Endpoint.js',
@@ -199,7 +200,7 @@ module.exports = function (grunt) {
                             {type: 'lcov', dir: 'build/coverage/styledelements', subdir: 'lcov'},
                         ]
                     },
-                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/*Spec.js']),
+                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/base.css', 'js_tests/styledelements/*Spec.js']),
                     preprocessors: {
                         "wirecloud/commons/static/js/StyledElements/*.js": ['coverage'],
                     }

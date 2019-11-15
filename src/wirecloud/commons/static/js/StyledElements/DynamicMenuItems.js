@@ -8,7 +8,10 @@
     /**
      *
      */
-    StyledElements.DynamicMenuItems = function DynamicMenuItems() {
+    StyledElements.DynamicMenuItems = function DynamicMenuItems(build) {
+        if (build != null) {
+            this.build = build;
+        }
     };
 
     StyledElements.DynamicMenuItems.prototype.build = function build() {

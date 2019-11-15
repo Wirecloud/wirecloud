@@ -17,6 +17,7 @@
     border-radius: $border-radius-base;
     box-sizing: border-box;
     min-width: 160px;
+    overflow: auto;
 
     &.se-popup-menu-left-bottom {
         margin-top: 0;

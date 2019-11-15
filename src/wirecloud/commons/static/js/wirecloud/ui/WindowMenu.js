@@ -125,14 +125,12 @@
     };
 
     /**
-     * @private
-     *
      * Calculates a usable absolute position for the window
      */
-    WindowMenu.prototype.calculatePosition = function calculatePosition() {
+    WindowMenu.prototype.repaint = function repaint() {
 
         if (this.htmlElement.parentNode == null) {
-            return;
+            return this;
         }
 
         var priv = privates.get(this);
@@ -164,8 +162,10 @@
         this.htmlElement.style.left = coordenates[0] + "px";
 
         if (priv.child != null) {
-            priv.child.calculatePosition();
+            priv.child.repaint();
         }
+
+        return this;
     };
 
     /**
@@ -302,7 +302,7 @@
         var baseelement = utils.getFullscreenElement() || document.body;
         baseelement.appendChild(this.htmlElement);
 
-        this.calculatePosition();
+        this.repaint();
     };
 
     Wirecloud.ui.WindowMenu = WindowMenu;

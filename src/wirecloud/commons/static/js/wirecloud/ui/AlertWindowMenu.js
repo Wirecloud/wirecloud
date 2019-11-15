@@ -98,8 +98,7 @@
             this.msgElement.textContent = msg;
         }
 
-        this.calculatePosition();
-        return this;
+        return this.repaint();
     };
 
     AlertWindowMenu.prototype.setHandler = function setHandler(acceptHandler, cancelHandler) {

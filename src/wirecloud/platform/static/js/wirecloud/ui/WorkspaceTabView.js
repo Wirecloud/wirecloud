@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -192,7 +192,9 @@
             options.width = clean_number(layout.adaptWidth(options.width).inLU, 1, layout.columns);
 
             if (options.left == null || options.top == null) {
-                if ("_searchFreeSpace" in layout) {
+                if (options.refposition && "searchBestPosition" in layout) {
+                    layout.searchBestPosition(options);
+                } else if ("_searchFreeSpace" in layout) {
                     position = layout._searchFreeSpace(options.width, options.height);
                     options.left = position.x;
                     options.top = position.y;
