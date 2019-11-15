@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -549,19 +550,15 @@
 
             // if the widget hasn't been taken to another tab and
             // the movement affects the rest of widgets
-            p = this.update();
-            if (dragboardChange && (affectedWidgetsRemoving || affectedWidgetsAdding)) {
-                if (affectedWidgetsRemoving) {
-                    p.then(function () {
-                        return oldLayout.dragboard.update();
-                    });
+            p = this.update().then(() => {
+                affectedWidgetsAdding.add(this.id);
+                if (dragboardChange) {
+                    oldLayout.dragboard.update([...affectedWidgetsRemoving]);
+                    newLayout.dragboard.update([...affectedWidgetsAdding]);
+                } else {
+                    newLayout.dragboard.update([...utils.setupdate(affectedWidgetsAdding, affectedWidgetsRemoving)]);
                 }
-                if (affectedWidgetsAdding) {
-                    p.then(function () {
-                        return newLayout.dragboard.update();
-                    });
-                }
-            }
+            });
         },
 
         toggleMinimizeStatus: function toggleMinimizeStatus(persistence) {
@@ -587,7 +584,6 @@
             }
             this.model.fulldragboard = enable;
 
-            dragboard.update([this.model.id]);
             update.call(this);
         },
 

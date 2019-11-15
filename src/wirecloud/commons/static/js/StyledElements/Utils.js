@@ -944,6 +944,16 @@ if (window.StyledElements == null) {
         return values;
     };
 
+    /**
+     *
+     */
+    Utils.setupdate = function setupdate(setA, setB) {
+        for (var elem of setB) {
+            setA.add(elem);
+        }
+        return setA;
+    };
+
     Utils.waitTransition = function waitTransition(element) {
         return new Promise((fulfill) => {
             if (element.parentNode === null) {

@@ -209,6 +209,8 @@
         this.widgets[widget.id] = widget;
         widget.addEventListener('remove', this._on_remove_widget_bound);
         widget.repaint();
+
+        return new Set();
     };
 
     /**
@@ -266,7 +268,7 @@
         widget.layout = null;
         widget.removeEventListener('remove', this._on_remove_widget_bound);
 
-        return false;
+        return new Set();
     };
 
     /**

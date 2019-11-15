@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -260,86 +261,9 @@
         }
     };
 
-    GridLayout.prototype._moveSpaceDown = function _moveSpaceDown(buffer, widget, offsetY) {
-        var affectedIWidgets, position, finalPosition, edgeY, iwidget, x, y, key, matrix;
+    GridLayout.prototype.moveSpaceDown = Wirecloud.ui.ColumnLayout.prototype.moveSpaceDown;
 
-        affectedIWidgets = {};
-        matrix = this._buffers[buffer].matrix;
-        position = this._getPositionOn(buffer, widget);
-        finalPosition = new Wirecloud.DragboardPosition(position.x, position.y + offsetY);
-
-        edgeY = position.y + widget.shape.height;
-
-        // Search affected widgets
-        // TODO move widgets according to the biggest offset for optimizing
-        for (x = 0; x < widget.shape.width; x++) {
-            for (y = 0; y < offsetY; y++) {
-                iwidget = matrix[position.x + x][edgeY + y];
-                if (iwidget != null) {
-                    affectedIWidgets[iwidget.id] = offsetY - y; // calculate the offset for this iwidget
-                    break; // continue whit the next column
-                }
-            }
-        }
-
-        // Move affected widgets instances
-        for (key in affectedIWidgets) {
-            iwidget = this.widgets[key];
-            this._moveSpaceDown(buffer, iwidget, affectedIWidgets[key]);
-        }
-
-        // Move the widget
-        this._clearSpace(buffer, widget);
-        this._setPositionOn(buffer, widget, finalPosition);
-        this._reserveSpace(buffer, widget);
-    };
-
-    GridLayout.prototype._moveSpaceUp = function (buffer, widget) {
-        var position, edgeY, offsetY, affectedIWidgets, finalPosition, iwidget,
-            x, y, columnsize, key, matrix;
-
-        matrix = this._buffers[buffer].matrix;
-        position = this._getPositionOn(buffer, widget);
-        edgeY = position.y + widget.shape.height;
-
-        offsetY = 1;
-        while (((position.y - offsetY) >= 0) && this._hasSpaceFor(matrix, position.x, position.y - offsetY, widget.width, 1)) {
-            offsetY += 1;
-        }
-        offsetY -= 1;
-
-        if (offsetY > 0) {
-            affectedIWidgets = {};
-            finalPosition = new Wirecloud.DragboardPosition(position.x, position.y - offsetY);
-
-            // Search affected widgets
-            // TODO move the topmost widget for optimizing
-            for (x = 0; x < widget.shape.width; x++) {
-                columnsize = matrix[position.x + x].length;
-                for (y = edgeY; y < columnsize; y++) {
-                    iwidget = matrix[position.x + x][y];
-                    if (iwidget != null) {
-                        affectedIWidgets[iwidget.id] = iwidget;
-                        break; // continue whit the next column
-                    }
-                }
-            }
-
-            // Move the representation of the widget
-            this._clearSpace(buffer, widget);
-            this._setPositionOn(buffer, widget, finalPosition);
-            this._reserveSpace(buffer, widget);
-
-            // Move affected widgets instances
-            for (key in affectedIWidgets) {
-                this._moveSpaceUp(buffer, affectedIWidgets[key]);
-            }
-
-            //return true if the iwidget position has been modified
-            return true;
-        }
-        return false;
-    };
+    GridLayout.prototype.moveSpaceUp = Wirecloud.ui.ColumnLayout.prototype.moveSpaceUp;
 
     GridLayout.prototype._removeFromMatrix = function (_matrix, widget) {
         this._clearSpace(_matrix, widget);
@@ -389,7 +313,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this.moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -409,7 +333,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this.moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -450,7 +374,7 @@
             for (y = position.y + oldHeight; y < limitY; y++) {
                 for (x = step2X; x < limitX; x++) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceDown("base", this.matrix[x][y], limitY - y);
+                        this.moveSpaceDown("base", this.matrix[x][y], limitY - y);
                     }
                 }
             }
@@ -473,7 +397,7 @@
 
         // Move other instances
         var affectedwidget, offset, affectedY, matrix;
-        var affectedWidgets = false;
+        var affectedwidgets = new Set();
         var lastX = newPosition.x + widget.shape.width;
         var lastY = newPosition.y + widget.shape.height;
 
@@ -490,9 +414,9 @@
                     affectedY = this._getPositionOn(buffer, affectedwidget).y;
                     // y + widget.height - affectedY - (newPosition.y - y);
                     offset = lastY - affectedY;
-                    this._moveSpaceDown(buffer, affectedwidget, offset);
                     // move only the topmost widget in the column
-                    affectedWidgets = true;
+                    affectedwidgets.add(affectedwidget.id);
+                    utils.setupdate(affectedwidgets, this.moveSpaceDown(buffer, affectedwidget, offset));
                     break;
                 }
             }
@@ -504,7 +428,7 @@
         this._reserveSpace(buffer, widget);
 
         //returns if any widget's position has been modified
-        return affectedWidgets;
+        return affectedwidgets;
     };
 
     GridLayout.prototype._searchFreeSpace = function (width, height) {
@@ -582,12 +506,12 @@
      * @return whether any widget's position has been modified
      */
     GridLayout.prototype.addWidget = function addWidget(widget, affectsDragboard) {
-        var affectedWidgets = false;
+        var affectedwidgets = new Set();
 
         Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, widget, affectsDragboard);
 
         if (!this.initialized) {
-            return;
+            return affectedwidgets;
         }
 
         if (widget.width > this.columns) {
@@ -602,7 +526,7 @@
             }
 
             // Insert it. Returns if there are any affected widget
-            affectedWidgets = this._insertAt(widget, position.x, position.y, "base");
+            affectedwidgets = this._insertAt(widget, position.x, position.y, "base");
         } else {
             // Search a position for the widget
             position = this._searchFreeSpace(widget.shape.width, widget.shape.height);
@@ -613,21 +537,19 @@
         }
 
         this._adaptIWidget(widget);
-        return affectedWidgets;
+        return affectedwidgets;
     };
 
     /**
-     * @returns Returns true if the position of other widgets has been modified
+     * @returns Returns a list of the widgets affected by the removing the indicated widget
      */
     GridLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
-        var affectedWidgets;
-
-        affectedWidgets = this._removeFromMatrix("base", widget);
+        this._removeFromMatrix("base", widget);
         Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
-        return affectedWidgets;
+        return [];
     };
 
-    GridLayout.prototype.moveTo = function (destLayout) {
+    GridLayout.prototype.moveTo = function moveTo(destLayout) {
         var movedWidgets, orderedWidgets, x, y, i, widget;
 
         /*

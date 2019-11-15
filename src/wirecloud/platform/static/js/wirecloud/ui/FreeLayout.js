@@ -163,6 +163,8 @@
         }
 
         this._adaptIWidget(iWidget);
+
+        return new Set();
     };
 
     FreeLayout.prototype.initializeMove = function initializeMove(widget, draggable) {
