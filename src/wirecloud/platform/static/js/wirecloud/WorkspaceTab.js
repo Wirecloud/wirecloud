@@ -349,7 +349,9 @@
     var create_widget = function create_widget(resource, data) {
         var widget = new Wirecloud.Widget(this, resource, data);
 
-        return on_addwidget.call(this, widget, null);
+        on_addwidget.call(this, widget, null);
+
+        return widget;
     };
 
     var get_widgets_by_id = function get_widgets_by_id() {
@@ -392,7 +394,7 @@
         widget.addEventListener('remove', priv.on_removewidget);
         widget.addEventListener('change', priv.on_changewidget);
         priv.widgets.push(widget);
-        return this.dispatchEvent('addwidget', widget, view);
+        this.dispatchEvent('addwidget', widget, view);
     };
 
     var on_removewidget = function on_removewidget(widget) {

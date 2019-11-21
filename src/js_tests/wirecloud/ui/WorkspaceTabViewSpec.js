@@ -563,7 +563,7 @@
                     "20": jasmine.any(ns.WidgetView)
                 });
                 expect(tab.widgets[0].load).toHaveBeenCalledWith();
-                expect(tab.initialMessage.hidden).toBe(false);
+                expect(tab.initialMessage.hidden).toBe(true);
             });
 
             it("should handle addwidget events (hidden tab)", () => {
@@ -586,7 +586,7 @@
                     "20": jasmine.any(ns.WidgetView)
                 });
                 expect(tab.widgets[0].load).not.toHaveBeenCalled();
-                expect(tab.initialMessage.hidden).toBe(false);
+                expect(tab.initialMessage.hidden).toBe(true);
             });
 
             it("should handle addwidget events related to move widgets between tabs", () => {

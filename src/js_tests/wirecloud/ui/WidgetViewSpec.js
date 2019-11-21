@@ -283,7 +283,6 @@
                 let tab = create_tab_mock();
                 let model = create_widget_mock({fulldragboard: true});
                 let widget = new ns.WidgetView(tab, model);
-                let oldLayout = widget.layout;
                 let newLayout = create_layout_mock(tab, ns.SmartColumnLayout);
                 newLayout.addWidget.and.callFake(function () {
                     widget.layout = this;

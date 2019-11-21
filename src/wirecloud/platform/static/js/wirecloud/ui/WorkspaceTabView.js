@@ -146,7 +146,6 @@
             tutorials: Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts'])
         }).children[1];
         this.appendChild(this.initialMessage);
-        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit");
 
         this.model.preferences.addEventListener('pre-commit', on_change_preferences.bind(this));
         this.model.widgets.forEach(_create_widget, this);
@@ -333,7 +332,7 @@
         } else {
             priv.widgets.push(view);
         }
-        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit");
+        this.initialMessage.hidden = true;
     };
 
     var on_removetab = function on_removetab(model) {
@@ -342,8 +341,8 @@
 
     var on_removewidget = function on_removewidget(widget) {
         const priv = privates.get(this);
-        privates.get(this).widgets.splice(privates.get(this).widgets.indexOf(widget), 1);
-        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || this.widgets.length > 0;
+        priv.widgets.splice(priv.widgets.indexOf(widget), 1);
+        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || priv.widgets.length > 0;
     };
 
     var update_pref_button = function update_pref_button() {
