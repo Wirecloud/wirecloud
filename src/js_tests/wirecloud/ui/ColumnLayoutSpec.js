@@ -139,7 +139,11 @@
             var layout;
 
             const createWidgetMock = function createWidgetMock(data) {
-                Wirecloud.ui.WidgetView = jasmine.createSpy("WidgetView").and.callFake(function () {
+                return new Wirecloud.ui.WidgetView(data);
+            };
+
+            beforeEach(() => {
+                spyOn(Wirecloud.ui, "WidgetView").and.callFake(function (data) {
                     this.id = data.id;
                     this.position = {
                         x: data.x,
@@ -160,10 +164,6 @@
                     this.tab.wrapperElement.appendChild(this.wrapperElement);
                 });
 
-                return new Wirecloud.ui.WidgetView(data);
-            };
-
-            beforeEach(() => {
                 var dragboard = {
                     _notifyWindowResizeEvent: jasmine.createSpy("_notifyWindowResizeEvent"),
                     update: jasmine.createSpy("update"),
@@ -399,7 +399,7 @@
             it("should add widgets", () => {
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
 
-                expect(layout.addWidget(widget, true)).toBe(false);
+                expect(layout.addWidget(widget, true)).toEqual(new Set());
 
                 expect(Wirecloud.ui.DragboardLayout.prototype.addWidget).toHaveBeenCalledWith(widget, true);
                 expect(layout.matrix[0][0]).toBe(widget);
@@ -408,7 +408,7 @@
             it("should shrink widgets that are too wide", () => {
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 5, height: 1});
 
-                expect(layout.addWidget(widget, true)).toBe(false);
+                expect(layout.addWidget(widget, true)).toEqual(new Set());
 
                 expect(Wirecloud.ui.DragboardLayout.prototype.addWidget).toHaveBeenCalledWith(widget, true);
                 expect(widget.setShape).toHaveBeenCalledWith({width: 4});
@@ -856,7 +856,7 @@
                 var widget = {}, matrix = {};
                 spyOn(layout, "_clearSpace");
 
-                expect(layout._removeFromMatrix(matrix, widget)).toBe(false);
+                expect(layout._removeFromMatrix(matrix, widget)).toEqual(new Set());
 
                 expect(layout._clearSpace).toHaveBeenCalledWith(matrix, widget);
             });

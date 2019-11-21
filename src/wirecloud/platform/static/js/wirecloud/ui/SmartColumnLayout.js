@@ -48,7 +48,7 @@
         for (key in this.widgets) {
             keys.push(key);
             widget = this.widgets[key];
-            modified = modified || this._moveSpaceUp("base", widget);
+            modified = modified || this.moveSpaceUp("base", widget);
         }
         if (modified) {
             // save these changes in the server side
@@ -79,7 +79,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this.moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -102,7 +102,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this.moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -132,7 +132,7 @@
                 limitX = position.x + widthDiff;
                 for (x = position.x; x < limitX; ++x) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceUp("base", this.matrix[x][y]);
+                        this.moveSpaceUp("base", this.matrix[x][y]);
                     }
                 }
 
@@ -150,7 +150,7 @@
                 limitX = position.x + oldWidth;
                 for (x = position.x + newWidth; x < limitX; ++x) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceUp("base", this.matrix[x][y]);
+                        this.moveSpaceUp("base", this.matrix[x][y]);
                     }
                 }
             }
@@ -163,7 +163,7 @@
             for (y = position.y + oldHeight; y < limitY; y++) {
                 for (x = step2X; x < limitX; x++) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceDown("base", this.matrix[x][y], limitY - y);
+                        this.moveSpaceDown("base", this.matrix[x][y], limitY - y);
                     }
                 }
             }
@@ -178,14 +178,14 @@
             limitX = step2X + step2Width;
             for (x = step2X; x < limitX; x++) {
                 if (this.matrix[x][y] != null) {
-                    this._moveSpaceUp("base", this.matrix[x][y]);
+                    this.moveSpaceUp("base", this.matrix[x][y]);
                 }
             }
         }
 
         this._notifyWindowResizeEvent(true, true); // TODO
         if (persist) {
-            this._moveSpaceUp("base", widget);
+            this.moveSpaceUp("base", widget);
             // Save new positions into persistence
             this.dragboard.update(); // FIXME
         }
@@ -193,11 +193,8 @@
 
     // Returns if any widget's position has been modified
     SmartColumnLayout.prototype._insertAt = function (widget, x, y, buffer) {
-
-        var affectedWidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, widget, x, y, buffer);
-        this._moveSpaceUp(buffer, widget);
-
-        return affectedWidgets;
+        var affectedwidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, widget, x, y, buffer);
+        return utils.setupdate(affectedwidgets, this.moveSpaceUp(buffer, widget));
     };
 
     /**
@@ -206,23 +203,21 @@
     SmartColumnLayout.prototype._removeFromMatrix = function (buffer, widget) {
         this._clearSpace(buffer, widget);
 
-        var modified = false, affectedIWidgets = {};
-        var affectedwidget, x;
+        var visitedwidgets = new Set(), modifiedwidgets = new Set();
         var position = this._getPositionOn(buffer, widget);
         var edgeY = position.y + widget.shape.height;
 
         var _matrix = this._buffers[buffer].matrix;
 
         // check if we have to update the representations of the widget instances
-        for (x = 0; x < widget.shape.width; x++) {
-            affectedwidget = _matrix[position.x + x][edgeY];
-            if ((affectedwidget != null) && (typeof affectedIWidgets[affectedwidget.id] !== true)) {
-                affectedIWidgets[affectedwidget.id] = true;
-                modified = this._moveSpaceUp(buffer, affectedwidget);
-                break;
+        for (let x = 0; x < widget.shape.width; x++) {
+            let currentwidget = _matrix[position.x + x][edgeY];
+            if (currentwidget != null && !visitedwidgets.has(currentwidget.id)) {
+                visitedwidgets.add(currentwidget.id);
+                utils.setupdate(modifiedwidgets, this.moveSpaceUp(buffer, currentwidget));
             }
         }
-        return modified;
+        return modifiedwidgets;
     };
 
     Wirecloud.ui.SmartColumnLayout = SmartColumnLayout;

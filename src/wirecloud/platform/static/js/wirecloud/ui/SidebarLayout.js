@@ -72,7 +72,7 @@
     utils.inherit(SidebarLayout, Wirecloud.ui.SmartColumnLayout);
 
     SidebarLayout.prototype.addWidget = function addWidget(widget, affectsDragboard) {
-        Wirecloud.ui.SmartColumnLayout.prototype.addWidget.call(this, widget, affectsDragboard);
+        const result = Wirecloud.ui.SmartColumnLayout.prototype.addWidget.call(this, widget, affectsDragboard);
 
         if (this.handle.classList.contains("hidden")) {
             this.handle.classList.remove("hidden");
@@ -80,10 +80,12 @@
         if (this.initialized) {
             this.matrix[0][0].wrapperElement.appendChild(this.handle);
         }
+
+        return result;
     };
 
     SidebarLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
-        Wirecloud.ui.SmartColumnLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
+        const result = Wirecloud.ui.SmartColumnLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
 
         if (Object.keys(this.widgets).length === 0) {
             this.handle.classList.add("hidden");
@@ -91,6 +93,7 @@
         } else {
             this.matrix[0][0].wrapperElement.appendChild(this.handle);
         }
+        return result;
     };
 
     SidebarLayout.prototype.adaptColumnOffset = function adaptColumnOffset(value) {

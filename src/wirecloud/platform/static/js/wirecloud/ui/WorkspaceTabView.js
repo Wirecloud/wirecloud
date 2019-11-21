@@ -40,13 +40,14 @@
             name: model.title
         });
 
-        privates.set(this, {
+        var priv = {
             widgets: [],
             on_changetab: on_changetab.bind(this),
-            on_createwidget: on_createwidget.bind(this),
+            on_addwidget: on_addwidget.bind(this),
             on_removetab: on_removetab.bind(this),
             on_removewidget: on_removewidget.bind(this)
-        });
+        };
+        privates.set(this, priv);
 
         Object.defineProperties(this, {
             /**
@@ -94,7 +95,7 @@
              */
             widgets: {
                 get: function () {
-                    return privates.get(this).widgets.slice(0);
+                    return priv.widgets.slice(0);
                 }
             },
             /**
@@ -148,11 +149,12 @@
 
         this.model.preferences.addEventListener('pre-commit', on_change_preferences.bind(this));
         this.model.widgets.forEach(_create_widget, this);
+        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || this.widgets.length > 0;
 
-        this.model.addEventListener('change', privates.get(this).on_changetab);
-        this.model.addEventListener('createwidget', privates.get(this).on_createwidget);
-        this.model.addEventListener('remove', privates.get(this).on_removetab);
-        this.model.addEventListener('removewidget', privates.get(this).on_removewidget);
+        this.model.addEventListener('change', priv.on_changetab);
+        this.model.addEventListener('addwidget', priv.on_addwidget);
+        this.model.addEventListener('remove', priv.on_removetab);
+        this.model.addEventListener('removewidget', priv.on_removewidget);
     };
 
     // =========================================================================
@@ -271,8 +273,6 @@
 
         privates.get(this).widgets.push(widget);
 
-        this.initialMessage.hidden = this.widgets.length > 0;
-
         return widget;
     };
 
@@ -320,12 +320,19 @@
         }
     };
 
-    var on_createwidget = function on_createwidget(tab, model) {
-        var widget = _create_widget.call(this, model);
+    var on_addwidget = function on_addwidget(tab, model, view) {
+        const priv = privates.get(this);
 
-        if (!this.hidden) {
-            widget.load();
+        if (view == null) {
+            view = _create_widget.call(this, model);
+
+            if (!this.hidden) {
+                view.load();
+            }
+        } else {
+            priv.widgets.push(view);
         }
+        this.initialMessage.hidden = true;
     };
 
     var on_removetab = function on_removetab(model) {
@@ -333,8 +340,9 @@
     };
 
     var on_removewidget = function on_removewidget(widget) {
-        privates.get(this).widgets.splice(privates.get(this).widgets.indexOf(widget), 1);
-        this.initialMessage.hidden = this.widgets.length > 0;
+        const priv = privates.get(this);
+        priv.widgets.splice(priv.widgets.indexOf(widget), 1);
+        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || priv.widgets.length > 0;
     };
 
     var update_pref_button = function update_pref_button() {

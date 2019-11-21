@@ -61,7 +61,7 @@
             on_livemessage: on_livemessage.bind(this),
             on_changetab: on_changetab.bind(this),
             on_createoperator: on_createoperator.bind(this),
-            on_createwidget: on_createwidget.bind(this),
+            on_addwidget: on_addwidget.bind(this),
             on_removetab: on_removetab.bind(this),
             on_removeoperator: on_removeoperator.bind(this),
             on_removewidget: on_removewidget.bind(this)
@@ -549,7 +549,7 @@
         var priv = privates.get(this);
 
         tab.addEventListener('change', priv.on_changetab);
-        tab.addEventListener('createwidget', priv.on_createwidget);
+        tab.addEventListener('addwidget', priv.on_addwidget);
         tab.addEventListener('remove', priv.on_removetab);
         tab.addEventListener('removewidget', priv.on_removewidget);
 
@@ -582,7 +582,7 @@
 
         while (titles.indexOf(title) !== -1) {
             copy += 1;
-            title = utils.interpolate(utils.gettext("%(base) (%(copy)s)"), {
+            title = utils.interpolate(utils.gettext("%(base)s (%(copy)s)"), {
                 base: base,
                 copy: copy
             });
@@ -656,9 +656,12 @@
         this.dispatchEvent('createoperator', operator);
     };
 
-    var on_createwidget = function on_createwidget(tab, widget) {
-        this.resources.addComponent(widget.meta);
-        this.dispatchEvent('createwidget', widget);
+    var on_addwidget = function on_addwidget(tab, widget, view) {
+        // Check if we are managing a create widget event
+        if (view == null) {
+            this.resources.addComponent(widget.meta);
+            this.dispatchEvent('createwidget', widget);
+        }
     };
 
     var on_livemessage = function on_livemessage(live, data) {
@@ -679,7 +682,7 @@
         priv.tabs.splice(priv.tabs.indexOf(tab), 1);
 
         tab.removeEventListener('change', priv.on_changetab);
-        tab.removeEventListener('createwidget', priv.on_createwidget);
+        tab.removeEventListener('addwidget', priv.on_addwidget);
         tab.removeEventListener('remove', priv.on_removetab);
         tab.removeEventListener('removewidget', priv.on_removewidget);
 
