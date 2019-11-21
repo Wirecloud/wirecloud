@@ -57,7 +57,13 @@
     };
 
     WidgetViewDraggable.prototype.canDrag = function canDrag(draggable, context) {
-        return (context.widget.model.volatile || context.widget.tab.workspace.editing) && context.widget.model.isAllowed('move') && !(context.widget.layout instanceof Wirecloud.ui.FullDragboardLayout);
+        return (
+            context.widget.model.volatile
+            || context.widget.layout instanceof Wirecloud.ui.FreeLayout
+            || context.widget.tab.workspace.editing
+        )
+        && context.widget.model.isAllowed('move')
+        && !(context.widget.layout instanceof Wirecloud.ui.FullDragboardLayout);
     };
 
     WidgetViewDraggable.prototype.ondragstart = function ondragstart(draggable, context) {
