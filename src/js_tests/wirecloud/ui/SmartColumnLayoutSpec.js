@@ -369,10 +369,11 @@
 
         describe("_removeFromMatrix(matrix, widget)", () => {
 
-            var layout;
+            var layout, id_seq;
 
             const createWidgetMock = function createWidgetMock(data) {
                 let widget = {
+                    id: "" + id_seq++,
                     position: {
                         x: data.x,
                         y: data.y
@@ -394,6 +395,7 @@
             };
 
             beforeEach(() => {
+                id_seq = 1;
                 var dragboard = {
                     update: jasmine.createSpy("update")
                 };
@@ -456,6 +458,32 @@
 
                 expect(layout._removeFromMatrix("base", widget1)).toEqual(new Set([widget2]));
                 expect(layout.matrix[0][0]).toBe(widget2);
+            });
+
+            it("should work on layouts with affected widgets (complex case)", () => {
+                // | 111|    |2233|
+                // | 111| => |22 4|
+                // |2233|    |   4|
+                // |22 4|    |    |
+                // |   4|    |    |
+                let widget1 = createWidgetMock({
+                    x: 1, y: 0, width: 3, height: 2
+                });
+                let widget2 = createWidgetMock({
+                    x: 0, y: 2, width: 2, height: 2
+                });
+                let widget3 = createWidgetMock({
+                    x: 2, y: 2, width: 2, height: 1
+                });
+                let widget4 = createWidgetMock({
+                    x: 3, y: 3, width: 1, height: 2
+                });
+
+                expect(layout._removeFromMatrix("base", widget1)).toEqual(new Set([widget2, widget3, widget4]));
+                expect(layout.matrix[0][0]).toBe(widget2);
+                expect(layout.matrix[2][0]).toBe(widget3);
+                expect(layout.matrix[3][1]).toBe(widget4);
+                expect(layout.matrix[3][3]).toBe(undefined);
             });
 
             it("should work on layouts with affected widgets (complex case)", () => {

@@ -139,7 +139,11 @@
             var layout;
 
             const createWidgetMock = function createWidgetMock(data) {
-                Wirecloud.ui.WidgetView = jasmine.createSpy("WidgetView").and.callFake(function () {
+                return new Wirecloud.ui.WidgetView(data);
+            };
+
+            beforeEach(() => {
+                spyOn(Wirecloud.ui, "WidgetView").and.callFake(function (data) {
                     this.id = data.id;
                     this.position = {
                         x: data.x,
@@ -160,10 +164,6 @@
                     this.tab.wrapperElement.appendChild(this.wrapperElement);
                 });
 
-                return new Wirecloud.ui.WidgetView(data);
-            };
-
-            beforeEach(() => {
                 var dragboard = {
                     _notifyWindowResizeEvent: jasmine.createSpy("_notifyWindowResizeEvent"),
                     update: jasmine.createSpy("update"),

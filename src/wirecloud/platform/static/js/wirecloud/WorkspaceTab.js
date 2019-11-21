@@ -51,14 +51,16 @@
         se.ObjectWithEvents.call(this, events);
         data = clean_data.call(this, data);
 
-        privates.set(this, {
+        const priv = {
             initial: data.initial,
             name: data.name,
             title: data.title != null && data.title.trim() != "" ? data.title : data.name,
             widgets: [],
             on_changetab: on_changetab.bind(this),
+            on_changewidget: on_changewidget.bind(this),
             on_removewidget: on_removewidget.bind(this)
-        });
+        };
+        privates.set(this, priv);
 
         Object.defineProperties(this, /** @lends Wirecloud.WorkspaceTab# */{
             /**
@@ -72,7 +74,7 @@
              */
             initial: {
                 get: function () {
-                    return privates.get(this).initial;
+                    return priv.initial;
                 }
             },
             /**
@@ -80,7 +82,7 @@
              */
             name: {
                 get: function () {
-                    return privates.get(this).name;
+                    return priv.name;
                 }
             },
             /**
@@ -88,7 +90,7 @@
              */
             title: {
                 get: function () {
-                    return privates.get(this).title;
+                    return priv.title;
                 }
             },
             /**
@@ -96,7 +98,7 @@
              */
             widgets: {
                 get: function () {
-                    return privates.get(this).widgets.slice(0);
+                    return priv.widgets.slice(0);
                 }
             },
             /**
@@ -124,7 +126,7 @@
             }
         });
 
-        this.workspace.addEventListener('changetab', privates.get(this).on_changetab);
+        this.workspace.addEventListener('changetab', priv.on_changetab);
     };
 
     // =========================================================================
@@ -312,7 +314,7 @@
 
     var privates = new WeakMap();
 
-    var events = ['change', 'createwidget', 'preremove', 'remove', 'removewidget'];
+    var events = ['change', 'addwidget', 'preremove', 'remove', 'removewidget'];
 
     var change_initial = function change_initial(initial) {
         privates.get(this).initial = initial;
@@ -347,11 +349,7 @@
     var create_widget = function create_widget(resource, data) {
         var widget = new Wirecloud.Widget(this, resource, data);
 
-        widget.addEventListener('remove', privates.get(this).on_removewidget);
-        privates.get(this).widgets.push(widget);
-        this.dispatchEvent('createwidget', widget);
-
-        return widget;
+        return on_addwidget.call(this, widget, null);
     };
 
     var get_widgets_by_id = function get_widgets_by_id() {
@@ -380,9 +378,28 @@
         }
     };
 
+    var on_changewidget = function on_changewidget(widget, changes) {
+        // Manage Tab changes
+        if (changes.indexOf("tab") !== -1 && widget.tab !== this) {
+            let view = this.workspace.view.findWidget(widget.id);
+            on_removewidget.call(this, widget);
+            on_addwidget.call(widget.tab, widget, view);
+        }
+    };
+
+    var on_addwidget = function on_addwidget(widget, view) {
+        const priv = privates.get(this);
+        widget.addEventListener('remove', priv.on_removewidget);
+        widget.addEventListener('change', priv.on_changewidget);
+        priv.widgets.push(widget);
+        return this.dispatchEvent('addwidget', widget, view);
+    };
+
     var on_removewidget = function on_removewidget(widget) {
-        widget.removeEventListener('remove', privates.get(this).on_removewidget);
-        privates.get(this).widgets.splice(privates.get(this).widgets.indexOf(widget), 1);
+        const priv = privates.get(this);
+        widget.removeEventListener('remove', priv.on_removewidget);
+        widget.removeEventListener('change', priv.on_changewidget);
+        priv.widgets.splice(priv.widgets.indexOf(widget), 1);
         this.dispatchEvent('removewidget', widget);
     };
 

@@ -288,23 +288,23 @@
             }
         }.bind(this), true);
 
-        model.addEventListener('load', function (model) {
+        model.addEventListener('load', (model) => {
 
             this.wrapperElement.classList.add('in');
 
-            model.wrapperElement.contentDocument.defaultView.addEventListener('keydown', function (event) {
+            model.wrapperElement.contentDocument.defaultView.addEventListener('keydown', (event) => {
                 if (event.keyCode === 27) { // escape
                     Wirecloud.UserInterfaceManager.handleEscapeEvent();
                 }
             }, true);
 
-            model.wrapperElement.contentDocument.defaultView.addEventListener('click', function () {
+            model.wrapperElement.contentDocument.defaultView.addEventListener('click', () => {
                 Wirecloud.UserInterfaceManager.handleEscapeEvent();
                 this.unhighlight();
-            }.bind(this), true);
+            }, true);
 
             this.repaint();
-        }.bind(this));
+        });
 
         this.tab.workspace.addEventListener('editmode', update.bind(this));
         model.addEventListener('remove', on_remove.bind(this));
@@ -322,30 +322,34 @@
          * @param newStatus new minimize status of the iwidget
          */
         setMinimizeStatus: function setMinimizeStatus(newStatus, persistence, reserveSpace) {
-            var oldHeight = this.shape.height;
+            const priv = privates.get(this);
+
+            // Sanitize newStatus value
+            newStatus = !!newStatus;
 
             if (newStatus === this.minimized) {
                 return this;
             }
 
-            privates.get(this).minimized = newStatus;
+            let oldHeight = this.shape.height;
+            priv.minimized = newStatus;
 
             if (this.minimized) {
                 this.minimizebutton.setTitle(utils.gettext("Maximize"));
                 this.minimizebutton.replaceIconClassName("fa-minus", "fa-plus");
                 this.wrapperElement.classList.add('wc-minimized-widget');
                 this.wrapperElement.style.height = "";
-                privates.get(this).minimized_shape = {
+                priv.minimized_shape = {
                     height: this.layout.adaptHeight(this.wrapperElement.offsetHeight + 'px').inLU,
-                    width: privates.get(this).shape.width
+                    width: priv.shape.width
                 };
                 this.setTitleVisibility(true, false);
             } else {
                 this.minimizebutton.setTitle(utils.gettext("Minimize"));
                 this.minimizebutton.replaceIconClassName("fa-plus", "fa-minus");
                 this.wrapperElement.classList.remove('wc-minimized-widget');
-                this.wrapperElement.style.height = this.layout.getHeightInPixels(privates.get(this).shape.height) + 'px';
-                privates.get(this).minimized_shape = null;
+                this.wrapperElement.style.height = this.layout.getHeightInPixels(priv.shape.height) + 'px';
+                priv.minimized_shape = null;
             }
 
             this.model.contextManager.modify({
@@ -496,13 +500,14 @@
 
         moveToLayout: function moveToLayout(newLayout) {
             var affectedWidgetsRemoving, affectedWidgetsAdding,
-                minimizeOnFinish, p, previousWidth, previousHeight,
+                minimizeOnFinish, previousWidth, previousHeight,
                 dragboardChange, oldLayout, oldPositionPixels;
 
             if (this.layout === newLayout) {
-                return;
+                return Promise.resolve();
             }
 
+            const priv = privates.get(this);
             minimizeOnFinish = false;
             if (this.minimized) {
                 minimizeOnFinish = true;
@@ -512,7 +517,8 @@
             previousWidth = this.wrapperElement.offsetWidth;
             previousHeight = this.wrapperElement.offsetHeight;
 
-            dragboardChange = this.layout.dragboard !== newLayout.dragboard || privates.get(this).tab !== newLayout.dragboard.tab;
+            const tabChange = priv.tab !== newLayout.dragboard.tab;
+            dragboardChange = this.layout.dragboard !== newLayout.dragboard || tabChange;
             oldLayout = this.layout;
 
             affectedWidgetsRemoving = oldLayout.removeWidget(this, dragboardChange);
@@ -542,15 +548,14 @@
             }
 
             affectedWidgetsAdding = newLayout.addWidget(this, dragboardChange);
-            privates.get(this).tab = newLayout.dragboard.tab;
+            priv.tab = newLayout.dragboard.tab;
 
             if (minimizeOnFinish) {
                 this.toggleMinimizeStatus();
             }
 
-            // if the widget hasn't been taken to another tab and
-            // the movement affects the rest of widgets
-            p = this.update().then(() => {
+            // Persist changes
+            this.model.changeTab(newLayout.dragboard.tab.model).then(() => {
                 affectedWidgetsAdding.add(this.id);
                 if (dragboardChange) {
                     oldLayout.dragboard.update([...affectedWidgetsRemoving]);
@@ -585,10 +590,6 @@
             this.model.fulldragboard = enable;
 
             update.call(this);
-        },
-
-        update: function update() {
-            return this.model.changeTab(this.tab.model);
         },
 
         toJSON: function toJSON() {

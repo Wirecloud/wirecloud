@@ -87,11 +87,11 @@
         const notebook = new StyledElements.Notebook();
 
         beforeAll(() => {
-            // TODO
-            ns.WidgetView = jasmine.createSpy("WidgetView").and.callFake(function (tab, options) {
-                this.id = options.id;
+            spyOn(ns, "WidgetView").and.callFake(function (tab, model, options) {
+                this.id = model.id;
                 this.load = jasmine.createSpy("load");
             });
+            // TODO
             ns.WorkspaceTabViewDragboard = jasmine.createSpy("WorkspaceTabViewDragboard").and.callFake(function () {
                 this.freeLayout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({inLU: 0}),
@@ -130,7 +130,6 @@
 
         afterAll(() => {
             // TODO
-            ns.WidgetView = null;
             ns.WorkspaceTabViewDragboard = null;
             Wirecloud.TutorialCatalogue = null;
         });
@@ -156,6 +155,7 @@
                 expect(tab.title).toEqual("Tab Title");
                 expect(tab.widgets).toEqual([]);
                 expect(tab.widgetsById).toEqual({});
+                expect(tab.initialMessage.hidden).toBe(true);
             });
 
             it("should load tabs with widgets", () => {
@@ -177,6 +177,23 @@
                     "5": jasmine.any(ns.WidgetView),
                     "9": jasmine.any(ns.WidgetView)
                 });
+                expect(tab.initialMessage.hidden).toBe(true);
+            });
+
+            it("should load empty editable tabs", () => {
+                let workspace = create_workspace();
+                workspace.model.isAllowed.and.returnValue(true);
+                let model = create_tab({
+                    widgets: []
+                });
+                ns.WorkspaceTabViewMenuItems.calls.reset();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                expect(ns.WorkspaceTabViewMenuItems).toHaveBeenCalledWith(tab);
+                expect(tab.initialMessage.hidden).toBe(false);
             });
 
             it("should load editable tabs", () => {
@@ -252,6 +269,8 @@
                     expect(id).toBe(80);
                     return widget;
                 });
+                tab.dragboard.baseLayout.adaptWidth.and.returnValue({inLU: 15});
+                tab.dragboard.baseLayout.columns = 20;
 
                 let created_widget = tab.createWidget(
                     {
@@ -263,6 +282,37 @@
                 );
 
                 expect(created_widget).toBe(widget);
+            });
+
+            it("should support the refposition option", () => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(widgetmodel);
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+                tab.dragboard.freeLayout.searchBestPosition = jasmine.createSpy("searchBestPosition").and.returnValue({x: 1, y: 2});
+
+                let created_widget = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        commit: false,
+                        layout: 1,
+                        refposition: document.createElement('div')
+                    }
+                );
+
+                expect(created_widget).toBe(widget);
+                expect(tab.dragboard.freeLayout.searchBestPosition).toHaveBeenCalled();
             });
 
             it("should honour initiallayout preference", (done) => {
@@ -493,8 +543,9 @@
                 expect(StyledElements.Tab.prototype.close).toHaveBeenCalledWith();
             });
 
-            it("should handle createwidget events (visible tab)", () => {
+            it("should handle addwidget events (visible tab)", () => {
                 let workspace = create_workspace();
+                workspace.model.isAllowed.and.returnValue(true);
                 let model = create_tab();
                 let tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
@@ -503,7 +554,7 @@
                 let widgetmodel = {id: "20"};
                 tab.hidden = false;
 
-                callEventListener(model, "createwidget", widgetmodel);
+                callEventListener(model, "addwidget", widgetmodel, null);
 
                 expect(tab.widgets).toEqual([
                     jasmine.any(ns.WidgetView)
@@ -512,10 +563,12 @@
                     "20": jasmine.any(ns.WidgetView)
                 });
                 expect(tab.widgets[0].load).toHaveBeenCalledWith();
+                expect(tab.initialMessage.hidden).toBe(false);
             });
 
-            it("should handle createwidget events (hidden tab)", () => {
+            it("should handle addwidget events (hidden tab)", () => {
                 let workspace = create_workspace();
+                workspace.model.isAllowed.and.returnValue(true);
                 let model = create_tab();
                 let tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
@@ -524,7 +577,7 @@
                 let widgetmodel = {id: "20"};
                 tab.hidden = true;
 
-                callEventListener(model, "createwidget", widgetmodel);
+                callEventListener(model, "addwidget", widgetmodel, null);
 
                 expect(tab.widgets).toEqual([
                     jasmine.any(ns.WidgetView)
@@ -533,10 +586,34 @@
                     "20": jasmine.any(ns.WidgetView)
                 });
                 expect(tab.widgets[0].load).not.toHaveBeenCalled();
+                expect(tab.initialMessage.hidden).toBe(false);
+            });
+
+            it("should handle addwidget events related to move widgets between tabs", () => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: "20"};
+                let widgetview = new ns.WidgetView(null, widgetmodel);
+                ns.WidgetView.calls.reset();
+                tab.hidden = true;
+
+                callEventListener(model, "addwidget", widgetmodel, widgetview);
+
+                expect(tab.widgets).toEqual([widgetview]);
+                expect(tab.widgetsById).toEqual({
+                    "20": widgetview
+                });
+                expect(ns.WidgetView).not.toHaveBeenCalled();
+                expect(widgetview.load).not.toHaveBeenCalled();
             });
 
             it("should handle removewidget events", () => {
                 let workspace = create_workspace();
+                workspace.model.isAllowed.and.returnValue(true);
                 let model = create_tab({
                     widgets: [{id: "9"}, {id: "5"}]
                 });
@@ -554,6 +631,26 @@
                 expect(tab.widgetsById).toEqual({
                     "9": jasmine.any(ns.WidgetView)
                 });
+                expect(tab.initialMessage.hidden).toBe(true);
+            });
+
+            it("should display empty message when adequated on removewidget events", () => {
+                let workspace = create_workspace();
+                workspace.model.isAllowed.and.returnValue(true);
+                let model = create_tab({
+                    widgets: [{id: "5"}]
+                });
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widget = tab.findWidget("5");
+
+                callEventListener(model, "removewidget", widget);
+
+                expect(tab.widgets).toEqual([]);
+                expect(tab.widgetsById).toEqual({});
+                expect(tab.initialMessage.hidden).toBe(false);
             });
 
             it("should handle edit mode change events", () => {
