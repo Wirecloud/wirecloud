@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -47,7 +48,7 @@ class FIWAREViewsTestCase(unittest.TestCase):
         request = Mock()
         request.META = {}
         request.GET.urlencode.return_value = 'param=a&t=d'
-        request.user.is_authenticated.return_value = False
+        request.user.is_authenticated = False
         request.method = 'GET'
         request.session.get.return_value = None
         with patch("wirecloud.fiware.views.reverse") as reverse_mock:
@@ -61,7 +62,7 @@ class FIWAREViewsTestCase(unittest.TestCase):
         request = Mock()
         request.META = {}
         request.GET.get.return_value = '/landing_page'
-        request.user.is_authenticated.return_value = True
+        request.user.is_authenticated = True
         request.method = 'GET'
         request.session.get.return_value = None
         response = login(request)
