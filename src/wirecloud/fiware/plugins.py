@@ -90,7 +90,7 @@ class FiWarePlugin(WirecloudPlugin):
 
     features = {
         'FIWARE': wirecloud.fiware.__version__,
-        'NGSI': '1.2.1',
+        'NGSI': '1.2.2',
         'ObjectStorage': '0.5',
     }
 

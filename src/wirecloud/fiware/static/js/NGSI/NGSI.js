@@ -34,6 +34,7 @@
  *     obligated to do so.  If you do not wish to do so, delete this
  *     exception statement from your version.
  *
+ *     Modified by: Fermín Galán Márquez - Telefónica
  */
 
 /* global EventSource, exports, require */
@@ -2915,6 +2916,14 @@
      * - `orderBy` (`String`): Criteria for ordering results
      * - `q` (`String`): A query expression, composed of a list of statements
      *   separated by semicolons (`;`)
+     * - `georel` (`String`): Spatial relationship between matching entities and
+     *   a reference shape. See "Geographical Queries" section in NGSIv2 specification
+     *   for details.
+     * - `geometry` (`String`): Geographical area to which the query is restricted.
+     *   See "Geographical Queries" section in NGSIv2 specification for details.
+     * - `coords` (`String`): List of latitude-longitude pairs of coordinates
+     *   separated by ';'. See "Geographical Queries" section in NGSIv2 specification
+     *   for details.
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
      * - `type` (`String`): A comma-separated list of entity types to retrieve.
@@ -4832,7 +4841,7 @@
      * @param {Object} [options]
      *
      * Object with extra options:
-     *
+     * - `skipInitialNotification` (`Boolean`; Default: `false`): Skip Initial Context Broker notification
      * - `correlator` (`String`): Transaction id
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
@@ -4971,11 +4980,17 @@
             p = Promise.resolve();
         }
 
+        var parameters = {};
+        if (options.skipInitialNotification === true) {
+            parameters.options = "skipInitialNotification";
+        }
+
         var url = new URL(NGSI.endpoints.v2.SUBSCRIPTION_COLLECTION, connection.url);
         return p.then(function () {
             return makeJSONRequest2.call(connection, url, {
                 method: "POST",
                 postBody: subscription,
+                parameters: parameters,
                 requestHeaders: {
                     "FIWARE-Correlator": options.correlator,
                     "FIWARE-Service": options.service,
