@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -19,6 +20,8 @@
 
 import os
 import sys
+
+import django
 
 import wirecloud.platform
 
@@ -79,17 +82,23 @@ class CommandLineUtility(object):
         if stderr is None:
             stderr = sys.stderr
 
-        parser = CommandParser(
-            None,
-            usage="%(prog)s subcommand [options] [args]",
-            add_help=False
-        )
+        if django.VERSION > (2, 1):
+            parser = CommandParser(
+                usage="%(prog)s subcommand [options] [args]",
+                add_help=False,
+            )
+        else:
+            parser = CommandParser(
+                None,
+                usage="%(prog)s subcommand [options] [args]",
+                add_help=False,
+            )
         parser.add_argument('--version', action='store_true', help="show program's version number and exit")
         parser.add_argument('-h', '--help', action='store_true', help="show this help message and exit")
 
         try:
             options, argv = parser.parse_known_args(argv)
-        except:
+        except Exception:
             pass  # Ignore any option errors at this point.
 
         if len(argv) > 1:
@@ -144,7 +153,7 @@ def execute_from_command_line():
     })
     try:
         utility.execute()
-    except:
+    except Exception:
         sys.exit(1)
 
 
