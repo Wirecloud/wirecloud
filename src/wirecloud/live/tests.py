@@ -19,7 +19,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import CallableMixin, Mock, NonCallableMock, patch
 
 from django.contrib.auth.models import User, Group
 from django.test import TestCase
@@ -27,18 +27,50 @@ from django.utils import timezone
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import WirecloudTestCase
-from wirecloud.platform.models import CatalogueResource, Workspace
+from wirecloud.platform.models import Workspace
 import wirecloud.live
 
 try:  # pragma: no cover
     import channels  # noqa
+    from asgiref.sync import async_to_sync
     CHANNELS_INSTALLED = True
 
     # Those modules cannot be imported if the channels module is not installed
+    from wirecloud.live import routing
     from wirecloud.live.apps import WirecloudLiveConfig
+    from wirecloud.live.consumers import LiveConsumer
+    from wirecloud.live.plugins import LivePlugin
     from wirecloud.live.signals.handlers import install_signals, mac_update, update_users_or_groups, notify, workspace_update
 except ModuleNotFoundError:  # pragma: no cover
     CHANNELS_INSTALLED = False
+
+
+# AsyncMock is only available on Python 3.8, provide a backport for being able
+# to pass tests on Python 3.5+
+class AsyncCallableMixin(CallableMixin):
+
+    def __init__(_mock_self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _mock_self.aenter_return_value = _mock_self
+
+    def __call__(_mock_self, *args, **kwargs):
+        # can't use self in-case a function / method we are mocking uses self
+        # in the signature
+        async def wrapper():
+            _mock_self._mock_check_sig(*args, **kwargs)
+            return _mock_self._mock_call(*args, **kwargs)
+
+        return wrapper()
+
+    async def __aenter__(_mock_self):
+        return _mock_self.aenter_return_value
+
+    async def __aexit__(_mock_self, exc_type, exc_val, exc_tb):
+        pass
+
+
+class AsyncMock(AsyncCallableMixin, NonCallableMock):
+    pass
 
 
 @unittest.skipIf(not CHANNELS_INSTALLED, 'django channels package not installed')
@@ -353,3 +385,38 @@ class LiveNotificationsTestCase(WirecloudTestCase, TestCase):
         app.ready()
 
         install_signals_mock.toHaveBeenCalled()
+
+    def test_consumer_connect(self, notify_mock):
+        consumer = LiveConsumer({"user": Mock(username="aarranz")})
+        consumer.channel_name = "aname"
+        consumer.channel_layer = AsyncMock()
+        consumer.accept = AsyncMock()
+
+        async_to_sync(consumer.connect)()
+
+        self.assertGreater(consumer.channel_layer.group_add.call_count, 0)
+        consumer.accept.assert_called_once_with()
+
+    def test_consumer_disconnect(self, notify_mock):
+        consumer = LiveConsumer({"user": Mock(username="aarranz")})
+        consumer.channel_name = "aname"
+        consumer.channel_layer = AsyncMock()
+
+        async_to_sync(consumer.disconnect)("aclose_code")
+
+        self.assertGreater(consumer.channel_layer.group_discard.call_count, 0)
+
+    def test_consumer_notification(self, notify_mock):
+        consumer = LiveConsumer({"user": Mock(username="aarranz")})
+        consumer.send_json = AsyncMock()
+
+        async_to_sync(consumer.notification)({"data": "jsondata"})
+
+        consumer.send_json.assert_called_once_with("jsondata")
+
+    def test_plugin(self, notify_mock):
+        plugin = LivePlugin()
+        plugin.get_ajax_endpoints("classic")
+
+    def test_routing(self, notify_mock):
+        self.assertTrue(hasattr(routing, "application"))
