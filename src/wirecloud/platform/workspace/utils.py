@@ -110,7 +110,7 @@ def decrypt_value(value):
 
 def get_workspace_list(user):
 
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return Workspace.objects.filter(public=True, searchable=True)
 
     # Now we can fetch all the workspaces for the user
@@ -140,10 +140,10 @@ def _process_variable(component_type, component_id, vardef, value, forced_values
     else:
         # Handle multiuser variables
         variable_user = current_user if vardef.get("multiuser", False) else workspace_creator
-        if value is None or value["users"].get("%s" % variable_user.id, None) is None:
+        if value is None or value["users"].get(str(variable_user.id), None) is None:
             value = parse_value_from_text(entry, vardef['default'])
         else:
-            value = value["users"].get("%s" % variable_user.id, None)
+            value = value["users"].get(str(variable_user.id), None)
 
         entry['value'] = value
         entry['readonly'] = False
@@ -165,7 +165,7 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
 
     for iwidget in IWidget.objects.filter(tab__workspace=workspace):
         # forced_values uses string keys
-        svariwidget = "%s" % iwidget.id
+        svariwidget = str(iwidget.id)
         values_by_varname["iwidget"][svariwidget] = {}
 
         if iwidget.widget is None:
@@ -241,13 +241,13 @@ class VariableValueCacheManager():
 
     def get_variable_value_from_varname(self, component_type, component_id, var_name):
         values = self.get_variable_values()
-        entry = values[component_type]["%s" % component_id][var_name]
+        entry = values[component_type][str(component_id)][var_name]
         return self._process_entry(entry)
 
     # Get variable data
     def get_variable_data(self, component_type, component_id, var_name):
         values = self.get_variable_values()
-        entry = values[component_type]["%s" % component_id][var_name]
+        entry = values[component_type][str(component_id)][var_name]
 
         # If secure and has value, censor it
         if entry['secure'] and entry["value"] != "":
@@ -273,7 +273,7 @@ def get_workspace_data(workspace, user):
         longdescription = workspace.description
 
     return {
-        'id': "%s" % workspace.id,
+        'id': str(workspace.id),
         'name': workspace.name,
         'title': workspace.title,
         'public': workspace.public,
@@ -437,11 +437,11 @@ def _get_global_workspace_data(workspaceDAO, user):
 
             if preference_name in operator_forced_values:
                 preference['value'] = operator_forced_values[preference_name]['value']
-            elif value is None or value["users"].get("%s" % variable_user.id, None) is None:
+            elif value is None or value["users"].get(str(variable_user.id), None) is None:
                 # If not defined / not defined for the current user, take the default value
                 preference['value'] = parse_value_from_text(vardef, vardef['default'])
             else:
-                preference['value'] = value["users"].get("%s" % variable_user.id)
+                preference['value'] = value["users"].get(str(variable_user.id))
 
             # Secure censor
             if vardef is not None and vardef["secure"]:
@@ -457,11 +457,11 @@ def _get_global_workspace_data(workspaceDAO, user):
 
             if property_name in operator_forced_values:
                 property['value'] = operator_forced_values[property_name]['value']
-            elif value is None or value["users"].get("%s" % variable_user.id, None) is None:
+            elif value is None or value["users"].get(str(variable_user.id), None) is None:
                 # If not defined / not defined for the current user, take the default value
                 property['value'] = parse_value_from_text(vardef, vardef['default'])
             else:
-                property['value'] = value["users"].get("%s" % variable_user.id)
+                property['value'] = value["users"].get(str(variable_user.id))
 
             # Secure censor
             if vardef is not None and vardef["secure"]:
@@ -490,7 +490,7 @@ def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
         cache_manager = VariableValueCacheManager(workspace, user)
 
     return {
-        'id': "%s" % tab.id,
+        'id': str(tab.id),
         'name': tab.name,
         'title': tab.title,
         'visible': tab.visible,
@@ -501,25 +501,27 @@ def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
 
 def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
+    widget_position = iwidget.positions.get('widget', {})
+    icon_position = iwidget.positions.get('icon', {})
     data_ret = {
-        'id': "%s" % iwidget.id,
+        'id': str(iwidget.id),
         'title': iwidget.name,
         'tab': iwidget.tab.id,
         'layout': iwidget.layout,
         'widget': iwidget.widget_uri,
-        'top': iwidget.positions['widget']['top'],
-        'left': iwidget.positions['widget']['left'],
-        'zIndex': iwidget.positions['widget']['zIndex'],
-        'width': iwidget.positions['widget']['width'],
-        'height': iwidget.positions['widget']['height'],
-        'fulldragboard': iwidget.positions['widget']['fulldragboard'],
-        'minimized': iwidget.positions['widget']['minimized'],
-        'icon_top': iwidget.positions['icon']['top'],
-        'icon_left': iwidget.positions['icon']['left'],
+        'top': widget_position.get('top', 0),
+        'left': widget_position.get('left', 0),
+        'zIndex': widget_position.get('zIndex', 0),
+        'width': widget_position.get('width', 0),
+        'height': widget_position.get('height', 0),
+        'fulldragboard': widget_position.get('fulldragboard', False),
+        'minimized': widget_position.get('minimized', False),
+        'icon_top': icon_position.get('top', 0),
+        'icon_left': icon_position.get('left', 0),
         'readonly': iwidget.readOnly,
         'preferences': {},
         'properties': {},
-        'titlevisible': iwidget.positions['widget'].get('titlevisible', True),
+        'titlevisible': widget_position.get('titlevisible', True),
     }
 
     if iwidget.widget is None or not iwidget.widget.resource.is_available_for(workspace.creator):

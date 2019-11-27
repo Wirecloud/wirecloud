@@ -23,9 +23,9 @@ import os
 from urllib.request import url2pathname
 
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView

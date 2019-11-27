@@ -51,7 +51,7 @@ class WorkspacePreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
 
         response = self.restapi.create(request, "1")
 
@@ -72,7 +72,7 @@ class WorkspacePreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
         User.DoesNotExist = Exception
         user1 = Mock()
         org1 = Mock()
@@ -95,7 +95,7 @@ class WorkspacePreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
         User.DoesNotExist = Exception
         User.objects.get.side_effect = User.DoesNotExist
 
@@ -127,7 +127,7 @@ class WorkspacePreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
         User.DoesNotExist = Exception
         User.objects.get.side_effect = User.DoesNotExist
 
@@ -160,7 +160,7 @@ class WorkspacePreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
         User.DoesNotExist = Exception
         User.objects.get.side_effect = User.DoesNotExist
 
@@ -195,7 +195,7 @@ class WorkspacePreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
 
         response = self.restapi.create(request, "1")
 
@@ -246,7 +246,7 @@ class WorkspacePreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
 
         response = self.restapi.create(request, "1")
 
@@ -293,7 +293,7 @@ class TabPreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
 
         response = self.restapi.create(request, "1", "1")
 
@@ -346,7 +346,7 @@ class TabPreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
 
         response = self.restapi.create(request, "1", "1")
 
@@ -390,7 +390,7 @@ class PlatformPreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
 
         response = self.restapi.create(request)
 
@@ -424,7 +424,7 @@ class PlatformPreferencesTestCase(TestCase):
         request = Mock(META={
             "CONTENT_TYPE": "application/json",
         })
-        request.user.is_anonymous.return_value = False
+        request.user.is_anonymous = False
 
         response = self.restapi.create(request)
 

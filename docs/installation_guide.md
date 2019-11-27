@@ -1,6 +1,6 @@
 ## Introduction
 
-This document describes how to install WireCloud version 1.3 (starting from FIWARE release 7.7). Any feedback on this
+This document describes how to install WireCloud version 1.4 (starting from FIWARE release 7.7). Any feedback on this
 document is highly welcomed, including bugs, typos or things you think should be included but are not.
 
 ## Requirements
@@ -10,7 +10,7 @@ meant to be installed manually in this step, as they will be installed throughou
 
 -   A Database Manager (MySQL, PostgreSQL, SQLite3...)
 -   Python 3.4+. In any case, the following python packages must be installed:
-    -   Django 1.10-1.11
+    -   Django 2.0+
     -   lxml 2.3.0+
     -   django-appconf 1.0.1+
     -   django_compressor 2.0+
@@ -18,7 +18,7 @@ meant to be installed manually in this step, as they will be installed throughou
     -   requests 2.1.0+
     -   selenium 3.4+
     -   pytz
-    -   django_relatives 0.3.x
+    -   django_relatives 1.x
     -   user-agents
     -   regex
     -   markdown

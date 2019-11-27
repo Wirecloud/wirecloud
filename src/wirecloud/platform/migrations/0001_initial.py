@@ -74,8 +74,8 @@ class Migration(migrations.Migration):
             name='Organization',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('group', models.OneToOneField(to='auth.Group')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('group', models.OneToOneField(to='auth.Group', on_delete=models.CASCADE)),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -153,7 +153,7 @@ class Migration(migrations.Migration):
             name='Widget',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('resource', models.OneToOneField(to='catalogue.CatalogueResource')),
+                ('resource', models.OneToOneField(to='catalogue.CatalogueResource', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('resource__vendor', 'resource__short_name', 'resource__version'),

@@ -56,8 +56,8 @@ class OrganizationManager(models.Manager):
 
 class Organization(models.Model):
 
-    user = models.OneToOneField(User)
-    group = models.OneToOneField(Group)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    group = models.OneToOneField(Group, on_delete=models.CASCADE)
 
     objects = OrganizationManager()
 

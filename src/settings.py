@@ -2,9 +2,8 @@
 # Django settings used as base for developing wirecloud.
 
 from os import path
-import sys
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 DEBUG = True
 BASEDIR = path.dirname(path.abspath(__file__))
@@ -30,9 +29,8 @@ DATABASES = {
     },
 }
 
-# This setting has only effect in DJango 1.5+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+# See https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['*']
 
 THEME_ACTIVE = "wirecloud.defaulttheme"
@@ -73,7 +71,7 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
 ROOT_URLCONF = 'urls'
 
-INSTALLED_APPS += (
+INSTALLED_APPS += ( # noqa
     'wirecloud.oauth2provider',
     'wirecloud.fiware',
     'django_nose',
@@ -87,23 +85,23 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
-#HAYSTACK_CONNECTIONS = {
-#    'default': {
-#        'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
-#        'URL': 'http://127.0.0.1:8983/solr'
-#        # ...or for multicore...
-#        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
-#    },
-#}
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': 'wirecloud.commons.haystack_backends.solr_backend.SolrEngine',
+#         'URL': 'http://127.0.0.1:8983/solr'
+#         # ...or for multicore...
+#         # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+#     },
+# }
 
 
-#TEST_HAYSTACK_CONNECTIONS = {
-#    'default': {
-#        'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
-#        'URL': <'INDEX_URI'>,
-#        'INDEX_NAME': 'wirecloud',
-#    },
-#}
+# TEST_HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
+#         'URL': <'INDEX_URI'>,
+#         'INDEX_NAME': 'wirecloud',
+#     },
+# }
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -116,7 +114,7 @@ LOGIN_URL = reverse_lazy('login')
 LOGOUT_URL = reverse_lazy('wirecloud.root')
 LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 
-#Authentication
+# Authentication
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -125,7 +123,7 @@ AUTHENTICATION_BACKENDS = (
 CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
 GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'widgets')
 
-#SESSION_COOKIE_DOMAIN = '.domain'
+# SESSION_COOKIE_DOMAIN = '.domain'
 
 # Cache settings
 CACHES = {
@@ -140,34 +138,34 @@ CACHES = {
 FORCE_SCRIPT_NAME = ""
 
 
-#WIRECLOUD_SELENIUM_TEST_BROWSERS = {
+# WIRECLOUD_SELENIUM_TEST_BROWSERS = {
 #
-#    # Old versions of Firefox can be found here:
-#    # http://archive.mozilla.org/pub/mozilla.org/firefox/releases/
+#     # Old versions of Firefox can be found here:
+#     # http://archive.mozilla.org/pub/mozilla.org/firefox/releases/
 #
-#    'Firefox': {
-#        'CLASS': 'selenium.webdriver.Firefox',
-#    },
+#     'Firefox': {
+#         'CLASS': 'selenium.webdriver.Firefox',
+#     },
 #
-#    # Download chrome driver from the following URL:
-#    # https://sites.google.com/a/chromium.org/chromedriver/
-#    # Old versions of chrome can be found here:
-#    # http://google-chrome.en.uptodown.com/mac/old
-#    'GoogleChrome': {
-#        'CLASS': 'selenium.webdriver.Chrome',
-#    },
+#     # Download chrome driver from the following URL:
+#     # https://sites.google.com/a/chromium.org/chromedriver/
+#     # Old versions of chrome can be found here:
+#     # http://google-chrome.en.uptodown.com/mac/old
+#     'GoogleChrome': {
+#         'CLASS': 'selenium.webdriver.Chrome',
+#     },
 #
-#    # Download opera driver from the following URL:
-#    # https://github.com/operasoftware/operachromiumdriver/releases
-#    # Old versions of Opera can be found here:
-#    # http://get.geo.opera.com.global.prod.fastly.net/pub/opera/
+#     # Download opera driver from the following URL:
+#     # https://github.com/operasoftware/operachromiumdriver/releases
+#     # Old versions of Opera can be found here:
+#     # http://get.geo.opera.com.global.prod.fastly.net/pub/opera/
 #
-#    'Opera': {
-#        'CLASS': 'selenium.webdriver.Opera',
-#    },
+#     'Opera': {
+#         'CLASS': 'selenium.webdriver.Opera',
+#     },
 #
-#    # https://blog.codecentric.de/en/2015/02/selenium-webdriver-safari-8/
-#    'Safari': {
-#        'CLASS': 'selenium.webdriver.Safari',
-#    },
-#}
+#     # https://blog.codecentric.de/en/2015/02/selenium-webdriver-safari-8/
+#     'Safari': {
+#         'CLASS': 'selenium.webdriver.Safari',
+#     },
+# }

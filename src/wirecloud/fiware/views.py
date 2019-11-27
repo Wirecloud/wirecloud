@@ -21,9 +21,9 @@ import json
 
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_GET
+from django.urls import reverse
 
 from wirecloud.commons.authentication import logout as wirecloud_logout
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url
@@ -51,7 +51,7 @@ def oauth_discovery(request):
 @require_GET
 def login(request):
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         url = request.GET.get(REDIRECT_FIELD_NAME, '/')
     else:
         url = reverse('social:begin', kwargs={'backend': 'fiware'}) + '?' + request.GET.urlencode()

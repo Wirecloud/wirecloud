@@ -51,11 +51,11 @@ urlpatterns = (
     url(r'^cdp', include('wirecloud.proxy.urls')),
 
     # Login/logout
-    url(r'^login/?$', auth_views.login, name="login"),
+    url(r'^login/?$', auth_views.LoginView.as_view(), name="login"),
     url(r'^logout/?$', wc_auth.logout, name="logout"),
 
     # Admin interface
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     # Test views
     url('valid_path', valid, name="valid_path"),

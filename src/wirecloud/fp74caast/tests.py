@@ -22,8 +22,8 @@ import unittest
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.test import Client, TransactionTestCase
+from django.urls import reverse
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.context.utils import get_platform_context_current_values, get_workspace_context_current_values

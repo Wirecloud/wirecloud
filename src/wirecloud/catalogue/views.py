@@ -27,10 +27,10 @@ from urllib.request import pathname2url, url2pathname
 import zipfile
 
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.urls import reverse
 from django.utils.translation import get_language, ugettext as _
 from django.views.decorators.http import require_GET
 import markdown
@@ -164,7 +164,7 @@ class ResourceEntry(Resource):
             resource = get_object_or_404(objects, vendor=vendor, short_name=name, version=version)
             data = get_resource_data(resource, request.user, request)
         else:
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 resources = get_list_or_404(objects.filter(Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))).distinct())
             else:
                 resources = get_list_or_404(objects.filter(Q(vendor=vendor) & Q(short_name=name) & Q(public=True)))

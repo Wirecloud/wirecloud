@@ -22,9 +22,9 @@ import json
 import os
 from urllib.parse import urlparse, urlunparse, parse_qs
 
+from django import urls as urlresolvers
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login as django_redirect_to_login
-from django.core import urlresolvers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import TemplateDoesNotExist
@@ -131,10 +131,10 @@ def render_root_page(request):
 
 def auto_select_workspace(request, mode=None):
 
-    if settings.ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
+    if settings.ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated is False:
         return redirect_to_login(request.get_full_path())
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         url = urlresolvers.reverse('wirecloud.workspace_view', kwargs={
             'owner': 'wirecloud',
             'name': 'home'
@@ -157,18 +157,18 @@ def auto_select_workspace(request, mode=None):
 
 def render_workspace_view(request, owner, name):
 
-    if settings.ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
+    if settings.ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated is False:
         return redirect_to_login(request.get_full_path())
 
     get_workspace_list(request.user)
 
     workspace = get_object_or_404(Workspace, creator__username=owner, name=name)
     if not workspace.is_accessible_by(request.user):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return build_error_response(request, 403, 'forbidden')
         else:
             return redirect_to_login(request.get_full_path())
-    elif not request.user.is_authenticated():
+    elif not request.user.is_authenticated:
         # Ensure user has a session
         request.session[settings.LANGUAGE_COOKIE_NAME] = request.session.get(settings.LANGUAGE_COOKIE_NAME, None)
 

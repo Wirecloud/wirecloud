@@ -21,9 +21,9 @@ import json
 from unittest.mock import patch
 from urllib.parse import parse_qs, urlparse
 
-from django.core.urlresolvers import reverse
 from django.test import Client, TransactionTestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 from django.utils.http import urlencode
 
 from wirecloud.commons.utils.conf import BASE_APPS

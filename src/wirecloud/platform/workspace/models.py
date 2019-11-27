@@ -82,8 +82,8 @@ class Workspace(models.Model):
         return (
             user.is_superuser
             or self.public and not self.requireauth
-            or self.public and user.is_authenticated()
-            or user.is_authenticated() and (
+            or self.public and user.is_authenticated
+            or user.is_authenticated and (
                 self.creator == user
                 or self.users.filter(id=user.id).exists()
                 or len(set(self.groups.all()) & set(user.groups.all())) > 0

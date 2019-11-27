@@ -463,7 +463,7 @@ class WirecloudTestCase(object):
 
         # Populate initial db
         if self.populate:
-            management.call_command('populate', verbosity=0, interactive=False)
+            management.call_command('populate', verbosity=0)
 
     def tearDown(self):
 
@@ -673,7 +673,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         LiveServerTestCase.setUp(self)
         WirecloudRemoteTestCase.setUp(self)
-        management.call_command('populate', verbosity=0, interactive=False)
+        management.call_command('populate', verbosity=0)
 
     def tearDown(self):
 

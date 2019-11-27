@@ -20,8 +20,8 @@
 import json
 from unittest.mock import Mock, patch
 
-from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.search_indexes import cleanResults, searchWorkspace, CONTENT_FIELDS
@@ -36,7 +36,7 @@ class WorkspaceIndexTestCase(TestCase):
     tags = ('wirecloud-search-api', 'wirecloud-noselenium')
 
     def test_searchWorkspace_emptyquery(self, sqs_mock, q_mock, buildSearchResults_mock):
-        request_mock = Mock(user=Mock(is_authenticated=Mock(return_value=True)))
+        request_mock = Mock(user=Mock(is_authenticated=True))
         request_mock.user.groups.values_list.return_value = ("onegroup",)
         searchWorkspace(request_mock, "", 1, 10)
         sqs_mock().models.assert_called_with(Workspace)
@@ -46,7 +46,7 @@ class WorkspaceIndexTestCase(TestCase):
 
     @patch("wirecloud.platform.search_indexes.ParseSQ")
     def test_searchWorkspace_query(self, ParseSQ_mock, sqs_mock, q_mock, buildSearchResults_mock):
-        request_mock = Mock(user=Mock(groups=Mock(values_list=Mock(return_value=())), is_authenticated=Mock(return_value=True)))
+        request_mock = Mock(user=Mock(groups=Mock(values_list=Mock(return_value=())), is_authenticated=True))
         ParseSQ_mock().parse.return_value = "filter"
 
         searchWorkspace(request_mock, "query", 1, 10)
@@ -59,7 +59,7 @@ class WorkspaceIndexTestCase(TestCase):
 
     @patch("wirecloud.platform.search_indexes.ParseSQ")
     def test_searchWorkspace_query_anonymous(self, ParseSQ_mock, sqs_mock, q_mock, buildSearchResults_mock):
-        request_mock = Mock(user=Mock(groups=Mock(values_list=Mock(return_value=())), is_authenticated=Mock(return_value=False)))
+        request_mock = Mock(user=Mock(groups=Mock(values_list=Mock(return_value=())), is_authenticated=False))
         ParseSQ_mock().parse.return_value = "filter"
 
         searchWorkspace(request_mock, "query", 1, 10)
@@ -72,7 +72,7 @@ class WorkspaceIndexTestCase(TestCase):
 
     @patch("wirecloud.platform.search_indexes.ParseSQ")
     def test_searchWorkspace_ordered_query(self, ParseSQ_mock, sqs_mock, q_mock, buildSearchResults_mock):
-        request_mock = Mock(user=Mock(groups=Mock(values_list=Mock(return_value=())), is_authenticated=Mock(return_value=True)))
+        request_mock = Mock(user=Mock(groups=Mock(values_list=Mock(return_value=())), is_authenticated=True))
         ParseSQ_mock().parse.return_value = "filter"
 
         searchWorkspace(request_mock, "query", 1, 10, orderby=('title',))

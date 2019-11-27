@@ -27,9 +27,9 @@ import unittest
 from unittest.mock import Mock, patch
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.test import Client, override_settings, TestCase, TransactionTestCase
+from django.urls import reverse
 import selenium
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait

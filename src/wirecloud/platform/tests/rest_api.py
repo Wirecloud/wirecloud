@@ -24,9 +24,9 @@ from lxml import etree
 import os
 from unittest.mock import Mock, patch
 
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.test import Client, TestCase, TransactionTestCase
+from django.urls import reverse
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource

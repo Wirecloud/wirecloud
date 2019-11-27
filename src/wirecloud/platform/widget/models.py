@@ -66,7 +66,7 @@ class WidgetManager(models.Manager):
 
 class Widget(models.Model):
 
-    resource = models.OneToOneField('catalogue.CatalogueResource')
+    resource = models.OneToOneField('catalogue.CatalogueResource', on_delete=models.CASCADE)
 
     xhtml = models.ForeignKey(XHTML, on_delete=models.CASCADE)
     objects = WidgetManager()

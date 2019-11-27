@@ -20,7 +20,7 @@
 import os
 import sys
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 
 BASE_APPS = (
@@ -117,8 +117,13 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         }
     ]
 
-    settings['MIDDLEWARE_CLASSES'] = (
+    settings['MIDDLEWARE'] = (
         'wirecloud.commons.middleware.URLMiddleware',
+    )
+    settings['SILENCED_SYSTEM_CHECKS'] = (
+        'admin.E408',
+        'admin.E409',
+        'admin.E410',
     )
 
     settings['URL_MIDDLEWARE_CLASSES'] = {
@@ -130,7 +135,6 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             'django.middleware.gzip.GZipMiddleware',
             'django.middleware.locale.LocaleMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
         ),
         'api': (
@@ -141,13 +145,11 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             'django.middleware.gzip.GZipMiddleware',
             'django.middleware.locale.LocaleMiddleware',
             'wirecloud.commons.middleware.AuthenticationMiddleware',
-            'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
         ),
         'proxy': (
             'django.middleware.security.SecurityMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
         )
     }
 

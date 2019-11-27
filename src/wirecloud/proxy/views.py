@@ -26,8 +26,8 @@ import sys
 from urllib.parse import unquote, urlparse
 
 from django.conf import settings
-from django.core.urlresolvers import resolve, reverse
 from django.http import StreamingHttpResponse
+from django.urls import resolve, reverse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 

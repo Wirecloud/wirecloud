@@ -22,10 +22,10 @@ import json
 import requests
 
 from django.conf import settings
-from django.core.cache import cache
-from django.core.urlresolvers import reverse
-from django.test import Client, override_settings, TestCase
 from django.contrib.auth.models import User
+from django.core.cache import cache
+from django.test import Client, override_settings, TestCase
+from django.urls import reverse
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
 from wirecloud.platform.models import IWidget

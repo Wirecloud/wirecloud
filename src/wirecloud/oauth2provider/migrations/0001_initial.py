@@ -31,8 +31,8 @@ class Migration(migrations.Migration):
                 ('code', models.CharField(max_length=255, verbose_name='Code')),
                 ('creation_timestamp', models.CharField(max_length=40, verbose_name='Creation timestamp')),
                 ('expires_in', models.CharField(max_length=40, verbose_name='Expires in', blank=True)),
-                ('client', models.ForeignKey(to='oauth2provider.Application')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('client', models.ForeignKey(to='oauth2provider.Application', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -47,8 +47,8 @@ class Migration(migrations.Migration):
                 ('refresh_token', models.CharField(max_length=40, verbose_name='Refresh token', blank=True)),
                 ('creation_timestamp', models.CharField(max_length=40, verbose_name='Creation timestamp')),
                 ('expires_in', models.CharField(max_length=40, verbose_name='Expires in', blank=True)),
-                ('client', models.ForeignKey(to='oauth2provider.Application')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('client', models.ForeignKey(to='oauth2provider.Application', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },

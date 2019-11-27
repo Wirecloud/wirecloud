@@ -19,12 +19,12 @@ urlpatterns = (
     url(r'^cdp/', include('wirecloud.proxy.urls')),
 
     # Login/logout
-    url(r'^login/?$', django_auth.login, name="login"),
+    url(r'^login/?$', django_auth.LoginView.as_view(), name="login"),
     url(r'^logout/?$', wc_auth.logout, name="logout"),
     url(r'^admin/logout/?$', wc_auth.logout),
 
     # Admin interface
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 )
 
 urlpatterns += wirecloud.platform.urls.urlpatterns

@@ -3,8 +3,9 @@ language: python
 cache: pip
 sudo: false
 env:
-    - DJANGO_VERSION=1.10
-    - DJANGO_VERSION=1.11
+    - DJANGO_VERSION=2.0
+    - DJANGO_VERSION=2.1
+    - DJANGO_VERSION=2.2
 python:
     - "3.5"
     - "3.6"
@@ -19,11 +20,11 @@ matrix:
         - python: "3.6"
           env:
               - TEST_SUITE=elasticsearch
-              - DJANGO_VERSION=1.11
+              - DJANGO_VERSION=2.2
         - python: "3.6"
           env:
               - TEST_SUITE=solr
-              - DJANGO_VERSION=1.11
+              - DJANGO_VERSION=2.2
         - node_js: "lts/*"
           language: node_js
           python: ""
@@ -40,7 +41,7 @@ matrix:
               firefox: "60.2.2esr"
           env:
               - TEST_SUITE=selenium
-              - DJANGO_VERSION=1.11
+              - DJANGO_VERSION=2.2
 
 install:
     - . src/ci_scripts/travis_install.sh
