@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,22 +18,35 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from channels import Group
-from channels.auth import channel_session_user, channel_session_user_from_http
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 from wirecloud.live.utils import build_group_name, WIRECLOUD_BROADCAST_GROUP
 
 
-@channel_session_user_from_http
-def ws_connect(message):
-    user_group = build_group_name("live-%s" % message.user.username)
-    Group(user_group).add(message.reply_channel)
-    Group(WIRECLOUD_BROADCAST_GROUP).add(message.reply_channel)
-    message.reply_channel.send({"accept": True})
+class LiveConsumer(AsyncJsonWebsocketConsumer):
 
+    async def connect(self):
+        user_group = build_group_name("live-%s" % self.scope["user"].username)
+        await self.channel_layer.group_add(
+            user_group,
+            self.channel_name
+        )
+        await self.channel_layer.group_add(
+            WIRECLOUD_BROADCAST_GROUP,
+            self.channel_name
+        )
+        await self.accept()
 
-@channel_session_user
-def ws_disconnect(message):
-    user_group = build_group_name("live-%s" % message.user.username)
-    Group(user_group).discard(message.reply_channel)
-    Group(WIRECLOUD_BROADCAST_GROUP).discard(message.reply_channel)
+    async def disconnect(self, close_code):
+        user_group = build_group_name("live-%s" % self.scope["user"].username)
+        await self.channel_layer.group_discard(
+            user_group,
+            self.channel_name
+        )
+        await self.channel_layer.group_discard(
+            WIRECLOUD_BROADCAST_GROUP,
+            self.channel_name
+        )
+
+    async def notification(self, event):
+        await self.send_json(event['data'])

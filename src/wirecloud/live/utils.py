@@ -21,7 +21,7 @@ from base64 import b64encode
 
 
 def build_group_name(name):
-    return b"wc-%s" % b64encode(name.encode('utf-8'), b'-_').replace(b'=', b'.')
+    return "wc-%s" % b64encode(name.encode('utf-8'), b'-_').replace(b'=', b'').decode('utf-8')
 
 
 WIRECLOUD_BROADCAST_GROUP = build_group_name('live-*')
