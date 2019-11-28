@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,10 +18,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
+from asgiref.sync import async_to_sync
 
-from channels import Group
-from django.dispatch import receiver
+import channels.layers
 from django.db.models.signals import m2m_changed, post_save
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -29,9 +29,16 @@ from wirecloud.platform.models import Workspace
 
 
 def notify(data, affected_users):
+    channel_layer = channels.layers.get_channel_layer()
     for user in affected_users:
         group_name = build_group_name('live-%s' % user)
-        Group(group_name).send({"text": json.dumps(data)})
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "notification",
+                "data": data
+            }
+        )
 
 
 def get_affected_users(instance):
@@ -45,27 +52,23 @@ def get_affected_users(instance):
         return affected_users
 
 
-@receiver(post_save, sender=Workspace)
 def workspace_update(sender, instance, created, raw, using, update_fields, **kwargs):
 
     affected_users = get_affected_users(instance)
 
-    if affected_users != '':
-        data = {
-            "workspace": "%s" % instance.id,
-            "action": "update",
-            "category": "workspace"
-        }
+    data = {
+        "workspace": "%s" % instance.id,
+        "action": "update",
+        "category": "workspace"
+    }
 
-        if update_fields is not None:
-            for field in update_fields:
-                data[field] = getattr(instance, field)
+    if update_fields is not None:
+        for field in update_fields:
+            data[field] = getattr(instance, field)
 
-        notify(data, affected_users)
+    notify(data, affected_users)
 
 
-@receiver(m2m_changed, sender=CatalogueResource.groups.through)
-@receiver(m2m_changed, sender=CatalogueResource.users.through)
 def update_users_or_groups(sender, instance, action, reverse, model, pk_set, using, **kwargs):
     if reverse or action.startswith('post_') or (pk_set is not None and len(pk_set) == 0):
         return
@@ -75,7 +78,7 @@ def update_users_or_groups(sender, instance, action, reverse, model, pk_set, usi
             affected_users = set(instance.users.all().values_list("username", flat=True))
         else:
             affected_users = set(model.objects.filter(pk__in=pk_set).values_list("username", flat=True))
-    else:
+    else:  # if sender == CatalogueResource.groups.through
         if action == "pre_clear":
             groups = instance.groups.all()
         else:
@@ -95,16 +98,22 @@ def update_users_or_groups(sender, instance, action, reverse, model, pk_set, usi
     )
 
 
-@receiver(post_save, sender=CatalogueResource)
 def mac_update(sender, instance, created, raw, **kwargs):
 
     affected_users = get_affected_users(instance)
 
-    if len(affected_users) > 0:
-        notify(
-            {
-                "component": instance.local_uri_part,
-                "action": "update",
-            },
-            affected_users
-        )
+    notify(
+        {
+            "component": instance.local_uri_part,
+            "action": "update",
+            "category": "component",
+        },
+        affected_users
+    )
+
+
+def install_signals():
+    post_save.connect(workspace_update, sender=Workspace)
+    m2m_changed.connect(update_users_or_groups, sender=CatalogueResource.groups.through)
+    m2m_changed.connect(update_users_or_groups, sender=CatalogueResource.users.through)
+    post_save.connect(mac_update, sender=CatalogueResource)

@@ -36,10 +36,10 @@ done
 
 # Build and install WireCloud
 ./setup.py bdist_wheel &> /dev/null
-pip install "lxml<4.4" ${TRAVIS_BUILD_DIR}/src/dist/wirecloud*.whl
+pip install "channels<3" "lxml<4.4" ${TRAVIS_BUILD_DIR}/src/dist/wirecloud*.whl
 
 # Install the required testing tools
-pip install django-nose parameterized radon
+pip install -r ${TRAVIS_BUILD_DIR}/src/requirements-dev.txt
 
 # Configure WireCloud
 cat ${TRAVIS_BUILD_DIR}/src/ci_scripts/base_settings.py > settings.py

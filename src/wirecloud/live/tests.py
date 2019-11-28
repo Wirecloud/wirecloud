@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,51 +18,160 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
 import unittest
-from unittest.mock import patch
+from unittest.mock import CallableMixin, Mock, NonCallableMock, patch
 
-from django.conf import settings
 from django.contrib.auth.models import User, Group
-from django.test import TransactionTestCase
+from django.test import TestCase
+from django.utils import timezone
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.models import Workspace
+import wirecloud.live
+
+try:  # pragma: no cover
+    import channels  # noqa
+    from asgiref.sync import async_to_sync
+    CHANNELS_INSTALLED = True
+
+    # Those modules cannot be imported if the channels module is not installed
+    from wirecloud.live import routing
+    from wirecloud.live.apps import WirecloudLiveConfig
+    from wirecloud.live.consumers import LiveConsumer
+    from wirecloud.live.plugins import LivePlugin
+    from wirecloud.live.signals.handlers import install_signals, mac_update, update_users_or_groups, notify, workspace_update
+except ModuleNotFoundError:  # pragma: no cover
+    CHANNELS_INSTALLED = False
 
 
-@unittest.skipIf('wirecloud.live' not in settings.INSTALLED_APPS, 'wirecloud.live not installed')
+# AsyncMock is only available on Python 3.8, provide a backport for being able
+# to pass tests on Python 3.5+
+class AsyncCallableMixin(CallableMixin):
+
+    def __init__(_mock_self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _mock_self.aenter_return_value = _mock_self
+
+    def __call__(_mock_self, *args, **kwargs):
+        # can't use self in-case a function / method we are mocking uses self
+        # in the signature
+        async def wrapper():
+            _mock_self._mock_check_sig(*args, **kwargs)
+            return _mock_self._mock_call(*args, **kwargs)
+
+        return wrapper()
+
+    async def __aenter__(_mock_self):
+        return _mock_self.aenter_return_value
+
+    async def __aexit__(_mock_self, exc_type, exc_val, exc_tb):
+        pass
+
+
+class AsyncMock(AsyncCallableMixin, NonCallableMock):
+    pass
+
+
+@unittest.skipIf(not CHANNELS_INSTALLED, 'django channels package not installed')
 @patch('wirecloud.live.signals.handlers.notify')
-class LiveNotificationsTestCase(WirecloudTestCase, TransactionTestCase):
+class LiveNotificationsTestCase(WirecloudTestCase, TestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-noselenium', 'wirecloud-live')
+    populate = False
+    use_search_indexes = False
 
     def setUp(self):
         self.normuser = User.objects.get(username="normuser")
+        self.orggroup = Group.objects.get(name="org")
 
     def test_mac_install_by_user_are_notified(self, notify_mock):
-        instance = CatalogueResource.objects.create(type=1, creation_date=datetime.datetime.now(), short_name="MyWidget", vendor="Wirecloud", version="1.0")
-        instance.users.add(self.normuser)
+        instance = Mock(speck=CatalogueResource)
+
+        update_users_or_groups(
+            sender=CatalogueResource.users.through,
+            instance=instance,
+            action="pre_add",
+            reverse=False,
+            model=User,
+            pk_set={self.normuser.pk},
+            using="default"
+        )
+
         notify_mock.assert_called_once_with(
             {
-                "component": "Wirecloud/MyWidget/1.0",
+                "component": instance.local_uri_part,
                 "action": "install",
                 "category": "component"
             },
             {"normuser"}
         )
 
-    def test_mac_user_clear_are_notified(self, notify_mock):
-        instance = CatalogueResource.objects.create(type=1, creation_date=datetime.datetime.now(), short_name="MyWidget", vendor="Wirecloud", version="1.0")
-        instance.users.add(self.normuser)
-        notify_mock.reset_mock()
+    def test_mac_install_by_group_are_notified(self, notify_mock):
+        instance = CatalogueResource(type=1, creation_date=timezone.now(), short_name="MyWidget", vendor="Wirecloud", version="1.0")
 
-        instance.users.clear()
+        update_users_or_groups(
+            sender=CatalogueResource.groups.through,
+            instance=instance,
+            action="pre_add",
+            reverse=False,
+            model=Group,
+            pk_set={self.orggroup.pk},
+            using="default"
+        )
 
         notify_mock.assert_called_once_with(
             {
                 "component": "Wirecloud/MyWidget/1.0",
+                "action": "install",
+                "category": "component"
+            },
+            {"orguser", "org"}
+        )
+
+    def test_mac_groups_clear_are_notified(self, notify_mock):
+        group = Mock()
+        group.user_set.values_list.return_value = ("normuser",)
+        instance = Mock(spec=CatalogueResource)
+        instance.groups.all.return_value = (group,)
+
+        update_users_or_groups(
+            sender=CatalogueResource.groups.through,
+            instance=instance,
+            action="pre_clear",
+            reverse=False,
+            model=Group,
+            pk_set={self.normuser.pk},
+            using="default"
+        )
+
+        notify_mock.assert_called_once_with(
+            {
+                "component": instance.local_uri_part,
+                "action": "uninstall",
+                "category": "component"
+            },
+            {"normuser"}
+        )
+
+    def test_mac_user_clear_are_notified(self, notify_mock):
+        instance = Mock(spec=CatalogueResource)
+        instance.users.all().values_list.return_value = ("normuser",)
+
+        update_users_or_groups(
+            sender=CatalogueResource.users.through,
+            instance=instance,
+            action="pre_clear",
+            reverse=False,
+            model=User,
+            pk_set={self.normuser.pk},
+            using="default"
+        )
+
+        notify_mock.assert_called_once_with(
+            {
+                "component": instance.local_uri_part,
                 "action": "uninstall",
                 "category": "component"
             },
@@ -69,15 +179,21 @@ class LiveNotificationsTestCase(WirecloudTestCase, TransactionTestCase):
         )
 
     def test_mac_uninstall_by_user_are_notified(self, notify_mock):
-        instance = CatalogueResource.objects.create(type=1, creation_date=datetime.datetime.now(), short_name="MyWidget", vendor="Wirecloud", version="1.0")
-        instance.users.add(self.normuser)
-        notify_mock.reset_mock()
+        instance = Mock(spec=CatalogueResource)
 
-        instance.users.remove(self.normuser)
+        update_users_or_groups(
+            sender=CatalogueResource.users.through,
+            instance=instance,
+            action="pre_remove",
+            reverse=False,
+            model=User,
+            pk_set={self.normuser.pk},
+            using="default"
+        )
 
         notify_mock.assert_called_once_with(
             {
-                "component": "Wirecloud/MyWidget/1.0",
+                "component": instance.local_uri_part,
                 "action": "uninstall",
                 "category": "component"
             },
@@ -85,8 +201,21 @@ class LiveNotificationsTestCase(WirecloudTestCase, TransactionTestCase):
         )
 
     def test_workspace_updates_are_notified(self, notify_mock):
-        instance = Workspace.objects.get(pk="2")
-        instance.save()
+        instance = Mock(spec=Workspace)
+        instance.id = 2
+        instance.public = False
+        instance.users.values_list.return_value = ("user_with_workspaces",)
+        instance.groups.all.return_value = ()
+
+        workspace_update(
+            sender=Workspace,
+            instance=instance,
+            created=False,
+            raw={},
+            using="default",
+            update_fields=()
+        )
+
         notify_mock.assert_called_once_with(
             {
                 "workspace": "2",
@@ -96,14 +225,51 @@ class LiveNotificationsTestCase(WirecloudTestCase, TransactionTestCase):
             {"user_with_workspaces"}
         )
 
-    def test_workspace_simple_updates_are_notified(self, notify_mock):
-        instance = Workspace.objects.get(pk="2")
-        instance.description = "New description"
-        with patch("time.time", return_value=123456):
-            instance.save(update_fields=("description",))
+    def test_workspace_update_support_empty_update_fields(self, notify_mock):
+        instance = Mock(spec=Workspace)
+        instance.id = 2
+        instance.public = False
+        instance.users.values_list.return_value = ()
+        instance.groups.all.return_value = ()
+
+        workspace_update(
+            sender=Workspace,
+            instance=instance,
+            created=False,
+            raw={},
+            using="default",
+            update_fields=None
+        )
+
         notify_mock.assert_called_once_with(
             {
-                "workspace": "2",
+                "workspace": "%s" % instance.id,
+                "action": "update",
+                "category": "workspace",
+            },
+            set()
+        )
+
+    def test_workspace_simple_updates_are_notified(self, notify_mock):
+        instance = Mock(spec=Workspace)
+        instance.public = False
+        instance.description = "New description"
+        instance.last_modified = 123456000
+        instance.users.values_list.return_value = ("user_with_workspaces",)
+        instance.groups.all.return_value = ()
+
+        workspace_update(
+            sender=Workspace,
+            instance=instance,
+            created=False,
+            raw={},
+            using="default",
+            update_fields=('description', 'last_modified')
+        )
+
+        notify_mock.assert_called_once_with(
+            {
+                "workspace": "%s" % instance.id,
                 "action": "update",
                 "category": "workspace",
                 "description": "New description",
@@ -113,12 +279,23 @@ class LiveNotificationsTestCase(WirecloudTestCase, TransactionTestCase):
         )
 
     def test_workspace_simple_updates_are_notified_shared(self, notify_mock):
-        instance = Workspace.objects.get(pk="2")
-        instance.userworkspace_set.create(user=User.objects.get(username="normuser"))
-        instance.groups.add(Group.objects.get(name="org"))
+        instance = Mock(spec=Workspace)
+        instance.id = 2
+        instance.public = False
+        instance.users.values_list.return_value = ("normuser", "user_with_workspaces")
+        instance.groups.all.return_value = (self.orggroup,)
         instance.description = "New description"
-        with patch("time.time", return_value=123456):
-            instance.save(update_fields=("description",))
+        instance.last_modified = 123456000
+
+        workspace_update(
+            sender=Workspace,
+            instance=instance,
+            created=False,
+            raw={},
+            using="default",
+            update_fields=('description', 'last_modified')
+        )
+
         notify_mock.assert_called_once_with(
             {
                 "workspace": "2",
@@ -131,10 +308,21 @@ class LiveNotificationsTestCase(WirecloudTestCase, TransactionTestCase):
         )
 
     def test_workspace_public_updates_are_notified(self, notify_mock):
-        instance = Workspace.objects.get(pk="4")
+        instance = Mock(spec=Workspace)
+        instance.id = 4
+        instance.public = True
         instance.description = "New description"
-        with patch("time.time", return_value=123456):
-            instance.save(update_fields=("description",))
+        instance.last_modified = 123456000
+
+        workspace_update(
+            sender=Workspace,
+            instance=instance,
+            created=False,
+            raw={},
+            using="default",
+            update_fields=('description', 'last_modified')
+        )
+
         notify_mock.assert_called_once_with(
             {
                 "workspace": "4",
@@ -145,3 +333,90 @@ class LiveNotificationsTestCase(WirecloudTestCase, TransactionTestCase):
             },
             {"*"}
         )
+
+    def test_mac_install_should_be_ignored_post(self, notify_mock):
+        instance = Mock(speck=CatalogueResource)
+
+        update_users_or_groups(
+            sender=CatalogueResource.users.through,
+            instance=instance,
+            action="post_add",
+            reverse=False,
+            model=User,
+            pk_set={self.normuser.pk},
+            using="default"
+        )
+
+        notify_mock.assert_not_called()
+
+    def test_mac_update(self, notify_mock):
+        instance = Mock(speck=CatalogueResource)
+        instance.public = True
+
+        mac_update(
+            sender=CatalogueResource.users.through,
+            instance=instance,
+            created=False,
+            raw=None
+        )
+
+        notify_mock.assert_called_once_with(
+            {
+                "component": instance.local_uri_part,
+                "action": "update",
+                "category": "component"
+            },
+            {"*"}
+        )
+
+    @patch("wirecloud.live.signals.handlers.channels")
+    @patch("wirecloud.live.signals.handlers.async_to_sync")
+    def test_notify(self, notify_mock, channels_mock, async_to_sync_mock):
+        notify({}, ("a",))
+
+    @patch("wirecloud.live.signals.handlers.m2m_changed")
+    @patch("wirecloud.live.signals.handlers.post_save")
+    def test_install_signals(self, notify_mock, channels_mock, async_to_sync_mock):
+        install_signals()
+
+    @patch("wirecloud.live.apps.install_signals")
+    def test_live_app_ready(self, notify_mock, install_signals_mock):
+        app = WirecloudLiveConfig("wirecloud.live", wirecloud.live)
+        app.ready()
+
+        install_signals_mock.toHaveBeenCalled()
+
+    def test_consumer_connect(self, notify_mock):
+        consumer = LiveConsumer({"user": Mock(username="aarranz")})
+        consumer.channel_name = "aname"
+        consumer.channel_layer = AsyncMock()
+        consumer.accept = AsyncMock()
+
+        async_to_sync(consumer.connect)()
+
+        self.assertGreater(consumer.channel_layer.group_add.call_count, 0)
+        consumer.accept.assert_called_once_with()
+
+    def test_consumer_disconnect(self, notify_mock):
+        consumer = LiveConsumer({"user": Mock(username="aarranz")})
+        consumer.channel_name = "aname"
+        consumer.channel_layer = AsyncMock()
+
+        async_to_sync(consumer.disconnect)("aclose_code")
+
+        self.assertGreater(consumer.channel_layer.group_discard.call_count, 0)
+
+    def test_consumer_notification(self, notify_mock):
+        consumer = LiveConsumer({"user": Mock(username="aarranz")})
+        consumer.send_json = AsyncMock()
+
+        async_to_sync(consumer.notification)({"data": "jsondata"})
+
+        consumer.send_json.assert_called_once_with("jsondata")
+
+    def test_plugin(self, notify_mock):
+        plugin = LivePlugin()
+        plugin.get_ajax_endpoints("classic")
+
+    def test_routing(self, notify_mock):
+        self.assertTrue(hasattr(routing, "application"))

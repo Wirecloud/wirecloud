@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -17,10 +17,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from channels.routing import route
-from wirecloud.live.consumers import ws_connect, ws_disconnect
 
-channel_routing = [
-    route("websocket.connect", ws_connect, path="^/api/live"),
-    route("websocket.disconnect", ws_disconnect),
-]
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.urls import path
+
+from . import consumers
+
+application = ProtocolTypeRouter({
+    "websocket": AuthMiddlewareStack(
+        URLRouter([
+            path("api/live", consumers.LiveConsumer)
+        ])
+    )
+})
