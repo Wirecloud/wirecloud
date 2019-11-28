@@ -20,7 +20,7 @@ services:
         environment:
             - POSTGRES_PASSWORD=wirepass   # Change this password!
         volumes:
-            - ./postgres-data:/var/lib/postgresql/data
+            - /var/lib/postgresql/data
 
 
     elasticsearch:
