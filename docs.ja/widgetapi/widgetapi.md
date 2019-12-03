@@ -178,6 +178,8 @@ var request = MashupPlatform.http.makeRequest("http://api.example.com", {
     実行が保証されます。レスポンス・オブジェクトを第1引数として受け取ります
 -   `onException`: `onXYZ`, `onSuccess`, `onFailure`, `onComplete` コールバックのいずれかを実行して例外が
     発生するたびにトリガされます。リクエストを第1引数として受け取り、例外オブジェクトを第2引数として受け取ります
+-   `onProgress`: リクエスト時にこれまでに行われた進捗量を示すために定期的にトリガーされます
+-   `onUploadProgress`: アップロード時にこれまでに行われた進捗量を示すために定期的にトリガーされます
 
 
 #### リクエスト・オブジェクト

@@ -450,6 +450,17 @@
                     .toHaveBeenCalledWith("progress", listener, false);
             });
 
+            it("should support the onProgress listener", function () {
+                var url = "http://server:1234/path";
+                var listener = function () {};
+
+                var request = Wirecloud.io.makeRequest(url, {
+                    onProgress: listener
+                });
+                expect(request.transport.addEventListener)
+                    .toHaveBeenCalledWith("progress", listener, false);
+            });
+
             it("should allow to abort requests", function () {
                 var url = "http://server:1234/path?q=1";
 

@@ -167,6 +167,8 @@ var request = MashupPlatform.http.makeRequest("http://api.example.com", {
     during the request. Receives the response object as the first argument
 -   `onException`: Triggered whenever an exception arises running any of the `onXYZ`, `onSuccess`, `onFailure` and
     `onComplete` callbacks. Receives the request as the first argument, and the exception object as the second one
+-   `onProgress`: Periodically triggered to indicate the amount of progress made so far on request
+-   `onUploadProgress`: Periodically triggered to indicate the amount of progress made so far on upload
 
 #### Request object
 
