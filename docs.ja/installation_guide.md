@@ -1,6 +1,6 @@
 ## イントロダクション
 
-このドキュメントでは、WireCloud version 1.3 (FIWARE release 7.7 以降) のインストール方法について説明します。
+このドキュメントでは、WireCloud version 1.4 (FIWARE release 7.7 以降) のインストール方法について説明します。
 バグ、タイプミス、あなたが含まれるべきだが含まれていないと思うものなど、このドキュメントに関するフィードバックは
 大歓迎です。
 
@@ -11,7 +11,7 @@
 
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
 - Python 3.4+. 以下の python パッケージをインストールする必要があります :
-    - Django 1.10-1.11
+    - Django 2.0+
     - lxml 2.3.0+
     - django-appconf 1.0.1+
     - django_compressor 2.0+
@@ -19,7 +19,7 @@
     - requests 2.1.0+
     - selenium 3.4+
     - pytz
-    - django_relatives 0.3.x
+    - django_relatives 1.x
     - user-agents
     - regex
     - markdown
@@ -986,21 +986,26 @@ WireCloud 1.0 では、Web  ソケットを介したリアルタイム同期の�
 
 このサポートを有効にする手順は次のとおりです :
 
--  [Django チャンネル](https://channels.readthedocs.io/en/latest/)をインストール :
+<zbr>1.   [Django チャンネル](https://channels.readthedocs.io/en/latest/)をインストール :
 
 
 ```bash
-$ pip install channels
+pip install "channels<3"
 ```
 
--  `channels` と` wirecloud.live` を `settings.py` ファイルの `INSTALLED_APPS` 設定に追加します。
--  `CHANNEL_LAYERS` 設定を構成して、チャネル・フレームワークを設定します。たとえば、次の設定を使用できます :
+<zbr>2.   `channels` と` wirecloud.live` を `settings.py` ファイルの `INSTALLED_APPS` 設定に追加します。
+
+<zbr>3.   `ASGI_APPLICATION` と `CHANNEL_LAYERS` 設定を構成して、チャネル・フレームワークを設定します。
+    たとえば、次の設定を使用できます :
 
 ```python
+ASGI_APPLICATION = 'wirecloud.live.routing.application'
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "wirecloud.live.routing.channel_routing",
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
 }
 ```
