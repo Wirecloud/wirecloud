@@ -225,6 +225,9 @@
         if (typeof this.options.onUploadProgress === 'function') {
             this.transport.upload.addEventListener('progress', options.onUploadProgress, false);
         }
+        if (typeof this.options.onProgress === 'function') {
+            this.transport.addEventListener('progress', options.onProgress, false);
+        }
 
         Wirecloud.Task.call(this, "making request", function (resolve, reject, update) {
             this.transport.upload.addEventListener('progress', function (event) {
