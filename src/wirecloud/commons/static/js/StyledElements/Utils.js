@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -952,6 +953,41 @@ if (window.StyledElements == null) {
             setA.add(elem);
         }
         return setA;
+    };
+
+    /**
+     * Creates a new promise that will reject if the original promise does not
+     * resolve or reject in a specific period of time. It is also possible to
+     * use this method to fullfil with a default value if the fallback
+     * parameter is passed.
+     *
+     * @param {Promise} promise original Promise
+     * @param {Number} ms time to wait until the promise should be rejected or
+     *        resolved
+     * @param {*} [fallback] if provided, the created promise will resolve
+     *        instead of being rejected. fallback value will be used as Promise
+     *        value.
+     *
+     * @returns {Promise}
+     */
+    Utils.timeoutPromise = function timeoutPromise(promise, ms, fallback) {
+        // Create a promise that resolves/rejects in <ms> milliseconds
+        let timeout = new Promise((resolve, reject) => {
+            let id = setTimeout(() => {
+                clearTimeout(id);
+                if (fallback != null) {
+                    resolve(fallback);
+                } else {
+                    reject('Timed out in ' + ms + 'ms.')
+                }
+            }, ms);
+        });
+
+        // Returns a race between our timeout and the passed in promise
+        return Promise.race([
+            promise,
+            timeout
+        ]);
     };
 
     Utils.waitTransition = function waitTransition(element) {

@@ -336,10 +336,10 @@
                 inAlternative.altId < outAlternative.altId ? 'left' : 'right'
             ]).show();
             p = p.then(function () {
-                return Promise.all([
+                return utils.timeoutPromise(Promise.all([
                     utils.waitTransition(inAlternative.get()),
                     utils.waitTransition(outAlternative.get())
-                ]);
+                ]), 3000, 'timeout');
             }).then(function () {
                 inAlternative.removeClassName('slide');
                 outAlternative.removeClassName('slide left right').hide();
@@ -354,10 +354,10 @@
             inAlternative.addClassName('fade').show();
             outAlternative.addClassName('fade in');
             p = p.then(function () {
-                return Promise.all([
+                return utils.timeoutPromise(Promise.all([
                     utils.waitTransition(inAlternative.get()),
                     utils.waitTransition(outAlternative.get())
-                ]);
+                ]), 3000, 'timeout');
             }).then(function () {
                 inAlternative.removeClassName('fade in');
                 outAlternative.removeClassName('fade').hide();
