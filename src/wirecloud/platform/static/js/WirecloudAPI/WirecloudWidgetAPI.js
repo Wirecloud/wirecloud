@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,52 +27,65 @@
 
     "use strict";
 
-    var platform, view, model, IWidgetVariable, endpoint_name, inputs, outputs;
-
-    platform = window.parent;
-
     // Init resource entry (in this case a widget) so other API files can make
     // use of it
-    view = MashupPlatform.priv.workspaceview.findWidget(MashupPlatform.priv.id);
-    model = view.model;
+    const view = MashupPlatform.priv.workspaceview.findWidget(MashupPlatform.priv.id);
+    const model = view.model;
     MashupPlatform.priv.view = view;
     MashupPlatform.priv.resource = model;
 
-    IWidgetVariable = function IWidgetVariable(variable) {
-        this.set = function set(value) {
-            variable.set(value);
-        };
+    class IWidgetVariable {
 
-        this.get = function get() {
-            return variable.get();
-        };
-        Object.freeze(this);
-    };
+        constructor(variable) {
+            this.set = function set(value) {
+                variable.set(value);
+            };
+
+            this.get = function get() {
+                return variable.get();
+            };
+            Object.freeze(this);
+        }
+
+    }
 
     // Widget module
     Object.defineProperty(window.MashupPlatform, 'widget', {value: {}});
-    Object.defineProperty(window.MashupPlatform.widget, 'id', {value: MashupPlatform.priv.id});
-    Object.defineProperty(window.MashupPlatform.widget, 'getVariable', {
-        value: function getVariable(name) {
-            var variable = model.properties[name];
-            if (variable != null) {
-                return new IWidgetVariable(variable);
+    Object.defineProperties(window.MashupPlatform.widget, {
+        id: {
+            value: MashupPlatform.priv.id
+        },
+        getVariable: {
+            value: function getVariable(name) {
+                const variable = model.properties[name];
+                if (variable != null) {
+                    return new IWidgetVariable(variable);
+                }
+            }
+        },
+        drawAttention: {
+            value: function drawAttention() {
+                view.tab.workspace.drawAttention(model.id);
+            }
+        },
+        close: {
+            value: function close() {
+                if (!model.volatile) {
+                    throw new TypeError('Only volatile widgets can be closed');
+                }
+                model.remove();
+            }
+        },
+        context: {
+            value: {}
+        },
+        log: {
+            value: function log(msg, level) {
+                model.logManager.log(msg, level);
             }
         }
     });
 
-    Object.defineProperty(window.MashupPlatform.widget, 'drawAttention', {
-        value: function drawAttention() {
-            view.tab.workspace.drawAttention(model.id);
-        }
-    });
-
-    Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
-    Object.defineProperty(window.MashupPlatform.widget, 'log', {
-        value: function log(msg, level) {
-            model.logManager.log(msg, level);
-        }
-    });
     Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {
         value: function getAvailableContext() {
             return model.contextManager.getAvailableContext();
@@ -94,15 +108,15 @@
     Object.preventExtensions(window.MashupPlatform.widget.context);
 
     // Inputs
-    inputs = {};
-    for (endpoint_name in model.inputs) {
+    const inputs = {};
+    for (let endpoint_name in model.inputs) {
         inputs[endpoint_name] = new MashupPlatform.priv.InputEndpoint(model.inputs[endpoint_name], true);
     }
     Object.defineProperty(window.MashupPlatform.widget, 'inputs', {value: inputs});
 
     // Outputs
-    outputs = {};
-    for (endpoint_name in model.outputs) {
+    const outputs = {};
+    for (let endpoint_name in model.outputs) {
         outputs[endpoint_name] = new MashupPlatform.priv.OutputEndpoint(model.outputs[endpoint_name], true);
     }
     Object.defineProperty(window.MashupPlatform.widget, 'outputs', {value: outputs});
