@@ -112,7 +112,10 @@
         // Init platform context
         var contextTask = Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
             method: 'GET',
-            parameters: {theme: Wirecloud.constants.CURRENT_THEME},
+            parameters: {
+                lang: Wirecloud.constants.CURRENT_LANGUAGE,
+                theme: Wirecloud.constants.CURRENT_THEME
+            },
             requestHeaders: {'Accept': 'application/json'}
         }).then((response) => {
             var context_info = JSON.parse(response.responseText);
@@ -129,9 +132,13 @@
 
         var themeTask = contextTask.then(() => {
             // Init theme
-            var url =  Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')}) + "?v=" + Wirecloud.contextManager.get('version_hash');
+            var url =  Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')});
             return Wirecloud.io.makeRequest(url, {
                 method: 'GET',
+                parameters: {
+                    lang: Wirecloud.constants.CURRENT_LANGUAGE,
+                    v: Wirecloud.contextManager.get('version_hash')
+                },
                 requestHeaders: {'Accept': 'application/json'}
             }).then((response) => {
                 Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));

@@ -64,8 +64,7 @@ class NoseArgs(object):
 
 def load_default_wirecloud_conf(settings, instance_type='platform'):
 
-    if 'DEBUG' not in settings:
-        settings['DEBUG'] = False
+    settings.setdefault('DEBUG', False)
 
     settings['APPEND_SLASH'] = False
 
@@ -133,7 +132,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             'django.middleware.http.ConditionalGetMiddleware',
             'django.middleware.common.CommonMiddleware',
             'django.middleware.gzip.GZipMiddleware',
-            'django.middleware.locale.LocaleMiddleware',
+            'wirecloud.commons.middleware.LocaleMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
         ),
@@ -143,7 +142,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             'django.middleware.http.ConditionalGetMiddleware',
             'django.middleware.common.CommonMiddleware',
             'django.middleware.gzip.GZipMiddleware',
-            'django.middleware.locale.LocaleMiddleware',
+            'wirecloud.commons.middleware.LocaleMiddleware',
             'wirecloud.commons.middleware.AuthenticationMiddleware',
         ),
         'proxy': (

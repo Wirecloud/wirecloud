@@ -31,6 +31,7 @@ from django.template import TemplateDoesNotExist
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
 from django.utils.http import urlencode
+from django.utils.translation import check_for_language
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_safe
 from user_agents import parse as ua_parse
@@ -215,9 +216,14 @@ def render_wirecloud(request, view_type=None, title=None, description=None):
     if theme not in get_available_themes():
         return remove_query_parameter(request, 'theme')
 
+    lang = request.GET.get("lang")
+    if lang is not None and not check_for_language(lang):
+        return remove_query_parameter(request, 'lang')
+
     context = {
         'title': title,
         'description': description,
+        'LANG': lang,
         'THEME': theme,
         'VIEW_MODE': view_type,
         'WIRECLOUD_VERSION_HASH': get_version_hash(),

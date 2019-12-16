@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -21,6 +22,7 @@ from importlib import import_module
 
 from django.contrib.auth.middleware import get_user
 from django.urls import reverse
+from django.utils import translation
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import SimpleLazyObject
 from django.utils.translation import ugettext as _
@@ -137,6 +139,27 @@ class URLMiddleware(MiddlewareMixin):
             response = middleware(request, exception)
             if response:
                 return response
+
+
+class LocaleMiddleware(MiddlewareMixin):
+    """
+    Parse a request and decide what translation object to install in the
+    current thread context. This allows pages to be dynamically translated to
+    the language the user desires (if the language is available, of course).
+    """
+
+    def process_request(self, request):
+        if 'lang' in request.GET and translation.check_for_language(request.GET['lang']):
+            language = request.GET['lang']
+        else:
+            language = translation.get_language_from_request(request, check_path=False)
+        translation.activate(language)
+        request.LANGUAGE_CODE = translation.get_language()
+
+    def process_response(self, request, response):
+        language = translation.get_language()
+        response.setdefault('Content-Language', language)
+        return response
 
 
 def get_api_user(request):
