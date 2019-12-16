@@ -751,6 +751,9 @@
             return;
         }
 
+        let position = this.getCellAt(x, y);
+        x = position.x;
+        y = position.y;
         if (y < 0) {
             y = 0;
         }
@@ -799,7 +802,7 @@
         this.dragboardCursor = null;
     };
 
-    ColumnLayout.prototype.acceptMove = function () {
+    ColumnLayout.prototype.acceptMove = function acceptMove() {
         if (this.iwidgetToMove == null) {
             var msg = "Dragboard: Function acceptMove called when there is not an started widget move.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);

@@ -98,6 +98,7 @@
         context.widget.wrapperElement.style.top = (context.y + yDelta) + 'px';
         context.widget.wrapperElement.style.bottom = "";
         context.widget.wrapperElement.style.right = "";
+        context.widget.wrapperElement.style.marginLeft = "";
 
         const x = context.x + xDelta + context.xOffset;
         const y = context.y + yDelta + context.yOffset;
@@ -109,9 +110,7 @@
 
         // The mouse is not over a tab
         // The cursor must allways be inside the dragboard
-        var position = context.widget.layout.getCellAt(x, y);
-        context.widget.layout.moveTemporally(position.x, position.y);
-        return;
+        context.widget.layout.moveTemporally(x, y);
     };
 
     WidgetViewDraggable.prototype.ondragend = function ondragend(draggable, context) {

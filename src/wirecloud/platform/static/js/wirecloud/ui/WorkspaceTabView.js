@@ -177,7 +177,12 @@
                 commit: true,
                 height: resource.default_height,
                 layout: this.model.preferences.get('initiallayout') === "Free" ? 1 : 0,
-                width: resource.default_width
+                width: resource.default_width,
+                anchor: 'topleft',
+                relx: true,
+                rely: false,
+                relwidth: true,
+                relheight: false
             }, options);
 
             var layouts = [
@@ -188,10 +193,18 @@
             ];
             layout = layouts[options.layout];
 
-            options.left = options.left != null ? layout.adaptColumnOffset(options.left).inLU : undefined;
+            if (layout !== this.dragboard.freeLayout || options.relx) {
+                options.left = options.left != null ? layout.adaptColumnOffset(options.left).inLU : undefined;
+            } else {
+                options.left = options.left != null ? layout.adaptColumnOffset(options.left).inPixels : undefined;
+            }
             options.top = options.top != null ? layout.adaptRowOffset(options.top).inLU : undefined;
             options.height = clean_number(layout.adaptHeight(options.height).inLU, 1);
-            options.width = clean_number(layout.adaptWidth(options.width).inLU, 1, layout.columns);
+            if (layout !== this.dragboard.freeLayout || options.relwidth) {
+                options.width = clean_number(layout.adaptWidth(options.width).inLU, 1, layout.columns);
+            } else {
+                options.width = clean_number(layout.adaptWidth(options.width).inPixels, 1);
+            }
 
             if (options.left == null || options.top == null) {
                 if (options.refposition && "searchBestPosition" in layout) {

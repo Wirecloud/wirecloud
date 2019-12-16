@@ -217,11 +217,90 @@
             return;
         }
 
+        // Y coordinate
+        if (this.iwidgetToMove.position.rely) {
+            this.newPosition.y -= this.dragboardTopMargin - 1;
+        }
+        if (["bottomcenter", "bottomleft", "bottomright"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+            this.newPosition.y = this.getHeight() - this.iwidgetToMove.shape.height - this.newPosition.y;
+        }
+        if (this.iwidgetToMove.position.rely) {
+            this.newPosition.y = this.adaptRowOffset(this.newPosition.y + 'px').inLU;
+        }
+
+        // X coordinate
+        if (this.iwidgetToMove.position.relx) {
+            this.newPosition.x -= this.dragboardTopMargin - 1;
+        }
+        if (["bottomcenter", "topcenter"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+            this.newPosition.x += this.iwidgetToMove.shape.width / 2;
+        } else if (["bottomright", "topright"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+            this.newPosition.x = this.getWidth() - this.iwidgetToMove.shape.width - this.newPosition.x;
+        }
+        if (this.iwidgetToMove.position.relx) {
+            this.newPosition.x = this.adaptColumnOffset(this.newPosition.x + 'px').inLU;
+        }
         this.iwidgetToMove.setPosition(this.newPosition);
         this.dragboard.update([this.iwidgetToMove.id]);
 
         this.iwidgetToMove = null;
         this.newPosition = null;
+    };
+
+    FreeLayout.prototype.updatePosition = function updatePosition(widget, element) {
+        switch (widget.position.anchor) {
+        case "topleft":
+        case "topright":
+        case "topcenter":
+            element.style.top = (widget.position.rely ? this.getRowOffset(widget.position.y) : widget.position.y) + "px";
+            element.style.bottom = "";
+            break;
+        case "bottomleft":
+        case "bottomright":
+        case "bottomcenter":
+            element.style.top = "";
+            element.style.bottom = (widget.position.rely ? this.getRowOffset(widget.position.y) : widget.position.y) + "px";
+            break;
+        }
+
+        switch (widget.position.anchor) {
+        case "topright":
+        case "bottomright":
+            element.style.left = "";
+            element.style.right = (widget.position.relx ? this.getColumnOffset(widget.position.x) : widget.position.x) + "px";
+            element.style.marginLeft = "";
+            break;
+        case "topleft":
+        case "bottomleft":
+            element.style.left = (widget.position.relx ? this.getColumnOffset(widget.position.x) : widget.position.x) + "px";
+            element.style.right = "";
+            element.style.marginLeft = "";
+            break;
+        case "topcenter":
+        case "bottomcenter":
+            if (widget.position.relx) {
+                element.style.left = (widget.position.x / 10000) + "%";
+            } else {
+                element.style.left = widget.position.x + "%";
+            }
+            element.style.right = "";
+            if (widget.shape.relwidth) {
+                element.style.marginLeft = '-' + (widget.shape.width / 2) + '%';
+            } else {
+                element.style.marginLeft = '-' + (widget.shape.width / 2) + 'px';
+            }
+
+            break;
+        }
+    };
+
+    FreeLayout.prototype.updateShape = function updateShape(widget, element) {
+        if (widget.shape.relwidth) {
+            element.style.width = (widget.shape.width / 10000) + '%';
+        } else {
+            element.style.width = widget.shape.width + 'px';
+        }
+        element.style.height = widget.minimized ? "" : widget.shape.height + 'px';
     };
 
     FreeLayout.prototype.cancelMove = function cancelMove() {

@@ -668,6 +668,9 @@
             return;
         }
 
+        let position = this.getCellAt(x, y);
+        x = position.x;
+        y = position.y;
         if (y < 0) {
             y = 0;
         }

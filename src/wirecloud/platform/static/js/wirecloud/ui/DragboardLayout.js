@@ -144,6 +144,22 @@
         element.style.right = "";
     };
 
+    DragboardLayout.prototype.updateShape = function updateShape(widget, element) {
+        let width = this.getWidthInPixels(widget.shape.width);
+        if (width != null) {
+            element.style.width = width + 'px';
+        } else {
+            element.style.width = "";
+        }
+
+        let height = widget.minimized ? null : this.getHeightInPixels(widget.shape.height);
+        if (height != null) {
+            element.style.height = height + 'px';
+        } else {
+            element.style.height = "";
+        }
+    };
+
     DragboardLayout.prototype.padWidth = function padWidth(width) {
         return width;
     };
@@ -182,16 +198,17 @@
         return this.dragboard.getHeight();
     };
 
-    Object.defineProperty(DragboardLayout.prototype, "dragboardTopMargin", {
-        get: function () {
-            return this.dragboard.topMargin;
-        }
-    });
-
-    Object.defineProperty(DragboardLayout.prototype, "dragboardLeftMargin", {
-        configurable: true,
-        get: function () {
-            return this.dragboard.leftMargin;
+    Object.defineProperties(DragboardLayout.prototype, {
+        "dragboardTopMargin": {
+            get: function () {
+                return this.dragboard.topMargin;
+            }
+        },
+        "dragboardLeftMargin": {
+            configurable: true,
+            get: function () {
+                return this.dragboard.leftMargin;
+            }
         }
     });
 

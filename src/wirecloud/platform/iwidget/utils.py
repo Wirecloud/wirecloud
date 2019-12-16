@@ -109,6 +109,8 @@ def update_position(iwidget, key, data):
     update_size_value(position, data, 'height')
     update_position_value(position, data, 'top')
     update_position_value(position, data, 'left')
+    if 'rel' in data:
+        position['rel'] = data['rel']  # TODO
     update_position_value(position, data, 'zIndex')
     update_boolean_value(position, data, 'minimized')
     update_boolean_value(position, data, 'titlevisible')
