@@ -291,9 +291,17 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Is Superuser'),
                 'description': _('Boolean. Designates whether current user is a super user.'),
             },
+            'groups': {
+                'label': _('User Groups'),
+                'description': _('List of the groups the user belongs to.'),
+            },
             'mode': {
                 'label': _('Mode'),
                 'description': _('Rendering mode used by the platform (available modes: classic, smartphone and embedded)'),
+            },
+            'organizations': {
+                'label': _('User Organizations'),
+                'description': _('List of the organizations the user belongs to.'),
             },
             'orientation': {
                 'label': _('Orientation'),
@@ -339,6 +347,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'isanonymous': user.is_anonymous,
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
+            'groups': tuple(user.groups.values_list('name', flat=True)),
+            'organizations': tuple(user.groups.filter(organization__isnull=False).values_list('name', flat=True)),
             'mode': 'unknown',
             'realuser': session.get("realuser"),
             'theme': get_active_theme_name(),
