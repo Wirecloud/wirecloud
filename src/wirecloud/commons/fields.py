@@ -2,9 +2,7 @@ import copy
 import json
 
 from django.core.exceptions import ValidationError
-from django.db import connection, models
-
-from django.utils.encoding import smart_text
+from django.db import models
 
 
 class JSONField(models.TextField):
@@ -24,9 +22,8 @@ class JSONField(models.TextField):
             if callable(self.default):
                 return copy.deepcopy(self.default())
             return copy.deepcopy(self.default)
-        if not self.empty_strings_allowed or (self.null and not connection.features.interprets_empty_strings_as_nulls):
-            return None
-        return ""
+        else:
+            return None if self.null else {}
 
     def from_db_value(self, value, expression, connection, context):
         return self.to_python(value)
@@ -36,11 +33,10 @@ class JSONField(models.TextField):
         Convert the input JSON value into python structures, raises
         django.core.exceptions.ValidationError if the data can't be converted.
         """
-        if self.blank and not value:
-            return {}
+        if self.null and value is None:
+            return None
+
         value = value or '{}'
-        if isinstance(value, bytes):
-            value = str(value, 'utf-8')
         if isinstance(value, str):
             try:
                 return json.loads(value)
@@ -48,16 +44,6 @@ class JSONField(models.TextField):
                 raise ValidationError(str(err))
         else:
             return value
-
-    def validate(self, value, model_instance):
-        """Check value is a valid JSON string, raise ValidationError on
-        error."""
-        if isinstance(value, str):
-            super(JSONField, self).validate(value, model_instance)
-            try:
-                json.loads(value)
-            except Exception as err:
-                raise ValidationError(str(err))
 
     def get_prep_value(self, value):
         """Convert value to JSON string before save"""
@@ -67,9 +53,9 @@ class JSONField(models.TextField):
             raise ValidationError(str(err))
 
     def value_to_string(self, obj):
-        """Return value from object converted to string properly"""
-        return smart_text(self.get_prep_value(self._get_val_from_obj(obj)))
+        """Converts obj to a string. Used to serialize the value of the field."""
+        return self.value_from_object(obj)
 
     def value_from_object(self, obj):
         """Return value dumped to string."""
-        return self.get_prep_value(self._get_val_from_obj(obj))
+        return self.get_prep_value(super(JSONField, self).value_from_object(obj))
