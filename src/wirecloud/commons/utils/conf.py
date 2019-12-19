@@ -130,7 +130,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         'default': (
             'django.middleware.security.SecurityMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
-            'wirecloud.commons.middleware.ConditionalGetMiddleware',
+            'django.middleware.http.ConditionalGetMiddleware',
             'django.middleware.common.CommonMiddleware',
             'django.middleware.gzip.GZipMiddleware',
             'django.middleware.locale.LocaleMiddleware',
@@ -140,7 +140,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         'api': (
             'django.middleware.security.SecurityMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
-            'wirecloud.commons.middleware.ConditionalGetMiddleware',
+            'django.middleware.http.ConditionalGetMiddleware',
             'django.middleware.common.CommonMiddleware',
             'django.middleware.gzip.GZipMiddleware',
             'django.middleware.locale.LocaleMiddleware',
