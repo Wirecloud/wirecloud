@@ -215,7 +215,8 @@
             'search_criteria': options.keywords,
             'scope': options.scope,
             'pagenum': page,
-            'maxresults': options.pageSize
+            'maxresults': options.pageSize,
+            'lang': Wirecloud.contextManager.get('language')
         };
         if (typeof this.catalogue.getCurrentSearchContext === 'function') {
             options = utils.merge(options, this.catalogue.getCurrentSearchContext());

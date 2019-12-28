@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -150,7 +150,8 @@
         this.dispatchEvent('search');
         priv.request = Wirecloud.LocalCatalogue.search({
             scope: this.search_scope,
-            search_criteria: keywords
+            search_criteria: keywords,
+            lang: Wirecloud.contextManager.get('language')
         }).then((search_info) => {
             on_search_success.call(this, keywords, search_info.resources, search_info);
         }, (error) => {

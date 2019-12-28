@@ -168,6 +168,12 @@
 
         });
 
+        afterEach(() => {
+            if (Wirecloud.contextManager != null) {
+                delete Wirecloud.contextManager;
+            }
+        });
+
         // TODO
         afterAll(() => {
             delete Wirecloud.PropertyCommiter;

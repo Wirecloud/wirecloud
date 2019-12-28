@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -38,13 +39,18 @@
         Wirecloud.MashableApplicationComponent.call(this, data);
 
         if (this.missing) {
-            this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, Wirecloud.location.base)).href;
+            this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, Wirecloud.location.base)).href + '?lang=' + Wirecloud.contextManager.get('language');
             this.codecontenttype = "application/xhtml+xml";
         } else {
             this.codeurl = data.contents.src;
             this.codecontenttype = data.contents.contenttype;
         }
-        this.codeurl += "?entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
+        if (this.codeurl.indexOf('?') === -1) {
+            this.codeurl += '?';
+        } else {
+            this.codeurl += '&';
+        }
+        this.codeurl += "entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
 
         // Properties
         this.properties = {};
