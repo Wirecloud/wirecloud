@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -35,15 +36,18 @@
 
         this.theme = new se.Select({initialEntries: Wirecloud.constants.AVAILABLE_THEMES});
         this.theme.setValue(Wirecloud.currentTheme.name);
+        this.lang = new se.Select({initialEntries: [{value: "", label: utils.gettext("Auto")}].concat(Wirecloud.constants.AVAILABLE_LANGUAGES)});
         this.code = new se.TextArea();
 
         var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/embed_code'], {
             'themeselect': this.theme,
+            'langselect': this.lang,
             'code': this.code
         });
         contents.appendTo(this.windowContent);
 
         this.theme.addEventListener('change', build_embed_code.bind(this));
+        this.lang.addEventListener('change', build_embed_code.bind(this));
         build_embed_code.call(this);
 
         // Accept button
@@ -63,7 +67,12 @@
     Wirecloud.ui.EmbedCodeWindowMenu = EmbedCodeWindowMenu;
 
     var build_embed_code = function build_embed_code() {
-        var workspace_url = this.workspace.model.url + '?mode=embedded&theme=' + encodeURIComponent(this.theme.getValue());
+        var workspace_url = this.workspace.model.url + '?mode=embedded';
+        let lang = this.lang.getValue();
+        if (lang != "") {
+            workspace_url += '&lang=' + encodeURIComponent(lang);
+        }
+        workspace_url += '&theme=' + encodeURIComponent(this.theme.getValue());
         var code = '<iframe src="' + workspace_url + '" style="width: 100%; height: 450px; border: 0px none;" frameborder="0" allowfullscreen></iframe>';
         this.code.setValue(code);
         this.repaint();
