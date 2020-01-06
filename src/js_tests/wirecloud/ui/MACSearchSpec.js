@@ -47,12 +47,24 @@
 
     describe("MACSearch(options)", () => {
 
+        beforeAll(() => {
+            Wirecloud.contextManager = {
+                get: jasmine.createSpy('get').and.returnValue("es")
+            };
+        });
+
         beforeEach(() => {
             jasmine.clock().install();
         });
 
         afterEach(() => {
             jasmine.clock().uninstall();
+        });
+
+        afterAll(() => {
+            if ("contextManager" in Wirecloud) {
+                delete Wirecloud.contextManager;
+            }
         });
 
         it("options is required", () => {
@@ -101,7 +113,7 @@
             jasmine.clock().uninstall();
 
             setTimeout(() => {
-                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords'});
+                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords', lang: 'es'});
                 expect(element.resource_painter).not.toBe(null);
                 done();
             }, 0);
@@ -122,7 +134,7 @@
             jasmine.clock().uninstall();
 
             setTimeout(() => {
-                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords'});
+                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords', lang: 'es'});
                 expect(element.resource_painter).toBe(rp);
                 expect(element.resource_painter.paint).toHaveBeenCalledWith(parsed_component);
                 done();
@@ -142,7 +154,7 @@
             jasmine.clock().uninstall();
 
             setTimeout(() => {
-                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords'});
+                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords', lang: 'es'});
                 expect(element.resource_painter).not.toBe(null);
                 done();
             }, 0);
@@ -160,7 +172,7 @@
             jasmine.clock().uninstall();
 
             setTimeout(() => {
-                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords'});
+                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords', lang: 'es'});
                 expect(element.resource_painter).not.toBe(null);
                 expect(element.paintInfo).toHaveBeenCalled();
                 done();
@@ -178,7 +190,7 @@
             jasmine.clock().uninstall();
 
             setTimeout(() => {
-                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords'});
+                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords', lang: 'es'});
                 done();
             }, 0);
         });
@@ -196,7 +208,7 @@
             jasmine.clock().uninstall();
 
             setTimeout(() => {
-                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: 'widget', search_criteria: 'other'});
+                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: 'widget', search_criteria: 'other', lang: 'es'});
                 expect(Wirecloud.LocalCatalogue.search.calls.count()).toBe(1);
                 done();
             }, 0);
@@ -212,7 +224,7 @@
             element.input.value = "keywords";
             element.input.dispatchEvent("keydown", [], "Enter");
 
-            expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords'});
+            expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: 'keywords', lang: 'es'});
         });
 
         it("should handle keydown events", () => {
@@ -236,7 +248,7 @@
 
                 element.input.dispatchEvent("keydown", [], "Enter");
 
-                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: scope, search_criteria: ''});
+                expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: scope, search_criteria: '', lang: 'es'});
                 jasmine.clock().uninstall();
                 setTimeout(() => {
                     expect(element.paintError).toHaveBeenCalled();
@@ -305,6 +317,20 @@
 
     describe("refresh()", () => {
 
+        beforeEach(() => {
+            Wirecloud.contextManager = {
+                get: jasmine.createSpy('get').and.returnValue("es")
+            };
+            jasmine.clock().install();
+        });
+
+        afterEach(() => {
+            if ("contextManager" in Wirecloud) {
+                delete Wirecloud.contextManager;
+            }
+            jasmine.clock().uninstall();
+        });
+
         it("should make an immediate request", () => {
             let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
 
@@ -314,7 +340,7 @@
 
             expect(element.refresh()).toBe(element);
 
-            expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: ''});
+            expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalledWith({scope: '', search_criteria: '', lang: 'es'});
             expect(Wirecloud.LocalCatalogue.search.calls.count()).toBe(1);
         });
 
@@ -336,6 +362,7 @@
                 expect(Wirecloud.LocalCatalogue.search.calls.count()).toBe(1);
                 done();
             }, 300);
+            jasmine.clock().tick(301);
         });
 
         it("should abort current requests", (done) => {
@@ -356,6 +383,7 @@
                 expect(Wirecloud.LocalCatalogue.search).toHaveBeenCalled();
                 done();
             }, 800);
+            jasmine.clock().tick(801);
         });
 
     });

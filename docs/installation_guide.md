@@ -951,7 +951,7 @@ The steps for enabling this support are the following:
 <zbr>1.   Install [Django channels](https://channels.readthedocs.io/en/latest/):
 
 ```bash
-pip install "channels<3"
+pip install "channels<2.4"
 ```
 
 <zbr>2.   Add `channels` and `wirecloud.live` into the `INSTALLED_APPS` setting in the `settings.py` file.

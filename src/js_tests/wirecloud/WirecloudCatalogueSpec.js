@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -491,6 +491,16 @@
                         fail('reject function called');
                     }
                 );
+            });
+
+            it("should support lang option", (done) => {
+                let catalogue = new ns.WirecloudCatalogue();
+                spyOn(ns.io, 'makeRequest').and.callFake((url, options) => {
+                    expect(options.parameters.lang).toBe("es");
+                    done();
+                });
+
+                catalogue.search({lang: "es"});
             });
 
             it("should support searching by criteria", (done) => {

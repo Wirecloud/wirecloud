@@ -26,6 +26,7 @@ from django.template import TemplateSyntaxError
 from django.template.loader_tags import do_extends as django_do_extends, do_include as django_do_include
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
+from django.utils.translation import get_language
 
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.http import get_absolute_reverse_url
@@ -154,6 +155,10 @@ def platform_css(context, view):
 def wirecloud_bootstrap(context, view):
 
     current_theme = context.get('THEME', get_active_theme_name())
+    current_lang = context.get('LANG')
+    if current_lang is None:
+        current_lang = get_language()
+
     available_themes = [{"value": theme.name, "label": theme.label} for theme in get_available_themes(metadata=True)]
 
     endpoints = get_wirecloud_ajax_endpoints(view)
@@ -171,6 +176,7 @@ def wirecloud_bootstrap(context, view):
     constants = []
     for constant in constants_def:
         constants.append({'key': constant['key'], 'value': mark_safe(constant['value'])})
+    constants.append({'key': 'CURRENT_LANGUAGE', 'value': mark_safe('"' + current_lang + '"')})
     constants.append({'key': 'CURRENT_MODE', 'value': mark_safe('"' + view + '"')})
     constants.append({'key': 'CURRENT_THEME', 'value': mark_safe('"' + current_theme + '"')})
     constants.append({'key': 'AVAILABLE_THEMES', 'value': mark_safe(json.dumps(available_themes, cls=LazyEncoder))})

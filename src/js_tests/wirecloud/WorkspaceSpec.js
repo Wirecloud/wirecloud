@@ -179,6 +179,9 @@
             if ("live" in Wirecloud) {
                 delete Wirecloud.live;
             }
+            if (Wirecloud.contextManager != null) {
+                delete Wirecloud.contextManager;
+            }
         });
 
         describe("new Workspace(data, components)", () => {
