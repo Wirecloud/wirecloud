@@ -17,12 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from unittest.mock import DEFAULT, patch
+from unittest.mock import DEFAULT, Mock, patch
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.test import TestCase
+from django.test import override_settings, TestCase
+from parameterized import parameterized
 
+from wirecloud.platform.core.plugins import WirecloudCorePlugin
 from wirecloud.platform.plugins import clear_cache, get_active_features, get_plugins, \
     get_extra_javascripts, get_widget_api_extensions, WirecloudPlugin, find_wirecloud_plugins
 
@@ -157,3 +159,167 @@ class WirecloudPluginTestCase(TestCase):
                 mocks['import_module'].side_effect = NameError()
                 find_wirecloud_plugins()
                 self.assertTrue(mocks['logger'].error.called)
+
+
+class CorePluginTestCase(TestCase):
+
+    tags = ('wirecloud-plugins', 'wirecloud-core-plugin')
+
+    @classmethod
+    def setUpClass(cls):
+        super(CorePluginTestCase, cls).setUpClass()
+        cls.plugin = WirecloudCorePlugin()
+
+    @override_settings(INSTALLED_APPS=[])
+    def test_get_ajax_endpoints(self):
+        self.assertEqual(type(self.plugin.get_ajax_endpoints("classic")), tuple)
+
+    @override_settings(INSTALLED_APPS=["django.contrib.admin"])
+    def test_get_ajax_endpoints_admin(self):
+        endpoints = self.plugin.get_ajax_endpoints("classic")
+        self.assertEqual(type(endpoints), tuple)
+
+    def test_get_constants(self):
+        self.assertEqual(type(self.plugin.get_constants()), dict)
+
+    def test_get_market_classes(self):
+        self.assertEqual(type(self.plugin.get_market_classes()), dict)
+
+    def test_get_platform_context_definitions(self):
+        self.assertEqual(type(self.plugin.get_platform_context_definitions()), dict)
+
+    def test_get_platform_context_current_values_anonymous(self):
+        user = Mock(
+            is_authenticated=False,
+            is_anonymous=True,
+            email="myemail@example.com",
+            groups=Mock(
+                values_list=Mock(return_value=[]),
+                filter=Mock(return_value=Mock(values_list=Mock(return_value=[])))
+            )
+        )
+        session = None
+        context = self.plugin.get_platform_context_current_values(user, session)
+        self.assertEqual(type(context), dict)
+        self.assertTrue(context['isanonymous'])
+        self.assertEqual(context['groups'], ())
+        self.assertEqual(context['realuser'], None)
+
+    def test_get_platform_context_current_values_authenticated(self):
+        user = Mock(
+            is_authenticated=True,
+            is_anonymous=False,
+            email="myemail@example.com",
+            groups=Mock(
+                values_list=Mock(return_value=["group1", "group2", "org1"]),
+                filter=Mock(return_value=Mock(values_list=Mock(return_value=["org1"])))
+            )
+        )
+        session = None
+        context = self.plugin.get_platform_context_current_values(user, session)
+        self.assertEqual(type(context), dict)
+        self.assertFalse(context['isanonymous'])
+        self.assertEqual(context['groups'], ("group1", "group2", "org1"))
+        self.assertEqual(context['organizations'], ("org1",))
+        self.assertEqual(context['realuser'], None)
+
+    def test_get_platform_context_current_values_realuser(self):
+        user = Mock(
+            is_authenticated=False,
+            is_anonymous=True,
+            email="myemail@example.com",
+            groups=Mock(
+                values_list=Mock(return_value=[]),
+                filter=Mock(return_value=Mock(values_list=Mock(return_value=[])))
+            )
+        )
+        session = {"realuser": "admin"}
+        context = self.plugin.get_platform_context_current_values(user, session)
+        self.assertEqual(type(context), dict)
+        self.assertEqual(context['realuser'], "admin")
+
+    @parameterized.expand([
+        ("classic"),
+        ("embedded"),
+        ("smartphone"),
+        ("other"),
+    ])
+    def test_get_platform_css(self, view):
+        self.assertIn(type(self.plugin.get_platform_css(view)), (tuple, list))
+
+    @patch("wirecloud.platform.core.plugins.Workspace")
+    @patch("wirecloud.platform.core.plugins.CatalogueResource")
+    def test_populate_up_to_date(self, CatalogueResource, Workspace):
+        user = Mock()
+        log = Mock()
+        CatalogueResource.objects.filter().exists.return_value = True
+        Workspace.objects.filter().exists.return_value = True
+        self.assertFalse(self.plugin.populate(user, log))
+
+    @patch("wirecloud.platform.core.plugins.create_workspace")
+    @patch("wirecloud.platform.core.plugins.install_component")
+    @patch("wirecloud.platform.core.plugins.Workspace")
+    @patch("wirecloud.platform.core.plugins.IWidget")
+    @patch("wirecloud.platform.core.plugins.CatalogueResource")
+    def test_populate_out_of_date(self, CatalogueResource, IWidget, Workspace, install_component, create_workspace):
+        user = Mock()
+        log = Mock()
+        CatalogueResource.objects.filter().exists.return_value = False
+        Workspace.objects.filter().exists.return_value = False
+        install_component.return_value = (True, Mock())
+        self.assertTrue(self.plugin.populate(user, log))
+
+    def test_get_proxy_processors(self):
+        self.assertIn(type(self.plugin.get_proxy_processors()), (tuple, list))
+
+    @parameterized.expand([
+        ("classic"),
+        ("embedded"),
+        ("smartphone"),
+        ("other"),
+    ])
+    def test_get_scripts_classic(self, view):
+        self.assertIn(type(self.plugin.get_scripts(view)), (tuple, list))
+
+    def test_get_tab_preferences(self):
+        self.assertEqual(type(self.plugin.get_tab_preferences()), list)
+
+    def test_get_templates_classic(self):
+        self.assertEqual(type(self.plugin.get_templates("classic")), list)
+
+    def test_get_templates_embedded(self):
+        self.assertEqual(type(self.plugin.get_templates("embedded")), list)
+
+    def test_get_templates_smartphone(self):
+        self.assertEqual(type(self.plugin.get_templates("smartphone")), list)
+
+    def test_get_workspace_preferences(self):
+        self.assertEqual(type(self.plugin.get_workspace_preferences()), list)
+
+    def test_get_workspace_context_definitions(self):
+        self.assertEqual(type(self.plugin.get_workspace_context_definitions()), dict)
+
+    def test_get_workspace_context_current_values(self):
+        user = Mock()
+        workspace = Mock(name="myworkspace", owner=Mock(username="owner"))
+        context = self.plugin.get_workspace_context_current_values(workspace, user)
+        self.assertEqual(context, {
+            "name": workspace.name,
+            "owner": workspace.creator.username
+        })
+
+    def test_get_widget_api_extensions_no_feature(self):
+        scripts = self.plugin.get_widget_api_extensions("classic", [])
+        self.assertEqual(scripts, ['js/WirecloudAPI/StyledElements.js'])
+
+    def test_get_widget_api_extensions_feature(self):
+        scripts = self.plugin.get_widget_api_extensions("classic", ["DashboardManagement", "ComponentManagement"])
+        self.assertEqual(scripts, ['js/WirecloudAPI/StyledElements.js', 'js/WirecloudAPI/DashboardManagementAPI.js', 'js/WirecloudAPI/ComponentManagementAPI.js'])
+
+    def test_get_operator_api_extensions_no_feature(self):
+        scripts = self.plugin.get_operator_api_extensions("classic", [])
+        self.assertEqual(scripts, [])
+
+    def test_get_operator_api_extensions_feature(self):
+        scripts = self.plugin.get_operator_api_extensions("classic", ["DashboardManagement", "ComponentManagement"])
+        self.assertEqual(scripts, ['js/WirecloudAPI/DashboardManagementAPI.js', 'js/WirecloudAPI/ComponentManagementAPI.js'])

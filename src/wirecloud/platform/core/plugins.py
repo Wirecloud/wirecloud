@@ -619,7 +619,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wirecloud/user_menu",
             ]
         else:
-            return {}
+            return []
 
     def get_ajax_endpoints(self, view):
         endpoints = (
