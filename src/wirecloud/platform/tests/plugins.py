@@ -69,7 +69,7 @@ class WirecloudTestConflictingPlugin(WirecloudPlugin):
 
 class WirecloudPluginTestCase(TestCase):
 
-    tags = ('wirecloud-plugins',)
+    tags = ('wirecloud-plugins', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -163,7 +163,7 @@ class WirecloudPluginTestCase(TestCase):
 
 class CorePluginTestCase(TestCase):
 
-    tags = ('wirecloud-plugins', 'wirecloud-core-plugin')
+    tags = ('wirecloud-plugins', 'wirecloud-core-plugin', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
