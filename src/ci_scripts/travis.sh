@@ -58,4 +58,4 @@ python manage.py collectstatic -v 0 -c --noinput
 # Pass the tests
 DJANGO_LIVE_TEST_SERVER_ADDRESS="${IP_ADDR}:28081"    # Used by Django 1.8-1.10
 DJANGO_LIVE_TEST_SERVER_HOST="${IP_ADDR}"             # Custom env variable used on Django 1.11
-${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 ${TESTS}
+${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 ${TESTS}
