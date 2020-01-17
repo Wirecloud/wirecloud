@@ -9,7 +9,7 @@ services:
             - 80:80
         volumes:
             - ./nginx.conf:/etc/nginx/nginx.conf:ro
-            - ./wirecloud-static:/var/www/static:ro
+            - wirecloud-static:/var/www/static:ro
         depends_on:
             - wirecloud
 
@@ -20,14 +20,14 @@ services:
         environment:
             - POSTGRES_PASSWORD=wirepass   # Change this password!
         volumes:
-            - /var/lib/postgresql/data
+            - postgres-data:/var/lib/postgresql/data
 
 
     elasticsearch:
         restart: always
         image: elasticsearch:2.4
         volumes:
-            - ./elasticsearch-data:/usr/share/elasticsearch/data
+            - elasticsearch-data:/usr/share/elasticsearch/data
         command: elasticsearch -Des.index.max_result_window=50000
 
 
@@ -58,7 +58,13 @@ services:
             #- SOCIAL_AUTH_FIWARE_KEY=${SOCIAL_AUTH_FIWARE_KEY}
             #- SOCIAL_AUTH_FIWARE_SECRET=${SOCIAL_AUTH_FIWARE_SECRET}
         volumes:
-            - ./wirecloud-data:/opt/wirecloud_instance/data
-            - ./wirecloud-static:/var/www/static
+            - wirecloud-data:/opt/wirecloud_instance/data
+            - wirecloud-static:/var/www/static
         #entrypoint: /bin/bash
         #command: -c "sleep 500"
+
+volumes:
+    elasticsearch-data:
+    postgres-data:
+    wirecloud-data:
+    wirecloud-static:
