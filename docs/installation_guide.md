@@ -20,7 +20,7 @@ step, as they will be installed throughout the documentation:**
     - Django 1.8-1.11
     - lxml 2.3.0+
     - django-appconf 1.0.1+
-    - django_compressor 2.0+
+    - django_compressor 2.0-2.3
     - rdflib 3.2.0+
     - requests 2.1.0+
     - futures 2.1.3+ (only on python 2.7)
