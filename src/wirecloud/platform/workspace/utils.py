@@ -502,7 +502,6 @@ def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
 def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
     widget_position = iwidget.positions.get('widget', {})
-    icon_position = iwidget.positions.get('icon', {})
     permissions = iwidget.permissions
     if workspace.creator != user and 'owner' in permissions:
         del permissions['owner']
@@ -520,8 +519,6 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'height': widget_position.get('height', 0),
         'fulldragboard': widget_position.get('fulldragboard', False),
         'minimized': widget_position.get('minimized', False),
-        'icon_top': icon_position.get('top', 0),
-        'icon_left': icon_position.get('left', 0),
         'readonly': iwidget.readOnly,
         'permissions': permissions,
         'preferences': {},

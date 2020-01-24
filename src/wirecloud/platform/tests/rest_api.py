@@ -1987,7 +1987,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
         data = [
-            {'id': 1, 'icon_left': 0}
+            {'id': 1, 'left': 0}
         ]
         check_put_requires_permission(self, url, json.dumps(data))
 
@@ -2000,7 +2000,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
         # Make the request
         data = [
-            {'id': 1, 'icon_left': -1}
+            {'id': 1, 'left': -1}
         ]
         response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
@@ -2016,7 +2016,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
         # Make the request
         data = [
-            {'id': 1234, 'icon_left': 0}
+            {'id': 1234, 'left': 0}
         ]
         response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
@@ -2399,12 +2399,6 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
 
     def test_iwidget_entry_post_invalid_height_type(self):
         self.check_iwidget_entry_post_invalid_position_value('height', 'a', 400)
-
-    def test_iwidget_entry_post_invalid_icon_top_type(self):
-        self.check_iwidget_entry_post_invalid_position_value('icon_top', 'a', 400)
-
-    def test_iwidget_entry_post_invalid_icon_left_type(self):
-        self.check_iwidget_entry_post_invalid_position_value('icon_left', True, 400)
 
     def test_iwidget_entry_post_bad_request_content_type(self):
 

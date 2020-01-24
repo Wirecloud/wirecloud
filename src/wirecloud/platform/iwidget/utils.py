@@ -99,16 +99,6 @@ def update_size_value(model, data, field):
         model[field] = size
 
 
-def update_icon_position(iwidget, data):
-    if 'icon' not in iwidget.positions:
-        iwidget.positions['icon'] = {}
-
-    position = iwidget.positions['icon']
-
-    update_position_value(position, data, 'top', 'icon_top')
-    update_position_value(position, data, 'left', 'icon_left')
-
-
 def update_position(iwidget, key, data):
     if key not in iwidget.positions:
         iwidget.positions[key] = {}
@@ -178,10 +168,6 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
             'titlevisible': True,
             'fulldragboard': False,
         },
-        'icon': {
-            'top': 0,
-            'left': 0,
-        },
     }
 
     if initial_variable_values is not None:
@@ -189,7 +175,6 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
 
     update_title_value(new_iwidget, iwidget)
     update_position(new_iwidget, 'widget', iwidget)
-    update_icon_position(new_iwidget, iwidget)
 
     if commit:
         new_iwidget.save()
