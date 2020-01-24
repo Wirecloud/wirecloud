@@ -56,13 +56,16 @@
         };
     };
 
-    WidgetViewDraggable.prototype.canDrag = function canDrag(draggable, context) {
+    WidgetViewDraggable.prototype.canDrag = function canDrag(draggable, context, role) {
+        if (role == null) {
+            role = context.widget.tab.workspace.editing ? "editor" : "viewer";
+        }
         return (
             context.widget.model.volatile
             || context.widget.layout instanceof Wirecloud.ui.FreeLayout
             || context.widget.tab.workspace.editing
         )
-        && context.widget.model.isAllowed('move')
+        && context.widget.model.isAllowed('move', role)
         && !(context.widget.layout instanceof Wirecloud.ui.FullDragboardLayout);
     };
 

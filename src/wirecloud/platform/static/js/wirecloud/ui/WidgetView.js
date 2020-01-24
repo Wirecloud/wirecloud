@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -98,7 +98,7 @@
                 }
             },
             title: {
-                get: function () {
+                get: () => {
                     return this.model.title;
                 }
             },
@@ -140,8 +140,17 @@
                 return button;
             },
             'grip': (options, tcomponents, view) => {
-                view.grip = document.createElement("i");
-                view.grip.className = "fas fa-grip-vertical";
+                view.grip = new StyledElements.Button({
+                    plain: true,
+                    class: 'wc-grip-button',
+                    iconClass: 'fa-fw fas fa-grip-vertical'
+                });
+                view.grip.addEventListener('click', (button) => {
+                    button.addClassName('busy');
+                    view.togglePermission('move', true).finally(() => {
+                        button.removeClassName('busy');
+                    });
+                });
                 return view.grip;
             },
             'menubutton': function (options, tcomponents, view) {
@@ -182,7 +191,7 @@
             'titlevisibilitybutton': (options, tcomponents, view) => {
                 var button = new StyledElements.Button({
                     plain: true,
-                    class: 'wc-titlevisibilitybutton',
+                    class: 'wc-titlevisibility-button',
                     iconClass: 'fa-fw fas fa-eye-slash'
                 });
 
@@ -236,7 +245,7 @@
                 this.titleelement.setTextContent(widget.title);
             }
 
-            if (changes.indexOf('meta') !== -1) {
+            if (changes.indexOf('meta') !== -1 || changes.indexOf('permissions') !== -1) {
                 update.call(this);
             }
         });
@@ -406,6 +415,21 @@
             this.setTitleVisibility(!this.titlevisible, persistence);
         },
 
+        /**
+         * Toggles a widget permission
+         *
+         * @param {String} permission permission to toggle
+         * @param {Boolean} persistence save change on server
+         *
+         * @return {Wirecloud.Task} task instance controlling the progress
+         */
+        togglePermission: function togglePermission(permission, persistence) {
+            let changes = {
+                [permission]: !this.model.permissions.viewer[permission]
+            };
+            return this.model.setPermissions(changes, persistence);
+        },
+
         setPosition: function setPosition(position) {
             utils.update(privates.get(this).position, position);
             if (this.layout != null) {
@@ -479,9 +503,9 @@
             } else {
                 // Reset highlighting animation
                 this.wrapperElement.classList.remove('wc-widget-highlight');
-                setTimeout(function () {
+                setTimeout(() => {
                     this.wrapperElement.classList.add('wc-widget-highlight');
-                }.bind(this));
+                });
             }
 
             return this;
@@ -663,20 +687,26 @@
     var privates = new WeakMap();
 
     var update_buttons = function update_buttons() {
-        var editing = this.tab.workspace.editing;
+        let editing = this.tab.workspace.editing;
+        let role = editing ? "editor" : "viewer";
         if (this.grip) {
-            this.grip.classList.toggle("disabled", this.draggable == null || !this.draggable.canDrag(null, {widget: this}));
+            let editable = editing && (this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'editor'));
+            let moveable = this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'viewer');
+            this.grip.enabled = this.tab.workspace.editing;
+            this.grip.hidden = !editable && !moveable;
+            this.grip.icon.classList.toggle("fa-anchor", !moveable);
+            this.grip.icon.classList.toggle("fa-grip-vertical", moveable);
         }
 
         if (this.titlevisibilitybutton) {
             this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
         }
-        this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close');
+        this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close', role);
         this.menubutton.enabled = editing;
 
-        this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
-        this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
-        this.rightresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
+        this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
+        this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
+        this.rightresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
     };
 
     var update_className = function update_className() {

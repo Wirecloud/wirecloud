@@ -125,6 +125,11 @@ def update_position(iwidget, key, data):
     update_boolean_value(position, data, 'fulldragboard')
 
 
+def update_permissions(iwidget, data):
+    permissions = iwidget.permissions.setdefault('viewer', {})
+    update_boolean_value(permissions, data, 'move')
+
+
 def update_widget_value(iwidget, data, user, required=False):
 
     if 'widget' in data:
@@ -208,9 +213,10 @@ def UpdateIWidget(data, user, tab, updatecache=True):
         layout = data['layout']
         iwidget.layout = layout
 
+    update_permissions(iwidget, data.get('permissions', {}).get('viewer', {}))
+
     # update positions
     update_position(iwidget, 'widget', data)
-    update_icon_position(iwidget, data)
 
     # save the changes
     iwidget.save(updatecache=updatecache)

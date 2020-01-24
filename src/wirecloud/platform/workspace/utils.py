@@ -503,6 +503,10 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
     widget_position = iwidget.positions.get('widget', {})
     icon_position = iwidget.positions.get('icon', {})
+    permissions = iwidget.permissions
+    if workspace.creator != user and 'owner' in permissions:
+        del permissions['owner']
+
     data_ret = {
         'id': str(iwidget.id),
         'title': iwidget.name,
@@ -519,6 +523,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'icon_top': icon_position.get('top', 0),
         'icon_left': icon_position.get('left', 0),
         'readonly': iwidget.readOnly,
+        'permissions': permissions,
         'preferences': {},
         'properties': {},
         'titlevisible': widget_position.get('titlevisible', True),

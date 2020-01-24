@@ -69,6 +69,11 @@
     & .disabled {
         display: none;
     }
+
+    & .wc-grip-button.disabled {
+        display: inline-block;
+    }
+
 }
 
 .wc-widget-body {

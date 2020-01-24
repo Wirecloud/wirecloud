@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -47,6 +47,17 @@
             delete ns.WidgetViewMenuItems;
             delete ns.WidgetViewResizeHandle;
         });
+
+        const callEventListener = function callEventListener(instance, event) {
+            var largs = Array.prototype.slice.call(arguments, 2);
+            largs.unshift(instance);
+            instance.addEventListener.calls.allArgs().some(function (args) {
+                if (args[0] === event) {
+                    args[1].apply(instance, largs);
+                    return true;
+                }
+            });
+        };
 
         const create_layout_mock = function create_layout_mock(tab, klass) {
             let layout = Object.create(klass.prototype);
@@ -112,6 +123,14 @@
                 logManager: {
                     addEventListener: jasmine.createSpy("addEventListener")
                 },
+                permissions: {
+                    editor: {
+                        move: true,
+                    },
+                    viewer: {
+                        move: false
+                    }
+                },
                 position: {
                     x: 3,
                     y: 0,
@@ -123,6 +142,7 @@
                     heihgt: 1
                 },
                 remove: jasmine.createSpy("remove"),
+                setPermissions: jasmine.createSpy("setPermissions").and.returnValue(new Wirecloud.Task("", () => {})),
                 showLogs: jasmine.createSpy("showLogs"),
                 showSettings: jasmine.createSpy("showSettings"),
                 title: "My Widget",
@@ -299,6 +319,32 @@
 
         });
 
+        describe("togglePermission(permission)", () => {
+
+            it("should work for enabling a permission", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                model.permissions.viewer.move = false;
+                let widget = new ns.WidgetView(tab, model);
+
+                let t = widget.togglePermission("move", false);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                expect(model.setPermissions).toHaveBeenCalledWith({move: true}, false);
+            });
+
+            it("should work for disabling a permission", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                model.permissions.viewer.move = true;
+                let widget = new ns.WidgetView(tab, model);
+
+                let t = widget.togglePermission("move", true);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                expect(model.setPermissions).toHaveBeenCalledWith({move: false}, true);
+            });
+
+        });
+
         describe("reload()", () => {
 
             it("should work", () => {
@@ -358,6 +404,48 @@
                 let widget = new ns.WidgetView(tab, model);
 
                 expect(widget.remove()).toBe(widget);
+            });
+
+        });
+
+        describe("events", () => {
+
+            let model, tab, widget;
+
+            beforeEach(() => {
+                tab = create_tab_mock();
+                model = create_widget_mock();
+                widget = new ns.WidgetView(tab, model);
+            });
+
+            it("should manage changes on widget meta", () => {
+                model.missing = true;
+                callEventListener(model, "change", ["meta"]);
+
+                expect(widget.wrapperElement.classList.contains("wc-missing-widget")).toBe(true);
+            });
+
+            it("should manage changes on widget title", () => {
+                let newTitle = "New Title";
+                spyOn(widget.titleelement, "setTextContent");
+                model.title = newTitle;
+                callEventListener(model, "change", ["title"]);
+
+                expect(widget.titleelement.setTextContent).toHaveBeenCalledWith(newTitle);
+            });
+
+            it("should manage edit mode changes on workspace", () => {
+                tab.workspace.editing = true;
+                callEventListener(tab.workspace, "editmode");
+
+                expect(widget.grip.enabled).toBe(true);
+            });
+
+            it("should manage click events on the grip button", () => {
+                spyOn(widget, "togglePermission");
+                widget.grip.dispatchEvent("click");
+
+                expect(widget.togglePermission).toHaveBeenCalledWith("move", true);
             });
 
         });
