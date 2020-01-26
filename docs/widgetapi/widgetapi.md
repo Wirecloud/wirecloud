@@ -90,7 +90,7 @@ img.src = url;
 
 #### `MashupPlatform.http.makeRequest` method
 
-Sends an HTTP request. This method internally calls the buildProxyURL method for working around any possible problem
+Sends an HTTP request. This method internally calls the `buildProxyURL` method for working around any possible problem
 related with the same-origin policy followed by browser (allowing CORS requests).
 
 ```javascript
@@ -100,27 +100,55 @@ MashupPlatform.http.makeRequest(url, options);
 -   `url` (_required, string_): the URL to which to send the request
 -   `options` (_optional, object_): an object with a list of request options (shown later)
 
-This method returns a _Request_ object
+This method returns a `Request` object.
 
 **Example usage:**
 
 ```javascript
 $("loading").show();
-var request = MashupPlatform.http.makeRequest("http://api.example.com", {
+let request = MashupPlatform.http.makeRequest("http://api.example.com", {
     method: "POST",
     postBody: JSON.stringify({ key: value }),
     contentType: "application/json",
     onSuccess: function(response) {
-        // Everything went ok
+        // A response in the 2xx range was received
     },
     onFailure: function(response) {
-        // Something went wrong
+        // Something went wrong connecting to the server or a response outside
+        // 2xx range was received
     },
     onComplete: function() {
         $("loading").hide();
     }
 });
 ```
+
+`Request` objects are also `Promise` compatible supporting the following scenario:
+
+```javascript
+$("loading").show();
+let request = MashupPlatform.http.makeRequest("http://api.example.com", {
+    method: "POST",
+    postBody: JSON.stringify({key: value}),
+    contentType: "application/json"
+});
+request.then(
+    (response) => {
+        // We have a response from the server
+    },
+    (error) => {
+        // Impossible to read a response from server
+    }
+).finally(
+    () => {
+        $("loading").hide();
+    }
+);
+```
+
+This also means that `Request` objects can be used with other `Promise` methods, like `Promise.all()`,
+`Promise.allSettled()`, `Promise.any()` or `Promise.race()`.
+
 
 #### Request options: General options
 
@@ -149,6 +177,7 @@ var request = MashupPlatform.http.makeRequest("http://api.example.com", {
 -   `context` (_object; default `null`_): The value to be passed as the this parameter to the callbacks.
     If context is `null` the `this` parameter of the callbacks is left intact.
 
+
 #### Request options: Callback options
 
 -   `onAbort` (new in WireCloud 0.8.2): Invoked when the `abort()` method of the Request object returned by
@@ -170,6 +199,7 @@ var request = MashupPlatform.http.makeRequest("http://api.example.com", {
 -   `onProgress`: Periodically triggered to indicate the amount of progress made so far on request
 -   `onUploadProgress`: Periodically triggered to indicate the amount of progress made so far on upload
 
+
 #### Request object
 
 The request object returned by the `MashupPlatform.http.makeRequest` method provides the following attributes:
@@ -180,6 +210,14 @@ The request object returned by the `MashupPlatform.http.makeRequest` method prov
 And the following method:
 
 -   `abort()`: Aborts the request if it has already been sent
+-   `catch(onRejected[, onAborted])`: Equivalent to `Promise.catch` supporting the `onAborted` parameter of `Request.then()`.
+-   `finally(onFinally)`: Equivalent to `Promise.finally()`, catching also abort events.
+-   `then(onFulfilled[, onRejected, onAborted])`: Equivalent method to `Promise.then` making `Request` objects `Promise`
+    compatible. `onFulfilled` is called just after successfully receiving a full response from server. `onRejected` is
+    called if there is any problem connecting to the server or the browser imposes some restriction for reading the
+    response. Finally, this method supports an extra `onAborted` parameter for configuring a handler that will be called
+    when the request is aborted.
+
 
 #### Response object
 
