@@ -143,9 +143,11 @@
                 },
                 remove: jasmine.createSpy("remove"),
                 setPermissions: jasmine.createSpy("setPermissions").and.returnValue(new Wirecloud.Task("", () => {})),
+                setTitleVisibility: jasmine.createSpy("setTitleVisibility").and.returnValue(new Wirecloud.Task("", () => {})),
                 showLogs: jasmine.createSpy("showLogs"),
                 showSettings: jasmine.createSpy("showSettings"),
                 title: "My Widget",
+                titlevisible: true,
                 wrapperElement: document.createElement('div')
             };
         };
@@ -319,7 +321,7 @@
 
         });
 
-        describe("togglePermission(permission)", () => {
+        describe("togglePermission(permission, persitence)", () => {
 
             it("should work for enabling a permission", () => {
                 let tab = create_tab_mock();
@@ -341,6 +343,32 @@
                 let t = widget.togglePermission("move", true);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 expect(model.setPermissions).toHaveBeenCalledWith({move: false}, true);
+            });
+
+        });
+
+        describe("toggleTitleVisibility(persitence)", () => {
+
+            it("should work for enabling a title visibility", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                model.titlevisible = false;
+                let widget = new ns.WidgetView(tab, model);
+
+                let t = widget.toggleTitleVisibility(false);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                expect(model.setTitleVisibility).toHaveBeenCalledWith(true, false);
+            });
+
+            it("should work for disabling a permission", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                model.titlevisible = true;
+                let widget = new ns.WidgetView(tab, model);
+
+                let t = widget.toggleTitleVisibility(true);
+                expect(t).toEqual(jasmine.any(Wirecloud.Task));
+                expect(model.setTitleVisibility).toHaveBeenCalledWith(false, true);
             });
 
         });
@@ -434,6 +462,13 @@
                 expect(widget.titleelement.setTextContent).toHaveBeenCalledWith(newTitle);
             });
 
+            it("should manage changes on widget title visibility", () => {
+                model.titlevisible = false;
+                callEventListener(model, "change", ["titlevisible"]);
+
+                expect(widget.wrapperElement.classList.contains("wc-titled-widget")).toBe(false);
+            });
+
             it("should manage edit mode changes on workspace", () => {
                 tab.workspace.editing = true;
                 callEventListener(tab.workspace, "editmode");
@@ -441,8 +476,15 @@
                 expect(widget.grip.enabled).toBe(true);
             });
 
+            it("should manage click events on the titlevisible button", () => {
+                spyOn(widget, "toggleTitleVisibility");
+                widget.titlevisibilitybutton.dispatchEvent("click");
+
+                expect(widget.toggleTitleVisibility).toHaveBeenCalledWith(true);
+            });
+
             it("should manage click events on the grip button", () => {
-                spyOn(widget, "togglePermission");
+                spyOn(widget, "togglePermission").and.callThrough();
                 widget.grip.dispatchEvent("click");
 
                 expect(widget.togglePermission).toHaveBeenCalledWith("move", true);

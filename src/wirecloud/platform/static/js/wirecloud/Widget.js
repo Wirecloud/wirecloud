@@ -602,12 +602,12 @@
          *
          * @returns {Promise}
          */
-        setTitleVisibility: function setTitleVisibility(visibility) {
+        setTitleVisibility: function setTitleVisibility(visibility, persistence) {
             visibility = !!visibility;
 
             if (this.volatile) {
                 throw new TypeError();
-            } else {
+            } else if (persistence) {
                 var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
                     workspace_id: this.tab.workspace.id,
                     tab_id: this.tab.id,
@@ -626,11 +626,16 @@
                 }).then((response) => {
                     if (response.status === 204) {
                         privates.get(this).titlevisible = visibility;
+                        this.dispatchEvent('change', ['titlevisible']);
                         return Promise.resolve(this);
                     } else {
                         return Promise.reject(new Error("Unexpected response from server"));
                     }
                 });
+            } else {
+                privates.get(this).titlevisible = visibility;
+                this.dispatchEvent('change', ['titlevisible']);
+                return Promise.resolve(this);
             }
         },
 

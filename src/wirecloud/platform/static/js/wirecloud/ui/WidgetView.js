@@ -104,7 +104,7 @@
             },
             titlevisible: {
                 get: () => {
-                    return this.titlevisibilitybutton.hasIconClassName('fa-eye');
+                    return this.model.titlevisible;
                 }
             }
         });
@@ -245,7 +245,7 @@
                 this.titleelement.setTextContent(widget.title);
             }
 
-            if (changes.indexOf('meta') !== -1 || changes.indexOf('permissions') !== -1) {
+            if (changes.indexOf('meta') !== -1 || changes.indexOf('permissions') !== -1 || changes.indexOf('titlevisible') !== -1) {
                 update.call(this);
             }
         });
@@ -286,7 +286,6 @@
 
         // Init minimized and title visibility options
         this.setMinimizeStatus(model.minimized, false, true);
-        this.setTitleVisibility(model.titlevisible, false);
 
         this.model.logManager.addEventListener('newentry', on_add_log.bind(this));
 
@@ -352,7 +351,7 @@
                     height: this.layout.adaptHeight(this.wrapperElement.offsetHeight + 'px').inLU,
                     width: priv.shape.width
                 };
-                this.setTitleVisibility(true, false);
+                this.model.setTitleVisibility(true, false);
             } else {
                 this.minimizebutton.setTitle(utils.gettext("Minimize"));
                 this.minimizebutton.replaceIconClassName("fa-plus", "fa-minus");
@@ -378,41 +377,15 @@
         },
 
         /**
-         * Changes title visibility for this widget
-         *
-         * @param {Boolean} newStatus new title visibility status for this widget
-         * @param {Boolean} persistence save change on server
-         */
-        setTitleVisibility: function setTitleVisibility(newStatus, persistence) {
-
-            if (newStatus === this.titlevisible) {
-                return this;
-            }
-
-            let p = persistence ? this.model.setTitleVisibility(newStatus) : Promise.resolve();
-
-            return p.then(
-                () => {
-                    this.titlevisibilitybutton.setTitle(newStatus ? utils.gettext("Hide title") : utils.gettext("Show title"));
-                    this.wrapperElement.classList.toggle('wc-titled-widget', newStatus);
-                    if (newStatus) {
-                        this.titlevisibilitybutton.replaceIconClassName("fa-eye-slash", "fa-eye");
-                    } else {
-                        this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
-                    }
-                },
-                () => {
-                }
-            );
-        },
-
-        /**
          * Toggles title visibility
          *
          * @param {Boolean} persistence save change on server
          */
         toggleTitleVisibility: function toggleTitleVisibility(persistence) {
-            this.setTitleVisibility(!this.titlevisible, persistence);
+            this.titlevisibilitybutton.addClassName('busy');
+            let t = this.model.setTitleVisibility(!this.titlevisible, persistence);
+            t.finally(() => {this.titlevisibilitybutton.removeClassName('busy');});
+            return t;
         },
 
         /**
@@ -700,6 +673,12 @@
 
         if (this.titlevisibilitybutton) {
             this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
+            this.titlevisibilitybutton.setTitle(this.model.titlevisible ? utils.gettext("Hide title") : utils.gettext("Show title"));
+            if (this.model.titlevisible) {
+                this.titlevisibilitybutton.replaceIconClassName("fa-eye-slash", "fa-eye");
+            } else {
+                this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
+            }
         }
         this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close', role);
         this.menubutton.enabled = editing;
@@ -713,6 +692,7 @@
         this.wrapperElement.classList.toggle('wc-missing-widget', this.model.missing);
         this.wrapperElement.classList.toggle('wc-floating-widget', this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout);
         this.wrapperElement.classList.toggle('wc-moveable-widget', this.draggable != null && this.draggable.canDrag(null, {widget: this}));
+        this.wrapperElement.classList.toggle('wc-titled-widget', this.model.titlevisible);
     };
 
     var update = function update() {

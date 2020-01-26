@@ -1340,7 +1340,7 @@
 
         });
 
-        describe("setTitleVisibility(visibility)", () => {
+        describe("setTitleVisibility(visibility[, persistence])", () => {
 
             it("throws a TypeError exception for volatile widgets", () => {
                 var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
@@ -1350,8 +1350,29 @@
                 });
 
                 expect(() => {
-                    widget.setTitleVisibility(true)
+                    widget.setTitleVisibility(true, false)
                 }).toThrowError(TypeError);
+            });
+
+            it("updates titlevisible property", (done) => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    titlevisible: false
+                });
+                spyOn(Wirecloud.io, "makeRequest");
+                expect(widget.titlevisible).toBe(false);
+
+                let p = widget.setTitleVisibility(true, false);
+                expect(widget.titlevisible).toBe(true);
+                expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                p.then(
+                    (value) => {
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
             });
 
             it("updates titlevisible property on the server", (done) => {
@@ -1369,7 +1390,7 @@
                 });
                 expect(widget.titlevisible).toBe(false);
 
-                let p = widget.setTitleVisibility(true);
+                let p = widget.setTitleVisibility(true, true);
                 p.then(
                     (value) => {
                         expect(widget.titlevisible).toBe(true);
@@ -1395,7 +1416,7 @@
                     });
                 });
 
-                let p = widget.setTitleVisibility(true);
+                let p = widget.setTitleVisibility(true, true);
                 p.then(
                     (value) => {
                         fail("success callback called");
