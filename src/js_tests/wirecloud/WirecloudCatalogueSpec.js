@@ -498,6 +498,7 @@
                 spyOn(ns.io, 'makeRequest').and.callFake((url, options) => {
                     expect(options.parameters.lang).toBe("es");
                     done();
+                    return new Wirecloud.Task("", () => {});
                 });
 
                 catalogue.search({lang: "es"});
