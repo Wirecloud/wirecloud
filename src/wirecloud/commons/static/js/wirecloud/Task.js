@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -210,6 +211,21 @@
 
     Task.prototype.catch = function _catch(reject, abort) {
         return this.then(null, reject, abort);
+    };
+
+    /**
+     * The `finally()` method returns a `Wirecloud.Task`. When the promise is
+     * settled, i.e either fulfilled, aborted or rejected, the specified
+     * callback function is executed. This provides a way for code to be run
+     * whether the promise was fulfilled successfully, aborted or rejected
+     * once the `Wirecloud.Task` has been dealt with.
+     *
+     * @param {Function} onFinally A `Function` called when the `Wirecloud.Task`
+     *                             is settled.
+     * @returns {Wirecloud.Task}
+     */
+    Task.prototype.finally = function _finally(onFinally) {
+        return this.then(onFinally, onFinally, onFinally);
     };
 
     Task.prototype.renameTask = function renameTask(title) {

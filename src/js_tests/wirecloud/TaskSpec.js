@@ -168,15 +168,15 @@
                 expect(task.value).toBe(resolve_value);
             });
 
-            describe("instances should be Promise compatible:", function () {
+            describe("instances should be Promise compatible:", () => {
 
-                it("rejected task notify promises", function (done) {
-                    var expected_reason = "error reason";
-                    var task_reject;
-                    var task = new Wirecloud.Task("task", function (resolve, reject) {
+                it("rejected task notify promises", (done) => {
+                    let expected_reason = "error reason";
+                    let task_reject;
+                    let task = new Wirecloud.Task("task", (resolve, reject) => {
                         task_reject = reject;
                     });
-                    task.catch(function (reason) {
+                    task.catch((reason) => {
                         expect(reason).toBe(expected_reason);
                         done();
                     });
@@ -184,92 +184,131 @@
                     task_reject(expected_reason);
                 });
 
-                it("exceptions in the onFulfilled listener are progated", function (done) {
-                    var expected_error;
-                    var task = new Wirecloud.Task("task", function (resolve, reject) {
+                it("exceptions in the onFulfilled listener are progated", (done) => {
+                    let expected_error;
+                    let task = new Wirecloud.Task("task", (resolve, reject) => {
                         resolve("success");
                     });
-                    task.then(function (value) {
+                    task.then((value) => {
                         expected_error = new Error();
                         throw expected_error;
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         expect(error).toBe(expected_error);
                         done();
                     });
                 });
 
-                it("exceptions in the onRejected listener are progated", function (done) {
-                    var expected_error;
-                    var task = new Wirecloud.Task("task", function (resolve, reject) {
+                it("exceptions in the onRejected listener are progated", (done) => {
+                    let expected_error;
+                    let task = new Wirecloud.Task("task", (resolve, reject) => {
                         reject("error");
                     });
                     task.then(
                         null,
-                        function (value) {
+                        (value) => {
                             expected_error = new Error();
                             throw expected_error;
                         }
                     ).catch(
-                        function (error) {
+                        (error) => {
                             expect(error).toBe(expected_error);
                             done();
                         }
                     );
                 });
 
-                it("catch without return value continue the chain", function (done) {
-                    var task = new Wirecloud.Task("task", function (resolve, reject) {
+                it("catch without return value continue the chain", (done) => {
+                    let task = new Wirecloud.Task("task", (resolve, reject) => {
                         reject("error");
                     });
                     task.then(
                         null,
-                        function (error) {
+                        (error) => {
                             expect(error).toBe("error");
                         }
                     ).then(
-                        function (value) {
+                        (value) => {
                             expect(value).toBe(undefined);
                             done();
                         }
                     );
                 });
 
-                it("Task can be returned in a Promise's then callback", function () {
-                    var success_value = "success value";
-                    var build_task = function build_task() {
-                        return new Wirecloud.Task("task", function (fulfill, reject, update) {
+                it("Task can be returned in a Promise's then callback", () => {
+                    let success_value = "success value";
+                    let build_task = function build_task() {
+                        return new Wirecloud.Task("task", (fulfill, reject, update) => {
                             fulfill(success_value);
                         });
                     };
-                    Promise.resolve().then(build_task).then(function (value) {
+                    Promise.resolve().then(build_task).then((value) => {
                         expect(value).toBe(success_value);
                     });
                 });
 
-                it("Promises can be returned in a Task's then callback", function () {
-                    var success_value = "success value";
-                    var build_promise = function () {
+                it("Promises can be returned in a Task's then callback", () => {
+                    let success_value = "success value";
+                    let build_promise = function build_promise() {
                         return Promise.resolve(success_value);
                     };
-                    var task = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                    let task = new Wirecloud.Task("task", (fulfill, reject, update) => {
                         fulfill(success_value);
                     });
-                    task.then(build_promise).then(function (value) {
+                    task.then(build_promise).then((value) => {
                         expect(value).toBe(success_value);
                     });
                 });
 
-                it("values can be returned in a Task's then callback", function () {
-                    var success_value = "success value";
-                    var build_value = function () {
+                it("values can be returned in a Task's then callback", () => {
+                    let success_value = "success value";
+                    let build_value = function build_value() {
                         return success_value;
                     };
-                    var task = new Wirecloud.Task("task", function (fulfill, reject, update) {
+                    let task = new Wirecloud.Task("task", (fulfill, reject, update) => {
                         fulfill(success_value);
                     });
-                    task.then(build_value).then(function (value) {
+                    task.then(build_value).then((value) => {
                         expect(value).toBe(success_value);
                     });
+                });
+
+                it("finally method can be used for catching errors", (done) => {
+                    let task_reject;
+                    let task = new Wirecloud.Task("task", (resolve, reject) => {
+                        task_reject = reject;
+                    });
+                    task.finally(function () {
+                        // TODO
+                        // expect(arguments.length).toBe(0);
+                        done();
+                    });
+
+                    task_reject("error reason");
+                });
+
+                it("finally method can be used for doing task after task is resolved", (done) => {
+                    let task_resolve;
+                    let task = new Wirecloud.Task("task", (resolve, reject) => {
+                        task_resolve = resolve;
+                    });
+                    task.finally(function () {
+                        // TODO
+                        // expect(arguments.length).toBe(0);
+                        done();
+                    });
+
+                    task_resolve(1);
+                });
+
+                it("finally method can be used for doing task after task is aborted", (done) => {
+                    let task = new Wirecloud.Task("task", (resolve, reject) => {});
+                    task.finally(function () {
+                        // TODO
+                        // expect(arguments.length).toBe(0);
+                        done();
+                    });
+
+                    task.abort(1);
                 });
 
             });
