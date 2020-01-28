@@ -990,7 +990,7 @@ WireCloud 1.0 では、Web  ソケットを介したリアルタイム同期の�
 
 
 ```bash
-pip install "channels<3"
+pip install "channels<2.4"
 ```
 
 <zbr>2.   `channels` と` wirecloud.live` を `settings.py` ファイルの `INSTALLED_APPS` 設定に追加します。

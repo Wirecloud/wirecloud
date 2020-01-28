@@ -96,7 +96,7 @@ img.src = url;
 
 #### `MashupPlatform.http.makeRequest` メソッド
 
-このメソッドは内部的に buildProxyURL メソッドを呼び出して、CORS リクエストを許可するブラウザに続く同じ起点ポリシーに
+このメソッドは内部的に `buildProxyURL` メソッドを呼び出して、CORS リクエストを許可するブラウザに続く同じ起点ポリシーに
 関連する問題を回避します。
 
 ```javascript
@@ -106,27 +106,55 @@ MashupPlatform.http.makeRequest(url, options)
 -   `url` (_required, string_): リクエストを送信する URL
 -   `options` (_optional, object_): リクエスト・オプションのリストを持つオブジェクト (後述)
 
-このメソッドは、_Request_ オブジェクトを返します。
+このメソッドは、`Request` オブジェクトを返します。
 
 **使用例:**
 
 ```javascript
 $("loading").show();
-var request = MashupPlatform.http.makeRequest("http://api.example.com", {
+let request = MashupPlatform.http.makeRequest("http://api.example.com", {
     method: "POST",
     postBody: JSON.stringify({ key: value }),
     contentType: "application/json",
     onSuccess: function(response) {
-        // Everything went ok
+        // A response in the 2xx range was received
     },
     onFailure: function(response) {
-        // Something went wrong
+        // Something went wrong connecting to the server or a response outside
+        // 2xx range was received
     },
     onComplete: function() {
         $("loading").hide();
     }
 });
 ```
+
+
+`Request` オブジェクトは、次のシナリオをサポートする `Promise` の互換性もあります:
+
+```javascript
+$("loading").show();
+let request = MashupPlatform.http.makeRequest("http://api.example.com", {
+    method: "POST",
+    postBody: JSON.stringify({key: value}),
+    contentType: "application/json"
+});
+request.then(
+    (response) => {
+        // We have a response from the server
+    },
+    (error) => {
+        // Impossible to read a response from server
+    }
+).finally(
+    () => {
+        $("loading").hide();
+    }
+);
+```
+
+これは、`Promise.all()`, `Promise.allSettled()`, `Promise.any()` または `Promise.race()` のような他の
+`Promise` メソッドで `Request` オブジェクトを使用できることも意味します。
 
 
 #### リクエスト・オプション : 一般オプション
@@ -192,6 +220,13 @@ var request = MashupPlatform.http.makeRequest("http://api.example.com", {
 そして、次のメソッド :
 
 -   `abort()`: すでにリクエストが送信されている場合は、リクエストを中止します
+-   `catch(onRejected[, onAborted])`: `Request.then()` の `onAborted` パラメータをサポートする `Promise.catch` と同等です
+-   `finally(onFinally)`: `Promise.finally()` と同等、アボート・イベントもキャッチ
+-   `then(onFulfilled[, onRejected, onAborted])`: `Promise.then` と同等のメソッドで、`Request` オブジェクトを `Promise`
+    互換にします。`onFulfilled` は、サーバから完全なレスポンスを正常に受信した直後に呼び出されます。サーバへの接続に問題が
+    ある場合、またはブラウザがレスポンスの読み取りに何らかの制限を課す場合、`onRejected` が呼び出されます。最後に、この
+    メソッドは、リクエストがアボートしたときに呼び出されるハンドラを設定するための追加の `onAborted` パラメータをサポート
+    します
 
 
 #### レスポンス・オブジェクト
