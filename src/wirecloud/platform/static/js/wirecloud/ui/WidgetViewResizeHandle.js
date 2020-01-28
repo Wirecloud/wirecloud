@@ -53,8 +53,12 @@
     };
     WidgetViewResizeHandle.prototype = new StyledElements.StyledElement();
 
-    WidgetViewResizeHandle.prototype.canDrag = function canDrag(resizableElement, data) {
-        return data.widget.model.isAllowed('resize');
+    WidgetViewResizeHandle.prototype.canDrag = function canDrag(resizableElement, data, role) {
+        let editing = data.widget.tab.workspace.editing;
+        if (role == null) {
+            role = editing ? "editor" : "viewer";
+        }
+        return (data.widget.model.volatile || editing) && data.widget.model.isAllowed('resize', role);
     };
 
     WidgetViewResizeHandle.prototype.ondragstart = function ondragstart(resizableElement, handleElement, data) {

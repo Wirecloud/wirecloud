@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -63,23 +63,42 @@
         this.pending_events = [];
         this.prefCallback = null;
 
-        this.permissions = Wirecloud.Utils.merge({
-            close: true,
-            configure: true,
-            move: true,
-            rename: true,
-            resize: true,
-            minimize: true,
-            upgrade: true
-        }, data.permissions);
+        if (data.permissions == null) {
+            data.permissions = {};
+        }
+
+        let permissions = {
+            'editor': Wirecloud.Utils.merge({
+                close: true,
+                configure: true,
+                move: true,
+                rename: true,
+                resize: true,
+                minimize: true,
+                upgrade: true
+            }, data.permissions.editor),
+            'viewer': Wirecloud.Utils.merge({
+                close: false,
+                configure: false,
+                move: false,
+                rename: false,
+                resize: false,
+                minimize: false,
+                upgrade: false
+            }, data.permissions.viewer)
+        };
 
         // TODO
         if (data.readonly) {
-            this.permissions.close = false;
-            this.permissions.upgrade = false;
+            permissions.editor.close = false;
+            permissions.editor.upgrade = false;
+            permissions.viewer.close = false;
+            permissions.viewer.upgrade = false;
+            permissions.viewer.upgrade = false;
         }
 
         privates.set(this, {
+            permissions: permissions,
             position: {
                 x: data.left,
                 y: data.top,
@@ -212,6 +231,15 @@
             minimized: {
                 writable: true,
                 value: data.minimized
+            },
+            /**
+             * @memberOf Wirecloud.Widget#
+             * @type {Object}
+             */
+            permissions: {
+                get: function () {
+                    return utils.clone(privates.get(this).permissions);
+                }
             },
             /**
              * @memberOf Wirecloud.Widget#
@@ -363,28 +391,34 @@
 
         /**
          * @param {String} name
+         * @param {String} [role] (default: `"viewer"`)
          *
          * @returns {Boolean}
          */
-        isAllowed: function isAllowed(name) {
+        isAllowed: function isAllowed(name, role) {
 
-            if (!(name in this.permissions)) {
+            if (role == null) {
+                role = "viewer";
+            }
+            let permissions = privates.get(this).permissions[role];
+
+            if (!(name in permissions)) {
                 throw new TypeError("invalid name parameter");
             }
 
             if (!this.volatile) {
                 switch (name) {
                 case "close":
-                    return this.permissions.close && this.tab.workspace.isAllowed('add_remove_iwidgets');
+                    return permissions.close && this.tab.workspace.isAllowed('add_remove_iwidgets');
                 case "move":
                 case "resize":
                 case "minimize":
-                    return this.permissions[name] && this.tab.workspace.isAllowed('edit_layout');
+                    return permissions[name] && this.tab.workspace.isAllowed('edit_layout');
                 default:
-                    return !this.tab.workspace.restricted && this.permissions[name];
+                    return !this.tab.workspace.restricted && permissions[name];
                 }
             } else {
-                return this.permissions[name];
+                return permissions[name];
             }
         },
 
@@ -510,6 +544,44 @@
             }
         },
 
+        /**
+         * Updates viewer permissions over the widget.
+         *
+         * @param {Object} permissions object with the permissions to modify
+         *
+         * @returns {Wirecloud.Task}
+         */
+        setPermissions: function setPermissions(permissions) {
+            if (this.volatile) {
+                return _setPermissions(this, permissions);
+            } else {
+                var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                    workspace_id: this.tab.workspace.id,
+                    tab_id: this.tab.id,
+                    iwidget_id: this.id
+                });
+
+                var payload = {
+                    permissions: {
+                        viewer: permissions
+                    }
+                };
+
+                return Wirecloud.io.makeRequest(url, {
+                    method: 'POST',
+                    requestHeaders: {'Accept': 'application/json'},
+                    contentType: 'application/json',
+                    postBody: JSON.stringify(payload)
+                }).then((response) => {
+                    if (response.status === 204) {
+                        return _setPermissions(this, permissions);
+                    } else {
+                        return Promise.reject(new Error("Unexpected response from server"));
+                    }
+                });
+            }
+        },
+
         setPosition: function setPosition(position) {
             utils.update(privates.get(this).position, position);
             return this;
@@ -526,12 +598,12 @@
          *
          * @returns {Promise}
          */
-        setTitleVisibility: function setTitleVisibility(visibility) {
+        setTitleVisibility: function setTitleVisibility(visibility, persistence) {
             visibility = !!visibility;
 
             if (this.volatile) {
-                throw new TypeError();
-            } else {
+                return _setTitleVisibility(this, visibility);
+            } else if (persistence) {
                 var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
                     workspace_id: this.tab.workspace.id,
                     tab_id: this.tab.id,
@@ -549,12 +621,15 @@
                     postBody: JSON.stringify(payload)
                 }).then((response) => {
                     if (response.status === 204) {
-                        privates.get(this).titlevisible = visibility;
-                        return Promise.resolve(this);
+                        return _setTitleVisibility(this, visibility);
                     } else {
                         return Promise.reject(new Error("Unexpected response from server"));
                     }
                 });
+            } else {
+                privates.get(this).titlevisible = visibility;
+                this.dispatchEvent('change', ['titlevisible']);
+                return Promise.resolve(this);
             }
         },
 
@@ -767,6 +842,18 @@
             title: title
         });
         this.dispatchEvent('change', ['title']);
+    };
+
+    const _setPermissions = function _setPermissions(widget, permissions) {
+        utils.update(privates.get(widget).permissions.viewer, permissions);
+        widget.dispatchEvent('change', ['permissions']);
+        return Promise.resolve(widget);
+    };
+
+    const _setTitleVisibility = function _setTitleVisibility(widget, visibility) {
+        privates.get(widget).titlevisible = visibility;
+        widget.dispatchEvent('change', ['titlevisible']);
+        return Promise.resolve(widget);
     };
 
     var clean_title = function clean_title(title) {

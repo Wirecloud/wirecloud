@@ -136,7 +136,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             tab.click()
             tab_widget = tab.find_widget(title="Test 2")
-            self.assertTrue(tab_widget.remove_button.is_disabled)
+            self.assertFalse(tab_widget.remove_button.is_displayed)
 
     def test_refresh_widget(self):
         self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
@@ -636,7 +636,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.edit_mode as edit_session:
             iwidget = self.widgets[0]
             close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.wc-remove'))
-            self.assertTrue(close_button.is_disabled)
+            self.assertFalse(close_button.is_displayed)
 
             with edit_session.wiring_view as wiring:
                 self.assertEqual(len(wiring.find_connections(extra_class="readonly")), 3)

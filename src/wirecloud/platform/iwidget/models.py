@@ -32,6 +32,7 @@ class IWidget(models.Model):
     tab = models.ForeignKey('platform.Tab', on_delete=models.CASCADE, verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     positions = JSONField(blank=True)
+    permissions = JSONField(blank=True)
     readOnly = models.BooleanField(_('Read Only'), default=False)
     variables = JSONField(blank=True)
 

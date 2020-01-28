@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -699,20 +699,24 @@
                     var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
-                            close: true
+                            editor: {
+                                close: true
+                            }
                         }
                     });
-                    expect(widget.isAllowed("close")).toBe(true);
+                    expect(widget.isAllowed("close", "editor")).toBe(true);
                 });
 
                 it("normal widget on locked workspace", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
-                            close: true
+                            editor: {
+                                close: true
+                            }
                         }
                     });
-                    expect(widget.isAllowed("close")).toBe(false);
+                    expect(widget.isAllowed("close", "editor")).toBe(false);
                 });
 
                 it("normal widget on shared workspace", () => {
@@ -722,16 +726,23 @@
                             // This should contain a false value as this user is
                             // not able to edit shared dashboards
                             // Anyway, this should no affect the result
-                            close: true
+                            viewer: {
+                                close: true
+                            }
                         }
                     });
-                    expect(widget.isAllowed("close")).toBe(false);
+                    expect(widget.isAllowed("close", "viewer")).toBe(false);
                 });
 
                 it("volatile widget on shared workspace", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
-                        volatile: true
+                        volatile: true,
+                        permissions: {
+                            viewer: {
+                                close: true
+                            }
+                        }
                     });
                     expect(widget.isAllowed("close")).toBe(true);
                 });
@@ -740,11 +751,13 @@
                     var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
-                            close: true
+                            editor: {
+                                close: true
+                            }
                         },
                         readonly: true
                     });
-                    expect(widget.isAllowed("close")).toBe(false);
+                    expect(widget.isAllowed("close", "editor")).toBe(false);
                 });
 
             });
@@ -753,15 +766,33 @@
 
                 it("normal widget on locked workspace", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
-                    expect(widget.isAllowed("move")).toBe(false);
+                    expect(widget.isAllowed("move", "editor")).toBe(false);
                 });
 
-                it("volatile widget on shared workspace", () => {
+                it("volatile widget on shared workspace (editor)", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
-                        volatile: true
+                        volatile: true,
+                        permissions: {
+                            editor: {
+                                move: true
+                            }
+                        }
                     });
-                    expect(widget.isAllowed("move")).toBe(true);
+                    expect(widget.isAllowed("move", "editor")).toBe(true);
+                });
+
+                it("volatile widget on shared workspace (viewer)", () => {
+                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                        id: "1/1",
+                        volatile: true,
+                        permissions: {
+                            viewer: {
+                                move: true
+                            }
+                        }
+                    });
+                    expect(widget.isAllowed("move", "viewer")).toBe(true);
                 });
 
             });
@@ -772,41 +803,52 @@
                     var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
-                            rename: true
+                            editor: {
+                                rename: true
+                            }
                         }
                     });
-                    expect(widget.isAllowed("rename")).toBe(true);
+                    expect(widget.isAllowed("rename", "editor")).toBe(true);
                 });
 
                 it("normal widget on locked workspace", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
-                            rename: true
+                            editor: {
+                                rename: true
+                            }
                         }
                     });
-                    expect(widget.isAllowed("rename")).toBe(false);
+                    expect(widget.isAllowed("rename", "editor")).toBe(false);
                 });
 
                 it("normal widget on shared workspace", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
-                            // This should contain a false value as this user is
-                            // not able to edit shared dashboards
-                            // Anyway, this should no affect the result
-                            close: true
+                            viewer: {
+                                // This should contain a false value as this user is
+                                // not able to edit shared dashboards
+                                // Anyway, this should no affect the result
+                                close: true
+                            }
                         }
                     });
-                    expect(widget.isAllowed("rename")).toBe(false);
+                    expect(widget.isAllowed("rename", "viewer")).toBe(false);
                 });
 
                 it("volatile widget on shared workspace", () => {
                     var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
-                        volatile: true
+                        volatile: true,
+                        permissions: {
+                            viewer: {
+                                rename: true
+                            }
+                        }
                     });
-                    expect(widget.isAllowed("rename")).toBe(true);
+                    expect(widget.isAllowed("rename", "viewer")).toBe(true);
                 });
 
             });
@@ -1221,18 +1263,125 @@
 
         });
 
-        describe("setTitleVisibility(visibility)", () => {
+        describe("setPermissions(permissions)", () => {
 
-            it("throws a TypeError exception for volatile widgets", () => {
+            it("applies changes immediatelly for volatile widgets", () => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1/1",
+                    title: "old title",
+                    volatile: true,
+                    permissions: {
+                        viewer: {
+                            move: false
+                        }
+                    }
+                });
+
+                let t = widget.setPermissions({move: true});
+                expect(t).toEqual(jasmine.any(Promise));
+                expect(widget.permissions.viewer.move).toBe(true);
+            });
+
+            it("updates permissions on the server", (done) => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    permissions: {
+                        viewer: {
+                            move: false
+                        }
+                    }
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("POST");
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                let p = widget.setPermissions({move: true});
+                p.then(
+                    (value) => {
+                        expect(widget.permissions.viewer.move).toBe(true);
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("handles unexpected responses", (done) => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1"
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("POST");
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 200
+                        });
+                    });
+                });
+
+                let p = widget.setPermissions({move: true});
+                p.then(
+                    (value) => {
+                        fail("success callback called");
+                    },
+                    (error) => {
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                        done();
+                    }
+                );
+            });
+
+        });
+
+        describe("setTitleVisibility(visibility[, persistence])", () => {
+
+            it("returns immediatelly for volatile widgets", (done) => {
                 var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
+                spyOn(Wirecloud.io, "makeRequest");
 
-                expect(() => {
-                    widget.setTitleVisibility(true)
-                }).toThrowError(TypeError);
+                let p = widget.setTitleVisibility(true, false);
+                expect(widget.titlevisible).toBe(true);
+                expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                p.then(
+                    (value) => {
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
+            });
+
+            it("updates titlevisible property", (done) => {
+                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    titlevisible: false
+                });
+                spyOn(Wirecloud.io, "makeRequest");
+                expect(widget.titlevisible).toBe(false);
+
+                let p = widget.setTitleVisibility(true, false);
+                expect(widget.titlevisible).toBe(true);
+                expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                p.then(
+                    (value) => {
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
             });
 
             it("updates titlevisible property on the server", (done) => {
@@ -1250,7 +1399,7 @@
                 });
                 expect(widget.titlevisible).toBe(false);
 
-                let p = widget.setTitleVisibility(true);
+                let p = widget.setTitleVisibility(true, true);
                 p.then(
                     (value) => {
                         expect(widget.titlevisible).toBe(true);
@@ -1276,7 +1425,7 @@
                     });
                 });
 
-                let p = widget.setTitleVisibility(true)
+                let p = widget.setTitleVisibility(true, true);
                 p.then(
                     (value) => {
                         fail("success callback called");

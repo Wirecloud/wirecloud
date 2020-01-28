@@ -99,16 +99,6 @@ def update_size_value(model, data, field):
         model[field] = size
 
 
-def update_icon_position(iwidget, data):
-    if 'icon' not in iwidget.positions:
-        iwidget.positions['icon'] = {}
-
-    position = iwidget.positions['icon']
-
-    update_position_value(position, data, 'top', 'icon_top')
-    update_position_value(position, data, 'left', 'icon_left')
-
-
 def update_position(iwidget, key, data):
     if key not in iwidget.positions:
         iwidget.positions[key] = {}
@@ -123,6 +113,11 @@ def update_position(iwidget, key, data):
     update_boolean_value(position, data, 'minimized')
     update_boolean_value(position, data, 'titlevisible')
     update_boolean_value(position, data, 'fulldragboard')
+
+
+def update_permissions(iwidget, data):
+    permissions = iwidget.permissions.setdefault('viewer', {})
+    update_boolean_value(permissions, data, 'move')
 
 
 def update_widget_value(iwidget, data, user, required=False):
@@ -173,10 +168,6 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
             'titlevisible': True,
             'fulldragboard': False,
         },
-        'icon': {
-            'top': 0,
-            'left': 0,
-        },
     }
 
     if initial_variable_values is not None:
@@ -184,7 +175,6 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
 
     update_title_value(new_iwidget, iwidget)
     update_position(new_iwidget, 'widget', iwidget)
-    update_icon_position(new_iwidget, iwidget)
 
     if commit:
         new_iwidget.save()
@@ -208,9 +198,10 @@ def UpdateIWidget(data, user, tab, updatecache=True):
         layout = data['layout']
         iwidget.layout = layout
 
+    update_permissions(iwidget, data.get('permissions', {}).get('viewer', {}))
+
     # update positions
     update_position(iwidget, 'widget', data)
-    update_icon_position(iwidget, data)
 
     # save the changes
     iwidget.save(updatecache=updatecache)

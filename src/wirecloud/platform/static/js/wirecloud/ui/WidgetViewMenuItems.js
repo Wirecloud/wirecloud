@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -54,48 +55,48 @@
 
             items = [];
 
-            item = new se.MenuItem(utils.gettext("Rename"), function () {
-                this.titleelement.enableEdition();
-            }.bind(this.widget));
+            item = new se.MenuItem(utils.gettext("Rename"), () => {
+                this.widget.titleelement.enableEdition();
+            });
             item.addIconClass("fa fa-pencil");
-            item.setDisabled(!this.widget.model.isAllowed('rename'));
+            item.setDisabled(!this.widget.model.isAllowed('rename', 'editor'));
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("Reload"), function () {
-                this.reload();
-            }.bind(this.widget));
+            item = new se.MenuItem(utils.gettext("Reload"), () => {
+                this.widget.reload();
+            });
             item.addIconClass("fa fa-refresh");
             item.setDisabled(this.widget.model.missing);
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("Upgrade/Downgrade"), function () {
-                var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.model);
+            item = new se.MenuItem(utils.gettext("Upgrade/Downgrade"), () => {
+                var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.widget.model);
                 dialog.show();
-            }.bind(this.widget));
+            });
             item.addIconClass("fa fa-retweet");
-            item.setDisabled(!this.widget.model.isAllowed('upgrade') || !Wirecloud.LocalCatalogue.hasAlternativeVersion(this.widget.model.meta));
+            item.setDisabled(!this.widget.model.isAllowed('upgrade', 'editor') || !Wirecloud.LocalCatalogue.hasAlternativeVersion(this.widget.model.meta));
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("Logs"), function () {
-                this.showLogs();
-            }.bind(this.widget));
+            item = new se.MenuItem(utils.gettext("Logs"), () => {
+                this.widget.showLogs();
+            });
             item.addIconClass("fa fa-tags");
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("Settings"), function () {
-                this.showSettings();
-            }.bind(this.widget));
+            item = new se.MenuItem(utils.gettext("Settings"), () => {
+                this.widget.showSettings();
+            });
             item.addIconClass("fa fa-cog");
-            item.setDisabled(!this.widget.model.hasPreferences() || !this.widget.model.isAllowed('configure'));
+            item.setDisabled(!this.widget.model.hasPreferences() || !this.widget.model.isAllowed('configure', 'editor'));
             items.push(item);
 
-            item = new se.MenuItem(utils.gettext("User's Manual"), function () {
+            item = new se.MenuItem(utils.gettext("User's Manual"), () => {
                 var myresources_view = Wirecloud.UserInterfaceManager.views.myresources;
-                myresources_view.createUserCommand('showDetails', this.model.meta, {
-                        version: this.model.meta.version,
+                myresources_view.createUserCommand('showDetails', this.widget.model.meta, {
+                        version: this.widget.model.meta.version,
                         tab: utils.gettext('Documentation')
                     })();
-            }.bind(this.widget));
+            });
             item.addIconClass("fa fa-book");
             item.setDisabled(this.widget.model.meta.doc === '');
             items.push(item);
@@ -115,7 +116,7 @@
                 this.setFullDragboardMode(this.layout !== this.tab.dragboard.fulldragboardLayout);
             }.bind(this.widget));
             item.addIconClass(item_icon);
-            item.setDisabled(!this.widget.model.isAllowed('move'));
+            item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
             items.push(item);
 
             if (this.widget.layout === this.widget.tab.dragboard.fulldragboardLayout) {
@@ -128,7 +129,7 @@
                     this.widget.moveToLayout(this.widget.tab.dragboard.freeLayout);
                 });
                 item.addIconClass("fas fa-sign-out-alt");
-                item.setDisabled(!this.widget.model.isAllowed('move'));
+                item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 items.push(item);
             }
 
@@ -137,7 +138,7 @@
                     this.widget.moveToLayout(this.widget.tab.dragboard.baseLayout);
                 });
                 item.addIconClass("fas fa-sign-in-alt");
-                item.setDisabled(!this.widget.model.isAllowed('move'));
+                item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 items.push(item);
             }
 
@@ -146,7 +147,7 @@
                     this.widget.moveToLayout(this.widget.tab.dragboard.leftLayout);
                 });
                 item.addIconClass("fas fa-caret-square-left")
-                    .setDisabled(!this.widget.model.isAllowed('move'));
+                    .setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 items.push(item);
             }
 
@@ -155,7 +156,7 @@
                     this.widget.moveToLayout(this.widget.tab.dragboard.rightLayout);
                 });
                 item.addIconClass("fas fa-caret-square-right")
-                    .setDisabled(!this.widget.model.isAllowed('move'));
+                    .setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 items.push(item);
             }
 

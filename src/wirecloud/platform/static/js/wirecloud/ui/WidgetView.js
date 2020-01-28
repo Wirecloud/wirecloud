@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -98,13 +98,13 @@
                 }
             },
             title: {
-                get: function () {
+                get: () => {
                     return this.model.title;
                 }
             },
             titlevisible: {
                 get: () => {
-                    return this.titlevisibilitybutton.hasIconClassName('fa-eye');
+                    return this.model.titlevisible;
                 }
             }
         });
@@ -131,17 +131,25 @@
                     iconClass: 'fas fa-exclamation-triangle'
                 });
 
-                button.addEventListener('click', function (button) {
+                button.hide().addEventListener('click', function (button) {
                     var dialog = new Wirecloud.ui.LogWindowMenu(view.model.logManager);
                     dialog.show();
                 });
-                button.disable();
                 view.errorbutton = button;
                 return button;
             },
             'grip': (options, tcomponents, view) => {
-                view.grip = document.createElement("i");
-                view.grip.className = "fas fa-grip-vertical";
+                view.grip = new StyledElements.Button({
+                    plain: true,
+                    class: 'wc-grip-button',
+                    iconClass: 'fa-fw fas fa-grip-vertical'
+                });
+                view.grip.addEventListener('click', (button) => {
+                    button.disable().addClassName('busy');
+                    view.togglePermission('move', true).finally(() => {
+                        button.enable().removeClassName('busy');
+                    });
+                });
                 return view.grip;
             },
             'menubutton': function (options, tcomponents, view) {
@@ -182,7 +190,7 @@
             'titlevisibilitybutton': (options, tcomponents, view) => {
                 var button = new StyledElements.Button({
                     plain: true,
-                    class: 'wc-titlevisibilitybutton',
+                    class: 'wc-titlevisibility-button',
                     iconClass: 'fa-fw fas fa-eye-slash'
                 });
 
@@ -236,7 +244,7 @@
                 this.titleelement.setTextContent(widget.title);
             }
 
-            if (changes.indexOf('meta') !== -1) {
+            if (changes.indexOf('meta') !== -1 || changes.indexOf('permissions') !== -1 || changes.indexOf('titlevisible') !== -1) {
                 update.call(this);
             }
         });
@@ -277,7 +285,6 @@
 
         // Init minimized and title visibility options
         this.setMinimizeStatus(model.minimized, false, true);
-        this.setTitleVisibility(model.titlevisible, false);
 
         this.model.logManager.addEventListener('newentry', on_add_log.bind(this));
 
@@ -308,6 +315,7 @@
 
         this.tab.workspace.addEventListener('editmode', update.bind(this));
         model.addEventListener('remove', on_remove.bind(this));
+        update.call(this);
     };
 
     // =========================================================================
@@ -343,7 +351,7 @@
                     height: this.layout.adaptHeight(this.wrapperElement.offsetHeight + 'px').inLU,
                     width: priv.shape.width
                 };
-                this.setTitleVisibility(true, false);
+                this.model.setTitleVisibility(true, false);
             } else {
                 this.minimizebutton.setTitle(utils.gettext("Minimize"));
                 this.minimizebutton.replaceIconClassName("fa-plus", "fa-minus");
@@ -369,41 +377,30 @@
         },
 
         /**
-         * Changes title visibility for this widget
-         *
-         * @param {Boolean} newStatus new title visibility status for this widget
-         * @param {Boolean} persistence save change on server
-         */
-        setTitleVisibility: function setTitleVisibility(newStatus, persistence) {
-
-            if (newStatus === this.titlevisible) {
-                return this;
-            }
-
-            let p = persistence ? this.model.setTitleVisibility(newStatus) : Promise.resolve();
-
-            return p.then(
-                () => {
-                    this.titlevisibilitybutton.setTitle(newStatus ? utils.gettext("Hide title") : utils.gettext("Show title"));
-                    this.wrapperElement.classList.toggle('wc-titled-widget', newStatus);
-                    if (newStatus) {
-                        this.titlevisibilitybutton.replaceIconClassName("fa-eye-slash", "fa-eye");
-                    } else {
-                        this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
-                    }
-                },
-                () => {
-                }
-            );
-        },
-
-        /**
          * Toggles title visibility
          *
          * @param {Boolean} persistence save change on server
          */
         toggleTitleVisibility: function toggleTitleVisibility(persistence) {
-            this.setTitleVisibility(!this.titlevisible, persistence);
+            this.titlevisibilitybutton.disable().addClassName('busy');
+            let t = this.model.setTitleVisibility(!this.titlevisible, persistence);
+            t.finally(() => {this.titlevisibilitybutton.enable().removeClassName('busy');});
+            return t;
+        },
+
+        /**
+         * Toggles a widget permission
+         *
+         * @param {String} permission permission to toggle
+         * @param {Boolean} persistence save change on server
+         *
+         * @return {Wirecloud.Task} task instance controlling the progress
+         */
+        togglePermission: function togglePermission(permission, persistence) {
+            let changes = {
+                [permission]: !this.model.permissions.viewer[permission]
+            };
+            return this.model.setPermissions(changes, persistence);
         },
 
         setPosition: function setPosition(position) {
@@ -479,9 +476,9 @@
             } else {
                 // Reset highlighting animation
                 this.wrapperElement.classList.remove('wc-widget-highlight');
-                setTimeout(function () {
+                setTimeout(() => {
                     this.wrapperElement.classList.add('wc-widget-highlight');
-                }.bind(this));
+                });
             }
 
             return this;
@@ -663,26 +660,41 @@
     var privates = new WeakMap();
 
     var update_buttons = function update_buttons() {
-        var editing = this.tab.workspace.editing;
+        let editing = this.tab.workspace.editing;
+        let role = editing ? "editor" : "viewer";
         if (this.grip) {
-            this.grip.classList.toggle("disabled", this.draggable == null || !this.draggable.canDrag(null, {widget: this}));
+            let editable = editing && !this.model.volatile && this.layout instanceof Wirecloud.ui.FreeLayout && (this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'editor'));
+            let moveable = this.draggable != null && this.draggable.canDrag(null, {widget: this}, 'viewer');
+            this.grip.enabled = editable;
+            this.grip.hidden = !editable && !(moveable && this.layout instanceof Wirecloud.ui.FreeLayout);
+            this.grip.icon.classList.toggle("fa-anchor", !moveable);
+            this.grip.icon.classList.toggle("fa-grip-vertical", moveable);
+            this.grip.setTitle(moveable ? utils.gettext("Disallow to move this widget") : utils.gettext("Allow to move this widget"));
         }
 
         if (this.titlevisibilitybutton) {
+            this.titlevisibilitybutton.hidden = !editing;
             this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
+            this.titlevisibilitybutton.setTitle(this.model.titlevisible ? utils.gettext("Hide title") : utils.gettext("Show title"));
+            if (this.model.titlevisible) {
+                this.titlevisibilitybutton.replaceIconClassName("fa-eye-slash", "fa-eye");
+            } else {
+                this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
+            }
         }
-        this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close');
-        this.menubutton.enabled = editing;
+        this.closebutton.hidden = !(this.model.volatile || editing) || !this.model.isAllowed('close', role);
+        this.menubutton.hidden = !editing;
 
-        this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
-        this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
-        this.rightresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize');
+        this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
+        this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
+        this.rightresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
     };
 
     var update_className = function update_className() {
         this.wrapperElement.classList.toggle('wc-missing-widget', this.model.missing);
         this.wrapperElement.classList.toggle('wc-floating-widget', this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout);
         this.wrapperElement.classList.toggle('wc-moveable-widget', this.draggable != null && this.draggable.canDrag(null, {widget: this}));
+        this.wrapperElement.classList.toggle('wc-titled-widget', this.model.titlevisible);
     };
 
     var update = function update() {
@@ -734,7 +746,7 @@
 
     var on_add_log = function on_add_log() {
         var label, errorCount = this.model.logManager.errorCount;
-        this.errorbutton.enabled = errorCount !== 0;
+        this.errorbutton.hidden = errorCount === 0;
 
         label = utils.ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
         label = utils.interpolate(label, {errorCount: errorCount}, true);

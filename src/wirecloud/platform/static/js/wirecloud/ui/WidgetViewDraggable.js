@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -56,19 +56,28 @@
         };
     };
 
-    WidgetViewDraggable.prototype.canDrag = function canDrag(draggable, context) {
-        return (context.widget.model.volatile || context.widget.tab.workspace.editing) && context.widget.model.isAllowed('move') && !(context.widget.layout instanceof Wirecloud.ui.FullDragboardLayout);
+    WidgetViewDraggable.prototype.canDrag = function canDrag(draggable, context, role) {
+        if (role == null) {
+            role = context.widget.tab.workspace.editing ? "editor" : "viewer";
+        }
+        return (
+            context.widget.model.volatile
+            || context.widget.layout instanceof Wirecloud.ui.FreeLayout
+            || context.widget.tab.workspace.editing
+        )
+        && context.widget.model.isAllowed('move', role)
+        && !(context.widget.layout instanceof Wirecloud.ui.FullDragboardLayout);
     };
 
     WidgetViewDraggable.prototype.ondragstart = function ondragstart(draggable, context) {
-        context.layout = context.widget.layout;
-        context.layout.dragboard.raiseToTop(context.widget);
-        context.layout.initializeMove(context.widget, draggable);
+        let layout = context.widget.layout;
+        layout.dragboard.raiseToTop(context.widget);
+        layout.initializeMove(context.widget, draggable);
 
         context.widget.wrapperElement.classList.add('dragging');
         context.widget.tab.wrapperElement.classList.add('dragging');
 
-        context.tabs = context.widget.tab.workspace.tabs.filter(function (tab) {
+        context.tabs = context.widget.tab.workspace.tabs.filter((tab) => {
             if (tab.id !== context.widget.tab.id) {
                 tab.tabElement.addEventListener('mouseenter', context._on_mouseenter_tab);
                 tab.tabElement.addEventListener('mouseleave', context._on_mouseleave_tab);
@@ -100,8 +109,8 @@
 
         // The mouse is not over a tab
         // The cursor must allways be inside the dragboard
-        var position = context.layout.getCellAt(x, y);
-        context.layout.moveTemporally(position.x, position.y);
+        var position = context.widget.layout.getCellAt(x, y);
+        context.widget.layout.moveTemporally(position.x, position.y);
         return;
     };
 
@@ -111,13 +120,13 @@
         context.widget.wrapperElement.classList.remove('dragging');
         context.widget.tab.wrapperElement.classList.remove('dragging');
 
-        context.tabs.forEach(function (tab) {
+        context.tabs.forEach((tab) => {
             tab.tabElement.removeEventListener('mouseenter', context._on_mouseenter_tab);
             tab.tabElement.removeEventListener('mouseleave', context._on_mouseleave_tab);
         });
 
         if (context.tab != null) {
-            context.layout.cancelMove();
+            context.widget.layout.cancelMove();
 
             // On-demand loading of tabs!
             // TODO: context.tab.load();
@@ -134,7 +143,7 @@
             context.tab.tabElement.classList.remove("selected");
             context.tab = null;
         } else {
-            context.layout.acceptMove();
+            context.widget.layout.acceptMove();
         }
     };
 
@@ -142,7 +151,7 @@
         var tab = this.widget.tab.workspace.findTab(event.target.getAttribute('data-id'));
         this.tab = tab;
         this.tab.tabElement.classList.add("selected");
-        this.layout.disableCursor();
+        this.widget.layout.disableCursor();
     };
 
     var on_mouseleave_tab = function on_mouseleave_tab(event) {
