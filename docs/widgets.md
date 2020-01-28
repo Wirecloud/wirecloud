@@ -529,12 +529,12 @@ Homepage: [https://github.com/wirecloud-fiware/ngsi-entity2poi-operator](https:/
 Map viewer widget using OpenLayers.
 
 * Vendor: CoNWeT
-* Version: 1.1.3
+* Version: 1.2.0
 * License: Apache License 2.0
 
 Homepage: [https://github.com/Wirecloud/ol3-map-widget](https://github.com/Wirecloud/ol3-map-widget)
 
-**[Download CoNWeT\_ol3-map\_1.1.3.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.1.3/CoNWeT_ol3-map_1.1.3.wgt)**
+**[Download CoNWeT\_ol3-map\_1.2.0.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.2.0/CoNWeT_ol3-map_1.2.0.wgt)**
 
 ### Open item webpage
 
