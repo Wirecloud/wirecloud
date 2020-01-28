@@ -1342,16 +1342,25 @@
 
         describe("setTitleVisibility(visibility[, persistence])", () => {
 
-            it("throws a TypeError exception for volatile widgets", () => {
+            it("returns immediatelly for volatile widgets", (done) => {
                 var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
+                spyOn(Wirecloud.io, "makeRequest");
 
-                expect(() => {
-                    widget.setTitleVisibility(true, false)
-                }).toThrowError(TypeError);
+                let p = widget.setTitleVisibility(true, false);
+                expect(widget.titlevisible).toBe(true);
+                expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                p.then(
+                    (value) => {
+                        done();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                );
             });
 
             it("updates titlevisible property", (done) => {

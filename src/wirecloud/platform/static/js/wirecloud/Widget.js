@@ -553,9 +553,7 @@
          */
         setPermissions: function setPermissions(permissions) {
             if (this.volatile) {
-                utils.update(privates.get(this).permissions.viewer, permissions);
-                this.dispatchEvent('change', ['permissions']);
-                return Promise.resolve(this);
+                return _setPermissions(this, permissions);
             } else {
                 var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
                     workspace_id: this.tab.workspace.id,
@@ -576,9 +574,7 @@
                     postBody: JSON.stringify(payload)
                 }).then((response) => {
                     if (response.status === 204) {
-                        utils.update(privates.get(this).permissions.viewer, permissions);
-                        this.dispatchEvent('change', ['permissions']);
-                        return Promise.resolve(this);
+                        return _setPermissions(this, permissions);
                     } else {
                         return Promise.reject(new Error("Unexpected response from server"));
                     }
@@ -606,7 +602,7 @@
             visibility = !!visibility;
 
             if (this.volatile) {
-                throw new TypeError();
+                return _setTitleVisibility(this, visibility);
             } else if (persistence) {
                 var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
                     workspace_id: this.tab.workspace.id,
@@ -625,9 +621,7 @@
                     postBody: JSON.stringify(payload)
                 }).then((response) => {
                     if (response.status === 204) {
-                        privates.get(this).titlevisible = visibility;
-                        this.dispatchEvent('change', ['titlevisible']);
-                        return Promise.resolve(this);
+                        return _setTitleVisibility(this, visibility);
                     } else {
                         return Promise.reject(new Error("Unexpected response from server"));
                     }
@@ -848,6 +842,18 @@
             title: title
         });
         this.dispatchEvent('change', ['title']);
+    };
+
+    const _setPermissions = function _setPermissions(widget, permissions) {
+        utils.update(privates.get(widget).permissions.viewer, permissions);
+        widget.dispatchEvent('change', ['permissions']);
+        return Promise.resolve(widget);
+    };
+
+    const _setTitleVisibility = function _setTitleVisibility(widget, visibility) {
+        privates.get(widget).titlevisible = visibility;
+        widget.dispatchEvent('change', ['titlevisible']);
+        return Promise.resolve(widget);
     };
 
     var clean_title = function clean_title(title) {

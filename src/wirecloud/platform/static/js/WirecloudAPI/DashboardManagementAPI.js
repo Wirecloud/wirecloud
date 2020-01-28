@@ -172,10 +172,13 @@
         }
 
         options = options != null ? options : {};
-        options.permissions.viewer = Wirecloud.Utils.merge({
-            close: true,
-            rename: false
-        }, options.permissions);
+        options.permissions = {
+            viewer: Wirecloud.Utils.merge({
+                close: true,
+                rename: false,
+                move: true
+            }, options.permissions)
+        };
         options.permissions.editor = options.permissions.viewer;
 
         var tab = workspaceview.activeTab;

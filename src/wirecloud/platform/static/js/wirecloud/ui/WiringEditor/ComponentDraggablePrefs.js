@@ -104,11 +104,11 @@
     // =========================================================================
 
     var canRename = function canRename() {
-        return this.type == 'widget' && this._component.isAllowed('rename');
+        return this.type == 'widget' && this._component.isAllowed('rename', 'editor');
     };
 
     var canUpgrade = function canUpgrade() {
-        return !this.background && this._component.isAllowed('upgrade') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this._component.meta);
+        return !this.background && this._component.isAllowed('upgrade', 'editor') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this._component.meta);
     };
 
     var canCollapseEndpoints = function canCollapseEndpoints() {
@@ -124,7 +124,7 @@
     };
 
     var canShowSettings = function canShowSettings() {
-        return this.hasSettings() && this._component.isAllowed('configure');
+        return this.hasSettings() && this._component.isAllowed('configure', 'editor');
     };
 
     var getItemCollapse = function getItemCollapse() {

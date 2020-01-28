@@ -87,11 +87,11 @@
     };
 
     var canUpgrade = function canUpgrade() {
-        return this.component._component.isAllowed('upgrade') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this.component._component.meta);
+        return this.component._component.isAllowed('upgrade', 'editor') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this.component._component.meta);
     };
 
     var canShowSettings = function canShowSettings() {
-        return this.component.hasSettings() && this.component._component.isAllowed('configure');
+        return this.component.hasSettings() && this.component._component.isAllowed('configure', 'editor');
     };
 
     var showRenameModal = function showRenameModal() {

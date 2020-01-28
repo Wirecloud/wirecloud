@@ -199,7 +199,7 @@
             switch (permission) {
             case 'remove':
                 return !this.workspace.restricted && Object.keys(this.workspace.tabs).length > 1 && !privates.get(this).widgets.some(function (widget) {
-                    return !widget.volatile && !widget.isAllowed('close');
+                    return !widget.volatile && !widget.isAllowed('close', 'editor');
                 });
             default:
                 throw new TypeError("invalid permission parameter");

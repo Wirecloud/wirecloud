@@ -470,9 +470,11 @@
             });
 
             it("should manage edit mode changes on workspace", () => {
+                widget.layout = create_layout_mock(tab, ns.FreeLayout);
                 tab.workspace.editing = true;
                 callEventListener(tab.workspace, "editmode");
 
+                expect(widget.grip.hidden).toBe(false);
                 expect(widget.grip.enabled).toBe(true);
             });
 

@@ -131,11 +131,10 @@
                     iconClass: 'fas fa-exclamation-triangle'
                 });
 
-                button.addEventListener('click', function (button) {
+                button.hide().addEventListener('click', function (button) {
                     var dialog = new Wirecloud.ui.LogWindowMenu(view.model.logManager);
                     dialog.show();
                 });
-                button.disable();
                 view.errorbutton = button;
                 return button;
             },
@@ -146,9 +145,9 @@
                     iconClass: 'fa-fw fas fa-grip-vertical'
                 });
                 view.grip.addEventListener('click', (button) => {
-                    button.addClassName('busy');
+                    button.disable().addClassName('busy');
                     view.togglePermission('move', true).finally(() => {
-                        button.removeClassName('busy');
+                        button.enable().removeClassName('busy');
                     });
                 });
                 return view.grip;
@@ -316,6 +315,7 @@
 
         this.tab.workspace.addEventListener('editmode', update.bind(this));
         model.addEventListener('remove', on_remove.bind(this));
+        update.call(this);
     };
 
     // =========================================================================
@@ -382,9 +382,9 @@
          * @param {Boolean} persistence save change on server
          */
         toggleTitleVisibility: function toggleTitleVisibility(persistence) {
-            this.titlevisibilitybutton.addClassName('busy');
+            this.titlevisibilitybutton.disable().addClassName('busy');
             let t = this.model.setTitleVisibility(!this.titlevisible, persistence);
-            t.finally(() => {this.titlevisibilitybutton.removeClassName('busy');});
+            t.finally(() => {this.titlevisibilitybutton.enable().removeClassName('busy');});
             return t;
         },
 
@@ -663,15 +663,17 @@
         let editing = this.tab.workspace.editing;
         let role = editing ? "editor" : "viewer";
         if (this.grip) {
-            let editable = editing && (this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'editor'));
-            let moveable = this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'viewer');
-            this.grip.enabled = this.tab.workspace.editing;
-            this.grip.hidden = !editable && !moveable;
+            let editable = editing && !this.model.volatile && this.layout instanceof Wirecloud.ui.FreeLayout && (this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'editor'));
+            let moveable = this.draggable != null && this.draggable.canDrag(null, {widget: this}, 'viewer');
+            this.grip.enabled = editable;
+            this.grip.hidden = !editable && !(moveable && this.layout instanceof Wirecloud.ui.FreeLayout);
             this.grip.icon.classList.toggle("fa-anchor", !moveable);
             this.grip.icon.classList.toggle("fa-grip-vertical", moveable);
+            this.grip.setTitle(moveable ? utils.gettext("Disallow to move this widget") : utils.gettext("Allow to move this widget"));
         }
 
         if (this.titlevisibilitybutton) {
+            this.titlevisibilitybutton.hidden = !editing;
             this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
             this.titlevisibilitybutton.setTitle(this.model.titlevisible ? utils.gettext("Hide title") : utils.gettext("Show title"));
             if (this.model.titlevisible) {
@@ -680,8 +682,8 @@
                 this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
             }
         }
-        this.closebutton.enabled = (this.model.volatile || editing) && this.model.isAllowed('close', role);
-        this.menubutton.enabled = editing;
+        this.closebutton.hidden = !(this.model.volatile || editing) || !this.model.isAllowed('close', role);
+        this.menubutton.hidden = !editing;
 
         this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
         this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
@@ -744,7 +746,7 @@
 
     var on_add_log = function on_add_log() {
         var label, errorCount = this.model.logManager.errorCount;
-        this.errorbutton.enabled = errorCount !== 0;
+        this.errorbutton.hidden = errorCount === 0;
 
         label = utils.ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
         label = utils.interpolate(label, {errorCount: errorCount}, true);
