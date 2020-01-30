@@ -1,6 +1,6 @@
 /*
  *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -53,6 +53,10 @@
             this.activeTab.dragboard._updateIWidgetSizes(true, true);
         });
         this.editButton.addEventListener("active", (button) => {
+            if (this.editing) {
+                this.activeTab.dragboard.leftLayout.active = true;
+                this.activeTab.dragboard.rightLayout.active = true;
+            }
             this.dispatchEvent("editmode", this.editing);
         });
 

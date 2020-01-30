@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -118,7 +118,7 @@
 
     SidebarLayout.prototype.updatePosition = function updatePosition(widget, element) {
         var offset;
-        if (!(this.dragboard.tab.workspace.editing || this.active)) {
+        if (!this.active) {
             offset = -this.getWidth() - this.leftMargin + this.dragboardLeftMargin;
         } else {
             offset = 0;
