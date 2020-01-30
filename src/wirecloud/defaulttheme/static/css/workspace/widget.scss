@@ -29,10 +29,11 @@
 }
 
 .wc-widget-heading {
-    position: relative;
+    position: absolute;
     flex-grow: 0;
     display: none;
     width: 100%;
+    z-index: 4;
 
     .wc-moveable-widget > & {
         cursor: -webkit-grab;
@@ -40,6 +41,9 @@
         cursor: grab;
     }
 
+    .wc-titled-widget > & {
+        position: relative;
+    }
     .wc-workspace-editing &,
     .wc-minimized-widget &,
     .wc-titled-widget > & {
