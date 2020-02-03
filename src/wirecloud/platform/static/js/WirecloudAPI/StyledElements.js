@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -108,17 +109,21 @@
         this.show = function show(refPosition) {
             var position = iwidget.wrapperElement.getBoundingClientRect();
 
-            refPosition = {
-                top: refPosition.top + position.top + platform.document.body.scrollTop,
-                left: refPosition.left + position.left + platform.document.body.scrollLeft,
-                width: refPosition.width,
-                height: refPosition.height
-            };
-            refPosition.right = refPosition.left + refPosition.width;
-            refPosition.bottom = refPosition.top + refPosition.height;
-            Object.freeze(refPosition);
+            if ('getBoundingClientRect' in refPosition) {
+                refPosition = refPosition.getBoundingClientRect();
+            }
 
-            menu.show(refPosition);
+            let _refPosition = {};
+            Object.defineProperties(_refPosition, {
+                bottom: {get: () => {return refPosition.top + _refPosition.height;}},
+                height: {value: Number.isFinite(refPosition.height) ? refPosition.height : 0},
+                left: {get: () => {return refPosition.left + position.left + platform.document.body.scrollLeft}},
+                right: {get: () => {return refPosition.left + _refPosition.width;}},
+                top: {get: () => {return refPosition.top + position.top + platform.document.body.scrollTop;}},
+                width: {value: Number.isFinite(refPosition.width) ? refPosition.width : 0}
+            });
+
+            menu.show(_refPosition);
 
             return this;
         };
@@ -165,23 +170,27 @@
         });
 
         this.show = function show(refPosition) {
-            var position = iwidget.wrapperElement.getBoundingClientRect();
+            let _refPosition = {
+                getBoundingClientRect: () => {
+                    let position = iwidget.wrapperElement.getBoundingClientRect();
 
-            if ('getBoundingClientRect' in refPosition) {
-                refPosition = refPosition.getBoundingClientRect();
-            }
+                    if ('getBoundingClientRect' in refPosition) {
+                        refPosition = refPosition.getBoundingClientRect();
+                    }
 
-            refPosition = {
-                top: refPosition.top + position.top + platform.document.body.scrollTop,
-                left: refPosition.left + position.left + platform.document.body.scrollLeft,
-                width: refPosition.width,
-                height: refPosition.height
+                    let box = {
+                        height: Number.isFinite(refPosition.height) ? refPosition.height : 0,
+                        left: refPosition.left + position.left + platform.document.body.scrollLeft,
+                        top: refPosition.top + position.top + platform.document.body.scrollTop,
+                        width: Number.isFinite(refPosition.width) ? refPosition.width : 0
+                    };
+                    box.right = position.left + refPosition.left + box.width;
+                    box.bottom = position.top + refPosition.top + box.height;
+                    return box;
+                }
             };
-            refPosition.right = refPosition.left + refPosition.width;
-            refPosition.bottom = refPosition.top + refPosition.height;
-            Object.freeze(refPosition);
 
-            popover.show(refPosition);
+            popover.show(_refPosition);
         };
 
         proxy_method(this, popover, 'addEventListener');

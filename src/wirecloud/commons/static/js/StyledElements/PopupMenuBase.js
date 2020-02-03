@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -62,7 +62,7 @@
             this.wrapperElement.style.top = (refPosition.top - 1) + "px";
             break;
         case 'top-left':
-            this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
+            this.wrapperElement.style.bottom = (this.wrapperElement.parentElement.offsetHeight - refPosition.top - 1) + "px";
             this.wrapperElement.style.left = refPosition.left + "px";
             break;
         case 'top-right':

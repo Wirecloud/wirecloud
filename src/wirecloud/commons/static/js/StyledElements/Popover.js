@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -115,6 +115,10 @@
         const priv = privates.get(this);
         var i = 0, weights = [];
 
+        if ('getBoundingClientRect' in refPosition) {
+            refPosition = refPosition.getBoundingClientRect();
+        }
+
         do {
             setPosition(priv.element, refPosition, positions[i]);
             weights.push(standsOut(priv.element));
@@ -138,10 +142,6 @@
             return this.repaint();
         }
 
-        if ('getBoundingClientRect' in refPosition) {
-            refPosition = refPosition.getBoundingClientRect();
-        }
-
         priv.element = builder.parse(template, {
             title: this.options.title,
             content: this.options.content
@@ -152,7 +152,8 @@
         priv.baseelement.appendChild(priv.element);
         priv.baseelement.addEventListener("click", priv.disableCallback, true);
 
-        searchBestPosition.call(this, refPosition, this.options.placement);
+        priv.refPosition = refPosition;
+        searchBestPosition.call(this, priv.refPosition, this.options.placement);
         priv.element.classList.add('in');
         this.dispatchEvent('show');
 
@@ -213,6 +214,16 @@
         }
     };
 
+    Popover.prototype.repaint = function repaint() {
+        let priv = privates.get(this);
+
+        if (priv.refPosition) {
+            searchBestPosition.call(this, priv.refPosition, this.options.placement);
+        }
+
+        return this;
+    };
+
     Popover.prototype.show = function show(refElement) {
         return _show.call(this, refElement);
     };
@@ -222,6 +233,7 @@
         if (priv.element != null && !priv.element.classList.contains('in')) {
             priv.element.remove();
             priv.element = null;
+            priv.refPosition = null;
             if ('Wirecloud' in window) {
                 Wirecloud.UserInterfaceManager._unregisterPopup(this);
             }
