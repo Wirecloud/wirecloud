@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -110,7 +110,13 @@
                 this.findWidget = jasmine.createSpy("findWidget");
                 this.widgets = [];
                 this.dragboard = {
-                    _updateIWidgetSizes: jasmine.createSpy("_updateIWidgetSizes")
+                    _updateIWidgetSizes: jasmine.createSpy("_updateIWidgetSizes"),
+                    leftLayout: {
+                        active: false
+                    },
+                    rightLayout: {
+                        active: false
+                    }
                 };
             });
             utils.inherit(ns.WorkspaceTabView, StyledElements.Tab);
