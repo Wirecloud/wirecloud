@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-/* globals StyledElements */
+/* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (se) {
 
     "use strict";
 
@@ -81,6 +81,12 @@
 
         describe("hide()", () => {
 
+            afterEach(() => {
+                if ("Wirecloud" in window) {
+                    delete window.Wirecloud;
+                }
+            });
+
             it("can be displayed and hidden just immediately", () => {
                 var ref_element = new StyledElements.Button();
                 var tooltip = new StyledElements.Popover();
@@ -110,9 +116,54 @@
                 expect(document.querySelector('.popover')).toBe(null);
             });
 
+            it("should support WireCloud", () => {
+                var ref_element = new se.Button();
+                var popover = new se.Popover();
+                popover.show(ref_element);
+                window.Wirecloud = {
+                    UserInterfaceManager: {
+                        _unregisterPopup: jasmine.createSpy("_unregisterPopup")
+                    }
+                };
+
+                expect(popover.hide()).toBe(popover);
+                expect(Wirecloud.UserInterfaceManager._unregisterPopup).toHaveBeenCalledWith(popover);
+            });
+
+        });
+
+        describe("repaint()", () => {
+
+            it("works on hiden popovers", () => {
+                let popover = new StyledElements.Popover({placement: ['right']});
+                expect(popover.repaint()).toBe(popover);
+            });
+
+            it("works on visible popovers", () => {
+                let ref_element = new StyledElements.Button();
+                let popover = new StyledElements.Popover({placement: ['right']});
+                popover.show(ref_element);
+
+                expect(popover.repaint()).toBe(popover);
+            });
+
+            it("works on visible popovers (using static ref_elements)", () => {
+                let ref_element = {top: 0, bottom: 0, right: 0, left: 0};
+                let popover = new StyledElements.Popover({placement: ['right']});
+                popover.show(ref_element);
+
+                expect(popover.repaint()).toBe(popover);
+            });
+
         });
 
         describe("show(refPosition)", () => {
+
+            afterEach(() => {
+                if ("Wirecloud" in window) {
+                    delete window.Wirecloud;
+                }
+            });
 
             it("second call cancels animation", () => {
                 var ref_element = new StyledElements.Button();
@@ -172,6 +223,23 @@
                 expect(element.style.left).not.toBe("");
             });
 
+            it("should support WireCloud", () => {
+                let ref_element = new se.Button({text: "Test"});
+                let popover = new se.Popover({
+                    placement: ['bottom-right']
+                });
+                window.Wirecloud = {
+                    UserInterfaceManager: {
+                        _registerPopup: jasmine.createSpy("_registerPopup")
+                    }
+                };
+                expect(popover.show(ref_element)).toBe(popover);
+
+                var element = document.querySelector('.popover');
+                expect(element).not.toBe(null);
+                expect(Wirecloud.UserInterfaceManager._registerPopup).toHaveBeenCalledWith(popover);
+            });
+
         });
 
         describe("toggle(refPosition)", () => {
@@ -201,6 +269,52 @@
 
         });
 
+        describe("events", () => {
+
+            it("should hide popover when clicking outside the popover", (done) => {
+                let ref_element = new StyledElements.Button();
+                let popover = new StyledElements.Popover();
+                spyOn(popover, "hide").and.callThrough();
+                expect(popover.show(ref_element)).toBe(popover);
+
+                document.body.dispatchEvent(new MouseEvent("click", {button: 0}));
+
+                setTimeout(() => {
+                    expect(popover.hide).toHaveBeenCalledWith();
+                    done();
+                });
+            });
+
+            it("should ignore click events outside the popover when the not using the main button", (done) => {
+                let ref_element = new StyledElements.Button();
+                let popover = new StyledElements.Popover();
+                spyOn(popover, "hide").and.callThrough();
+                expect(popover.show(ref_element)).toBe(popover);
+
+                document.body.dispatchEvent(new MouseEvent("click", {button: 1}));
+
+                setTimeout(() => {
+                    expect(popover.hide).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it("should ignore transitionend events when showing a popover", () => {
+                let ref_element = new StyledElements.Button();
+                let popover = new StyledElements.Popover();
+                // The expected behaviour when calling hide just after calling show
+                // is to find a computed opacity of 0
+                spyOn(window, 'getComputedStyle').and.returnValue({
+                    getPropertyValue: function () {return "0";}
+                });
+                expect(popover.show(ref_element)).toBe(popover);
+
+                let element = document.querySelector('.popover');
+                element.dispatchEvent(new Event("transitionend"));
+            });
+
+        });
+
     });
 
-})();
+})(StyledElements);

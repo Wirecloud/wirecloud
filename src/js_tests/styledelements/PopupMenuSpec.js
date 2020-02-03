@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,21 +23,25 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (se) {
 
     "use strict";
 
     describe("Styled PopupMenuBase", function () {
         var popupMenu;
 
-        describe("PopupMenuBase(options)", function () {
+        describe("PopupMenuBase(options)", () => {
+
             it("Should be createdwith no options", function () {
-                popupMenu = new StyledElements.PopupMenu();
+                let popupMenu = new StyledElements.PopupMenu();
                 expect(popupMenu).toBeTruthy();
+                expect(popupMenu.wrapperElement.classList[1]).toEqual("hidden");
             });
+
         });
 
         describe("append(child)", function () {
+
             describe("Should work with MenuItem instances", function () {
                 var menuItem1, menuItem2;
                 var empty = function empty() {
@@ -79,7 +84,9 @@
                     menuItem2.click();
                     expect(menuItem2.run).toHaveBeenCalledWith({test: "helloWorld"}, {test: "helloWorld"});
                 });
+
             });
+
         });
 
         describe("appendSeparator()", function () {
@@ -92,11 +99,66 @@
             });
         });
 
-        it("Should handle visibility", function () {
-            popupMenu = new StyledElements.PopupMenu();
-            expect(popupMenu).toBeTruthy();
-            expect(popupMenu.wrapperElement.classList[1]).toEqual("hidden");
+        describe("destroy()", () => {
+
+            describe("Should work with MenuItem instances", () => {
+
+                it("Should work", function () {
+                    let menu = new StyledElements.PopupMenu();
+                    menu.destroy();
+                });
+
+            });
+
+        });
+
+        describe("events", () => {
+
+            it("should hide menu when clicking outside the menu", (done) => {
+                let ref_element = new se.Button();
+                let menu = new se.PopupMenu();
+                spyOn(menu, "hide").and.callThrough();
+                expect(menu.show(ref_element)).toBe(menu);
+
+                document.body.dispatchEvent(new MouseEvent("click", {button: 0}));
+
+                setTimeout(() => {
+                    expect(menu.hide).toHaveBeenCalledWith();
+                    done();
+                });
+            });
+
+            it("should ignore click events outside the menu when the not using the main button", (done) => {
+                let ref_element = new se.Button();
+                let menu = new se.PopupMenu();
+                spyOn(menu, "hide").and.callThrough();
+                expect(menu.show(ref_element)).toBe(menu);
+
+                document.body.dispatchEvent(new MouseEvent("click", {button: 1}));
+
+                setTimeout(() => {
+                    expect(menu.hide).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it("should ignore click events inside the menu", (done) => {
+                let ref_element = new se.Button();
+                let menu = new se.PopupMenu();
+                spyOn(menu, "hide").and.callThrough();
+                expect(menu.show(ref_element)).toBe(menu);
+                spyOn(menu.wrapperElement, "getBoundingClientRect").and.returnValue({top: 0, left: 0, right: 10, bottom: 10});
+
+                document.body.dispatchEvent(new MouseEvent("click", {button: 0, clientX: 2, clientY: 3}));
+
+                setTimeout(() => {
+                    expect(menu.hide).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
         });
 
     });
-})();
+
+})(StyledElements);
