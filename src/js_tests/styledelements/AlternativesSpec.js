@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -50,12 +51,15 @@
             it("should support the full option", function () {
                 var element = new StyledElements.Alternatives({full: false});
                 expect(element.hasClassName('full')).toBe(false);
+                expect(element.alternatives).toEqual({});
             });
 
             it("should support the id option", function () {
                 var element = new StyledElements.Alternatives({id: 'myid'});
                 expect(element.wrapperElement.id).toBe('myid');
+                expect(element.alternatives).toEqual({});
             });
+
         });
 
         describe("clear()", function () {
@@ -93,6 +97,10 @@
                 alt2 = element.createAlternative();
                 expect(element.visibleAlt).toBe(alt1);
 
+                const expected = {};
+                expected[alt1.altId] = alt1;
+                expected[alt2.altId] = alt2;
+                expect(element.alternatives).toEqual(expected);
                 expect(element.alternativeList).toEqual([alt1, alt2]);
             });
 

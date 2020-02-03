@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -427,6 +428,89 @@
             });
 
         });
+
+        describe("timeoutPromise(promise, ms, fallback)", () => {
+
+            beforeEach(() => {
+                jasmine.clock().install();
+            });
+
+            afterEach(() => {
+                // Needed because tests can fail
+                jasmine.clock().uninstall();
+            });
+
+            it("should resolve if original promise resolves before timeout", (done) => {
+                let resolve;
+                let original = new Promise((_resolve, reject) => {resolve = _resolve;});
+                let listener = jasmine.createSpy("listener");
+                let p = StyledElements.Utils.timeoutPromise(original, 200);
+                p.then(listener);
+
+                // Allow Promises to react
+                const value = "myvalue";
+                resolve(value);
+                jasmine.clock().uninstall();
+
+                setTimeout(() => {
+                    expect(listener).toHaveBeenCalledWith(value);
+                    done();
+                });
+            });
+
+            it("should reject if original promise rejects before timeout", (done) => {
+                let reject;
+                let original = new Promise((resolve, _reject) => {reject = _reject;});
+                let listener = jasmine.createSpy("listener");
+                let p = StyledElements.Utils.timeoutPromise(original, 200);
+                p.catch(listener);
+
+                // Allow Promises to react
+                const value = "myvalue";
+                reject(value);
+                jasmine.clock().uninstall();
+
+                setTimeout(() => {
+                    expect(listener).toHaveBeenCalledWith(value);
+                    done();
+                });
+            });
+
+            it("should reject on timeout", (done) => {
+                let original = new Promise((resolve, reject) => {});
+                let listener = jasmine.createSpy("listener");
+                let p = StyledElements.Utils.timeoutPromise(original, 200);
+                p.catch(listener);
+
+                jasmine.clock().tick(201);
+                // Allow Promises to react
+                jasmine.clock().uninstall();
+
+                setTimeout(() => {
+                    expect(listener).toHaveBeenCalledWith(jasmine.any(String));
+                    done();
+                });
+            });
+
+            it("should resolve on timeout when providing a fallback", (done) => {
+                let fallback = "fallback";
+                let original = new Promise((resolve, reject) => {});
+                let listener = jasmine.createSpy("listener");
+                let p = StyledElements.Utils.timeoutPromise(original, 200, fallback);
+                p.then(listener);
+
+                jasmine.clock().tick(201);
+                // Allow Promises to react
+                jasmine.clock().uninstall();
+
+                setTimeout(() => {
+                    expect(listener).toHaveBeenCalledWith(fallback);
+                    done();
+                });
+            });
+
+        });
+
         describe("stopPropagationListener(event)", function () {
 
             it("should stop the propagation of the event", function () {
