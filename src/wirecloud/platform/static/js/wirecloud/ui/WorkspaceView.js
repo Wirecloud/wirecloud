@@ -57,7 +57,9 @@
                 this.activeTab.dragboard.leftLayout.active = true;
                 this.activeTab.dragboard.rightLayout.active = true;
             }
-            this.model.contextManager.modify({editing: this.editing});
+            if (this.model != null) {
+                this.model.contextManager.modify({editing: this.editing});
+            }
             this.dispatchEvent("editmode", this.editing);
         });
 
