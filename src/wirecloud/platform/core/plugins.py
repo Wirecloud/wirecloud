@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -358,6 +358,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_workspace_context_definitions(self):
         return {
+            'description': {
+                'label': _('Description'),
+                'description': _("Short description of the workspace without formating"),
+            },
+            'editing': {
+                'label': _('Editing mode'),
+                'description': _('Boolean. Designates whether the workspace is in editing mode.'),
+            },
             'title': {
                 'label': _('Title'),
                 'description': _('Current title of the workspace'),
@@ -370,20 +378,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Owner'),
                 'description': _("Workspace's owner username"),
             },
-            'description': {
-                'label': _('Description'),
-                'description': _("Short description of the workspace without formating"),
-            },
             'longdescription': {
                 'label': _('Long description'),
                 'description': _("Detailed workspace's description. This description can contain formatting."),
             }
-        }
-
-    def get_workspace_context_current_values(self, workspace, user):
-        return {
-            'name': workspace.name,
-            'owner': workspace.creator.username,
         }
 
     def get_workspace_preferences(self):
