@@ -152,9 +152,17 @@
 
             // Simulate Wirecloud.init has been called
             Wirecloud.constants.WORKSPACE_CONTEXT = {
-                "title": {
-                    "description": "Current title of the workspace",
-                    "label": "Title"
+                "description": {
+                    "description": "Workspace's short description",
+                    "label": "Description"
+                },
+                'editing': {
+                    "label": "Editing mode",
+                    "description": "Boolean. Designates whether the workspace is in editing mode."
+                },
+                "longdescription": {
+                    "description": "Workspace's long description",
+                    "label": "Long Description"
                 },
                 "name": {
                     "description": "Current name of the workspace",
@@ -164,13 +172,9 @@
                     "description": "Workspace's owner username",
                     "label": "Owner"
                 },
-                "description": {
-                    "description": "Workspace's short description",
-                    "label": "Description"
-                },
-                "longdescription": {
-                    "description": "Workspace's long description",
-                    "label": "Long Description"
+                "title": {
+                    "description": "Current title of the workspace",
+                    "label": "Title"
                 }
             };
         });
