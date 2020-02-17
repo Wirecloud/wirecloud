@@ -21,9 +21,20 @@ any time.
 
 The following list of features are planned to be addressed in the short term,
 and incorporated in the next release of the product planned for
-**February 2019**:
+**March 2020**:
 
-* Create a catalogue outside FIWARE Lab for the official components.
+* Initial support for NGSI-LD (targeting orion-ld and Scorpio)
+  * Next version of WireCloud will incorporate a version of the NGSIJS with
+    support for NGSI-LD
+  * In a first step, NGSI-Source and NGSI-datamodel2poi operators will be
+    updated to cope with NGSI-LD.
+  * After this, the rest of widgets and operatos will be updated to support
+    NGSI-LD
+
+Already in-place features to be released on next version:
+* Support for Django 1.9 and 1.10 has been dropped and support for Django 2.0,
+  2.1 and 2.2 added.
+* WireCloud 1.4 has been move to use django-channels 2.x
 
 
 ## Medium term
@@ -32,24 +43,11 @@ The following list of features are planned to be addressed in the medium term,
 typically within the subsequent release(s) generated in the next **9 months**
 after next planned release:
 
-* Edit mode (see more detailed description below)
+* Support elastic search 6-7
+* Improved free layout with support for new relative placements (instead of
+  always using top-left square as origin) and better z-index management.
 * New layout modes.
-* Support for Django 1.9 and 1.10 will be dropped and support for Django 2.0
-  and 2.1 added.
-* Support for Python 2 will be also dropped. The next major release, WireCloud
-  1.3, will only support Python 3.4+.
-* WireCloud 1.3 will use move to use django-channels 2.x
-
-
-### Edit mode
-
-After introduction of the edit mode into WireCloud, workspaces will be loaded
-in execution mode by default, having to click on the edit button for being able
-to make modifications onto the workspace.
-
-This mode will simplify the implementation and evolution of other features, like
-the implementation of widgets without titles (See #67), improving the behaviour
-of minimized widgets, etc.
+* User interface rework.
 
 
 ## Long term
