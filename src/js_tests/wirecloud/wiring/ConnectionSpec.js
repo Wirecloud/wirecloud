@@ -29,6 +29,12 @@
     describe("Connection", function () {
         var operatorModel, widgetModel, endpointDesc1, endpointDesc2, sourceEndpoint, targetEndpoint, wiringEngine;
 
+        beforeAll(() => {
+            spyOn(console, "log");
+            spyOn(console, "info");
+            spyOn(console, "error");
+        });
+
         beforeEach(function () {
 
             endpointDesc1 = {

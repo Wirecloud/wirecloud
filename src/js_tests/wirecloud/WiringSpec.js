@@ -29,6 +29,11 @@
 
     describe("Wiring", function () {
 
+        beforeAll(() => {
+            spyOn(console, "log");
+            spyOn(console, "info");
+        });
+
         beforeEach(function () {
 
             spyOn(Wirecloud.wiring, "Operator").and.callFake(function (wiring, meta, data) {
