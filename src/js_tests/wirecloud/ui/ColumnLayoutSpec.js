@@ -217,8 +217,8 @@
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 3, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
-                layout.moveTemporally(1, 0);
-                layout.moveTemporally(2, 0);
+                layout.moveTemporally(200, 0);
+                layout.moveTemporally(420, 0);
                 layout.acceptMove();
 
                 expect(widget.position).toEqual({x: 1, y: 0});
@@ -229,7 +229,7 @@
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 2, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
-                layout.moveTemporally(10, 0);
+                layout.moveTemporally(1000, 0);
                 layout.acceptMove();
 
                 expect(widget.position).toEqual({x: 2, y: 0});
