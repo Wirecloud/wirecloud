@@ -1,28 +1,28 @@
 {% load wirecloudtags %}
 <header class="navbar fiware-header">
-    <div class="container-fluid">
-        <div class="logo-fl-header">
+<div class="container-fluid">
+<div class="logo-fl-header">
             {% if FIWARE_OFFICIAL_PORTAL %}
-            <a href="{{ FIWARE_HOME }}" class="brand">
+            <a class="brand" href="{{ FIWARE_HOME }}">
                 {% ifequal FIWARE_IDM_SERVER "https://account.lab.fiware.org" %}
-                <img alt="FIWARE Lab" class="fiware-logo" src="{% theme_static "images/fiwarelab.png" %}" />
+                <img %}"="" alt="Image can not be loaded." class="fiware-logo" fiwarelab.png"="" images="" src="{% theme_static "/>
                 {% else %}
-                <img alt="FIWARE Testbed" class="fiware-logo" src="{% theme_static "images/fiwaretestbed.png" %}" />
+                <img %}"="" alt="Image can not be loaded." class="fiware-logo" fiwaretestbed.png"="" images="" src="{% theme_static "/>
                 {% endifequal %}
-                <img alt="FIWARE Lab" class="fiware-symbol" src="{% theme_static "images/fiware-symbol.png" %}" />
-            </a>
+                <img %}"="" alt="Image can not be loaded." class="fiware-symbol" fiware-symbol.png"="" images="" src="{% theme_static "/>
+</a>
             {% else %}
             <a href="{{ FIWARE_HOME }}">
-                <img alt="FIWARE" class="fiware-logo" src="{% theme_static "images/logos/header.png" %}" />
-            </a>
+<img %}"="" alt="Image can not be loaded." class="fiware-logo" header.png"="" images="" logos="" src="{% theme_static "/>
+</a>
             {% endif %}
         </div><nav class="collapse">
-            <div id="wc-user-menu" class="user-menu nav pull-right"></div>
-            <ul class="nav navbar-nav">
-                {% for portal in FIWARE_PORTALS %}{% if portal.display != False %}<li {% ifinternalurl portal.url %}class="active"{% endifinternalurl %}>
-                <a href="{{ portal.url }}">{{ portal.name }}</a>
-                </li>{% endif %}{% endfor %}
+<div class="user-menu nav pull-right" id="wc-user-menu"></div>
+<ul class="nav navbar-nav">
+                {% for portal in FIWARE_PORTALS %}{% if portal.display != False %}<li %}="" %}class="active" endifinternalurl="" ifinternalurl="" portal.url="" {%="">
+<a href="{{ portal.url }}">{{ portal.name }}</a>
+</li>{% endif %}{% endfor %}
             </ul>
-        </nav>
-    </div>
+</nav>
+</div>
 </header>
