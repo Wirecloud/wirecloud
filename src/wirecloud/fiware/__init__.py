@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-__version_info__ = (6, 4, 7)
+__version_info__ = (6, 4, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
 FIWARE_LAB_PORTALS = (
