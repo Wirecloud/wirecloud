@@ -540,7 +540,7 @@
         for (positionY = 0; true ; positionY++) {
             for (positionX = 0; positionX <= maxX; positionX++) {
                 if (this._hasSpaceFor(this.matrix, positionX, positionY, width, height)) {
-                    return new Wirecloud.DragboardPosition(positionX, positionY);
+                    return {relx: true, x: positionX, rely: true, y: positionY};
                 }
             }
         }

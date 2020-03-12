@@ -1047,7 +1047,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 const return_this = function () {return this;};
                 const draggable = {setXOffset: return_this, setYOffset: return_this};
                 layout.initializeMove(widget, draggable);
-                layout.moveTemporally(layout.getColumnOffset(3), 0);
+                layout.moveTemporally(layout.getColumnOffset({relx: true, x: 3}), 0);
                 layout.acceptMove();
             ''' % widget2.id)
 
