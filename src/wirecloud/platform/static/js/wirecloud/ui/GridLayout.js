@@ -148,25 +148,25 @@
             }
             offsetInLU = Math.round(this.fromPixelsToVCells(pixels - this.topMargin));
         }
-        return new Wirecloud.ui.MultiValuedSize(this.getRowOffset(offsetInLU), offsetInLU);
+        return new Wirecloud.ui.MultiValuedSize(this.getRowOffset({y: offsetInLU}), offsetInLU);
     };
 
-    GridLayout.prototype.padWidth = function (width) {
+    GridLayout.prototype.padWidth = function padWidth(width) {
         return width + this.leftMargin + this.rightMargin;
     };
 
-    GridLayout.prototype.padHeight = function (height) {
+    GridLayout.prototype.padHeight = function padHeight(height) {
         return height + this.topMargin + this.bottomMargin;
     };
 
-    GridLayout.prototype.getColumnOffset = function (column) {
-        var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(column)) / 100);
+    GridLayout.prototype.getColumnOffset = function getColumnOffset(position) {
+        var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(position.x)) / 100);
         tmp += this.leftMargin + this.dragboardLeftMargin;
         return tmp;
     };
 
-    GridLayout.prototype.getRowOffset = function (row) {
-        return this.dragboardTopMargin + this.fromVCellsToPixels(row) + this.topMargin;
+    GridLayout.prototype.getRowOffset = function getRowOffset(position) {
+        return this.dragboard.topMargin + this.fromVCellsToPixels(position.y) + this.topMargin;
     };
 
     GridLayout.prototype._getPositionOn = function _getPositionOn(buffer, widget) {
@@ -292,7 +292,7 @@
         this._compressColumns(_matrix, positionX, width);
     };
 
-    GridLayout.prototype._notifyResizeEvent = function (widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+    GridLayout.prototype._notifyResizeEvent = function (widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
         var x, y;
         var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
         var position = widget.position;
@@ -324,9 +324,11 @@
                 widget.setPosition(position);
 
                 // Reserve the new space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x, position.y,
-                                                 widthDiff, newHeight);
+                this._reserveSpace2(this.matrix,
+                    widget,
+                    position.x, position.y,
+                    widthDiff, newHeight
+                );
             } else {
                 // Move affected iwidgets
                 for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
@@ -340,9 +342,11 @@
                 }
 
                 // Reserve this space
-                this._reserveSpace2(this.matrix, widget,
-                                                 position.x + oldWidth, position.y,
-                                                 newWidth - oldWidth, newHeight);
+                this._reserveSpace2(
+                    this.matrix, widget,
+                    position.x + oldWidth, position.y,
+                    newWidth - oldWidth, newHeight
+                );
             }
 
         } else if (newWidth < oldWidth) {
@@ -427,7 +431,7 @@
 
         this._reserveSpace(buffer, widget);
 
-        //returns if any widget's position has been modified
+        // returns true when any widget position has been modified
         return affectedwidgets;
     };
 
@@ -475,8 +479,10 @@
         if (iWidgetsToReinsert.length > 0) {
             // Reinsert the iwidgets that didn't fit in their positions
             for (i = 0; i < iWidgetsToReinsert.length; i++) {
-                position = this._searchFreeSpace(iWidgetsToReinsert[i].shape.width,
-                                                 iWidgetsToReinsert[i].shape.height);
+                position = this._searchFreeSpace(
+                    iWidgetsToReinsert[i].shape.width,
+                    iWidgetsToReinsert[i].shape.height
+                );
                 iWidgetsToReinsert[i].setPosition(position);
                 this._reserveSpace(this.matrix, iWidgetsToReinsert[i]);
             }

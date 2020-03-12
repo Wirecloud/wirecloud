@@ -48,7 +48,7 @@
 
         });
 
-        describe("canDrag(draggable, context)", () => {
+        describe("canDrag(draggable, context[, role])", () => {
 
             const test = (editing, volatile, Layout, allowed, result) => {
                 let title = "should return " + result + " when (";

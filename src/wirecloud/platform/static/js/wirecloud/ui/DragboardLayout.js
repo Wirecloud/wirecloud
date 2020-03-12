@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -60,7 +60,7 @@
     /**
      *
      */
-    DragboardLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+    DragboardLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
     };
 
     // =========================================================================
@@ -138,8 +138,8 @@
     };
 
     DragboardLayout.prototype.updatePosition = function updatePosition(widget, element) {
-        element.style.left = this.getColumnOffset(widget.position.x) + "px";
-        element.style.top = this.getRowOffset(widget.position.y) + "px";
+        element.style.left = this.getColumnOffset(widget.position) + "px";
+        element.style.top = this.getRowOffset(widget.position) + "px";
         element.style.bottom = "";
         element.style.right = "";
     };

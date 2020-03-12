@@ -124,7 +124,7 @@
             offset = 0;
         }
 
-        element.style.top = this.getRowOffset(widget.position.y) + "px";
+        element.style.top = this.getRowOffset(widget.position) + "px";
         element.style.bottom = "";
         if (this.position === "left") {
             element.style.left = offset + "px";

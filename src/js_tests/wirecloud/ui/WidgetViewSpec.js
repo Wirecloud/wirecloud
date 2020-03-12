@@ -139,7 +139,7 @@
                 reload: jasmine.createSpy("reload"),
                 shape: {
                     width: 5,
-                    heihgt: 1
+                    height: 1
                 },
                 remove: jasmine.createSpy("remove"),
                 setPermissions: jasmine.createSpy("setPermissions").and.returnValue(new Wirecloud.Task("", () => {})),
@@ -291,6 +291,7 @@
                     widget.layout = this;
                     return new Set(["3", "4"]);
                 });
+                newLayout._searchFreeSpace.and.returnValue({relx: true, rely: true, relwidth: true, relheight: true, anchor: "topleft", x: 1, y: 2});
 
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {

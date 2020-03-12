@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,7 +27,7 @@
 
     "use strict";
 
-    var returnTrue = function returnTrue() {
+    const returnTrue = function returnTrue() {
         return true;
     };
 
@@ -35,7 +36,6 @@
         var xStart = 0, yStart = 0;
         var scrollDelta, scrollStart = 0;
         var dragboardCover;
-        var x, y;
         var endresize, resize, startresize, scroll;
         canBeResized = canBeResized ? canBeResized : returnTrue;
 
@@ -90,7 +90,7 @@
             xDelta = clientX - xStart;
             yDelta = clientY - yStart;
 
-            onResize(resizableElement, handleElement, data, x + xDelta, y + yDelta - scrollDelta);
+            onResize(resizableElement, handleElement, data, xDelta, yDelta - scrollDelta);
         };
 
         // fire each time the dragboard is scrolled while dragging
@@ -100,7 +100,7 @@
             var scrollTop = parseInt(dragboard.scrollTop, 10);
             scrollDelta = scrollStart - scrollTop;
 
-            onResize(resizableElement, handleElement, data, x + xDelta, y + yDelta - scrollDelta);
+            onResize(resizableElement, handleElement, data, xDelta, yDelta - scrollDelta);
         };
 
         // initiate the resizing
@@ -127,8 +127,6 @@
                 xStart = e.clientX;
                 yStart = e.clientY;
             }
-            x = resizableElement.offsetLeft + handleElement.offsetLeft + (handleElement.offsetWidth / 2);
-            y = resizableElement.offsetTop + handleElement.offsetTop + (handleElement.offsetHeight / 2);
             document.addEventListener("mouseup", endresize, false);
             document.addEventListener("touchend", endresize, false);
             document.addEventListener("mousemove", resize, false);

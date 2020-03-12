@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -99,18 +100,34 @@ def update_size_value(model, data, field):
         model[field] = size
 
 
+def update_anchor_value(model, data):
+    if "anchor" in data:
+        anchor = data["anchor"]
+
+        if type(anchor) != str:
+            raise TypeError(_('anchor field must contain a string value'))
+
+        if anchor not in ("topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright"):
+            raise ValueError(_('Invalid value for anchor field'))
+
+        model["anchor"] = anchor
+
+
 def update_position(iwidget, key, data):
     if key not in iwidget.positions:
         iwidget.positions[key] = {}
 
     position = iwidget.positions[key]
 
+    update_boolean_value(position, data, 'relwidth')
+    update_boolean_value(position, data, 'relheight')
     update_size_value(position, data, 'width')
     update_size_value(position, data, 'height')
     update_position_value(position, data, 'top')
     update_position_value(position, data, 'left')
-    if 'rel' in data:
-        position['rel'] = data['rel']  # TODO
+    update_anchor_value(position, data)
+    update_boolean_value(position, data, 'relx')
+    update_boolean_value(position, data, 'rely')
     update_position_value(position, data, 'zIndex')
     update_boolean_value(position, data, 'minimized')
     update_boolean_value(position, data, 'titlevisible')

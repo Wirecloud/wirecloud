@@ -95,7 +95,7 @@
         return pixels > 0 ? (pixels / this.cellHeight) : 0;
     };
 
-    ColumnLayout.prototype.fromVCellsToPixels = function (cells) {
+    ColumnLayout.prototype.fromVCellsToPixels = function fromVCellsToPixels(cells) {
         return (cells * this.cellHeight);
     };
 
@@ -136,11 +136,11 @@
             if (parsedSize[1] === '%') {
                 pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
             } else {
-                pixels = parsedSize[0];
+                pixels = parsedSize[0] < this.dragboard.leftMargin ? 0 : parsedSize[0] - this.dragboard.leftMargin;
             }
             offsetInLU = Math.round(this.fromPixelsToHCells(pixels - this.leftMargin));
         }
-        return new Wirecloud.ui.MultiValuedSize(this.getColumnOffset(offsetInLU), offsetInLU);
+        return new Wirecloud.ui.MultiValuedSize(this.getColumnOffset({x: offsetInLU}), offsetInLU);
     };
 
     ColumnLayout.prototype.adaptRowOffset = function adaptRowOffset(size) {
@@ -153,11 +153,11 @@
             if (parsedSize[1] === '%') {
                 pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
             } else {
-                pixels = parsedSize[0];
+                pixels = parsedSize[0] < this.dragboard.topMargin ? 0 : parsedSize[0] - this.dragboard.topMargin;
             }
             offsetInLU = Math.round(this.fromPixelsToVCells(pixels - this.topMargin));
         }
-        return new Wirecloud.ui.MultiValuedSize(this.getRowOffset(offsetInLU), offsetInLU);
+        return new Wirecloud.ui.MultiValuedSize(this.getRowOffset({y: offsetInLU}), offsetInLU);
     };
 
     ColumnLayout.prototype.padWidth = function (width) {
@@ -168,14 +168,14 @@
         return height + this.topMargin + this.bottomMargin;
     };
 
-    ColumnLayout.prototype.getColumnOffset = function (column) {
-        var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(column)) / 100);
+    ColumnLayout.prototype.getColumnOffset = function getColumnOffset(position) {
+        var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(position.x)) / 100);
         tmp += this.leftMargin + this.dragboardLeftMargin;
         return tmp;
     };
 
-    ColumnLayout.prototype.getRowOffset = function (row) {
-        return this.dragboardTopMargin + this.fromVCellsToPixels(row) + this.topMargin;
+    ColumnLayout.prototype.getRowOffset = function getRowOffset(position) {
+        return this.dragboard.topMargin + this.fromVCellsToPixels(position.y) + this.topMargin;
     };
 
     ColumnLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
@@ -386,7 +386,7 @@
         this._compressColumns(_matrix, positionX, width);
     };
 
-    ColumnLayout.prototype._notifyResizeEvent = function (widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+    ColumnLayout.prototype._notifyResizeEvent = function (widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
         var x, y;
         var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
         var position = widget.position;
