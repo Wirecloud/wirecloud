@@ -113,7 +113,7 @@
 
                 expect(widget1.setShape).toHaveBeenCalledWith({width: 4});
                 expect(widget2.setShape).toHaveBeenCalledWith({width: 4});
-                expect(widget2.setPosition).toHaveBeenCalledWith(new Wirecloud.DragboardPosition(0, 1));
+                expect(widget2.setPosition).toHaveBeenCalledWith({relx: true, x: 0, rely: true, y: 1});
             });
 
             it("should move colliding widgets", () => {
