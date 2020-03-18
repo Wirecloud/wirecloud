@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -42,6 +42,7 @@ def logout(request, next_page=getattr(settings, 'LOGOUT_REDIRECT_URL', None), te
         url_next_page = request.GET.get(REDIRECT_FIELD_NAME)
         url_is_safe = is_safe_url(
             url=url_next_page,
+            allowed_hosts={request.get_host()},
             require_https=request.is_secure(),
         )
         if url_is_safe:
