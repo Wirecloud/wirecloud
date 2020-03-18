@@ -170,7 +170,7 @@
 
     ColumnLayout.prototype.getColumnOffset = function getColumnOffset(position) {
         var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(position.x)) / 100);
-        tmp += this.leftMargin + this.dragboardLeftMargin;
+        tmp += this.leftMargin + this.dragboard.leftMargin;
         return tmp;
     };
 

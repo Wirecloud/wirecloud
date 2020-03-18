@@ -524,9 +524,18 @@
 
             if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setShape(this.previousShape);
+            } else if (newLayout instanceof Wirecloud.ui.FreeLayout) {
+                this.setShape({
+                    relwidth: true,
+                    width: newLayout.adaptWidth(previousWidth + 'px').inLU,
+                    relheight: false,
+                    height: newLayout.adaptHeight(previousHeight + 'px').inPixels
+                });
             } else {
                 this.setShape({
+                    relwidth: true,
                     width: newLayout.adaptWidth(previousWidth + 'px').inLU,
+                    relheight: true,
                     height: newLayout.adaptHeight(previousHeight + 'px').inLU
                 });
             }
@@ -535,8 +544,6 @@
                 let newposition = newLayout._searchFreeSpace(this.shape.width, this.shape.height);
                 newposition.relx = true;
                 newposition.rely = true;
-                newposition.relwidth = true;
-                newposition.relheight = true;
                 newposition.anchor = "topleft";
                 this.setPosition(newposition);
             } else if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
@@ -546,15 +553,23 @@
                     x: oldLayout.getColumnOffset(this.position),
                     y: oldLayout.getRowOffset(this.position)
                 };
-                this.setPosition({
-                    x: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px').inLU,
-                    y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inLU,
-                    relx: true,
-                    rely: false,
-                    relwidth: true,
-                    relheight: false,
-                    anchor: "topleft"
-                });
+                if (newLayout instanceof Wirecloud.ui.FreeLayout) {
+                    this.setPosition({
+                        x: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px').inLU,
+                        y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inPixels,
+                        relx: true,
+                        rely: false,
+                        anchor: "topleft"
+                    });
+                } else {
+                    this.setPosition({
+                        x: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px').inLU,
+                        y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inLU,
+                        relx: true,
+                        rely: true,
+                        anchor: "topleft"
+                    });
+                }
             }
 
             affectedWidgetsAdding = newLayout.addWidget(this, dragboardChange);

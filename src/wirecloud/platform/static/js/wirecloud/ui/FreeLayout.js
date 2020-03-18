@@ -266,7 +266,7 @@
 
         // Y coordinate
         if (["bottomcenter", "bottomleft", "bottomright"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
-            this.newPosition.y = this.getHeight() - this.iwidgetToMove.shape.height - this.newPosition.y;
+            this.newPosition.y = this.getHeight() - this.iwidgetToMove.wrapperElement.offsetHeight - this.newPosition.y;
         }
         if (this.iwidgetToMove.position.rely) {
             this.newPosition.y = this.adaptRowOffset(this.newPosition.y + 'px').inLU;
@@ -278,7 +278,7 @@
         if (["bottomcenter", "topcenter"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
             this.newPosition.x += (this.iwidgetToMove.shape.relwidth ? this.getWidthInPixels(this.iwidgetToMove.shape.width) : this.iwidgetToMove.shape.width) / 2;
         } else if (["bottomright", "topright"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
-            this.newPosition.x = this.getWidth() - this.iwidgetToMove.shape.width - this.newPosition.x;
+            this.newPosition.x = this.getWidth() - this.iwidgetToMove.wrapperElement.offsetWidth - this.newPosition.x;
         }
         if (this.iwidgetToMove.position.relx) {
             this.newPosition.x = this.adaptColumnOffset(this.newPosition.x + 'px').inLU;

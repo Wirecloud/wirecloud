@@ -198,20 +198,6 @@
         return this.dragboard.getHeight();
     };
 
-    Object.defineProperties(DragboardLayout.prototype, {
-        "dragboardTopMargin": {
-            get: function () {
-                return this.dragboard.topMargin;
-            }
-        },
-        "dragboardLeftMargin": {
-            configurable: true,
-            get: function () {
-                return this.dragboard.leftMargin;
-            }
-        }
-    });
-
     DragboardLayout.prototype.addWidget = function addWidget(widget, affectsDragboard) {
         if (widget.layout != null) {
             var msg = utils.gettext("the widget could not be associated with this layout as it already has an associated layout.");

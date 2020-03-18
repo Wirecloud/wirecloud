@@ -592,13 +592,16 @@
 
             const return_this = function () {return this;};
             const draggable = {setXOffset: return_this, setYOffset: return_this};
-            var layout;
+            let layout, dom;
 
             const createWidgetMock = function createWidgetMock(data) {
                 return new Wirecloud.ui.WidgetView(data);
             };
 
             beforeEach(() => {
+                dom = document.createElement('div');
+                document.body.appendChild(dom);
+
                 spyOn(Wirecloud.ui, "WidgetView").and.callFake(function (data) {
                     this.id = data.id;
                     this.position = {
@@ -623,6 +626,7 @@
                         wrapperElement: document.createElement('div')
                     };
                     this.tab.wrapperElement.appendChild(this.wrapperElement);
+                    dom.appendChild(this.tab.wrapperElement);
                 });
 
                 var dragboard = {
@@ -636,6 +640,10 @@
                 layout = new ns.FreeLayout(dragboard);
                 spyOn(layout, "updatePosition");
                 layout.initialize();
+            });
+
+            afterEach(() => {
+                dom.remove();
             });
 
             it("should throw an exception if widget is not a widget instance", () => {
@@ -690,6 +698,8 @@
 
             it("should work on empty layouts (basic move - bottom)", () => {
                 let widget = createWidgetMock({id: "1", anchor: "bottomleft", x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
@@ -702,6 +712,8 @@
 
             it("should work on empty layouts (basic move - rely, bottom, center)", () => {
                 let widget = createWidgetMock({id: "1", anchor: "bottomcenter", rely: true, x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
@@ -726,6 +738,8 @@
 
             it("should work on empty layouts (basic move - relx, bottom, right)", () => {
                 let widget = createWidgetMock({id: "1", anchor: "bottomright", relx: true, x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
