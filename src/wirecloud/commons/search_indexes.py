@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -47,7 +47,7 @@ def get_available_search_engines():
         from wirecloud.catalogue.search_indexes import searchResource
         from wirecloud.platform.search_indexes import searchWorkspace
 
-        _available_search_engines = {"group": searchGroup, "user": searchUser, "resource": searchResource, "workspace": searchWorkspace}
+        _available_search_engines = {"group": searchGroup, "user": searchUser, "usergroup": searchUserGroup, "resource": searchResource, "workspace": searchWorkspace}
 
     return _available_search_engines
 
@@ -104,7 +104,7 @@ def prepare_search_response(search_results, hits, pagenum, maxresults):
     return search_result
 
 
-USER_CONTENT_FIELDS = ["fullname", "username"]
+USER_CONTENT_FIELDS = ["fullname", "name"]
 
 
 class UserIndex(indexes.SearchIndex, indexes.Indexable):
@@ -113,9 +113,9 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, stored=False)
 
     fullname = indexes.NgramField()
-    fullname_orderby = indexes.CharField()
-    username = indexes.NgramField(model_attr='username')
-    username_orderby = indexes.CharField(model_attr='username')
+    fullname_orderby = indexes.CharField(stored=False)
+    name = indexes.NgramField(model_attr='username')
+    username_orderby = indexes.CharField(model_attr='username', stored=False)
     organization = BooleanField()
 
     def get_model(self):
@@ -126,7 +126,7 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
         try:
             is_organization = object.organization is not None
-        except:
+        except Exception:
             is_organization = False
 
         self.prepared_data['fullname'] = self.prepared_data['fullname_orderby'] = '%s' % (object.get_full_name())
@@ -138,8 +138,8 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
 
 def cleanUserResults(result, request):
     res = result.get_stored_fields()
-    del res['fullname_orderby']
-    del res['username_orderby']
+    res['username'] = res['name']
+    del res['name']
     return res
 
 
@@ -163,11 +163,24 @@ GROUP_CONTENT_FIELDS = ["name"]
 class GroupIndex(indexes.SearchIndex, indexes.Indexable):
     model = Group
 
-    text = indexes.CharField(document=True, stored=False)
-    name = indexes.CharField(model_attr='name')
+    text = indexes.CharField(document=True, stored=False, model_attr='name')
+    name = indexes.NgramField(model_attr='name')
+    organization = BooleanField()
 
     def get_model(self):
         return self.model
+
+    def prepare(self, object):
+        self.prepared_data = super(GroupIndex, self).prepare(object)
+
+        try:
+            is_organization = object.organization is not None
+        except Exception:
+            is_organization = False
+
+        self.prepared_data['organization'] = is_organization
+
+        return self.prepared_data
 
 
 def cleanGroupResults(result, request):
@@ -185,3 +198,23 @@ def searchGroup(request, querytext, pagenum, maxresults, orderby=None):
         sqs = sqs.order_by(*orderby)
 
     return buildSearchResults(sqs, pagenum, maxresults, cleanGroupResults)
+
+
+def cleanUserGroupResults(result, request):
+    res = result.get_stored_fields()
+    res['type'] = 'group' if 'fullname' not in res else 'organization' if res['organization'] else 'user'
+    del res['organization']
+    return res
+
+
+# Search for groups
+def searchUserGroup(request, querytext, pagenum, maxresults, orderby=None):
+    sqs = SearchQuerySet().models(User, Group).all().exclude(django_ct="auth.group", organization=1)
+    if len(querytext) > 0:
+        parser = ParseSQ()
+        sqs = sqs.filter(parser.parse(querytext, USER_CONTENT_FIELDS))
+
+    if orderby is not None:
+        sqs = sqs.order_by(*orderby)
+
+    return buildSearchResults(sqs, pagenum, maxresults, cleanUserGroupResults)

@@ -237,9 +237,7 @@ class UserIndexTestCase(WirecloudTestCase, TestCase):
             cleanUserResults(
                 Mock(get_stored_fields=Mock(return_value={
                     "fullname": "Full Name",
-                    "fullname_orderby": "Full Name",
-                    "username": "username",
-                    "username_orderby": "username",
+                    "name": "username",
                     "organization": False,
                 })),
                 Mock()
@@ -256,9 +254,7 @@ class UserIndexTestCase(WirecloudTestCase, TestCase):
             cleanUserResults(
                 Mock(get_stored_fields=Mock(return_value={
                     "fullname": "Organization Name",
-                    "fullname_orderby": "Organization Name",
-                    "username": "username",
-                    "username_orderby": "username",
+                    "name": "username",
                     "organization": True,
                 })),
                 Mock()
