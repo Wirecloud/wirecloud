@@ -64,8 +64,8 @@
         this.inputSearchTypeahead = new Wirecloud.ui.UserTypeahead({autocomplete: false});
 
         this.inputSearchTypeahead.bind(this.inputSearch);
-        this.inputSearchTypeahead.addEventListener('select', (typeahead, menuItem) => {
-            appendUser.call(this, menuItem.context);
+        this.inputSearchTypeahead.addEventListener('select', (typeahead, menuitem) => {
+            appendUser.call(this, menuitem.context);
         });
 
         this.userGroup = new se.Container({class: "wc-dashboard-share-list"});

@@ -47,6 +47,7 @@
      * of the handler callback
      */
     se.MenuItem = function MenuItem(title, handler, context) {
+
         se.StyledElement.call(this, events);
 
         this.wrapperElement = document.createElement('div');
@@ -349,7 +350,7 @@
             event.preventDefault();
             this.parentElement.hide();
             if (this.parentElement instanceof StyledElements.SubMenuItem) {
-                this.parentElement.menuItem.focus();
+                this.parentElement.menuitem.focus();
             }
             break;
         case 'ArrowUp':

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -255,7 +255,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     features = {
         'Wirecloud': wirecloud.platform.__version__,
         'ApplicationMashup': wirecloud.platform.__application_mashup_version__,
-        'StyledElements': '0.10.0',
+        'StyledElements': '0.11.0',
         'FullscreenWidget': '0.5',
         'DashboardManagement': '1.0',
         'ComponentManagement': '1.0',

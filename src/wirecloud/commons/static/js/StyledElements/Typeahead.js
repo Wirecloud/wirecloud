@@ -185,29 +185,29 @@
         return this.dispatchEvent('show', data);
     };
 
-    var popupMenu_onselect = function popupMenu_onselect(popupMenu, menuItem) {
+    var popupMenu_onselect = function popupMenu_onselect(popupMenu, menuitem) {
         // Disable change events to avoid
         this.disableChangeEvents = true;
-        this.textField.setValue(this.autocomplete ? menuItem.context.value : "");
+        this.textField.setValue(this.autocomplete ? menuitem.context.value : "");
         this.textField.focus();
         this.disableChangeEvents = false;
 
-        menuItem.context = menuItem.context.context;
-        this.dispatchEvent('select', menuItem);
+        menuitem.context = menuitem.context.context;
+        this.dispatchEvent('select', menuitem);
     };
 
     var createMenuItem = function createMenuItem(data) {
-        var menuItem = new se.MenuItem(new se.Fragment(utils.highlight(data.title, this.userQuery)), null, data);
+        var menuitem = new se.MenuItem(new se.Fragment(utils.highlight(data.title, this.userQuery)), null, data);
 
         if (data.iconClass) {
-            menuItem.addIconClass(data.iconClass);
+            menuitem.addIconClass(data.iconClass);
         }
 
         if (data.description) {
-            menuItem.setDescription(new se.Fragment(utils.highlight(data.description, this.userQuery)));
+            menuitem.setDescription(new se.Fragment(utils.highlight(data.description, this.userQuery)));
         }
 
-        return menuItem;
+        return menuitem;
     };
 
     var textField_onkeydown = function textField_onkeydown(textField, event, key) {
