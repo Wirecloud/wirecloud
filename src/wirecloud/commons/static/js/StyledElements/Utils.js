@@ -1011,6 +1011,13 @@ if (window.StyledElements == null) {
         });
     };
 
+    Utils.removeFromArray = function removeFromArray(arr, element) {
+        let index = arr.indexOf(element);
+        if (index !== -1) {
+            arr.splice(index, 1);
+        }
+    };
+
     StyledElements.Utils = Utils;
 
 })();

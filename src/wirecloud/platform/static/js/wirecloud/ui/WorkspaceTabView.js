@@ -147,7 +147,7 @@
         }).children[1];
         this.appendChild(this.initialMessage);
 
-        this.model.preferences.addEventListener('pre-commit', on_change_preferences.bind(this));
+        this.model.preferences.addEventListener('post-commit', on_change_preferences.bind(this));
         this.model.widgets.forEach(_create_widget, this);
         this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || this.widgets.length > 0;
 

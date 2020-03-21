@@ -104,6 +104,13 @@
             },
             /**
              * @memberOf Wirecloud.Workspace#
+             * @type {Array.<Group>}
+             */
+            groups: {
+                value: data.groups
+            },
+            /**
+             * @memberOf Wirecloud.Workspace#
              * @type {String}
              */
             id: {

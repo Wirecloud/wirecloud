@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -75,56 +75,83 @@
      *
      * ```javascript
      * preferences.set({
-     *    'theme':  {inherit: true},
-     *    'locked': {value: true}
+     *    theme:  {inherit: true},
+     *    locked: {value: true}
      * });
      * ```
      *
      * @param {Object} newValues a hash with preferenceName/changes pairs
      */
     Preferences.prototype.set = function set(newValues) {
-        var newEffectiveValues = {};
         var modifiedValues = {};
+        let persist = false;
 
-        for (var name in newValues) {
-            var preference = this.preferences[name];
-            var changes = newValues[name];
+        for (let name in newValues) {
+            let preference = this.preferences[name];
+            let changes = utils.clone(newValues[name]);
             let changed = false;
-            let previousValue = preference.getEffectiveValue();
 
             if ('inherit' in changes) {
-                changed = preference.inherit !== changes.inherit;
-                preference.inherit = changes.inherit;
+                if (preference.inherit !== changes.inherit) {
+                    changed = persist = true;
+                } else {
+                    delete changes.inherit;
+                }
             }
 
             if ('value' in changes) {
-                changed = changed || (preference.value !== changes.value);
-                preference.value = changes.value;
-                changes.value = Wirecloud.ui.InputInterfaceFactory.stringify(preference.meta.options.type, preference.value);
+                if (preference.value !== changes.value) {
+                    changed = persist = true;
+                    changes.value = Wirecloud.ui.InputInterfaceFactory.stringify(preference.meta.options.type, changes.value);
+                } else {
+                    delete changes.value;
+                }
             }
 
             if (changed) {
                 modifiedValues[name] = changes;
-                let newValue = preference.getEffectiveValue();
-                if (previousValue !== newValue) {
-                    newEffectiveValues[name] = newValue;
-                }
             }
         }
 
-        if (Object.keys(modifiedValues).length === 0) {
+        if (!persist) {
             // Nothing changed
             return Promise.resolve();
         }
 
-        this.dispatchEvent('pre-commit', newEffectiveValues);
+        this.dispatchEvent('pre-commit', modifiedValues);
         return Wirecloud.io.makeRequest(this._build_save_url(), {
             method: 'POST',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(modifiedValues)
-        }).then(() => {
-            this.dispatchEvent('post-commit', modifiedValues);
+        }).then((response) => {
+            if ([204, 401, 403, 422, 500].indexOf(response.status) === -1) {
+                return Promise.reject(utils.gettext("Unexpected response from server"));
+            } else if (response.status !== 204) {
+                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+            }
+
+            let newEffectiveValues = {};
+            for (let name in modifiedValues) {
+                let preference = this.preferences[name];
+                let previousValue = preference.getEffectiveValue();
+                let changes = modifiedValues[name];
+
+                if ('inherit' in changes) {
+                    preference.inherit = changes.inherit;
+                }
+
+                if ('value' in changes) {
+                    preference.value = newValues[name].value;
+                }
+
+                let newValue = preference.getEffectiveValue();
+                if (previousValue !== newValue) {
+                    newEffectiveValues[name] = newValue;
+                }
+            }
+
+            this.dispatchEvent('post-commit', newEffectiveValues);
         });
     };
 
@@ -140,7 +167,7 @@
         }
 
         if (propagate) {
-            this.dispatchEvent('pre-commit', valuesToPropagate);
+            this.dispatchEvent('post-commit', valuesToPropagate);
         }
     };
 

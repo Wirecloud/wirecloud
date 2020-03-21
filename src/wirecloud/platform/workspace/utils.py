@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -377,19 +377,33 @@ def _get_global_workspace_data(workspaceDAO, user):
     data_ret['preferences'] = preferences
 
     data_ret['users'] = []
+    data_ret['groups'] = []
 
-    for u in workspaceDAO.users.all():
-        try:
-            is_organization = u.organization is not None
-        except Organization.DoesNotExist:
-            is_organization = False
+    if workspaceDAO.creator == user:
+        for u in workspaceDAO.users.all():
+            try:
+                is_organization = u.organization is not None
+            except Organization.DoesNotExist:
+                is_organization = False
 
-        data_ret['users'].append({
-            "fullname": u.get_full_name(),
-            "username": u.username,
-            "organization": is_organization,
-            "accesslevel": "owner" if workspaceDAO.creator == u else "read",
-        })
+            data_ret['users'].append({
+                "fullname": u.get_full_name(),
+                "username": u.username,
+                "organization": is_organization,
+                "accesslevel": "owner" if workspaceDAO.creator == u else "read",
+            })
+
+        for g in workspaceDAO.groups.all():
+            try:
+                is_organization = g.organization is not None
+            except Organization.DoesNotExist:
+                is_organization = False
+
+            if is_organization is False:
+                data_ret['groups'].append({
+                    "name": g.name,
+                    "accesslevel": "read",
+                })
 
     # Process forced variable values
     concept_values = get_context_values(workspaceDAO, user)

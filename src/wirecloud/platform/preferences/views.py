@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -20,7 +20,7 @@
 
 import json
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -288,17 +288,24 @@ class WorkspacePreferencesCollection(Resource):
                 sharelist = json.loads(preferences_json['sharelist'])
 
             for item in sharelist:
-                try:
-                    user = User.objects.get(username=item['username'])
-                except (KeyError, User.DoesNotExist):
-                    continue
+                entrytype = item.get("type", "user")
+                if entrytype in ("user", "organization"):
+                    try:
+                        user = User.objects.get(username=item['name'])
+                    except (KeyError, User.DoesNotExist):
+                        continue
 
-                workspace.userworkspace_set.create(user=user)
-                try:
-                    workspace.groups.add(user.organization.group)
-                except Organization.DoesNotExist:
-                    pass
-            del preferences_json['sharelist']
+                    workspace.userworkspace_set.create(user=user)
+                    try:
+                        workspace.groups.add(user.organization.group)
+                    except Organization.DoesNotExist:
+                        pass
+                elif entrytype == "group":
+                    try:
+                        group = Group.objects.get(name=item['name'])
+                        workspace.groups.add(group)
+                    except (KeyError, Group.DoesNotExist):
+                        continue
 
         if 'public' in preferences_json and (type(preferences_json['public']) or "value" in preferences_json['public']):
             save_workspace = True
