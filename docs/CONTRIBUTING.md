@@ -197,3 +197,24 @@ python manage.py runserver
     [WCAG color contrast guidelines](http://www.w3.org/TR/WCAG20/#visual-audio-contrast).
 -   Except in rare cases, don't remove default `:focus` styles (via e.g. `outline: none;`) without providing alternative
     styles. See [this A11Y Project post](http://a11yproject.com/posts/never-remove-css-outlines/) for more details.
+
+
+### Code style git hooks
+
+WireCloud repository provides a `pre-commit` configuration file to provide automatic code style validation through the
+use of git hooks. Currently this validation is configured for JavaScript and Python code.
+
+We first need to install pre-commit onto the system. You can refer to the [pre-commit](https://pre-commit.com/#intro)
+website for more in-depth information. On the basic scenario, you can install it by running the following command:
+
+```
+pip install pre-commit
+```
+
+Once installed, you can install git hooks on the working copy by running the following in the terminal:
+
+```
+pre-commit install
+```
+
+Now `pre-commit` will run automatically on `git commit`!
