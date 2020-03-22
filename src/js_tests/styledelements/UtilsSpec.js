@@ -457,6 +457,19 @@
 
         });
 
+        describe("setupdate(setA, setB)", () => {
+
+            it("should add all elements from setB into setA", () => {
+                let setA = new Set([1, 2, 3]);
+                let setB = new Set([5, 6, 7]);
+
+                expect(utils.setupdate(setA, setB)).toBe(setA);
+
+                expect(setA).toEqual(new Set([1, 2, 3, 5, 6, 7]));
+            });
+
+        });
+
         describe("timeoutPromise(promise, ms, fallback)", () => {
 
             beforeEach(() => {
