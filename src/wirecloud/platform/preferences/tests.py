@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -59,9 +59,9 @@ class WorkspacePreferencesTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
 
     @parameterized.expand([
-        ({"value": '[{"username": "user1", "accessLevel": "read"}, {"username": "org1"}]'},),
-        ('[{"username": "user1", "accessLevel": "read"}, {"username": "org1"}]',),
-        ('[{"username": "user1", "accessLevel": "read"}, {"username": "org1"}, {"username": "inexistent"}, {"username": false}]',),
+        ({"value": '[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}]'},),
+        ('[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}]',),
+        ('[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}, {"name": "inexistent", "type": "user"}, {"name": false}]',),
     ])
     def test_workspace_preference_collection_post_sharelist(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404, value):
         workspace = get_object_or_404()
@@ -90,7 +90,7 @@ class WorkspacePreferencesTestCase(TestCase):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = {
-            "sharelist": '[{"username": "user1", "accessLevel": "write"}]',
+            "sharelist": '[{"name": "user1", "type": "user", "accessLevel": "write"}]',
         }
         request = Mock(META={
             "CONTENT_TYPE": "application/json",

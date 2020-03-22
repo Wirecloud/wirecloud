@@ -307,6 +307,8 @@ class WorkspacePreferencesCollection(Resource):
                     except (KeyError, Group.DoesNotExist):
                         continue
 
+            del preferences_json['sharelist']
+
         if 'public' in preferences_json and (type(preferences_json['public']) or "value" in preferences_json['public']):
             save_workspace = True
             if type(preferences_json['public']) == str:
