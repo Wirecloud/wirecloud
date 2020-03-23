@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -42,8 +42,8 @@ from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.wiring.utils import get_wiring_skeleton
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_xml_template_from_workspace
-from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
-from wirecloud.platform.workspace.utils import deleteTab, createTab, get_tab_data, get_workspace_list, get_workspace_data, get_global_workspace_data, setVisibleTab, delete_workspace
+from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, fillWorkspaceUsingTemplate, MissingDependencies
+from wirecloud.platform.workspace.utils import deleteTab, createTab, get_tab_data, get_workspace_list, get_workspace_data, get_global_workspace_data, setVisibleTab, create_workspace, delete_workspace
 from wirecloud.platform.markets.utils import get_local_catalogue
 
 
@@ -115,55 +115,27 @@ class WorkspaceCollection(Resource):
         else:
 
             if mashup_id != '':
-                values = mashup_id.split('/', 3)
-                if len(values) != 3:
-                    return build_error_response(request, 422, _('invalid mashup id'))
-
-                (mashup_vendor, mashup_name, mashup_version) = values
-                try:
-                    resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
-                    if not resource.is_available_for(request.user) or resource.resource_type() != 'mashup':
-                        raise CatalogueResource.DoesNotExist
-                except CatalogueResource.DoesNotExist:
-                    return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
-
-                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
-                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                template = TemplateParser(wgt_file.get_template())
-
+                mashup = mashup_id
             else:
-
-                from_ws = get_object_or_404(Workspace, id=workspace_id)
-                if not from_ws.is_accessible_by(request.user):
+                mashup = get_object_or_404(Workspace, id=workspace_id)
+                if not mashup.is_accessible_by(request.user):
                     return build_error_response(request, 403, _('You are not allowed to read from workspace %s') % workspace_id)
 
-                options = {
-                    'vendor': 'api',
-                    'name': from_ws.name,
-                    'version': '1.0',
-                    'title': from_ws.title if from_ws.title is not None and from_ws.title.strip() != "" else from_ws.name,
-                    'description': 'Temporal mashup for the workspace copy operation',
-                    'email': 'a@example.com',
-                }
-
-                template = TemplateParser(build_json_template_from_workspace(options, from_ws, from_ws.creator))
-
             try:
-                check_mashup_dependencies(template, request.user)
+                workspace = create_workspace(request.user, mashup, allow_renaming=allow_renaming, new_name=workspace_name, dry_run=dry_run)
+            except ValueError as e:
+                return build_error_response(request, 422, e)
             except MissingDependencies as e:
                 details = {
                     'missingDependencies': e.missing_dependencies,
                 }
                 return build_error_response(request, 422, e, details=details)
-
-            if dry_run:
-                return HttpResponse(status=204)
-
-            try:
-                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming, new_name=workspace_name, new_title=workspace_title)
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)
+
+            if dry_run:
+                return HttpResponse(status=204)
 
         if len(initial_pref_values) > 0:
             update_workspace_preferences(workspace, initial_pref_values, invalidate_cache=False)
