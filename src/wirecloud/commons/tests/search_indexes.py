@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -26,7 +26,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from wirecloud.commons.haystack_queryparser import NoMatchingBracketsFound, ParseSQ
-from wirecloud.commons.search_indexes import cleanUserResults, cleanGroupResults, searchGroup, searchUser, GROUP_CONTENT_FIELDS, USER_CONTENT_FIELDS
+from wirecloud.commons.search_indexes import cleanUserGroupResults, cleanUserResults, cleanGroupResults, searchGroup, searchUser, searchUserGroup, GROUP_CONTENT_FIELDS, USER_CONTENT_FIELDS
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
@@ -312,4 +312,81 @@ class GroupIndexTestCase(WirecloudTestCase, TestCase):
                 Mock()
             ),
             {"name": "group"}
+        )
+
+
+@patch("wirecloud.commons.search_indexes.buildSearchResults")
+@patch("wirecloud.commons.search_indexes.SearchQuerySet")
+class UserGroupIndexTestCase(WirecloudTestCase, TestCase):
+
+    fixtures = ()
+    tags = ('wirecloud-search-api', 'wirecloud-noselenium')
+    populate = False
+
+    def test_searchUserGroup_emptyquery(self, sqs_mock, buildSearchResults_mock):
+        request_mock = Mock()
+        searchUserGroup(request_mock, "", 1, 10)
+        sqs_mock().models.assert_called_with(User, Group)
+        sqs_mock().models().all().filter.assert_not_called()
+        buildSearchResults_mock.assert_called_with(sqs_mock().models().all().exclude(), 1, 10, cleanUserGroupResults)
+
+    @patch("wirecloud.commons.search_indexes.ParseSQ")
+    def test_searchUserGroup_query(self, ParseSQ_mock, sqs_mock, buildSearchResults_mock):
+        request_mock = Mock()
+        ParseSQ_mock().parse.return_value = "filter"
+
+        searchUserGroup(request_mock, "query", 1, 10, orderby=('-name',))
+        ParseSQ_mock().parse.assert_called_with("query", USER_CONTENT_FIELDS)
+        sqs_mock().models.assert_called_with(User, Group)
+        sqs_mock().models().all().exclude().filter.assert_called_with("filter")
+        sqs_mock().models().all().exclude().filter().order_by.assert_called_with('-name')
+        buildSearchResults_mock.assert_called_with(sqs_mock().models().all().exclude().filter().order_by(), 1, 10, cleanUserGroupResults)
+
+    def test_cleanUserGroupResults(self, sqs_mock, buildSearchResults_mock):
+        self.assertEqual(
+            cleanUserGroupResults(
+                Mock(get_stored_fields=Mock(return_value={
+                    "fullname": "Full Name",
+                    "name": "username",
+                    "organization": False,
+                })),
+                Mock()
+            ),
+            {
+                "fullname": "Full Name",
+                "name": "username",
+                "type": "user"
+            }
+        )
+
+    def test_cleanUserGroupResults_org(self, sqs_mock, buildSearchResults_mock):
+        self.assertEqual(
+            cleanUserGroupResults(
+                Mock(get_stored_fields=Mock(return_value={
+                    "fullname": "Organization Name",
+                    "name": "username",
+                    "organization": True,
+                })),
+                Mock()
+            ),
+            {
+                "fullname": "Organization Name",
+                "name": "username",
+                "type": "organization"
+            }
+        )
+
+    def test_cleanUserGroupResults_group(self, sqs_mock, buildSearchResults_mock):
+        self.assertEqual(
+            cleanUserGroupResults(
+                Mock(get_stored_fields=Mock(return_value={
+                    "name": "onegroup",
+                    "organization": False,
+                })),
+                Mock()
+            ),
+            {
+                "name": "onegroup",
+                "type": "group"
+            }
         )
