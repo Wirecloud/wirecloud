@@ -21,7 +21,7 @@
 from copy import deepcopy
 import json
 import sys
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import patch, MagicMock, Mock, ANY
 
 from django.test import TestCase, override_settings
 
@@ -125,12 +125,13 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         if 'wirecloud.fiware.social_auth_backend' in sys.modules:
             del sys.modules['wirecloud.fiware.social_auth_backend']
 
-        from wirecloud.fiware.social_auth_backend import FIWAREOAuth2, create_organizations
+        from wirecloud.fiware.social_auth_backend import FIWAREOAuth2, create_organizations, sync_role_groups
         self.fiwareauth_module = FIWAREOAuth2
         self.fiwareauth_module._request_user_info = self.fiwareauth_module.request_user_info
         self.fiwareauth_module.request_user_info = MagicMock()
         self.instance = self.fiwareauth_module()
         self.create_organizations = create_organizations
+        self.sync_role_groups = sync_role_groups
 
     def tearDown(self):
 
@@ -375,3 +376,27 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
 
         self.assertEqual(UserSocialAuth.objects.create.call_count, 0)
         org_social.user.group.add.assert_called_with(user)
+
+    def test_sync_role_groups_ignores_other_backends(self):
+        backend = Mock()
+        backend.name = "other"
+        strategy = Mock()
+        user = Mock()
+        response = None
+
+        self.sync_role_groups(strategy, backend, user, response)
+
+        user.groups.set.assert_not_called()
+
+    def test_sync_role_groups_update_user_groups(self):
+        backend = Mock()
+        backend.name = "fiware"
+        strategy = Mock()
+        user = Mock()
+        response = {
+            "roles": [{"name": "group1"}, {"name": "group2"}]
+        }
+
+        self.sync_role_groups(strategy, backend, user, response)
+
+        user.groups.set.assert_called_with((ANY, ANY))

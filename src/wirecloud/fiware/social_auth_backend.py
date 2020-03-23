@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 Conwet Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -36,6 +36,7 @@ import base64
 from urllib.parse import urljoin
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from social_core.backends.oauth import BaseOAuth2
 from social_django.models import UserSocialAuth
 
@@ -67,6 +68,16 @@ def create_organizations(strategy, backend, user, response, *args, **kwargs):
             social = UserSocialAuth.objects.create(user=org, uid=organization['id'])
 
         social.user.group.add(user)
+
+
+def sync_role_groups(strategy, backend, user, response, *args, **kwargs):
+
+    if backend.name != 'fiware':
+        return
+
+    roles = set(rol['name'].strip().lower() for rol in response.get("roles", []))
+    groups = tuple(Group.objects.get_or_create(name=rol)[0] for rol in roles)
+    user.groups.set(groups)
 
 
 class FIWAREOAuth2(BaseOAuth2):
