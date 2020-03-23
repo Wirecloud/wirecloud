@@ -14,6 +14,7 @@ WireCloud に何か貢献したいですか？ **手助けをする方法は次�
 -   [機能リクエスト](#feature-requests)
 -   [コントリビューションするコード](#contributing-code)
     -   [コード・ガイドライン](#code-guidelines)
+    -   [コード・スタイル git hooks](#code-style-git-hooks)
 
 
 <a name="using-the-issue-tracker"></a>
@@ -205,3 +206,24 @@ python manage.py runserver
 -   まれな場合を除いて、代替スタイルを提供せずにデフォルト `:focus` スタイル (例：`outline: none;` を経由) を
     削除しないでください。詳細は、この [A11Yプロジェクトの記事](http://a11yproject.com/posts/never-remove-css-outlines/)
     を参照してください
+
+<a name="code-style-git-hooks"></a>
+### コード・スタイル git hooks
+
+WireCloud リポジトリは git hooks を使用して自動コード・スタイル検証を提供するための  `pre-commit` 設定ファイルを提供
+します。現在、この検証は JavaScript および Python コード用に構成されています。
+
+最初に pre-commit をシステムにインストールする必要があります。詳細な情報については、[pre-commit](https://pre-commit.com/#intro)
+Web サイトを参照できます。基本的なシナリオでは、次のコマンドを実行してインストールできます :
+
+```
+pip install pre-commit
+```
+
+インストールしたら、ターミナルで次を実行してワーキング・コピーに git hooks をインストールできます :
+
+```
+pre-commit install
+```
+
+これで、`git commit` で `pre-commit` が自動的に実行されます!
