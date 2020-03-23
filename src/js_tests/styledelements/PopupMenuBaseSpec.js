@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -46,7 +46,7 @@
 
         });
 
-        describe("append()", () => {
+        describe("append(child)", () => {
 
             var menu;
 
@@ -108,6 +108,23 @@
                 expect(menu.activeItem).toBe(item);
                 expect(menu.firstEnabledItem).toBe(item);
                 expect(menu.lastEnabledItem).toBe(item);
+            });
+
+            it("should work when adding a disabled item while oneActiveAtLeast option is used", () => {
+                var listener = jasmine.createSpy("listener");
+                menu = new se.PopupMenuBase({oneActiveAtLeast: true});
+                var ref_element = new se.Button();
+                menu.show(ref_element);
+                menu.addEventListener("itemOver", listener);
+                var item = new se.MenuItem("Entry");
+                item.enabled = false;
+
+                expect(menu.append(item)).toBe(menu);
+
+                expect(listener).not.toHaveBeenCalled();
+                expect(menu.activeItem).toBe(null);
+                expect(menu.firstEnabledItem).toBe(null);
+                expect(menu.lastEnabledItem).toBe(null);
             });
 
             it("should add dynamic generated items", () => {

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -30,7 +30,7 @@
 
         beforeAll(() => {
             // TODO
-            Wirecloud.ui.UserTypeahead = jasmine.createSpy("UserTypeahead").and.callFake(function () {
+            Wirecloud.ui.UserGroupTypeahead = jasmine.createSpy("UserGroupTypeahead").and.callFake(function () {
                 this.bind = jasmine.createSpy("bind");
                 this.addEventListener = jasmine.createSpy("addEventListener");
             });
@@ -60,6 +60,7 @@
             it("load sharing configuration from workspaces (public)", () => {
                 let workspace = {
                     model: {
+                        groups: [],
                         users: [
                             {
                                 username: "currentuser",
@@ -89,12 +90,18 @@
                 let dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
 
                 expect(dialog.visibilityOptions.getValue()).toBe("public");
-                expect(Object.keys(dialog.sharingUsers).length).toBe(3);
+                expect(dialog.sharelist.length).toBe(3);
             });
 
             it("load sharing configuration from workspaces (public-auth)", () => {
                 let workspace = {
                     model: {
+                        groups: [
+                            {
+                                name: "group",
+                                accesslevel: "read"
+                            }
+                        ],
                         users: [
                             {
                                 username: "currentuser",
@@ -117,7 +124,7 @@
                 let dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
 
                 expect(dialog.visibilityOptions.getValue()).toBe("public-auth");
-                expect(Object.keys(dialog.sharingUsers).length).toBe(2);
+                expect(dialog.sharelist.length).toBe(3);
             });
 
         });
@@ -129,9 +136,16 @@
             beforeEach(() => {
                 let workspace = {
                     model: {
+                        groups: [
+                            {
+                                name: "currentgroup",
+                                accesslevel: "owner"
+                            }
+                        ],
                         users: [
                             {
                                 username: "currentuser",
+                                fullname: "Current User",
                                 organization: false,
                                 accesslevel: "owner"
                             }
@@ -148,37 +162,63 @@
             it("should add new users", () => {
                 callEventListener(dialog.inputSearchTypeahead, "select", {
                     context: {
-                        username: "otheruser",
-                        organization: false,
+                        name: "otheruser",
+                        type: "user",
                         accesslevel: "read"
                     }
                 });
-                expect(Object.keys(dialog.sharingUsers).length).toBe(2);
+                expect(dialog.sharelist.length).toBe(3);
             });
 
             it("should add new organizations", () => {
                 callEventListener(dialog.inputSearchTypeahead, "select", {
                     context: {
-                        username: "org",
-                        organization: true,
+                        name: "org",
+                        type: "organization",
                         accesslevel: "read"
                     }
                 });
-                expect(Object.keys(dialog.sharingUsers).length).toBe(2);
+                expect(dialog.sharelist.length).toBe(3);
+            });
+
+            it("should add new groups", () => {
+                callEventListener(dialog.inputSearchTypeahead, "select", {
+                    context: {
+                        name: "onegroup",
+                        type: "group",
+                        accesslevel: "read"
+                    }
+                });
+                expect(dialog.sharelist.length).toBe(3);
             });
 
             it("should ignore already present users", () => {
-                let initialSharingUsers = dialog.sharingUsers;
+                let initialShareList = utils.clone(dialog.sharelist);
 
                 callEventListener(dialog.inputSearchTypeahead, "select", {
                     context: {
-                        username: "currentuser",
-                        organization: true,
+                        name: "currentuser",
+                        fullname: "Updated fullname",
+                        type: "user",
                         accesslevel: "read"
                     }
                 });
 
-                expect(dialog.sharingUsers).toEqual(initialSharingUsers);
+                expect(dialog.sharelist).toEqual(initialShareList);
+            });
+
+            it("should ignore already present groups", () => {
+                let initialShareList = utils.clone(dialog.sharelist);
+
+                callEventListener(dialog.inputSearchTypeahead, "select", {
+                    context: {
+                        name: "currentgroup",
+                        type: "group",
+                        accesslevel: "read"
+                    }
+                });
+
+                expect(dialog.sharelist).toEqual(initialShareList);
             });
 
             it("should be possible to remove added users", () => {
@@ -190,16 +230,37 @@
 
                 callEventListener(dialog.inputSearchTypeahead, "select", {
                     context: {
-                        username: "otheruser",
-                        organization: false,
+                        name: "otheruser",
+                        type: "user",
                         accesslevel: "read"
                     }
                 });
-                expect(Object.keys(dialog.sharingUsers).length).toBe(2);
+                expect(dialog.sharelist.length).toBe(3);
 
                 callEventListener(button, "click");
 
-                expect(Object.keys(dialog.sharingUsers).length).toBe(1);
+                expect(dialog.sharelist.length).toBe(2);
+            });
+
+            it("should be possible to remove added groups", () => {
+                var button;
+                spyOn(StyledElements, "Button").and.callFake(function () {
+                    button = this;
+                    this.addEventListener = jasmine.createSpy("addEventListener");
+                });
+
+                callEventListener(dialog.inputSearchTypeahead, "select", {
+                    context: {
+                        name: "otheruser",
+                        type: "group",
+                        accesslevel: "read"
+                    }
+                });
+                expect(dialog.sharelist.length).toBe(3);
+
+                callEventListener(button, "click");
+
+                expect(dialog.sharelist.length).toBe(2);
             });
 
         });
@@ -211,9 +272,16 @@
             beforeEach(() => {
                 workspace = {
                     model: {
+                        groups: [
+                            {
+                                name: "group",
+                                accesslevel: "read"
+                            }
+                        ],
                         users: [
                             {
                                 username: "currentuser",
+                                type: "user",
                                 organization: false,
                                 accesslevel: "owner"
                             }
@@ -237,6 +305,7 @@
                 expect(dialog.btnCancel.enabled).toBe(false);
 
                 setTimeout(() => {
+                    expect(workspace.model.preferences.set).toHaveBeenCalled();
                     expect(dialog._closeListener).toHaveBeenCalledWith();
                     done();
                 });
@@ -272,4 +341,4 @@
         });
     };
 
-})();
+})(StyledElements.Utils);

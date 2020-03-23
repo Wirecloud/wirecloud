@@ -23,7 +23,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -429,6 +429,47 @@
 
         });
 
+        describe("removeFromArray(arr, element)", () => {
+
+            it("should remove basic primitives from an array", () => {
+                let arr = [1, 2, 3];
+
+                utils.removeFromArray(arr, 2);
+
+                expect(arr).toEqual([1, 3]);
+            });
+
+            it("should remove only first element", () => {
+                let arr = [1, 2, 3, 2];
+
+                utils.removeFromArray(arr, 2);
+
+                expect(arr).toEqual([1, 3, 2]);
+            });
+
+            it("should work if element is not found", () => {
+                let arr = [1, 2, 3];
+
+                utils.removeFromArray(arr, 4);
+
+                expect(arr).toEqual([1, 2, 3]);
+            });
+
+        });
+
+        describe("setupdate(setA, setB)", () => {
+
+            it("should add all elements from setB into setA", () => {
+                let setA = new Set([1, 2, 3]);
+                let setB = new Set([5, 6, 7]);
+
+                expect(utils.setupdate(setA, setB)).toBe(setA);
+
+                expect(setA).toEqual(new Set([1, 2, 3, 5, 6, 7]));
+            });
+
+        });
+
         describe("timeoutPromise(promise, ms, fallback)", () => {
 
             beforeEach(() => {
@@ -631,4 +672,4 @@
 
     });
 
-})();
+})(StyledElements.Utils);

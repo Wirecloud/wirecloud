@@ -30,5 +30,5 @@ from wirecloud.platform.markets.tests import *  # noqa
 from wirecloud.platform.preferences.tests import *  # noqa
 from wirecloud.platform.wiring.tests import *  # noqa
 from wirecloud.platform.widget.tests import CodeTransformationTestCase, WidgetModuleTestCase  # noqa
-from wirecloud.platform.workspace.tests import WorkspaceMigrationsTestCase, WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase  # noqa
+from wirecloud.platform.workspace.tests import WorkspaceMigrationsTestCase, WorkspaceTestCase, WorkspaceUtilsTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase  # noqa
 from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests  # noqa

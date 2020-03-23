@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -484,7 +484,7 @@
             });
 
             it("should handle changes to the baselayout preference", () => {
-                callEventListener(model.preferences, "pre-commit", {"baselayout": 5});
+                callEventListener(model.preferences, "post-commit", {"baselayout": 5});
 
                 expect(tab.dragboard._updateBaseLayout).toHaveBeenCalledWith();
             });

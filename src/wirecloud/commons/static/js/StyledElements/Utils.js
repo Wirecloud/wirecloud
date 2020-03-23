@@ -946,7 +946,9 @@ if (window.StyledElements == null) {
     };
 
     /**
+     * Updates a set by adding all the elements of another set.
      *
+     * @since 0.11.0
      */
     Utils.setupdate = function setupdate(setA, setB) {
         for (var elem of setB) {
@@ -1009,6 +1011,18 @@ if (window.StyledElements == null) {
                 fulfill();
             }
         });
+    };
+
+    /**
+     * Removes an element from an array.
+     *
+     * @since 0.11.0
+     */
+    Utils.removeFromArray = function removeFromArray(arr, element) {
+        let index = arr.indexOf(element);
+        if (index !== -1) {
+            arr.splice(index, 1);
+        }
     };
 
     StyledElements.Utils = Utils;

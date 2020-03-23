@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -377,19 +377,33 @@ def _get_global_workspace_data(workspaceDAO, user):
     data_ret['preferences'] = preferences
 
     data_ret['users'] = []
+    data_ret['groups'] = []
 
-    for u in workspaceDAO.users.all():
-        try:
-            is_organization = u.organization is not None
-        except Organization.DoesNotExist:
-            is_organization = False
+    if workspaceDAO.creator == user:
+        for u in workspaceDAO.users.all():
+            try:
+                is_organization = u.organization is not None
+            except Organization.DoesNotExist:
+                is_organization = False
 
-        data_ret['users'].append({
-            "fullname": u.get_full_name(),
-            "username": u.username,
-            "organization": is_organization,
-            "accesslevel": "owner" if workspaceDAO.creator == u else "read",
-        })
+            data_ret['users'].append({
+                "fullname": u.get_full_name(),
+                "username": u.username,
+                "organization": is_organization,
+                "accesslevel": "owner" if workspaceDAO.creator == u else "read",
+            })
+
+        for g in workspaceDAO.groups.all():
+            try:
+                is_organization = g.organization is not None
+            except Organization.DoesNotExist:
+                is_organization = False
+
+            if is_organization is False:
+                data_ret['groups'].append({
+                    "name": g.name,
+                    "accesslevel": "read",
+                })
 
     # Process forced variable values
     concept_values = get_context_values(workspaceDAO, user)
@@ -540,21 +554,45 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
     return data_ret
 
 
-def create_workspace(owner, f=None, mashup=None, new_name=None, new_title=None, preferences={}, searchable=True, public=False):
+def create_workspace(owner, mashup, new_name=None, new_title=None, preferences={}, searchable=True, public=False, allow_renaming=False, dry_run=False):
 
-    from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
+    from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, check_mashup_dependencies
 
-    if mashup is not None and f is not None:
-        raise Exception
+    if type(mashup) == str:
+        values = mashup.split('/', 3)
+        if len(values) != 3:
+            raise ValueError(_('invalid mashup id'))
 
-    if f is not None:
+        (mashup_vendor, mashup_name, mashup_version) = values
+        try:
+            resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+            if not resource.is_available_for(owner) or resource.resource_type() != 'mashup':
+                raise CatalogueResource.DoesNotExist
+        except CatalogueResource.DoesNotExist:
+            raise ValueError(_('Mashup not found: %(mashup)s') % {'mashup': mashup})
 
-        wgt = f if isinstance(f, WgtFile) else WgtFile(f)
+        base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+        wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+        template = TemplateParser(wgt_file.get_template())
+    elif isinstance(mashup, Workspace):
+        from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace
+        options = {
+            'vendor': 'api',
+            'name': mashup.name,
+            'version': '1.0',
+            'title': mashup.title if mashup.title is not None and mashup.title.strip() != "" else mashup.name,
+            'description': 'Temporal mashup for the workspace copy operation',
+            'email': 'a@example.com',
+        }
+
+        template = TemplateParser(build_json_template_from_workspace(options, mashup, mashup.creator))
+    else:
+        wgt = mashup if isinstance(mashup, WgtFile) else WgtFile(mashup)
         template = TemplateParser(wgt.get_template())
 
         resource_info = template.get_resource_processed_info(process_urls=False)
         if resource_info["type"] != 'mashup':
-            raise Exception
+            raise ValueError("WgtFile is not a mashup")
 
         for embedded_resource in resource_info['embedded']:
             if embedded_resource['src'].startswith('https://'):
@@ -564,24 +602,14 @@ def create_workspace(owner, f=None, mashup=None, new_name=None, new_title=None, 
 
             extra_resource_contents = WgtFile(resource_file)
             install_component(extra_resource_contents, executor_user=owner, users=[owner])
-    else:
-        values = mashup.split('/', 3)
-        if len(values) != 3:
-            raise TypeError(_('invalid mashup id'))
 
-        (mashup_vendor, mashup_name, mashup_version) = values
-        try:
-            resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
-            if not resource.is_available_for(owner) or resource.resource_type() != 'mashup':
-                raise CatalogueResource.DoesNotExist
-        except CatalogueResource.DoesNotExist:
-            raise Exception(_('Mashup not found: %(mashup)s') % {'mashup': mashup})
+    check_mashup_dependencies(template, owner)
 
-        base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
-        wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-        template = TemplateParser(wgt_file.get_template())
+    if dry_run:
+        # TODO check name conflict
+        return None
 
-    workspace, _foo = buildWorkspaceFromTemplate(template, owner, new_name=new_name, new_title=new_title, searchable=searchable, public=public)
+    workspace, _foo = buildWorkspaceFromTemplate(template, owner, allow_renaming=allow_renaming, new_name=new_name, new_title=new_title, searchable=searchable, public=public)
 
     if len(preferences) > 0:
         update_workspace_preferences(workspace, preferences, invalidate_cache=False)

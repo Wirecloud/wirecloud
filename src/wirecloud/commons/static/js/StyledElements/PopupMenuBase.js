@@ -196,7 +196,7 @@
         if (this.isVisible()) {
             display.call(this, child);
 
-            if (this._activeMenuItem == null && this.oneActiveAtLeast) {
+            if (this._activeMenuItem == null && this.oneActiveAtLeast && this._enabledItems.length > 0) {
                 activateMenuItem.call(this, this._enabledItems[0]);
             }
         }

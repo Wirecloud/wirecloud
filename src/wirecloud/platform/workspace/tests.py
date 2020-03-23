@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -24,20 +24,21 @@ import os
 import rdflib
 import json
 from unittest import TestCase
-from unittest.mock import Mock, create_autospec
+from unittest.mock import Mock, patch
 
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser, User, Group
 from django.db.migrations.exceptions import IrreversibleError
 from django.test import TransactionTestCase
 
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
+from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from wirecloud.platform.workspace.utils import get_global_workspace_data, encrypt_value
+from wirecloud.platform.workspace.utils import get_global_workspace_data, encrypt_value, create_workspace, delete_workspace
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 from wirecloud.platform.migration_utils import multiuser_variables_structure_forwards, multiuser_variables_structure_backwards
 
@@ -213,6 +214,72 @@ def check_secure_preferences(self, workspace, user):
     self.assertEqual(data["wiring"]["operators"]["2"]["preferences"]["pref_secure"]["value"], "********")
 
 
+class WorkspaceUtilsTestCase(TestCase):
+
+    tags = ('wirecloud-noselenium', 'wirecloud-workspace')
+
+    def test_create_workspace_invalid_mashup_id(self):
+        owner = Mock()
+        self.assertRaises(ValueError, create_workspace, owner, "invalid")
+
+    @patch('wirecloud.platform.workspace.mashupTemplateParser.buildWorkspaceFromTemplate')
+    @patch('wirecloud.platform.workspace.utils.TemplateParser')
+    @patch('wirecloud.platform.workspace.utils.WgtFile')
+    @patch('wirecloud.platform.workspace.utils.catalogue')
+    @patch('wirecloud.platform.workspace.utils.CatalogueResource')
+    def test_create_workspace_from_mashup(self, CatalogueResource, catalogue, WgtFile, TemplateParser, buildWorkspaceFromTemplate):
+        owner = Mock()
+        resource = CatalogueResource.objects.get()
+        resource.is_available_for.return_value = True
+        resource.resource_type.return_value = "mashup"
+        resource.template_uri = "a.wgt"
+        catalogue.wgt_deployer.get_base_dir.return_value = '/tmp'
+        TemplateParser().get_resource_dependencies.return_value = ()
+        workspace_mock = Mock()
+        buildWorkspaceFromTemplate.return_value = (workspace_mock, None)
+
+        workspace = create_workspace(owner, "Wirecloud/mashup/1.0")
+
+        self.assertEqual(workspace, workspace_mock)
+
+    @patch('wirecloud.platform.workspace.utils.TemplateParser')
+    def test_create_workspace_from_wgt(self, TemplateParser):
+        owner = Mock()
+        wgt = Mock(spec=WgtFile)
+        TemplateParser().get_resource_processed_info.return_value = {"type": "widget"}
+
+        self.assertRaises(ValueError, create_workspace, owner, wgt)
+
+    @patch('wirecloud.platform.workspace.utils.get_object_or_404')
+    def test_delete_workspace_not_found(self, get_object_or_404):
+        get_object_or_404.side_effect = Exception
+        self.assertRaises(Exception, delete_workspace, user="owner", name="dashboard")
+
+    @patch('wirecloud.platform.workspace.utils.IWidget')
+    @patch('wirecloud.platform.workspace.utils.get_object_or_404')
+    def test_delete_workspace_with_widgets(self, get_object_or_404, IWidget):
+        widget1 = Mock()
+        widget2 = Mock()
+        IWidget.objects.filter.return_value = (widget1, widget2)
+
+        delete_workspace(user="owner", name="dashboard")
+
+        widget1.delete.assert_called_with()
+        widget2.delete.assert_called_with()
+
+    @patch('wirecloud.platform.workspace.utils.IWidget')
+    def test_delete_workspace(self, IWidget):
+        widget1 = Mock()
+        widget2 = Mock()
+        IWidget.objects.filter.return_value = (widget1, widget2)
+        workspace = Mock()
+
+        delete_workspace(workspace)
+
+        widget1.delete.assert_called_with()
+        widget2.delete.assert_called_with()
+
+
 class WorkspaceTestCase(WirecloudTestCase, TransactionTestCase):
 
     fixtures = ('test_data',)
@@ -238,6 +305,17 @@ class WorkspaceTestCase(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(preferences['username']['value'], 'test_username')
         properties = tab['iwidgets'][0]['properties']
         self.assertEqual(properties['prop']['value'], 'test_data')
+
+    def test_get_global_workspace_data_sharelist(self):
+
+        workspace = Workspace.objects.get(pk=1)
+        workspace.groups.add(Group.objects.get(name="normusers"))
+        workspace.groups.add(Group.objects.get(name="wirecloud"))
+
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        # wirecloud group is an organization, it should be filtered
+        self.assertEqual(data['groups'], [{"name": "normusers", "accesslevel": "read"}])
 
     def test_get_global_workspace_data_harvest_operator_properties(self):
         workspace = Workspace.objects.get(id=1)

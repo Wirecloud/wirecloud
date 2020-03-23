@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -197,10 +197,9 @@
                     () => {
                         expect(listener1).not.toHaveBeenCalled();
                         expect(listener2).not.toHaveBeenCalled();
-                        done();
                     },
                     fail
-                );
+                ).finally(done);
             });
 
             it("should update preferences on the server", (done) => {
@@ -234,12 +233,53 @@
 
                 t.then(
                     () => {
-                        expect(listener1).toHaveBeenCalledWith(preferences, {"onepref": 20});
-                        expect(listener2).toHaveBeenCalledWith(preferences, {"onepref": {"value": "20"}, "anotherpref": {"inherit": true}});
-                        done();
+                        expect(listener1).toHaveBeenCalledWith(preferences, {"onepref": {"value": "20"}, "anotherpref": {"inherit": true}});
+                        expect(listener2).toHaveBeenCalledWith(preferences, {"onepref": 20});
                     },
                     fail
-                );
+                ).finally(done);
+            });
+
+            describe("should handle errors from server", () => {
+                const test = function test(statuscode) {
+                    it("(" + statuscode + ")", (done) => {
+                        spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                            return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: statuscode});});
+                        });
+                        let listener1 = jasmine.createSpy("listener1");
+                        preferences.addEventListener("pre-commit", listener1);
+                        let listener2 = jasmine.createSpy("listener2");
+                        preferences.addEventListener("post-commit", listener2);
+                        preferences.preferences.onepref.value = 5;
+                        preferences.preferences.onepref.getEffectiveValue.and.returnValues(5, 20);
+                        Wirecloud.ui.InputInterfaceFactory.stringify.and.returnValue("20");
+
+                        let t = preferences.set({
+                            "onepref": {
+                                "value": 20
+                            }
+                        });
+
+                        t.then(
+                            fail,
+                            () => {
+                                expect(listener1).toHaveBeenCalled();
+                                expect(listener2).not.toHaveBeenCalled();
+                            }
+                        ).finally(done);
+                    });
+                };
+
+                // Error codes that are used by the API
+                test(401);
+                test(403);
+                test(422);
+                test(500);
+
+                // Other error codes
+                test(200);
+                test(404);
+                test(409);
             });
 
         });
@@ -313,8 +353,8 @@
 
                 preferences._handleParentChanges("notused", {"onepref": 25, "mypref": "newtext"});
 
-                expect(listener1).toHaveBeenCalledWith(preferences, {"mypref": "newtext"});
-                expect(listener2).not.toHaveBeenCalled();
+                expect(listener1).not.toHaveBeenCalled();
+                expect(listener2).toHaveBeenCalledWith(preferences, {"mypref": "newtext"});
             });
 
         });

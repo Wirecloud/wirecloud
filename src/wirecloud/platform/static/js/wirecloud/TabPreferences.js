@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -35,7 +36,7 @@
             }
         });
 
-        this.tab.workspace.preferences.addEventListener('pre-commit', this._handleParentChanges);
+        this.tab.workspace.preferences.addEventListener('post-commit', this._handleParentChanges);
     };
     utils.inherit(TabPreferences, Wirecloud.Preferences);
 
@@ -52,7 +53,7 @@
     };
 
     TabPreferences.prototype.destroy = function destroy() {
-        this.tab.workspace.preferences.removeEventListener('pre-commit', this._handleParentChanges);
+        this.tab.workspace.preferences.removeEventListener('post-commit', this._handleParentChanges);
         Wirecloud.Preferences.prototype.destroy.call(this);
     };
 
