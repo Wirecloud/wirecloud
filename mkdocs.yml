@@ -29,6 +29,10 @@ pages:
         - 'Translations': 'development/platform/translation.md'
 - 'Appendix: Widgets': 'widgets.md'
 
+plugins:
+    - exclude:
+        glob:
+            - slides/*
 
 markdown_extensions:
     - markdown.extensions.tables
