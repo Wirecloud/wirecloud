@@ -903,7 +903,7 @@ AUTHENTICATION_BACKENDS = (
 ```
 
 > **Note**: Django supports several authentication backends (see this
-> [link](https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#specifying-authentication-backends) for more
+> [link](https://docs.djangoproject.com/en/2.2/topics/auth/customizing/#specifying-authentication-backends) for more
 > details). For example, you can continue authenticating users using the local db by also listing
 > `django.contrib.auth.backends.ModelBackend` in `AUTHENTICATION_BACKENDS`, although this will require extra
 > configuration not documented in this guide.
@@ -936,7 +936,28 @@ SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc822
     portals at the same time the user sign out from WireCloud, providing a single sign out experience. This setting is
     also used for building the navigation bar.
 
-<zbr>6.  Run `python manage.py migrate; python manage.py collectstatic --noinput`
+<zbr>6.   [Optional]: Enable role-group synchronization by adding
+    `wirecloud.fiware.social_auth_backend.sync_role_groups` into social auth pipeline. By enabling this role-group
+    synchronization, each role configured on the KeyRock application will be associated with a WireCloud group, users
+    will be associated with those groups following KeyRock instructions. This is the default social auth pipeline with
+    role-group synchronization enabled:
+
+```python
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'wirecloud.fiware.social_auth_backend.sync_role_groups',
+)
+```
+
+<zbr>7.  Run `python manage.py migrate; python manage.py collectstatic --noinput`
 
 [keyrock's user and programmers guide]:
     https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application
