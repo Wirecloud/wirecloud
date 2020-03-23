@@ -1,0 +1,13 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.5.0
+    hooks:
+    -   id: flake8
+-   repo: local
+    hooks:
+    -   id: eslint
+        name: eslint
+        entry: eslint -c src/.eslintrc
+        language: node
+        'types': [javascript]
+        files: 'src/wirecloud/(commons|platform)/static/js/.*'

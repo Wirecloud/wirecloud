@@ -33,6 +33,7 @@ __test__ = False
 @patch('wirecloud.platform.preferences.views.get_object_or_404')
 @patch('wirecloud.platform.preferences.views.parse_json_request')
 @patch('wirecloud.platform.preferences.views.cache')
+@patch('wirecloud.platform.preferences.views.Group')
 @patch('wirecloud.platform.preferences.views.User')
 @patch('wirecloud.platform.preferences.views.WorkspacePreference')
 class WorkspacePreferencesTestCase(TestCase):
@@ -44,7 +45,20 @@ class WorkspacePreferencesTestCase(TestCase):
         cls.restapi = WorkspacePreferencesCollection(permitted_methods=('GET', 'POST'))
         super(WorkspacePreferencesTestCase, cls).setUpClass()
 
-    def test_workspace_preference_collection_post_empty(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404):
+    def test_workspace_preference_collection_post_forbidden(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404):
+        workspace = get_object_or_404()
+        workspace.is_editable_by.return_value = False
+        request = Mock(META={
+            "CONTENT_TYPE": "application/json",
+        })
+        request.user.is_anonymous = False
+
+        response = self.restapi.create(request, "1")
+
+        workspace.save.assert_not_called()
+        self.assertEqual(response.status_code, 403)
+
+    def test_workspace_preference_collection_post_empty(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = {}
@@ -59,11 +73,11 @@ class WorkspacePreferencesTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
 
     @parameterized.expand([
-        ({"value": '[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}]'},),
-        ('[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}]',),
-        ('[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}, {"name": "inexistent", "type": "user"}, {"name": false}]',),
+        ({"value": '[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}, {"name": "group1", "type": "group"}]'},),
+        ('[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}, {"name": "group1", "type": "group"}]',),
+        ('[{"name": "user1", "type": "user", "accessLevel": "read"}, {"name": "org1", "type": "organization"}, {"name": "group1", "type": "group"}, {"name": "inexistent", "type": "user"}, {"name": "missingroup", "type": "group"}, {"name": false, "type": "invalid"}]',),
     ])
-    def test_workspace_preference_collection_post_sharelist(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404, value):
+    def test_workspace_preference_collection_post_sharelist(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404, value):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = {
@@ -74,19 +88,22 @@ class WorkspacePreferencesTestCase(TestCase):
         })
         request.user.is_anonymous = False
         User.DoesNotExist = Exception
+        Group.DoesNotExist = Exception
         user1 = Mock()
         org1 = Mock()
+        group1 = Mock()
         User.objects.get.side_effect = (user1, org1, User.DoesNotExist)
+        Group.objects.get.side_effect = (group1, Group.DoesNotExist)
         type(user1.organization).group = PropertyMock(side_effect=Organization.DoesNotExist)
 
         response = self.restapi.create(request, "1")
 
         self.assertEqual(workspace.userworkspace_set.create.call_args_list, [call(user=user1), call(user=org1)])
-        self.assertEqual(workspace.groups.add.call_args_list, [call(org1.organization.group)])
+        self.assertEqual(workspace.groups.add.call_args_list, [call(org1.organization.group), call(group1)])
         workspace.save.assert_not_called()
         self.assertEqual(response.status_code, 204)
 
-    def test_workspace_preference_collection_post_sharelist_ignore_non_existing_users(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404):
+    def test_workspace_preference_collection_post_sharelist_ignore_non_existing_users(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = {
@@ -118,7 +135,7 @@ class WorkspacePreferencesTestCase(TestCase):
         ({"value": "null"}, False),
         ({"value": "{}"}, False),
     ])
-    def test_workspace_preference_collection_post_public(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404, payload, expected):
+    def test_workspace_preference_collection_post_public(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404, payload, expected):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = {
@@ -151,7 +168,7 @@ class WorkspacePreferencesTestCase(TestCase):
         ({"value": "null"}, False),
         ({"value": "{}"}, False),
     ])
-    def test_workspace_preference_collection_post_requireauth(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404, payload, expected):
+    def test_workspace_preference_collection_post_requireauth(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404, payload, expected):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = {
@@ -188,7 +205,7 @@ class WorkspacePreferencesTestCase(TestCase):
         ({"pref": {"value": 5}},),
         ({"pref1": "", "pref2": None},),
     ])
-    def test_workspace_preference_collection_post_invalid_payload_values(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404, payload):
+    def test_workspace_preference_collection_post_invalid_payload_values(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404, payload):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         parse_json_request.return_value = payload
@@ -232,7 +249,7 @@ class WorkspacePreferencesTestCase(TestCase):
         ({"pref1": {"inherit": True}, "pref2": {"inherit": False}}, True, True, False),
         ({"pref1": {}, "pref2": {}}, False, False, False),
     ])
-    def test_workspace_preference_collection_post_valid_payload_values(self, WorkspacePreference, User, cache, parse_json_request, get_object_or_404, payload, change1, change2=False, new=False):
+    def test_workspace_preference_collection_post_valid_payload_values(self, WorkspacePreference, User, Group, cache, parse_json_request, get_object_or_404, payload, change1, change2=False, new=False):
         workspace = get_object_or_404()
         workspace.is_editable_by.return_value = True
         pref1 = Mock(value="5", inherit=False)
@@ -367,6 +384,19 @@ class PlatformPreferencesTestCase(TestCase):
     def setUpClass(cls):
         cls.restapi = PlatformPreferencesCollection(permitted_methods=('GET', 'POST'))
         super(PlatformPreferencesTestCase, cls).setUpClass()
+
+    def test_platform_preference_collection_get(self, PlatformPreference, parse_json_request):
+        request = Mock()
+        request.user.is_anonymous = False
+        pref1 = Mock(name="pref1", value=1)
+        pref1.name = "pref1"
+        pref2 = Mock(name="pref2", value=3)
+        pref2.name = "pref2"
+        PlatformPreference.objects.filter.return_value = (pref2, pref1)
+
+        response = self.restapi.read(request)
+
+        self.assertEqual(response.status_code, 200)
 
     @parameterized.expand([
         ("value",),

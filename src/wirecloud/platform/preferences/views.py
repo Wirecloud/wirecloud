@@ -52,12 +52,7 @@ def update_preferences(user, preferences_json):
 
 
 def parseValues(values):
-    _values = {}
-
-    for value in values:
-        _values[value.name] = {'inherit': False, 'value': value.value}
-
-    return _values
+    return {value.name: {'inherit': False, 'value': value.value} for value in values}
 
 
 def parseInheritableValues(values):
