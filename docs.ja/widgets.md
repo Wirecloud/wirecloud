@@ -528,12 +528,12 @@ Orion Context Broker サーバから来た、NGSI エンティティを Point of
 OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 * ベンダー : CoNWeT
-* バージョン : 1.2.0
+* バージョン : 1.2.1
 * ライセンス : Apache License 2.0
 
 ホームページ : [https://github.com/Wirecloud/ol3-map-widget](https://github.com/Wirecloud/ol3-map-widget)
 
-**[Download CoNWeT\_ol3-map\_1.2.0.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.2.0/CoNWeT_ol3-map_1.2.0.wgt)**
+**[Download CoNWeT\_ol3-map\_1.2.1.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.2.1/CoNWeT_ol3-map_1.2.1.wgt)**
 
 ### Open item webpage
 
