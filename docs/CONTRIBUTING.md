@@ -16,6 +16,7 @@ features.
 -   [Feature requests](#feature-requests)
 -   [Contributing code](#contributing-code)
     -   [Code Guidelines](#code-guidelines)
+    -   [Code style git hooks](#code-style-git-hooks)
 
 ## Using the issue tracker
 
