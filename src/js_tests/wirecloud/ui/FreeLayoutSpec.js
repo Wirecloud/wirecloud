@@ -215,7 +215,7 @@
 
             it("should return a value", () => {
                 let layout = new ns.FreeLayout({
-                    getHeight: function () {return 1000;}
+                    getHeight: () => {return 1000;}
                 });
                 expect(layout.fromPixelsToVCells(306)).toBe(306000);
             });

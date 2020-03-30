@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -194,12 +194,8 @@
         }
     };
 
-    GridLayout.prototype._hasSpaceFor = function (_matrix, positionX, positionY, width, height) {
+    GridLayout.prototype._hasSpaceFor = function _hasSpaceFor(_matrix, positionX, positionY, width, height) {
         var x, y;
-
-        if (typeof _matrix === "string") {
-            _matrix = this._buffers[_matrix].matrix;
-        }
 
         for (x = 0; x < width; x++) {
             for (y = 0; y < height; y++) {
@@ -229,7 +225,7 @@
         }
     };
 
-    GridLayout.prototype._clearSpace = function (_matrix, widget) {
+    GridLayout.prototype._clearSpace = function _clearSpace(_matrix, widget) {
         var x, y;
         var position = this._getPositionOn(_matrix, widget);
         var width = widget.shape.width;
@@ -265,7 +261,7 @@
 
     GridLayout.prototype.moveSpaceUp = Wirecloud.ui.ColumnLayout.prototype.moveSpaceUp;
 
-    GridLayout.prototype._removeFromMatrix = function (_matrix, widget) {
+    GridLayout.prototype._removeFromMatrix = function _removeFromMatrix(_matrix, widget) {
         this._clearSpace(_matrix, widget);
         return false;
     };
@@ -550,7 +546,7 @@
      * @returns Returns a list of the widgets affected by the removing the indicated widget
      */
     GridLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
-        this._removeFromMatrix("base", widget);
+        this._removeFromMatrix(this.matrix, widget);
         Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
         return [];
     };
@@ -623,16 +619,16 @@
         this.iwidgetToMove = widget;
 
         // Make a copy of the positions of the widgets
-        this._buffers.backup = {};
-        this._buffers.backup.positions = this._clonePositions(this.matrix);
-        this._buffers.shadow = {
-            "matrix": this.matrix
+        this._buffers.backup = {
+            matrix: this._cloneMatrix(this.matrix),
+            positions: this._clonePositions(this.matrix)
         };
-
+        this._buffers.shadow = {
+            matrix: this.matrix
+        };
         // Shadow matrix = current matrix without the widget to move
         // Initialize shadow matrix and searchInsertPointCache
-        this._buffers.backup.matrix = this._cloneMatrix(this.matrix);
-        this._removeFromMatrix("backup", widget);
+        this._removeFromMatrix(this._buffers.backup.matrix, widget);
 
         // Create dragboard cursor
         this.dragboardCursor = new Wirecloud.ui.DragboardCursor(widget);
@@ -650,7 +646,7 @@
         }
     };
 
-    GridLayout.prototype.disableCursor = function () {
+    GridLayout.prototype.disableCursor = function disableCursor() {
         this._destroyCursor();
     };
 
@@ -709,7 +705,7 @@
         }
     };
 
-    GridLayout.prototype.cancelMove = function () {
+    GridLayout.prototype.cancelMove = function cancelMove() {
         if (this.iwidgetToMove == null) {
             var msg = "Dragboard: Trying to cancel an inexistant temporal move.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
@@ -725,7 +721,7 @@
         this.dragboardCursor = null;
     };
 
-    GridLayout.prototype.acceptMove = function () {
+    GridLayout.prototype.acceptMove = function acceptMove() {
         if (this.iwidgetToMove == null) {
             var msg = "Dragboard: Function acceptMove called when there is not an started iwidget move.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
