@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018-2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -403,6 +403,166 @@
                 });
             });
 
+            it("should allow to create widgets using the relx option", (done) => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                let p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        relx: false,
+                        left: "10px",
+                        layout: 1
+                    }
+                );
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
+            it("should allow to create widgets using the rely option", (done) => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                let p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        rely: true,
+                        top: "10px",
+                        layout: 1
+                    }
+                );
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
+            it("should allow to create widgets using the relwidth option", (done) => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                let p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        relwidth: false,
+                        width: "10px",
+                        layout: 1
+                    }
+                );
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
+            it("should allow to create widgets using the relheight option", (done) => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                let p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        relheight: false,
+                        height: "10px",
+                        layout: 1
+                    }
+                );
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
+            it("should allow to create widgets with fixed position (left and top)", (done) => {
+                let workspace = create_workspace();
+                let model = create_tab();
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+                let widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                let widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                let p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "33%"
+                    }, {
+                        layout: 0,
+                        left: "10px",
+                        top: "10px"
+                    }
+                );
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
         });
 
         describe("highlight()", () => {
@@ -435,6 +595,21 @@
                 expect(tab.show()).toBe(tab);
                 expect(tab.widgets[0].load).toHaveBeenCalled();
                 expect(tab.widgets[1].load).toHaveBeenCalled();
+            });
+
+            it("should expand side layouts when editing", () => {
+                let workspace = create_workspace();
+                workspace.editing = true;
+                let model = create_tab({});
+                let tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                expect(tab.show()).toBe(tab);
+
+                expect(tab.dragboard.leftLayout.active).toBe(true);
+                expect(tab.dragboard.rightLayout.active).toBe(true);
             });
 
         });
