@@ -47,7 +47,7 @@
             this.show(menuitem);
         });
         menuitem.addClassName('submenu');
-        menuitem.submenu = this;
+        Object.defineProperty(menuitem, "submenu", {"value": this});
 
         Object.defineProperties(this, {
             /**

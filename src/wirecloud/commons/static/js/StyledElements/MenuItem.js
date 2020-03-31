@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,6 +26,8 @@
 (function (se, utils) {
 
     "use strict";
+
+    const privates = new WeakMap();
 
     // =========================================================================
     // CLASS DEFINITION
@@ -53,16 +56,25 @@
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = "se-popup-menu-item";
 
-        this.thumbnailElement = document.createElement('div');
-        this.thumbnailElement.className = "se-popup-menu-item-thumbnail";
+        let priv = {
+            bodyelement: document.createElement('div'),
+            thumbnailelement: document.createElement('div'),
+            titleelement: document.createElement('div'),
+            element_onclick: element_onclick.bind(this),
+            element_onmouseenter: element_onmouseenter.bind(this),
+            element_onmouseleave: element_onmouseleave.bind(this),
+            element_onblur: element_onblur.bind(this),
+            element_onfocus: element_onfocus.bind(this),
+            element_onkeydown: element_onkeydown.bind(this)
+        };
+        privates.set(this, priv);
 
-        this.bodyElement = document.createElement('div');
-        this.bodyElement.className = "se-popup-menu-item-body";
-        this.wrapperElement.appendChild(this.bodyElement);
+        priv.bodyelement.className = "se-popup-menu-item-body";
+        priv.thumbnailelement.className = "se-popup-menu-item-thumbnail";
+        priv.titleelement.className = "se-popup-menu-item-title";
 
-        this.titleElement = document.createElement('div');
-        this.titleElement.className = "se-popup-menu-item-title";
-        this.bodyElement.appendChild(this.titleElement);
+        priv.bodyelement.appendChild(priv.titleelement);
+        this.wrapperElement.appendChild(priv.bodyelement);
 
         Object.defineProperties(this, {
             active: {get: property_active_get, set: property_active_set},
@@ -75,26 +87,14 @@
         this.run = handler;
         this.context = context;
 
-        // Set up MouseEvent internal handlers.
-        this._onclick_bound = element_onclick.bind(this);
-        this._onmouseenter_bound = element_onmouseenter.bind(this);
-        this._onmouseleave_bound = element_onmouseleave.bind(this);
-
-        this.wrapperElement.addEventListener('click', this._onclick_bound, true);
-        this.wrapperElement.addEventListener('mouseenter', this._onmouseenter_bound);
-        this.wrapperElement.addEventListener('mouseleave', this._onmouseleave_bound);
-
-        // Set up FocusEvent internal handlers and status
-        this._onblur_bound = element_onblur.bind(this);
-        this._onfocus_bound = element_onfocus.bind(this);
-
-        this.wrapperElement.addEventListener('blur', this._onblur_bound);
-        this.wrapperElement.addEventListener('focus', this._onfocus_bound);
+        this.wrapperElement.addEventListener('click', priv.element_onclick, true);
+        this.wrapperElement.addEventListener('mouseenter', priv.element_onmouseenter);
+        this.wrapperElement.addEventListener('mouseleave', priv.element_onmouseleave);
+        this.wrapperElement.addEventListener('blur', priv.element_onblur);
+        this.wrapperElement.addEventListener('focus', priv.element_onfocus);
         this._onenabled(true);
 
-        // Set up KeyboardEvent internal handlers
-        this._onkeydown_bound = element_onkeydown.bind(this);
-        this.wrapperElement.addEventListener('keydown', this._onkeydown_bound);
+        this.wrapperElement.addEventListener('keydown', priv.element_onkeydown);
     };
 
     // =========================================================================
@@ -135,17 +135,18 @@
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
         addIconClass: function addIconClass(iconClass) {
+            const priv = privates.get(this);
 
-            if (this.iconElement == null) {
-                this.iconElement = document.createElement('span');
-                this.thumbnailElement.appendChild(this.iconElement);
+            if (priv.iconelement == null) {
+                priv.iconelement = document.createElement('span');
+                priv.thumbnailelement.appendChild(priv.iconelement);
             }
 
-            if (this.thumbnailElement.parentElement == null) {
-                this.wrapperElement.insertBefore(this.thumbnailElement, this.wrapperElement.firstChild);
+            if (priv.thumbnailelement.parentElement == null) {
+                this.wrapperElement.insertBefore(priv.thumbnailelement, this.wrapperElement.firstChild);
             }
 
-            this.iconElement.className = "se-icon " + iconClass;
+            priv.iconelement.className = "se-icon " + iconClass;
 
             return this;
         },
@@ -167,24 +168,19 @@
          * @since 0.5.0
          */
         destroy: function destroy() {
+            const priv = privates.get(this);
 
             if (this.wrapperElement.parentElement != null) {
                 this.wrapperElement.parentElement.removeChild(this.wrapperElement);
             }
 
-            this.wrapperElement.removeEventListener('click', this._onclick_bound, true);
-            this.wrapperElement.removeEventListener('mouseenter', this._onmouseenter_bound);
-            this.wrapperElement.removeEventListener('mouseleave', this._onmouseleave_bound);
-            this.wrapperElement.removeEventListener('keydown', this._onkeydown_bound);
-            this.wrapperElement.removeEventListener('blur', this._onblur_bound);
-            this.wrapperElement.removeEventListener('focus', this._onfocus_bound);
-
-            this._onclick_bound = null;
-            this._onmouseenter_bound = null;
-            this._onmouseleave_bound = null;
-            this._onkeydown_bound = null;
-            this._onblur_bound = null;
-            this._onfocus_bound = null;
+            this.wrapperElement.removeEventListener('click', priv.element_onclick, true);
+            this.wrapperElement.removeEventListener('mouseenter', priv.element_onmouseenter);
+            this.wrapperElement.removeEventListener('mouseleave', priv.element_onmouseleave);
+            this.wrapperElement.removeEventListener('keydown', priv.element_onkeydown);
+            this.wrapperElement.removeEventListener('blur', priv.element_onblur);
+            this.wrapperElement.removeEventListener('focus', priv.element_onfocus);
+            this.wrapperElement.removeEventListener('keydown', priv.element_onkeydown);
 
             se.StyledElement.prototype.destroy.call(this);
         },
@@ -243,18 +239,19 @@
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
         setDescription: function setDescription(description) {
+            const priv = privates.get(this);
 
-            if (this.descriptionElement == null) {
-                this.descriptionElement = document.createElement('div');
-                this.descriptionElement.className = "se-popup-menu-item-description";
-                this.bodyElement.appendChild(this.descriptionElement);
+            if (priv.descriptionelement == null) {
+                priv.descriptionelement = document.createElement('div');
+                priv.descriptionelement.className = "se-popup-menu-item-description";
+                priv.bodyelement.appendChild(priv.descriptionelement);
             }
 
             if (description instanceof se.StyledElement) {
-                this.descriptionElement.innerHTML = "";
-                description.appendTo(this.descriptionElement);
+                priv.descriptionelement.innerHTML = "";
+                description.appendTo(priv.descriptionelement);
             } else {
-                this.descriptionElement.textContent = description;
+                priv.descriptionelement.textContent = description;
             }
 
             return this;
@@ -269,11 +266,13 @@
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
         setTitle: function setTitle(title) {
+            const priv = privates.get(this);
+
             if (title instanceof se.StyledElement) {
-                this.titleElement.innerHTML = "";
-                title.appendTo(this.titleElement);
+                priv.titleelement.innerHTML = "";
+                title.appendTo(priv.titleelement);
             } else {
-                this.titleElement.textContent = title;
+                priv.titleelement.textContent = title;
             }
 
             return this;
@@ -298,11 +297,11 @@
     };
 
     var property_description_get = function property_description_get() {
-        return this.descriptionElement != null ? this.descriptionElement.textContent : "";
+        return privates.get(this).descriptionelement.textContent;
     };
 
     var property_title_get = function property_title_get() {
-        return this.titleElement.textContent;
+        return privates.get(this).titleelement.textContent;
     };
 
     var element_onclick = function element_onclick(event) {
