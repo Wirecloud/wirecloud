@@ -80,10 +80,6 @@
         });
     };
 
-    SubMenuItem.prototype._getMenuItem = function _getMenuItem() {
-        return this.menuitem;
-    };
-
     SubMenuItem.prototype.addEventListener = function addEventListener(eventId, handler) {
         switch (eventId) {
         case 'mouseenter':

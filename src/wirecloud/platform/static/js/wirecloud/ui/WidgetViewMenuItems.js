@@ -93,9 +93,9 @@
             item = new se.MenuItem(utils.gettext("User's Manual"), () => {
                 var myresources_view = Wirecloud.UserInterfaceManager.views.myresources;
                 myresources_view.createUserCommand('showDetails', this.widget.model.meta, {
-                        version: this.widget.model.meta.version,
-                        tab: utils.gettext('Documentation')
-                    })();
+                    version: this.widget.model.meta.version,
+                    tab: utils.gettext('Documentation')
+                })();
             });
             item.addIconClass("fa fa-book");
             item.setDisabled(this.widget.model.meta.doc === '');
@@ -109,6 +109,64 @@
             } else {
                 item_icon = "fa fa-expand";
                 item_title = utils.gettext("Full Dragboard");
+            }
+
+            if (this.widget.layout === this.widget.tab.dragboard.freeLayout) {
+                let submenu = new se.SubMenuItem("Placement");
+                items.push(submenu.addIconClass("fas fa-thumbtack"));
+
+                let title = this.widget.position.relx ? utils.gettext("Absolute x") : utils.gettext("Relative x");
+                item = new se.MenuItem(title, () => {
+                    const layout = this.widget.layout;
+                    if (this.widget.position.relx) {
+                        this.widget.setPosition({relx: false, x: layout.getColumnOffset(this.widget.position) - layout.dragboard.leftMargin});
+                    } else {
+                        this.widget.setPosition({relx: true, x: layout.adaptColumnOffset(layout.getColumnOffset(this.widget.position) + 'px').inLU});
+                    }
+                });
+                item.addIconClass("fas " + (this.widget.position.relx ? "fa-ruler" : "fa-percentage"));
+                item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
+                submenu.append(item);
+
+                title = this.widget.position.rely ? utils.gettext("Absolute y") : utils.gettext("Relative y");
+                item = new se.MenuItem(title, () => {
+                    const layout = this.widget.layout;
+                    if (this.widget.position.rely) {
+                        let margin = this.widget.position.anchor.startsWith("top") ? layout.dragboard.topMargin : layout.dragboard.bottomMargin;
+                        this.widget.setPosition({rely: false, y: layout.getRowOffset(this.widget.position) - margin});
+                    } else {
+                        this.widget.setPosition({rely: true, y: layout.adaptRowOffset(layout.getRowOffset(this.widget.position) + 'px').inLU});
+                    }
+                });
+                item.addIconClass("fas " + (this.widget.position.rely ? "fa-ruler" : "fa-percentage"));
+                item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
+                submenu.append(item);
+
+                title = this.widget.shape.relwidth ? utils.gettext("Absolute width") : utils.gettext("Relative width");
+                item = new se.MenuItem(title, () => {
+                    const layout = this.widget.layout;
+                    if (this.widget.shape.relwidth) {
+                        this.widget.setShape({relwidth: false, width: layout.getWidthInPixels(this.widget.shape.width)});
+                    } else {
+                        this.widget.setShape({relwidth: true, width: layout.adaptWidth(this.widget.shape.width + 'px').inLU});
+                    }
+                });
+                item.addIconClass("fas " + (this.widget.shape.relwidth ? "fa-ruler" : "fa-percentage"));
+                item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
+                submenu.append(item);
+
+                title = this.widget.shape.relheight ? utils.gettext("Absolute height") : utils.gettext("Relative height");
+                item = new se.MenuItem(title, () => {
+                    const layout = this.widget.layout;
+                    if (this.widget.shape.relheight) {
+                        this.widget.setShape({relheight: false, height: layout.getHeightInPixels(this.widget.shape.height)});
+                    } else {
+                        this.widget.setShape({relheight: true, height: layout.adaptHeight(this.widget.shape.height + 'px').inLU});
+                    }
+                });
+                item.addIconClass("fas " + (this.widget.shape.relheight ? "fa-ruler" : "fa-percentage"));
+                item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
+                submenu.append(item);
             }
 
             item = new se.MenuItem(item_title, function () {

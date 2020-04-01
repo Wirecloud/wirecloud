@@ -272,8 +272,7 @@
                         this._enabledItems.push(generatedItem);
                     }
                 } else /* if (generatedItem instanceof StyledElements.SubMenuItem) */{
-                    generatedItem._getMenuItem().insertInto(this.wrapperElement);
-                    generatedItem.parentElement = this;
+                    generatedItem.menuitem.insertInto(this.wrapperElement).parentElement = this;
                     this._enabledItems.push(generatedItem.menuitem);
                 }
             }
@@ -285,8 +284,7 @@
                 this._enabledItems.push(item);
             }
         } else /* if (item instanceof StyledElements.SubMenuItem) */ {
-            item._getMenuItem().insertInto(this.wrapperElement);
-            item._getMenuItem().parentElement = this;
+            item.menuitem.insertInto(this.wrapperElement).parentElement = this;
             this._submenus.push(item);
             this._enabledItems.push(item.menuitem);
         }
