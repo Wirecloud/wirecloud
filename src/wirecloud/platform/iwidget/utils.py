@@ -33,9 +33,9 @@ def parse_value_from_text(info, value):
         except ValueError:
             try:
                 return float(info['default'])
-            except ValueError:
+            except (KeyError, ValueError):
                 return 0
-    elif info['type'] in ('list', 'text', 'password'):
+    else:  # info['type'] in ('list', 'text', 'password'):
         return str(value)
 
 
@@ -114,10 +114,7 @@ def update_anchor_value(model, data):
 
 
 def update_position(iwidget, key, data):
-    if key not in iwidget.positions:
-        iwidget.positions[key] = {}
-
-    position = iwidget.positions[key]
+    position = iwidget.positions.setdefault(key, {})
 
     update_boolean_value(position, data, 'relwidth')
     update_boolean_value(position, data, 'relheight')
