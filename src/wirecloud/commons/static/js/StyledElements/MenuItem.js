@@ -44,8 +44,15 @@
      * @name StyledElements.MenuItem
      *
      * @param {String} title Label to display in the user interface
-     * @param {Function} handler Callback to be called when this Menu Item is
+     * @param {Object.<String, *>|Function} [options] For backwards compability,
+     * this parameter accepts function values, in that case the value will be
+     * used for the "handler" option.
+     *
+     * Available options:
+     * - `handler` (`Function`) Callback to be called when this Menu Item is
      * executed
+     * - `context` (`Any`) Context to be provided to the handler function.
+     *
      * @param {Object} [context] Object to be passed as the second parameter
      * of the handler callback
      */
@@ -55,6 +62,16 @@
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = "se-popup-menu-item";
+
+        let options;
+        if (handler != null && typeof handler === "object") {
+            options = handler;
+        } else {
+            options = {
+                handler: handler,
+                context: context
+            };
+        }
 
         let priv = {
             bodyelement: document.createElement('div'),
@@ -84,8 +101,8 @@
 
         this.setTitle(title);
 
-        this.run = handler;
-        this.context = context;
+        this.run = options.handler;
+        this.context = options.context;
 
         this.wrapperElement.addEventListener('click', priv.element_onclick, true);
         this.wrapperElement.addEventListener('mouseenter', priv.element_onmouseenter);
@@ -95,6 +112,13 @@
         this._onenabled(true);
 
         this.wrapperElement.addEventListener('keydown', priv.element_onkeydown);
+
+        if (options.enabled != null) {
+            this.enabled = options.enabled;
+        }
+        if (options.iconClass != null) {
+            this.addIconClass(options.iconClass);
+        }
     };
 
     // =========================================================================
