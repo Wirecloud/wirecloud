@@ -160,7 +160,7 @@ setup(
     name='wirecloud',
     version=wirecloud.platform.__version__,
     description='Widgets Container and Mashup edition tools for composing end-user centric mashup applications.',
-    long_description=read('../README.md'),
+    long_description=read('README.md'),
     long_description_content_type="text/markdown",
     author='CoNWeT Lab',
     author_email='wirecloud@conwet.com',
