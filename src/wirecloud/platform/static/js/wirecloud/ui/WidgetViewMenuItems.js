@@ -58,14 +58,14 @@
             item = new se.MenuItem(utils.gettext("Rename"), () => {
                 this.widget.titleelement.enableEdition();
             });
-            item.addIconClass("fa fa-pencil");
+            item.addIconClass("fas fa-pencil-alt");
             item.setDisabled(!this.widget.model.isAllowed('rename', 'editor'));
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Reload"), () => {
                 this.widget.reload();
             });
-            item.addIconClass("fa fa-refresh");
+            item.addIconClass("fas fa-sync");
             item.setDisabled(this.widget.model.missing);
             items.push(item);
 
@@ -73,20 +73,20 @@
                 var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.widget.model);
                 dialog.show();
             });
-            item.addIconClass("fa fa-retweet");
+            item.addIconClass("fas fa-retweet");
             item.setDisabled(!this.widget.model.isAllowed('upgrade', 'editor') || !Wirecloud.LocalCatalogue.hasAlternativeVersion(this.widget.model.meta));
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Logs"), () => {
                 this.widget.showLogs();
             });
-            item.addIconClass("fa fa-tags");
+            item.addIconClass("fas fa-tags");
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Settings"), () => {
                 this.widget.showSettings();
             });
-            item.addIconClass("fa fa-cog");
+            item.addIconClass("fas fa-cog");
             item.setDisabled(!this.widget.model.hasPreferences() || !this.widget.model.isAllowed('configure', 'editor'));
             items.push(item);
 
@@ -97,29 +97,80 @@
                     tab: utils.gettext('Documentation')
                 })();
             });
-            item.addIconClass("fa fa-book");
+            item.addIconClass("fas fa-book");
             item.setDisabled(this.widget.model.meta.doc === '');
             items.push(item);
 
             items.push(new StyledElements.Separator());
 
-            if (this.widget.layout === this.widget.tab.dragboard.fulldragboardLayout) {
-                item_icon = "fa fa-compress";
-                item_title = utils.gettext("Exit Full Dragboard");
-            } else {
-                item_icon = "fa fa-expand";
-                item_title = utils.gettext("Full Dragboard");
-            }
-
             if (this.widget.layout === this.widget.tab.dragboard.freeLayout) {
                 let submenu = new se.SubMenuItem("Placement");
                 items.push(submenu.addIconClass("fas fa-thumbtack"));
+
+                let halignmenu = new se.SubMenuItem("Horizontal Align", {iconClass: 'fas fa-arrows-alt-h'});
+                halignmenu.append(new se.MenuItem(
+                    utils.gettext("Left"),
+                    {
+                        enabled: !this.widget.position.anchor.endsWith("left"),
+                        iconClass: "fas fa-align-left",
+                        handler: (context) => {
+                            this.widget.setPosition({anchor: (this.widget.position.anchor.startsWith("top") ? "top" : "bottom") + "left"});
+                        }
+                    }
+                ));
+                halignmenu.append(new se.MenuItem(
+                    utils.gettext("Center"),
+                    {
+                        enabled: !this.widget.position.anchor.endsWith("center"),
+                        iconClass: "fas fa-align-center",
+                        handler: (context) => {
+                            this.widget.setPosition({anchor: (this.widget.position.anchor.startsWith("top") ? "top" : "bottom") + "center"});
+                        }
+                    }
+                ));
+                halignmenu.append(new se.MenuItem(
+                    utils.gettext("Right"),
+                    {
+                        enabled: !this.widget.position.anchor.endsWith("right"),
+                        iconClass: "fas fa-align-right",
+                        handler: (context) => {
+                            this.widget.setPosition({anchor: (this.widget.position.anchor.startsWith("top") ? "top" : "bottom") + "right"});
+                        }
+                    }
+                ));
+                submenu.append(halignmenu);
+
+                let valignmenu = new se.SubMenuItem("Vertical Align", {iconClass: 'fas fa-arrows-alt-v'});
+                valignmenu.append(new se.MenuItem(
+                    utils.gettext("Top"),
+                    {
+                        enabled: this.widget.position.anchor.startsWith("bottom"),
+                        iconClass: "fas fa-arrow-up",
+                        handler: (context) => {
+                            let horizontal = this.widget.position.anchor.substr(6);
+                            this.widget.setPosition({anchor: "top" + horizontal});
+                        }
+                    }
+                ));
+                valignmenu.append(new se.MenuItem(
+                    utils.gettext("Bottom"),
+                    {
+                        enabled: this.widget.position.anchor.startsWith("top"),
+                        iconClass: "fas fa-arrow-down",
+                        handler: (context) => {
+                            let horizontal = this.widget.position.anchor.substr(3);
+                            this.widget.setPosition({anchor: "bottom" + horizontal});
+                        }
+                    }
+                ));
+                submenu.append(valignmenu).appendSeparator();
 
                 let title = this.widget.position.relx ? utils.gettext("Absolute x") : utils.gettext("Relative x");
                 item = new se.MenuItem(title, () => {
                     const layout = this.widget.layout;
                     if (this.widget.position.relx) {
-                        this.widget.setPosition({relx: false, x: layout.getColumnOffset(this.widget.position) - layout.dragboard.leftMargin});
+                        let margin = this.widget.position.anchor.endsWith("left") ? layout.dragboard.leftMargin : layout.dragboard.rightMargin;
+                        this.widget.setPosition({relx: false, x: layout.getColumnOffset(this.widget.position) - margin});
                     } else {
                         this.widget.setPosition({relx: true, x: layout.adaptColumnOffset(layout.getColumnOffset(this.widget.position) + 'px').inLU});
                     }
@@ -167,6 +218,14 @@
                 item.addIconClass("fas " + (this.widget.shape.relheight ? "fa-ruler" : "fa-percentage"));
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 submenu.append(item);
+            }
+
+            if (this.widget.layout === this.widget.tab.dragboard.fulldragboardLayout) {
+                item_icon = "fas fa-compress";
+                item_title = utils.gettext("Exit Full Dragboard");
+            } else {
+                item_icon = "fas fa-expand";
+                item_title = utils.gettext("Full Dragboard");
             }
 
             item = new se.MenuItem(item_title, function () {

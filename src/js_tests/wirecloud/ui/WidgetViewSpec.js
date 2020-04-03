@@ -33,7 +33,7 @@
         });
 
         beforeEach(() => {
-            ns.WidgetViewMenuItems = jasmine.createSpy("WidgetViewMenuItems");
+            spyOn(ns, "WidgetViewMenuItems")
             utils.inherit(ns.WidgetViewMenuItems, StyledElements.DynamicMenuItems);
 
             ns.WidgetViewResizeHandle = jasmine.createSpy("WidgetViewResizeHandle").and.callFake(function () {
@@ -44,7 +44,6 @@
 
         afterAll(() => {
             delete ns.FullDragboardLayout;
-            delete ns.WidgetViewMenuItems;
             delete ns.WidgetViewResizeHandle;
         });
 

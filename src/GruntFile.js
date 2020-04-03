@@ -129,6 +129,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/WidgetViewDraggable.js',
     'wirecloud/platform/static/js/wirecloud/ui/WidgetViewResizeHandle.js',
     'wirecloud/platform/static/js/wirecloud/ui/WidgetView.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WidgetViewMenuItems.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Behaviour.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
