@@ -33,7 +33,10 @@
      * @name StyledElements.SubMenuItem
      *
      * @param {String} title Label to display in the user interface
-     * @param {Object} options
+     * @param {Object} [options]
+     * Available options:
+     * - `enabled` {Boolean} initial state (available since version 0.11.0)
+     * - `iconClass` {String} initial icon class (available since version 0.11.0)
      */
     var SubMenuItem = function SubMenuItem(title, options) {
         options = utils.merge({
@@ -54,8 +57,17 @@
              * @memberOf StyledElements.SubMenuItem#
              * @type {StyledElements.MenuItem}
              */
-            menuitem: {value: menuitem}
+            menuitem: {value: menuitem},
+            title: {get: () => {return menuitem.title;}}
         });
+
+        if (options.enabled != null) {
+            this.enabled = options.enabled;
+        }
+
+        if (options.iconClass != null) {
+            this.addIconClass(options.iconClass);
+        }
     };
     utils.inherit(SubMenuItem, StyledElements.PopupMenuBase);
 
