@@ -290,7 +290,7 @@
                     widget.layout = this;
                     return new Set(["3", "4"]);
                 });
-                newLayout._searchFreeSpace.and.returnValue({relx: true, rely: true, relwidth: true, relheight: true, anchor: "topleft", x: 1, y: 2});
+                newLayout._searchFreeSpace.and.returnValue({relx: true, rely: true, relwidth: true, relheight: true, anchor: "top-left", x: 1, y: 2});
 
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {

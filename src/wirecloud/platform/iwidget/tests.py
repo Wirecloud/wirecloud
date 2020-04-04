@@ -31,11 +31,11 @@ class IWidgetUtilsTestCase(TestCase):
     def test_update_anchor_value(self):
         model = MagicMock()
         data = {
-            "anchor": "topleft"
+            "anchor": "top-left"
         }
         update_anchor_value(model, data)
 
-        self.assertEqual(data, {"anchor": "topleft"})
+        self.assertEqual(data, {"anchor": "top-left"})
 
     def test_update_anchor_value_not_defined(self):
         model = MagicMock()

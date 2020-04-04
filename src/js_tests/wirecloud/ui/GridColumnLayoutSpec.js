@@ -467,7 +467,7 @@
                 let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 widget.position = null;
                 widget.setPosition.and.callFake(function (newposition) {this.position = newposition;});
-                spyOn(layout, "_searchFreeSpace").and.returnValue({anchor: "topleft", x: 0, y: 0});
+                spyOn(layout, "_searchFreeSpace").and.returnValue({anchor: "top-left", x: 0, y: 0});
 
                 expect(layout.addWidget(widget, true)).toEqual(new Set());
 

@@ -114,7 +114,8 @@
                         enabled: !this.widget.position.anchor.endsWith("left"),
                         iconClass: "fas fa-align-left",
                         handler: (context) => {
-                            this.widget.setPosition({anchor: (this.widget.position.anchor.startsWith("top") ? "top" : "bottom") + "left"});
+                            let vertical = this.widget.position.anchor.split('-')[0];
+                            this.widget.setPosition({anchor: vertical + "-left"});
                         }
                     }
                 ));
@@ -124,7 +125,8 @@
                         enabled: !this.widget.position.anchor.endsWith("center"),
                         iconClass: "fas fa-align-center",
                         handler: (context) => {
-                            this.widget.setPosition({anchor: (this.widget.position.anchor.startsWith("top") ? "top" : "bottom") + "center"});
+                            let vertical = this.widget.position.anchor.split('-')[0];
+                            this.widget.setPosition({anchor: vertical + "-center"});
                         }
                     }
                 ));
@@ -134,7 +136,8 @@
                         enabled: !this.widget.position.anchor.endsWith("right"),
                         iconClass: "fas fa-align-right",
                         handler: (context) => {
-                            this.widget.setPosition({anchor: (this.widget.position.anchor.startsWith("top") ? "top" : "bottom") + "right"});
+                            let vertical = this.widget.position.anchor.split('-')[0];
+                            this.widget.setPosition({anchor: vertical + "-right"});
                         }
                     }
                 ));
@@ -147,8 +150,8 @@
                         enabled: this.widget.position.anchor.startsWith("bottom"),
                         iconClass: "fas fa-arrow-up",
                         handler: (context) => {
-                            let horizontal = this.widget.position.anchor.substr(6);
-                            this.widget.setPosition({anchor: "top" + horizontal});
+                            let horizontal = this.widget.position.anchor.split('-')[1];
+                            this.widget.setPosition({anchor: "top-" + horizontal});
                         }
                     }
                 ));
@@ -158,8 +161,8 @@
                         enabled: this.widget.position.anchor.startsWith("top"),
                         iconClass: "fas fa-arrow-down",
                         handler: (context) => {
-                            let horizontal = this.widget.position.anchor.substr(3);
-                            this.widget.setPosition({anchor: "bottom" + horizontal});
+                            let horizontal = this.widget.position.anchor.split('-')[1];
+                            this.widget.setPosition({anchor: "bottom-" + horizontal});
                         }
                     }
                 ));

@@ -179,7 +179,7 @@
                     heading: document.createElement("div"),
                     layout: new Wirecloud.ui.FreeLayout(),
                     position: {
-                        anchor: "topleft",
+                        anchor: "top-left",
                         relx: false,
                         rely: false,
                         x: 10,

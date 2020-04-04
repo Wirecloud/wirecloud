@@ -265,7 +265,7 @@
         }
 
         // Y coordinate
-        if (["bottomcenter", "bottomleft", "bottomright"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+        if (["bottom-center", "bottom-left", "bottom-right"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
             this.newPosition.y = this.getHeight() - this.iwidgetToMove.wrapperElement.offsetHeight - this.newPosition.y;
         }
         if (this.iwidgetToMove.position.rely) {
@@ -277,9 +277,9 @@
         }
 
         // X coordinate
-        if (["bottomcenter", "topcenter"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+        if (["bottom-center", "top-center"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
             this.newPosition.x += (this.iwidgetToMove.shape.relwidth ? this.getWidthInPixels(this.iwidgetToMove.shape.width) : this.iwidgetToMove.shape.width) / 2;
-        } else if (["bottomright", "topright"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+        } else if (["bottom-right", "top-right"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
             this.newPosition.x = this.getWidth() - this.iwidgetToMove.wrapperElement.offsetWidth - this.newPosition.x;
         }
         if (this.iwidgetToMove.position.relx) {
@@ -298,35 +298,35 @@
 
     FreeLayout.prototype.updatePosition = function updatePosition(widget, element) {
         switch (widget.position.anchor) {
-        case "topleft":
-        case "topright":
-        case "topcenter":
+        case "top-left":
+        case "top-right":
+        case "top-center":
             element.style.top = this.getRowOffset(widget.position, true);
             element.style.bottom = "";
             break;
-        case "bottomleft":
-        case "bottomright":
-        case "bottomcenter":
+        case "bottom-left":
+        case "bottom-right":
+        case "bottom-center":
             element.style.top = "";
             element.style.bottom = this.getRowOffset(widget.position, true);
             break;
         }
 
         switch (widget.position.anchor) {
-        case "topright":
-        case "bottomright":
+        case "top-right":
+        case "bottom-right":
             element.style.left = "";
             element.style.right = this.getColumnOffset(widget.position, true);
             element.style.marginLeft = "";
             break;
-        case "topleft":
-        case "bottomleft":
+        case "top-left":
+        case "bottom-left":
             element.style.left = this.getColumnOffset(widget.position, true);
             element.style.right = "";
             element.style.marginLeft = "";
             break;
-        case "topcenter":
-        case "bottomcenter":
+        case "top-center":
+        case "bottom-center":
             element.style.left = this.getColumnOffset(widget.position, true);
             element.style.right = "";
             if (widget.shape.relwidth) {

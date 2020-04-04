@@ -178,7 +178,7 @@
                 height: resource.default_height,
                 layout: this.model.preferences.get('initiallayout') === "Free" ? 1 : 0,
                 width: resource.default_width,
-                anchor: 'topleft',
+                anchor: 'top-left',
                 relx: true,
                 rely: false,
                 relwidth: true,

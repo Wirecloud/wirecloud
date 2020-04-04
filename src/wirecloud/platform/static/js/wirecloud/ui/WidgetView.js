@@ -544,7 +544,7 @@
                 let newposition = newLayout._searchFreeSpace(this.shape.width, this.shape.height);
                 newposition.relx = true;
                 newposition.rely = true;
-                newposition.anchor = "topleft";
+                newposition.anchor = "top-left";
                 this.setPosition(newposition);
             } else if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setPosition(this.previousPosition);
@@ -559,7 +559,7 @@
                         y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inPixels,
                         relx: true,
                         rely: false,
-                        anchor: "topleft"
+                        anchor: "top-left"
                     });
                 } else {
                     this.setPosition({
@@ -567,7 +567,7 @@
                         y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inLU,
                         relx: true,
                         rely: true,
-                        anchor: "topleft"
+                        anchor: "top-left"
                     });
                 }
             }

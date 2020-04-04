@@ -107,7 +107,7 @@ def update_anchor_value(model, data):
         if type(anchor) != str:
             raise TypeError(_('anchor field must contain a string value'))
 
-        if anchor not in ("topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright"):
+        if anchor not in ("top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"):
             raise ValueError(_('Invalid value for anchor field'))
 
         model["anchor"] = anchor

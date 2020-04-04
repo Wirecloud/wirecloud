@@ -514,7 +514,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'widget': iwidget.widget_uri,
         'top': widget_position.get('top', 0),
         'left': widget_position.get('left', 0),
-        'anchor': widget_position.get('anchor', 'topleft'),
+        'anchor': widget_position.get('anchor', 'top-left'),
         'relx': True if iwidget.layout != 1 else widget_position.get('relx', True),
         'rely': True if iwidget.layout != 1 else widget_position.get('rely', False),
         'relheight': True if iwidget.layout != 1 else widget_position.get('relheight', False),

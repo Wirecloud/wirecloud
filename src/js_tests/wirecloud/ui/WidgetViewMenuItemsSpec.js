@@ -56,13 +56,14 @@
                         }
                     },
                     position: {
-                        anchor: options.anchor || "topleft",
+                        anchor: options.anchor || "top-left",
                         relx: !!options.relx,
                         rely: !!options.rely,
                         x: 0,
                         y: 0
                     },
                     setPosition: jasmine.createSpy('setPosition'),
+                    setShape: jasmine.createSpy('setShape'),
                     shape: {
                         relwidth: !!options.relwidth,
                         relheight: !!options.relheight,
@@ -346,6 +347,26 @@
                 element.run();
             });
 
+            it("handles switching into absolute horizontal placement (right alignment)", () => {
+                let widget = createwidgetmock({layout: 1, relx: true, anchor: "top-right"});
+                let item = new ns.WidgetViewMenuItems(widget);
+                spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
+
+                let items = item.build();
+                widget.layout = {
+                    adaptColumnOffset: jasmine.createSpy("adaptColumnOffset").and.returnValue({}),
+                    dragboard: {
+                        leftMargin: 1
+                    },
+                    getColumnOffset: jasmine.createSpy("getColumnOffset").and.returnValue(0)
+                };
+                expect(items).toEqual(jasmine.any(Array));
+                let submenu = items.find((item) => {return item.title === "Placement";});
+                let element = submenu._items.find((item) => {return item.title === "Absolute x";});
+
+                element.run();
+            });
+
             it("handles switching into relative vertical placement", () => {
                 let widget = createwidgetmock({layout: 1});
                 let item = new ns.WidgetViewMenuItems(widget);
@@ -386,12 +407,38 @@
                 element.run();
             });
 
+            it("handles switching into absolute vertical placement (bottom alignment)", () => {
+                let widget = createwidgetmock({layout: 1, rely: true, anchor: "bottom-left"});
+                let item = new ns.WidgetViewMenuItems(widget);
+                spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
+
+                let items = item.build();
+                widget.layout = {
+                    adaptRowOffset: jasmine.createSpy("adaptRowOffset").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    },
+                    getRowOffset: jasmine.createSpy("getRowOffset").and.returnValue(0)
+                };
+                expect(items).toEqual(jasmine.any(Array));
+                let submenu = items.find((item) => {return item.title === "Placement";});
+                let element = submenu._items.find((item) => {return item.title === "Absolute y";});
+
+                element.run();
+            });
+
             it("handles switching into relative widths", () => {
                 let widget = createwidgetmock({layout: 1});
                 let item = new ns.WidgetViewMenuItems(widget);
                 spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
 
                 let items = item.build();
+                widget.layout = {
+                    adaptWidth: jasmine.createSpy("adaptWidth").and.returnValue({}),
+                    dragboard: {
+                        leftMargin: 1
+                    }
+                };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
                 let element = submenu._items.find((item) => {return item.title === "Relative width";});
@@ -405,6 +452,13 @@
                 spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
 
                 let items = item.build();
+                widget.layout = {
+                    adaptWidth: jasmine.createSpy("adaptWidth").and.returnValue({}),
+                    getWidthInPixels: jasmine.createSpy("getWidthInPixels").and.returnValue(3),
+                    dragboard: {
+                        leftMargin: 1
+                    }
+                };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
                 let element = submenu._items.find((item) => {return item.title === "Absolute width";});
@@ -418,6 +472,12 @@
                 spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
 
                 let items = item.build();
+                widget.layout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    }
+                };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
                 let element = submenu._items.find((item) => {return item.title === "Relative height";});
@@ -431,9 +491,121 @@
                 spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
 
                 let items = item.build();
+                widget.layout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    },
+                    getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
+                };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
                 let element = submenu._items.find((item) => {return item.title === "Absolute height";});
+
+                element.run();
+            });
+
+            it("handles enabling left alignment", () => {
+                let widget = createwidgetmock({layout: 1});
+                let item = new ns.WidgetViewMenuItems(widget);
+                spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
+
+                let items = item.build();
+                widget.layout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    },
+                    getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
+                };
+                expect(items).toEqual(jasmine.any(Array));
+                let submenu = items.find((item) => {return item.title === "Placement";});
+                let submenu2 = submenu._items.find((item) => {return item.title === "Horizontal Align";});
+                let element = submenu2._items.find((item) => {return item.title === "Left";});
+
+                element.run();
+            });
+
+            it("handles enabling center alignment", () => {
+                let widget = createwidgetmock({layout: 1});
+                let item = new ns.WidgetViewMenuItems(widget);
+                spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
+
+                let items = item.build();
+                widget.layout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    },
+                    getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
+                };
+                expect(items).toEqual(jasmine.any(Array));
+                let submenu = items.find((item) => {return item.title === "Placement";});
+                let submenu2 = submenu._items.find((item) => {return item.title === "Horizontal Align";});
+                let element = submenu2._items.find((item) => {return item.title === "Center";});
+
+                element.run();
+            });
+
+            it("handles enabling right alignment", () => {
+                let widget = createwidgetmock({layout: 1});
+                let item = new ns.WidgetViewMenuItems(widget);
+                spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
+
+                let items = item.build();
+                widget.layout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    },
+                    getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
+                };
+                expect(items).toEqual(jasmine.any(Array));
+                let submenu = items.find((item) => {return item.title === "Placement";});
+                let submenu2 = submenu._items.find((item) => {return item.title === "Horizontal Align";});
+                let element = submenu2._items.find((item) => {return item.title === "Right";});
+
+                element.run();
+            });
+
+            it("handles enabling top alignment", () => {
+                let widget = createwidgetmock({layout: 1});
+                let item = new ns.WidgetViewMenuItems(widget);
+                spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
+
+                let items = item.build();
+                widget.layout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    },
+                    getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
+                };
+                expect(items).toEqual(jasmine.any(Array));
+                let submenu = items.find((item) => {return item.title === "Placement";});
+                let submenu2 = submenu._items.find((item) => {return item.title === "Vertical Align";});
+                let element = submenu2._items.find((item) => {return item.title === "Top";});
+
+                element.run();
+            });
+
+            it("handles enabling bottom alignment", () => {
+                let widget = createwidgetmock({layout: 1});
+                let item = new ns.WidgetViewMenuItems(widget);
+                spyOn(Wirecloud.LocalCatalogue, 'hasAlternativeVersion').and.returnValue(true);
+
+                let items = item.build();
+                widget.layout = {
+                    adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
+                    dragboard: {
+                        topMargin: 1
+                    },
+                    getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
+                };
+                expect(items).toEqual(jasmine.any(Array));
+                let submenu = items.find((item) => {return item.title === "Placement";});
+                let submenu2 = submenu._items.find((item) => {return item.title === "Vertical Align";});
+                let element = submenu2._items.find((item) => {return item.title === "Bottom";});
 
                 element.run();
             });

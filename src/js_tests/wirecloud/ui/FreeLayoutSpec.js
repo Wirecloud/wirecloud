@@ -242,7 +242,7 @@
             const createWidgetMock = function createWidgetMock(data) {
                 return {
                     position: {
-                        anchor: data.anchor || "topleft",
+                        anchor: data.anchor || "top-left",
                         relx: data.relx || false,
                         rely: data.rely || false,
                         x: data.x,
@@ -274,9 +274,9 @@
                 expect(widget.setPosition).not.toHaveBeenCalled();
             });
 
-            it("should work on empty layouts (width change - left, topcenter)", () => {
+            it("should work on empty layouts (width change - left, top-center)", () => {
                 let widget = createWidgetMock({
-                    anchor: "topcenter", x: 0, y: 0, width: 1, height: 4
+                    anchor: "top-center", x: 0, y: 0, width: 1, height: 4
                 });
 
                 layout._notifyResizeEvent(widget, 1, 4, 2, 4, true, false, false);
@@ -284,9 +284,9 @@
                 expect(widget.setPosition).toHaveBeenCalled();
             });
 
-            it("should work on empty layouts (no size change - left, topcenter)", () => {
+            it("should work on empty layouts (no size change - left, top-center)", () => {
                 let widget = createWidgetMock({
-                    anchor: "topcenter", x: 0, y: 0, width: 1, height: 4
+                    anchor: "top-center", x: 0, y: 0, width: 1, height: 4
                 });
 
                 layout._notifyResizeEvent(widget, 1, 4, 1, 4, true, false, false);
@@ -426,7 +426,7 @@
                     leftMargin: 4,
                     topMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: true, anchor: "topleft", x: 500000})).toBe(404);
+                expect(layout.getColumnOffset({relx: true, anchor: "top-left", x: 500000})).toBe(404);
             });
 
             it("should work with relative positions (from left, css)", () => {
@@ -435,7 +435,7 @@
                     leftMargin: 4,
                     rightMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: true, anchor: "topleft", x: 500000}, true)).toBe("calc(50% + -1.5px)");
+                expect(layout.getColumnOffset({relx: true, anchor: "top-left", x: 500000}, true)).toBe("calc(50% + -1.5px)");
             });
 
             it("should work with relative positions (from right)", () => {
@@ -444,7 +444,7 @@
                     rightMargin: 3,
                     topMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: true, anchor: "topright", x: 500000})).toBe(403);
+                expect(layout.getColumnOffset({relx: true, anchor: "top-right", x: 500000})).toBe(403);
             });
 
             it("should work with relative positions (from right, css)", () => {
@@ -453,7 +453,7 @@
                     rightMargin: 3,
                     leftMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: true, anchor: "topright", x: 500000}, true)).toBe("calc(50% + -2px)");
+                expect(layout.getColumnOffset({relx: true, anchor: "top-right", x: 500000}, true)).toBe("calc(50% + -2px)");
             });
 
             it("should work with absolute positions (from left)", () => {
@@ -462,7 +462,7 @@
                     leftMargin: 4,
                     topMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: false, anchor: "topleft", x: 400})).toBe(404);
+                expect(layout.getColumnOffset({relx: false, anchor: "top-left", x: 400})).toBe(404);
             });
 
             it("should work with absolute positions (from right)", () => {
@@ -472,7 +472,7 @@
                     rightMargin: 3,
                     topMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: false, anchor: "topright", x: 400})).toBe(403);
+                expect(layout.getColumnOffset({relx: false, anchor: "top-right", x: 400})).toBe(403);
             });
 
             it("should work with absolute positions (from right, css)", () => {
@@ -482,7 +482,7 @@
                     rightMargin: 3,
                     topMargin: 7,
                 });
-                expect(layout.getColumnOffset({relx: false, anchor: "topright", x: 400}, true)).toBe("403px");
+                expect(layout.getColumnOffset({relx: false, anchor: "top-right", x: 400}, true)).toBe("403px");
             });
 
         });
@@ -507,7 +507,7 @@
                     getHeight: function () {return 800;},
                     topMargin: 7
                 });
-                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "topleft"})).toBe(407);
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "top-left"})).toBe(407);
             });
 
             it("should work with relative positions (from bottom)", () => {
@@ -515,21 +515,21 @@
                     getHeight: function () {return 800;},
                     bottomMargin: 5
                 });
-                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "bottomleft"})).toBe(405);
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "bottom-left"})).toBe(405);
             });
 
             it("should work with absolute positions (from top)", () => {
                 var layout = new ns.FreeLayout({
                     topMargin: 7
                 });
-                expect(layout.getRowOffset({y: 400, rely: false, anchor: "topleft"})).toBe(407);
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "top-left"})).toBe(407);
             });
 
             it("should work with absolute positions (from bottom)", () => {
                 var layout = new ns.FreeLayout({
                     bottomMargin: 5
                 });
-                expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottomleft"})).toBe(405);
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottom-left"})).toBe(405);
             });
 
             it("should work with relative positions (from top, css)", () => {
@@ -538,7 +538,7 @@
                     topMargin: 10,
                     bottomMargin: 10
                 });
-                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "topleft"}, true)).toBe("calc(50% + 0px)");
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "top-left"}, true)).toBe("calc(50% + 0px)");
             });
 
             it("should work with relative positions (from bottom, css)", () => {
@@ -547,21 +547,21 @@
                     topMargin: 10,
                     bottomMargin: 5
                 });
-                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "bottomleft"}, true)).toBe("calc(50% + -2.5px)");
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "bottom-left"}, true)).toBe("calc(50% + -2.5px)");
             });
 
             it("should work with absolute positions (from top, css)", () => {
                 var layout = new ns.FreeLayout({
                     topMargin: 7
                 });
-                expect(layout.getRowOffset({y: 400, rely: false, anchor: "topleft"}, true)).toBe("407px");
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "top-left"}, true)).toBe("407px");
             });
 
             it("should work with absolute positions (from bottom, css)", () => {
                 var layout = new ns.FreeLayout({
                     bottomMargin: 5
                 });
-                expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottomleft"}, true)).toBe("405px");
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottom-left"}, true)).toBe("405px");
             });
 
         });
@@ -605,7 +605,7 @@
                 spyOn(Wirecloud.ui, "WidgetView").and.callFake(function (data) {
                     this.id = data.id;
                     this.position = {
-                        anchor: data.anchor || "topleft",
+                        anchor: data.anchor || "top-left",
                         relx: data.relx || false,
                         rely: data.rely || false,
                         x: data.x,
@@ -692,12 +692,12 @@
                 layout.moveTemporally(2, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({anchor: "topleft", relx: false, rely: false, x: 2, y: 0});
+                expect(widget.position).toEqual({anchor: "top-left", relx: false, rely: false, x: 2, y: 0});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
             it("should work on empty layouts (basic move - bottom)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "bottomleft", x: 0, y: 0, width: 3, height: 1});
+                let widget = createWidgetMock({id: "1", anchor: "bottom-left", x: 0, y: 0, width: 3, height: 1});
                 widget.wrapperElement.style.width = "3px";
                 widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
@@ -706,12 +706,26 @@
                 layout.moveTemporally(2, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({anchor: "bottomleft", relx: false, rely: false, x: 2, y: 799});
+                expect(widget.position).toEqual({anchor: "bottom-left", relx: false, rely: false, x: 2, y: 799});
+                expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
+            });
+
+            it("should work on empty layouts (basic move - bottom, right)", () => {
+                let widget = createWidgetMock({id: "1", anchor: "bottom-right", x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(1, 0);
+                layout.moveTemporally(2, 0);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({anchor: "bottom-right", relx: false, rely: false, x: 795, y: 799});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
             it("should work on empty layouts (basic move - rely, bottom, center)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "bottomcenter", rely: true, x: 0, y: 0, width: 3, height: 1});
+                let widget = createWidgetMock({id: "1", anchor: "bottom-center", rely: true, x: 0, y: 0, width: 3, height: 1});
                 widget.wrapperElement.style.width = "3px";
                 widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
@@ -720,24 +734,24 @@
                 layout.moveTemporally(2, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({anchor: "bottomcenter", relx: false, rely: true, x: 3.5, y: 998750});
+                expect(widget.position).toEqual({anchor: "bottom-center", relx: false, rely: true, x: 3.5, y: 998750});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
             it("should work on empty layouts (basic move - relwidth, top, center)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "topcenter", relwidth: true, x: 0, y: 0, width: 250000, height: 1});
+                let widget = createWidgetMock({id: "1", anchor: "top-center", relwidth: true, x: 0, y: 0, width: 250000, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
                 layout.moveTemporally(2, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({anchor: "topcenter", relx: false, rely: false, x: 102, y: 0});
+                expect(widget.position).toEqual({anchor: "top-center", relx: false, rely: false, x: 102, y: 0});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
             it("should work on empty layouts (basic move - relx, bottom, right)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "bottomright", relx: true, x: 0, y: 0, width: 3, height: 1});
+                let widget = createWidgetMock({id: "1", anchor: "bottom-right", relx: true, x: 0, y: 0, width: 3, height: 1});
                 widget.wrapperElement.style.width = "3px";
                 widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
@@ -746,7 +760,7 @@
                 layout.moveTemporally(2, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({anchor: "bottomright", relx: true, rely: false, x: 993750, y: 799});
+                expect(widget.position).toEqual({anchor: "bottom-right", relx: true, rely: false, x: 993750, y: 799});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
@@ -758,7 +772,7 @@
                 layout.moveTemporally(2 * width / 7, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({anchor: 'topleft', relx: false, rely: false, x: width / 7, y: 0});
+                expect(widget.position).toEqual({anchor: 'top-left', relx: false, rely: false, x: width / 7, y: 0});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
@@ -770,7 +784,7 @@
                 layout.moveTemporally(-100, -100);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({anchor: 'topleft', relx: false, rely: false, x: 0, y: 0});
+                expect(widget.position).toEqual({anchor: 'top-left', relx: false, rely: false, x: 0, y: 0});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
@@ -930,69 +944,69 @@
                 element = document.createElement("div");
             });
 
-            it("should support topleft placement", () => {
+            it("should support top-left placement", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "topleft"}
+                    position: {anchor: "top-left"}
                 }, element)).toBe(layout);
                 expect(element.style.right).toBe("");
                 expect(element.style.bottom).toBe("");
             });
 
-            it("should support topcenter placement", () => {
+            it("should support top-center placement", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "topcenter"},
+                    position: {anchor: "top-center"},
                     shape: {relwidth: false, width: 100}
                 }, element)).toBe(layout);
                 expect(element.style.right).toBe("");
                 expect(element.style.bottom).toBe("");
             });
 
-            it("should support topcenter placement (relwidth)", () => {
+            it("should support top-center placement (relwidth)", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "topcenter"},
+                    position: {anchor: "top-center"},
                     shape: {relwidth: true, width: 500000}
                 }, element)).toBe(layout);
                 expect(element.style.right).toBe("");
                 expect(element.style.bottom).toBe("");
             });
 
-            it("should support topright placement", () => {
+            it("should support top-right placement", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "topright"}
+                    position: {anchor: "top-right"}
                 }, element)).toBe(layout);
                 expect(element.style.left).toBe("");
                 expect(element.style.bottom).toBe("");
             });
 
-            it("should support bottomleft placement", () => {
+            it("should support bottom-left placement", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "bottomleft"}
+                    position: {anchor: "bottom-left"}
                 }, element)).toBe(layout);
                 expect(element.style.right).toBe("");
                 expect(element.style.top).toBe("");
             });
 
-            it("should support bottomcenter placement", () => {
+            it("should support bottom-center placement", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "bottomcenter"},
+                    position: {anchor: "bottom-center"},
                     shape: {relwidth: false, width: 100}
                 }, element)).toBe(layout);
                 expect(element.style.right).toBe("");
                 expect(element.style.top).toBe("");
             });
 
-            it("should support bottomcenter placement (relwidth)", () => {
+            it("should support bottom-center placement (relwidth)", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "bottomcenter"},
+                    position: {anchor: "bottom-center"},
                     shape: {relwidth: true, width: 500000}
                 }, element)).toBe(layout);
                 expect(element.style.right).toBe("");
                 expect(element.style.top).toBe("");
             });
 
-            it("should support bottomright placement", () => {
+            it("should support bottom-right placement", () => {
                 expect(layout.updatePosition({
-                    position: {anchor: "bottomright"}
+                    position: {anchor: "bottom-right"}
                 }, element)).toBe(layout);
                 expect(element.style.left).toBe("");
                 expect(element.style.top).toBe("");
