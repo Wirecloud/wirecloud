@@ -316,7 +316,8 @@
                 widget.layout = {
                     adaptColumnOffset: jasmine.createSpy("adaptColumnOffset").and.returnValue({}),
                     dragboard: {
-                        leftMargin: 1
+                        leftMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getColumnOffset: jasmine.createSpy("getColumnOffset").and.returnValue(0)
                 };
@@ -336,7 +337,8 @@
                 widget.layout = {
                     adaptColumnOffset: jasmine.createSpy("adaptColumnOffset").and.returnValue({}),
                     dragboard: {
-                        leftMargin: 1
+                        leftMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getColumnOffset: jasmine.createSpy("getColumnOffset").and.returnValue(0)
                 };
@@ -356,7 +358,8 @@
                 widget.layout = {
                     adaptColumnOffset: jasmine.createSpy("adaptColumnOffset").and.returnValue({}),
                     dragboard: {
-                        leftMargin: 1
+                        leftMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getColumnOffset: jasmine.createSpy("getColumnOffset").and.returnValue(0)
                 };
@@ -376,7 +379,8 @@
                 widget.layout = {
                     adaptRowOffset: jasmine.createSpy("adaptRowOffset").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getRowOffset: jasmine.createSpy("getRowOffset").and.returnValue(0)
                 };
@@ -396,7 +400,8 @@
                 widget.layout = {
                     adaptRowOffset: jasmine.createSpy("adaptRowOffset").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getRowOffset: jasmine.createSpy("getRowOffset").and.returnValue(0)
                 };
@@ -416,7 +421,8 @@
                 widget.layout = {
                     adaptRowOffset: jasmine.createSpy("adaptRowOffset").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getRowOffset: jasmine.createSpy("getRowOffset").and.returnValue(0)
                 };
@@ -436,7 +442,8 @@
                 widget.layout = {
                     adaptWidth: jasmine.createSpy("adaptWidth").and.returnValue({}),
                     dragboard: {
-                        leftMargin: 1
+                        leftMargin: 1,
+                        update: jasmine.createSpy("update")
                     }
                 };
                 expect(items).toEqual(jasmine.any(Array));
@@ -456,7 +463,8 @@
                     adaptWidth: jasmine.createSpy("adaptWidth").and.returnValue({}),
                     getWidthInPixels: jasmine.createSpy("getWidthInPixels").and.returnValue(3),
                     dragboard: {
-                        leftMargin: 1
+                        leftMargin: 1,
+                        update: jasmine.createSpy("update")
                     }
                 };
                 expect(items).toEqual(jasmine.any(Array));
@@ -475,7 +483,8 @@
                 widget.layout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     }
                 };
                 expect(items).toEqual(jasmine.any(Array));
@@ -494,7 +503,8 @@
                 widget.layout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
                 };
@@ -514,7 +524,8 @@
                 widget.layout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
                 };
@@ -535,7 +546,8 @@
                 widget.layout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
                 };
@@ -556,7 +568,8 @@
                 widget.layout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
                 };
@@ -577,7 +590,8 @@
                 widget.layout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
                 };
@@ -598,7 +612,8 @@
                 widget.layout = {
                     adaptHeight: jasmine.createSpy("adaptHeight").and.returnValue({}),
                     dragboard: {
-                        topMargin: 1
+                        topMargin: 1,
+                        update: jasmine.createSpy("update")
                     },
                     getHeightInPixels: jasmine.createSpy("getHeightInPixels").and.returnValue(3)
                 };
