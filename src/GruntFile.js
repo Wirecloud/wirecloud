@@ -145,6 +145,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/MultiValuedSize.js',
     'wirecloud/platform/static/js/wirecloud/ui/DragboardLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/ColumnLayout.js',
+    'wirecloud/platform/static/js/wirecloud/ui/GridLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/FreeLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/SmartColumnLayout.js',
     'wirecloud/platform/static/js/wirecloud/ui/SidebarLayout.js',

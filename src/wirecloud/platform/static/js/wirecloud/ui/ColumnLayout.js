@@ -476,27 +476,22 @@
      * @returns returns if any widget's position has been modified
      */
     ColumnLayout.prototype._insertAt = function _insertAt(widget, x, y, buffer) {
-        var newPosition = new Wirecloud.DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
+        let newPosition = new Wirecloud.DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
 
         // Move other instances
-        var affectedwidget, offset, affectedY;
-        var affectedwidgets = new Set();
-        var lastX = newPosition.x + widget.shape.width;
-        var lastY = newPosition.y + widget.shape.height;
-
-        if (buffer == null) {
-            buffer = this._buffers.base;
-        }
+        let affectedwidgets = new Set();
+        let lastX = newPosition.x + widget.shape.width;
+        let lastY = newPosition.y + widget.shape.height;
         let matrix = buffer.matrix;
 
         for (x = newPosition.x; x < lastX; x++) {
             for (y = newPosition.y; y < lastY; y++) {
-                affectedwidget = matrix[x][y];
+                let affectedwidget = matrix[x][y];
                 if (affectedwidget != null) {
                     // only move the widget if we didn't move it before
-                    affectedY = this._getPositionOn(buffer, affectedwidget).y;
+                    let affectedY = this._getPositionOn(buffer, affectedwidget).y;
                     // y + widget.shape.height - affectedY - (newPosition.y - y);
-                    offset = lastY - affectedY;
+                    let offset = lastY - affectedY;
                     // move only the topmost widget in the column
                     affectedwidgets.add(affectedwidget.id);
                     utils.setupdate(affectedwidgets, this.moveSpaceDown(buffer, affectedwidget, offset));
@@ -608,7 +603,7 @@
         }
 
         // Insert it. Returns if there are any affected widget
-        let affectedwidgets = this._insertAt(widget, position.x, position.y);
+        let affectedwidgets = this._insertAt(widget, position.x, position.y, this._buffers.base);
 
         this._adaptIWidget(widget);
         return affectedwidgets;
@@ -688,7 +683,7 @@
 
         // Make a copy of the positions of the widgets
         this._buffers.backup = {
-            matrix: this._cloneMatrix(this.matrix),
+            matrix: this._cloneMatrix(this._buffers.base.matrix),
             positions: this._clonePositions(this._buffers.base)
         };
         this._buffers.shadow = {

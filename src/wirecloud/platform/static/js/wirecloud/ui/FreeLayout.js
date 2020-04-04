@@ -270,6 +270,8 @@
         }
         if (this.iwidgetToMove.position.rely) {
             this.newPosition.y = this.adaptRowOffset(this.newPosition.y + 'px').inLU;
+        } else if (this.iwidgetToMove.position.anchor.startsWith("bottom")) {
+            this.newPosition.y += this.dragboard.topMargin;
         } else {
             this.newPosition.y -= this.dragboard.topMargin;
         }
@@ -282,6 +284,8 @@
         }
         if (this.iwidgetToMove.position.relx) {
             this.newPosition.x = this.adaptColumnOffset(this.newPosition.x + 'px').inLU;
+        } else if (this.iwidgetToMove.position.anchor.endsWith("right")) {
+            this.newPosition.x += this.dragboard.leftMargin;
         } else {
             this.newPosition.x -= this.dragboard.leftMargin;
         }

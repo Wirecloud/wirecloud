@@ -370,7 +370,13 @@
             it("should work on empty layouts", () => {
                 let layout = new ns.DragboardLayout({});
 
-                layout._notifyWindowResizeEvent();
+                layout._notifyWindowResizeEvent(false, true);
+            });
+
+            it("should work without changes", () => {
+                let layout = new ns.DragboardLayout({});
+
+                layout._notifyWindowResizeEvent(false, false);
             });
 
             it("should work on layouts with widgets", () => {
@@ -380,7 +386,7 @@
                 let layout = new ns.DragboardLayout({});
                 layout.widgets["1"] = widget;
 
-                layout._notifyWindowResizeEvent();
+                layout._notifyWindowResizeEvent(true, false);
 
                 expect(widget.repaint).toHaveBeenCalledWith();
             });

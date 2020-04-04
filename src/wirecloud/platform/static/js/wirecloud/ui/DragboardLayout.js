@@ -51,10 +51,12 @@
      *
      */
     DragboardLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
-        // Notify each iwidget
-        Object.values(this.widgets).forEach((widget) => {
-            widget.repaint();
-        });
+        if (widthChanged || heightChanged) {
+            // Notify each iwidget
+            Object.values(this.widgets).forEach((widget) => {
+                widget.repaint();
+            });
+        }
     };
 
     /**

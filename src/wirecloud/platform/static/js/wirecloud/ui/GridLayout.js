@@ -38,11 +38,12 @@
      */
     var GridLayout = function GridLayout(dragboard, columns, rows, verticalMargin, horizontalMargin) {
         this.initialized = false;
-        this._buffers = {"base": {}};
         Object.defineProperties(this, {
             'columns': {value: columns},
             'rows': {value: rows}
         });
+        this._buffers = {base: {}};
+        clearMatrix.call(this);         // Matrix of iWidgets
 
         if ((verticalMargin % 2) === 0) {
             this.topMargin = verticalMargin / 2;
@@ -60,10 +61,6 @@
             this.rightMargin = Math.floor(horizontalMargin / 2) + 1;
         }
 
-        clearMatrix.call(this);         // Matrix of iWidgets
-        this._buffers.base = {
-            matrix: this.matrix,
-        };
         this.dragboardCursor = null;
         this.iwidgetToMove = null;
 
@@ -72,14 +69,12 @@
     utils.inherit(GridLayout, Wirecloud.ui.DragboardLayout);
 
     GridLayout.prototype.fromPixelsToVCells = function fromPixelsToVCells(pixels) {
-        var cells = pixels / this.fromVCellsToPixels(1);
-        var truncatedCells = Math.floor(cells);
-
-        if (Math.ceil(this.fromVCellsToPixels(truncatedCells)) === pixels) {
-            return truncatedCells;
-        } else {
-            return cells;
+        if (pixels <= 0) {
+            return 0;
         }
+
+        let cells = pixels / this.fromVCellsToPixels(1);
+        return Math.round(cells);
     };
 
     GridLayout.prototype.fromVCellsToPixels = function fromVCellsToPixels(rows) {
@@ -99,14 +94,12 @@
     };
 
     GridLayout.prototype.fromPixelsToHCells = function fromPixelsToHCells(pixels) {
-        var cells = pixels / this.fromHCellsToPixels(1);
-        var truncatedCells = Math.floor(cells);
-
-        if (Math.ceil(this.fromHCellsToPixels(truncatedCells)) === pixels) {
-            return truncatedCells;
-        } else {
-            return cells;
+        if (pixels <= 0) {
+            return 0;
         }
+
+        let cells = pixels / this.fromHCellsToPixels(1);
+        return Math.round(cells);
     };
 
     GridLayout.prototype.fromHCellsToPixels = function fromHCellsToPixels(columns) {
@@ -142,7 +135,7 @@
             offsetInLU = Math.round(parsedSize[0]);
         } else {
             if (parsedSize[1] === '%') {
-                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+                pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
             } else {
                 pixels = parsedSize[0];
             }
@@ -169,21 +162,8 @@
         return this.dragboard.topMargin + this.fromVCellsToPixels(position.y) + this.topMargin;
     };
 
-    GridLayout.prototype._getPositionOn = function _getPositionOn(buffer, widget) {
-        if (buffer === this.matrix || buffer === "base") {
-            return widget.position;
-        } else {
-            return this._buffers[buffer].positions[widget.id];
-        }
-    };
-
-    GridLayout.prototype._setPositionOn = function _setPositionOn(buffer, widget, position) {
-        if (buffer === this.matrix || buffer === "base") {
-            widget.setPosition(position);
-        } else {
-            this._buffers[buffer].positions[widget.id] = position;
-        }
-    };
+    GridLayout.prototype._getPositionOn = Wirecloud.ui.ColumnLayout.prototype._getPositionOn;
+    GridLayout.prototype._setPositionOn = Wirecloud.ui.ColumnLayout.prototype._setPositionOn;
 
     var clearMatrix = function clearMatrix() {
         this.matrix = [];
@@ -208,85 +188,21 @@
         return true;
     };
 
-    GridLayout.prototype._reserveSpace = function (_matrix, widget) {
-        var x, y;
-        var position = this._getPositionOn(_matrix, widget);
-        var width = widget.shape.width;
-        var height = widget.shape.height;
+    GridLayout.prototype._reserveSpace = function _reserveSpace(buffer, widget) {
+        let position = this._getPositionOn(buffer, widget);
+        let width = widget.shape.width;
+        let height = widget.shape.height;
 
-        if (typeof _matrix === "string") {
-            _matrix = this._buffers[_matrix].matrix;
-        }
-
-        for (x = 0; x < width; x++) {
-            for (y = 0; y < height; y++) {
-                _matrix[position.x + x][position.y + y] = widget;
-            }
-        }
+        this._reserveSpace2(buffer.matrix, widget, position.x, position.y, width, height);
     };
 
-    GridLayout.prototype._clearSpace = function _clearSpace(_matrix, widget) {
-        var x, y;
-        var position = this._getPositionOn(_matrix, widget);
-        var width = widget.shape.width;
-        var height = widget.shape.height;
-
-        if (typeof _matrix === "string") {
-            _matrix = this._buffers[_matrix].matrix;
-        }
-
-        for (x = 0; x < width; x++) {
-            for (y = 0; y < height; y++) {
-                delete _matrix[position.x + x][position.y + y];
-            }
-        }
-
-        this._compressColumns(_matrix, position.x, width);
-    };
-
-    GridLayout.prototype._compressColumns = function _compressColumns(_matrix, x, width) {
-        var i, y;
-
-        for (i = 0; i < width; i++) {
-            for (y = _matrix[x + i].length - 1; y >= 0; y--) {
-                if (_matrix[x + i][y] != null) {
-                    break;
-                }
-                _matrix[x + i].pop();
-            }
-        }
-    };
-
+    GridLayout.prototype._clearSpace = Wirecloud.ui.ColumnLayout.prototype._clearSpace;
+    GridLayout.prototype._compressColumns = Wirecloud.ui.ColumnLayout.prototype._compressColumns;
     GridLayout.prototype.moveSpaceDown = Wirecloud.ui.ColumnLayout.prototype.moveSpaceDown;
-
     GridLayout.prototype.moveSpaceUp = Wirecloud.ui.ColumnLayout.prototype.moveSpaceUp;
-
-    GridLayout.prototype._removeFromMatrix = function _removeFromMatrix(_matrix, widget) {
-        this._clearSpace(_matrix, widget);
-        return false;
-    };
-
-    GridLayout.prototype._reserveSpace2 = function (_matrix, widget, positionX, positionY, width, height) {
-        var x, y;
-
-        for (x = 0; x < width; x++) {
-            for (y = 0; y < height; y++) {
-                _matrix[positionX + x][positionY + y] = widget;
-            }
-        }
-    };
-
-    GridLayout.prototype._clearSpace2 = function (_matrix, positionX, positionY, width, height) {
-        var x, y;
-
-        for (x = 0; x < width; x++) {
-            for (y = 0; y < height; y++) {
-                delete _matrix[positionX + x][positionY + y];
-            }
-        }
-
-        this._compressColumns(_matrix, positionX, width);
-    };
+    GridLayout.prototype._removeFromMatrix = Wirecloud.ui.ColumnLayout.prototype._removeFromMatrix;
+    GridLayout.prototype._reserveSpace2 = Wirecloud.ui.ColumnLayout.prototype._reserveSpace2;
+    GridLayout.prototype._clearSpace2 = Wirecloud.ui.ColumnLayout.prototype._clearSpace2;
 
     GridLayout.prototype._notifyResizeEvent = function (widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
         var x, y;
@@ -309,7 +225,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this.moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this.moveSpaceDown(this._buffers.base, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -331,7 +247,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this.moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this.moveSpaceDown(this._buffers.base, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -374,7 +290,7 @@
             for (y = position.y + oldHeight; y < limitY; y++) {
                 for (x = step2X; x < limitX; x++) {
                     if (this.matrix[x][y] != null) {
-                        this.moveSpaceDown("base", this.matrix[x][y], limitY - y);
+                        this.moveSpaceDown(this._buffers.base, this.matrix[x][y], limitY - y);
                     }
                 }
             }
@@ -393,27 +309,22 @@
     };
 
     GridLayout.prototype._insertAt = function _insertAt(widget, x, y, buffer) {
-        var newPosition = new Wirecloud.DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
+        let newPosition = new Wirecloud.DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
 
         // Move other instances
-        var affectedwidget, offset, affectedY, matrix;
-        var affectedwidgets = new Set();
-        var lastX = newPosition.x + widget.shape.width;
-        var lastY = newPosition.y + widget.shape.height;
-
-        if (buffer == null) {
-            buffer = "base";
-        }
-        matrix = this._buffers[buffer].matrix;
+        let affectedwidgets = new Set();
+        let lastX = newPosition.x + widget.shape.width;
+        let lastY = newPosition.y + widget.shape.height;
+        let matrix = buffer.matrix;
 
         for (x = newPosition.x; x < lastX; x++) {
             for (y = newPosition.y; y < lastY; y++) {
-                affectedwidget = matrix[x][y];
+                let affectedwidget = matrix[x][y];
                 if (affectedwidget != null) {
                     // only move the widget if we didn't move it before
-                    affectedY = this._getPositionOn(buffer, affectedwidget).y;
+                    let affectedY = this._getPositionOn(buffer, affectedwidget).y;
                     // y + widget.height - affectedY - (newPosition.y - y);
-                    offset = lastY - affectedY;
+                    let offset = lastY - affectedY;
                     // move only the topmost widget in the column
                     affectedwidgets.add(affectedwidget.id);
                     utils.setupdate(affectedwidgets, this.moveSpaceDown(buffer, affectedwidget, offset));
@@ -431,7 +342,7 @@
         return affectedwidgets;
     };
 
-    GridLayout.prototype._searchFreeSpace = function (width, height) {
+    GridLayout.prototype._searchFreeSpace = function _searchFreeSpace(width, height) {
         var positionX = 0, positionY = 0;
         var maxX = this.columns - width;
 
@@ -444,7 +355,7 @@
         }
     };
 
-    GridLayout.prototype.initialize = function () {
+    GridLayout.prototype.initialize = function initialize() {
         var widget, i, key, position, iWidgetsToReinsert = [];
 
         clearMatrix.call(this);
@@ -459,13 +370,13 @@
 
             if (widget.shape.width > this.columns) {
                 // TODO
-                widget.change({width: this.columns});
+                widget.setShape({width: this.columns});
             }
 
             if (widget.shape.width + position.x > this.columns) {
                 iWidgetsToReinsert.push(widget);
             } else if (this._hasSpaceFor(this.matrix, position.x, position.y, widget.shape.width, widget.shape.height)) {
-                this._reserveSpace(this.matrix, widget);
+                this._reserveSpace(this._buffers.base, widget);
             } else {
                 iWidgetsToReinsert.push(widget);
             }
@@ -480,7 +391,7 @@
                     iWidgetsToReinsert[i].shape.height
                 );
                 iWidgetsToReinsert[i].setPosition(position);
-                this._reserveSpace(this.matrix, iWidgetsToReinsert[i]);
+                this._reserveSpace(this._buffers.base, iWidgetsToReinsert[i]);
             }
             modified = true;
         }
@@ -516,7 +427,7 @@
             return affectedwidgets;
         }
 
-        if (widget.width > this.columns) {
+        if (widget.shape.width > this.columns) {
             widget.setShape({width: this.columns});
         }
 
@@ -528,14 +439,14 @@
             }
 
             // Insert it. Returns if there are any affected widget
-            affectedwidgets = this._insertAt(widget, position.x, position.y, "base");
+            affectedwidgets = this._insertAt(widget, position.x, position.y, this._buffers.base);
         } else {
             // Search a position for the widget
             position = this._searchFreeSpace(widget.shape.width, widget.shape.height);
             widget.setPosition(position);
 
             // Reserve the cells for the widget instance
-            this._reserveSpace(this.matrix, widget);
+            this._reserveSpace(this._buffers.base, widget);
         }
 
         this._adaptIWidget(widget);
@@ -546,9 +457,9 @@
      * @returns Returns a list of the widgets affected by the removing the indicated widget
      */
     GridLayout.prototype.removeWidget = function removeWidget(widget, affectsDragboard) {
-        this._removeFromMatrix(this.matrix, widget);
+        this._removeFromMatrix(this._buffers.base, widget);
         Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
-        return [];
+        return new Set();
     };
 
     GridLayout.prototype.moveTo = function moveTo(destLayout) {
@@ -581,29 +492,10 @@
         delete this._removeFromMatrix;
     };
 
-    GridLayout.prototype._cloneMatrix = function _cloneMatrix(matrix) {
-        var i, cloned_matrix = [];
+    GridLayout.prototype._cloneMatrix = Wirecloud.ui.ColumnLayout.prototype._cloneMatrix;
+    GridLayout.prototype._clonePositions = Wirecloud.ui.ColumnLayout.prototype._clonePositions;
 
-        for (i = 0; i < this.columns; i++) {
-            cloned_matrix[i] = Wirecloud.Utils.clone(matrix[i]);
-        }
-
-        return cloned_matrix;
-    };
-
-    GridLayout.prototype._clonePositions = function _clonePositions(buffer) {
-        var key, positions = {};
-
-        for (key in this.widgets) {
-            positions[key] = utils.clone(this._getPositionOn(buffer, this.widgets[key]));
-        }
-
-        return positions;
-    };
-
-    GridLayout.prototype.initializeMove = function (widget, draggable) {
-
-        draggable = draggable || null; // default value of draggable argument
+    GridLayout.prototype.initializeMove = function initializeMove(widget, draggable) {
 
         if (!(widget instanceof Wirecloud.ui.WidgetView)) {
             throw new TypeError("widget must be an WidgetView instance");
@@ -620,23 +512,21 @@
 
         // Make a copy of the positions of the widgets
         this._buffers.backup = {
-            matrix: this._cloneMatrix(this.matrix),
-            positions: this._clonePositions(this.matrix)
+            matrix: this._cloneMatrix(this._buffers.base.matrix),
+            positions: this._clonePositions(this._buffers.base)
         };
         this._buffers.shadow = {
             matrix: this.matrix
         };
         // Shadow matrix = current matrix without the widget to move
         // Initialize shadow matrix and searchInsertPointCache
-        this._removeFromMatrix(this._buffers.backup.matrix, widget);
+        this._removeFromMatrix(this._buffers.backup, widget);
 
         // Create dragboard cursor
         this.dragboardCursor = new Wirecloud.ui.DragboardCursor(widget);
 
-        if (draggable) {
-            draggable.setXOffset(this.fromHCellsToPixels(1) / 2);
-            draggable.setYOffset(this.fromVCellsToPixels(1) / 2);
-        }
+        draggable.setXOffset(this.fromHCellsToPixels(1) / 2);
+        draggable.setYOffset(this.fromVCellsToPixels(1) / 2);
     };
 
     GridLayout.prototype._destroyCursor = function _destroyCursor() {
@@ -656,11 +546,11 @@
         for (key in this.widgets) {
             curIWidget = this.widgets[key];
             if (curIWidget !== this.iwidgetToMove) {
-                curIWidget.setPosition(this._getPositionOn("shadow", curIWidget));
+                curIWidget.setPosition(this._getPositionOn(this._buffers.shadow, curIWidget));
             }
         }
 
-        this.dragboardCursor.setPosition(this._getPositionOn("shadow", this.dragboardCursor));
+        this.dragboardCursor.setPosition(this._getPositionOn(this._buffers.shadow, this.dragboardCursor));
     };
 
     GridLayout.prototype.moveTemporally = function moveTemporally(x, y) {
@@ -689,19 +579,19 @@
             var cursorpos = this.dragboardCursor.position;
 
             if ((cursorpos.y !== y) || (cursorpos.x !== x)) {
-                this._buffers.shadow.positions = this._clonePositions("backup");
+                this._buffers.shadow.positions = this._clonePositions(this._buffers.backup);
                 this._buffers.shadow.matrix = this._cloneMatrix(this._buffers.backup.matrix);
 
                 // Change cursor position
-                this._insertAt(this.dragboardCursor, x, y, "shadow");
+                this._insertAt(this.dragboardCursor, x, y, this._buffers.shadow);
                 this._setPositions();
             }
         } else {
-            this._buffers.shadow.positions = this._clonePositions("backup");
+            this._buffers.shadow.positions = this._clonePositions(this._buffers.backup);
             this._buffers.shadow.matrix = this._cloneMatrix(this._buffers.backup.matrix);
 
             this.dragboardCursor = new Wirecloud.ui.DragboardCursor(this.iwidgetToMove);
-            this._insertAt(this.dragboardCursor, x, y, "shadow");
+            this._insertAt(this.dragboardCursor, x, y, this._buffers.shadow);
         }
     };
 
@@ -739,7 +629,7 @@
         if (oldposition.y !== newposition.y || oldposition.x !== newposition.x) {
             this.matrix = this._buffers.shadow.matrix;
             this._buffers.base.matrix = this.matrix;
-            this._reserveSpace("base", this.iwidgetToMove);
+            this._reserveSpace(this._buffers.base, this.iwidgetToMove);
             this.dragboard.update();
         }
 
