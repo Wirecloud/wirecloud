@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -542,6 +542,7 @@ class ApplicationMashupTemplateParser(object):
                 position = self.get_xpath(POSITION_XPATH, widget)
                 rendering = self.get_xpath(RENDERING_XPATH, widget)
 
+                layout = int(str(rendering.get('layout')))
                 widget_info = {
                     'id': str(widget.get('id')),
                     'name': str(widget.get('name')),
@@ -552,6 +553,9 @@ class ApplicationMashupTemplateParser(object):
                     'properties': {},
                     'preferences': {},
                     'position': {
+                        'anchor': str(position.get('anchor', 'top-left')),
+                        'relx': position.get('relx', 'true').lower() == 'true',
+                        'rely': position.get('rely', 'true' if layout != 1 else 'false').lower() == 'true',
                         'x': str(position.get('x')),
                         'y': str(position.get('y')),
                         'z': str(position.get('z')),
@@ -559,9 +563,11 @@ class ApplicationMashupTemplateParser(object):
                     'rendering': {
                         'fulldragboard': rendering.get('fulldragboard', 'false').lower() == 'true',
                         'minimized': rendering.get('minimized', 'false').lower() == 'true',
+                        'relwidth': rendering.get('relwidth', 'true').lower() == 'true',
+                        'relheight': rendering.get('relheight', 'true' if layout != 1 else 'false').lower() == 'true',
                         'width': str(rendering.get('width')),
                         'height': str(rendering.get('height')),
-                        'layout': str(rendering.get('layout')),
+                        'layout': layout,
                         'titlevisible': rendering.get('titlevisible', 'true').lower() == 'true',
                     },
                 }

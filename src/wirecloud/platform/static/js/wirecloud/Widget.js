@@ -100,12 +100,17 @@
         privates.set(this, {
             permissions: permissions,
             position: {
+                anchor: data.anchor,
+                relx: data.relx,
+                rely: data.rely,
                 x: data.left,
                 y: data.top,
                 z: data.zIndex
             },
             meta: meta,
             shape: {
+                relheight: data.relheight,
+                relwidth: data.relwidth,
                 width: data.width,
                 height: data.height
             },

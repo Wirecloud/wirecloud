@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -237,6 +237,9 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
             pos = rdflib.BNode()
             graph.add((pos, rdflib.RDF.type, WIRE_M['Position']))
             graph.add((resource, WIRE_M['hasPosition'], pos))
+            graph.add((pos, WIRE_M['anchor'], rdflib.Literal(iwidget['position']['anchor'])))
+            graph.add((pos, WIRE_M['relx'], rdflib.Literal(str(iwidget['position']['relx']))))
+            graph.add((pos, WIRE_M['rely'], rdflib.Literal(str(iwidget['position']['rely']))))
             graph.add((pos, WIRE_M['x'], rdflib.Literal(iwidget['position']['x'])))
             graph.add((pos, WIRE_M['y'], rdflib.Literal(iwidget['position']['y'])))
             graph.add((pos, WIRE_M['z'], rdflib.Literal(iwidget['position']['z'])))
@@ -245,6 +248,8 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
             rend = rdflib.BNode()
             graph.add((rend, rdflib.RDF.type, WIRE_M['iWidgetRendering']))
             graph.add((resource, WIRE_M['hasiWidgetRendering'], rend))
+            graph.add((rend, WIRE_M['relwidth'], rdflib.Literal(str(iwidget['rendering']['relwidth']))))
+            graph.add((rend, WIRE_M['relheight'], rdflib.Literal(str(iwidget['rendering']['relheight']))))
             graph.add((rend, WIRE['renderingWidth'], rdflib.Literal(str(iwidget['rendering']['width']))))
             graph.add((rend, WIRE['renderingHeight'], rdflib.Literal(str(iwidget['rendering']['height']))))
             graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(iwidget['rendering']['layout']))))

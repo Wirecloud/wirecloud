@@ -175,10 +175,10 @@
             child.addEventListener('blur', this._menuItem_onblur_bound);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.menuItem.addEventListener('mouseenter', this._menuItem_onmouseenter_bound);
-            child.menuItem.addEventListener('mouseleave', this._menuItem_onmouseleave_bound);
-            child.menuItem.addEventListener('focus', this._menuItem_onfocus_bound);
-            child.menuItem.addEventListener('blur', this._menuItem_onblur_bound);
+            child.menuitem.addEventListener('mouseenter', this._menuItem_onmouseenter_bound);
+            child.menuitem.addEventListener('mouseleave', this._menuItem_onmouseleave_bound);
+            child.menuitem.addEventListener('focus', this._menuItem_onfocus_bound);
+            child.menuitem.addEventListener('blur', this._menuItem_onblur_bound);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do
@@ -235,19 +235,19 @@
         this._context = context;
     };
 
-    PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
-        this.dispatchEvent('click', menuItem);
+    PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuitem) {
+        this.dispatchEvent('click', menuitem);
 
         // This if is necessary for touch screens where mouseenter and
         // mouseleave events are not raised
         // In that case, the user will "click" the menu item and
         // the popup menu should continue to be displayed
-        if (!menuItem.hasClassName('submenu')) {
+        if (!menuitem.hasClassName('submenu')) {
             this.hide();
         }
 
-        if (typeof menuItem.run === 'function') {
-            menuItem.run(this._context, menuItem.context);
+        if (typeof menuitem.run === 'function') {
+            menuitem.run(this._context, menuitem.context);
         }
     };
 
@@ -272,9 +272,8 @@
                         this._enabledItems.push(generatedItem);
                     }
                 } else /* if (generatedItem instanceof StyledElements.SubMenuItem) */{
-                    generatedItem._getMenuItem().insertInto(this.wrapperElement);
-                    generatedItem.parentElement = this;
-                    this._enabledItems.push(generatedItem.menuItem);
+                    generatedItem.menuitem.insertInto(this.wrapperElement).parentElement = this;
+                    this._enabledItems.push(generatedItem.menuitem);
                 }
             }
         } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
@@ -285,10 +284,9 @@
                 this._enabledItems.push(item);
             }
         } else /* if (item instanceof StyledElements.SubMenuItem) */ {
-            item._getMenuItem().insertInto(this.wrapperElement);
-            item._getMenuItem().parentElement = this;
+            item.menuitem.insertInto(this.wrapperElement).parentElement = this;
             this._submenus.push(item);
-            this._enabledItems.push(item.menuItem);
+            this._enabledItems.push(item.menuitem);
         }
     };
 
@@ -530,9 +528,9 @@
         return this.wrapperElement.parentElement == null;
     };
 
-    var activateMenuItem = function activateMenuItem(menuItem) {
-        this._activeMenuItem = menuItem.activate();
-        this.dispatchEvent('itemOver', menuItem);
+    var activateMenuItem = function activateMenuItem(menuitem) {
+        this._activeMenuItem = menuitem.activate();
+        this.dispatchEvent('itemOver', menuitem);
     };
 
     var hideContent = function hideContent() {
@@ -560,33 +558,33 @@
         this.wrapperElement.innerHTML = "";
     };
 
-    var menuItem_onmouseenter = function menuItem_onmouseenter(menuItem) {
+    var menuItem_onmouseenter = function menuItem_onmouseenter(menuitem) {
         this._enabledItems.forEach((item) => {
             item.deactivate();
         });
 
-        activateMenuItem.call(this, menuItem);
+        activateMenuItem.call(this, menuitem);
     };
 
-    var menuItem_onmouseleave = function menuItem_onmouseleave(menuItem) {
+    var menuItem_onmouseleave = function menuItem_onmouseleave(menuitem) {
         if (this.oneActiveAtLeast) {
-            if (this._activeMenuItem !== menuItem) {
-                menuItem.deactivate();
+            if (this._activeMenuItem !== menuitem) {
+                menuitem.deactivate();
             }
         } else {
-            if (this._activeMenuItem === menuItem) {
+            if (this._activeMenuItem === menuitem) {
                 this._activeMenuItem = null;
             }
-            menuItem.deactivate();
+            menuitem.deactivate();
         }
     };
 
-    var menuItem_onfocus = function menuItem_onfocus(menuItem) {
-        this._focusedMenuItem = menuItem;
+    var menuItem_onfocus = function menuItem_onfocus(menuitem) {
+        this._focusedMenuItem = menuitem;
     };
 
-    var menuItem_onblur = function menuItem_onblur(menuItem) {
-        if (this._focusedMenuItem === menuItem) {
+    var menuItem_onblur = function menuItem_onblur(menuitem) {
+        if (this._focusedMenuItem === menuitem) {
             this._focusedMenuItem = null;
         }
     };

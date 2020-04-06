@@ -370,7 +370,13 @@
             it("should work on empty layouts", () => {
                 let layout = new ns.DragboardLayout({});
 
-                layout._notifyWindowResizeEvent();
+                layout._notifyWindowResizeEvent(false, true);
+            });
+
+            it("should work without changes", () => {
+                let layout = new ns.DragboardLayout({});
+
+                layout._notifyWindowResizeEvent(false, false);
             });
 
             it("should work on layouts with widgets", () => {
@@ -380,7 +386,7 @@
                 let layout = new ns.DragboardLayout({});
                 layout.widgets["1"] = widget;
 
-                layout._notifyWindowResizeEvent();
+                layout._notifyWindowResizeEvent(true, false);
 
                 expect(widget.repaint).toHaveBeenCalledWith();
             });
@@ -471,7 +477,6 @@
 
         });
 
-
         describe("updatePosition(widget, element)", () => {
 
             it("should update widget css", () => {
@@ -484,6 +489,58 @@
 
                 expect(widget.element.style.left).toBe("10px");
                 expect(widget.element.style.top).toBe("20px");
+            });
+
+        });
+
+        describe("updateShape(widget, element)", () => {
+
+            it("should update widget css", () => {
+                let layout = new ns.DragboardLayout({});
+                layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(10);
+                layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(20);
+                let widget = {
+                    element: document.createElement('div'),
+                    minimized: false,
+                    shape: {width: 1, height: 3}
+                };
+
+                layout.updateShape(widget, widget.element);
+
+                expect(widget.element.style.width).toBe("10px");
+                expect(widget.element.style.height).toBe("20px");
+            });
+
+            it("should update widget css (minimized)", () => {
+                let layout = new ns.DragboardLayout({});
+                layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(10);
+                layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(20);
+                let widget = {
+                    element: document.createElement('div'),
+                    minimized: true,
+                    shape: {width: 1, height: 3}
+                };
+
+                layout.updateShape(widget, widget.element);
+
+                expect(widget.element.style.width).toBe("10px");
+                expect(widget.element.style.height).toBe("");
+            });
+
+            it("should update widget css (null sizes)", () => {
+                let layout = new ns.DragboardLayout({});
+                layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(null);
+                layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(null);
+                let widget = {
+                    element: document.createElement('div'),
+                    minimized: false,
+                    shape: {width: 1, height: 3}
+                };
+
+                layout.updateShape(widget, widget.element);
+
+                expect(widget.element.style.width).toBe("");
+                expect(widget.element.style.height).toBe("");
             });
 
         });

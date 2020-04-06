@@ -1047,7 +1047,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 const return_this = function () {return this;};
                 const draggable = {setXOffset: return_this, setYOffset: return_this};
                 layout.initializeMove(widget, draggable);
-                layout.moveTemporally(3, 0);
+                layout.moveTemporally(layout.getColumnOffset({relx: true, x: 3}), 0);
                 layout.acceptMove();
             ''' % widget2.id)
 
@@ -1139,7 +1139,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 const return_this = function () {return this;};
                 const draggable = {setXOffset: return_this, setYOffset: return_this};
                 layout.initializeMove(widget, draggable);
-                layout.moveTemporally(6, 25);
+                layout.moveTemporally(layout.getColumnOffset({relx: true, x: 6}), layout.getRowOffset({rely: false, y: 25}));
                 layout.acceptMove();
             ''' % iwidgets[0].id)
 

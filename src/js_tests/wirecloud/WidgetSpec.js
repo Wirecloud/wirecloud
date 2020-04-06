@@ -145,6 +145,11 @@
 
     describe("Wirecloud.Widget", function () {
 
+        beforeAll(() => {
+            spyOn(console, "log");
+            spyOn(console, "info");
+        });
+
         // TODO
         beforeEach(() => {
             Wirecloud.PropertyCommiter = jasmine.createSpy("PropertyCommiter").and.returnValue({
@@ -1191,6 +1196,9 @@
 
             it("should allow to modify all the position properties", () => {
                 const new_position = {
+                    anchor: "bottom-left",
+                    relx: false,
+                    rely: true,
                     x: 1,
                     y: 2,
                     z: 3
@@ -1203,6 +1211,9 @@
             it("should ignore extra properties", () => {
                 const new_position = {
                     extra: 123,
+                    anchor: "bottom-left",
+                    relx: true,
+                    rely: false,
                     x: 1,
                     y: 2,
                     z: 3
@@ -1210,6 +1221,9 @@
                 expect(widget.setPosition(new_position)).toBe(widget);
 
                 expect(widget.position).toEqual({
+                    anchor: "bottom-left",
+                    relx: true,
+                    rely: false,
                     x: 1,
                     y: 2,
                     z: 3
@@ -1239,6 +1253,8 @@
 
             it("should allow to modify all the shape properties", () => {
                 const new_shape = {
+                    relwidth: true,
+                    relheight: true,
                     width: 2,
                     height: 3
                 };
@@ -1250,12 +1266,16 @@
             it("should ignore extra properties", () => {
                 const new_shape = {
                     extra: 123,
+                    relwidth: true,
+                    relheight: true,
                     width: 2,
                     height: 3
                 };
                 expect(widget.setShape(new_shape)).toBe(widget);
 
                 expect(widget.shape).toEqual({
+                    relwidth: true,
+                    relheight: true,
                     width: 2,
                     height: 3
                 });

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,16 +26,16 @@
 
     "use strict";
 
-    describe("ColumnLayout", () => {
+    describe("GridLayout", () => {
 
-        describe("new ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace)", () => {
+        describe("new GridLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace)", () => {
 
             it("should work by providing options", () => {
-                var dragboard = {};
-                let layout = new ns.ColumnLayout(
+                let dragboard = {};
+                let layout = new ns.GridLayout(
                     dragboard,
                     20,
-                    13,
+                    10,
                     4,
                     4,
                     10
@@ -43,7 +43,7 @@
 
                 // Check initial values
                 expect(layout.columns).toBe(20);
-                expect(layout.rows).toBe(0);
+                expect(layout.rows).toBe(10);
                 expect(layout.topMargin).toBe(2);
                 expect(layout.bottomMargin).toBe(2);
                 expect(layout.leftMargin).toBe(2);
@@ -51,11 +51,11 @@
             });
 
             it("should work by providing odd margins", () => {
-                var dragboard = {};
-                let layout = new ns.ColumnLayout(
+                let dragboard = {};
+                let layout = new ns.GridLayout(
                     dragboard,
                     20,
-                    13,
+                    10,
                     5,
                     5,
                     10
@@ -63,7 +63,7 @@
 
                 // Check initial values
                 expect(layout.columns).toBe(20);
-                expect(layout.rows).toBe(0);
+                expect(layout.rows).toBe(10);
                 expect(layout.topMargin).toBe(2);
                 expect(layout.bottomMargin).toBe(3);
                 expect(layout.leftMargin).toBe(2);
@@ -73,11 +73,14 @@
 
         describe("initialize()", () => {
 
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data, insert) {
                 return {
                     id: data.id,
+                    model: {
+                        load: jasmine.createSpy("load")
+                    },
                     position: {
                         x: data.x,
                         y: data.y
@@ -94,10 +97,10 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                let dragboard = {
                     update: jasmine.createSpy("update")
                 };
-                layout = new ns.ColumnLayout(
+                layout = new ns.GridLayout(
                     dragboard,
                     4,
                     13,
@@ -112,7 +115,7 @@
             });
 
             it("should not save widget positions if is not needed to move widgets", () => {
-                var widget = createWidgetMock({
+                let widget = createWidgetMock({
                     id: "1", x: 0, y: 0, width: 1, height: 1
                 });
                 layout.addWidget(widget);
@@ -122,11 +125,11 @@
             });
 
             it("should shrink widgets that are too wide", () => {
-                var widget1 = createWidgetMock({
+                let widget1 = createWidgetMock({
                     id: "1", x: 0, y: 0, width: 5, height: 1
                 });
                 layout.addWidget(widget1);
-                var widget2 = createWidgetMock({
+                let widget2 = createWidgetMock({
                     id: "2", x: 1, y: 1, width: 5, height: 1
                 });
                 layout.addWidget(widget2);
@@ -140,11 +143,11 @@
             });
 
             it("should move colliding widgets", () => {
-                var widget1 = createWidgetMock({
+                let widget1 = createWidgetMock({
                     id: "1", x: 0, y: 0, width: 3, height: 2
                 });
                 layout.addWidget(widget1);
-                var widget2 = createWidgetMock({
+                let widget2 = createWidgetMock({
                     id: "2", x: 1, y: 1, width: 2, height: 1
                 });
                 layout.addWidget(widget2);
@@ -159,7 +162,7 @@
 
             const return_this = function () {return this;};
             const draggable = {setXOffset: return_this, setYOffset: return_this};
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data) {
                 return new Wirecloud.ui.WidgetView(data);
@@ -187,12 +190,13 @@
                     this.tab.wrapperElement.appendChild(this.wrapperElement);
                 });
 
-                var dragboard = {
+                let dragboard = {
                     _notifyWindowResizeEvent: jasmine.createSpy("_notifyWindowResizeEvent"),
                     update: jasmine.createSpy("update"),
+                    getHeight: jasmine.createSpy("getHeight").and.returnValue(400),
                     getWidth: jasmine.createSpy("getWidth").and.returnValue(800)
                 };
-                layout = new ns.ColumnLayout(dragboard, 4, 13, 4, 4, 10);
+                layout = new ns.GridLayout(dragboard, 4, 13, 4, 4, 10);
                 spyOn(layout, "updatePosition");
                 layout.initialize();
             });
@@ -293,7 +297,7 @@
         describe("adaptColumnOffset(size)", () => {
 
             it("should return 0 LU as minimum", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(0);
 
                 let value = layout.adaptColumnOffset(0);
@@ -303,7 +307,7 @@
             });
 
             it("should take into account left margin", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(80);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(0);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(0);
@@ -316,20 +320,20 @@
             });
 
             it("should handle pixels offsets", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(80);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(200);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(1);
 
                 let value = layout.adaptColumnOffset("204px");
 
-                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(200);
+                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(202);
                 expect(value.inPixels).toBe(200);
                 expect(value.inLU).toBe(1);
             });
 
             it("should support percentages", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(60);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(3);
@@ -345,7 +349,7 @@
         describe("adaptRowOffset(value)", () => {
 
             it("should return 0 LU as minimum", () => {
-                let layout = new ns.ColumnLayout({topMargin: 4}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({topMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(0);
 
@@ -356,7 +360,7 @@
             });
 
             it("should manage cell values", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(0);
 
@@ -367,7 +371,7 @@
             });
 
             it("should floor cells", () => {
-                let layout = new ns.ColumnLayout({}, 4, 20, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 20, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(80);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(60);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(3.2);
@@ -379,7 +383,7 @@
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(80);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(60);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(2.5);
@@ -391,7 +395,7 @@
             });
 
             it("should support percentages", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(80);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(60);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(3);
@@ -427,7 +431,7 @@
             };
 
             beforeEach(() => {
-                layout = new ns.ColumnLayout(dragboard, 4, 10, 4, 4, 10);
+                layout = new ns.GridLayout(dragboard, 4, 10, 4, 4, 10);
                 layout.initialized = true;
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "addWidget");
             });
@@ -459,12 +463,24 @@
                 expect(widget.setPosition).toHaveBeenCalledWith(new Wirecloud.DragboardPosition(0, 0));
             });
 
+            it("should search a position for not-positioned widgets", () => {
+                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                widget.position = null;
+                widget.setPosition.and.callFake(function (newposition) {this.position = newposition;});
+                spyOn(layout, "_searchFreeSpace").and.returnValue({anchor: "top-left", x: 0, y: 0});
+
+                expect(layout.addWidget(widget, true)).toEqual(new Set());
+
+                expect(Wirecloud.ui.DragboardLayout.prototype.addWidget).toHaveBeenCalledWith(widget, true);
+                expect(layout.matrix[0][0]).toBe(widget);
+            });
+
         });
 
         describe("disableCursor()", () => {
 
             it("should work when the cursor is already disabled", () => {
-                let layout = new ns.ColumnLayout({}, 20, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 20, 13, 4, 4, 10);
                 layout.disableCursor();
             });
 
@@ -476,7 +492,7 @@
 
             beforeEach(() => {
                 dragboard = {};
-                layout = new ns.ColumnLayout(
+                layout = new ns.GridLayout(
                     dragboard,
                     20,
                     13,
@@ -507,11 +523,13 @@
             let dragboard, layout;
 
             beforeEach(() => {
-                dragboard = {};
-                layout = new ns.ColumnLayout(
+                dragboard = {
+                    getHeight: jasmine.createSpy("getHeight").and.returnValue(400)
+                };
+                layout = new ns.GridLayout(
                     dragboard,
                     20,
-                    13,
+                    10,
                     4,
                     4,
                     10
@@ -519,7 +537,7 @@
             });
 
             it("should return a value", () => {
-                expect(layout.fromPixelsToVCells(26)).toBe(2);
+                expect(layout.fromPixelsToVCells(76)).toBe(2);
             });
 
             it("should check minimum value is zero", () => {
@@ -530,17 +548,19 @@
 
         describe("getCellAt(x, y)", () => {
 
-            it("should be able to return origin position", () => {
-                let layout = new ns.ColumnLayout({}, 4, 10, 4, 4, 10);
-                layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
+            let layout;
 
+            beforeEach(() => {
+                layout = new ns.GridLayout({}, 4, 4, 4, 4, 10);
+                layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
+                layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
+            });
+
+            it("should be able to return origin position", () => {
                 expect(layout.getCellAt(0, 0)).toEqual(new Wirecloud.DragboardPosition(0, 0));
             });
 
             it("should be able to return intermediate positions", () => {
-                let layout = new ns.ColumnLayout({}, 4, 10, 4, 4, 10);
-                layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
-
                 expect(layout.getCellAt(38, 12)).toEqual(new Wirecloud.DragboardPosition(3, 1));
             });
 
@@ -549,16 +569,18 @@
         describe("getHeightInPixels(cells)", () => {
 
             it("should work", () => {
-                let dragboard = {};
-                let layout = new ns.ColumnLayout(
+                let dragboard = {
+                    getHeight: jasmine.createSpy("getHeight").and.returnValue(400),
+                };
+                let layout = new ns.GridLayout(
                     dragboard,
                     20,
-                    13,
+                    10,
                     4,
                     4,
                     10
                 );
-                expect(layout.getHeightInPixels(2)).toBe(26 - 4);
+                expect(layout.getHeightInPixels(2)).toBe(80 - 4);
             });
 
         });
@@ -570,7 +592,7 @@
                     getWidth: jasmine.createSpy("getWidth").and.returnValue(800),
                     leftMargin: 4
                 };
-                let layout = new ns.ColumnLayout(
+                let layout = new ns.GridLayout(
                     dragboard,
                     4,
                     13,
@@ -582,9 +604,47 @@
             });
         });
 
+        describe("getRowOffset(cells)", () => {
+
+            it("should work", () => {
+                let dragboard = {
+                    getHeight: jasmine.createSpy("getHeight").and.returnValue(800),
+                    topMargin: 4
+                };
+                let layout = new ns.GridLayout(
+                    dragboard,
+                    4,
+                    4,
+                    4,
+                    4,
+                    10
+                );
+                expect(layout.getRowOffset({y: 2})).toBe(400 + 4 + 2);
+            });
+        });
+
+        describe("getWidthInPixels(cells)", () => {
+
+            it("should work", () => {
+                let dragboard = {
+                    getWidth: jasmine.createSpy("getHeight").and.returnValue(400),
+                };
+                let layout = new ns.GridLayout(
+                    dragboard,
+                    10,
+                    10,
+                    4,
+                    4,
+                    10
+                );
+                expect(layout.getWidthInPixels(2)).toBe(80 - 4);
+            });
+
+        });
+
         describe("insertAt(widget, x, y, matrix)", () => {
 
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data, insert) {
                 let widget = {
@@ -611,10 +671,10 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                let dragboard = {
                     update: jasmine.createSpy("update")
                 };
-                layout = new ns.ColumnLayout(
+                layout = new ns.GridLayout(
                     dragboard,
                     4,
                     13,
@@ -690,10 +750,10 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                let dragboard = {
                     update: jasmine.createSpy("update")
                 };
-                layout = new ns.ColumnLayout(
+                layout = new ns.GridLayout(
                     dragboard,
                     4,
                     13,
@@ -761,10 +821,10 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                let dragboard = {
                     update: jasmine.createSpy("update")
                 };
-                layout = new ns.ColumnLayout(
+                layout = new ns.GridLayout(
                     dragboard,
                     4,
                     13,
@@ -819,10 +879,10 @@
 
             const destLayout = "destLayout";
 
-            var layout;
+            let layout;
 
             beforeEach(() => {
-                layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
             });
 
             it("should work on empty layouts", () => {
@@ -850,7 +910,7 @@
 
         describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist)", () => {
 
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data) {
                 let widget = {
@@ -875,10 +935,10 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                let dragboard = {
                     update: jasmine.createSpy("update")
                 };
-                layout = new ns.ColumnLayout(
+                layout = new ns.GridLayout(
                     dragboard,
                     4,
                     13,
@@ -1117,7 +1177,7 @@
         describe("_notifyWindowResizeEvent(widthChanged, heightChanged)", () => {
 
             it("should call parent on width change", () => {
-                var layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
 
                 layout._notifyWindowResizeEvent(true, false);
@@ -1125,13 +1185,17 @@
                 expect(Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent).toHaveBeenCalledWith(true, false);
             });
 
-            it("should ignore changes not affecting view width", () => {
-                var layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+            it("should ignore changes not affecting view width/height", () => {
+                let widget = {
+                    repaint: jasmine.createSpy('repaint')
+                };
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
+                layout.widgets["1"] = widget;
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
 
                 layout._notifyWindowResizeEvent(false, false);
 
-                expect(Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent).not.toHaveBeenCalled();
+                expect(widget.repaint).not.toHaveBeenCalled();
             });
 
         });
@@ -1139,7 +1203,7 @@
         describe("padHeight(height)", () => {
 
             it("should pad height", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 5, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 5, 4, 10);
                 expect(layout.padHeight(20)).toBe(25);
             });
 
@@ -1148,7 +1212,7 @@
         describe("padWidth(width)", () => {
 
             it("should pad width", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 5, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 5, 4, 10);
                 expect(layout.padWidth(20)).toBe(24);
             });
 
@@ -1157,8 +1221,8 @@
         describe("_removeFromMatrix(matrix, widget)", () => {
 
             it("should call _clearSpace", () => {
-                var dragboard = {};
-                var layout = new ns.ColumnLayout(
+                let dragboard = {};
+                let layout = new ns.GridLayout(
                     dragboard,
                     4,
                     13,
@@ -1166,7 +1230,7 @@
                     4,
                     10
                 );
-                var widget = {}, matrix = {};
+                let widget = {}, matrix = {};
                 spyOn(layout, "_clearSpace");
 
                 expect(layout._removeFromMatrix(matrix, widget)).toEqual(new Set());
@@ -1179,12 +1243,12 @@
         describe("removeWidget(widget, affectsDragboard)", () => {
 
             it("should call _removeFromMatrix and removeWidget from DragboardLayout", () => {
-                let widget = {}, affectsDragboard = {}, result = {};
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                let widget = {}, affectsDragboard = {}, result = new Set();
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
                 spyOn(layout, "_removeFromMatrix").and.returnValue(result);
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "removeWidget").and.returnValue(result);
 
-                expect(layout.removeWidget(widget, affectsDragboard)).toBe(result);
+                expect(layout.removeWidget(widget, affectsDragboard)).toEqual(result);
 
                 expect(layout._removeFromMatrix).toHaveBeenCalledWith(layout._buffers.base, widget);
                 expect(Wirecloud.ui.DragboardLayout.prototype.removeWidget).toHaveBeenCalledWith(widget, affectsDragboard);
@@ -1195,7 +1259,7 @@
         describe("_setPositions()", () => {
 
             it("works on empty layouts", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
                 layout._buffers.shadow = {
                     positions: {}
                 };
@@ -1205,7 +1269,7 @@
             });
 
             it("works on layouts with widgets", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                let layout = new ns.GridLayout({}, 4, 13, 4, 4, 10);
                 layout._buffers.shadow = {
                     positions: {}
                 };

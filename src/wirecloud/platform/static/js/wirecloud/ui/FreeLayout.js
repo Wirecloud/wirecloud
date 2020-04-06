@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -42,13 +42,14 @@
     utils.inherit(FreeLayout, Wirecloud.ui.DragboardLayout);
 
     FreeLayout.prototype.MAX_HLU = 1000000;
+    FreeLayout.prototype.MAX_HLU_PERCENTAGE = 10000;
 
     FreeLayout.prototype.fromPixelsToVCells = function fromPixelsToVCells(pixels) {
-        return pixels;
+        return (pixels * this.MAX_HLU / this.getHeight());
     };
 
     FreeLayout.prototype.fromVCellsToPixels = function fromVCellsToPixels(cells) {
-        return cells;
+        return Math.round((this.getHeight() * cells) / this.MAX_HLU);
     };
 
     FreeLayout.prototype.getWidthInPixels = function getWidthInPixels(cells) {
@@ -67,12 +68,32 @@
         return Math.round((this.getWidth() * cells) / this.MAX_HLU);
     };
 
-    FreeLayout.prototype.getColumnOffset = function getColumnOffset(column) {
-        return this.dragboardLeftMargin + this.fromHCellsToPixels(column);
+    FreeLayout.prototype.getColumnOffset = function getColumnOffset(position, css) {
+        let margin = position.anchor.endsWith("left") ? this.dragboard.leftMargin : this.dragboard.rightMargin;
+        if (css) {
+            if (position.relx) {
+                let percentage = position.x / this.MAX_HLU_PERCENTAGE;
+                return "calc(" + percentage + "% + " + (margin - (percentage * (this.dragboard.leftMargin + this.dragboard.rightMargin) / 100)) + "px)";
+            } else {
+                return (margin + position.x) + "px";
+            }
+        } else {
+            return margin + (position.relx ? this.fromHCellsToPixels(position.x) : position.x);
+        }
     };
 
-    FreeLayout.prototype.getRowOffset = function getRowOffset(row) {
-        return this.dragboardTopMargin + row;
+    FreeLayout.prototype.getRowOffset = function getRowOffset(position, css) {
+        let margin = position.anchor.startsWith("bottom") ? this.dragboard.bottomMargin : this.dragboard.topMargin;
+        if (css) {
+            if (position.rely) {
+                let percentage = position.y / this. MAX_HLU_PERCENTAGE;
+                return "calc(" + percentage + "% + " + (margin - (percentage * (this.dragboard.topMargin + this.dragboard.bottomMargin) / 100)) + "px)";
+            } else {
+                return (margin + position.y) + "px";
+            }
+        } else {
+            return margin + (position.rely ? this.fromVCellsToPixels(position.y) : position.y);
+        }
     };
 
     FreeLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {
@@ -85,7 +106,7 @@
             if (parsedSize[1] === '%') {
                 pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
             } else {
-                pixels = parsedSize[0];
+                pixels = parsedSize[0] < this.dragboard.leftMargin ? 0 : parsedSize[0] - this.dragboard.leftMargin;
             }
             offsetInLU = Math.round(this.fromPixelsToHCells(pixels));
         }
@@ -94,7 +115,10 @@
     };
 
     FreeLayout.prototype.adaptRowOffset = function adaptRowOffset(size) {
-        return this.adaptHeight(size);
+        let newsize = this.adaptHeight(size).inPixels;
+        newsize = newsize >= this.dragboard.topMargin ? newsize - this.dragboard.topMargin : 0;
+        let offsetLU = Math.round(this.fromPixelsToVCells(newsize));
+        return new Wirecloud.ui.MultiValuedSize(newsize, offsetLU);
     };
 
     FreeLayout.prototype.adaptHeight = function adaptHeight(size) {
@@ -111,7 +135,8 @@
             pixels = parsedSize[0];
             break;
         }
-        return new Wirecloud.ui.MultiValuedSize(pixels, pixels);
+        let heightLU = Math.round(this.fromPixelsToVCells(pixels));
+        return new Wirecloud.ui.MultiValuedSize(pixels, heightLU);
     };
 
     FreeLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
@@ -120,16 +145,35 @@
         }
     };
 
-    FreeLayout.prototype._notifyResizeEvent = function _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
-        if (resizeLeftSide) {
-            var widthDiff = newWidth - oldWidth;
+    FreeLayout.prototype._notifyResizeEvent = function _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
+        let position = {};
+        if (
+            (resizeLeftSide && widget.position.anchor.endsWith("left"))
+            || (!resizeLeftSide && widget.position.anchor.endsWith("right"))
+        ) {
+            let widthDiff = newWidth - oldWidth;
             if (widthDiff !== 0) {
-                var position = widget.position;
-                position.x -= widthDiff;
-
-                widget.setPosition(position);
-                widget.repaint();
+                position.x = widget.position.x - widthDiff;
             }
+        } else if (resizeLeftSide && widget.position.anchor.endsWith("center")) {
+            let widthDiff = newWidth - oldWidth;
+            if (widthDiff !== 0) {
+                position.x = widget.position.x - widthDiff / 2;
+            }
+        }
+
+        if (
+            (resizeTopSide && widget.position.anchor.startsWith("top"))
+            || (!resizeTopSide && widget.position.anchor.startsWith("bottom"))
+        ) {
+            let heightDiff = newHeight - oldHeight;
+            if (heightDiff !== 0) {
+                position.y = widget.position.y - heightDiff;
+            }
+        }
+
+        if (Object.keys(position).length > 0) {
+            widget.setPosition(position).repaint();
         }
 
         if (persist) {
@@ -152,7 +196,7 @@
      * Calculate what cell is at a given position in pixels
      */
     FreeLayout.prototype.getCellAt = function getCellAt(x, y) {
-        return new Wirecloud.DragboardPosition(((x - this.dragboardLeftMargin) * this.MAX_HLU) / this.getWidth(), y - this.dragboardTopMargin);
+        return new Wirecloud.DragboardPosition(((x - this.dragboard.leftMargin) * this.MAX_HLU) / this.getWidth(), y - this.dragboard.topMargin);
     };
 
     FreeLayout.prototype.addWidget = function addWidget(iWidget, affectsDragboard) {
@@ -182,7 +226,10 @@
         }
 
         this.iwidgetToMove = widget;
-        this.newPosition = widget.position;
+        this.newPosition = {
+            x: widget.wrapperElement.offsetLeft,
+            y: widget.wrapperElement.offsetTop
+        };
 
         draggable.setXOffset(0).setYOffset(0);
     };
@@ -217,11 +264,101 @@
             return;
         }
 
+        // Y coordinate
+        if (["bottom-center", "bottom-left", "bottom-right"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+            this.newPosition.y = this.getHeight() - this.iwidgetToMove.wrapperElement.offsetHeight - this.newPosition.y;
+        }
+        if (this.iwidgetToMove.position.rely) {
+            this.newPosition.y = this.adaptRowOffset(this.newPosition.y + 'px').inLU;
+        } else if (this.iwidgetToMove.position.anchor.startsWith("bottom")) {
+            this.newPosition.y += this.dragboard.topMargin;
+        } else {
+            this.newPosition.y -= this.dragboard.topMargin;
+        }
+
+        // X coordinate
+        if (["bottom-center", "top-center"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+            this.newPosition.x += (this.iwidgetToMove.shape.relwidth ? this.getWidthInPixels(this.iwidgetToMove.shape.width) : this.iwidgetToMove.shape.width) / 2;
+        } else if (["bottom-right", "top-right"].indexOf(this.iwidgetToMove.position.anchor) !== -1) {
+            this.newPosition.x = this.getWidth() - this.iwidgetToMove.wrapperElement.offsetWidth - this.newPosition.x;
+        }
+        if (this.iwidgetToMove.position.relx) {
+            this.newPosition.x = this.adaptColumnOffset(this.newPosition.x + 'px').inLU;
+        } else if (this.iwidgetToMove.position.anchor.endsWith("right")) {
+            this.newPosition.x += this.dragboard.leftMargin;
+        } else {
+            this.newPosition.x -= this.dragboard.leftMargin;
+        }
         this.iwidgetToMove.setPosition(this.newPosition);
         this.dragboard.update([this.iwidgetToMove.id]);
 
         this.iwidgetToMove = null;
         this.newPosition = null;
+    };
+
+    FreeLayout.prototype.updatePosition = function updatePosition(widget, element) {
+        switch (widget.position.anchor) {
+        case "top-left":
+        case "top-right":
+        case "top-center":
+            element.style.top = this.getRowOffset(widget.position, true);
+            element.style.bottom = "";
+            break;
+        case "bottom-left":
+        case "bottom-right":
+        case "bottom-center":
+            element.style.top = "";
+            element.style.bottom = this.getRowOffset(widget.position, true);
+            break;
+        }
+
+        switch (widget.position.anchor) {
+        case "top-right":
+        case "bottom-right":
+            element.style.left = "";
+            element.style.right = this.getColumnOffset(widget.position, true);
+            element.style.marginLeft = "";
+            break;
+        case "top-left":
+        case "bottom-left":
+            element.style.left = this.getColumnOffset(widget.position, true);
+            element.style.right = "";
+            element.style.marginLeft = "";
+            break;
+        case "top-center":
+        case "bottom-center":
+            element.style.left = this.getColumnOffset(widget.position, true);
+            element.style.right = "";
+            if (widget.shape.relwidth) {
+                let percentage = widget.shape.width / 2 / this.MAX_HLU_PERCENTAGE;
+                element.style.marginLeft = "calc(-" + percentage + '% + ' + (percentage * (this.dragboard.leftMargin + this.dragboard.rightMargin) / 100) + 'px)';
+            } else {
+                element.style.marginLeft = '-' + (widget.shape.width / 2) + 'px';
+            }
+
+            break;
+        }
+
+        return this;
+    };
+
+    FreeLayout.prototype.updateShape = function updateShape(widget, element) {
+        if (widget.shape.relwidth) {
+            let percentage = widget.shape.width / this.MAX_HLU_PERCENTAGE;
+            element.style.width = "calc(" + percentage + '% - ' + (percentage * (this.dragboard.leftMargin + this.dragboard.rightMargin) / 100) + 'px)';
+        } else {
+            element.style.width = widget.shape.width + 'px';
+        }
+        if (widget.minimized) {
+            element.style.height = "";
+        } else if (widget.shape.relheight) {
+            let percentage = widget.shape.height / this.MAX_HLU_PERCENTAGE;
+            element.style.height = "calc(" + percentage + '% - ' + (percentage * (this.dragboard.topMargin + this.dragboard.bottomMargin) / 100) + 'px)';
+        } else {
+            element.style.height = widget.shape.height + 'px';
+        }
+
+        return this;
     };
 
     FreeLayout.prototype.cancelMove = function cancelMove() {
@@ -248,27 +385,27 @@
 
         switch (position) {
         case "top-right":
-            options.left = offset.x + options.refposition.left - this.dragboardLeftMargin;
-            options.top = offset.y + options.refposition.top - this.dragboardTopMargin - this.getHeightInPixels(options.height);
+            options.left = offset.x + options.refposition.left - this.dragboard.leftMargin;
+            options.top = offset.y + options.refposition.top - this.dragboard.topMargin - options.height;
             break;
         case "top-left":
-            options.left = offset.x + options.refposition.right - this.dragboardLeftMargin - this.getWidthInPixels(options.width);
-            options.top = offset.y + options.refposition.top - this.dragboardTopMargin - this.getHeightInPixels(options.height);
+            options.left = offset.x + options.refposition.right - this.dragboard.leftMargin - this.getWidthInPixels(options.width);
+            options.top = offset.y + options.refposition.top - this.dragboard.topMargin - options.height;
             break;
         case "bottom-right":
-            options.left = offset.x + options.refposition.left - this.dragboardLeftMargin;
-            options.top = offset.y + options.refposition.bottom - this.dragboardTopMargin;
+            options.left = offset.x + options.refposition.left - this.dragboard.leftMargin;
+            options.top = offset.y + options.refposition.bottom - this.dragboard.topMargin;
             break;
         case "bottom-left":
-            options.left = offset.x + options.refposition.right - this.dragboardLeftMargin - this.getWidthInPixels(options.width);
-            options.top = offset.y + options.refposition.bottom - this.dragboardTopMargin;
+            options.left = offset.x + options.refposition.right - this.dragboard.leftMargin - this.getWidthInPixels(options.width);
+            options.top = offset.y + options.refposition.bottom - this.dragboard.topMargin;
             break;
         }
     };
 
     const standsOut = function standsOut(options) {
         var width_in_pixels = this.getWidthInPixels(options.width);
-        var height_in_pixels = this.getHeightInPixels(options.height);
+        var height_in_pixels = options.height;
 
         var visible_width = width_in_pixels - Math.max(options.left + width_in_pixels - this.getWidth(), 0) - Math.max(-options.left, 0);
         var visible_height = height_in_pixels - Math.max(options.top + height_in_pixels - this.getHeight(), 0) - Math.max(-options.top, 0);
@@ -298,24 +435,14 @@
             let placement = placements[index];
             setPosition.call(this, placement, options, offset);
 
-            options.top = this.adaptRowOffset(options.top + "px").inLU;
+            options.top = this.adaptRowOffset(options.top + "px").inPixels;
             options.left = this.adaptColumnOffset(options.left + "px").inLU;
-
-            if (options.top < 0) {
-                options.height += options.top;
-                options.top = 0;
-            }
-
-            if (options.left < 0) {
-                options.width += options.left;
-                options.left = 0;
-            }
 
             if (options.left + options.width >= this.MAX_HLU) {
                 options.width -= options.left + options.width - this.MAX_HLU;
             }
         } else {
-            options.top = this.adaptRowOffset(options.top + "px").inLU;
+            options.top = this.adaptRowOffset(options.top + "px").inPixels;
             options.left = this.adaptColumnOffset(options.left + "px").inLU;
         }
     };

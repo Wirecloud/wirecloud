@@ -31,7 +31,7 @@
 
         StyledElements.SubMenuItem.call(this, utils.gettext('Tutorials'));
 
-        this.menuItem.addIconClass('fa fa-map-o');
+        this.menuitem.addIconClass('fa fa-map-o');
 
         for (i = 0; i < Wirecloud.TutorialCatalogue.tutorials.length; i++) {
             tutorial = Wirecloud.TutorialCatalogue.tutorials[i];

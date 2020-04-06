@@ -233,6 +233,7 @@
 
 .wc-floating-widget {
     @include z-depth(2);
+    transition: none;
 
     &.wc-missing-widget {
         @include z-depth(2, $color: $state-danger-border);

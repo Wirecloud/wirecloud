@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -51,16 +51,18 @@
      *
      */
     DragboardLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
-        // Notify each iwidget
-        Object.values(this.widgets).forEach((widget) => {
-            widget.repaint();
-        });
+        if (widthChanged || heightChanged) {
+            // Notify each iwidget
+            Object.values(this.widgets).forEach((widget) => {
+                widget.repaint();
+            });
+        }
     };
 
     /**
      *
      */
-    DragboardLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+    DragboardLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
     };
 
     // =========================================================================
@@ -138,10 +140,26 @@
     };
 
     DragboardLayout.prototype.updatePosition = function updatePosition(widget, element) {
-        element.style.left = this.getColumnOffset(widget.position.x) + "px";
-        element.style.top = this.getRowOffset(widget.position.y) + "px";
+        element.style.left = this.getColumnOffset(widget.position) + "px";
+        element.style.top = this.getRowOffset(widget.position) + "px";
         element.style.bottom = "";
         element.style.right = "";
+    };
+
+    DragboardLayout.prototype.updateShape = function updateShape(widget, element) {
+        let width = this.getWidthInPixels(widget.shape.width);
+        if (width != null) {
+            element.style.width = width + 'px';
+        } else {
+            element.style.width = "";
+        }
+
+        let height = widget.minimized ? null : this.getHeightInPixels(widget.shape.height);
+        if (height != null) {
+            element.style.height = height + 'px';
+        } else {
+            element.style.height = "";
+        }
     };
 
     DragboardLayout.prototype.padWidth = function padWidth(width) {
@@ -181,19 +199,6 @@
     DragboardLayout.prototype.getHeight = function getHeight() {
         return this.dragboard.getHeight();
     };
-
-    Object.defineProperty(DragboardLayout.prototype, "dragboardTopMargin", {
-        get: function () {
-            return this.dragboard.topMargin;
-        }
-    });
-
-    Object.defineProperty(DragboardLayout.prototype, "dragboardLeftMargin", {
-        configurable: true,
-        get: function () {
-            return this.dragboard.leftMargin;
-        }
-    });
 
     DragboardLayout.prototype.addWidget = function addWidget(widget, affectsDragboard) {
         if (widget.layout != null) {

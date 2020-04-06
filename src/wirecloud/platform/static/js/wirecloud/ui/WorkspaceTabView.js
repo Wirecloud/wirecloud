@@ -177,7 +177,12 @@
                 commit: true,
                 height: resource.default_height,
                 layout: this.model.preferences.get('initiallayout') === "Free" ? 1 : 0,
-                width: resource.default_width
+                width: resource.default_width,
+                anchor: 'top-left',
+                relx: true,
+                rely: false,
+                relwidth: true,
+                relheight: false
             }, options);
 
             var layouts = [
@@ -188,10 +193,30 @@
             ];
             layout = layouts[options.layout];
 
-            options.left = options.left != null ? layout.adaptColumnOffset(options.left).inLU : undefined;
-            options.top = options.top != null ? layout.adaptRowOffset(options.top).inLU : undefined;
-            options.height = clean_number(layout.adaptHeight(options.height).inLU, 1);
-            options.width = clean_number(layout.adaptWidth(options.width).inLU, 1, layout.columns);
+            if (options.left != null) {
+                if (layout !== this.dragboard.freeLayout || options.relx) {
+                    options.left = layout.adaptColumnOffset(options.left).inLU;
+                } else {
+                    options.left = layout.adaptColumnOffset(options.left).inPixels;
+                }
+            }
+            if (options.top != null) {
+                if (layout !== this.dragboard.freeLayout || options.rely) {
+                    options.top = layout.adaptRowOffset(options.top).inLU;
+                } else {
+                    options.top = layout.adaptRowOffset(options.top).inPixels;
+                }
+            }
+            if (layout !== this.dragboard.freeLayout || options.relheight) {
+                options.height = clean_number(layout.adaptHeight(options.height).inLU, 1);
+            } else {
+                options.height = clean_number(layout.adaptHeight(options.height).inPixels, 1);
+            }
+            if (layout !== this.dragboard.freeLayout || options.relwidth) {
+                options.width = clean_number(layout.adaptWidth(options.width).inLU, 1, layout.columns);
+            } else {
+                options.width = clean_number(layout.adaptWidth(options.width).inPixels, 1);
+            }
 
             if (options.left == null || options.top == null) {
                 if (options.refposition && "searchBestPosition" in layout) {

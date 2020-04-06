@@ -25,7 +25,7 @@
       <preferencevalue name="columns" value="9"/>
       <resource id="1" name="TestWidget" title="Widget title" vendor="Wirecloud" version="1.0">
         <position x="0" y="1" z="2"/>
-        <rendering height="10" width="10" layout="0" minimized="false" fulldragboard="false"/>
+        <rendering height="10" width="10" layout="1" minimized="false" fulldragboard="false"/>
         <preferencevalue name="text" value="other value" readonly="true" hidden="true"/>
         <preferencevalue name="list" value="default" readonly="true"/>
         <variablevalue name="prop1" value="value1"/>

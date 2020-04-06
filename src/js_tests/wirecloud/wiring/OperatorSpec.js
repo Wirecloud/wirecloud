@@ -91,6 +91,11 @@
 
     describe("Wirecloud.wiring.Operator", function () {
 
+        beforeAll(() => {
+            spyOn(console, "log");
+            spyOn(console, "info");
+        });
+
         // TODO
         beforeEach(() => {
             Wirecloud.PropertyCommiter = jasmine.createSpy("PropertyCommiter").and.returnValue({

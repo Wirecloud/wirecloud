@@ -254,6 +254,8 @@
         });
 
         this.heading = this.wrapperElement.getElementsByClassName('wc-widget-heading')[0];
+        this.draggable = new Wirecloud.ui.WidgetViewDraggable(this);
+
 
         // TODO: review
         var layout;
@@ -279,9 +281,6 @@
             }
         }
         layout.addWidget(this, true);
-
-        // Mark as draggable
-        this.draggable = new Wirecloud.ui.WidgetViewDraggable(this);
 
         // Init minimized and title visibility options
         this.setMinimizeStatus(model.minimized, false, true);
@@ -348,7 +347,9 @@
                 this.wrapperElement.classList.add('wc-minimized-widget');
                 this.wrapperElement.style.height = "";
                 priv.minimized_shape = {
+                    relheight: true,
                     height: this.layout.adaptHeight(this.wrapperElement.offsetHeight + 'px').inLU,
+                    relwidth: priv.shape.relwidth,
                     width: priv.shape.width
                 };
                 this.model.setTitleVisibility(true, false);
@@ -369,7 +370,7 @@
             reserveSpace = reserveSpace != null ? reserveSpace : true;
             if (reserveSpace) {
                 var persist = persistence != null ? persistence : true;
-                this.layout._notifyResizeEvent(this, this.shape.width, oldHeight, this.shape.width,  this.shape.height, false, persist, reserveSpace);
+                this.layout._notifyResizeEvent(this, this.shape.width, oldHeight, this.shape.width,  this.shape.height, false, false, persist, reserveSpace);
             }
 
             update.call(this);
@@ -409,9 +410,10 @@
                 update_position.call(this);
                 notify_position.call(this);
             }
+            return this;
         },
 
-        setShape: function setShape(shape, resizeLeftSide, persist) {
+        setShape: function setShape(shape, resizeLeftSide, resizeTopSide, persist) {
             var oldWidth = this.shape.width;
             var oldHeight = this.shape.height;
 
@@ -425,7 +427,7 @@
             notify_shape.call(this);
 
             // Notify resize event
-            this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.shape.width, this.shape.height, resizeLeftSide, persist);
+            this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.shape.width, this.shape.height, resizeLeftSide, resizeTopSide, persist);
         },
 
         load: function load() {
@@ -522,26 +524,52 @@
 
             if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setShape(this.previousShape);
+            } else if (newLayout instanceof Wirecloud.ui.FreeLayout) {
+                this.setShape({
+                    relwidth: true,
+                    width: newLayout.adaptWidth(previousWidth + 'px').inLU,
+                    relheight: false,
+                    height: newLayout.adaptHeight(previousHeight + 'px').inPixels
+                });
             } else {
                 this.setShape({
+                    relwidth: true,
                     width: newLayout.adaptWidth(previousWidth + 'px').inLU,
+                    relheight: true,
                     height: newLayout.adaptHeight(previousHeight + 'px').inLU
                 });
             }
 
             if (dragboardChange && !(newLayout instanceof Wirecloud.ui.FreeLayout)) {
-                this.setPosition(newLayout._searchFreeSpace(this.shape.width, this.shape.height));
+                let newposition = newLayout._searchFreeSpace(this.shape.width, this.shape.height);
+                newposition.relx = true;
+                newposition.rely = true;
+                newposition.anchor = "top-left";
+                this.setPosition(newposition);
             } else if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setPosition(this.previousPosition);
             } else {
                 oldPositionPixels = {
-                    x: oldLayout.getColumnOffset(this.position.x) - oldLayout.dragboardLeftMargin,
-                    y: oldLayout.getRowOffset(this.position.y) - oldLayout.dragboardTopMargin
+                    x: oldLayout.getColumnOffset(this.position),
+                    y: oldLayout.getRowOffset(this.position)
                 };
-                this.setPosition({
-                    x: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px').inLU,
-                    y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inLU
-                });
+                if (newLayout instanceof Wirecloud.ui.FreeLayout) {
+                    this.setPosition({
+                        x: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px').inLU,
+                        y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inPixels,
+                        relx: true,
+                        rely: false,
+                        anchor: "top-left"
+                    });
+                } else {
+                    this.setPosition({
+                        x: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px').inLU,
+                        y: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inLU,
+                        relx: true,
+                        rely: true,
+                        anchor: "top-left"
+                    });
+                }
             }
 
             affectedWidgetsAdding = newLayout.addWidget(this, dragboardChange);
@@ -608,10 +636,15 @@
             }
 
             if (this.layout !== this.tab.dragboard.fulldragboardLayout) {
+                data.anchor = this.position.anchor;
+                data.relx = this.position.relx;
+                data.rely = this.position.rely;
                 data.top = this.position.y;
                 data.left = this.position.x;
                 data.zIndex = this.position.z;
+                data.relwidth = this.shape.relwidth;
                 data.width = this.shape.width;
+                data.relheight = this.shape.relheight;
                 data.height = privates.get(this).shape.height;
                 data.fulldragboard = false;
             } else {
@@ -708,19 +741,7 @@
     };
 
     var update_shape = function update_shape() {
-        let width = this.layout.getWidthInPixels(this.shape.width);
-        if (width != null) {
-            this.wrapperElement.style.width = width + 'px';
-        } else {
-            this.wrapperElement.style.width = "";
-        }
-
-        let height = this.minimized ? null : this.layout.getHeightInPixels(this.shape.height);
-        if (height != null) {
-            this.wrapperElement.style.height = height + 'px';
-        } else {
-            this.wrapperElement.style.height = "";
-        }
+        this.layout.updateShape(this, this.wrapperElement);
     };
 
     var notify_position = function notify_position() {

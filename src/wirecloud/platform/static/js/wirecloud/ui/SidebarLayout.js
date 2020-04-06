@@ -119,12 +119,12 @@
     SidebarLayout.prototype.updatePosition = function updatePosition(widget, element) {
         var offset;
         if (!this.active) {
-            offset = -this.getWidth() - this.leftMargin + this.dragboardLeftMargin;
+            offset = -this.getWidth() - this.leftMargin + this.dragboard.leftMargin;
         } else {
             offset = 0;
         }
 
-        element.style.top = this.getRowOffset(widget.position.y) + "px";
+        element.style.top = this.getRowOffset(widget.position) + "px";
         element.style.bottom = "";
         if (this.position === "left") {
             element.style.left = offset + "px";

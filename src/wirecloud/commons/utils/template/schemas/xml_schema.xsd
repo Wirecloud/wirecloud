@@ -727,9 +727,12 @@
         <xs:attribute name="y" type="xs:string" use="required" />
     </xs:complexType>
 
-    <xs:complexType name="Position3d">
+    <xs:complexType name="LayoutPosition">
         <xs:complexContent>
             <xs:extension base="macd:Position2d">
+                <xs:attribute name="anchor" type="xs:string" use="optional" />
+                <xs:attribute name="relx" type="xs:boolean" use="optional" />
+                <xs:attribute name="rely" type="xs:boolean" use="optional" />
                 <xs:attribute name="z" type="xs:string" use="required" />
             </xs:extension>
         </xs:complexContent>
@@ -743,9 +746,11 @@
                     <xs:choice minOccurs="1" maxOccurs="unbounded">
                         <xs:element name="preferencevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
                         <xs:element name="variablevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
-                        <xs:element name="position" type="macd:Position3d" minOccurs="1" maxOccurs="1" />
+                        <xs:element name="position" type="macd:LayoutPosition" minOccurs="1" maxOccurs="1" />
                         <xs:element name="rendering" minOccurs="1" maxOccurs="1">
                             <xs:complexType>
+                                <xs:attribute name="relwidth" type="xs:boolean" use="optional" />
+                                <xs:attribute name="relheight" type="xs:boolean" use="optional" />
                                 <xs:attribute name="width" type="xs:string" use="required" />
                                 <xs:attribute name="minimized" type="xs:boolean" use="optional" />
                                 <xs:attribute name="layout" type="xs:string" use="required" />

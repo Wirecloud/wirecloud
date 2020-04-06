@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -59,10 +59,13 @@
             });
 
             it("should support pixel units", () => {
-                let layout = new ns.FreeLayout({});
+                let layout = new ns.FreeLayout({
+                    leftMargin: 2,
+                    topMargin: 2
+                });
                 spyOn(layout, "getWidth").and.returnValue(100);
 
-                let value = layout.adaptColumnOffset("56px");
+                let value = layout.adaptColumnOffset("58px");
 
                 expect(value.inPixels).toBe(56);
                 expect(value.inLU).toBe(560000);
@@ -89,7 +92,7 @@
                 let value = layout.adaptHeight("60.3%");
 
                 expect(value.inPixels).toBe(60);
-                expect(value.inLU).toBe(60);
+                expect(value.inLU).toBe(600000);
             });
 
             it("should ceil cells", () => {
@@ -99,7 +102,7 @@
                 let value = layout.adaptHeight("60.7%");
 
                 expect(value.inPixels).toBe(61);
-                expect(value.inLU).toBe(61);
+                expect(value.inLU).toBe(610000);
             });
 
             it("should support pixel units", () => {
@@ -109,7 +112,7 @@
                 let value = layout.adaptHeight("56px");
 
                 expect(value.inPixels).toBe(56);
-                expect(value.inLU).toBe(56);
+                expect(value.inLU).toBe(560000);
             });
 
             it("should support cell units", () => {
@@ -119,7 +122,7 @@
                 let value = layout.adaptHeight(56);
 
                 expect(value.inPixels).toBe(56);
-                expect(value.inLU).toBe(56);
+                expect(value.inLU).toBe(560000);
             });
 
         });
@@ -127,43 +130,55 @@
         describe("adaptRowOffset(value)", () => {
 
             it("should floor cells", () => {
-                let layout = new ns.FreeLayout({});
+                let layout = new ns.FreeLayout({
+                    leftMargin: 2,
+                    topMargin: 2
+                });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset("60.3%");
+                let value = layout.adaptRowOffset("62.3%");
 
                 expect(value.inPixels).toBe(60);
-                expect(value.inLU).toBe(60);
+                expect(value.inLU).toBe(600000);
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.FreeLayout({});
+                let layout = new ns.FreeLayout({
+                    leftMargin: 2,
+                    topMargin: 2
+                });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset("60.7%");
+                let value = layout.adaptRowOffset("62.7%");
 
                 expect(value.inPixels).toBe(61);
-                expect(value.inLU).toBe(61);
+                expect(value.inLU).toBe(610000);
             });
 
             it("should support pixel units", () => {
-                let layout = new ns.FreeLayout({});
+                let layout = new ns.FreeLayout({
+                    leftMargin: 2,
+                    topMargin: 2
+                });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset("56px");
+                let value = layout.adaptRowOffset("58px");
 
                 expect(value.inPixels).toBe(56);
-                expect(value.inLU).toBe(56);
+                expect(value.inLU).toBe(560000);
             });
 
             it("should support cell units", () => {
-                let layout = new ns.FreeLayout({});
+                let layout = new ns.FreeLayout({
+                    leftMargin: 2,
+                    topMargin: 2
+                });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset(56);
+                let value = layout.adaptRowOffset(58);
 
                 expect(value.inPixels).toBe(56);
-                expect(value.inLU).toBe(56);
+                expect(value.inLU).toBe(560000);
             });
 
         });
@@ -199,8 +214,10 @@
         describe("fromPixelsToVCells(pixels)", () => {
 
             it("should return a value", () => {
-                let layout = new ns.FreeLayout({});
-                expect(layout.fromPixelsToVCells(306)).toBe(306);
+                let layout = new ns.FreeLayout({
+                    getHeight: () => {return 1000;}
+                });
+                expect(layout.fromPixelsToVCells(306)).toBe(306000);
             });
 
         });
@@ -218,13 +235,16 @@
 
         });
 
-        describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist", () => {
+        describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist)", () => {
 
             var dragboard, layout;
 
             const createWidgetMock = function createWidgetMock(data) {
                 return {
                     position: {
+                        anchor: data.anchor || "top-left",
+                        relx: data.relx || false,
+                        rely: data.rely || false,
                         x: data.x,
                         y: data.y
                     },
@@ -233,7 +253,7 @@
                         height: data.height
                     },
                     repaint: jasmine.createSpy('repaint'),
-                    setPosition: jasmine.createSpy('setPosition').and.callFake(function (newposition) {this.position = newposition;})
+                    setPosition: jasmine.createSpy('setPosition').and.callFake(function (newposition) {this.position = newposition; return this;})
                 };
             };
 
@@ -249,7 +269,27 @@
                     x: 0, y: 0, width: 1, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 1, 4, 2, 4, false, false);
+                layout._notifyResizeEvent(widget, 1, 4, 2, 4, false, false, false);
+
+                expect(widget.setPosition).not.toHaveBeenCalled();
+            });
+
+            it("should work on empty layouts (width change - left, top-center)", () => {
+                let widget = createWidgetMock({
+                    anchor: "top-center", x: 0, y: 0, width: 1, height: 4
+                });
+
+                layout._notifyResizeEvent(widget, 1, 4, 2, 4, true, false, false);
+
+                expect(widget.setPosition).toHaveBeenCalled();
+            });
+
+            it("should work on empty layouts (no size change - left, top-center)", () => {
+                let widget = createWidgetMock({
+                    anchor: "top-center", x: 0, y: 0, width: 1, height: 4
+                });
+
+                layout._notifyResizeEvent(widget, 1, 4, 1, 4, true, false, false);
 
                 expect(widget.setPosition).not.toHaveBeenCalled();
             });
@@ -265,20 +305,29 @@
                     x: 1, y: 1, width: 3, height: 1
                 });
 
-                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, false, false);
+                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, false, false, false);
 
                 expect(widget1.setPosition).not.toHaveBeenCalled();
                 expect(widget2.setPosition).not.toHaveBeenCalled();
                 expect(widget3.setPosition).not.toHaveBeenCalled();
             });
 
-            it("should work on empty layouts (height change - right)", () => {
+            it("should work on empty layouts (height change - right, bottom)", () => {
                 let widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
 
-                layout._notifyResizeEvent(widget, 1, 1, 1, 4, false, false);
+                layout._notifyResizeEvent(widget, 1, 1, 1, 4, false, false, false);
                 expect(widget.setPosition).not.toHaveBeenCalled();
+            });
+
+            it("should work on empty layouts (height change - right, top)", () => {
+                let widget = createWidgetMock({
+                    x: 0, y: 4, width: 1, height: 1
+                });
+
+                layout._notifyResizeEvent(widget, 1, 1, 1, 4, false, true, false);
+                expect(widget.setPosition).toHaveBeenCalledWith({y: 1});
             });
 
             it("should work on layouts with widgets (height change - right)", () => {
@@ -292,7 +341,7 @@
                     x: 0, y: 2, width: 4, height: 1
                 });
 
-                layout._notifyResizeEvent(widget1, 1, 3, 1, 2, false, false);
+                layout._notifyResizeEvent(widget1, 1, 3, 1, 2, false, false, false);
                 expect(widget1.setPosition).not.toHaveBeenCalled();
                 expect(widget2.setPosition).not.toHaveBeenCalled();
                 expect(widget3.setPosition).not.toHaveBeenCalled();
@@ -303,9 +352,9 @@
                     x: 3, y: 0, width: 1, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 1, 4, 2, 4, true, false);
+                layout._notifyResizeEvent(widget, 1, 4, 2, 4, true, false, false);
 
-                expect(widget.setPosition).toHaveBeenCalledWith({x: 2, y: 0});
+                expect(widget.setPosition).toHaveBeenCalledWith({x: 2});
             });
 
             it("should work on layouts with widgets (width change - left)", () => {
@@ -316,17 +365,26 @@
                     x: 1, y: 4, width: 2, height: 4
                 });
 
-                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, true, false);
+                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, true, false, false);
 
-                expect(widget1.setPosition).toHaveBeenCalledWith({x: 3, y: 0});
+                expect(widget1.setPosition).toHaveBeenCalledWith({x: 3});
             });
 
-            it("should work on empty layouts (height change - left)", () => {
+            it("should work on empty layouts (height change - left, bottom)", () => {
                 let widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 1, 4, 1, 1, true, false);
+                layout._notifyResizeEvent(widget, 1, 4, 1, 1, true, false, false);
+                expect(widget.setPosition).not.toHaveBeenCalled();
+            });
+
+            it("should work on empty layouts (width change - rigth, top)", () => {
+                let widget = createWidgetMock({
+                    x: 3, y: 0, width: 1, height: 4
+                });
+
+                layout._notifyResizeEvent(widget, 1, 4, 4, 4, false, true, false);
                 expect(widget.setPosition).not.toHaveBeenCalled();
             });
 
@@ -341,7 +399,7 @@
                     x: 0, y: 4, width: 4, height: 1
                 });
 
-                layout._notifyResizeEvent(widget1, 1, 4, 1, 1, true, false);
+                layout._notifyResizeEvent(widget1, 1, 4, 1, 1, true, false, false);
 
                 expect(widget1.setPosition).not.toHaveBeenCalled();
                 expect(widget2.setPosition).not.toHaveBeenCalled();
@@ -353,35 +411,157 @@
                     x: 0, y: 0, width: 2, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 2, 4, 1, 4, true, true);
+                layout._notifyResizeEvent(widget, 2, 4, 1, 4, true, false, true);
 
                 expect(dragboard.update).toHaveBeenCalledWith([widget.id]);
             });
 
         });
 
-        describe("getColumnOffset(column)", () => {
+        describe("getColumnOffset(position)", () => {
 
-            it("should return a value", () => {
+            it("should work with relative positions (from left)", () => {
                 var layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     leftMargin: 4,
+                    topMargin: 7
+                });
+                expect(layout.getColumnOffset({relx: true, anchor: "top-left", x: 500000})).toBe(404);
+            });
+
+            it("should work with relative positions (from left, css)", () => {
+                var layout = new ns.FreeLayout({
+                    getWidth: function () {return 800;},
+                    leftMargin: 4,
+                    rightMargin: 7
+                });
+                expect(layout.getColumnOffset({relx: true, anchor: "top-left", x: 500000}, true)).toBe("calc(50% + -1.5px)");
+            });
+
+            it("should work with relative positions (from right)", () => {
+                var layout = new ns.FreeLayout({
+                    getWidth: function () {return 800;},
+                    rightMargin: 3,
+                    topMargin: 7
+                });
+                expect(layout.getColumnOffset({relx: true, anchor: "top-right", x: 500000})).toBe(403);
+            });
+
+            it("should work with relative positions (from right, css)", () => {
+                var layout = new ns.FreeLayout({
+                    getWidth: function () {return 800;},
+                    rightMargin: 3,
+                    leftMargin: 7
+                });
+                expect(layout.getColumnOffset({relx: true, anchor: "top-right", x: 500000}, true)).toBe("calc(50% + -2px)");
+            });
+
+            it("should work with absolute positions (from left)", () => {
+                var layout = new ns.FreeLayout({
+                    getWidth: function () {return 800;},
+                    leftMargin: 4,
+                    topMargin: 7
+                });
+                expect(layout.getColumnOffset({relx: false, anchor: "top-left", x: 400})).toBe(404);
+            });
+
+            it("should work with absolute positions (from right)", () => {
+                var layout = new ns.FreeLayout({
+                    getWidth: function () {return 800;},
+                    leftMargin: 4,
+                    rightMargin: 3,
+                    topMargin: 7
+                });
+                expect(layout.getColumnOffset({relx: false, anchor: "top-right", x: 400})).toBe(403);
+            });
+
+            it("should work with absolute positions (from right, css)", () => {
+                var layout = new ns.FreeLayout({
+                    getWidth: function () {return 800;},
+                    leftMargin: 4,
+                    rightMargin: 3,
                     topMargin: 7,
                 });
-                expect(layout.getColumnOffset(500000)).toBe(404);
+                expect(layout.getColumnOffset({relx: false, anchor: "top-right", x: 400}, true)).toBe("403px");
             });
 
         });
 
-        describe("getRowOffset(column)", () => {
+        describe("getHeightInPixels(cells)", () => {
 
-            it("should return a value", () => {
+            it("should work", () => {
                 var layout = new ns.FreeLayout({
-                    getWidth: function () {return 800;},
+                    getHeight: function () {return 800;},
                     leftMargin: 4,
-                    topMargin: 7,
+                    topMargin: 7
                 });
-                expect(layout.getRowOffset(400)).toBe(407);
+                expect(layout.getHeightInPixels(500000)).toBe(400);
+            });
+
+        });
+
+        describe("getRowOffset(column[, css])", () => {
+
+            it("should work with relative positions (from top)", () => {
+                var layout = new ns.FreeLayout({
+                    getHeight: function () {return 800;},
+                    topMargin: 7
+                });
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "top-left"})).toBe(407);
+            });
+
+            it("should work with relative positions (from bottom)", () => {
+                var layout = new ns.FreeLayout({
+                    getHeight: function () {return 800;},
+                    bottomMargin: 5
+                });
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "bottom-left"})).toBe(405);
+            });
+
+            it("should work with absolute positions (from top)", () => {
+                var layout = new ns.FreeLayout({
+                    topMargin: 7
+                });
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "top-left"})).toBe(407);
+            });
+
+            it("should work with absolute positions (from bottom)", () => {
+                var layout = new ns.FreeLayout({
+                    bottomMargin: 5
+                });
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottom-left"})).toBe(405);
+            });
+
+            it("should work with relative positions (from top, css)", () => {
+                var layout = new ns.FreeLayout({
+                    getHeight: function () {return 800;},
+                    topMargin: 10,
+                    bottomMargin: 10
+                });
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "top-left"}, true)).toBe("calc(50% + 0px)");
+            });
+
+            it("should work with relative positions (from bottom, css)", () => {
+                var layout = new ns.FreeLayout({
+                    getHeight: function () {return 800;},
+                    topMargin: 10,
+                    bottomMargin: 5
+                });
+                expect(layout.getRowOffset({y: 500000, rely: true, anchor: "bottom-left"}, true)).toBe("calc(50% + -2.5px)");
+            });
+
+            it("should work with absolute positions (from top, css)", () => {
+                var layout = new ns.FreeLayout({
+                    topMargin: 7
+                });
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "top-left"}, true)).toBe("407px");
+            });
+
+            it("should work with absolute positions (from bottom, css)", () => {
+                var layout = new ns.FreeLayout({
+                    bottomMargin: 5
+                });
+                expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottom-left"}, true)).toBe("405px");
             });
 
         });
@@ -412,20 +592,28 @@
 
             const return_this = function () {return this;};
             const draggable = {setXOffset: return_this, setYOffset: return_this};
-            var layout;
+            let layout, dom;
 
             const createWidgetMock = function createWidgetMock(data) {
                 return new Wirecloud.ui.WidgetView(data);
             };
 
             beforeEach(() => {
+                dom = document.createElement('div');
+                document.body.appendChild(dom);
+
                 spyOn(Wirecloud.ui, "WidgetView").and.callFake(function (data) {
                     this.id = data.id;
                     this.position = {
+                        anchor: data.anchor || "top-left",
+                        relx: data.relx || false,
+                        rely: data.rely || false,
                         x: data.x,
                         y: data.y
                     };
                     this.shape = {
+                        relwidth: data.relwidth || false,
+                        relheight: data.relheight || false,
                         width: data.width,
                         height: data.height
                     };
@@ -438,15 +626,24 @@
                         wrapperElement: document.createElement('div')
                     };
                     this.tab.wrapperElement.appendChild(this.wrapperElement);
+                    dom.appendChild(this.tab.wrapperElement);
                 });
 
                 var dragboard = {
                     _notifyWindowResizeEvent: jasmine.createSpy("_notifyWindowResizeEvent"),
+                    getWidth: jasmine.createSpy("getWidth").and.returnValue(800),
+                    getHeight: jasmine.createSpy("getHeight").and.returnValue(800),
+                    topMargin: 0,
+                    leftMargin: 0,
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.FreeLayout(dragboard);
                 spyOn(layout, "updatePosition");
                 layout.initialize();
+            });
+
+            afterEach(() => {
+                dom.remove();
             });
 
             it("should throw an exception if widget is not a widget instance", () => {
@@ -495,7 +692,75 @@
                 layout.moveTemporally(2, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({x: 2, y: 0});
+                expect(widget.position).toEqual({anchor: "top-left", relx: false, rely: false, x: 2, y: 0});
+                expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
+            });
+
+            it("should work on empty layouts (basic move - bottom)", () => {
+                let widget = createWidgetMock({id: "1", anchor: "bottom-left", x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(1, 0);
+                layout.moveTemporally(2, 0);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({anchor: "bottom-left", relx: false, rely: false, x: 2, y: 799});
+                expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
+            });
+
+            it("should work on empty layouts (basic move - bottom, right)", () => {
+                let widget = createWidgetMock({id: "1", anchor: "bottom-right", x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(1, 0);
+                layout.moveTemporally(2, 0);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({anchor: "bottom-right", relx: false, rely: false, x: 795, y: 799});
+                expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
+            });
+
+            it("should work on empty layouts (basic move - rely, bottom, center)", () => {
+                let widget = createWidgetMock({id: "1", anchor: "bottom-center", rely: true, x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(1, 0);
+                layout.moveTemporally(2, 0);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({anchor: "bottom-center", relx: false, rely: true, x: 3.5, y: 998750});
+                expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
+            });
+
+            it("should work on empty layouts (basic move - relwidth, top, center)", () => {
+                let widget = createWidgetMock({id: "1", anchor: "top-center", relwidth: true, x: 0, y: 0, width: 250000, height: 1});
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(1, 0);
+                layout.moveTemporally(2, 0);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({anchor: "top-center", relx: false, rely: false, x: 102, y: 0});
+                expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
+            });
+
+            it("should work on empty layouts (basic move - relx, bottom, right)", () => {
+                let widget = createWidgetMock({id: "1", anchor: "bottom-right", relx: true, x: 0, y: 0, width: 3, height: 1});
+                widget.wrapperElement.style.width = "3px";
+                widget.wrapperElement.style.height = "1px";
+                layout.addWidget(widget);
+                layout.initializeMove(widget, draggable);
+                layout.moveTemporally(1, 0);
+                layout.moveTemporally(2, 0);
+                layout.acceptMove();
+
+                expect(widget.position).toEqual({anchor: "bottom-right", relx: true, rely: false, x: 993750, y: 799});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
@@ -507,7 +772,7 @@
                 layout.moveTemporally(2 * width / 7, 0);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({x: width / 7, y: 0});
+                expect(widget.position).toEqual({anchor: 'top-left', relx: false, rely: false, x: width / 7, y: 0});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
@@ -519,7 +784,7 @@
                 layout.moveTemporally(-100, -100);
                 layout.acceptMove();
 
-                expect(widget.position).toEqual({x: 0, y: 0});
+                expect(widget.position).toEqual({anchor: 'top-left', relx: false, rely: false, x: 0, y: 0});
                 expect(layout.dragboard.update).toHaveBeenCalledWith(["1"]);
             });
 
@@ -615,7 +880,7 @@
                 layout.searchBestPosition(options);
 
                 expect(options.width).toBe(800000);
-                expect(options.height).toBe(90);
+                expect(options.height).toBe(100);
                 expect(options.left).toBe(100000);
                 expect(options.top).toBe(0);
             });
@@ -644,7 +909,7 @@
 
                 layout.searchBestPosition(options);
 
-                expect(options.width).toBe(900000);
+                expect(options.width).toBe(950000);
                 expect(options.height).toBe(100);
                 expect(options.left).toBe(0);
                 expect(options.top).toBe(10);
@@ -665,6 +930,156 @@
                 expect(options.height).toBe(20);
                 expect(options.left).toBe(200000);
                 expect(options.top).toBe(70);
+            });
+
+        });
+
+        describe("updatePosition(widget, element)", () => {
+
+            let layout, element;
+
+            beforeEach(() => {
+                layout = new ns.FreeLayout({});
+                spyOn(layout, "getRowOffset").and.returnValue("127px");
+                element = document.createElement("div");
+            });
+
+            it("should support top-left placement", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "top-left"}
+                }, element)).toBe(layout);
+                expect(element.style.right).toBe("");
+                expect(element.style.bottom).toBe("");
+            });
+
+            it("should support top-center placement", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "top-center"},
+                    shape: {relwidth: false, width: 100}
+                }, element)).toBe(layout);
+                expect(element.style.right).toBe("");
+                expect(element.style.bottom).toBe("");
+            });
+
+            it("should support top-center placement (relwidth)", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "top-center"},
+                    shape: {relwidth: true, width: 500000}
+                }, element)).toBe(layout);
+                expect(element.style.right).toBe("");
+                expect(element.style.bottom).toBe("");
+            });
+
+            it("should support top-right placement", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "top-right"}
+                }, element)).toBe(layout);
+                expect(element.style.left).toBe("");
+                expect(element.style.bottom).toBe("");
+            });
+
+            it("should support bottom-left placement", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "bottom-left"}
+                }, element)).toBe(layout);
+                expect(element.style.right).toBe("");
+                expect(element.style.top).toBe("");
+            });
+
+            it("should support bottom-center placement", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "bottom-center"},
+                    shape: {relwidth: false, width: 100}
+                }, element)).toBe(layout);
+                expect(element.style.right).toBe("");
+                expect(element.style.top).toBe("");
+            });
+
+            it("should support bottom-center placement (relwidth)", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "bottom-center"},
+                    shape: {relwidth: true, width: 500000}
+                }, element)).toBe(layout);
+                expect(element.style.right).toBe("");
+                expect(element.style.top).toBe("");
+            });
+
+            it("should support bottom-right placement", () => {
+                expect(layout.updatePosition({
+                    position: {anchor: "bottom-right"}
+                }, element)).toBe(layout);
+                expect(element.style.left).toBe("");
+                expect(element.style.top).toBe("");
+            });
+
+        });
+
+        describe("updateShape(widget, element)", () => {
+
+            let layout, element;
+
+            beforeEach(() => {
+                layout = new ns.FreeLayout({
+                    topMargin: 1,
+                    rightMargin: 2,
+                    bottomMargin: 3,
+                    leftMargin: 4
+                });
+                spyOn(layout, "getRowOffset").and.returnValue("127px");
+                element = document.createElement("div");
+            });
+
+            it("should support absolute sizes", () => {
+                expect(layout.updateShape({
+                    shape: {
+                        relwidth: false,
+                        relheight: false,
+                        width: 50,
+                        height: 10
+                    }
+                }, element)).toBe(layout);
+                expect(element.style.width).toBe("50px");
+                expect(element.style.height).toBe("10px");
+            });
+
+            it("should support relwidth shapes", () => {
+                expect(layout.updateShape({
+                    shape: {
+                        relwidth: true,
+                        relheight: false,
+                        width: 500000,
+                        height: 10
+                    }
+                }, element)).toBe(layout);
+                expect(element.style.width).toBe("calc(50% - 3px)");
+                expect(element.style.height).toBe("10px");
+            });
+
+            it("should support relheight shapes", () => {
+                expect(layout.updateShape({
+                    shape: {
+                        relwidth: false,
+                        relheight: true,
+                        width: 50,
+                        height: 100000
+                    }
+                }, element)).toBe(layout);
+                expect(element.style.width).toBe("50px");
+                expect(element.style.height).toBe("calc(10% - 0.4px)");
+            });
+
+            it("should support minimized shapes", () => {
+                expect(layout.updateShape({
+                    minimized: true,
+                    shape: {
+                        relwidth: false,
+                        relheight: true,
+                        width: 50,
+                        height: 100000
+                    }
+                }, element)).toBe(layout);
+                expect(element.style.width).toBe("50px");
+                expect(element.style.height).toBe("");
             });
 
         });

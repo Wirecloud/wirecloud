@@ -75,8 +75,8 @@
                 expect(menu.append(item)).toBe(menu);
 
                 expect(menu.activeItem).toBe(null);
-                expect(menu.firstEnabledItem).toBe(item.menuItem);
-                expect(menu.lastEnabledItem).toBe(item.menuItem);
+                expect(menu.firstEnabledItem).toBe(item.menuitem);
+                expect(menu.lastEnabledItem).toBe(item.menuitem);
             });
 
             it("should work on visible menus", () => {
@@ -146,7 +146,7 @@
                 expect(listener).toHaveBeenCalledWith(menu, item2);
                 expect(menu.activeItem).toBe(item2);
                 expect(menu.firstEnabledItem).toBe(item2);
-                expect(menu.lastEnabledItem).toBe(item4.menuItem);
+                expect(menu.lastEnabledItem).toBe(item4.menuitem);
             });
 
         });
@@ -838,7 +838,7 @@
                     .append(item).show(ref_element)
                     .moveFocusDown();
 
-                item.menuItem.dispatchEvent("click");
+                item.menuitem.dispatchEvent("click");
             });
 
         });

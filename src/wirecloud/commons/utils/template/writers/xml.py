@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -122,11 +122,24 @@ def write_mashup_tree(doc, resources, options):
             if iwidget.get('readonly', False):
                 resource.set('readonly', 'true')
 
-            etree.SubElement(resource, 'position', x=str(iwidget['position']['x']), y=str(iwidget['position']['y']), z=str(iwidget['position']['z']))
+            layout = iwidget['rendering']['layout']
+
+            position = etree.SubElement(
+                resource,
+                'position',
+                anchor=str(iwidget['position']['anchor']),
+                x=str(iwidget['position']['x']),
+                y=str(iwidget['position']['y']),
+                z=str(iwidget['position']['z'])
+            )
+            addAttributes(iwidget['position'], position, ('relx',), default='true', type='boolean')
+            addAttributes(iwidget['position'], position, ('rely',), default=('true' if layout != 1 else 'false'), type='boolean')
+
             rendering = etree.SubElement(resource, 'rendering')
             addAttributes(iwidget['rendering'], rendering, ('height', 'width', 'layout'), required=True)
             addAttributes(iwidget['rendering'], rendering, ('minimized', 'fulldragboard'), default='false', type='boolean')
-            addAttributes(iwidget['rendering'], rendering, ('titlevisible',), default='true', type='boolean')
+            addAttributes(iwidget['rendering'], rendering, ('relwidth', 'titlevisible'), default='true', type='boolean')
+            addAttributes(iwidget['rendering'], rendering, ('relheight',), default=('true' if layout != 1 else 'false'), type='boolean')
 
             addPreferenceValues(resource, iwidget['preferences'])
 

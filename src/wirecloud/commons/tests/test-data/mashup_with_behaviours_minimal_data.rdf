@@ -519,7 +519,7 @@
                 <wire:renderingHeight>10</wire:renderingHeight>
                 <wire:renderingWidth>10</wire:renderingWidth>
                 <wire-m:fullDragboard>False</wire-m:fullDragboard>
-                <wire-m:layout>0</wire-m:layout>
+                <wire-m:layout>1</wire-m:layout>
               </wire-m:iWidgetRendering>
             </wire-m:hasiWidgetRendering>
           </wire-m:iWidget>

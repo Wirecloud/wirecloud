@@ -137,7 +137,7 @@
 
         });
 
-        describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist", () => {
+        describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist", () => {
 
             var layout;
 
@@ -182,7 +182,7 @@
                     x: 0, y: 0, width: 1, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 1, 4, 2, 4, false, false);
+                layout._notifyResizeEvent(widget, 1, 4, 2, 4, false, false, false);
 
                 expect(layout.matrix[1][0]).toBe(widget);
             });
@@ -198,7 +198,7 @@
                     x: 1, y: 1, width: 3, height: 1
                 });
 
-                layout._notifyResizeEvent(widget1, 1, 4, 2, 4, false, false);
+                layout._notifyResizeEvent(widget1, 1, 4, 2, 4, false, false, false);
 
                 expect(layout.matrix[1][0]).toBe(widget1);
                 expect(layout.matrix[1][3]).toBe(widget1);
@@ -211,7 +211,7 @@
                     x: 0, y: 0, width: 2, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 2, 4, 1, 4, false, false);
+                layout._notifyResizeEvent(widget, 2, 4, 1, 4, false, false, false);
 
                 expect(layout.matrix[1][0]).toBe(undefined);
             });
@@ -224,7 +224,7 @@
                     x: 1, y: 4, width: 2, height: 4
                 });
 
-                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, false, false);
+                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, false, false, false);
 
                 expect(layout.matrix[0][0]).toBe(widget1);
                 expect(layout.matrix[1][0]).toBe(widget2);
@@ -235,7 +235,7 @@
                     x: 0, y: 0, width: 1, height: 1
                 });
 
-                layout._notifyResizeEvent(widget, 1, 1, 1, 4, false, false);
+                layout._notifyResizeEvent(widget, 1, 1, 1, 4, false, false, false);
                 expect(layout.matrix[0][3]).toBe(widget);
             });
 
@@ -250,7 +250,7 @@
                     x: 0, y: 2, width: 4, height: 1
                 });
 
-                layout._notifyResizeEvent(widget1, 1, 1, 1, 4, false, false);
+                layout._notifyResizeEvent(widget1, 1, 1, 1, 4, false, false, false);
                 expect(layout.matrix[0][3]).toBe(widget1);
                 expect(layout.matrix[2][0]).toBe(widget2);
                 expect(layout.matrix[0][4]).toBe(widget3);
@@ -261,7 +261,7 @@
                     x: 0, y: 0, width: 1, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 1, 4, 1, 1, false, false);
+                layout._notifyResizeEvent(widget, 1, 4, 1, 1, false, false, false);
                 expect(layout.matrix[0][0]).toBe(widget);
             });
 
@@ -270,7 +270,7 @@
                     x: 3, y: 0, width: 1, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 1, 4, 2, 4, true, false);
+                layout._notifyResizeEvent(widget, 1, 4, 2, 4, true, false, false);
 
                 expect(layout.matrix[2][3]).toBe(widget);
             });
@@ -286,7 +286,7 @@
                     x: 0, y: 1, width: 3, height: 1
                 });
 
-                layout._notifyResizeEvent(widget1, 1, 4, 2, 4, true, false);
+                layout._notifyResizeEvent(widget1, 1, 4, 2, 4, true, false, false);
 
                 expect(layout.matrix[2][0]).toBe(widget1);
                 expect(layout.matrix[2][3]).toBe(widget1);
@@ -299,7 +299,7 @@
                     x: 2, y: 0, width: 2, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 2, 4, 1, 4, true, false);
+                layout._notifyResizeEvent(widget, 2, 4, 1, 4, true, false, false);
                 expect(layout.matrix[3][0]).toBe(widget);
                 expect(layout.matrix[2][0]).toBe(undefined);
                 expect(layout.matrix[2][3]).toBe(undefined);
@@ -313,7 +313,7 @@
                     x: 1, y: 4, width: 2, height: 4
                 });
 
-                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, true, false);
+                layout._notifyResizeEvent(widget1, 2, 4, 1, 4, true, false, false);
 
                 expect(layout.matrix[3][0]).toBe(widget1);
                 expect(layout.matrix[2][0]).toBe(widget2);
@@ -324,7 +324,7 @@
                     x: 3, y: 0, width: 1, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 1, 4, 1, 1, true, false);
+                layout._notifyResizeEvent(widget, 1, 4, 1, 1, true, false, false);
                 expect(layout.matrix[3][0]).toBe(widget);
                 expect(layout.matrix[3][1]).toBe(undefined);
             });
@@ -340,7 +340,7 @@
                     x: 0, y: 4, width: 4, height: 1
                 });
 
-                layout._notifyResizeEvent(widget1, 1, 4, 1, 1, true, false);
+                layout._notifyResizeEvent(widget1, 1, 4, 1, 1, true, false, false);
 
                 expect(layout.matrix[3][0]).toBe(widget1);
                 expect(layout.matrix[3][1]).toBe(undefined);
@@ -353,7 +353,7 @@
                     x: 3, y: 0, width: 1, height: 1
                 });
 
-                layout._notifyResizeEvent(widget, 1, 1, 1, 4, true, false);
+                layout._notifyResizeEvent(widget, 1, 1, 1, 4, true, false, false);
                 expect(layout.matrix[3][3]).toBe(widget);
             });
 
@@ -362,7 +362,9 @@
                     x: 0, y: 0, width: 2, height: 4
                 });
 
-                layout._notifyResizeEvent(widget, 2, 4, 1, 4, true, true);
+                layout._notifyResizeEvent(widget, 2, 4, 1, 4, true, false, true);
+
+                expect(layout.dragboard.update).toHaveBeenCalledWith();
             });
 
         });
@@ -414,7 +416,7 @@
                     x: 0, y: 0, width: 2, height: 4
                 });
 
-                expect(layout._removeFromMatrix("base", widget)).toEqual(new Set());
+                expect(layout._removeFromMatrix(layout._buffers.base, widget)).toEqual(new Set());
             });
 
             it("should work on layouts with unaffected widgets (basic case)", () => {
@@ -425,7 +427,7 @@
                     x: 3, y: 0, width: 1, height: 4
                 });
 
-                expect(layout._removeFromMatrix("base", widget1)).toEqual(new Set());
+                expect(layout._removeFromMatrix(layout._buffers.base, widget1)).toEqual(new Set());
                 expect(layout.matrix[3][0]).toBe(widget2);
             });
 
@@ -440,7 +442,7 @@
                     x: 0, y: 4, width: 4, height: 4
                 });
 
-                expect(layout._removeFromMatrix("base", widget1)).toEqual(new Set());
+                expect(layout._removeFromMatrix(layout._buffers.base, widget1)).toEqual(new Set());
                 expect(layout.matrix[0][0]).toBe(undefined);
                 expect(layout.matrix[0][3]).toBe(undefined);
                 expect(layout.matrix[0][4]).toBe(widget3);
@@ -456,7 +458,7 @@
                     x: 0, y: 4, width: 1, height: 4
                 });
 
-                expect(layout._removeFromMatrix("base", widget1)).toEqual(new Set([widget2]));
+                expect(layout._removeFromMatrix(layout._buffers.base, widget1)).toEqual(new Set([widget2]));
                 expect(layout.matrix[0][0]).toBe(widget2);
             });
 
@@ -479,7 +481,7 @@
                     x: 3, y: 3, width: 1, height: 2
                 });
 
-                expect(layout._removeFromMatrix("base", widget1)).toEqual(new Set([widget2, widget3, widget4]));
+                expect(layout._removeFromMatrix(layout._buffers.base, widget1)).toEqual(new Set([widget2, widget3, widget4]));
                 expect(layout.matrix[0][0]).toBe(widget2);
                 expect(layout.matrix[2][0]).toBe(widget3);
                 expect(layout.matrix[3][1]).toBe(widget4);
@@ -500,7 +502,7 @@
                     x: 0, y: 5, width: 4, height: 4
                 });
 
-                expect(layout._removeFromMatrix("base", widget1)).toEqual(new Set([widget3, widget4]));
+                expect(layout._removeFromMatrix(layout._buffers.base, widget1)).toEqual(new Set([widget3, widget4]));
                 expect(layout.matrix[0][0]).toBe(widget3);
                 expect(layout.matrix[0][1]).toBe(undefined);
                 expect(layout.matrix[0][3]).toBe(widget4);
