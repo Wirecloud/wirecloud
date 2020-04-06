@@ -60,7 +60,7 @@
                     "rendering": {
                         "width": "10",
                         "height": "10",
-                        "layout": "0",
+                        "layout": 1,
                         "fulldragboard": false,
                         "minimized": false,
                         "titlevisible": true
@@ -85,6 +85,8 @@
                         "z": "2"
                     },
                     "rendering": {
+                        "relwidth": true,
+                        "relheight": true,
                         "width": "10",
                         "height": "10",
                         "layout": "0",

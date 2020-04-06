@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -23,7 +23,7 @@ import rdflib
 from django.utils.translation import ugettext as _
 from lxml import etree
 
-from wirecloud.commons.utils.mimeparser import parse_mime_type
+from wirecloud.commons.utils.mimeparser import InvalidMimeType, parse_mime_type
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 from wirecloud.platform.wiring.utils import parse_wiring_old_version, get_wiring_skeleton
 
@@ -44,7 +44,7 @@ DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
 def possible_int(value):
     try:
         return int(value)
-    except:
+    except ValueError:
         return value
 
 
@@ -62,7 +62,7 @@ class RDFTemplateParser(object):
             try:
                 self._graph = rdflib.Graph()
                 self._graph.parse(data=template, format='n3')
-            except:
+            except Exception:
                 if isinstance(template, bytes):
                     doc = etree.fromstring(template)
                 elif isinstance(template, str):
@@ -161,12 +161,8 @@ class RDFTemplateParser(object):
 
         fields = self._graph.objects(subject, namespace[element])
         for field_element in fields:
-            if not id_:
-                result = str(field_element)
-                break
-            else:
-                result = field_element
-                break
+            result = str(field_element) if not id_ else field_element
+            break
         else:
             if required:
                 msg = _('missing required field: %(field)s')
@@ -416,14 +412,14 @@ class RDFTemplateParser(object):
                 component_view_description['position'] = position
 
     def _parse_position(self, node, relation_name='hasPosition', default=None):
-            position_node = self._get_field(WIRE_M, relation_name, node, id_=True, default=None, required=False)
-            if position_node is not None:
-                return {
-                    'x': int(self._get_field(WIRE_M, 'x', position_node)),
-                    'y': int(self._get_field(WIRE_M, 'y', position_node))
-                }
+        position_node = self._get_field(WIRE_M, relation_name, node, id_=True, default=None, required=False)
+        if position_node is not None:
+            return {
+                'x': int(self._get_field(WIRE_M, 'x', position_node)),
+                'y': int(self._get_field(WIRE_M, 'y', position_node))
+            }
 
-            return default
+        return default
 
     def _join_endpoint_name(self, endpointView):
         endpoint = {
@@ -610,7 +606,7 @@ class RDFTemplateParser(object):
                 if contents_format.strip() != '':
                     try:
                         contenttype, parameters = parse_mime_type(contents_format)
-                    except:
+                    except InvalidMimeType:
                         raise TemplateParseException('Invalid code content type: %s' % contents_format)
 
                     contents_info['contenttype'] = contenttype
@@ -705,6 +701,7 @@ class RDFTemplateParser(object):
                 position = self._get_field(WIRE_M, 'hasPosition', widget, id_=True, required=False)
                 rendering = self._get_field(WIRE_M, 'hasiWidgetRendering', widget, id_=True, required=False)
                 vendor = self._get_field(USDL, 'hasProvider', widget, id_=True, required=True)
+                layout = int(self._get_field(WIRE_M, 'layout', rendering, default='0'))
 
                 widget_info = {
                     'id': self._get_field(WIRE_M, 'iWidgetId', widget),
@@ -716,14 +713,19 @@ class RDFTemplateParser(object):
                     'properties': {},
                     'preferences': {},
                     'position': {
+                        'anchor': self._get_field(WIRE_M, 'anchor', position, required=False, default="top-left"),
+                        'relx': self._get_field(WIRE_M, 'relx', position, required=False, default='true').lower() == 'true',
+                        'rely': self._get_field(WIRE_M, 'rely', position, required=False, default=('true' if layout != 1 else 'false')).lower() == 'true',
                         'x': self._get_field(WIRE_M, 'x', position),
                         'y': self._get_field(WIRE_M, 'y', position),
                         'z': self._get_field(WIRE_M, 'z', position),
                     },
                     'rendering': {
+                        'relwidth': self._get_field(WIRE_M, 'relwidth', rendering, required=False, default='True').lower() == 'true',
+                        'relheight': self._get_field(WIRE_M, 'relheight', rendering, required=False, default=('true' if layout != 1 else 'false')).lower() == 'true',
                         'width': self._get_field(WIRE, 'renderingWidth', rendering),
                         'height': self._get_field(WIRE, 'renderingHeight', rendering),
-                        'layout': self._get_field(WIRE_M, 'layout', rendering),
+                        'layout': layout,
                         'fulldragboard': self._get_field(WIRE_M, 'fullDragboard', rendering, required=False).lower() == 'true',
                         'minimized': self._get_field(WIRE_M, 'minimized', rendering, required=False).lower() == 'true',
                         'titlevisible': self._get_field(WIRE_M, 'titlevisible', rendering, default="true", required=False).lower() == 'true',

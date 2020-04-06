@@ -54,14 +54,19 @@
                         "text": {"value": "other value", "readonly": true, "hidden": true}
                     },
                     "position": {
+                        "anchor": "top-left",
+                        "relx": true,
+                        "rely": true,
                         "x": "0",
                         "y": "1",
                         "z": "2"
                     },
                     "rendering": {
+                        "relwidth": true,
+                        "relheight": true,
                         "width": "10",
                         "height": "10",
-                        "layout": "0",
+                        "layout": 0,
                         "fulldragboard": false,
                         "minimized": false,
                         "titlevisible": true
@@ -81,14 +86,19 @@
                         "text": {"value": "other value", "readonly": true, "hidden": true}
                     },
                     "position": {
+                        "anchor": "top-left",
+                        "relx": true,
+                        "rely": true,
                         "x": "10",
                         "y": "1",
                         "z": "2"
                     },
                     "rendering": {
+                        "relwidth": true,
+                        "relheight": true,
                         "width": "10",
                         "height": "10",
-                        "layout": "0",
+                        "layout": 0,
                         "fulldragboard": true,
                         "minimized": true,
                         "titlevisible": true

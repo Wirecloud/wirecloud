@@ -556,14 +556,19 @@ class TemplateUtilsTestCase(TestCase):
                                 'boolean': {'value': None, 'readonly': True, 'hidden': False}
                             },
                             'position': {
+                                'anchor': 'top-left',
+                                'relx': True,
+                                'rely': True,
                                 'x': '0',
                                 'y': '1',
                                 'z': '2',
                             },
                             'rendering': {
+                                'relwidth': True,
+                                'relheight': True,
                                 'width': '10',
                                 'height': '10',
-                                'layout': '0',
+                                'layout': 0,
                                 'fulldragboard': False,
                                 'minimized': False,
                                 'titlevisible': True
@@ -584,14 +589,19 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
+                                'anchor': 'bottom-left',
+                                'relx': False,
+                                'rely': False,
                                 'x': '10',
                                 'y': '1',
                                 'z': '2',
                             },
                             'rendering': {
+                                'relwidth': False,
+                                'relheight': False,
                                 'width': '10',
                                 'height': '10',
-                                'layout': '0',
+                                'layout': 0,
                                 'fulldragboard': True,
                                 'minimized': True,
                                 'titlevisible': True
@@ -762,14 +772,19 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
+                                'anchor': 'top-left',
+                                'relx': True,
+                                'rely': True,
                                 'x': '0',
                                 'y': '1',
                                 'z': '2',
                             },
                             'rendering': {
+                                'relwidth': True,
+                                'relheight': True,
                                 'width': '10',
                                 'height': '10',
-                                'layout': '0',
+                                'layout': 0,
                                 'fulldragboard': False,
                                 'minimized': False,
                                 'titlevisible': False
@@ -789,14 +804,19 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
+                                'anchor': 'top-left',
+                                'relx': True,
+                                'rely': True,
                                 'x': '10',
                                 'y': '1',
                                 'z': '2',
                             },
                             'rendering': {
+                                'relwidth': True,
+                                'relheight': True,
                                 'width': '10',
                                 'height': '10',
-                                'layout': '0',
+                                'layout': 0,
                                 'fulldragboard': True,
                                 'minimized': True,
                                 'titlevisible': False
@@ -998,14 +1018,19 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': '%(param.param2)', 'readonly': True, 'hidden': True}
                             },
                             'position': {
+                                'anchor': 'top-left',
+                                'relx': True,
+                                'rely': True,
                                 'x': '0',
                                 'y': '1',
                                 'z': '2',
                             },
                             'rendering': {
+                                'relwidth': True,
+                                'relheight': True,
                                 'width': '10',
                                 'height': '10',
-                                'layout': '0',
+                                'layout': 0,
                                 'fulldragboard': False,
                                 'minimized': False,
                                 'titlevisible': False
@@ -1025,14 +1050,19 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
+                                'anchor': 'top-left',
+                                'relx': True,
+                                'rely': True,
                                 'x': '10',
                                 'y': '1',
                                 'z': '2',
                             },
                             'rendering': {
+                                'relwidth': True,
+                                'relheight': True,
                                 'width': '10',
                                 'height': '10',
-                                'layout': '0',
+                                'layout': 0,
                                 'fulldragboard': True,
                                 'minimized': True,
                                 'titlevisible': True
@@ -1401,66 +1431,7 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
-        cls.minimal_property_info = {
-            'type': 'widget',
-            'vendor': 'Wirecloud',
-            'name': 'TemplateTest',
-            'version': '1.0',
-            'title': '',
-            'description': '',
-            'longdescription': '',
-            'authors': [],
-            'contributors': [],
-            'email': '',
-            'image': '',
-            'smartphoneimage': '',
-            'homepage': '',
-            'doc': '',
-            'license': '',
-            'licenseurl': '',
-            'issuetracker': '',
-            'changelog': '',
-            'requirements': [],
-            'preferences': [],
-            'properties': [
-                {
-                    'name': 'prop1',
-                    'type': 'text',
-                    'secure': False,
-                    'label': '',
-                    'description': '',
-                    'default': '',
-                    'multiuser': False,
-                },
-                {
-                    'name': 'prop2',
-                    'type': 'text',
-                    'secure': False,
-                    'label': '',
-                    'description': '',
-                    'default': '',
-                    'multiuser': False,
-                },
-            ],
-            'wiring': {
-                'inputs': [],
-                'outputs': [],
-            },
-            'contents': {
-                'src': 'http://example.com/code.html',
-                'charset': 'utf-8',
-                'contenttype': 'text/html',
-                'cacheable': True,
-                'useplatformstyle': False
-            },
-            'altcontents': [],
-            'default_lang': 'en',
-            'widget_width': '8',
-            'widget_height': '30',
-            'translations': {},
-            'translation_index_usage': {},
-        }
-
+        cls.minimal_property_info = read_json_fixtures("mashup_with_minimal_property_info")
         cls.mashup_with_behaviours_minimal_data = read_json_fixtures("mashup_with_behaviours_minimal_data_result")
 
     def compare_input_and_output_mashup(self, filename, mashup_format):

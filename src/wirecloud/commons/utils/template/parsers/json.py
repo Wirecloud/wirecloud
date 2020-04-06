@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -97,7 +98,7 @@ class JSONTemplateParser(object):
             elif not isinstance(place[field], bool):
                 raise TemplateParseException('A boolean value was expected for the %s field' % field)
 
-    def _check_integer_fields(self, fields, place=None, required=False, default=0):
+    def _check_integer_fields(self, fields, place=None, required=False, default=0, allow_cast=False):
         if place is None:
             place = self._info
 
@@ -108,7 +109,13 @@ class JSONTemplateParser(object):
 
                 place[field] = default
             elif not isinstance(place[field], int):
-                raise TemplateParseException('An integer value was expected for the %s field' % field)
+                if allow_cast:
+                    try:
+                        place[field] = int(place[field])
+                    except ValueError:
+                        raise TemplateParseException('An integer value was expected for the %s field' % field)
+                else:
+                    raise TemplateParseException('An integer value was expected for the %s field' % field)
 
     def _check_contacts_fields(self, fields, place=None, required=False):
         if place is None:
@@ -223,6 +230,18 @@ class JSONTemplateParser(object):
             for tab in self._info['tabs']:
                 self._check_string_fields(('name',), place=tab, required=True)
                 self._check_string_fields(('title',), place=tab, required=False)
+                self._check_array_fields(('resources',), place=tab)
+                for widget in tab['resources']:
+                    rendering = widget.get('rendering', {})
+                    self._check_integer_fields(('layout',), place=rendering, default=0, allow_cast=True)
+                    layout = rendering['layout']
+                    self._check_boolean_fields(('relwidth',), place=rendering, default=True)
+                    self._check_boolean_fields(('relheight',), place=rendering, default=(layout != 1))
+
+                    position = widget.get('position', {})
+                    self._check_string_fields(('anchor',), place=position, default="top-left")
+                    self._check_boolean_fields(('relx',), place=position, default=True)
+                    self._check_boolean_fields(('rely',), place=position, default=(layout != 1))
 
             for preference in self._info['params']:
                 self._check_string_fields(('name', 'type'), place=preference, required=True)
