@@ -168,7 +168,7 @@
                 ));
                 submenu.append(valignmenu).appendSeparator();
 
-                let title = this.widget.position.relx ? utils.gettext("Absolute x") : utils.gettext("Relative x");
+                let title = this.widget.position.relx ? utils.gettext("Fixed x") : utils.gettext("Relative x");
                 item = new se.MenuItem(title, () => {
                     const layout = this.widget.layout;
                     if (this.widget.position.relx) {
@@ -182,7 +182,7 @@
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 submenu.append(item);
 
-                title = this.widget.position.rely ? utils.gettext("Absolute y") : utils.gettext("Relative y");
+                title = this.widget.position.rely ? utils.gettext("Fixed y") : utils.gettext("Relative y");
                 item = new se.MenuItem(title, () => {
                     const layout = this.widget.layout;
                     if (this.widget.position.rely) {
@@ -196,7 +196,7 @@
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 submenu.append(item);
 
-                title = this.widget.shape.relwidth ? utils.gettext("Absolute width") : utils.gettext("Relative width");
+                title = this.widget.shape.relwidth ? utils.gettext("Fixed width") : utils.gettext("Relative width");
                 item = new se.MenuItem(title, () => {
                     const layout = this.widget.layout;
                     if (this.widget.shape.relwidth) {
@@ -209,7 +209,7 @@
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 submenu.append(item);
 
-                title = this.widget.shape.relheight ? utils.gettext("Absolute height") : utils.gettext("Relative height");
+                title = this.widget.shape.relheight ? utils.gettext("Fixed height") : utils.gettext("Relative height");
                 item = new se.MenuItem(title, () => {
                     const layout = this.widget.layout;
                     if (this.widget.shape.relheight) {
