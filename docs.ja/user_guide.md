@@ -1,13 +1,13 @@
 ## サポートしているブラウザ
 
-WireCloud 1.3 は、次のデスクトップ・ブラウザをサポートしています :
+WireCloud 1.4 は、次のデスクトップ・ブラウザをサポートしています :
 
--   Firefox 52+
--   Chrome 57+
--   Safari 10.1+
--   Opera 43+
+-   Firefox 60+
+-   Chrome 64+
+-   Safari 11+
+-   Opera 48+
 
-WireCloud 1.3 は、ワイヤリングエディタが現在タッチスクリーンでは動作しないことを除けば、以前のブラウザのモバイル版
+WireCloud 1.4 は、ワイヤリングエディタが現在タッチスクリーンでは動作しないことを除けば、以前のブラウザのモバイル版
 でも動作します。
 
 > **注意**： WireCloud はこれらのブラウザをサポートしていますが、一部のウィジェットやオペレータはこれらのブラウザの
@@ -135,7 +135,7 @@ https://github.com/search?q=wirecloud-widget&type=Repositories
 -   [CoNWeT_simple-history-module2linear-graph_2.3.2.wgt](attachments/CoNWeT_simple-history-module2linear-graph_2.3.2.wgt)
 -   [CoNWeT_ngsi-source_3.0.7.wgt](attachments/CoNWeT_ngsi-source_3.0.7.wgt)
 -   [CoNWeT_ngsientity2poi_3.0.3.wgt](attachments/CoNWeT_ngsientity2poi_3.0.3.wgt)
--   [CoNWeT_map-viewer_2.5.8.wgt](attachments/CoNWeT_map-viewer_2.5.8.wgt)
+-   [CoNWeT_map-viewer_2.6.2.wgt](attachments/CoNWeT_map-viewer_2.6.2.wgt)
 -   [CoNWeT_linear-graph_3.0.0b3.wgt](attachments/CoNWeT_linear-graph_3.0.0b3.wgt)
 
 インストールしたら、この例で使用されているすべてのウィジェット/オペレータを _My Resources_ ビューで見ることができます :

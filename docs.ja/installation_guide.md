@@ -935,11 +935,13 @@ IdM サーバ (例えば : `https://account.lab.fiware.org`) を使用して新�
 
 WireCloud インスタンスの場合 : 
 
--  `social-auth-app-django` モジュールをインストールします。例えば、`pip install "social-auth-app-django`
--  `settings.py` を編集します : 
-   -  `INSTALLED_APPS` から `wirecloud.oauth2provider` を削除します
-   -  `INSTALLED_APPS` に `social_django` を追加します
-   -  `AUTHENTICATION_BACKENDS` に `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` を追加します。例 : 
+<zbr>1.   `social-auth-app-django` モジュールをインストールします。例えば、`pip install "social-auth-app-django`
+
+<zbr>2.   `settings.py` を編集します : 
+
+ -  `INSTALLED_APPS` から `wirecloud.oauth2provider` を削除します
+ -  `INSTALLED_APPS` に `social_django` を追加します
+ -  `AUTHENTICATION_BACKENDS` に `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` を追加します。例 : 
 
 ```python
 AUTHENTICATION_BACKENDS = (
@@ -948,7 +950,7 @@ AUTHENTICATION_BACKENDS = (
 ```
 
 > **注**: Django はいくつかの認証バックエンドをサポートしています (
-> [こちら](https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#specifying-authentication-backends)
+> [こちら](https://docs.djangoproject.com/en/2.2/topics/auth/customizing/#specifying-authentication-backends)
 > を参照してください)。たとえば、このガイドには記載されていない追加の設定が必要になりますが、
 > `AUTHENTICATION_BACKENDS` の中の `django.contrib.auth.backends.ModelBackend` もリストに追加することで、
 > ローカル db を使用してユーザ認証の処理を続けることができます。
@@ -963,7 +965,7 @@ SOCIAL_AUTH_FIWARE_KEY = "43"
 SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
 ```
 
--  `urls.py` を編集します : 
+<zbr>3.   `urls.py` を編集します : 
    -  ログイン・エンドポイントを置き換えます :
        -  ファイルの先頭に次のインポート行を追加します : `from wirecloud.fiware import views as wc_fiware`
        -  Remove:
@@ -972,13 +974,34 @@ SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc822
           `url(r'^login/?$', wc_fiware.login, name="login"),`
    - パターンリストの最後に、`social-auth-app-django` url エンドポイントを追加します : `url('', include('social_django.urls', namespace='social')),`
 
--  [オプション] : `THEME_ACTIVE` 設定を `wirecloud.fiwarelabtheme` に変更します。このテーマは、
+<zbr>4.   [オプション] : `THEME_ACTIVE` 設定を `wirecloud.fiwarelabtheme` に変更します。このテーマは、
    FIWARE Lab の Mashup ポータルで使用されるテーマです
--  [オプション] : `[FIWARE_PORTALS](#fiware_portals)` 設定を行います。この設定は、ユーザが WireCloud
+
+<zbr>5.   [オプション] : `[FIWARE_PORTALS](#fiware_portals)` 設定を行います。この設定は、ユーザが WireCloud
    からサインアウトすると同時に他のポータルからサインアウトし、シングルサインアウトの経験を提供するために
    使用されます。この設定は、ナビゲーションバーの作成にも使用されます
--  `python manage.py migrate; python manage.py collectstatic --noinput` を実行します
 
+<zbr>6.   [オプション]: ソーシャル認証パイプラインに `wirecloud.fiware.social_auth_backend.sync_role_groups` を追加して、
+    ロール・グループ (role-group) の同期を有効にします。このロール・グループの同期を有効にすることにより、KeyRock
+    アプリケーションで構成された各ロールは WireCloud グループに関連付けられ、ユーザは KeyRock の指示に従ってそれらの
+    グループに関連付けられます。これは、ロール・グループの同期が有効になっているデフォルトのソーシャル認証パイプラインです :
+
+```python
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'wirecloud.fiware.social_auth_backend.sync_role_groups',
+)
+```
+
+<zbr>7.  `python manage.py migrate; python manage.py collectstatic --noinput` を実行します
 
 ### リアルタイム同期サポートの有効化
 
