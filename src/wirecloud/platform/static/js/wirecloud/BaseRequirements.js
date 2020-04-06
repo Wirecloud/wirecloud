@@ -84,6 +84,10 @@
             throw new Error('Missing WeakMap support');
         }
 
+        if (!('EventSource' in window)) {
+            throw new Error('Missing EventSource support');
+        }
+
         try {
             eval("var bar = (x) => x+1");
         } catch (e) {
