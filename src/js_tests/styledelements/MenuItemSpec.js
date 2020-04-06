@@ -35,7 +35,7 @@
             menuItem = null;
         });
 
-        describe("MenuItem(title, handler, context)", () => {
+        describe("MenuItem(title[, options, context])", () => {
 
             it("Should be created when no parameters are received", () => {
                 menuItem = new StyledElements.MenuItem();
@@ -54,6 +54,56 @@
 
                 expect(menuItem).toBeTruthy();
                 expect(menuItem.wrapperElement.querySelector(".se-popup-menu-item-title").innerHTML).toBe("<textarea class=\"se-text-area\"></textarea>");
+            });
+
+            it("Should allow to use the handler option", () => {
+                let listener = jasmine.createSpy('listener');
+                menuItem = new StyledElements.MenuItem("customTitle", {handler: listener});
+                expect(menuItem).toBeTruthy();
+
+                expect(menuItem.run).toBe(listener);
+            });
+
+            it("Should allow to use the handler parameter (backwards compability)", () => {
+                let listener = jasmine.createSpy('listener');
+                menuItem = new StyledElements.MenuItem("customTitle", listener);
+                expect(menuItem).toBeTruthy();
+
+                expect(menuItem.run).toBe(listener);
+            });
+
+            it("Should allow to use the context option", () => {
+                const context = {};
+                menuItem = new StyledElements.MenuItem("customTitle", {context: context});
+                expect(menuItem).toBeTruthy();
+
+                expect(menuItem.context).toBe(context);
+            });
+
+            it("Should allow to use the context parameter (backwards compability)", () => {
+                const context = {};
+                let listener = jasmine.createSpy('listener');
+                menuItem = new StyledElements.MenuItem("customTitle", listener, context);
+                expect(menuItem).toBeTruthy();
+
+                expect(menuItem.run).toBe(listener);
+                expect(menuItem.context).toBe(context);
+            });
+
+            it("Should allow to use the enabled option", () => {
+                menuItem = new StyledElements.MenuItem("customTitle", {enabled: false});
+                expect(menuItem).toBeTruthy();
+
+                expect(menuItem.enabled).toBe(false);
+            });
+
+            it("Should allow to use the iconClass option", () => {
+                let iconClass = "arrow";
+                menuItem = new StyledElements.MenuItem("customTitle", {iconClass: iconClass});
+                expect(menuItem).toBeTruthy();
+
+                let iconelement = menuItem.wrapperElement.querySelector(".se-icon");
+                expect(iconelement.className).toBe("se-icon " + iconClass);
             });
 
         });

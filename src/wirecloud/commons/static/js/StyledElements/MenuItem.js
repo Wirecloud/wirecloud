@@ -49,12 +49,14 @@
      * used for the "handler" option.
      *
      * Available options:
+     * - `context` (`Any`) Context to be provided to the handler function.
+     * - `enabled` (`Boolean`) Initial enablement status (default: `true`)
      * - `handler` (`Function`) Callback to be called when this Menu Item is
      * executed
-     * - `context` (`Any`) Context to be provided to the handler function.
+     * - `iconClass` (`String`) Initial icon class.
      *
      * @param {Object} [context] Object to be passed as the second parameter
-     * of the handler callback
+     * of the handler callback. Not used when passing a options object as parameter.
      */
     se.MenuItem = function MenuItem(title, handler, context) {
 
