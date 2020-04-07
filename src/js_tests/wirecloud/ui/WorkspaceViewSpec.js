@@ -55,7 +55,10 @@
             operators: [],
             preferences: {},
             createTab: jasmine.createSpy("createTab"),
-            isAllowed: jasmine.createSpy("isAllowed").and.returnValue(false)
+            isAllowed: jasmine.createSpy("isAllowed").and.returnValue(false),
+            contextManager: {
+                modify: jasmine.createSpy("modify")
+            }
         }, options);
 
         workspace.addEventListener = jasmine.createSpy("addEventListener");
@@ -919,6 +922,18 @@
                 expect(view.editing).toBe(false);
             });
 
+            it("should enable edit mode when clicking on the edit button", () => {
+                let workspace = create_workspace();
+                workspace.isAllowed.and.returnValue(true);
+                view.loadWorkspace(workspace);
+
+                // Enable edit mode
+                view.editButton.click();
+
+                expect(view.editing).toBe(true);
+                expect(view.model.contextManager.modify).toHaveBeenCalledWith({editing: true});
+            });
+
             it("should disable edit mode on unload events", () => {
                 let workspace = create_workspace();
                 workspace.isAllowed.and.returnValue(true);
@@ -944,11 +959,13 @@
 
                 view.walletButton.active = true;
                 view.walletButton.click();
+                view.model.contextManager.modify.calls.reset();
 
                 // Close edit mode
                 view.editButton.click();
 
                 expect(view.layout.slideOut).toHaveBeenCalledWith();
+                expect(view.model.contextManager.modify).toHaveBeenCalledWith({editing: false});
             });
 
         });
