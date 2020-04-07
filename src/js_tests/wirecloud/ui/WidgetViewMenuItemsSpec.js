@@ -344,7 +344,7 @@
                 };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
-                let element = submenu._items.find((item) => {return item.title === "Absolute x";});
+                let element = submenu._items.find((item) => {return item.title === "Fixed x";});
 
                 element.run();
             });
@@ -365,7 +365,7 @@
                 };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
-                let element = submenu._items.find((item) => {return item.title === "Absolute x";});
+                let element = submenu._items.find((item) => {return item.title === "Fixed x";});
 
                 element.run();
             });
@@ -407,7 +407,7 @@
                 };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
-                let element = submenu._items.find((item) => {return item.title === "Absolute y";});
+                let element = submenu._items.find((item) => {return item.title === "Fixed y";});
 
                 element.run();
             });
@@ -428,7 +428,7 @@
                 };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
-                let element = submenu._items.find((item) => {return item.title === "Absolute y";});
+                let element = submenu._items.find((item) => {return item.title === "Fixed y";});
 
                 element.run();
             });
@@ -469,7 +469,7 @@
                 };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
-                let element = submenu._items.find((item) => {return item.title === "Absolute width";});
+                let element = submenu._items.find((item) => {return item.title === "Fixed width";});
 
                 element.run();
             });
@@ -510,7 +510,7 @@
                 };
                 expect(items).toEqual(jasmine.any(Array));
                 let submenu = items.find((item) => {return item.title === "Placement";});
-                let element = submenu._items.find((item) => {return item.title === "Absolute height";});
+                let element = submenu._items.find((item) => {return item.title === "Fixed height";});
 
                 element.run();
             });
