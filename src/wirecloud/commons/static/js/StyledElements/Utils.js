@@ -815,6 +815,8 @@ if (window.StyledElements == null) {
      * property assignments of previous sources.
      *
      * @memberof StyledElements.Utils
+     * @deprecated since version 0.11.0
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign | Object.assign} as replacement
      * @since 0.5
      *
      * @param {Object} object The destination object.
@@ -846,22 +848,7 @@ if (window.StyledElements == null) {
      * defaults;
      * => {depth: 0, state: "primary", events: ["mouseover"]}
      */
-    Utils.merge = function merge(object) {
-
-        if (object == null || typeof object !== "object") {
-            throw new TypeError("object argument must be an object");
-        }
-
-        Array.prototype.slice.call(arguments, 1).forEach(function (source) {
-            if (source != null) {
-                Object.keys(source).forEach(function (key) {
-                    object[key] = source[key];
-                });
-            }
-        });
-
-        return object;
-    };
+    Utils.merge = Object.assign;
 
     /**
      * Updates existing properties using the values obtained from a list of
