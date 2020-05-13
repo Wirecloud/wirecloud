@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,6 +29,12 @@
     describe("SidebarLayout", () => {
 
         describe("new SidebarLayout(dragboard[, options])", () => {
+
+            it("is a class constructor", () => {
+                expect(() => {
+                    ns.SidebarLayout({});  // eslint-disable-line new-cap
+                }).toThrowError(TypeError);
+            });
 
             it("should work without providing options", () => {
                 var dragboard = {};

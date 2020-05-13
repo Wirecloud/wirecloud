@@ -263,11 +263,11 @@
                 items.push(item);
             }
 
-            if (this.widget.layout !== this.widget.tab.dragboard.leftLayout) {
-                item = new se.MenuItem(utils.gettext("Move to the left sidebar"), () => {
-                    this.widget.moveToLayout(this.widget.tab.dragboard.leftLayout);
+            if (this.widget.layout !== this.widget.tab.dragboard.topLayout) {
+                item = new se.MenuItem(utils.gettext("Move to the top sidebar"), () => {
+                    this.widget.moveToLayout(this.widget.tab.dragboard.topLayout);
                 });
-                item.addIconClass("fas fa-caret-square-left")
+                item.addIconClass("fas fa-caret-square-up")
                     .setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 items.push(item);
             }
@@ -277,6 +277,24 @@
                     this.widget.moveToLayout(this.widget.tab.dragboard.rightLayout);
                 });
                 item.addIconClass("fas fa-caret-square-right")
+                    .setDisabled(!this.widget.model.isAllowed('move', 'editor'));
+                items.push(item);
+            }
+
+            if (this.widget.layout !== this.widget.tab.dragboard.bottomLayout) {
+                item = new se.MenuItem(utils.gettext("Move to the bottom sidebar"), () => {
+                    this.widget.moveToLayout(this.widget.tab.dragboard.bottomLayout);
+                });
+                item.addIconClass("fas fa-caret-square-down")
+                    .setDisabled(!this.widget.model.isAllowed('move', 'editor'));
+                items.push(item);
+            }
+
+            if (this.widget.layout !== this.widget.tab.dragboard.leftLayout) {
+                item = new se.MenuItem(utils.gettext("Move to the left sidebar"), () => {
+                    this.widget.moveToLayout(this.widget.tab.dragboard.leftLayout);
+                });
+                item.addIconClass("fas fa-caret-square-left")
                     .setDisabled(!this.widget.model.isAllowed('move', 'editor'));
                 items.push(item);
             }

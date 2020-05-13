@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,358 +27,353 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
-
-    var WorkspaceTabViewDragboard = function WorkspaceTabViewDragboard(tab) {
-
-        Object.defineProperties(this, {
-            tab: {
-                value: tab
-            },
-            widgets: {
-                value: []
-            }
-        });
-
-        this.scrollbarSpace = 17; // TODO make this configurable?
-        // TODO or initialized with the scroll bar's real with?
-        this.dragboardWidth = 800;
-        this.dragboardHeight = 600;
-        this.widgetToMove = null;
-        this.painted = false;
-        this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
-        this.baseLayout = this._buildLayoutFromPreferences();
-        this.freeLayout = new Wirecloud.ui.FreeLayout(this);
-        this.leftLayout = new Wirecloud.ui.SidebarLayout(this);
-        this.rightLayout = new Wirecloud.ui.SidebarLayout(this, {position: "right"});
-        Object.defineProperties(this, {
-            layouts: {
-                get: () => {
-                    return [
-                        this.baseLayout,
-                        this.freeLayout,
-                        this.leftLayout,
-                        this.rightLayout,
-                    ];
-                }
-            }
-        });
-        if (this.tab.workspace.restricted) {
-            this.tab.wrapperElement.classList.add("fixed");
-        }
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    /**
-     * Gets the width of the usable dragboard area.
-     *
-     * @returns The width of the usable dragboard area
-     */
-    WorkspaceTabViewDragboard.prototype.getWidth = function getWidth() {
-        return this.dragboardWidth;
-    };
-
-    /**
-     * Gets the height of the usable dragboard area.
-     *
-     * @returns The height of the usable dragboard area
-     */
-    WorkspaceTabViewDragboard.prototype.getHeight = function getHeight() {
-        return this.dragboardHeight;
-    };
-
-    WorkspaceTabViewDragboard.prototype.lowerToBottom = function lowerToBottom(widget) {
-
-        if (widget.position.z === 0) {
-            return this;
-        }
-
-        this.widgets.splice(widget.position.z, 1);
-        this.widgets.unshift(widget);
-        this.widgets.forEach(function (value, index) {
-            value.setPosition({
-                z: index
-            });
-        });
-
-        this.update();
-
-        return this;
-    };
-
-    WorkspaceTabViewDragboard.prototype.lower = function lower(widget) {
-        var z = widget.position.z;
-
-        if (z === 0) {
-            return this;
-        }
-
-        var _widget = this.widgets[z - 1];
-
-        this.widgets[z - 1] = widget;
-        this.widgets[z] = _widget;
-
-        widget.setPosition({
-            z: z - 1
-        });
-        _widget.setPosition({
-            z: z
-        });
-
-        this.update([widget.id, _widget.id]);
-
-        return this;
-    };
-
-    WorkspaceTabViewDragboard.prototype.raiseToTop = function raiseToTop(widget) {
-
-        if (widget.position.z === (this.widgets.length - 1)) {
-            return this;
-        }
-
-        this.widgets.splice(widget.position.z, 1);
-        this.widgets.push(widget);
-        this.widgets.forEach(function (value, index) {
-            value.setPosition({
-                z: index
-            });
-        });
-
-        this.update();
-
-        return this;
-    };
-
-    WorkspaceTabViewDragboard.prototype.raise = function raise(widget) {
-        var z = widget.position.z;
-
-        if (z === (this.widgets.length - 1)) {
-            return this;
-        }
-
-        var _widget = this.widgets[z + 1];
-
-        this.widgets[z + 1] = widget;
-        this.widgets[z] = _widget;
-
-        widget.setPosition({
-            z: z + 1
-        });
-        _widget.setPosition({
-            z: z
-        });
-
-        this.update([widget.id, _widget.id]);
-
-        return this;
-    };
-
-    WorkspaceTabViewDragboard.prototype.paint = function paint() {
-
-        if (this.painted) {
-            return;
-        }
-
-        this._recomputeSize();
-
-        this.baseLayout.initialize();
-        this.freeLayout.initialize();
-        this.fulldragboardLayout.initialize();
-        this.leftLayout.initialize();
-        this.rightLayout.initialize();
-
-        refresh_zindex.call(this);
-
-        this.painted = true;
-    };
-
-    /**
-     *
-     */
-    WorkspaceTabViewDragboard.prototype.update = function update(ids) {
-        if (this.tab.workspace.editing === false) {
-            return Promise.resolve(this);
-        }
-
-        var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-            workspace_id: this.tab.workspace.model.id,
-            tab_id: this.tab.model.id
-        });
-
-        ids = ids || Object.keys(this.tab.widgetsById);
-
-        var content = this.widgets.filter(function (widget) {
-            return !widget.model.volatile && ids.indexOf(widget.id) !== -1;
-        });
-
-        if (!content.length) {
-            return Promise.resolve(this);
-        }
-
-        return Wirecloud.io.makeRequest(url, {
-            method: 'PUT',
-            requestHeaders: {'Accept': 'application/json'},
-            contentType: 'application/json',
-            postBody: JSON.stringify(content)
-        }).then((response) => {
-            if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
-                return Promise.reject(utils.gettext("Unexpected response from server"));
-            } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
-                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
-            }
-
-            this.widgets.filter((widget) => {
-                widget.persist();
-            });
-            return Promise.resolve(this);
-        });
-    };
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var refresh_zindex = function refresh_zindex() {
-        var i;
-
-        for (i = this.widgets.length - 1; i >= 0; i--) {
+    const refresh_zindex = function refresh_zindex() {
+        for (let i = this.widgets.length - 1; i >= 0; i--) {
             if (this.widgets[i] == null) {
                 this.widgets.splice(i, 1);
             }
         }
 
-        this.widgets.forEach(function (widget, index) {
+        this.widgets.forEach((widget, index) => {
             widget.setPosition({
                 z: index
             });
         });
     };
 
-    WorkspaceTabViewDragboard.prototype._buildLayoutFromPreferences = function _buildLayoutFromPreferences(description) {
-        var layoutInfo = this.tab.model.preferences.get('baselayout');
+    ns.WorkspaceTabViewDragboard = class WorkspaceTabViewDragboard {
 
-        switch (layoutInfo.type) {
-        case 'columnlayout':
-            if (layoutInfo.smart) {
-                return new Wirecloud.ui.SmartColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
-            } else {
-                return new Wirecloud.ui.ColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
+        constructor(tab) {
+            Object.defineProperties(this, {
+                tab: {
+                    value: tab
+                },
+                widgets: {
+                    value: []
+                }
+            });
+
+            this.scrollbarSpace = 17; // TODO make this configurable?
+            // TODO or initialized with the scroll bar's real with?
+            this.dragboardWidth = 800;
+            this.dragboardHeight = 600;
+            this.widgetToMove = null;
+            this.painted = false;
+            this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
+            this.baseLayout = this._buildLayoutFromPreferences();
+            this.freeLayout = new Wirecloud.ui.FreeLayout(this);
+            this.leftLayout = new Wirecloud.ui.SidebarLayout(this);
+            this.rightLayout = new Wirecloud.ui.SidebarLayout(this, {position: "right"});
+            this.bottomLayout = new Wirecloud.ui.SidebarLayout(this, {position: "bottom"});
+            this.topLayout = new Wirecloud.ui.SidebarLayout(this, {position: "top"});
+            Object.defineProperties(this, {
+                layouts: {
+                    get: () => {
+                        return [
+                            this.baseLayout,
+                            this.freeLayout,
+                            this.leftLayout,
+                            this.rightLayout,
+                            this.bottomLayout,
+                            this.topLayout
+                        ];
+                    }
+                }
+            });
+            if (this.tab.workspace.restricted) {
+                this.tab.wrapperElement.classList.add("fixed");
             }
-        case 'gridlayout':
-            return new Wirecloud.ui.GridLayout(this, layoutInfo.columns, layoutInfo.rows, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
         }
-    };
 
-    /**
-     * TODO, used by WorkspaceTabView to when the user changes the preferences
-     * for the base layout.
-     */
-    WorkspaceTabViewDragboard.prototype._updateBaseLayout = function _updateBaseLayout() {
-        // Create the new Layout
-        var newBaseLayout = this._buildLayoutFromPreferences();
-        newBaseLayout.initialize();
+        /**
+         * Gets the width of the usable dragboard area.
+         *
+         * @returns The width of the usable dragboard area
+         */
+        getWidth() {
+            return this.dragboardWidth;
+        }
 
-        // Change our base layout
-        this.baseLayout.moveTo(newBaseLayout);
-        this.baseLayout = newBaseLayout;
-    };
+        /**
+         * Gets the height of the usable dragboard area.
+         *
+         * @returns The height of the usable dragboard area
+         */
+        getHeight() {
+            return this.dragboardHeight;
+        }
 
-    WorkspaceTabViewDragboard.prototype._addWidget = function _addWidget(widget) {
-        var z = widget.position.z;
+        lowerToBottom(widget) {
 
-        if (z != null) {
-            if (this.widgets[z] != null) {
-                this.widgets.splice(z, 1, this.widgets[z], widget);
-                this.widgets.forEach(function (value, index) {
-                    // forEach skips undefined indexes
-                    value.setPosition({
-                        z: index
-                    });
+            if (widget.position.z === 0) {
+                return this;
+            }
+
+            this.widgets.splice(widget.position.z, 1);
+            this.widgets.unshift(widget);
+            this.widgets.forEach((value, index) => {
+                value.setPosition({
+                    z: index
                 });
-            } else {
-                this.widgets[z] = widget;
+            });
+
+            this.update();
+
+            return this;
+        }
+
+        lower(widget) {
+            const z = widget.position.z;
+
+            if (z === 0) {
+                return this;
             }
-        } else {
+
+            const _widget = this.widgets[z - 1];
+
+            this.widgets[z - 1] = widget;
+            this.widgets[z] = _widget;
+
             widget.setPosition({
-                z: this.widgets.push(widget) - 1
+                z: z - 1
+            });
+            _widget.setPosition({
+                z: z
+            });
+
+            this.update([widget.id, _widget.id]);
+
+            return this;
+        }
+
+        raiseToTop(widget) {
+
+            if (widget.position.z === (this.widgets.length - 1)) {
+                return this;
+            }
+
+            this.widgets.splice(widget.position.z, 1);
+            this.widgets.push(widget);
+            this.widgets.forEach((value, index) => {
+                value.setPosition({
+                    z: index
+                });
+            });
+
+            this.update();
+
+            return this;
+        }
+
+        raise(widget) {
+            const z = widget.position.z;
+
+            if (z === (this.widgets.length - 1)) {
+                return this;
+            }
+
+            const _widget = this.widgets[z + 1];
+
+            this.widgets[z + 1] = widget;
+            this.widgets[z] = _widget;
+
+            widget.setPosition({
+                z: z + 1
+            });
+            _widget.setPosition({
+                z: z
+            });
+
+            this.update([widget.id, _widget.id]);
+
+            return this;
+        }
+
+        paint() {
+
+            if (this.painted) {
+                return;
+            }
+
+            this._recomputeSize();
+
+            this.baseLayout.initialize();
+            this.freeLayout.initialize();
+            this.fulldragboardLayout.initialize();
+            this.leftLayout.initialize();
+            this.rightLayout.initialize();
+            this.bottomLayout.initialize();
+            this.topLayout.initialize();
+
+            refresh_zindex.call(this);
+
+            this.painted = true;
+        }
+
+        /**
+         *
+         */
+        update(ids) {
+            if (this.tab.workspace.editing === false) {
+                return Promise.resolve(this);
+            }
+
+            const url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+                workspace_id: this.tab.workspace.model.id,
+                tab_id: this.tab.model.id
+            });
+
+            ids = ids || Object.keys(this.tab.widgetsById);
+
+            const content = this.widgets.filter((widget) => {
+                return !widget.model.volatile && ids.indexOf(widget.id) !== -1;
+            });
+
+            if (!content.length) {
+                return Promise.resolve(this);
+            }
+
+            return Wirecloud.io.makeRequest(url, {
+                method: 'PUT',
+                requestHeaders: {'Accept': 'application/json'},
+                contentType: 'application/json',
+                postBody: JSON.stringify(content)
+            }).then((response) => {
+                if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
+
+                this.widgets.filter((widget) => {
+                    widget.persist();
+                });
+                return Promise.resolve(this);
             });
         }
 
-        this.tab.appendChild(widget);
-    };
+        _buildLayoutFromPreferences(description) {
+            const layoutInfo = this.tab.model.preferences.get('baselayout');
 
-    WorkspaceTabViewDragboard.prototype._removeWidget = function _removeWidget(widget) {
-        var z = widget.position.z;
+            switch (layoutInfo.type) {
+            case 'columnlayout':
+                if (layoutInfo.smart) {
+                    return new Wirecloud.ui.SmartColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
+                } else {
+                    return new Wirecloud.ui.ColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
+                }
+            case 'gridlayout':
+                return new Wirecloud.ui.GridLayout(this, layoutInfo.columns, layoutInfo.rows, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
+            }
+        }
 
-        this.widgets.splice(z, 1);
-        this.widgets.forEach(function (value, index) {
-            value.setPosition({
-                z: index
+        /**
+         * TODO, used by WorkspaceTabView to when the user changes the preferences
+         * for the base layout.
+         */
+        _updateBaseLayout() {
+            // Create the new Layout
+            const newBaseLayout = this._buildLayoutFromPreferences();
+            newBaseLayout.initialize();
+
+            // Change our base layout
+            this.baseLayout.moveTo(newBaseLayout);
+            this.baseLayout = newBaseLayout;
+        }
+
+        _addWidget(widget) {
+            const z = widget.position.z;
+
+            if (z != null) {
+                if (this.widgets[z] != null) {
+                    this.widgets.splice(z, 1, this.widgets[z], widget);
+                    this.widgets.forEach((value, index) => {
+                        // forEach skips undefined indexes
+                        value.setPosition({
+                            z: index
+                        });
+                    });
+                } else {
+                    this.widgets[z] = widget;
+                }
+            } else {
+                widget.setPosition({
+                    z: this.widgets.push(widget) - 1
+                });
+            }
+
+            this.tab.appendChild(widget);
+        }
+
+        _removeWidget(widget) {
+            const z = widget.position.z;
+
+            this.widgets.splice(z, 1);
+            this.widgets.forEach((value, index) => {
+                value.setPosition({
+                    z: index
+                });
             });
-        });
 
-        this.tab.removeChild(widget);
-    };
-
-    // Window Resize event dispacher function
-    WorkspaceTabViewDragboard.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent() {
-        var oldWidth = this.dragboardWidth;
-        var oldHeight = this.dragboardHeight;
-        this._recomputeSize();
-        var newWidth = this.dragboardWidth;
-        var newHeight = this.dragboardHeight;
-
-        var widthChanged = oldWidth !== newWidth;
-        var heightChanged = oldHeight !== newHeight;
-        if (widthChanged || heightChanged) {
-            this._updateIWidgetSizes(widthChanged, heightChanged);
-        }
-    };
-
-    /**
-     * @private
-     *
-     * This function is slow. Please, only call it when really necessary.
-     *
-     * Updates the width and height info for this dragboard.
-     */
-    WorkspaceTabViewDragboard.prototype._recomputeSize = function _recomputeSize() {
-        var cssStyle = document.defaultView.getComputedStyle(this.tab.wrapperElement, null);
-        if (cssStyle.getPropertyValue("display") === "none") {
-            return; // Do nothing
+            this.tab.removeChild(widget);
         }
 
-        // Read padding values
-        this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
-        this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
-        this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
-        this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
+        // Window Resize event dispacher function
+        _notifyWindowResizeEvent() {
+            const oldWidth = this.dragboardWidth;
+            const oldHeight = this.dragboardHeight;
+            this._recomputeSize();
+            const newWidth = this.dragboardWidth;
+            const newHeight = this.dragboardHeight;
 
-        this.dragboardWidth = parseInt(this.tab.wrapperElement.offsetWidth, 10) - this.leftMargin - this.rightMargin;
-        this.dragboardHeight = parseInt(this.tab.wrapperElement.parentNode.clientHeight, 10) - this.topMargin - this.bottomMargin;
-    };
+            const widthChanged = oldWidth !== newWidth;
+            const heightChanged = oldHeight !== newHeight;
+            if (widthChanged || heightChanged) {
+                this._updateIWidgetSizes(widthChanged, heightChanged);
+            }
+        }
 
-    /**
-     * @private
-     *
-     * This method forces recomputing of the iWidgets' sizes.
-     *
-     * @param {boolean} widthChanged
-     * @param {boolean} heightChanged
-     */
-    WorkspaceTabViewDragboard.prototype._updateIWidgetSizes = function _updateIWidgetSizes(widthChanged, heightChanged) {
-        this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-        this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-        this.fulldragboardLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-        this.leftLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-        this.rightLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-    };
+        /**
+         * @private
+         *
+         * This function is slow. Please, only call it when really necessary.
+         *
+         * Updates the width and height info for this dragboard.
+         */
+        _recomputeSize() {
+            const cssStyle = document.defaultView.getComputedStyle(this.tab.wrapperElement, null);
+            if (cssStyle.getPropertyValue("display") === "none") {
+                return; // Do nothing
+            }
 
-    ns.WorkspaceTabViewDragboard = WorkspaceTabViewDragboard;
+            // Read padding values
+            this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
+            this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
+            this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
+            this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+            this.dragboardWidth = parseInt(this.tab.wrapperElement.offsetWidth, 10) - this.leftMargin - this.rightMargin;
+            this.dragboardHeight = parseInt(this.tab.wrapperElement.parentNode.clientHeight, 10) - this.topMargin - this.bottomMargin;
+        }
+
+        /**
+         * @private
+         *
+         * This method forces recomputing of the iWidgets' sizes.
+         *
+         * @param {boolean} widthChanged
+         * @param {boolean} heightChanged
+         */
+        _updateIWidgetSizes(widthChanged, heightChanged) {
+            this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+            this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+            this.fulldragboardLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+            this.leftLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+            this.rightLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+            this.bottomLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+            this.topLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+        }
+
+    }
 
 })(Wirecloud.ui, Wirecloud.Utils);

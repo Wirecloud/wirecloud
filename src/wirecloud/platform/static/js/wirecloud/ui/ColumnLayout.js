@@ -143,7 +143,7 @@
         }
 
         adaptRowOffset(size) {
-            var offsetInLU, pixels, parsedSize;
+            let offsetInLU, pixels, parsedSize;
 
             parsedSize = this.parseSize(size);
             if (parsedSize[1] === 'cells') {
@@ -167,14 +167,15 @@
             return height + this.topMargin + this.bottomMargin;
         }
 
-        getColumnOffset(position) {
-            var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(position.x)) / 100);
+        getColumnOffset(position, css) {
+            let tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(position.x)) / 100);
             tmp += this.leftMargin + this.dragboard.leftMargin;
-            return tmp;
+            return css ? tmp + 'px' : tmp;
         }
 
-        getRowOffset(position) {
-            return this.dragboard.topMargin + this.fromVCellsToPixels(position.y) + this.topMargin;
+        getRowOffset(position, css) {
+            let offset = this.dragboard.topMargin + this.fromVCellsToPixels(position.y) + this.topMargin;
+            return css ? offset + 'px' : offset;
         }
 
         _notifyWindowResizeEvent(widthChanged, heightChanged) {
@@ -203,16 +204,14 @@
             this.matrix = [];
             this._buffers.base.matrix = this.matrix;
 
-            for (var x = 0; x < this.columns; x++) {
+            for (let x = 0; x < this.columns; x++) {
                 this.matrix[x] = [];
             }
         }
 
         _hasSpaceFor(_matrix, positionX, positionY, width, height) {
-            var x, y;
-
-            for (x = 0; x < width; x++) {
-                for (y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
                     if (_matrix[positionX + x][positionY + y] != null) {
                         return false;
                     }
@@ -232,10 +231,8 @@
         }
 
         _compressColumns(_matrix, x, width) {
-            var i, y;
-
-            for (i = 0; i < width; i++) {
-                for (y = _matrix[x + i].length - 1; y >= 0; y--) {
+            for (let i = 0; i < width; i++) {
+                for (let y = _matrix[x + i].length - 1; y >= 0; y--) {
                     if (_matrix[x + i][y] != null) {
                         break;
                     }
@@ -338,28 +335,24 @@
         }
 
         _reserveSpace(buffer, widget) {
-            var position = this._getPositionOn(buffer, widget);
-            var width = widget.shape.width;
-            var height = widget.shape.height;
+            const position = this._getPositionOn(buffer, widget);
+            const width = widget.shape.width;
+            const height = widget.shape.height;
 
             this._reserveSpace2(buffer.matrix, widget, position.x, position.y, width, height);
         }
 
         _reserveSpace2(matrix, widget, positionX, positionY, width, height) {
-            var x, y;
-
-            for (x = 0; x < width; x++) {
-                for (y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
                     matrix[positionX + x][positionY + y] = widget;
                 }
             }
         }
 
         _clearSpace2(_matrix, positionX, positionY, width, height) {
-            var x, y;
-
-            for (x = 0; x < width; x++) {
-                for (y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
                     delete _matrix[positionX + x][positionY + y];
                 }
             }

@@ -77,7 +77,9 @@
                     widget.layout = null;
                     return new Set();
                 }),
+                getHeight: jasmine.createSpy("getHeight"),
                 getHeightInPixels: jasmine.createSpy("getHeightInPixels"),
+                getWidth: jasmine.createSpy("getWidth"),
                 _notifyResizeEvent: jasmine.createSpy("_notifyResizeEvent")
             });
             if ("_searchFreeSpace" in klass.prototype) {
