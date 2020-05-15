@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +23,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -529,11 +530,8 @@
     };
 
     MultivaluedInputInterface.prototype._removeEntry = function _removeEntry(entry) {
-        var index;
-
         this.wrapperElement.removeChild(entry.wrapper);
-        index = this.entries.indexOf(entry);
-        this.entries.splice(index, 1);
+        utils.removeFromArray(this.entries, entry);
         entry.form.destroy();
 
         if (this.entries.length === 0) {
@@ -622,4 +620,4 @@
 
     StyledElements.FieldSetInterface = FieldSetInterface;
 
-})();
+})(StyledElements.utils);
