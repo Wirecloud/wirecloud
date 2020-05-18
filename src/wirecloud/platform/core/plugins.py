@@ -125,6 +125,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterface.js',
     'js/StyledElements/TextInputInterface.js',
     'js/StyledElements/InputInterfaces.js',
+    'js/StyledElements/MultiValuedInputInterface.js',
     'js/wirecloud/ui/ParametrizableValueInputInterface.js',
     'js/wirecloud/ui/ParametrizedTextInputInterface.js',
     'js/wirecloud/ui/LayoutInputInterface.js',

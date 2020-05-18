@@ -83,6 +83,7 @@ const styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/InputInterface.js',
     'wirecloud/commons/static/js/StyledElements/TextInputInterface.js',
     'wirecloud/commons/static/js/StyledElements/InputInterfaces.js',
+    'wirecloud/commons/static/js/StyledElements/MultivaluedInputInterface.js',
     'wirecloud/commons/static/js/StyledElements/VersionInputInterface.js',
     'wirecloud/commons/static/js/StyledElements/InputInterfaceFactory.js',
     'wirecloud/commons/static/js/StyledElements/DefaultInputInterfaceFactory.js',

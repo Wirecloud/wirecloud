@@ -43,7 +43,14 @@
         this._initialValue = options.initialValue;
         this._defaultValue = options.defaultValue;
         this._label = options.label;
-        Object.defineProperty(this, 'required', {value: 'required' in options ? !!options.required : false});
+        Object.defineProperties(this, {
+            id: {
+                value: fieldId
+            },
+            required: {
+                value: 'required' in options ? !!options.required : false
+            }
+        });
         this._readOnly = !!options.readOnly;
         this._hidden = !!options.hidden;
 
