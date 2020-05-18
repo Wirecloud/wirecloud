@@ -286,6 +286,22 @@
                     task_reject("error reason");
                 });
 
+                it("finally method can be used on then callbacks", (done) => {
+                    let success_value = "success value";
+                    let build_value = function build_value() {
+                        return success_value;
+                    };
+                    let task_reject;
+                    let task = new Wirecloud.Task("task", (fullfill, reject, update) => {
+                        fullfill(success_value);
+                    });
+                    task.then(build_value).finally(function () {
+                        // TODO
+                        // expect(arguments.length).toBe(0);
+                        done();
+                    });
+                });
+
                 it("finally method can be used for doing task after task is resolved", (done) => {
                     let task_resolve;
                     let task = new Wirecloud.Task("task", (resolve, reject) => {

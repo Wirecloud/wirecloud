@@ -286,9 +286,6 @@
     };
     utils.inherit(TaskContinuation, Task);
 
-    TaskContinuation.prototype.then = Task.prototype.then;
-    TaskContinuation.prototype.catch = Task.prototype.catch;
-
     /**
      * Creates a new task asociated to the progress of the chain of task
      * associated with this instance.
