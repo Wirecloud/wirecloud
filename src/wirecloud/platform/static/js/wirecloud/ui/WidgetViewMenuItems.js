@@ -116,6 +116,7 @@
                         handler: (context) => {
                             let vertical = this.widget.position.anchor.split('-')[0];
                             this.widget.setPosition({anchor: vertical + "-left"});
+                            this.widget.layout.dragboard.update([this.widget.id]);
                         }
                     }
                 ));
@@ -127,6 +128,7 @@
                         handler: (context) => {
                             let vertical = this.widget.position.anchor.split('-')[0];
                             this.widget.setPosition({anchor: vertical + "-center"});
+                            this.widget.layout.dragboard.update([this.widget.id]);
                         }
                     }
                 ));
@@ -138,6 +140,7 @@
                         handler: (context) => {
                             let vertical = this.widget.position.anchor.split('-')[0];
                             this.widget.setPosition({anchor: vertical + "-right"});
+                            this.widget.layout.dragboard.update([this.widget.id]);
                         }
                     }
                 ));
@@ -152,6 +155,7 @@
                         handler: (context) => {
                             let horizontal = this.widget.position.anchor.split('-')[1];
                             this.widget.setPosition({anchor: "top-" + horizontal});
+                            this.widget.layout.dragboard.update([this.widget.id]);
                         }
                     }
                 ));
@@ -163,6 +167,7 @@
                         handler: (context) => {
                             let horizontal = this.widget.position.anchor.split('-')[1];
                             this.widget.setPosition({anchor: "bottom-" + horizontal});
+                            this.widget.layout.dragboard.update([this.widget.id]);
                         }
                     }
                 ));
@@ -177,6 +182,7 @@
                     } else {
                         this.widget.setPosition({relx: true, x: layout.adaptColumnOffset(layout.getColumnOffset(this.widget.position) + 'px').inLU});
                     }
+                    this.widget.layout.dragboard.update([this.widget.id]);
                 });
                 item.addIconClass("fas " + (this.widget.position.relx ? "fa-ruler" : "fa-percentage"));
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
@@ -191,6 +197,7 @@
                     } else {
                         this.widget.setPosition({rely: true, y: layout.adaptRowOffset(layout.getRowOffset(this.widget.position) + 'px').inLU});
                     }
+                    this.widget.layout.dragboard.update([this.widget.id]);
                 });
                 item.addIconClass("fas " + (this.widget.position.rely ? "fa-ruler" : "fa-percentage"));
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
@@ -204,6 +211,7 @@
                     } else {
                         this.widget.setShape({relwidth: true, width: layout.adaptWidth(this.widget.shape.width + 'px').inLU});
                     }
+                    this.widget.layout.dragboard.update([this.widget.id]);
                 });
                 item.addIconClass("fas " + (this.widget.shape.relwidth ? "fa-ruler" : "fa-percentage"));
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
@@ -217,6 +225,7 @@
                     } else {
                         this.widget.setShape({relheight: true, height: layout.adaptHeight(this.widget.shape.height + 'px').inLU});
                     }
+                    this.widget.layout.dragboard.update([this.widget.id]);
                 });
                 item.addIconClass("fas " + (this.widget.shape.relheight ? "fa-ruler" : "fa-percentage"));
                 item.setDisabled(!this.widget.model.isAllowed('move', 'editor'));
