@@ -1,27 +1,21 @@
 {% load i18n %}
-<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
 <s:borderlayout>
-
-    <s:westcontainer>
-        <s:options>{"class": "search_bar"}</s:options>
-
-        <h2>{% trans "Filtering" %}</h2>
-        <t:reset_button/>
-        <div>
-            <label>{% trans 'Keywords:' %}</label>
-            <t:searchinput/>
-        </div>
-
-        <div>
-            <label>{% trans 'Store:' %}</label>
-            <t:store_select/>
-        </div>
-
-    </s:westcontainer>
-
-    <s:centercontainer>
-        <t:resourcelist />
-    </s:centercontainer>
-
+<s:westcontainer>
+<s:options>{"class": "search_bar"}</s:options>
+<h2>{% trans "Filtering" %}</h2>
+<t:reset_button></t:reset_button>
+<div>
+<label>{% trans 'Keywords:' %}</label>
+<t:searchinput></t:searchinput>
+</div>
+<div>
+<label>{% trans 'Store:' %}</label>
+<t:store_select></t:store_select>
+</div>
+</s:westcontainer>
+<s:centercontainer>
+<t:resourcelist></t:resourcelist>
+</s:centercontainer>
 </s:borderlayout>
 </s:styledgui>

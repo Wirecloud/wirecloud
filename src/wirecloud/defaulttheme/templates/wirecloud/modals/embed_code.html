@@ -1,8 +1,7 @@
-{% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
-    <div>
-        <b>{% trans "Theme" %}</b>: <t:themeselect/>
-        <b>{% trans "Language" %}</b>: <t:langselect/>
-    </div>
-    <t:code/>
+{% load i18n %}<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
+<div>
+<b>{% trans "Theme" %}</b>: <t:themeselect></t:themeselect>
+<b>{% trans "Language" %}</b>: <t:langselect></t:langselect>
+</div>
+<t:code></t:code>
 </s:styledgui>
-
