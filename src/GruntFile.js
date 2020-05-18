@@ -113,6 +113,7 @@ var WirecloudFiles = [
     'wirecloud/commons/static/js/wirecloud/ui/FormWindowMenu.js',
     //'wirecloud/commons/static/js/wirecloud/ui/InputInterfaceFactory.js',
     'wirecloud/commons/static/js/wirecloud/ui/MessageWindowMenu.js',
+    'wirecloud/commons/static/js/wirecloud/ui/TutorialSubMenu.js',
     'wirecloud/catalogue/static/js/wirecloud/WirecloudCatalogue.js',
     'wirecloud/catalogue/static/js/wirecloud/ui/ResourcePainter.js',
     'wirecloud/platform/static/js/wirecloud/io.js',

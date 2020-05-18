@@ -1,5 +1,4 @@
 /*
- *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
@@ -22,23 +21,35 @@
 
 /* globals StyledElements, Wirecloud */
 
-
-(function (utils) {
+(function (ns, se) {
 
     "use strict";
 
-    Wirecloud.ui.TutorialSubMenu = class TutorialSubMenu extends StyledElements.SubMenuItem {
+    describe("TutorialSubMenu", () => {
 
-        constructor() {
-            super(utils.gettext('Tutorials'));
+        beforeAll(() => {
+            // TODO
+            Wirecloud.TutorialCatalogue = {
+                tutorials: [
+                    {label: "tutorial1", start: function () {}}
+                ]
+            };
+        });
 
-            this.menuitem.addIconClass('far fa-map');
+        describe("new TutorialSubMenu()", () => {
 
-            Wirecloud.TutorialCatalogue.tutorials.forEach((tutorial) => {
-                this.append(new StyledElements.MenuItem(tutorial.label, tutorial.start.bind(tutorial)));
+            it("is a class constructor", () => {
+                expect(() => {
+                    se.TutorialSubMenu();  // eslint-disable-line new-cap
+                }).toThrowError(TypeError);
             });
-        }
 
-    }
+            it("should work without passing any parameter", () => {
+                new ns.TutorialSubMenu();
+            });
 
-})(Wirecloud.Utils);
+        });
+
+    });
+
+})(Wirecloud.ui, StyledElements);
