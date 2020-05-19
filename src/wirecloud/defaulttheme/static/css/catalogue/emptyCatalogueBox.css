@@ -1,9 +1,0 @@
-.catalogueEmptyBox {
-    text-align: center;
-}
-
-.catalogueEmptyBox > .alert {
-    width: 405px;
-    display: inline-block;
-    text-align: left;
-}
