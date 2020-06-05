@@ -1,0 +1,98 @@
+.se-horizontal-layout, .se-vertical-layout {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    box-sizing: border-box;
+}
+
+.se-horizontal-layout {
+    flex-direction: row;
+    width: auto;
+
+    &.full {
+        position: absolute;
+        width: auto;
+        height: auto;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+    }
+}
+
+.se-vertical-layout {
+    flex-direction: column;
+    height: 100%;
+
+    &.full {
+        position: absolute;
+        width: auto;
+        height: auto;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+    }
+}
+
+.se-hl-west-container, .se-vl-north-container {
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.se-hl-center-container, .se-vl-center-container {
+    overflow: auto;
+    box-sizing: border-box;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.se-hl-east-container, .se-vl-south-container {
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.se-horizontal-layout.input, .set-horizontal-layout.btn-group {
+    margin: 3px;
+    overflow: visible;
+}
+
+/* Deprecated */
+.input > .se-hl-west-container, .input > .se-hl-center-container, .input > .se-hl-east-container {
+    overflow: visible;
+}
+/* End deprecation */
+
+.se-input-group {
+    display: inline-flex;
+    vertical-align: middle;
+    width: auto;
+    margin: 3px;
+}
+
+.se-input-group-block {
+    display: flex;
+}
+
+.se-input-group > * {
+    margin: 0px;
+}
+
+.se-input-group > *:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.se-input-group > *:not(:last-child) {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.se-input-group > .se-select,
+.se-input-group > .se-text-field,
+.se-input-group > .se-numeric-field,
+.se-input-group > .se-password-field {
+    flex-grow: 1;
+    flex-shrink: 1;
+}

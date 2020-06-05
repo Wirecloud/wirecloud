@@ -1,0 +1,74 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+.se-add-on, .se-box {
+    display: inline-block;
+    width: auto;
+    min-width: 16px;
+    height: $input-height-base;
+    padding: $padding-vertical-base $padding-horizontal-base;
+    font-size: $font-size-base;
+    font-weight: normal;
+    line-height: $line-height-base;
+    text-align: center;
+    text-shadow: 0 1px 0 #ffffff;
+    border: 1px solid $input-border;
+    vertical-align: middle;
+    box-sizing: border-box;
+    border-radius: $input-border-radius-base;
+
+    @if ($button-gradients) {
+        box-shadow: $input-external-shadow;
+    }
+}
+
+.se-add-on {
+    color: contrast-color($addon-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $addon-bg;
+}
+
+.se-box {
+    color: contrast-color($box-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $box-bg;
+}
+
+/* Deprecated */
+
+.input-prepend > .se-hl-west-container > .se-add-on:first-child {
+    border-radius: $border-radius-base 0 0 $border-radius-base;
+}
+
+.input-prepend > .se-hl-west-container > .se-add-on:last-child {
+    margin: 0 -1px 0 0;
+}
+
+.input-append > .se-hl-east-container > .se-add-on:first-child {
+    margin: 0 0 0 -1px;
+}
+
+.input-append > .se-hl-east-container > .se-add-on:last-child {
+    border-radius: 0 $border-radius-base $border-radius-base 0;
+}
+
+/* End dreprecation */
+
+.btn-group-lg .se-add-on, .btn-group-lg .se-box, .se-input-group-lg .se-add-on, .se-input-group-lg .se-box {
+    height:  $input-height-large;
+    font-size: $font-size-large;
+    padding: $padding-vertical-large $padding-horizontal-large;
+    border-radius: $border-radius-large;
+}
+
+.btn-group-sm .se-add-on, .btn-group-sm .se-box, .se-input-group-sm .se-add-on, .se-input-group-sm .se-box {
+    height:  $input-height-small;
+    font-size: $font-size-small;
+    padding: $padding-vertical-small $padding-horizontal-small;
+    border-radius: $border-radius-small;
+}
+
+.btn-group-xs .se-add-on, .btn-group-xs .se-box, .se-input-group-xs .se-add-on, .se-input-group-xs .se-box {
+    height:  $input-height-xs;
+    font-size: $font-size-xs;
+    padding: $padding-vertical-xs $padding-horizontal-xs;
+    border-radius: $border-radius-xs;
+}

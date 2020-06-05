@@ -1,0 +1,27 @@
+@import 'variables';
+
+.rating {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.rating > span {
+    margin: 2px;
+    display: inline-block;
+    vertical-align: middle;
+
+    &.off {
+        color: rgb(102, 102, 102);
+    }
+
+    &.middle {
+        color: $rating-middle-color;
+    }
+
+    &.on {
+        color: $rating-on-color;
+    }
+
+}

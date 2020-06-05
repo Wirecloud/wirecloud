@@ -1,0 +1,199 @@
+[
+    {
+        "model": "auth.User",
+        "pk": "2",
+        "fields": {
+            "username": "test",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [4],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "3",
+        "fields": {
+            "username": "test2",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [4],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "4",
+        "fields": {
+            "username": "wirecloud",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "5",
+        "fields": {
+            "username": "otheruser",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.Group",
+        "pk": "4",
+        "fields": {
+            "name": "wirecloud"
+        }
+    },
+    {
+        "model": "commons.organization",
+        "pk": "4",
+        "fields": {
+            "user": 4,
+            "group": 4
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.team",
+        "model": "commons.team",
+        "fields": {
+            "organization": 4,
+            "name": "owners",
+            "users": [2]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.team",
+        "model": "commons.team",
+        "fields": {
+            "organization": 4,
+            "name": "members",
+            "users": [3]
+        }
+    },
+    {
+        "model": "catalogue.catalogueresource",
+        "pk": 1,
+        "fields": {
+            "short_name": "widget1",
+            "vendor": "Test",
+            "version": "1.2",
+            "creator": 2,
+            "type": 0,
+            "public": true,
+            "creation_date": "2009-01-01T00:00:00+01:00",
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget1\", \"version\": \"1.2\", \"type\": \"widget\", \"doc\": \"http://example.org/doc\", \"contents\": {\"src\": \"js/main.js\"}}"
+        }
+    },
+    {
+        "model": "catalogue.catalogueresource",
+        "pk": 2,
+        "fields": {
+            "short_name": "widget1",
+            "vendor": "Test",
+            "version": "1.10",
+            "creator": 2,
+            "type": 0,
+            "public": true,
+            "creation_date": "2009-01-01T00:00:00+01:00",
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget1\", \"version\": \"1.10\", \"type\": \"widget\", \"contents\": {\"src\": \"js/main.js\"}}"
+        }
+    },
+    {
+        "model": "catalogue.catalogueresource",
+        "pk": 3,
+        "fields": {
+            "short_name": "widget2",
+            "vendor": "Test",
+            "version": "1.0",
+            "creator": 2,
+            "type": 0,
+            "public": true,
+            "creation_date": "2009-01-01T00:00:00+01:00",
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget2\", \"version\": \"1.0\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"contents\": {\"src\": \"js/main.js\"}}"
+        }
+    },
+    {
+        "model": "catalogue.catalogueresource",
+        "pk": 4,
+        "fields": {
+            "short_name": "awidget",
+            "vendor": "Test",
+            "version": "1.0",
+            "creator": 2,
+            "type": 0,
+            "public": true,
+            "creation_date": "2009-01-01T00:00:00+01:00",
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"awidget\", \"version\": \"1.0\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"preferences\": [], \"properties\": [], \"license\": \"\", \"license_url\": \"\", \"contents\": {\"src\": \"js/main.js\"}}"
+        }
+    },
+    {
+        "model": "catalogue.catalogueresource",
+        "pk": 5,
+        "fields": {
+            "short_name": "zwidget",
+            "vendor": "Test",
+            "version": "1.0",
+            "creator": 2,
+            "type": 0,
+            "public": true,
+            "creation_date": "2009-01-01T00:00:00+01:00",
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"zwidget\", \"version\": \"1.0\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"contents\": {\"src\": \"js/main.js\"}}"
+        }
+    },
+    {
+        "model": "catalogue.catalogueresource",
+        "pk": 6,
+        "fields": {
+            "short_name": "test",
+            "vendor": "Wirecloud",
+            "version": "0.1",
+            "creator": 2,
+            "type": 0,
+            "public": true,
+            "creation_date": "2009-01-01T00:00:00+01:00",
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Wirecloud\", \"name\": \"test\", \"version\": \"0.1\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"contents\": {\"src\": \"js/main.js\"}}"
+        }
+    }
+]

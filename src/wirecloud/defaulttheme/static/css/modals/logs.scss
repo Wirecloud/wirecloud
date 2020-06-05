@@ -1,0 +1,19 @@
+@import 'variables';
+
+.window_menu.logwindowmenu > .window_content > .alert > strong {
+    font-size: 85%;
+    margin-right: 2ex;
+}
+
+.window_menu.logwindowmenu > .window_content > .alert {
+    margin-bottom: 10px;
+}
+
+.window_menu.logwindowmenu .alert > .expander {
+    margin: 3px 0;
+}
+
+.window_menu.logwindowmenu pre {
+    overflow: auto;
+    max-height: $pre-scrollable-max-height;
+}

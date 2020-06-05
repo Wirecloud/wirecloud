@@ -1,0 +1,108 @@
+@import 'variables';
+@import 'compass/css3';
+@import 'compass/css3/images';
+@import 'compass/utilities/color/contrast';
+
+.resource {
+    position: relative;
+    padding: 0;
+    display: inline-block;
+    margin: 6px;
+    vertical-align: middle;
+    height: 152px;
+    width: 317px;
+    text-align: left;
+    overflow: hidden;
+    transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
+    box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
+    cursor: pointer;
+    box-sizing: border-box;
+
+    & > .panel-heading {
+        padding: floor($panel-padding-vertical / 2) floor($panel-padding-horizontal / 2);
+    }
+
+    & > .description.text-truncate:after {
+        background-image: linear-gradient(to right, rgba($panel-bg, 0), $panel-bg);
+        height: $line-height-small;
+        width: 70px;
+    }
+}
+
+.wc-resource-img-container {
+    width: 170px;
+    height: 80px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background: white;
+    border-radius: 0 ($panel-border-radius - 1);
+    text-align: center;
+    overflow: hidden;
+}
+
+.wc-resource-img {
+    max-width: 170px;
+    max-height: 80px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.resource > .panel-heading > .rating {
+    position: absolute;
+    top: floor($panel-padding-vertical / 2);
+    right: floor($panel-padding-horizontal / 2);
+    line-height: 26px;
+}
+
+.resource > .panel-heading > .rating.disabled {
+    opacity: 0.1;
+}
+
+.resource > .panel-heading > .rating > span {
+    margin: 0px 1px 0px;
+}
+
+.resource > .panel-heading > .vendor {
+    font-size: 13px;
+}
+
+.resource > .description {
+    position: absolute;
+    font-size: $font-size-small;
+    line-height: $line-height-small;
+    height: floor(80px / $line-height-small) * $line-height-small;
+    overflow: hidden;
+    top: 70px;
+    left: 178px;
+    right: 8px;
+}
+
+.resource > .panel-heading > .panel-title {
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 20px;
+    line-height: 26px;
+
+    & > span {
+        max-width: 100%;
+        display: inline-block;
+        text-decoration: inherit;
+    }
+}
+
+.resource > .panel-heading > .label {
+    margin-left: 0px;
+}
+
+.resource > .panel-heading > h2 {
+    margin: 0px;
+    font-size: 24px;
+    width: 192px;
+}
+
+.resource .mainbutton {
+    clear: both;
+    float: right;
+    margin: 0px;
+}

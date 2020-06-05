@@ -1,0 +1,139 @@
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Comfortaa'), local('Comfortaa-Regular'),
+       url("../fonts/comfortaa_regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_regular-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_regular-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_regular-webfont.svg#ComfortaaRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Comfortaa Bold'), local('Comfortaa-Bold'),
+       url("../fonts/comfortaa_bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_bold-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_bold-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_bold-webfont.svg#ComfortaaBold") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Open Sans'), local('OpenSans'),
+       url("../fonts/opensans-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-regular-webfont.woff") format("woff"),
+       url("../fonts/opensans-regular-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-regular-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Open Sans Bold'), local('OpenSansBold'),
+       url("../fonts/opensans-bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-bold-webfont.woff") format("woff"),
+       url("../fonts/opensans-bold-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'NeoTech';
+  font-style: normal;
+  font-weight: normal;
+  src: local("Neo Tech"), local("NeoTech"),
+       url("../fonts/neotech-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/neotech-regular-webfont.woff") format("woff"),
+       url("../fonts/neotech-regular-webfont.ttf") format("truetype");
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    color: #333333;
+}
+
+/* Loading window */
+
+#loading-window, #loading-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10000;
+}
+
+#loading-background {
+    z-index: 3;
+}
+
+#loading-window:not(.in) #loading-background {
+    display: none;
+}
+
+#loading-window:not(.in) {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+#loading-window.fade {
+    transition: opacity 4s linear;
+
+    &.in {
+        transition: none;
+    }
+}
+
+#loading-message {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 70%;
+    max-width: 100%;
+    z-index: 4;
+    margin-bottom: 4ex;
+    margin-right: 4ex;
+}
+
+#loading-subtask-title {
+    margin: 0;
+}
+
+.window_menu .styled_form .notebook {
+    height: 400px;
+}
+
+.parametrizable_input > * {
+    display: inline-block;
+}
+
+.powered-by-wirecloud {
+    vertical-align: middle;
+}
+
+.powered-by-wirecloud:before {
+    content: 'Powered by ';
+    vertical-align: middle;
+}
+
+.powered-by-wirecloud:after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    width: 33px;
+    height: 20px;
+    background: url("../images/logos/wc1-mini.png");
+    background-size: 33px 20px;
+}

@@ -1,0 +1,44 @@
+/// Computes a top-shadow for a card effect.
+/// @param {Number} $depth - depth level
+/// @return {List}
+@function top-shadow($depth, $color: black) {
+    $primary-offset: nth(1.5 3 10 14 19, $depth) * 1px;
+    $blur: nth(1.5 3 10 14 19, $depth) * 4px;
+    $color: rgba($color, nth(.12 .16 .19 .25 .30, $depth));
+
+    @return 0 $primary-offset $blur $color;
+}
+
+/// Computes a bottom-shadow for a card effect.
+/// @param {Number} $depth - depth level
+/// @return {List}
+@function bottom-shadow($depth, $color: black) {
+    $primary-offset: nth(1.5 3 6 10 15, $depth) * 1px;
+    $blur: nth(1 3 3 5 6, $depth) * 4px;
+    $color: rgba($color, nth(.24 .23 .23 .22 .22, $depth));
+
+    @return 0 $primary-offset $blur $color;
+}
+
+/// Computes a depth shadow
+/// @param {Number} $depth - depth level
+/// @return {List}
+@function depth-shadow($depth, $color: black) {
+    $spread: nth(1 2 4 8 12, $depth) * 1px;
+    $blur: nth(1 3 3 5 6, $depth) * 4px;
+    $color: rgba($color, nth(.24 .23 .23 .22 .22, $depth));
+
+    @return 0 0 $blur $spread $color;
+}
+
+/// Gives a depth effect.
+/// @param {Number} $depth - depth level (between 1 and 5)
+@mixin z-depth($depth, $important: false, $color: black) {
+    @if $depth < 1 {
+        box-shadow: none if($important, !important, null);
+    } @else if $depth > 5 {
+        @warn "Invalid $depth `#{$depth}`.";
+    } @else {
+        box-shadow: bottom-shadow($depth, $color: $color), top-shadow($depth, $color) if($important, !important, null);
+    }
+}

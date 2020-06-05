@@ -1,0 +1,12 @@
+{% extends "wirecloud/views/base.html" %}{% load wirecloudtags %}
+
+{% load i18n %}
+
+{% block title %}{% trans "WireCloud Platform" %}{% endblock %}
+
+{% block header %}<div id="wirecloud_header"></div>{% endblock %}
+
+{% block core_scripts %}
+{% wirecloud_bootstrap "embedded" %}
+{% extra_javascripts "embedded" %}
+{% endblock %}

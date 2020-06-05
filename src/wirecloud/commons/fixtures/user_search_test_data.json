@@ -1,0 +1,147 @@
+[
+    {
+        "pk": 120,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Lourdes",
+            "last_name": "McGlynn",
+            "email": "Vincenza.Berge@tod.us",
+            "username": "madaline.hane",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 121,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Linwood",
+            "last_name": "DuBuque",
+            "email": "Jonas.Wisoky@trystan.ca",
+            "username": "dahlia",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 122,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Samantha",
+            "last_name": "Kihn",
+            "email": "Cristopher@norberto.us",
+            "username": "estel_murray",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 123,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Rachael",
+            "last_name": "Hegmann",
+            "email": "Georgette.Feil@sharon.org",
+            "username": "jalyn",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 124,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Hayley",
+            "last_name": "Reichel",
+            "email": "Myron_Cronin@karson.biz",
+            "username": "priscilla.berge",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 125,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Carlos",
+            "last_name": "Johns",
+            "email": "Marcelina@walker.org",
+            "username": "dominique",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 126,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Tanner",
+            "last_name": "Koss",
+            "email": "Aniya_Grant@elwyn.us",
+            "username": "selmer",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 127,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Elsie",
+            "last_name": "Jacobson",
+            "email": "Misty.Shields@blaise.biz",
+            "username": "fredrick",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 128,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Allison",
+            "last_name": "",
+            "email": "Vanessa.Turner@marianna.info",
+            "username": "filinberto",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 128,
+        "model": "auth.group",
+        "fields": {
+            "name": "Allison"
+        }
+    },
+    {
+        "pk": 128,
+        "model": "commons.organization",
+        "fields": {
+            "user": 128,
+            "group": 128
+        }
+    },
+    {
+        "pk": 129,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Tiara",
+            "last_name": "Botsford",
+            "email": "Heather_Reynolds@conner.name",
+            "username": "hoyt",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false
+        }
+    }
+]

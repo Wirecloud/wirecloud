@@ -1,0 +1,154 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+@if ($context == 'widget') {
+    $body-bg: $widget-bg;
+}
+
+@mixin table-row-variant($state, $background-color, $text-color) {
+
+    .se-model-table-row-$state {
+
+        & > * {
+            background-color: $background-color;
+            color: $text-color;
+        }
+
+        &:hover > * {
+            background-color: darken($background-color, 12%);
+        }
+
+        &.highlight > *, &.highlight:hover > *{
+            background-color: mix($background-color, #08C, 80%);
+        }
+    }
+
+    .table-striped .se-model-table-row-$state:nth-child(odd) {
+        & > * {
+            background-color: darken($background-color, 7%);
+        }
+
+        &:hover > * {
+            background-color: darken($background-color, 12%);
+        }
+
+        &.highlight > *, &.highlight:hover > * {
+            background-color: mix(darken($background-color, 12%), #08C, 80%);
+        }
+    }
+}
+
+.se-model-table {
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+}
+
+.se-model-table-headrow {
+    display: contents;
+
+    & > * {
+        font-weight: bold;
+        border-bottom: 1px solid #DDD;
+        white-space: nowrap;
+        position: sticky;
+        top: 0px;
+        z-index: 1;
+    }
+
+    & > .se-model-table-cell.sortable {
+        cursor: pointer;
+    }
+
+    & > .se-model-table-cell.ascending, & > .se-model-table-cell.descending {
+        background-color: rgb(226, 239, 246);
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    }
+
+}
+
+.se-model-table-cell {
+    padding: 4px 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: $body-bg;
+}
+
+
+.se-model-table-headrow > .se-model-table-cell.ascending:after {
+    content: "\f0d8";
+    font-family: "Font Awesome 5 Free";
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    margin-left: 8px;
+    font-weight: 900;
+}
+
+.se-model-table-headrow > .se-model-table-cell.descending:after {
+    content: "\f0d7";
+    font-family: "Font Awesome 5 Free";
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    margin-left: 8px;
+    font-weight: 900;
+}
+
+.se-model-table-body {
+    overflow-y: auto;
+    color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    display: grid;
+    grid-auto-rows: max-content;
+}
+
+.se-model-table-msg {
+    text-align: center;
+    margin: $padding-vertical-base $padding-horizontal-base;
+    grid-column: #{1}/#{-1};
+}
+
+.se-model-table-row {
+    display: contents;
+    white-space: nowrap;
+
+    .table-striped &:nth-child(odd) {
+
+        & > * {
+            background-color: darken($body-bg, 7%);
+        }
+
+        &:hover > * {
+            background-color: darken($body-bg, 12%);
+        }
+    }
+
+    & > * {
+        border-bottom: 1px solid #DDD;
+    }
+
+    &:hover > * {
+        background-color: darken($body-bg, 12%);
+    }
+
+    &.highlight > *,
+    .table-striped &.highlight > *,
+    &.highlight:hover > *,
+    .table-striped &.highlight:hover > *,
+    {
+        background-color: #08C;
+        color: contrast-color(#08C, $text-color-light, $text-color-dark, $text-color-threshold);
+    }
+
+    &:last-child > *{
+        border-bottom: 0 none;
+    }
+}
+
+.se-notebook-tab-content.se-container > .se-model-table:first-child > .se-model-table-headrow {
+    padding-top: 3px;
+}
+
+@include table-row-variant(success, $state-success-bg, $state-success-text);
+@include table-row-variant(warning, $state-warning-bg, $state-warning-text);
+@include table-row-variant(danger, $state-danger-bg, $state-danger-text);
+@include table-row-variant(info, $state-info-bg, $state-info-text);

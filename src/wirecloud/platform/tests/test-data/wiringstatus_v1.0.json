@@ -1,0 +1,171 @@
+{
+    "operators": {
+        "0": {
+            "id": "0",
+            "name": "Wirecloud/TestOperator/1.0",
+            "preferences": {
+                "prefix": {
+                    "readOnly": false,
+                    "hidden": false,
+                    "value": ""
+                },
+                "exception_on_event": {
+                    "readonly": false,
+                    "hidden": false,
+                    "value": false
+                },
+                "test_logging": {
+                    "readonly": false,
+                    "hidden": false,
+                    "value": false
+                }
+            },
+            "properties": {}
+        }
+    },
+    "connections": [
+        {
+            "readonly": false,
+            "source": {
+                "type": "ioperator",
+                "id": "0",
+                "endpoint": "output"
+            },
+            "target": {
+                "type": "iwidget",
+                "id": 1,
+                "endpoint": "inputendpoint"
+            },
+            "isGhost": false
+        },
+        {
+            "readOnly": false,
+            "source": {
+                "type": "iwidget",
+                "id": 1,
+                "endpoint": "outputendpoint"
+            },
+            "target": {
+                "type": "iwidget",
+                "id": 3,
+                "endpoint": "inputendpoint"
+            },
+            "isGhost": false
+        }
+    ],
+    "views": [
+        {
+            "label":"default",
+            "iwidgets":{
+                "1":{
+                    "position":{
+                        "posX":538,
+                        "posY":489
+                   },
+                    "endPointsInOuts":{
+                        "sources":[
+                            "outputendpoint"
+                        ],
+                       "targets":[
+                            "inputendpoint",
+                            "nothandled"
+                        ]
+                    },
+                    "name":"Wirecloud/Test/1.0"
+                },
+                "2":{
+                    "position":{
+                        "posX":887,
+                        "posY":77
+                    },
+                   "endPointsInOuts": {
+                        "sources": [],
+                        "targets": []
+                   },
+                    "name": "Wirecloud/context-inspector/0.5"
+                },
+                "3": {
+                    "position": {
+                        "posX": 1011,
+                        "posY": 468
+                    },
+                    "endPointsInOuts": {
+                        "sources": [
+                            "outputendpoint"
+                        ],
+                        "targets": [
+                            "inputendpoint",
+                            "nothandled"
+                        ]
+                    },
+                    "name": "Wirecloud/Test/1.0"
+                }
+            },
+            "operators": {
+                "0": {
+                    "minimized": false,
+                    "position": {
+                        "posX": 257,
+                        "posY": 124
+                   },
+                    "endPointsInOuts": {
+                        "sources": [
+                            "output"
+                        ],
+                        "targets": [
+                            "input",
+                            "nothandled"
+                        ]
+                    }
+                }
+            },
+            "multiconnectors": {
+                "0": {
+                    "id": "0",
+                    "pos": {
+                        "posX": 876,
+                        "posY": 348
+                    },
+                    "height": 1.62,
+                    "objectId": 1,
+                    "sourceName": "outputendpoint",
+                    "objectType": "iwidget",
+                    "pullerStart": {
+                        "posX": 114,
+                        "posY": 0
+                    },
+                    "pullerEnd": {
+                        "posX": -114,
+                        "posY": 0
+                    }
+                }
+            },
+            "connections": [
+                {
+                    "pullerStart": {
+                        "posX": 150,
+                        "posY": 0
+                    },
+                    "pullerEnd": {
+                        "posX": -150,
+                        "posY": 0
+                    },
+                    "startMulti": null,
+                    "endMulti": null
+                },
+                {
+                    "pullerStart": {
+                        "posX": 104,
+                        "posY": 0
+                    },
+                    "pullerEnd": {
+                        "posX": -104,
+                        "posY": 0
+                    },
+                    "startMulti": 0,
+                    "endMulti": null
+                }
+            ]
+        }
+   ]
+}

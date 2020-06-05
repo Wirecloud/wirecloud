@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="test" version="0.2">
+    <details>
+        <title>__MSG_displayName__</title>
+        <email>test@example.com</email>
+        <image>images/catalogue.png</image>
+        <smartphoneimage>images/catalogue_smartphone.png</smartphoneimage>
+        <description>__MSG_description__</description>
+        <authors>admin</authors>
+    </details>
+    <preferences>
+        <preference name="pref" type="text" label="__MSG_varLabel__" description="__MSG_prefDescription__" default="value"/>
+    </preferences>
+    <persistentvariables>
+        <variable name="prop" type="text" label="__MSG_varLabel__"/>
+    </persistentvariables>
+    <wiring>
+        <outputendpoint name="event" type="text" label="__MSG_varLabel__" friendcode="test_friend_code"/>
+        <inputendpoint name="slot" type="text" label="__MSG_varLabel__" friendcode="test_friend_code"/>
+    </wiring>
+    <contents src="test.html"/>
+    <rendering height="24" width="10"/>
+    <translations default="en">
+        <translation lang="en">
+            <msg name="prefDescription">Preference description</msg>
+            <msg name="varLabel">Label</msg>
+            <msg name="displayName">Test Widget</msg>
+            <msg name="description">Test Widget description</msg>
+            <msg name="extraIndex">Boo</msg>
+        </translation>
+        <translation lang="es">
+            <msg name="prefDescription">Descripción de la preferencia</msg>
+            <msg name="varLabel">Etiqueta</msg>
+            <msg name="displayName">Widget de pruebas</msg>
+            <msg name="description">Descripción del Widget de pruebas</msg>
+            <msg name="extraIndex">Boo</msg>
+        </translation>
+    </translations>
+</widget>

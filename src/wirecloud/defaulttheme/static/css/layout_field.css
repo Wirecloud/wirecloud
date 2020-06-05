@@ -1,0 +1,33 @@
+.se-layout-field > .se-hl-west-container > .se-select {
+    width: 100px;
+}
+
+.se-layout-field > .se-hl-center-container > .se-add-on {
+    display: block;
+    width:   auto;
+}
+
+.se-layout-field.focus {
+    box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.se-layout-field.focus > .se-hl-center-container > .se-add-on {
+    border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.se-layout-field.focus > .se-hl-east-container > .se-btn,
+.se-layout-field.focus > .se-hl-west-container > .se-btn
+{
+    border-color: rgba(82, 168, 236, 0.8);
+}
+
+/* TODO */
+
+.complexTable td.label-cell {
+    text-align: left;
+}
+
+.complexTable .inheritCell {
+    width: 160px;
+}

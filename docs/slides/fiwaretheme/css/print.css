@@ -1,0 +1,456 @@
+@font-face {
+  font-family: 'NeoTech';
+  font-style: normal;
+  font-weight: normal;
+  src: local("Neo Tech"), local("NeoTech"),
+       url("neotech-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("neotech-regular-webfont.woff") format("woff"),
+       url("neotech-regular-webfont.ttf") format("truetype");
+}
+
+@page {
+    size: 900px 676px;
+    margin: 0cm;
+    padding: 0px;
+}
+
+body {
+    font: 18px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-family: NeoTech;
+}
+
+p {
+    margin-top: 0px;
+    margin-bottom: 12px;
+}
+
+html, body, .slides, .slide_wrapper {
+    width: 900px !important;
+}
+
+ul {
+    margin-top: 0px;
+}
+
+ul ul, ol ul, ol ol, ul ol {
+    padding-left: 0px;
+    color: rgb(96, 193, 207);
+}
+
+ol > li > ul > li, ul > li > ul > li {
+    list-style-type: none;
+    text-indent: 20px;
+}
+
+ol > li > ul > li:before, ul > li > ul > li:before {
+    content: "–";
+    position: absolute;
+    margin-left: -20px;
+}
+
+ul ul ul {
+    color: #002B67;
+}
+
+ul ul ul > li {
+    list-style-type: disc;
+}
+
+ul ul ul > li:before {
+    display: none;
+    content: '';
+}
+
+.tutorial-level {
+    margin-top: 20px;
+    margin-right: 25px;
+    float: right;
+    border-radius: 13px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.65);
+    padding: 2.6ex 3ex;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.tutorialeasy .tutorial-level {
+    background: linear-gradient(rgb(156, 198, 70), rgb(120, 151, 54));
+    border: 1px solid rgb(138, 174, 62);
+}
+
+.tutorialmedium .tutorial-level {
+    background: linear-gradient(rgb(246, 143, 38), rgb(205, 109, 30));
+    border: 1px solid rgb(225, 126, 34);
+}
+
+.slides {
+    -webkit-transform: scale(1) !important;
+    transform: scale(1) !important;
+}
+
+.slide {
+    width: 900px !important;
+    height: 675px !important;
+    color: #002B67;
+    overflow: hidden;
+    page-break-after: always;
+    position: relative;
+    box-sizing: border-box;
+    background: #FFF;
+    font-family: Verdana;
+    margin: 0;
+    padding: 0;
+}
+
+.slide video {
+	max-width: 100%;
+	max-height: 424px;
+}
+
+.slide > header {
+    padding: 60px 55px;
+    font-size: 30px;
+    box-sizing: border-box;
+}
+
+.slide > header > h1, .slide > header > h2 {
+    font-size: 30px;
+    margin: 0px;
+    font-weight: normal;
+}
+
+.slide > .contents {
+    padding: 0px 35px;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.slide.font-size-small > .contents {
+    font-size: 19px;
+}
+
+.contents > h3:first-child {
+    color: #60C1CF;
+    margin-left: 20px;
+    margin-top: -46px;
+    margin-bottom: 15px;
+    font-weight: normal;
+    position: relative;
+}
+
+.contents img {
+    max-width: 830px;
+}
+
+.screenshot {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.screenshot-sm {
+    width: 580px;
+}
+
+.slide > footer {
+    position: absolute;
+    text-align: center;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    padding-bottom: 15px;
+}
+
+footer > .fiware-logo {
+    position: absolute;
+    width: 115px;
+    left: 50px;
+    bottom: 12px;
+}
+
+footer > .fiware-lab-ops-logo {
+    position: absolute;
+    width: 300px;
+    right: 12px;
+    bottom: 3px;
+}
+
+/*
+ *  Cover pages
+ */
+.slide.cover > header {
+    background: #60C1CF;
+    height: 185px;
+    padding: 30px;
+    color: #FFF;
+}
+
+.slide.cover > header > h2 {
+    font-size: 19px;
+    margin-top: 20px;
+}
+
+.slide.cover .fiware-contact {
+    width: 265px;
+    display: block;
+    position: absolute;
+    bottom: 105px;
+    left: 144px;
+}
+
+.slide.cover .fiware-logo {
+    width: 370px;
+    display: block;
+    position: absolute;
+    top: 260px;
+    left: 37px;
+}
+
+.slide.cover .fiware-lab-ops-logo {
+    width: 375px;
+    position: absolute;
+    top: 190px;
+    right: 70px;
+}
+
+.slide.cover .navigation-tip {
+    display: none;
+}
+
+/*
+ *  Back cover pages
+ */
+
+.slide.back-cover > div {
+    position: absolute;
+    top: 107px;
+    left: 88px;
+    font-size: 52px;
+    line-height: 52px;
+    color: #60C1CF;
+}
+
+.slide.back-cover .fiware-contact {
+    width: 205px;
+    display: block;
+    position: absolute;
+    bottom: 90px;
+    left: 90px;
+}
+
+.slide.back-cover .fiware-logo {
+    width: 410px;
+    display: block;
+    position: absolute;
+    top: 235px;
+    left: 70px;
+}
+
+.slide.back-cover .fiware-lab-ops-logo {
+    width: 375px;
+    position: absolute;
+    top: 170px;
+    right: 17px;
+}
+
+/*
+ * Section title pages
+ */
+
+.slide > .section-title-header {
+    position: absolute;
+    bottom: 112px;
+    padding: 60px 80px;
+}
+
+.slide > .section-title-header > h1 {
+    color: #60C1CF;
+    font-size: 25px;
+}
+
+.slide > .section-title-header > h2 {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 50px;
+}
+
+.section-title-sm .section-title-header > h2 {
+    font-size: 42px;
+}
+
+/*
+ * Ending
+ */
+
+#toc, #help, .slide aside, .slide .notes,
+.presenter_notes, #current_presenter_notes, #presenter_note {
+  display: none;
+}
+
+a {
+  color: inherit;
+  display: inline-block;
+  text-decoration: none;
+  line-height: 110%;
+  border-bottom: 2px solid #3f3f3f;
+}
+
+.contents table {
+    width: 100%;
+    border: 1px solid rgb(221, 221, 221);
+    border-radius: 3px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+.contents table tr td, .contents table tr th {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+}
+
+.contents table tr th {
+    border-top: 0px;
+    border: 1px solid rgb(221, 221, 221);
+    border-bottom-width: 2px;
+}
+.contents table tr td {
+    border: 1px solid rgb(221, 221, 221);
+}
+
+pre, code, tt {
+    font-family: Consolas, 'Bitstream Vera Sans Mono', 'Lucida Console', FreeMono, Courier, monospace;
+}
+
+code {
+    padding: 4px 4px 2px;
+    font-size: 90%;
+    color: #C7254E;
+    background-color: #F9F2F4;
+    border-radius: 4px;
+}
+
+pre>code {
+  background: none;
+}
+
+pre, .gist .gist-file .gist-data {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -webkit-border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -webkit-border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  font-size: 16px;
+  padding-top: 0.25em !important;
+  padding-right: 0.5em !important;
+  padding-left: 0.5em !important;
+  overflow: auto;
+  max-height: 300px;
+  margin: 10px 0;
+}
+
+.slide.code-block pre {
+    max-height: 410px;
+}
+
+.slide.code-block-sm pre {
+    font-size: 13px;
+}
+
+.slide.code-block-xs pre {
+    font-size: 12px;
+}
+
+blockquote {
+  border-left: solid 8px #555753;
+  padding: .1ex 1ex;
+  font-style: italic;
+}
+
+li pre { margin-left: 0em; }
+
+.im {
+	float: left;
+	margin: 0px 35px 10px 0px;
+}
+
+.piping1 {
+	margin: -30px 0px -5px 50px;
+}
+
+.piping2 {
+	margin: -25px 0px -20px 40px;
+}
+
+#arch {
+	margin: 28px 0px 0px 0px;
+	width: 798px;
+}
+
+/* Pygments default theme */
+.hll { background-color: #ffffcc }
+.c { color: #408080; font-style: italic } /* Comment */
+/*.err { border: 1px solid #FF0000 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666666 } /* Operator */
+.cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.cp { color: #BC7A00 } /* Comment.Preproc */
+.c1 { color: #408080; font-style: italic } /* Comment.Single */
+.cs { color: #408080; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.gr { color: #FF0000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #00A000 } /* Generic.Inserted */
+.go { color: #808080 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #0040D0 } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #7D9029 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.no { color: #880000 } /* Name.Constant */
+.nd { color: #AA22FF } /* Name.Decorator */
+.ni { color: #999999; font-weight: bold } /* Name.Entity */
+.ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.nf { color: #0000FF } /* Name.Function */
+.nl { color: #A0A000 } /* Name.Label */
+.nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.w { color: #bbbbbb } /* Text.Whitespace */
+.mf { color: #666666 } /* Literal.Number.Float */
+.mh { color: #666666 } /* Literal.Number.Hex */
+.mi { color: #666666 } /* Literal.Number.Integer */
+.mo { color: #666666 } /* Literal.Number.Oct */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */

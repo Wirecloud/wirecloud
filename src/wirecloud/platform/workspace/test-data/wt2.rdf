@@ -1,0 +1,143 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:usdl-core="http://www.linked-usdl.org/ns/usdl-core#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+     xmlns:wire-m="http://wirecloud.conwet.fi.upm.es/ns/mashup#"
+     xmlns:vCard = "http://www.w3.org/2006/vcard/ns#"
+     xmlns:gr="http://purl.org/goodrelations/v1#">
+
+    <wire-m:Mashup rdf:about="http://wirecloud.com/test">
+        <dcterms:title>Test Workspace</dcterms:title>
+        <dcterms:description>This template defines an empty workspace</dcterms:description>
+        <dcterms:creator rdf:resource="http://creatoruri/"/>
+        <usdl-core:versionInfo>1</usdl-core:versionInfo>
+        <wire:hasImageUri rdf:resource="images/mashup.png"/>
+
+        <foaf:page rdf:resource="docs/index.html"/>
+        <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
+
+        <vCard:addr>
+            <vCard:Work>
+                <vCard:email>a@b.com</vCard:email>
+            </vCard:Work>
+        </vCard:addr>
+
+        <wire-m:hasTab>
+            <wire-m:Tab rdf:ID="tab-1">
+                <wire:index>0</wire:index>
+                <dcterms:title>Tab</dcterms:title>
+                <wire-m:hasTabPreference>
+                    <wire-m:TabPreference rdf:ID="tab_pref">
+                        <dcterms:title>smart</dcterms:title>
+                        <wire:value>False</wire:value>
+                    </wire-m:TabPreference>
+                </wire-m:hasTabPreference>
+                <wire-m:hasiWidget>
+                    <wire-m:iWidget rdf:ID="i-1">
+                        <wire-m:iWidgetId>i-1</wire-m:iWidgetId>
+                        <dcterms:title>Test (1)</dcterms:title>
+                        <usdl-core:hasProvider>
+                            <foaf:Organization>
+                                <foaf:name>Wirecloud</foaf:name>
+                            </foaf:Organization>
+                        </usdl-core:hasProvider>
+                        <rdfs:label>Test</rdfs:label>
+                        <usdl-core:versionInfo>1.0</usdl-core:versionInfo>
+                        <wire-m:hasPosition>
+                            <wire-m:Position>
+                                <wire-m:x>0</wire-m:x>
+                                <wire-m:y>0</wire-m:y>
+                                <wire-m:z>0</wire-m:z>
+                            </wire-m:Position>
+                        </wire-m:hasPosition>
+                        <wire-m:hasiWidgetRendering>
+                            <wire-m:iWidgetRendering>
+                                <wire:renderingWidth>6</wire:renderingWidth>
+                                <wire:renderingHeight>24</wire:renderingHeight>
+                                <wire-m:layout>0</wire-m:layout>
+                                <wire-m:minimized>False</wire-m:minimized>
+                                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                            </wire-m:iWidgetRendering>
+                        </wire-m:hasiWidgetRendering>
+                    </wire-m:iWidget>
+                </wire-m:hasiWidget>
+                <wire-m:hasiWidget>
+                    <wire-m:iWidget rdf:ID="i-2">
+                        <wire-m:iWidgetId>i-2</wire-m:iWidgetId>
+                        <dcterms:title>Test (2)</dcterms:title>
+                        <usdl-core:hasProvider>
+                            <foaf:Organization>
+                                <foaf:name>Wirecloud</foaf:name>
+                            </foaf:Organization>
+                        </usdl-core:hasProvider>
+                        <rdfs:label>Test</rdfs:label>
+                        <usdl-core:versionInfo>1.0</usdl-core:versionInfo>
+                        <wire-m:hasPosition>
+                            <wire-m:Position>
+                                <wire-m:x>0</wire-m:x>
+                                <wire-m:y>0</wire-m:y>
+                                <wire-m:z>0</wire-m:z>
+                            </wire-m:Position>
+                        </wire-m:hasPosition>
+                        <wire-m:hasiWidgetRendering>
+                            <wire-m:iWidgetRendering>
+                                <wire:renderingWidth>6</wire:renderingWidth>
+                                <wire:renderingHeight>24</wire:renderingHeight>
+                                <wire-m:layout>0</wire-m:layout>
+                                <wire-m:minimized>False</wire-m:minimized>
+                                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                            </wire-m:iWidgetRendering>
+                        </wire-m:hasiWidgetRendering>
+                    </wire-m:iWidget>
+                </wire-m:hasiWidget>
+            </wire-m:Tab>
+        </wire-m:hasTab>
+        <wire-m:hasMashupWiring>
+            <wire:PlatformWiring rdf:ID="wiring">
+                <wire-m:hasConnection>
+                    <wire-m:Connection rdf:ID="CH-1">
+                        <dcterms:title>bloqued connection</dcterms:title>
+                        <wire-m:readonly>true</wire-m:readonly>
+                        <wire-m:hasSource>
+                            <wire-m:Source>
+                                <wire-m:sourceId>i-1</wire-m:sourceId>
+                                <wire:type>iwidget</wire:type>
+                                <wire-m:endpoint>test</wire-m:endpoint>
+                            </wire-m:Source>
+                        </wire-m:hasSource>
+                        <wire-m:hasTarget>
+                            <wire-m:Target>
+                                <wire-m:targetId>i-2</wire-m:targetId>
+                                <wire:type>iwidget</wire:type>
+                                <wire-m:endpoint>test</wire-m:endpoint>
+                            </wire-m:Target>
+                        </wire-m:hasTarget>
+                    </wire-m:Connection>
+                </wire-m:hasConnection>
+            </wire:PlatformWiring>
+        </wire-m:hasMashupWiring>
+
+    </wire-m:Mashup>
+
+
+    <foaf:Person rdf:about="http://creatoruri/">
+        <foaf:name>test</foaf:name>
+    </foaf:Person>
+
+    <gr:BusinessEntity rdf:about="http://vendoruri/">
+        <foaf:name>Wirecloud Test Suite</foaf:name>
+    </gr:BusinessEntity>
+
+    <usdl-core:Resource rdf:about="docs/index.html">
+        <dcterms:title>WikiURI</dcterms:title>
+    </usdl-core:Resource>
+
+    <foaf:Image rdf:about="images/mashup.png">
+        <dcterms:title>ImageURI</dcterms:title>
+    </foaf:Image>
+
+</rdf:RDF>

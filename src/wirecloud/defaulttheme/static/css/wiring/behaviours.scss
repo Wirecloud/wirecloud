@@ -1,0 +1,45 @@
+@import 'wiring/defaults';
+@import 'compass/css3/user-interface';
+@import "utils";
+
+
+// ======================================================================================
+// WIRING - BEHAVIOUR
+// ======================================================================================
+
+.behaviour {
+    cursor: pointer;
+    @include user-select(none);
+
+    .behaviour-description {
+        max-height: $behaviour-description-maxheight;
+        margin-bottom: 0px;
+        font-size: $font-size-h6;
+        line-height: $line-height-base;
+        color: $behaviour-description-font-color;
+        overflow: hidden;
+    }
+}
+
+.behaviour-title {
+    width: $behaviour-title-width;
+    float: left;
+    white-space: nowrap;
+
+    & > span {
+        display: inline-block;
+        max-width: 100%;
+    }
+}
+
+.behaviour.temporal {
+    visibility: hidden;
+}
+
+.behaviour.dragging {
+    position: absolute;
+    cursor: move;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}

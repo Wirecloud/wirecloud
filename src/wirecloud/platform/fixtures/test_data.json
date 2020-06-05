@@ -1,0 +1,340 @@
+[
+    {
+        "model": "auth.Group",
+        "pk": "1",
+        "fields": {
+            "name": "normusers"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "wirecloud"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "2",
+        "fields": {
+            "username": "test",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [1],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "3",
+        "fields": {
+            "username": "test2",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [1, 2],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "4",
+        "fields": {
+            "username": "test3",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [1],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "5",
+        "fields": {
+            "username": "wirecloud",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [2],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$30000$Td6dJ7DYEmYb$NSq/ZzEp3Glq4RdW+Vf/oSFp40NNjXWK2zbbNX/nj/k=",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "commons.organization",
+        "fields": {
+            "user": 5,
+            "group": 2
+        }
+    },
+    {
+        "pk": 1,
+        "model": "commons.team",
+        "fields": {
+            "organization": 1,
+            "name": "owners",
+            "users": [3, 5]
+        }
+    },
+    {
+        "model": "platform.XHTML",
+        "pk": "1",
+        "fields": {
+            "uri": "1",
+            "code": "widget code",
+            "url": "http://example.com/widget_code",
+            "content_type": "",
+            "cacheable": true
+        }
+    },
+    {
+        "model": "platform.Workspace",
+        "pk": "1",
+        "fields": {
+            "name": "workspace",
+            "title": "workspace",
+            "public": false,
+            "creator": "2",
+            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\" }}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value4\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\"}}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"\"}}}}}}, \"connections\": []}"
+        }
+    },
+    {
+        "model": "platform.Workspace",
+        "pk": "201",
+        "fields": {
+            "name": "workspace",
+            "title": "workspace",
+            "public": false,
+            "creator": "3",
+            "wiringStatus": "{\"operators\": {}, \"connections\": []}"
+        }
+    },
+    {
+        "model": "platform.Workspace",
+        "pk": "202",
+        "fields": {
+            "name": "workspaceSecure",
+            "title": "workspaceSecure",
+            "public": false,
+            "creator": "2",
+            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"\"}}}, \"username\": {\"secure\": false, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"username\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperatorSecure/1.0\", \"properties\": {}, \"preferences\": {\"pref_secure\": {\"secure\": true, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"r16Ts7Ekgd4EuYggazdIqQ==\"}}}, \"username\": {\"secure\": false, \"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"test_username\"}}}}}}, \"connections\": []}"
+        }
+    },
+    {
+        "model": "platform.Workspace",
+        "pk": "203",
+        "fields": {
+            "name": "publicworkspace",
+            "title": "publicworkspace",
+            "public": true,
+            "creator": "2",
+            "wiringStatus": "{\"operators\": {\"1\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\" }}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value4\"}}}}}, \"2\": {\"name\": \"Wirecloud/TestOperator/1.0\", \"properties\": {}, \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value1\"}}}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value2\"}}}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"value3\"}}}, \"empty_pref\": {\"readonly\": false, \"hidden\": false, \"value\": {\"users\": {\"2\": \"\"}}}}}}, \"connections\": []}"
+        }
+    },
+    {
+        "model": "platform.UserWorkspace",
+        "pk": "1",
+        "fields": {
+            "user": "2",
+            "workspace": "1"
+        }
+    },
+    {
+        "model": "platform.UserWorkspace",
+        "pk": "2",
+        "fields": {
+            "user": "2",
+            "workspace": "202"
+        }
+    },
+    {
+        "model": "platform.UserWorkspace",
+        "pk": "3",
+        "fields": {
+            "user": "3",
+            "workspace": "1"
+        }
+    },
+    {
+        "model": "platform.UserWorkspace",
+        "pk": "4",
+        "fields": {
+            "user": "2",
+            "workspace": "203"
+        }
+    },
+    {
+        "model": "platform.Tab",
+        "pk": "1",
+        "fields": {
+            "workspace": "1",
+            "name": "tab",
+            "title": "tab",
+            "visible": true
+        }
+    },
+    {
+        "model": "platform.Tab",
+        "pk": "2",
+        "fields": {
+            "workspace": "202",
+            "name": "tabSecure",
+            "title": "tabSecure",
+            "visible": true
+        }
+    },
+    {
+        "model": "platform.IWidget",
+        "pk": "1",
+        "fields": {
+            "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
+            "name": "Test Widget",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "tab": "1",
+            "variables": "{\"password\": {\"users\": {\"2\": \"test_password\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
+        }
+    },
+    {
+        "model": "platform.IWidget",
+        "pk": "2",
+        "fields": {
+            "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
+            "name": "Test Widget 2",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":5,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "tab": "1",
+            "variables": "{\"password\": {\"users\": {\"2\": \"test_password\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
+        }
+    },
+    {
+        "model": "platform.IWidget",
+        "pk": "3",
+        "fields": {
+            "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
+            "name": "Secure Widget 1",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "tab": "2",
+            "variables": "{\"password\": {\"users\": {\"2\": \"\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
+        }
+    },
+    {
+        "model": "platform.IWidget",
+        "pk": "4",
+        "fields": {
+            "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
+            "name": "Secure Widget 2",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "tab": "2",
+            "variables": "{\"password\": {\"users\": {\"2\": \"test_password\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
+        }
+    },
+    {
+        "model": "catalogue.CatalogueResource",
+        "pk": "1",
+        "fields": {
+            "vendor": "Test",
+            "short_name": "Test Widget",
+            "version": "1.0.0",
+            "creator": 2,
+            "type": 0,
+            "public": true,
+            "creation_date": "2011-05-13T12:24:03+01:00",
+            "groups": [],
+            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "popularity": "0",
+            "json_description": "{\"vendor\": \"Test\", \"description\": \"This widget is used to test some of the features of the Wirecloud platform\", \"contents\": {\"contenttype\": \"text/html\", \"src\": \"test.html\"}, \"translations\": {}, \"smartphoneimage\": \"images/catalogue_iphone.png\", \"requirements\": [], \"properties\": [{\"default\": \"initial text\", \"description\": \"text preference\", \"name\": \"prop\", \"label\": \"text\", \"type\": \"text\", \"secure\": false},{\"default\": \"\", \"description\": \"prop description\", \"name\": \"prop2\", \"label\": \"text\", \"type\": \"text\", \"secure\": false}], \"name\": \"Test Widget\", \"title\": \"Test\", \"preferences\": [{\"default\": \"default\", \"description\": \"list preference\", \"name\": \"list\", \"label\": \"list\", \"type\": \"list\", \"options\": [{\"value\": \"default\", \"label\": \"Default\"}, {\"value\": \"1\", \"label\": \"value1\"}, {\"value\": \"2\", \"label\": \"value2\"}], \"secure\": false}, {\"default\": \"initial text\", \"description\": \"text preference\", \"name\": \"username\", \"label\": \"text\", \"type\": \"text\", \"secure\": false}, {\"default\": \"false\", \"description\": \"boolean preference\", \"name\": \"boolean\", \"label\": \"boolean\", \"type\": \"boolean\", \"secure\": false}, {\"default\": \"default\", \"description\": \"password preference\", \"name\": \"password\", \"label\": \"password\", \"type\": \"password\", \"secure\": true}], \"authors\": \"aarranz\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test-data\", \"actionlabel\": \"\", \"name\": \"inputendpoint\", \"label\": \"Input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test-data\", \"description\": \"\", \"type\": \"text\", \"name\": \"outputendpoint\", \"label\": \"Output\"}]}, \"image\": \"images/catalogue.png\", \"version\": \"1.0.0\", \"context\": [], \"widget_height\": \"24\", \"email\": \"aarranz@conwet.com\", \"type\": \"widget\", \"widget_width\": \"6\", \"doc\": \"http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb\"}",
+            "users": []
+        }
+    },
+    {
+        "pk": 2,
+        "model": "catalogue.CatalogueResource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_TestOperator_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "TestOperator",
+            "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [{\"default\": \"\", \"name\": \"pref_with_val\", \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"},{\"default\": \"false\", \"name\": \"readonly_pref\", \"label\": \"Throw exceptions\", \"type\": \"text\", \"description\": \"Raise exception on event arrival\"},{\"default\": \"false\", \"name\": \"hidden_pref\", \"label\": \"Run logging tests\", \"type\": \"boolean\", \"description\": \"Run logging support tests on change to true\"}, {\"default\": \"default_value\", \"name\": \"empty_pref\", \"label\": \"Empty\", \"type\": \"text\", \"description\": \"\"}], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
+            "creator": 2,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "type": 2,
+            "public": false,
+            "users": [2]
+        }
+    },
+    {
+        "pk": 3,
+        "model": "catalogue.CatalogueResource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_TestOperatorSecure_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "TestOperatorSecure",
+            "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [{\"default\": \"\", \"name\": \"pref_secure\", \"secure\": true, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}, {\"default\": \"\", \"name\": \"username\", \"secure\": false, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
+            "creator": 2,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "type": 2,
+            "public": false,
+            "users": [2]
+        }
+    },
+    {
+        "pk": 4,
+        "model": "catalogue.CatalogueResource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_TestOperatorMultiuser_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "TestOperatorMultiuser",
+            "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [{\"default\": \"\",\"multiuser\": true, \"name\": \"prop1\", \"secure\": false, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}, {\"default\": \"\",\"multiuser\": true, \"name\": \"prop3\", \"secure\": true, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}, {\"default\": \"\",\"multiuser\": true, \"name\": \"prop4\", \"readonly\":true, \"secure\": false, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [{\"default\": \"\",\"multiuser\": false, \"name\": \"pref1\", \"secure\": false, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}, {\"default\": \"\",\"multiuser\": false, \"name\": \"pref2\", \"secure\": true, \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"}], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
+            "creator": 2,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "type": 2,
+            "public": false,
+            "users": [2]
+        }
+    },
+    {
+        "model": "platform.Widget",
+        "pk": "1",
+        "fields": {
+            "resource": 1,
+            "xhtml": "1"
+        }
+    }
+]

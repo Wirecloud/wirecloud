@@ -1,0 +1,91 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+@mixin label-badge-variant($background) {
+    color: contrast-color($background, $button-text-color-light, $button-text-color-dark, $button-text-color-threshold);
+    background-color: $background;
+}
+
+.label,
+.badge {
+    @include label-badge-variant($brand-default);
+    display: inline-block;
+    padding: 2px 4px;
+    font-size: $font-size-small;
+    font-weight: bold;
+    line-height: 14px;
+    white-space: nowrap;
+    vertical-align: baseline;
+    margin: 0 2px;
+
+    @if ($button-gradients) {
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    } @else {
+        text-shadow: none;
+    }
+}
+
+.label {
+    border-radius: 3px;
+}
+
+.badge {
+    padding-right: 9px;
+    padding-left: 9px;
+    border-radius: 9px;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.label.hidden,
+.badge.hidden {
+    display: none;
+}
+
+.label-primary,
+.badge-primary {
+    @include label-badge-variant($brand-primary);
+}
+
+.label-important, .label-danger,
+.badge-important, .badge-danger {
+    @include label-badge-variant($brand-danger);
+}
+
+.label-info,
+.badge-info {
+    @include label-badge-variant($brand-info);
+}
+
+.label-warning,
+.badge-warning {
+    @include label-badge-variant($brand-warning);
+}
+
+.label-success,
+.badge-success {
+    @include label-badge-variant($brand-success);
+}
+
+.label-inverse,
+.badge-inverse {
+    @include label-badge-variant(#333);
+}
+
+
+.label-connection,
+.badge-connection {
+    @include label-badge-variant($brand-connection);
+}
+
+.label-operator,
+.badge-operator {
+    @include label-badge-variant($brand-operator);
+}
+
+.label-widget,
+.badge-widget {
+    @include label-badge-variant($brand-widget);
+}

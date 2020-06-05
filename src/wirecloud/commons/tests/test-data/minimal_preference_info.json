@@ -1,0 +1,11 @@
+{
+    "vendor": "Wirecloud",
+    "name": "TemplateTest",
+    "version": "1.0",
+    "js_files": ["js/main.js"],
+    "type": "operator",
+    "preferences": [
+        {"name": "pref1", "type": "text"},
+        {"name": "pref2", "type": "text", "label": "", "description": "", "default": ""}
+    ]
+}

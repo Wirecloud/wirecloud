@@ -1,0 +1,21 @@
+@import "shared";
+
+@mixin animation($animation) {
+    @include build-prefix-values(animation, $animation);
+}
+
+@mixin keyframes($name) {
+
+    @-webkit-keyframes #{$name} {
+        @content
+    }
+
+    @-moz-keyframes #{$name} {
+        @content
+    }
+
+    @keyframes #{$name} {
+        @content
+    }
+
+}

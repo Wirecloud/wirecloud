@@ -1,0 +1,33 @@
+@import 'variables';
+@import 'base/font_mixins';
+
+
+@mixin children-display($selectors: (), $value: none) {
+    @each $selector in $selectors {
+        #{$selector} { display: $value; }
+    }
+}
+
+@mixin positioned-border-radius($direction) {
+    @if $direction == top { border-radius: $border-radius-base $border-radius-base 0px 0px; }
+    @if $direction == right { border-radius: 0px $border-radius-base $border-radius-base 0px; }
+    @if $direction == bottom { border-radius: 0px 0px $border-radius-base $border-radius-base; }
+    @if $direction == left { border-radius: $border-radius-base 0px 0px $border-radius-base; }
+}
+
+@mixin positioned-element($top: false, $right: false, $left: false, $bottom: false) {
+    position: absolute;
+
+    @if $top { top: $top; }
+    @if $right { right: $right; }
+    @if $left { left: $left; }
+    @if $bottom { bottom: $bottom; }
+}
+
+@function adapt-image-size($size) {
+    @if $high-resolution-images {
+        @return $size / 2;
+    } @else {
+        @return $size;
+    }
+}

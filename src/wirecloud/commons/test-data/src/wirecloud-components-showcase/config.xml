@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="wirecloud-components-showcase" version="1.1.8">
+  <details>
+    <title>__MSG_displayName__</title>
+    <email>aarranz@conwet.com</email>
+    <authors>aarranz</authors>
+  </details>
+  <wiring/>
+  <contents src="index.html" contenttype="application/xhtml+xml" useplatformstyle="true"/>
+  <rendering height="24" width="11"/>
+  <translations default="en">
+    <translation lang="en">
+      <msg name="displayName">Wirecloud Components Showcase</msg>
+    </translation>
+    <translation lang="es">
+      <msg name="displayName">Escaparate de Componentes Wirecloud</msg>
+    </translation>
+  </translations>
+</widget>

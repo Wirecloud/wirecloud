@@ -1,0 +1,173 @@
+@import 'variables';
+@import 'compass/css3';
+
+.controlLayerUp, .controlLayerDown, .controlLayerLeft, .controlLayerRight {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 200000;
+    opacity: 0.4;
+    background: #808080;
+    transition: left 0.5s ease-in, top 0.5s ease-in, height 0.5s ease-in, width 0.5s ease-in, opacity 0.5s ease-in;
+}
+
+.controlLayerCenter {
+    position: absolute;
+    z-index: 200000;
+    background: transparent;
+    transition: left 0.5s ease-in, top 0.5s ease-in, height 0.5s ease-in, width 0.5s ease-in, opacity 0.5s ease-in;
+}
+
+.controlLayer.transparent > div {
+    opacity: 0;
+}
+
+.controlLayer {
+    margin: 0;
+    padding: 0;
+    border: 0 none transparent;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.controlLayer > div {
+    pointer-events: all;
+}
+
+.msgLayer {
+
+}
+
+.empty {
+    display: none;
+}
+
+.simpleDescription {
+    display: none;
+}
+
+.simpleDescription.activeStep{
+    display: inherit;
+    z-index: 200100;
+    min-width: 180px;
+}
+
+/* popup */
+.pop-up {
+    position: absolute;
+    max-width: 500px;
+    display: block;
+    margin: 0px;
+    padding: $padding-vertical-base ($padding-horizontal-base + 16) $padding-vertical-base $padding-horizontal-base;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+    z-index: 200100;
+    box-sizing: border-box;
+}
+
+.pop-up .pop-up-message {
+
+}
+
+.pop-up .pop-up-close {
+    position: absolute;
+    display: inline;
+    right: 0px;
+    margin: 0px 5px 0px 0px;
+}
+
+.pop-up .pop-up-arrow {
+    position: absolute;
+    color: $state-primary-bg;
+    background-color: white;
+    font-size: 22px;
+    line-height: 16px;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+/* Arrows */
+.pop-up .pop-up-arrow.downLeft {
+    @include transform(rotate(0deg));
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+    top: -12px;
+    right: -12px;
+}
+
+.pop-up .pop-up-arrow.downRight {
+    @include transform(rotate(-90deg));
+    box-shadow: -2px 3px 3px rgba(0,0,0,0.3);
+    top: -12px;
+    left: -12px;
+}
+
+.pop-up .pop-up-arrow.topLeft {
+    @include transform(rotate(90deg));
+    box-shadow: 3px -5px 3px rgba(0,0,0,0.3);
+    bottom: -12px;
+    right: -12px;
+}
+
+.pop-up .pop-up-arrow.topRight {
+    @include transform(rotate(180deg));
+    box-shadow: -2px -5px 3px rgba(0,0,0,0.3);
+    bottom: -12px;
+    left: -12px;
+}
+
+.pop-up.subFormAction {
+    visibility: hidden;
+}
+
+.pop-up.subFormAction.activate {
+    visibility: visible;
+    display: inline;
+}
+
+.pop-up.subFormAction.invalid {
+    color: #7E1111;
+    visibility: visible;
+}
+
+.popup.subFormAction.invalid div{
+    display: inline;
+}
+
+/* WarningIco */
+.pop-up .warningIco {
+    visibility: hidden;
+    color: #7E1111;
+    margin-right: 8px;
+    position: absolute;
+}
+
+.pop-up.subFormAction.invalid .warningIco {
+    visibility: visible;
+    display: inline;
+    position: relative;
+}
+
+.disableLayer {
+    z-index: 300000;
+    position: absolute;
+}
+
+.tuto_highlight {
+/*    z-index: 200105;*/
+}
+
+/* menu de pruebas */
+.tutorialMenu {
+    z-index: 10000;
+    width: 300px;
+    height: 300px;
+    background:blue;
+}
+

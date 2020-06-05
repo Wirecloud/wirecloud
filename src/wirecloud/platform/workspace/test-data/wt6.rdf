@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+  xmlns:gr="http://purl.org/goodrelations/v1#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:wire-m="http://wirecloud.conwet.fi.upm.es/ns/mashup#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+>
+  <wire-m:Mashup rdf:about="http://wirecloud.conwet.fi.upm.es/ns/mashup#Wirecloud%20Test%20Suite/Test%20Mashup/1">
+    <foaf:page rdf:resource="docs/index.html"/>
+    <wire-m:hasTab>
+      <wire-m:Tab rdf:nodeID="Ndbced0a1261d45e880317d4f139267c5">
+        <wire-m:hasiWidget>
+          <wire-m:iWidget rdf:nodeID="N45e4e5a0a6c344d1b5388f6e98598ce5">
+            <wire-m:readonly>true</wire-m:readonly>
+            <wire-m:hasiWidgetRendering>
+              <wire-m:iWidgetRendering rdf:nodeID="N3ddcc5ec3aaa4e85b4ca876c0833a661">
+                <wire-m:layout>0</wire-m:layout>
+                <wire:renderingWidth>6</wire:renderingWidth>
+                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                <wire-m:minimized>False</wire-m:minimized>
+                <wire:renderingHeight>24</wire:renderingHeight>
+              </wire-m:iWidgetRendering>
+            </wire-m:hasiWidgetRendering>
+            <usdl:versionInfo>1.0</usdl:versionInfo>
+            <rdfs:label>Test</rdfs:label>
+            <wire-m:hasPosition>
+              <wire-m:Position rdf:nodeID="N97d8074eda7e4af0a69771f66dfb779e">
+                <wire-m:y>0</wire-m:y>
+                <wire-m:x>0</wire-m:x>
+                <wire-m:z>0</wire-m:z>
+              </wire-m:Position>
+            </wire-m:hasPosition>
+            <usdl:hasProvider>
+              <gr:BussisnessEntity rdf:nodeID="N35d3885bce6f45c4ab11a88e965a9c50">
+                <foaf:name>Wirecloud</foaf:name>
+              </gr:BussisnessEntity>
+            </usdl:hasProvider>
+            <wire-m:iWidgetId>2</wire-m:iWidgetId>
+            <dcterms:title>Test (2)</dcterms:title>
+          </wire-m:iWidget>
+        </wire-m:hasiWidget>
+        <wire:index>0</wire:index>
+        <dcterms:title>Tab</dcterms:title>
+        <wire-m:hasiWidget>
+          <wire-m:iWidget rdf:nodeID="N123ed318e75d4def8096bc2962664252">
+            <wire-m:hasiWidgetRendering>
+              <wire-m:iWidgetRendering rdf:nodeID="N487ce69e80314648a5362581a76077d0">
+                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                <wire:renderingWidth>6</wire:renderingWidth>
+                <wire-m:layout>0</wire-m:layout>
+                <wire-m:minimized>False</wire-m:minimized>
+                <wire:renderingHeight>24</wire:renderingHeight>
+              </wire-m:iWidgetRendering>
+            </wire-m:hasiWidgetRendering>
+            <dcterms:title>Test (1)</dcterms:title>
+            <wire-m:hasPosition>
+              <wire-m:Position rdf:nodeID="Naf463967ea414ea682543ca0dc5178f2">
+                <wire-m:y>0</wire-m:y>
+                <wire-m:x>0</wire-m:x>
+                <wire-m:z>0</wire-m:z>
+              </wire-m:Position>
+            </wire-m:hasPosition>
+            <usdl:hasProvider>
+              <gr:BussisnessEntity rdf:nodeID="Nc927e3e43ddf4418a188fd5175d01ecb">
+                <foaf:name>Wirecloud</foaf:name>
+              </gr:BussisnessEntity>
+            </usdl:hasProvider>
+            <rdfs:label>Test</rdfs:label>
+            <usdl:versionInfo>1.0</usdl:versionInfo>
+            <wire-m:iWidgetId>1</wire-m:iWidgetId>
+            <wire-m:readonly>true</wire-m:readonly>
+          </wire-m:iWidget>
+        </wire-m:hasiWidget>
+        <wire-m:hasiWidget>
+          <wire-m:iWidget rdf:nodeID="N7cbaa3acc6ac43dc9c5ffc88ecf6576a">
+            <usdl:hasProvider>
+              <gr:BussisnessEntity rdf:nodeID="N35205da453cf492cb9912d08fbdfba7a">
+                <foaf:name>Wirecloud</foaf:name>
+              </gr:BussisnessEntity>
+            </usdl:hasProvider>
+            <rdfs:label>Test</rdfs:label>
+            <wire-m:hasiWidgetRendering>
+              <wire-m:iWidgetRendering rdf:nodeID="N3e2ef44be4b24c739935225a8f294e79">
+                <wire:renderingWidth>6</wire:renderingWidth>
+                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                <wire-m:minimized>False</wire-m:minimized>
+                <wire-m:layout>0</wire-m:layout>
+                <wire:renderingHeight>24</wire:renderingHeight>
+              </wire-m:iWidgetRendering>
+            </wire-m:hasiWidgetRendering>
+            <wire-m:hasPosition>
+              <wire-m:Position rdf:nodeID="N8e9c2d61d6194917b3b1745c3d855f41">
+                <wire-m:y>0</wire-m:y>
+                <wire-m:x>0</wire-m:x>
+                <wire-m:z>0</wire-m:z>
+              </wire-m:Position>
+            </wire-m:hasPosition>
+            <usdl:versionInfo>1.0</usdl:versionInfo>
+            <dcterms:title>Test (3)</dcterms:title>
+            <wire-m:readonly>true</wire-m:readonly>
+            <wire-m:iWidgetId>3</wire-m:iWidgetId>
+          </wire-m:iWidget>
+        </wire-m:hasiWidget>
+      </wire-m:Tab>
+    </wire-m:hasTab>
+    <dcterms:abstract>Mashup for testing</dcterms:abstract>
+    <wire:hasImageUri rdf:resource="images/mashup.png"/>
+    <dcterms:title>Test Mashup</dcterms:title>
+    <usdl:hasProvider>
+      <gr:BusinessEntity rdf:nodeID="N14d3d40995cc4dd5bd7edef21bf6d1b2">
+        <foaf:name>Wirecloud Test Suite</foaf:name>
+      </gr:BusinessEntity>
+    </usdl:hasProvider>
+    <usdl:versionInfo>1</usdl:versionInfo>
+    <vcard:addr>
+      <vcard:Work rdf:nodeID="N70746fb628e94ff688e1feffa93f6b0c">
+        <vcard:email>a@b.com</vcard:email>
+      </vcard:Work>
+    </vcard:addr>
+    <wire-m:hasMashupWiring>
+      <wire:PlatformWiring rdf:nodeID="Na654b298d0b9454091a6624248b76ad5">
+        <wire-m:hasConnection>
+          <wire-m:Connection rdf:nodeID="Ne7feb379a6374005aa39c32f29b95372">
+            <wire-m:hasTarget>
+              <wire-m:Target rdf:nodeID="N9f73fddc45344ec7af7aba4c1e060a72">
+                <wire:type>widget</wire:type>
+                <wire-m:endpoint>test</wire-m:endpoint>
+                <wire-m:targetId>2</wire-m:targetId>
+              </wire-m:Target>
+            </wire-m:hasTarget>
+            <wire-m:hasSource>
+              <wire-m:Source rdf:nodeID="N8dc27c999de14e128764ed5cbf73bb3b">
+                <wire:type>widget</wire:type>
+                <wire-m:endpoint>test</wire-m:endpoint>
+                <wire-m:sourceId>1</wire-m:sourceId>
+              </wire-m:Source>
+            </wire-m:hasSource>
+          </wire-m:Connection>
+        </wire-m:hasConnection>
+        <usdl:versionInfo>2.0</usdl:versionInfo>
+      </wire:PlatformWiring>
+    </wire-m:hasMashupWiring>
+    <wire:hasChangeLog rdf:resource=""/>
+    <dcterms:creator>
+      <foaf:Person rdf:nodeID="Nb6831dd7733b4777923daf32855af72e">
+        <wire:index>0</wire:index>
+        <foaf:name>test</foaf:name>
+      </foaf:Person>
+    </dcterms:creator>
+  </wire-m:Mashup>
+</rdf:RDF>

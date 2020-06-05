@@ -1,0 +1,19 @@
+{% load i18n %}<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
+<h3>{% trans 'Description' %}</h3>
+<article class="markdown-body"><t:longdescription></t:longdescription></article>
+<h3>{% trans 'Tags' %}</h3>
+<div class="tag_cloud"><t:tags>{"max": 3}</t:tags></div>
+<h3>{% trans 'Detailed data' %}</h3>
+<dl>
+<dt>{% trans 'Internal ID' %}</dt>
+<dd class="text-muted"><t:internalname></t:internalname></dd>
+<dt>{% trans 'Author(s)' %}</dt>
+<t:authors class="text-muted"></t:authors>
+<dt>{% trans 'Contributor(s)' %}</dt>
+<t:contributors class="text-muted"></t:contributors>
+<dt>{% trans 'Size' %}</dt>
+<dd class="text-muted"><t:size></t:size></dd>
+</dl>
+<h3>{% trans 'Advanced operations' %}</h3>
+<div class="advanced_operations"><t:advancedops></t:advancedops></div>
+</s:styledgui>

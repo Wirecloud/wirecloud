@@ -1,0 +1,144 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2014-2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'variables';
+
+@mixin alert-variant($color, $background, $border) {
+    color: $color;
+    background: $background;
+    border-color: $border;
+
+    a,
+    .alert-link {
+        color: darken($color, 5%);
+    }
+
+    blockquote {
+        border-left-color: $color;
+    }
+}
+
+.alert {
+    position: relative;
+    padding: $alert-padding;
+    margin-bottom: $line-height-base;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    box-sizing: border-box;
+    @include alert-variant($state-warning-text, $state-warning-bg, $state-warning-border);
+
+    h4:first-child {
+        margin-top: 0;
+        color: inherit;
+    }
+
+    .close {
+        position: relative;
+        top: -2px;
+        right: -21px;
+        line-height: $line-height-base;
+    }
+
+    a,
+    .alert-link {
+        font-weight: 700;
+    }
+
+    &::after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+}
+
+.alert-success {
+    @include alert-variant($state-success-text, $state-success-bg, $state-success-border);
+}
+
+.alert-danger,
+.alert-error {
+    @include alert-variant($state-danger-text, $state-danger-bg, $state-danger-border);
+}
+
+.alert-info {
+    @include alert-variant($state-info-text, $state-info-bg, $state-info-border);
+}
+
+.alert-block {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.alert > p:last-child,
+.alert > ul:last-child {
+    margin-bottom: 0;
+}
+
+.alert > p + p {
+    margin-top: 5px;
+}
+
+.alert > .fa-remove {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 20px;
+    opacity: 0.2;
+    line-height: 20px;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+.alert > .fa-remove:hover, .alert > .fa-remove:focus {
+    opacity: 0.4;
+}
+
+// ============================================================================
+// STYLED-ALERT - BASIC ALERT MESSAGE
+// ============================================================================
+
+.se-alert-heading {
+    box-sizing: border-box;
+    margin-bottom: ($line-height-base / 2);
+    font-family: $headings-font-family;
+    font-weight: $headings-font-weight;
+    font-size: $font-size-h4;
+    line-height: $headings-line-height;
+    color: $headings-color;
+    text-rendering: optimizelegibility;
+}
+
+.se-alert-body {
+    text-align: justify;
+    font-size: $font-size-base;
+}
+
+// ============================================================================
+// STYLED-ALERT - ALIGNMENT
+// ============================================================================
+
+.se-alert-static-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: 10px auto;
+    width: 500px;
+}

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Example" name="test" version="0.1">
+    <details>
+        <email>test@example.com</email>
+        <image>images/catalogue.png</image>
+        <smartphoneimage>images/catalogue_smartphone.png</smartphoneimage>
+        <description>__MSG_description__</description>
+        <authors>admin</authors>
+    </details>
+    <requirements>
+        <feature name="Wirecloud"/>
+        <feature name="nonexistent-feature"/>
+    </requirements>
+    <preferences>
+        <preference name="pref" type="list" label="__MSG_prefLabel__" description="__MSG_prefDescription__" default="value">
+            <option label="__MSG_optionName__" value="1"/>
+        </preference>
+    </preferences>
+    <persistentvariables>
+        <variable name="prop" type="text" label="__MSG_propLabel__"/>
+    </persistentvariables>
+    <wiring>
+        <outputendpoint name="event" type="text" label="__MSG_eventLabel__" friendcode="test_friend_code"/>
+        <inputendpoint name="slot" type="text" label="__MSG_slotLabel__" friendcode="test_friend_code"/>
+    </wiring>
+    <contents src="test.html"/>
+    <rendering height="24" width="10"/>
+    <translations default="en">
+        <translation lang="en">
+            <msg name="description">Test Widget description</msg>
+            <msg name="prefDescription">Preference description</msg>
+            <msg name="slotLabel">Slot label</msg>
+            <msg name="eventLabel">Event label</msg>
+            <msg name="propLabel">Property label</msg>
+            <msg name="optionName">Option name</msg>
+            <msg name="prefLabel">Preference label</msg>
+        </translation>
+        <translation lang="es">
+            <msg name="description">Descripción del Widget de pruebas</msg>
+            <msg name="prefDescription">Descripción de la preferencia</msg>
+            <msg name="slotLabel">Etiqueta de la ranura</msg>
+            <msg name="eventLabel">Etiqueta del evento</msg>
+            <msg name="propLabel">Etiqueta de la propiedad</msg>
+            <msg name="optionName">Nombre de la opción</msg>
+            <msg name="prefLabel">Etiqueta de la preferencia</msg>
+        </translation>
+    </translations>
+</widget>

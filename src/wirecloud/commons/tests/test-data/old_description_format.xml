@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template xmlns="http://morfeo-project.org/2007/Template">
+    <Catalog.ResourceDescription>
+        <Vendor>Wirecloud</Vendor>
+        <Name>obsolete-widget</Name>
+        <DisplayName>Obsolete Widget</DisplayName>
+        <Version>0.1</Version>
+        <Author>admin</Author>
+        <Mail>wirecloud@conwet.com</Mail>
+        <Description>Widget using an obsolete description format</Description>
+        <ImageURI>image.png</ImageURI>
+        <iPhoneImageURI>smartphone.png</iPhoneImageURI>
+        <WikiURI>https://conwet.fi.upm.es/wirecloud</WikiURI>
+    </Catalog.ResourceDescription>
+
+    <Platform.StateProperties>
+        <Property name="services" type="text" label="Services"/>
+    </Platform.StateProperties>
+
+    <Platform.Wiring>
+        <Event name="location_event"      type="text" label="Location"      friendcode="location"/>
+        <Slot  name="search_text_slot"    type="text" label="Search Text"   friendcode="keyword"/>
+    </Platform.Wiring>
+
+    <Platform.Link>
+        <XHTML href="index.html"/>
+    </Platform.Link>
+
+    <Platform.Rendering width="6" height="28"/>
+
+</Template>

@@ -1,0 +1,22 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+{% block content %}
+<form method="POST">
+<div class="panel panel-default">
+<div class="panel-heading">
+<h2 class="panel-title">{% blocktrans with app_name=app.name  %}Authorize <em>{{ app_name }}</em>?{% endblocktrans %}</h2>
+</div>
+<div class="panel-body">
+            {% blocktrans with app_name=app.name username=request.user.username  %}The app <em>{{ app_name }}</em> would like to be able to do the following actions in your name ({{ username }}):{% endblocktrans %}
+            <ul>
+<li>{% trans "Read your public and private information" %}</li>
+<li>{% trans "Access and modify your workspaces" %}</li>
+<li>{% trans "Manage your mashable application components" %}</li>
+</ul>
+<button class="se-btn btn-success" name="action" type="submit" value="auth">{% trans "Authorize app" %}</button>
+<button autofocus="autofocus" class="se-btn btn-primary" name="action" type="submit" value="deny">{% trans "Deny" %}</button>
+</div>
+</div>
+    {% csrf_token %}
+</form>
+{% endblock %}

@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+
+<!--
+Copyright 2010 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original slides: Marcin Wichary (mwichary@google.com)
+Modifications: Ernest Delgado (ernestd@google.com)
+Alex Russell (slightlyoff@chromium.org)
+
+landslide modifications: Adam Zapletal (adamzap@gmail.com)
+Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="width=device-width, user-scalable=no" name="viewport"/>
+<meta content="chrome=1" http-equiv="X-UA-Compatible"/>
+<title>Using Object Storage</title>
+<!-- Styles -->
+<link href="./fiwaretheme/css/print.css" media="print" rel="stylesheet"/>
+<link href="./fiwaretheme/css/screen.css" media="screen, projection" rel="stylesheet"/>
+<!-- /Styles -->
+<!-- Javascripts -->
+<script src="./fiwaretheme/js/slides.js" type="text/javascript"></script>
+<!-- /Javascripts -->
+</head>
+<body>
+<div id="blank"></div>
+<div class="presentation">
+<div id="current_presenter_notes">
+<div id="presenter_note"></div>
+</div>
+<div class="slides">
+<div class="slide-wrapper">
+<section class="slide cover">
+<header class="slide-header"><h1>Using Object Storage</h1><h2>Application Mashup (WireCloud) course @ https://fiware-academy.readthedocs.io/</h2></header>
+<img alt="Image can not be loaded." class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+<div class="navigation-tip">Use <kbd class="key">←</kbd> and <kbd class="key">→</kbd> to move around. Press <kbd class="key">h</kbd> for getting more info</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Introduction</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide">
+<header class="slide-header">
+<h2>Introduction</h2>
+</header>
+<div class="contents"><p>Object Storage offers persistent storage for binary objects. Objects are stored in named locations known as containers. Containers can be nested thus objects can be stored hierarchically. The main aim of this section is to show an example that allows you to understand how to use this API.</p></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            3/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Adding ObjectStorage support to widgets/operators</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Adding ObjectStorage support to widgets/operators</h2>
+</header>
+<div class="contents"><p>If you want to use this feature, first of all you have to modify your <code>config.xml</code> file and add a new <code>Feature</code> named <strong>ObjectStorage</strong> within Requirements. For example, if you use XML to set up the configuration of your widget, your code should look similar to the following one. Note that we have also added a preference that will be useful to store the KeyStone server URL.</p>
+<div class="highlight"><pre><span class="cp">&lt;?xml version='1.0' encoding='UTF-8'?&gt;</span>
+<span class="nt">&lt;widget</span> <span class="na">xmlns=</span><span class="s">"http://wirecloud.conwet.fi.upm.es/ns/macdescription/1"</span> <span class="na">vendor=</span><span class="s">"Wirecloud"</span> <span class="na">name=</span><span class="s">"objectstorage-test-widget"</span> <span class="na">version=</span><span class="s">"1.0"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;details&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Wirecloud Object Storage API test widget<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;authors&gt;</span>aarranz<span class="nt">&lt;/authors&gt;</span>
+    <span class="nt">&lt;email&gt;</span>aarranz@conwet.com<span class="nt">&lt;/email&gt;</span>
+    <span class="nt">&lt;image&gt;</span>images/catalogue.png<span class="nt">&lt;/image&gt;</span>
+    <span class="nt">&lt;smartphoneimage&gt;</span>images/catalogue_iphone.png<span class="nt">&lt;/smartphoneimage&gt;</span>
+    <span class="nt">&lt;description&gt;</span>This widget is used to test whether the Object Storage API is usable by widgets<span class="nt">&lt;/description&gt;</span>
+    <span class="nt">&lt;doc&gt;</span>doc/index.html<span class="nt">&lt;/doc&gt;</span>
+  <span class="nt">&lt;/details&gt;</span>
+  <span class="nt">&lt;requirements&gt;</span>
+    <span class="nt">&lt;feature</span> <span class="na">name=</span><span class="s">"ObjectStorage"</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/requirements&gt;</span>
+  <span class="nt">&lt;preferences&gt;</span>
+    <span class="nt">&lt;preference</span> <span class="na">name=</span><span class="s">"keystone_url"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">label=</span><span class="s">"Keystone Server"</span> <span class="na">description=</span><span class="s">"Keystone Server where the Object Storage server to use for testing the integration between Wirecloud and the Object Storage GE is registered"</span> <span class="na">default=</span><span class="s">"https://cloud.lab.fiware.org/keystone"</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/preferences&gt;</span>
+  <span class="nt">&lt;wiring/&gt;</span>
+  <span class="nt">&lt;contents</span> <span class="na">src=</span><span class="s">"test.html"</span> <span class="na">contenttype=</span><span class="s">"text/html"</span> <span class="na">charset=</span><span class="s">"utf-8"</span> <span class="na">useplatformstyle=</span><span class="s">"true"</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;rendering</span> <span class="na">height=</span><span class="s">"24"</span> <span class="na">width=</span><span class="s">"6"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/widget&gt;</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            5/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide">
+<header class="slide-header">
+<h2>Adding ObjectStorage support to widgets/operators</h2>
+</header>
+<div class="contents"><p>In case you prefer to use RDF, your code should be similar to the following one:</p>
+<pre><code>!
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+  xmlns:gr="http://purl.org/goodrelations/v1#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+&gt;
+  &lt;wire:Widget rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#Wirecloud/objectstorage-test-widget/1.0"&gt;
+    &lt;dcterms:creator&gt;
+      &lt;foaf:Person rdf:nodeID="N2cda3cef67eb47558145c705d0d3b191"&gt;
+        &lt;foaf:name&gt;aarranz&lt;/foaf:name&gt;
+      &lt;/foaf:Person&gt;
+    &lt;/dcterms:creator&gt;
+    &lt;wire:displayName&gt;Wirecloud Object Storage API test widget&lt;/wire:displayName&gt;
+    &lt;foaf:page rdf:resource="doc/index.html"/&gt;
+    &lt;dcterms:description&gt;This widget is used to test whether the Object Storage API is usable by widgets&lt;/dcterms:description&gt;
+    &lt;wire:hasPlatformPreference&gt;
+      &lt;wire:PlatformPreference rdf:nodeID="Nf5128b00c737420f91385f002c272954"&gt;
+        &lt;dcterms:description&gt;Keystone Server where the Object Storage server to use for testing the integration between Wirecloud and the Object Storage GE is registered&lt;/dcterms:description&gt;
+        &lt;rdfs:label&gt;Keystone Server&lt;/rdfs:label&gt;
+        &lt;wire:index&gt;0&lt;/wire:index&gt;
+        &lt;wire:type&gt;text&lt;/wire:type&gt;
+        &lt;dcterms:title&gt;keystone_url&lt;/dcterms:title&gt;
+        &lt;wire:default&gt;https://cloud.lab.fiware.org/keystone&lt;/wire:default&gt;
+      &lt;/wire:PlatformPreference&gt;
+    &lt;/wire:hasPlatformPreference&gt;
+    &lt;wire:hasImageUri rdf:resource="images/catalogue.png"/&gt;
+    &lt;usdl:versionInfo&gt;1.0&lt;/usdl:versionInfo&gt;
+    &lt;dcterms:title&gt;objectstorage-test-widget&lt;/dcterms:title&gt;
+    &lt;vcard:addr&gt;
+      &lt;vcard:Work rdf:nodeID="N353ea6f0c6c24daf8e3e2ba8b1b6396c"&gt;
+        &lt;vcard:email&gt;aarranz@conwet.com&lt;/vcard:email&gt;
+      &lt;/vcard:Work&gt;
+    &lt;/vcard:addr&gt;
+    &lt;usdl:hasProvider&gt;
+      &lt;gr:BusinessEntity rdf:nodeID="Naf20bf95bb5d4a6484f501744b75deb4"&gt;
+        &lt;foaf:name&gt;Wirecloud&lt;/foaf:name&gt;
+      &lt;/gr:BusinessEntity&gt;
+    &lt;/usdl:hasProvider&gt;
+    &lt;wire:hasPlatformWiring&gt;
+      &lt;wire:PlatformWiring rdf:nodeID="Na67dd8db508d48338034a1f14ab4f2c9"/&gt;
+    &lt;/wire:hasPlatformWiring&gt;
+    &lt;usdl:utilizedResource&gt;
+      &lt;usdl:Resource rdf:about="test.html"&gt;
+        &lt;wire:usePlatformStyle&gt;true&lt;/wire:usePlatformStyle&gt;
+      &lt;/usdl:Resource&gt;
+    &lt;/usdl:utilizedResource&gt;
+    &lt;wire:hasPlatformRendering&gt;
+      &lt;wire:PlatformRendering rdf:nodeID="Nb55500a19f324a88bc5eff01d3d0bd8d"&gt;
+        &lt;wire:renderingHeight&gt;24&lt;/wire:renderingHeight&gt;
+        &lt;wire:renderingWidth&gt;6&lt;/wire:renderingWidth&gt;
+      &lt;/wire:PlatformRendering&gt;
+    &lt;/wire:hasPlatformRendering&gt;
+
+    &lt;!-- Here we add the Feature --&gt;
+    &lt;wire:hasRequirement&gt;
+      &lt;wire:Feature rdf:nodeID="N2cdd6eec5a4c43ad8cd68d09f51c100c"&gt;
+        &lt;rdfs:label&gt;ObjectStorage&lt;/rdfs:label&gt;
+      &lt;/wire:Feature&gt;
+    &lt;/wire:hasRequirement&gt;
+    &lt;wire:hasiPhoneImageUri rdf:resource="images/catalogue_iphone.png"/&gt;
+  &lt;/wire:Widget&gt;
+&lt;/rdf:RDF&gt;
+</code></pre></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            6/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Connecting with the KeyStone Server</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Connecting with the KeyStone Server</h2>
+</header>
+<div class="contents"><p>To start using the ObjectStorage, first you have to set up the connection with the KeyStone server. To do so, you should create a new <code>KeystoneAPI</code>:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">keystone</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">KeystoneAPI</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+</pre></div>
+<p>See the <a href="https://wirecloud.readthedocs.org/en/latest/development/object_storage_api/">ObjectStorage Javascript API documentation</a> for the full list of supported options but, as summary, the <code>url</code> is the ObjectStorage Server location. Also, if you are connecting to a ObjectStorage instance using the IdM authentication, you will need to pass the required authentication credentials. This can be accomplished in two ways:</p>
+<ul>
+<li>Making use of the <code>token</code> option and passing directly the required Authentication header</li>
+<li>Making use of the <code>use_user_fiware_token</code> option to make the ObjectStorage use the token obtained by WireCloud from the IdM</li>
+</ul></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            8/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Connecting with the KeyStone Server</h2>
+</header>
+<div class="contents"><p>This example shows you how to connect with the KeyStone server using the resources available in the FIWARE Testbed. Note that the Keystone URL used is the one obtained from the preferences:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">keystone</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">KeystoneAPI</span><span class="p">(</span><span class="nx">MashupPlatform</span><span class="p">.</span><span class="nx">prefs</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'keystone_url'</span><span class="p">),</span> <span class="p">{</span>
+    <span class="nx">use_user_fiware_token</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            9/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Getting all the available tenants for the users</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Getting all the available tenants for the users</h2>
+</header>
+<div class="contents"><p>Once that you are connected with the KeyStone server, you have to take into account is that a user can use several tenants to store the information. To get the list of available tenants for a user, you can use the <code>getTenants</code> function:</p>
+<div class="highlight"><pre><span class="nx">keystone</span><span class="p">.</span><span class="nx">getTenants</span><span class="p">([</span><span class="nx">options</span><span class="p">])</span>
+</pre></div>
+<p>The <code>options</code> argument allows you to set two callbacks:</p>
+<ul>
+<li><code>onSuccess</code> is called when the request finishes successfully. This function will receive a dictionary with the field tenants that contains all the available tenants for the user that make the request</li>
+<li><code>onFailure</code> is called when the request finish with errors</li>
+</ul></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            11/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Getting all the available tenants for the users</h2>
+</header>
+<div class="contents"><p>In the following example, we call the function with both callbacks. If the request finish successfully, we will show the id of the first available tenant. Otherwise, we will show a message error:</p>
+<div class="highlight"><pre><span class="nx">keystone</span><span class="p">.</span><span class="nx">getTenants</span><span class="p">({</span>
+    <span class="nx">onSuccess</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'tenantId'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">tenants</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">onFailure</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'tenantId'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">'Fail'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            12/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Getting the authentication token</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Getting the authentication token</h2>
+</header>
+<div class="contents"><p>When you have selected the tenant that you want to use, you must get an authentication token using the <code>getAuthToken</code> function:</p>
+<div class="highlight"><pre><span class="nx">keystone</span><span class="p">.</span><span class="nx">getAuthToken</span><span class="p">([</span><span class="nx">options</span><span class="p">])</span>
+</pre></div>
+<p><code>options</code> argument include the following fields:</p>
+<ul>
+<li><code>tenantName</code>: name of the tenant to be associated to the generated token. Both
+  the <code>tenantId</code> and <code>tenantName</code> attributes are optional, but should not be
+  specified together</li>
+<li><code>tenantId</code>: The <code>id</code> of the tenant to be associated to the generated token.
+  Both the 'tenantId' and 'tenantName' attributes are optional, but should not
+  be specified together</li>
+<li><code>onSuccess</code>: called when the request finishes successfully. This function will
+  receive two parameters:<ul>
+<li><code>new_token</code>: the new token obtained that you can use to access the
+  ObjectStorage</li>
+<li><code>data</code>: the catalogue of available services for the tenant</li>
+</ul>
+</li>
+<li><code>onFailure</code>: called when the request finish with errors</li>
+</ul></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            14/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Getting the authentication token</h2>
+</header>
+<div class="contents"><p>The next snippet shows you how to use this function. In this case we will use the tenant id obtained in the previous code. Note that we will also process the data parameter in order to get the ObjectStorage URL:</p>
+<div class="highlight"><pre><span class="nx">keystone</span><span class="p">.</span><span class="nx">getAuthToken</span><span class="p">({</span>
+    <span class="nx">tenantId</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">tenants</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span>
+    <span class="nx">onSuccess</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">new_token</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">access</span><span class="p">.</span><span class="nx">serviceCatalog</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">access</span><span class="p">.</span><span class="nx">serviceCatalog</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">'object-store'</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">object_storage</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">access</span><span class="p">.</span><span class="nx">serviceCatalog</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">endpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">publicURL</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">onFailure</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'api_token'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">'Fail'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            15/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Connecting with the ObjectStorage Server</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Connecting with the ObjectStorage Server</h2>
+</header>
+<div class="contents"><p>Once that you have the URL of the ObjectStorage server, we can connect to it. To do so, we must use the following function:</p>
+<div class="highlight"><pre><span class="nx">objectStorage</span> <span class="o">=</span> <span class="nx">ObjectStorageAPI</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+</pre></div>
+<p>In our case we have saved the ObjectStorage Server URL in the <code>object_storage</code> variable, so our code should be the following one:</p>
+<div class="highlight"><pre><span class="nx">objectStorage</span> <span class="o">=</span> <span class="nx">ObjectStorageAPI</span><span class="p">(</span><span class="nx">object_storage</span><span class="p">)</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            17/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Listing the content available in a container</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Listing the content available in a container</h2>
+</header>
+<div class="contents"><p>When we are connected to a ObjectStorage Server, we are able to list all the content available in a container. To do so, we should use the <code>listContainer</code> function:</p>
+<div class="highlight"><pre><span class="nx">objectStorage</span><span class="p">.</span><span class="nx">listContainer</span><span class="p">(</span><span class="nx">container</span><span class="p">[,</span> <span class="nx">options</span><span class="p">])</span>
+</pre></div>
+<p>The <code>container</code> argument is the name of the container while the <code>options</code>
+argument should contain the following fields:</p>
+<ul>
+<li><code>token</code>: The token obtained previously in the <code>getAuthToken</code> function</li>
+<li><code>onSuccess</code>: called when the request finishes successfully. This function
+  receives as argument the list of available files in the container</li>
+<li><code>onFailure</code>: called when the request finish with errors</li>
+</ul></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            19/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Listing the content available in a container</h2>
+</header>
+<div class="contents"><p>In the next example, we will show we will get the available files in the
+integrationTests container, and we will show the name of the first one.</p>
+<div class="highlight"><pre><span class="nx">objectStorage</span><span class="p">.</span><span class="nx">listContainer</span><span class="p">(</span><span class="s1">'integrationTests'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span><span class="p">,</span>
+
+    <span class="nx">onSuccess</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file_list</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'file_name'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">file_list</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">name</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">onFailure</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'file_count'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">'Fail'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            20/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Uploading a file</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Uploading a file</h2>
+</header>
+<div class="contents"><p>If you are connected to the ObjectStorage, you can also upload a file easily. To
+do so, you must use the uploadFile function:</p>
+<div class="highlight"><pre><span class="nx">objectStorage</span><span class="p">.</span><span class="nx">uploadFile</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">file</span><span class="p">[,</span> <span class="nx">options</span><span class="p">])</span>
+</pre></div>
+<p><code>container</code> is the name where the <code>file</code> is going to be uploaded, while file is
+the content to be uploaded. The <code>options</code> argument should contain the following
+fields:</p>
+<ul>
+<li><code>token</code>: The <code>token</code> obtained previously in the <code>getAuthToken</code> function</li>
+<li><code>file_name</code>: The name used to save the uploaded content in the <code>container</code></li>
+<li><code>onSuccess</code>: called when the request finishes successfully. This function does
+  not receive any arguments</li>
+<li><code>onFailure</code>: called when the request finish with errors</li>
+</ul></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            22/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Uploading a file</h2>
+</header>
+<div class="contents"><p>Here you can see how to upload a text file containing "Hello world!".</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">blob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Blob</span><span class="p">([</span><span class="s2">"Hello world!"</span><span class="p">],</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s2">"text/plain"</span> <span class="p">});</span>
+<span class="nx">objectStorage</span><span class="p">.</span><span class="nx">uploadFile</span><span class="p">(</span><span class="s1">'integrationTests'</span><span class="p">,</span> <span class="nx">blob</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span><span class="p">,</span>
+    <span class="nx">file_name</span><span class="o">:</span> <span class="s1">'test1.txt'</span><span class="p">,</span>
+    <span class="nx">onSuccess</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'file_upload'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">'OK'</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">onFailure</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'file_upload'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">'Fail'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            23/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Deleting a file</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Deleting a file</h2>
+</header>
+<div class="contents"><p>It's useful to upload a file, but in some occasions you will want to delete it.
+To do so, you have to use the <code>deleteFile</code> function:</p>
+<div class="highlight"><pre><span class="nx">objectStorage</span><span class="p">.</span><span class="nx">deleteFile</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">file_name</span><span class="p">[,</span> <span class="nx">options</span><span class="p">])</span>
+</pre></div>
+<p><code>container</code> is the name of the container where the file is going to be deleted
+while <code>file_name</code> is the name of the file to delete. The <code>options</code> argument
+should contain the following fields:</p>
+<ul>
+<li><code>token</code>: The token obtained previously in the <code>getAuthToken</code> function</li>
+<li><code>onSuccess</code>: called when the request finishes successfully. This function does
+  not receive any arguments</li>
+<li><code>onFailure</code>: called when the request finish with errors</li>
+</ul></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            25/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide has_code">
+<header class="slide-header">
+<h2>Deleting a file</h2>
+</header>
+<div class="contents"><p>The following example shows how to delete the file that we have created in the
+previous step:</p>
+<div class="highlight"><pre><span class="nx">objectStorage</span><span class="p">.</span><span class="nx">deleteFile</span><span class="p">(</span><span class="s1">'integrationTests'</span><span class="p">,</span> <span class="nx">file_name</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span><span class="p">,</span>
+    <span class="nx">onSuccess</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'file_deletion'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">'OK'</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">onFailure</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'file_deletion'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">'Fail'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            26/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide section-title">
+<header class="section-title-header">
+<h1>Using Object Storage</h1>
+<h2><h2>Test it yourself!</h2></h2>
+</header>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide">
+<header class="slide-header">
+<h2>Test it yourself!</h2>
+</header>
+<div class="contents"><p>We think that the best way to learn to use this feature is using it. For this
+reason we offer you a very simple example based on this guide. Check the code
+and modify as you like and test if it works. This widget will only work if you
+create a instanceTests container before running it, otherwise it will fail.</p>
+<ul>
+<li><a href="attachments/objectstorage.wgt">ObjectStorage Example Widget</a></li>
+</ul></div>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<aside class="page_number">
+                            28/29
+                            </aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+<div class="slide-wrapper">
+<section class="slide back-cover">
+<div>Thanks!</div>
+<img alt="Image can not be loaded." class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+<footer>
+<aside class="source">Source: <a href="3.2.2_Using Object Storage.md">3.2.2_Using Object Storage.md</a></aside>
+<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
+<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+</footer>
+<div class="presenter_notes">
+<header><h1>Presenter Notes</h1></header>
+<section>
+</section>
+</div>
+</section>
+</div>
+</div>
+</div>
+<div class="sidebar hidden" id="toc">
+<h2>Table of Contents</h2>
+<table>
+<caption>Table of Contents</caption>
+<tr id="toc-row-1">
+<th><a href="#slide1">Using Object Storage</a></th>
+<td><a href="#slide1">1</a></td>
+</tr>
+<tr class="sub" id="toc-row-2">
+<th><a href="#slide2">Introduction</a></th>
+<td><a href="#slide2">2</a></td>
+</tr>
+<tr class="sub" id="toc-row-3">
+<th><a href="#slide3">Introduction</a></th>
+<td><a href="#slide3">3</a></td>
+</tr>
+<tr class="sub" id="toc-row-4">
+<th><a href="#slide4">Adding ObjectStorage support to widgets/operators</a></th>
+<td><a href="#slide4">4</a></td>
+</tr>
+<tr class="sub" id="toc-row-5">
+<th><a href="#slide5">Adding ObjectStorage support to widgets/operators</a></th>
+<td><a href="#slide5">5</a></td>
+</tr>
+<tr class="sub" id="toc-row-6">
+<th><a href="#slide6">Adding ObjectStorage support to widgets/operators</a></th>
+<td><a href="#slide6">6</a></td>
+</tr>
+<tr class="sub" id="toc-row-7">
+<th><a href="#slide7">Connecting with the KeyStone Server</a></th>
+<td><a href="#slide7">7</a></td>
+</tr>
+<tr class="sub" id="toc-row-8">
+<th><a href="#slide8">Connecting with the KeyStone Server</a></th>
+<td><a href="#slide8">8</a></td>
+</tr>
+<tr class="sub" id="toc-row-9">
+<th><a href="#slide9">Connecting with the KeyStone Server</a></th>
+<td><a href="#slide9">9</a></td>
+</tr>
+<tr class="sub" id="toc-row-10">
+<th><a href="#slide10">Getting all the available tenants for the users</a></th>
+<td><a href="#slide10">10</a></td>
+</tr>
+<tr class="sub" id="toc-row-11">
+<th><a href="#slide11">Getting all the available tenants for the users</a></th>
+<td><a href="#slide11">11</a></td>
+</tr>
+<tr class="sub" id="toc-row-12">
+<th><a href="#slide12">Getting all the available tenants for the users</a></th>
+<td><a href="#slide12">12</a></td>
+</tr>
+<tr class="sub" id="toc-row-13">
+<th><a href="#slide13">Getting the authentication token</a></th>
+<td><a href="#slide13">13</a></td>
+</tr>
+<tr class="sub" id="toc-row-14">
+<th><a href="#slide14">Getting the authentication token</a></th>
+<td><a href="#slide14">14</a></td>
+</tr>
+<tr class="sub" id="toc-row-15">
+<th><a href="#slide15">Getting the authentication token</a></th>
+<td><a href="#slide15">15</a></td>
+</tr>
+<tr class="sub" id="toc-row-16">
+<th><a href="#slide16">Connecting with the ObjectStorage Server</a></th>
+<td><a href="#slide16">16</a></td>
+</tr>
+<tr class="sub" id="toc-row-17">
+<th><a href="#slide17">Connecting with the ObjectStorage Server</a></th>
+<td><a href="#slide17">17</a></td>
+</tr>
+<tr class="sub" id="toc-row-18">
+<th><a href="#slide18">Listing the content available in a container</a></th>
+<td><a href="#slide18">18</a></td>
+</tr>
+<tr class="sub" id="toc-row-19">
+<th><a href="#slide19">Listing the content available in a container</a></th>
+<td><a href="#slide19">19</a></td>
+</tr>
+<tr class="sub" id="toc-row-20">
+<th><a href="#slide20">Listing the content available in a container</a></th>
+<td><a href="#slide20">20</a></td>
+</tr>
+<tr class="sub" id="toc-row-21">
+<th><a href="#slide21">Uploading a file</a></th>
+<td><a href="#slide21">21</a></td>
+</tr>
+<tr class="sub" id="toc-row-22">
+<th><a href="#slide22">Uploading a file</a></th>
+<td><a href="#slide22">22</a></td>
+</tr>
+<tr class="sub" id="toc-row-23">
+<th><a href="#slide23">Uploading a file</a></th>
+<td><a href="#slide23">23</a></td>
+</tr>
+<tr class="sub" id="toc-row-24">
+<th><a href="#slide24">Deleting a file</a></th>
+<td><a href="#slide24">24</a></td>
+</tr>
+<tr class="sub" id="toc-row-25">
+<th><a href="#slide25">Deleting a file</a></th>
+<td><a href="#slide25">25</a></td>
+</tr>
+<tr class="sub" id="toc-row-26">
+<th><a href="#slide26">Deleting a file</a></th>
+<td><a href="#slide26">26</a></td>
+</tr>
+<tr class="sub" id="toc-row-27">
+<th><a href="#slide27">Test it yourself!</a></th>
+<td><a href="#slide27">27</a></td>
+</tr>
+<tr class="sub" id="toc-row-28">
+<th><a href="#slide28">Test it yourself!</a></th>
+<td><a href="#slide28">28</a></td>
+</tr>
+<tr id="toc-row-29">
+<th><a href="#slide29">-</a></th>
+<td><a href="#slide29">29</a></td>
+</tr>
+</table>
+</div>
+<div class="sidebar hidden" id="help">
+<h2>Help</h2>
+<table>
+<caption>Help</caption>
+<tr>
+<th>Table of Contents</th>
+<td>t</td>
+</tr>
+<tr>
+<th>Exposé</th>
+<td>ESC</td>
+</tr>
+<tr>
+<th>Full screen slides</th>
+<td>e</td>
+</tr>
+<tr>
+<th>Presenter View</th>
+<td>p</td>
+</tr>
+<tr>
+<th>Source Files</th>
+<td>s</td>
+</tr>
+<tr>
+<th>Slide Numbers</th>
+<td>n</td>
+</tr>
+<tr>
+<th>Toggle screen blanking</th>
+<td>b</td>
+</tr>
+<tr>
+<th>Show/hide slide context</th>
+<td>c</td>
+</tr>
+<tr>
+<th>Notes</th>
+<td>2</td>
+</tr>
+<tr>
+<th>Help</th>
+<td>h</td>
+</tr>
+</table>
+</div>
+<script>main()</script>
+</body>
+</html>

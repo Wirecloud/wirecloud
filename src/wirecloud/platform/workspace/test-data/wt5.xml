@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mashup xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud Test Suite" name="Test Mashup" version="1">
+    <details>
+        <email>a@b.com</email>
+        <image>images/mashup.png</image>
+        <description>Mashup for testing</description>
+        <doc>docs/index.html</doc>
+        <authors>test</authors>
+    </details>
+    <structure>
+        <tab id="0" name="Tab">
+            <preferencevalue name="smart" value="False"/>
+            <resource id="1" name="Test" title="Test (1)" vendor="Wirecloud" version="1.0">
+                <position x="0" y="0" z="0"/>
+                <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
+                <preferencevalue name="text" value="initial %(params.param)" readonly="true"/>
+                <preferencevalue name="list" value="default" readonly="true" hidden="true"/>
+            </resource>
+            <resource id="2" name="Test" title="Test (2)" vendor="Wirecloud" version="1.0">
+                <position x="0" y="0" z="0"/>
+                <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
+                <preferencevalue name="text" value="initial %(params.param)" readonly="true" hidden="true"/>
+                <preferencevalue name="list" readonly="true"/>
+            </resource>
+            <resource id="3" name="Test" title="Test (3)" vendor="Wirecloud" version="1.0">
+                <position x="0" y="0" z="0"/>
+                <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
+                <preferencevalue name="text" value="initial %(params.param)"/>
+                <preferencevalue name="list" value="default"/>
+            </resource>
+        </tab>
+        <tab id="1" name="Tab2">
+            <resource id="4" name="api-test" title="API Test (1)" vendor="Wirecloud" version="0.9">
+                <position x="0" y="0" z="0"/>
+                <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
+                <variablevalue name="prop" value="initial_data"/>
+            </resource>
+            <resource id="5" name="api-test" title="API Test (2)" vendor="Wirecloud" version="0.9">
+                <position x="0" y="0" z="0"/>
+                <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
+                <variablevalue name="prop" readonly="true"/>
+            </resource>
+        </tab>
+        <wiring>
+            <operator id="0" name="TestOperator" vendor="Wirecloud" version="1.0">
+                <preferencevalue name="pref1" value="initial %(params.param)" readonly="true"/>
+                <preferencevalue name="pref2" value="initial %(params.param)" readonly="true" hidden="true"/>
+                <preferencevalue name="pref3" value="initial %(params.param)"/>
+            </operator>
+            <connection>
+                <source endpoint="test" id="1" type="iwidget"/>
+                <target endpoint="test" id="2" type="iwidget"/>
+            </connection>
+        </wiring>
+    </structure>
+    <preferences>
+        <preference name="param" type="text" label="Parameter" description="Parameter description" />
+        <preference name="optional_param" type="number" label="Optional Parameter" description="Parameter description" required="false"/>
+    </preferences>
+    <wiring/>
+</mashup>

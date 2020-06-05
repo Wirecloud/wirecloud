@@ -1,0 +1,58 @@
+@import "variables";
+
+
+.se-offcanvas {
+    position: absolute;
+    display: flex;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.se-offcanvas-sidebar {
+    position: relative;
+    width: $offcanvas-sidebar-width;
+    height: 100%;
+    margin: 0 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.se-offcanvas-content {
+    position: relative;
+    height: 100%;
+    margin: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.se-offcanvas.left-sideway {
+    left: ($offcanvas-sidebar-width + (2 * $margin-horizontal-small)) * -1;
+    transition: left .2s ease-out;
+
+    &.slipped {
+        left: 0;
+    }
+
+    .se-offcanvas-sidebar {
+        margin-left: $margin-horizontal-small;
+        margin-right: $margin-horizontal-small;
+    }
+}
+
+.se-offcanvas.right-sideway {
+    right: ($offcanvas-sidebar-width + (2 * $margin-horizontal-small)) * -1;
+    transition: right .2s ease-out;
+
+    &.slipped {
+        right: 0;
+    }
+
+    .se-offcanvas-sidebar {
+        margin-right: $margin-horizontal-small;
+    }
+}

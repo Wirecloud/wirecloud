@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mashup xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud Test Suite" name="Test Workspace" version="1">
+    <details>
+        <email>a@b.com</email>
+        <image>images/mashup.png</image>
+        <description>This template defines an empty mashup</description>
+        <doc>docs/index.html</doc>
+        <authors>admin</authors>
+    </details>
+    <structure>
+        <tab id="0" name="Tab">
+            <preferencevalue name="smart" value="False"/>
+            <resource id="1" name="Test" title="Test (1)" vendor="Wirecloud" version="1.0">
+                <position x="0" y="0" z="0"/>
+                <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
+                <preferencevalue name="text" value="initial text" readonly="true"/>
+                <preferencevalue name="list" value="default" readonly="true" hidden="true"/>
+            </resource>
+            <resource id="2" name="Test" title="Test (2)" vendor="Wirecloud" version="1.0">
+                <position x="0" y="0" z="0"/>
+                <rendering height="24" width="6" layout="0" minimized="false" fulldragboard="false"/>
+                <preferencevalue name="text" value="initial text" readonly="true" hidden="true"/>
+                <preferencevalue name="list" value="default"/>
+            </resource>
+        </tab>
+        <wiring>
+            <connection readonly="true">
+                <source endpoint="test" id="1" type="iwidget"/>
+                <target endpoint="test" id="2" type="iwidget"/>
+            </connection>
+        </wiring>
+    </structure>
+    <wiring/>
+</mashup>

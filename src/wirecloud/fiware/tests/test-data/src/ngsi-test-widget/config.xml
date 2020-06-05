@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
+
+    <Catalog.ResourceDescription>
+        <Vendor>Wirecloud</Vendor>
+        <Name>ngsi-test-widget</Name>
+        <Version>1.0.1</Version>
+        <DisplayName>Wirecloud NGSI API test widget</DisplayName>
+        <Author>aarranz</Author>
+        <Mail>aarranz@conwet.com</Mail>
+        <Description>This widget is used to test if the NGSI API is usable by widgets</Description>
+        <ImageURI>images/catalogue.png</ImageURI>
+        <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+        <WikiURI>doc/index.html</WikiURI>
+
+        <Requirements>
+            <Feature name="NGSI"/>
+        </Requirements>
+
+    </Catalog.ResourceDescription>
+
+    <Platform.Preferences>
+        <Preference name="ngsi_server" type="text" description="NGSI Server to use for testing the integration between Wirecloud and the Context Broker GE" label="NGSI Server" default="http://orion.lab.fiware.org:10026/" />
+        <Preference name="use_user_fiware_token" type="boolean" label="Use the FIWARE credentials of the user" description="Use the FIWARE credentials of the user logged into WireCloud. Take into account this option cannot be enabled if you want to use this widget in a public workspace as anonoymous users doesn't have a valid FIWARE auth token" default="true" />
+    </Platform.Preferences>
+
+    <Platform.Link>
+        <XHTML href="test.html" use-platform-style="true" />
+    </Platform.Link>
+
+    <Platform.Rendering width="6" height="24"/>
+
+</Template>

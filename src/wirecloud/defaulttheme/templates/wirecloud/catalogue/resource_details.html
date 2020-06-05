@@ -1,0 +1,29 @@
+{% load i18n %}<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
+<s:horizontallayout class="resource_details full">
+<s:westcontainer>
+<div class="panel panel-default"><div class="panel-body">
+<div class="se-thumbnail se-thumbnail-sm"><t:image></t:image></div>
+<t:rating></t:rating>
+<t:mainbutton></t:mainbutton>
+<div class="links">
+<t:home></t:home>
+<t:license_home></t:license_home>
+<t:issuetracker></t:issuetracker>
+</div>
+<dl class="summary">
+<dt>{% trans 'Vendor' %}</dt>
+<dd class="text-muted"><t:vendor></t:vendor></dd>
+<dt>{% trans 'Version' %}</dt>
+<dd class="text-muted"><t:version></t:version></dd>
+<dt>{% trans 'License' %}</dt>
+<dd class="text-muted"><t:license></t:license></dd>
+<dt>{% trans 'Last Updated' %}</dt>
+<dd class="text-muted"><t:lastupdate></t:lastupdate></dd>
+</dl>
+</div></div>
+</s:westcontainer>
+<s:centercontainer class="description_column">
+<t:details></t:details>
+</s:centercontainer>
+</s:horizontallayout>
+</s:styledgui>

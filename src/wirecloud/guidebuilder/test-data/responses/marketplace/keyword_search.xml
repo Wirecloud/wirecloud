@@ -1,0 +1,33 @@
+<searchresults>
+    <searchresult>
+        <service name="SmartCityLigths">
+            <creator username="User 1">
+                <company>Company 1</company>
+                <email>user1@company1.example.com</email>
+                <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+            </creator>
+            <lasteditor username="User 1">
+                <company>Company 1</company>
+                <email>user1@company1.example.com</email>
+                <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+            </lasteditor>
+            <registrationDate>2013-08-30T15:17:59+02:00</registrationDate>
+            <url>http://repository.example.com/CoNWeT/service1.rdf</url>
+        </service>
+        <store name="Store 1">
+            <creator username="User 1">
+                <company>Company 1</company>
+                <email>user1@company1.example.com</email>
+                <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+            </creator>
+            <description>Integration Store Description</description>
+            <lasteditor username="User 1">
+                <company>Company 1</company>
+                <email>user1@company1.example.com</email>
+                <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+            </lasteditor>
+            <registrationDate>2012-08-10T12:25:57+02:00</registrationDate>
+            <url>http://store.example.com</url>
+        </store>
+    </searchresult>
+</searchresults>

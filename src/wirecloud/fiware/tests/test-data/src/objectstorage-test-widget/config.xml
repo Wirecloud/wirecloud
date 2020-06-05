@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="objectstorage-test-widget" version="1.0.1">
+  <details>
+    <title>Wirecloud Object Storage API test widget</title>
+    <email>aarranz@conwet.com</email>
+    <image>images/catalogue.png</image>
+    <smartphoneimage>images/catalogue_iphone.png</smartphoneimage>
+    <description>This widget is used to test whether the Object Storage API is usable by widgets</description>
+    <doc>doc/index.html</doc>
+    <authors>aarranz</authors>
+  </details>
+  <requirements>
+    <feature name="ObjectStorage"/>
+  </requirements>
+  <preferences>
+    <preference name="keystone_url" type="text" label="Keystone Server" description="Keystone Server where the Object Storage server to use for testing the integration between Wirecloud and the Object Storage GE is registered" default="https://cloud.lab.fiware.org/keystone"/>
+    <preference name="region" type="text" label="Region" description="FIWARE Lab region to use for accesing the Object Storage service. Leave this field empty for using the first found object storage server" default=""/>
+  </preferences>
+  <wiring/>
+  <contents src="test.html" useplatformstyle="true"/>
+  <rendering height="24" width="6"/>
+</widget>

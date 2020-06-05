@@ -1,0 +1,151 @@
+[
+    {
+        "pk": 20000000,
+        "model": "auth.user",
+        "fields": {
+            "username": "normuser",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [10000000, 20000000],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
+        "pk": 40000000,
+        "model": "auth.user",
+        "fields": {
+            "username": "user_with_workspaces",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [20000000],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
+        "pk": 50000000,
+        "model": "auth.user",
+        "fields": {
+            "username": "emptyuser",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [10000000],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
+        "pk": 60000000,
+        "model": "auth.user",
+        "fields": {
+            "username": "organization",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [20000000],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
+        "pk": 10000000,
+        "model": "auth.group",
+        "fields": {
+            "name": "normusers"
+        }
+    },
+    {
+        "pk": 20000000,
+        "model": "auth.group",
+        "fields": {
+            "name": "organization"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "commons.organization",
+        "fields": {
+            "user": 60000000,
+            "group": 20000000
+        }
+    },
+    {
+        "pk": 1,
+        "model": "commons.team",
+        "fields": {
+            "organization": 1,
+            "name": "owners",
+            "users": [40000000]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "commons.team",
+        "fields": {
+            "organization": 1,
+            "name": "members",
+            "users": [20000000]
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 3,
+        "fields": {
+            "name": "org-workspace",
+            "title": "Organization Workspace",
+            "creator": 60000000,
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}",
+            "groups": [20000000]
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 4,
+        "fields": {
+            "name": "priv-workspace",
+            "title": "Private Workspace",
+            "creator": 40000000,
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 2,
+        "fields": {
+            "user": 40000000,
+            "workspace": 4
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 8,
+        "fields": {
+            "name": "public-workspace",
+            "title": "Public Workspace",
+            "creator": 40000000,
+            "public": true,
+            "requireauth": false,
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    }
+]

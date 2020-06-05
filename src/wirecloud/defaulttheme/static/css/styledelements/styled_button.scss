@@ -1,0 +1,542 @@
+@import 'variables';
+@import 'compass/css3';
+@import 'compass/css3/images';
+@import 'compass/css3/user-interface';
+@import 'compass/css3/transform';
+@import 'compass/utilities/color/contrast';
+
+@mixin button-variant($background, $border-color) {
+    $highlight_background: darken($background, 10%);
+
+    color: contrast-color($background, $button-text-color-light, $button-text-color-dark, $button-text-color-threshold);
+    border: 1px solid $border-color;
+    background-color: $background;
+    @if ($button-gradients) {
+        border-bottom-color: darken($border-color, 10%);
+        background-repeat: repeat-x;
+        background-image: linear-gradient(lighten($background, 10%), $highlight_background);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .se-stacked-icon {
+        background-color: $background;
+        border: solid 1px $background;
+    }
+
+    &:hover,
+    &:focus, &.focus,
+    &:active, &.active,
+    &.disabled, &[disabled] {
+        text-decoration: none;
+        color: contrast-color($highlight_background, $button-text-color-light, $button-text-color-dark, $button-text-color-threshold);
+        background-color: $highlight_background;
+        @if ($button-gradients) {
+            background-position: 0 -15px;
+            transition: background-position 0.1s linear;
+        }
+
+        .se-stacked-icon {
+            background-color: $highlight_background;
+
+            &.bottom-right {
+                border-left: solid 1px $highlight_background;
+            }
+        }
+    }
+
+    &:active, &.active {
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 6px 2px rgba($input-border-color-focus, 0.6);
+    }
+
+    &:focus:active, &.focus:active, &:focus.active, &.focus.active,  {
+        box-shadow: 0 0 8px rgba(82, 168, 236, 0.6), inset 0 3px 5px rgba(0, 0, 0, .125);
+    }
+
+    &.disabled {
+        opacity: 0.65;
+        background-image: none;
+        cursor: default;
+    }
+}
+
+@mixin button-circle-sizing($button-line-height, $button-font-size) {
+    width: $button-line-height;
+    height: $button-line-height;
+    font-size: $button-font-size;
+    line-height: $button-line-height - 2;
+
+    &.btn-link {
+        line-height: $button-line-height;
+    }
+}
+
+button::-moz-focus-inner, input::-moz-focus-inner {
+    padding:0;
+    border:0
+}
+
+.se-btn {
+    font-size: $font-size-base;
+    padding: $padding-vertical-base $padding-horizontal-base;
+    border-radius: $button-border-radius;
+    line-height: $line-height-base;
+    font-weight: normal;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: middle;
+    text-align: center;
+    @include user-select(none);
+    position: relative;
+    cursor: pointer;
+    @include button-variant($button-background-default, $button-border-default);
+    box-sizing: border-box;
+    white-space: nowrap;
+    box-sizing: border-box;
+
+    @if ($button-gradients) {
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    } @else {
+        text-shadow: none;
+    }
+
+    > .se-icon {
+        position: relative;
+        line-height: $line-height-base;
+    }
+
+    .se-icon + span {
+        margin-left: $padding-horizontal-base;
+    }
+
+    .badge {
+        position: absolute;
+        top: 12%;
+        left: 75%;
+        z-index: 1;
+        margin: 0;
+        @include transform(translate(-50%, -50%));
+    }
+
+    .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
+        font-size: round($font-size-base * 0.7);
+    }
+
+}
+
+.se-btn:focus, .se-btn:hover {
+    z-index: 2;
+}
+
+.se-btn.open {
+    z-index: 111113;
+}
+
+.se-btn.plain {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    vertical-align: baseline;
+    text-shadow: none;
+    background: transparent;
+    padding: 0;
+    border: 0 none transparent;
+    border-radius: 0px;
+    box-shadow: none;
+    color: inherit;
+    opacity: .7;
+
+    &:focus, &:hover, &.disabled, &:active {
+        background: transparent;
+        border: 0 none transparent;
+    }
+
+    &:focus, &:hover, &:active {
+        opacity: 1;
+    }
+
+    &.disabled {
+        opacity: .4;
+    }
+}
+
+.se-btn img.icon {
+    margin: 3px;
+    vertical-align: middle;
+}
+
+/* Grouped buttons */
+
+.se-btn.btn-large, .se-btn.btn-lg, .btn-group-lg .se-btn, .se-input-group-lg > .se-btn {
+    font-size: $font-size-large;
+    height: $input-height-large;
+    padding: $padding-vertical-large $padding-horizontal-large;
+    border-radius: $border-radius-large;
+
+    .se-icon + span {
+        margin-left: $padding-horizontal-large;
+    }
+
+    .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
+        font-size: round($font-size-large * 0.65);
+    }
+
+    .badge {
+        padding: 2px 7px;
+    }
+}
+
+.se-btn.btn-small, .se-btn.btn-sm, .btn-group-sm .se-btn, .se-input-group-sm > .se-btn {
+    font-size: $font-size-small;
+    height: $input-height-small;
+    padding: $padding-vertical-small $padding-horizontal-small;
+    border-radius: $border-radius-small;
+
+    .se-icon + span {
+        margin-left: $padding-horizontal-small;
+    }
+
+    .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
+        font-size: round($font-size-small * 0.7);
+    }
+
+    .badge {
+        padding: $padding-vertical-xs $padding-horizontal-xs;
+        font-size: $font-size-xs;
+        line-height: $line-height-xs;
+    }
+}
+
+.se-btn.btn-mini, .se-btn.btn-xs, .btn-group-xs .se-btn, .se-input-group-xs > .se-btn {
+    font-size: $font-size-xs;
+    height: $input-height-xs;
+    padding: $padding-vertical-xs $padding-horizontal-xs;
+    border-radius: $border-radius-xs;
+
+    .se-icon + span {
+        margin-left: $padding-horizontal-xs;
+    }
+
+    .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
+        font-size: round($font-size-xs * 0.7);
+    }
+
+    .badge {
+        padding: 1px 4px;
+        font-size: $font-size-xs;
+        line-height: $line-height-xs;
+    }
+}
+
+/* Grouped buttons */
+
+.btn-group {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: middle;
+    margin: 3px;
+}
+
+.btn-group > .se-btn {
+    margin: 0px;
+}
+
+.btn-group > .se-btn:not(:first-child) {
+    margin-left: -1px;
+}
+
+.input-prepend > .se-hl-west-container > .se-btn {
+    margin: 0 -1px 0 0;
+}
+
+.input-prepend > .se-hl-west-container > .se-btn,
+.btn-group > .se-btn {
+    border-radius: 0px;
+}
+
+.input-prepend > .se-hl-west-container > .se-btn:first-child,
+.btn-group > .se-btn:first-child {
+    border-top-left-radius: $border-radius-base;
+    border-bottom-left-radius: $border-radius-base;
+}
+
+.input-append > .se-hl-east-container > .se-btn {
+    margin: 0 0 0 -1px;
+}
+
+.input-append > .se-hl-east-container > .se-btn {
+    border-radius: 0px;
+}
+
+.input-append > .se-hl-east-container > .se-btn:last-child,
+.btn-group > .se-btn:last-child {
+    border-top-right-radius: $border-radius-base;
+    border-bottom-right-radius: $border-radius-base;
+}
+
+.btn-group-justified {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin: 0px 0px $margin-vertical-base;
+
+    & > .se-btn {
+        flex-grow: 1;
+        width: 0px;
+    }
+}
+
+/* Button - Stacked Icon */
+
+.se-btn .se-stacked-icon {
+    position: absolute;
+    border-radius: 50%;
+
+    &.bottom-left {
+        left: -20%;
+        bottom: -20%;
+    }
+
+    &.bottom-right {
+        right: -20%;
+        bottom: -20%;
+    }
+
+    &.top-left {
+        top: -20%;
+        left: -20%;
+    }
+
+    &.top-right {
+        top: -20%;
+        right: -20%;
+    }
+}
+
+/* Button variants */
+
+.se-btn.btn-primary {
+    @include button-variant($button-background-primary, $button-border-primary);
+}
+
+.se-btn.btn-info {
+    @include button-variant($button-background-info, $button-border-info);
+}
+
+.se-btn.btn-success {
+    @include button-variant($button-background-success, $button-border-success);
+}
+
+.se-btn.btn-warning {
+    @include button-variant($button-background-warning, $button-border-warning);
+}
+
+.se-btn.btn-danger {
+    @include button-variant($button-background-danger, $button-border-danger);
+}
+
+/* File buttons */
+.se-btn > input[type="file"],
+.se-btn > input[type="file"]::-webkit-file-upload-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE
+// ============================================================================
+
+.se-btn.btn-circle,
+.btn-group-circle > .se-btn {
+    padding: 0;
+    background-image: none;
+    border-radius: 50%;
+    text-shadow: none;
+    @include button-circle-sizing($button-circle-base-line-height, $font-size-base);
+
+    &.btn-link {
+        border-width: 0;
+    }
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE - CLASSES
+// ============================================================================
+
+@mixin button-circle-variant($button-background, $button-border) {
+
+    $button-active-background: darken($button-background, 10%);
+
+    background-color: $button-background;
+    border-color: $button-border;
+    color: contrast-color($button-background, $button-text-color-light, $button-text-color-dark, $button-text-color-threshold);
+
+    &:hover,
+    &:focus {
+        background-color: $button-border;
+        border-color: $button-border;
+    }
+
+    &:active,
+    &.active {
+
+        &,
+        &:hover,
+        &:focus {
+            background-color: $button-active-background;
+            border-color: $button-active-background;
+        }
+    }
+
+    &.disabled,
+    &[disabled] {
+
+        &,
+        &:hover,
+        &:focus,
+        &:active,
+        &:active:hover,
+        &:active:focus {
+            background-color: $button-background;
+            border-color: $button-border;
+        }
+    }
+}
+
+.btn-circle.btn-default,
+.btn-group-circle > .btn-default {
+    @include button-circle-variant($button-background-default, $button-border-default);
+}
+
+.btn-circle.btn-primary,
+.btn-group-circle > .btn-primary {
+    @include button-circle-variant($button-background-primary, $button-border-primary);
+}
+
+.btn-circle.btn-success,
+.btn-group-circle > .btn-success {
+    @include button-circle-variant($button-background-success, $button-border-success);
+}
+
+.btn-circle.btn-info,
+.btn-group-circle > .btn-info {
+    @include button-circle-variant($button-background-info, $button-border-info);
+}
+
+.btn-circle.btn-warning,
+.btn-group-circle > .btn-warning {
+    @include button-circle-variant($button-background-warning, $button-border-warning);
+}
+
+.btn-circle.btn-danger,
+.btn-group-circle > .btn-danger {
+    @include button-circle-variant($button-background-danger, $button-border-danger);
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE - GROUP
+// ============================================================================
+
+.btn-group > .btn-circle,
+.btn-group-circle > .se-btn {
+
+    &:first-child,
+    &:last-child {
+        border-radius: 50%;
+    }
+
+    &:not(:first-child) {
+        margin-left: 1px;
+    }
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE - SIZES
+// ============================================================================
+
+.btn-lg.btn-circle,
+.btn-group-lg > .btn-circle,
+.btn-group-lg.btn-group-circle > .se-btn {
+    @include button-circle-sizing($button-circle-large-line-height, $font-size-large);
+}
+
+.btn-sm.btn-circle,
+.btn-group-sm > .btn-circle,
+.btn-group-sm.btn-group-circle > .se-btn {
+    @include button-circle-sizing($button-circle-small-line-height, $font-size-small);
+}
+
+.btn-xs.btn-circle,
+.btn-group-xs > .btn-circle,
+.btn-group-xs.btn-group-circle > .se-btn {
+    @include button-circle-sizing($button-circle-xs-line-height, $font-size-xs);
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - ANIMATIONS
+// ============================================================================
+
+@keyframes se-busy-spin {
+    0% {
+        -webkit-transform: translate(-50%, -50%) rotate(0deg);
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        -webkit-transform: translate(-50%, -50%) rotate(359deg);
+        transform: translate(-50%, -50%) rotate(359deg);
+    }
+}
+
+.se-btn.busy {
+
+    &:before {
+        animation: se-busy-spin 2s infinite linear;
+        content: "\f110";
+        font-family: "Font Awesome 5 Free";
+        font-size: 120%;
+        position: absolute;
+        text-align: center;
+        top: 50%;
+        left: 50%;
+        font-weight: 900;
+    }
+
+    & > * {
+        visibility: hidden;
+    }
+
+}
+
+@keyframes btn-has-alert {
+    50% {
+        background-color: $button-border-danger;
+        border-color: $button-border-danger;
+        color: contrast-color(
+            $button-background-danger,
+            $button-text-color-light,
+            $button-text-color-dark,
+            $button-text-color-threshold
+        );
+    }
+}
+
+.se-btn.has-alert {
+
+    &:not(.disabled),
+    &:not([disabled]) {
+        animation: btn-has-alert $button-has-alert-delay infinite;
+    }
+}

@@ -1,0 +1,17 @@
+label.checkbox, label.radio {
+    cursor: pointer;
+}
+
+.checkbox {
+    min-height: 20px;
+}
+
+.checkbox input[type="checkbox"] {
+    cursor: pointer;
+    margin: 2px 6px 2px 2px;
+}
+
+label.checkbox .styled_select {
+    margin-bottom: 0;
+    vertical-align: middle;
+}

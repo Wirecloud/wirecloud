@@ -1,0 +1,3 @@
+django-nose
+parameterized
+radon

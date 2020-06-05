@@ -1,0 +1,20 @@
+{% load static from staticfiles %}
+<script type="text/javascript">
+    var Wirecloud = {
+        constants: {
+{% for entry in constants %}            {{ entry.key }}: {{ entry.value }}{% if not forloop.last %},{% endif %}
+{% endfor %}        },
+        location: {
+            'domain': document.location.protocol + '//' + document.location.host,
+            'host': document.location.host,
+            'protocol': document.location.protocol.substr(0, document.location.protocol.length - 1)
+        },
+        ui: {}
+    };
+</script>
+<script %}"="" js="" src="{% static " styledelements="" type="text/javascript" utils.js"=""></script>
+<script %}"="" js="" src="{% static " type="text/javascript" utils.js"="" wirecloud=""></script>
+<script type="text/javascript">
+{{ script }}
+    Wirecloud.location.base = Wirecloud.location.domain + Wirecloud.URLs.ROOT_URL;
+</script>

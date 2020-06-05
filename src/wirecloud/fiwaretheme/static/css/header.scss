@@ -1,0 +1,177 @@
+@import 'variables';
+
+.wirecloud_header_nav {
+    margin: 0 0 0 5px;
+}
+
+#wirecloud_header {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.wirecloud_app_bar {
+    padding: 0px 0 5px 0;
+    white-space: nowrap;
+}
+
+.logo_wrapper {
+    margin-top: 5px;
+    font-family: Comfortaa;
+}
+
+.logo_wrapper > img {
+    margin: -2px 5px 5px 5px;
+    vertical-align: bottom;
+    padding: 0;
+    vertical-align: -1.3ex;
+    height: 60px;
+    display: inline-block;
+}
+
+.logo_wrapper > div {
+    margin-top: 8px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.fiware_title, .fiware_subtitle {
+    margin: 0;
+}
+
+.fiware_title {
+    color: rgb(96, 193, 207);
+    font-size: 23px;
+    line-height: 23px;
+    text-shadow: 0 1px 0 rgb(255, 255, 255);
+    font-family: "NeoTech";
+    font-weight: 200;
+}
+
+.fiware_title > span {
+    color: rgb(0, 45, 103);
+}
+
+.fiware_subtitle {
+    line-height: normal;
+    font-size: 20px;
+    color: rgb(62, 128, 173);
+    text-shadow: 1px 0px 1px rgba(255, 255, 255, 0.1);
+}
+
+.wc-toolbar {
+    overflow: visible;
+    margin: 0 5px;
+}
+
+.breadcrum {
+    font-size: 16px;
+    text-align: center;
+    font-weight: normal;
+    width: 500px;
+    transition: width 0.30s ease-in;
+}
+
+@media (min-width: 1024px) {
+    .breadcrum {
+        width: 700px;
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .breadcrum {
+        width: 800px;
+        font-size: 20px;
+    }
+}
+
+#wirecloud_header .menu_wrapper {
+    position: absolute;
+    right: 0px;
+    text-align: right;
+    font-family: "Arial";
+    font-size: 12px;
+    font-weight: normal;
+    color: #990000;
+}
+
+#wirecloud_header .menu_wrapper > .menu {
+    display: inline-block;
+    padding: 0 0 0 1ex;
+    vertical-align: top;
+}
+
+#wc-user-menu {
+
+    color: $brand-primary;
+
+    * {
+        vertical-align: middle;
+    }
+
+    .se-btn.open > span {
+        background: rgb(81, 163, 81);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .avatar {
+        border-radius: 2px;
+    }
+
+    span {
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        padding: 0px 3px;
+        margin: 2px;
+        font-size: 14px;
+    }
+
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span.wiring.error:before {
+    content: "\f071";
+    vertical-align: baseline;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+    color: #f89406;
+    margin-right: 3px;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span:hover {
+    text-decorator: none;
+    background-color: #EEE;
+}
+
+#wc-user-menu {
+    display: inline-block;
+    margin: 0 1ex;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span.selected {
+    cursor: default;
+    background-color: #08C;
+    color: white;
+}
+
+#wirecloud_header > .menu_wrapper > .menu .mark {
+    display: none;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .selected > .mark {
+    height: 2ex;
+}
+
+#wirecloud_header > .submenu {
+    display: none;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+#wirecloud_breadcrum > span {
+    padding: 0 5px;
+}

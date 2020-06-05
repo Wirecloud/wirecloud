@@ -1,0 +1,75 @@
+@import 'variables';
+@import 'compass/css3';
+@import 'styledelements/input_mixins';
+
+.se-file-field {
+    @include input-root-style();
+
+    color: $input-color;
+    margin: 1px 4px 9px 4px;
+    padding: 0;
+    width:   10em;
+    box-sizing: border-box;
+    overflow: visible;
+    border-radius: $input-border-radius-base;
+}
+
+.se-file-field > .se-hl-west-container > .preview {
+    display: block;
+    height: $line-height-base;
+    width:  20px;
+    margin-right: 2px;
+}
+
+.se-file-field > .se-hl-center-container > .filename {
+    display: block;
+    height: $input-height-base;
+    width:   auto;
+    padding: $input-padding-vertical $input-padding-horizontal;
+    line-height: $line-height-base;
+    color: $input-color;
+    border-radius: $input-border-radius-base 0 0 $input-border-radius-base;
+    background-color: $input-bg;
+    border: 1px solid $input-border;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    margin: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-sizing: border-box;
+}
+
+.se-file-field > .input_wrapper {
+    overflow: hidden;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    cursor: pointer;
+}
+
+.se-file-field > .input_wrapper > input {
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    display: block;
+    bottom: -2px;
+    right: -2px;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.se-file-field.focus {
+    box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.se-file-field.focus > .se-hl-center-container > .filename {
+    border-color: $input-border-color-focus;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.se-file-field.focus > .se-hl-east-container > .se-btn {
+    border-color: $input-border-color-focus;
+}

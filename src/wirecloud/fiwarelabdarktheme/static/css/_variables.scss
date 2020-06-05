@@ -1,0 +1,63 @@
+$brand-primary:             #0093C6;
+$brand-success:             #5BB75B;
+$brand-info:                #49AFCD;
+$brand-warning:             #F89406;
+$brand-danger:              #DA4F49;
+
+$font-size-base:            13px;
+$font-size-large:           15px;
+$font-size-small:           10px;
+$font-size-xs:              10px;
+
+$font-family-base:          "Open Sans", Arial, sans-serif;
+$headings-font-family:      Comfortaa;
+
+$line-height-base:          18px;
+
+$padding-vertical-base:      4px;
+$padding-horizontal-base:   12px;
+
+$padding-vertical-large:     8px;
+$padding-horizontal-large:  14px;
+
+$padding-vertical-small:     5px;
+$padding-horizontal-small:   9px;
+
+$padding-vertical-xs:        2px;
+$padding-horizontal-xs:      6px;
+
+$panel-bg:                  #FFFFFF;
+
+/*--------------------------------------------------------------------------------*/
+
+$gray-darker:           lighten(#000, 13.5%);
+$gray-dark:             lighten(#000, 20%);
+$gray:                  lighten(#000, 33.5%);
+$gray-light:            #4E5D6C;
+$gray-lighter:          #B8BDC1;
+
+$body-bg:               #2B3E50;
+$text-color-light:      $body-bg;
+$text-color-dark:       $gray-lighter;
+$panel-default-heading-bg: $gray-light;
+$panel-bg:              $gray-lighter;
+$panel-footer-bg:       $gray-light;
+
+$headings-font-weight:  normal;
+
+$button-gradients:       false;
+$button-text-color-dark: #FFF;
+
+$nav-tabs-border-color: $gray-light;
+$nav-tabs-active-link-hover-border-color: $gray-light;
+$nav-tabs-active-link-hover-bg: $gray-light;
+
+$modal-header-bg:           $panel-default-heading-bg;
+$modal-footer-bg:           $panel-default-heading-bg;
+$modal-header-border-color: none;
+
+$state-default-text: $text-color-dark;
+
+$wiring-content-bg: $panel-default-heading-bg;
+
+@import 'defaults';

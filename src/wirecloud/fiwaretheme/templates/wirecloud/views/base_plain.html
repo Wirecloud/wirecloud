@@ -1,0 +1,62 @@
+{% load compress i18n wirecloudtags %}{% load static from staticfiles %}
+<!DOCTYPE html>
+
+<html lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{% block title %}{% trans "WireCloud Platform" %}{% endblock %}</title>
+
+    {% block meta %}
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<link %}"="" favicon.ico"="" href="{% static " images="" rel="shortcut icon" type="image/x-icon"/>
+    {% endblock %}
+
+    {% block basecss %}
+        {% compress css %}
+        {% platform_css 'classic' %}
+        {% endcompress %}
+    {% endblock %}
+
+    {% block css %}
+    {% endblock %}
+
+    {% block basejs %}
+        <script %}?language="{{" language_code="" src="{% url " type="text/javascript" wirecloud.javascript_translation_catalogue"="" wirecloud_version_hash="" }}"="" }}&amp;v="{{"></script>
+        {% compress js %}
+        <script %}"="" js="" lib="" moment-with-locales.min.js"="" src="{% static " type="text/javascript"></script>
+<script %}"="" js="" lib="" moment-timezone-with-data.min.js"="" src="{% static " type="text/javascript"></script>
+        {% wirecloud_bootstrap "classic" %}
+        {% extra_javascripts "classic" %}
+        {% endcompress %}
+    {% endblock %}
+
+    {% block js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Wirecloud.init({
+                preventDefault: true
+            });
+        }, true);
+    </script>
+    {% endblock %}
+</head>
+<body>
+<div id="wirecloud_header">
+<div class="menu_wrapper"><div class="menu"><div id="wc-user-menu"></div></div></div>
+<div class="logo_wrapper">
+<img %}"="" alt="Image can not be loaded." header.png"="" images="" logos="" src="{% theme_static "/>
+<div>
+<div>
+<h2 class="fiware_title"><span>FI</span>WARE</h2>
+<h2 class="fiware_subtitle">WireCloud Mashup Platform</h2>
+</div>
+</div>
+</div>
+<div class="wirecloud_app_bar"><div class="se-input-group se-input-group-lg wirecloud_header_nav"><span class="breadcrum se-add-on" id="wirecloud_breadcrum">{% block path %}{% endblock %}</span></div></div>
+</div>
+<div class="plain_content">
+    {% block content %}
+    {% endblock %}
+    </div>
+    {% include "wirecloud/views/footer.html" %}
+</body>
+</html>

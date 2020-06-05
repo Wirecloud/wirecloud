@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="context-inspector" version="0.5">
+
+  <details>
+    <title>Context Inspector</title>
+    <authors>Álvaro Arranz &lt;aarranz@conwet.com&gt;</authors>
+    <email>wirecloud@conwet.com</email>
+    <image>images/catalogue.png</image>
+    <smartphoneimage>images/smartphone.png</smartphoneimage>
+    <description>Use this widget to discover and inspect the context provided by a particular instance of the Application Mashup GE.</description>
+  </details>
+
+  <contents src="context-inspector.html" contenttype="application/xhtml+xml" charset="utf-8" useplatformstyle="true"/>
+  <rendering width="6" height="24"/>
+
+</widget>

@@ -1,0 +1,213 @@
+@import 'variables';
+@import 'utils';
+@import 'styledelements/panel_mixins';
+
+
+// ======================================================================================
+// COMPONENT - PANEL
+// ======================================================================================
+
+.panel, .panel-heading, .panel-body, .panel-footer {
+    position: relative;
+    box-sizing: border-box;
+}
+
+.panel {
+    margin: 0px 0px $panel-margin-vertical;
+    background-color: $panel-bg;
+    border: 1px solid transparent;
+    border-radius: $panel-border-radius;
+    color: contrast-color($panel-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+}
+
+.panel-heading {
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    border-top-left-radius: ($panel-border-radius - 1);
+    border-top-right-radius: ($panel-border-radius - 1);
+
+    .panel-options {
+        position: relative;
+        display: block;
+        float: right;
+
+        .se-btn {
+            position: relative;
+            display: inline-block;
+            width: $panel-btn-width;
+            margin: 0px $panel-btn-margin-horizontal 0px 0px;
+            padding: 0px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            vertical-align: baseline;
+            text-align: center;
+
+            &:last-child {
+                margin-right: 0px;
+            }
+        }
+    }
+
+    &:last-child {
+        border-bottom-left-radius: ($panel-border-radius - 1);
+        border-bottom-right-radius: ($panel-border-radius - 1);
+    }
+
+    &:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+}
+
+.panel-heading > :last-child {
+    margin-bottom: 0;
+}
+
+.panel-title {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.panel-subtitle {
+    clear: both;
+    display: block;
+}
+
+.panel-body {
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    background-color: transparent;
+
+    &:last-child {
+        border-bottom-left-radius: ($panel-border-radius - 1);
+        border-bottom-right-radius: ($panel-border-radius - 1);
+    }
+}
+
+.panel-footer {
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    background-color: $panel-default-footer-bg;
+    border-bottom-left-radius: ($panel-border-radius - 1);
+    border-bottom-right-radius: ($panel-border-radius - 1);
+}
+
+.text-truncate:after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    height: 100%;
+    width: 38px;
+    right: 0px;
+}
+
+// ======================================================================================
+// COMPONENT - PANEL - CONTEXTUAL CLASSES
+// ======================================================================================
+
+.panel-default {
+    @include panel-variant(
+        $panel-default-border-color,
+        $panel-default-heading-bg,
+        $panel-default-heading-text-color,
+        $panel-default-btn-hover-text-color);
+
+    @include panel-selectable(
+        $input-border-color-focus,
+        $panel-default-heading-bg);
+
+    &.panel-selectable.active {
+        @include panel-variant(
+            $panel-primary-border-color,
+            $panel-primary-heading-bg,
+            $panel-primary-heading-text-color,
+            $panel-primary-btn-hover-text-color);
+        @include panel-selectable(
+            $panel-primary-border-color,
+            $panel-primary-heading-bg);
+    }
+}
+
+.panel-primary {
+    @include panel-variant(
+        $panel-primary-border-color,
+        $panel-primary-heading-bg,
+        $panel-primary-heading-text-color,
+        $panel-primary-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-primary-border-color,
+        $panel-primary-heading-bg);
+}
+
+.panel-success {
+    @include panel-variant(
+        $panel-success-border-color,
+        $panel-success-heading-bg,
+        $panel-success-heading-text-color,
+        $panel-success-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-success-border-color,
+        $panel-success-heading-bg);
+}
+
+.panel-info {
+    @include panel-variant(
+        $panel-info-border-color,
+        $panel-info-heading-bg,
+        $panel-info-heading-text-color,
+        $panel-info-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-info-border-color,
+        $panel-info-heading-bg);
+}
+
+.panel-warning {
+    @include panel-variant(
+        $panel-warning-border-color,
+        $panel-warning-heading-bg,
+        $panel-warning-heading-text-color,
+        $panel-warning-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-warning-border-color,
+        $panel-warning-heading-bg);
+}
+
+.panel-danger {
+    @include panel-variant(
+        $panel-danger-border-color,
+        $panel-danger-heading-bg,
+        $panel-danger-heading-text-color,
+        $panel-danger-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-danger-border-color,
+        $panel-danger-heading-bg);
+}
+
+.panel.panel-selectable {
+    cursor: pointer;
+}
+
+.panel, .panel.panel-selectable {
+
+    .panel-heading .panel-options .se-btn {
+
+        &:hover,
+        &:focus {
+            box-shadow: none;
+        }
+
+        &.disabled {
+            text-shadow: none;
+            box-shadow: none;
+            opacity: 0.4;
+        }
+    }
+}

@@ -1,0 +1,170 @@
+{
+    "resources": [
+        {
+            "usdl_url": "http://repository.example.com/CoNWeT/service4.rdf",
+            "vendor": "CoNWeT",
+            "name": "Arbitrary Offering",
+            "id": "ArbitraryOffering",
+            "type": "unknown",
+            "resources": [],
+            "uriImage": "http://static.example.com/smart_lights_icon.png",
+            "legal": [
+                {
+                    "clauses": [
+                        {
+                            "text": "The History Mod included in this application is free software you can redistribute and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                            "name": "History Mod Licence"
+                        },
+                        {
+                            "text": "The mashups included in this application are free software you can redistribute and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                            "name": "Mashups Licence"
+                        }
+                    ],
+                    "type": "http://www.linked-usdl.org/ns/usdl-legal#TermsAndConditions",
+                    "description": "",
+                    "label": "Terms and conditions"
+                }
+            ],
+            "vcard": {
+                "BEGIN": [
+                    {
+                        "properties": {},
+                        "value": "VCARD"
+                    }
+                ],
+                "TEL": [
+                    {
+                        "properties": {},
+                        "value": "+34913367394"
+                    }
+                ],
+                "END": [
+                    {
+                        "properties": {},
+                        "value": "VCARD"
+                    }
+                ],
+                "ADR": [
+                    {
+                        "properties": {},
+                        "value": "Campus de Montegancedo s/n;28660;Boadilla del Monte, Madrid;Spain"
+                    }
+                ],
+                "EMAIL": [
+                    {
+                        "properties": {},
+                        "value": "conwet@conwet.com"
+                    }
+                ],
+                "FN": [
+                    {
+                        "properties": {},
+                        "value": "CoNWeT"
+                    }
+                ]
+            },
+            "uriTemplate": "http://repository.example.com/CoNWeT/service4.rdf",
+            "version": "1.0",
+            "pricing": [
+                {
+                    "priceComponents": [
+                        {
+                            "currency": "EUR",
+                            "unit": "single payment",
+                            "description": "This component defines a single payment",
+                            "value": "10",
+                            "title": "Single payment"
+                        }
+                    ],
+                    "description": "This price plan defines a single payment",
+                    "label": "Single payment"
+                }
+            ],
+            "sla": [],
+            "displayName": "Arbitrary Offering",
+            "longDescription": "This widget gives users the ability to handle different map layers coming from several sources, showing all of them on the same map. It has a bunch of both events and slots that enables the user to have different instances of this widget wired, so she can compare with different cartographies at a glance.",
+            "shortDescription": "",
+            "store": "Store 2",
+            "page": ""
+        },
+        {
+            "usdl_url": "http://repository.example.com/CoNWeT/service6.rdf",
+            "vendor": "CoNWeT",
+            "name": "Open Offering",
+            "id": "OpenOffering",
+            "type": "unknown",
+            "resources": [],
+            "uriImage": "http://static.example.com/smart_lights_icon.png",
+            "legal": [
+                {
+                    "clauses": [
+                        {
+                            "text": "The History Mod included in this application is free software you can redistribute and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                            "name": "History Mod Licence"
+                        },
+                        {
+                            "text": "The mashups included in this application are free software you can redistribute and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                            "name": "Mashups Licence"
+                        }
+                    ],
+                    "type": "http://www.linked-usdl.org/ns/usdl-legal#TermsAndConditions",
+                    "description": "",
+                    "label": "Terms and conditions"
+                }
+            ],
+            "vcard": {
+                "BEGIN": [
+                    {
+                        "properties": {},
+                        "value": "VCARD"
+                    }
+                ],
+                "TEL": [
+                    {
+                        "properties": {},
+                        "value": "+34913367394"
+                    }
+                ],
+                "END": [
+                    {
+                        "properties": {},
+                        "value": "VCARD"
+                    }
+                ],
+                "ADR": [
+                    {
+                        "properties": {},
+                        "value": "Campus de Montegancedo s/n;28660;Boadilla del Monte, Madrid;Spain"
+                    }
+                ],
+                "EMAIL": [
+                    {
+                        "properties": {},
+                        "value": "conwet@conwet.com"
+                    }
+                ],
+                "FN": [
+                    {
+                        "properties": {},
+                        "value": "CoNWeT"
+                    }
+                ]
+            },
+            "uriTemplate": "http://repository.example.com/CoNWeT/service6.rdf",
+            "version": "1.0",
+            "pricing": [
+                {
+                    "description": "This offering can be acquired for free",
+                    "label": "Free use"
+                }
+            ],
+            "sla": [],
+            "displayName": "Open Offering",
+            "longDescription": "This widget gives users the ability to handle different map layers coming from several sources, showing all of them on the same map. It has a bunch of both events and slots that enables the user to have different instances of this widget wired, so she can compare with different cartographies at a glance.",
+            "shortDescription": "",
+            "store": "Store 2",
+            "page": ""
+        }
+
+    ]
+}

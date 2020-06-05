@@ -1,0 +1,652 @@
+@import 'wiring/defaults';
+@import 'compass/css3/images';
+@import 'compass/css3/user-interface';
+@import 'utils';
+@import 'styledelements/panel_mixins';
+@import "variables";
+
+
+// ============================================================================
+// WIRING SIDEBAR - COMPONENT
+// ============================================================================
+
+.we-component-group {
+    margin: 0 0 $margin-vertical-base;
+}
+
+.we-component-meta {
+    margin: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    .panel-body {
+        @include user-select(none);
+    }
+}
+
+.we-component-group {
+
+    .we-component {
+        border-radius: 0;
+        margin: 0;
+        @include user-select(none);
+
+        .panel-heading {
+            padding: 5px 8px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+
+            .label {
+                float: right;
+            }
+        }
+
+        .panel-title {
+            width: 85%;
+            float: left;
+        }
+
+        &:not(:last-child) .panel-heading {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .component-version {
+            float: left;
+        }
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    > :last-child {
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+}
+
+.component-title {
+    white-space: nowrap;
+
+    span {
+        display: inline-block;
+        max-width: 100%;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT
+// ============================================================================
+
+@mixin component-variant($component-variant-bg, $component-variant-border-color) {
+
+    border-color: $component-variant-border-color;
+
+    .panel-heading {
+        background-color: $component-variant-bg;
+
+        .panel-title,
+        .panel-subtitle,
+        .panel-options .se-btn {
+            color: $component-text-color;
+            text-shadow: $component-text-shadow;
+        }
+
+        @if alpha($component-variant-bg) == 1.0 {
+            .text-truncate:after {
+                background-image: linear-gradient(to right, rgba($component-variant-bg, 0), $component-variant-bg);
+            }
+        }
+    }
+}
+
+.component-operator {
+    @include component-variant($component-operator-bg, $component-operator-border-color);
+}
+
+.component-widget {
+    @include component-variant($component-widget-bg, $component-widget-border-color);
+}
+
+.wiring-sidebar {
+
+
+    .component-operator {
+
+        @include component-variant(rgba($component-operator-bg, 1), rgba($component-operator-border-color, 1));
+
+        &:hover {
+            @include component-variant(rgba(darken($component-operator-bg, 5%), 1), rgba(darken($component-operator-border-color, 10%), 1));
+        }
+
+    }
+
+    .component-widget {
+
+        @include component-variant(rgba($component-widget-bg, 1), rgba($component-widget-border-color, 1));
+
+        &:hover {
+            @include component-variant(rgba(darken($component-widget-bg, 5%), 1), rgba(darken($component-widget-border-color, 10%), 1));
+        }
+
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT-ITEM - DISABLED
+// ============================================================================
+
+.we-component {
+
+    &.disabled,
+    &.disabled:hover {
+        cursor: default;
+        opacity: 1;
+        box-shadow: none;
+
+        @include panel-variant(
+            $panel-default-border-color,
+            $panel-default-heading-bg,
+            $panel-default-heading-text-color,
+            $panel-default-btn-hover-text-color
+        );
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT DRAGGABLE
+// ============================================================================
+
+.component-draggable {
+    position: absolute;
+    margin: 0;
+    background-color: transparent;
+    @include user-select(none);
+    cursor: pointer;
+    z-index: $component-z-index;
+
+    .panel-heading {
+        display: table;
+        width: 100%;
+        white-space: nowrap;
+
+        .panel-title,
+        .panel-options {
+            display: table-cell;
+            float: inherit;
+            vertical-align: middle;
+        }
+
+        .panel-title {
+            max-width: $component-title-max-width;
+
+            & > span {
+                max-width: 100%;
+                display: block;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+
+        .panel-options {
+            padding-left: $component-options-padding-horizontal;
+            float: right;
+        }
+    }
+
+    .panel-body {
+        display: table;
+        width: 100%;
+        padding: 0;
+        background-color: $component-body-bg;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    &.dragging {
+        cursor: move;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - ENDPOINTS
+// ============================================================================
+
+@mixin endpoints-variant(
+    $endpoint-float,
+    $endpoint-border-radius,
+    $endpoint-anchor-bg
+) {
+
+    .endpoint {
+        float: $endpoint-float;
+        @include positioned-border-radius($endpoint-border-radius);
+
+        .endpoint-anchor {
+            #{$endpoint-float}: $endpoint-anchor-offsetwidth;
+            background-color: $endpoint-anchor-bg;
+            @include positioned-border-radius($endpoint-float);
+        }
+    }
+
+    .endpoint:hover,
+    .endpoint.active {
+
+        .endpoint-anchor {
+            border-left: solid 1px $endpoint-active-bg;
+        }
+    }
+
+}
+
+.endpoints {
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+
+    .endpoint {
+        position: relative;
+        cursor: pointer;
+        clear: both;
+        margin: 0 0 $endpoint-margin-vertical;
+
+        .endpoint-title {
+            color: $endpoint-text-color;
+            text-overflow: ellipsis;
+        }
+
+        .endpoint-anchor {
+            position: absolute;
+            top: 0;
+            padding: ($endpoint-text-height / 2) ($endpoint-anchor-width / 2);
+        }
+
+        &:first-child {
+            margin-top: $endpoint-margin-vertical;
+        }
+    }
+
+    &.source-endpoints {
+        @include endpoints-variant(
+            right,
+            left,
+            $source-endpoint-anchor-bg
+        );
+    }
+
+    &.target-endpoints {
+        @include endpoints-variant(
+            left,
+            right,
+            $target-endpoint-anchor-bg
+        );
+    }
+
+    &:empty {
+        display: none;
+    }
+
+    .endpoint:hover,
+    .endpoint.active,
+    .endpoint.active.disabled {
+        background-color: $endpoint-active-bg;
+        opacity: 1;
+
+        .endpoint-title {
+            color: $endpoint-active-text-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $endpoint-active-bg;
+        }
+    }
+
+    .endpoint.missing .endpoint-anchor {
+        background-color: $endpoint-missing-bg;
+    }
+}
+
+.endpoint {
+    max-width: $endpoint-max-width;
+    @include user-select(none);
+
+    .endpoint-title {
+        position: relative;
+        display: block;
+        margin: 0 $endpoint-padding-horizontal;
+        font-size: $endpoint-text-size;
+        line-height: $endpoint-text-height;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT - BACKGROUND
+// ============================================================================
+
+.component-draggable.background {
+    z-index: $component-background-z-index;
+
+    .panel-heading .panel-title,
+    .panel-heading .panel-options .se-btn {
+        color: $component-background-text-color;
+        text-shadow: initial;
+    }
+
+    .panel-body {
+        background-color: $component-background-body-bg;
+    }
+
+    &.component-operator {
+        border-color: $component-background-operator-border-color;
+
+        .panel-heading {
+            background-color: $component-background-operator-bg;
+        }
+    }
+
+    &.component-widget {
+        border-color: $component-background-widget-border-color;
+
+        .panel-heading {
+            background-color: $component-background-widget-bg;
+        }
+    }
+
+    .endpoints {
+
+        .endpoint .endpoint-title {
+            color: $endpoint-background-text-color;
+        }
+
+        &.source-endpoints .endpoint-anchor {
+            background-color: $source-endpoint-background-anchor-bg;
+        }
+
+        &.target-endpoints .endpoint-anchor {
+            background-color: $target-endpoint-background-anchor-bg;
+        }
+
+        .endpoint:hover,
+        .endpoint.active {
+            background-color: $endpoint-active-bg;
+
+            .endpoint-title {
+                color: $endpoint-active-text-color;
+            }
+
+            .endpoint-anchor {
+                background-color: $endpoint-active-bg;
+            }
+        }
+
+        .endpoint.missing .endpoint-anchor {
+            background-color: $endpoint-missing-background-bg;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT - OPTIONS
+// ============================================================================
+
+.component-operator .panel-heading {
+
+    .panel-options .se-btn:hover,
+    .panel-options .se-btn:focus {
+        color: $component-operator-text-color;
+        text-shadow: $component-text-hover-shadow;
+    }
+}
+
+.component-widget .panel-heading {
+
+    .panel-options .se-btn:hover,
+    .panel-options .se-btn:focus {
+        color: $component-widget-text-color;
+        text-shadow: $component-text-hover-shadow;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT - ACTIVE
+// ============================================================================
+
+.component-draggable.active,
+.component-draggable.background.active {
+    border-color: $component-active-border-color;
+    z-index: $component-active-z-index;
+
+    .panel-heading {
+        background-color: $component-active-bg;
+
+        .panel-title,
+        .panel-options .se-btn {
+            color: $component-active-text-color;
+            text-shadow: $component-active-text-shadow;
+        }
+
+        .panel-options .se-btn:hover,
+        .panel-options .se-btn:focus {
+            color: $component-active-text-hover-color;
+            text-shadow: $component-text-hover-shadow;
+        }
+    }
+
+    .panel-body {
+        background-color: $component-body-bg;
+    }
+
+    .endpoints {
+
+        .endpoint .endpoint-title {
+            color: $endpoint-text-color;
+        }
+
+        &.source-endpoints {
+
+            .endpoint .endpoint-anchor {
+                background-color: $source-endpoint-anchor-bg;
+            }
+
+            .endpoint:hover,
+            .endpoint.active {
+
+                .endpoint-anchor {
+                    border-left: solid 1px $component-active-text-hover-color;
+                }
+            }
+        }
+
+        &.target-endpoints {
+
+            .endpoint .endpoint-anchor {
+                background-color: $target-endpoint-anchor-bg;
+            }
+
+            .endpoint:hover,
+            .endpoint.active {
+
+                .endpoint-anchor {
+                    border-right: solid 1px $component-active-text-hover-color;
+                }
+            }
+        }
+
+        .endpoint:hover,
+        .endpoint.active {
+            background-color: $component-active-text-hover-color;
+
+            .endpoint-title {
+                color: $endpoint-active-text-color;
+            }
+
+            .endpoint-anchor {
+                background-color: $component-active-text-hover-color;
+            }
+        }
+
+        .endpoint.missing .endpoint-anchor {
+            background-color: $endpoint-missing-bg;
+        }
+    }
+}
+
+.component-draggable .endpoints,
+.component-draggable.active .endpoints {
+
+    .endpoint.missing {
+
+        &:hover,
+        &.active {
+            background-color: $endpoint-missing-active-bg;
+
+            .endpoint-anchor {
+                background-color: $endpoint-missing-active-bg;
+            }
+        }
+    }
+
+    &.source-endpoints .endpoint.missing {
+
+        &:hover,
+        &.active {
+
+            .endpoint-anchor {
+                border-left: solid 1px $endpoint-missing-active-bg;
+            }
+        }
+    }
+
+    &.target-endpoints .endpoint.missing {
+
+        &:hover,
+        &.active {
+
+            .endpoint-anchor {
+                border-left: solid 1px $endpoint-missing-active-bg;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT - COLLAPSED
+// ============================================================================
+
+.wc-workspace-wiring .component-draggable.collapsed {
+
+    .endpoints {
+        position: absolute;
+        top: 10px;
+
+        > .endpoint {
+            position: absolute;
+            cursor: default;
+            margin: 0;
+
+            .endpoint-title {
+                display: none;
+            }
+
+            .endpoint-anchor {
+                pointer-events: none;
+            }
+        }
+    }
+
+    .target-endpoints {
+        left: 0;
+    }
+
+    .source-endpoints {
+        right: 0;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT - SORTABLE ENDPOINTS
+// ============================================================================
+
+.component-draggable .endpoints.orderable {
+
+    .endpoint {
+        box-shadow: $endpoint-orderable-box-shadow;
+    }
+
+    .endpoint.dragging {
+        background-color: $endpoint-orderable-active-bg;
+        box-shadow: $endpoint-orderable-active-box-shadow;
+
+        .endpoint-title {
+            color: $endpoint-orderable-active-text-color;
+        }
+    }
+}
+
+.endpoint.cloned {
+    position: absolute;
+    background-color: $component-active-text-hover-color;
+    box-shadow: $endpoint-orderable-box-shadow;
+    cursor: move;
+    z-index: $endpoint-cloned-z-index;
+
+    .endpoint-title {
+        color: $endpoint-active-text-color;
+    }
+
+    .endpoint-anchor {
+        display: none;
+    }
+
+    &.source-endpoint {
+        @include positioned-border-radius(left);
+    }
+
+    &.target-endpoint {
+        @include positioned-border-radius(right);
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT - NOTICES
+// ============================================================================
+
+.component-draggable .component-notice {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    left: 0;
+    text-align: center;
+
+    .label {
+        font-size: 12px;
+        line-height: 20px;
+        padding: 0px 8px;
+        margin: 0;
+    }
+}
+
+.component-draggable.background .component-notice .label {
+    background-color: transparentize(lighten($brand-danger, 15%), 0.3);
+}
+
+.component-draggable.active,
+.component-draggable.active.background {
+
+    .component-notice .label {
+        background-color: $brand-danger;
+    }
+}
+
+.component-draggable,
+.component-draggable.background {
+
+    .component-notice .label:hover {
+        background-color: darken($brand-danger, 10%);
+    }
+}

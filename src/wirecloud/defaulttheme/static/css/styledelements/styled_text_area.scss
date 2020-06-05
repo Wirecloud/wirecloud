@@ -1,0 +1,8 @@
+@import 'variables';
+@import 'styledelements/input_mixins';
+@import 'compass/css3';
+
+.se-text-area {
+    @include input-base();
+    height: 5em;
+}

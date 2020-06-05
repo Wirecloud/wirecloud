@@ -1,0 +1,42 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+.resource_details .wc-resource-img-container {
+    position: static;
+    border: 1px solid #CDCED1;
+    border-radius: 4px;
+}
+
+.resource_details .panel {
+    text-align: center;
+    margin: 0 3ex;
+    width: 200px;
+}
+
+.resource_details .panel .summary {
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.resource_details .rating {
+    margin-left: 0;
+    display: block;
+    margin-top: 0.5ex;
+}
+
+.resource_details .links {
+    font-size: 125%;
+    margin: 0px 1ex;
+}
+
+.resource_details .versions {
+    margin: 0px 3px;
+}
+
+.resource_details .markdown-body {
+    margin-left: 2ex;
+}
+
+.wc-fiware-offering-resources-buttons-column {
+    width: 200px;
+}

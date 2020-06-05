@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+    xmlns:gr="http://purl.org/goodrelations/v1#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+    >
+
+    <wire:Widget rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#Wirecloud/TemplateTest/1.0">
+
+        <usdl:hasProvider>
+            <gr:BusinessEntity rdf:nodeID="Nf9ea65a41f1d468bbf009aa11d6a769f">
+                <foaf:name>Wirecloud</foaf:name>
+            </gr:BusinessEntity>
+        </usdl:hasProvider>
+        <dcterms:title>TemplateTest</dcterms:title>
+        <usdl:versionInfo>1.0</usdl:versionInfo>
+
+        <usdl:utilizedResource>
+            <usdl:Resource rdf:about="http://example.com/code.html"/>
+        </usdl:utilizedResource>
+
+        <wire:hasPlatformWiring>
+            <wire:PlatformWiring rdf:nodeID="Nd515f698fe474f488d25b3ef435db544">
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:nodeID="Nd374b28e04144d218995ca1448ebb068">
+                        <dcterms:title>output1</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <wire:index>0</wire:index>
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:nodeID="Nd374b28e04144d218995ca1448ebb069">
+                        <dcterms:title>output2</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <wire:index>1</wire:index>
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:nodeID="Naba6cc18bba24ecdb51cf13a7d0774a9">
+                        <dcterms:title>input1</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <wire:index>0</wire:index>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:nodeID="Naba6cc18bba24ecdb51cf13a7d0774aa">
+                        <dcterms:title>input2</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <wire:index>1</wire:index>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+            </wire:PlatformWiring>
+        </wire:hasPlatformWiring>
+
+        <wire:hasPlatformRendering>
+            <wire:PlatformRendering rdf:nodeID="N0bbb45f28a904b1195e3724ee1b0a7c9">
+                <wire:renderingWidth>8</wire:renderingWidth>
+                <wire:renderingHeight>30</wire:renderingHeight>
+            </wire:PlatformRendering>
+        </wire:hasPlatformRendering>
+
+    </wire:Widget>
+</rdf:RDF>

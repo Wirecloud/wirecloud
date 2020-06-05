@@ -1,0 +1,29 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+
+@mixin font-styled($text-size, $text-weight) {
+    @if $text-size == "large" {
+        font-size: $font-size-large;
+        line-height: $line-height-large;
+    } @else if $text-size == "base" {
+        font-size: $font-size-base;
+        line-height: $line-height-base;
+    } @else if $text-size == "small" {
+        font-size: $font-size-small;
+        line-height: $line-height-small;
+    } @else if $text-size == "xs" {
+        font-size: $font-size-xs;
+        line-height: $line-height-xs;
+    }
+
+    @if $text-weight == "normal" {
+        font-weight: $font-weight-base;
+    } @else if $text-weight == "bold" {
+        font-weight: $font-weight-bold;
+    }
+}
+
+@function contrast-text-color($component-bg) {
+    @return contrast-color($component-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+}

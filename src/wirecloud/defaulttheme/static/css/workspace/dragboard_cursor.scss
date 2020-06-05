@@ -1,0 +1,9 @@
+@import 'variables';
+
+.dragboardcursor {
+    border-radius: $border-radius-base $border-radius-base 0 0;
+    background: $state-info-bg;
+    border: 2px dashed $state-info-border;
+    position: absolute;
+    z-index: 0;
+}

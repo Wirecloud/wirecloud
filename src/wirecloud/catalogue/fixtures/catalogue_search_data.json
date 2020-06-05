@@ -1,0 +1,377 @@
+[
+    {
+        "pk": 80,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "username": "admin",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "groups": [],
+            "user_permissions": [],
+            "last_login": "2011-10-10T10:27:12Z",
+            "date_joined": "2011-10-10T10:27:12Z"
+        }
+    },
+    {
+        "pk": 81,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "username": "emptyuser",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "groups": [],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
+        "pk": 82,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "",
+            "last_name": "",
+            "email": "myuser@c.com",
+            "username": "myuser",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "groups": [],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
+        "pk": 83,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "",
+            "last_name": "",
+            "email": "myuser2@c.com",
+            "username": "MyUser",
+            "password": "pbkdf2_sha256$30000$McmqOMB4sOHp$jeABIPm67maqaeRByME3anmATCumGPjBeSa5EqpKUes=",
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "groups": [],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
+        "pk": 101,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Test_1.5.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "Test",
+            "json_description": "{\"name\": \"Test\", \"vendor\": \"Wirecloud\", \"version\": \"1.5\", \"type\": \"widget\", \"title\": \"Incredible Test\", \"description\": \"This widget contains keywords like term mashable application component.\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test-data\", \"actionlabel\": \"\", \"name\": \"inputendpoint\", \"label\": \"Input\", \"type\": \"text\", \"description\": \"input type text\"}], \"outputs\": [{\"friendcode\": \"test-data\", \"description\": \"output digit\", \"type\": \"text\", \"name\": \"outputendpoint\", \"label\": \"Output\"}]}, \"contents\": {\"src\": \"test.html\"}}",
+            "creator": 80,
+            "creation_date": "2011-05-12T11:24:03Z",
+            "version": "1.5",
+            "type": 0,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 102,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Test_2.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "Test",
+            "json_description": "{\"name\": \"Test\", \"vendor\": \"Wirecloud\", \"version\": \"2.0\", \"type\": \"widget\", \"title\": \"New Incredible Test\", \"description\": \"This widget contains keywords like prefix mashable application component.\", \"contents\": {\"src\": \"test.html\"}}",
+            "creator": 80,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "2.0",
+            "type": 0,
+            "public": true,
+            "users": [81, 82]
+        }
+    },
+    {
+        "pk": 103,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Test_2.5.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "Test",
+            "json_description": "{\"name\": \"Test\", \"vendor\": \"Wirecloud\", \"version\": \"2.5\", \"type\": \"widget\", \"title\": \"The Best Incredible Test\", \"description\": \"This widget contains keywords regex mashable application component.\", \"contents\": {\"src\": \"test.html\"}}",
+            "creator": 80,
+            "creation_date": "2011-05-14T11:24:03Z",
+            "version": "2.5",
+            "type": 0,
+            "public": false,
+            "users": [82]
+        }
+    },
+    {
+        "pk": 104,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "CoNWeT-Lab_Clock_Now_1.5.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT-Lab",
+            "short_name": "Clock_Now",
+            "json_description": "{\"name\": \"Clock_Now\", \"vendor\": \"CoNWeT-Lab\", \"version\": \"1.5\", \"type\": \"widget\", \"title\": \"Clock Now\", \"description\": \"This WireCloud widget contains keywords like free button bluetooth.\", \"contents\": {\"src\": \"test.html\"}}",
+            "creator": 80,
+            "creation_date": "2011-05-15T11:24:03Z",
+            "version": "1.5",
+            "type": 0,
+            "public": true,
+            "users": [80]
+        }
+    },
+    {
+        "pk": 105,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "CoNWeT-Lab_Clock_Now_1.11.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT-Lab",
+            "short_name": "Clock_Now",
+            "json_description": "{\"name\": \"Clock_Now\", \"vendor\": \"CoNWeT-Lab\", \"version\": \"1.11\", \"type\": \"widget\", \"title\": \"Last Clock Now\", \"description\": \"This WireCloud widget contains keywords like free button bluetooth.\", \"contents\": {\"src\": \"test.html\"}}",
+            "creator": 80,
+            "creation_date": "2011-05-16T11:24:03Z",
+            "version": "1.11",
+            "type": 0,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 106,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_test-mashup_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "test-mashup",
+            "json_description": "{\"name\": \"test-mashup\", \"vendor\": \"Wirecloud\", \"version\": \"1.0\", \"type\": \"mashup\", \"title\": \"WireCloud Test Mashup\", \"description\": \"This mashup contains keywords like power toogles mashable application.\"}",
+            "creator": 80,
+            "creation_date": "2011-05-17T11:24:03Z",
+            "version": "1.0",
+            "type": 1,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 107,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_test-mashup_1.0.5.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "test-mashup",
+            "json_description": "{\"name\": \"test-mashup\", \"vendor\": \"Wirecloud\", \"version\": \"1.0.5\", \"type\": \"mashup\", \"title\": \"WireCloud Test Mashup\", \"description\": \"This mashup contains keywords like power toogles.\"}",
+            "creator": 80,
+            "creation_date": "2011-05-18T11:24:03Z",
+            "version": "1.0.5",
+            "type": 1,
+            "public": true,
+            "users": [80, 82]
+        }
+    },
+    {
+        "pk": 108,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "CoNWeT_test-mashup-dependencies_1.5.5.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT",
+            "short_name": "test-mashup-dependencies",
+            "json_description": "{\"name\": \"test-mashup-dependencies\", \"vendor\": \"CoNWeT\", \"version\": \"1.5.5\", \"type\": \"mashup\", \"title\": \"Test Mashup Dependencies\", \"description\": \"This mashup contains keywords mashable weather interface.\"}",
+            "creator": 80,
+            "creation_date": "2011-05-19T11:24:03Z",
+            "version": "1.5.5",
+            "type": 1,
+            "public": false,
+            "users": [82]
+        }
+    },
+    {
+        "pk": 109,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "CoNWeT_test-mashup-dependencies_1.10.5.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT",
+            "short_name": "test-mashup-dependencies",
+            "json_description": "{\"name\": \"test-mashup-dependencies\", \"vendor\": \"CoNWeT\", \"version\": \"1.10.5\", \"type\": \"mashup\", \"title\": \"Private Test Mashup Dependencies\", \"description\": \"This mashup contains keywords weather interface.\"}",
+            "creator": 80,
+            "creation_date": "2011-05-20T11:24:03Z",
+            "version": "1.10.5",
+            "type": 1,
+            "public": false,
+            "users": [83]
+        }
+    },
+    {
+        "pk": 110,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Store_sky-weather_3.0.wgt",
+            "popularity": "0",
+            "vendor": "Store",
+            "short_name": "sky_weather",
+            "json_description": "{\"name\": \"sky_weather\", \"vendor\": \"Store\", \"version\": \"3.0\", \"type\": \"mashup\", \"title\": \"Mashup Sky Weather\", \"description\": \"This mashup contains keywords car news time.\", \"image\": \"images/catalogue.png\", \"smartphoneimage\": \"images/smartphone.png\"}",
+            "creator": 80,
+            "creation_date": "2011-05-21T11:24:03Z",
+            "version": "3.0",
+            "type": 1,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 111,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_TestOperator_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "TestOperator",
+            "json_description": "{\"name\": \"Test Operator\", \"vendor\": \"Wirecloud\", \"version\": \"2.0\", \"type\": \"operator\", \"title\": \"New Test Operator\", \"description\": \"This operator contains keywords phone launcher working.\", \"properties\": [], \"js_files\": [], \"preferences\": []}",
+            "creator": 80,
+            "creation_date": "2011-05-22T11:24:03Z",
+            "version": "2.0",
+            "type": 2,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 112,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_TestOperator_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "TestOperator",
+            "json_description": "{\"name\": \"Test Operator\", \"vendor\": \"Wirecloud\", \"version\": \"1.0\", \"type\": \"operator\", \"title\": \"New Test Operator\", \"description\": \"This operator contains keywords phone launcher working.\", \"properties\": [], \"js_files\": [], \"preferences\": []}",
+            "creator": 80,
+            "creation_date": "2011-05-23T11:24:03Z",
+            "version": "1.0",
+            "type": 2,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 113,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "CoNWeT_TestOperator_1.0.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT",
+            "short_name": "TestOperator",
+            "json_description": "{\"name\": \"Test Operator\", \"vendor\": \"CoNWeT\", \"version\": \"1.0\", \"type\": \"operator\", \"title\": \"New Test Operator\", \"description\": \"This operator contains keywords laptop width background.\", \"properties\": [], \"js_files\": [], \"preferences\": []}",
+            "creator": 80,
+            "creation_date": "2011-05-24T11:24:03Z",
+            "version": "1.0",
+            "type": 2,
+            "public": false,
+            "users": [82]
+        }
+    },
+    {
+        "pk": 114,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "CoNWeT_HD-Drive_1.5.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT",
+            "short_name": "HD-Drive",
+            "json_description": "{\"name\": \"HD-Drive\", \"vendor\": \"CoNWeT\", \"version\": \"1.5\", \"type\": \"operator\", \"title\": \"HD Drive Operator\", \"description\": \"This operator contains keywords lab office floor.\", \"properties\": [], \"js_files\": [], \"preferences\": []}",
+            "creator": 80,
+            "creation_date": "2011-05-25T11:24:03Z",
+            "version": "1.5",
+            "type": 2,
+            "public": true,
+            "users": [81, 82]
+        }
+    },
+    {
+        "pk": 115,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Android-Interprice-pocket-flipboard_2.0.wgt",
+            "popularity": "0",
+            "vendor": "Android-Interprice",
+            "short_name": "pocket-flipboard",
+            "json_description": "{\"name\": \"pocket-flipboard\", \"vendor\": \"Android-Interprice\", \"version\": \"2.0\", \"type\": \"operator\", \"title\": \"New Pocket Flipboard\", \"description\": \"This operator contains keywords water add feeds.\", \"properties\": [], \"js_files\": [], \"preferences\": []}",
+            "creator": 80,
+            "creation_date": "2011-05-26T11:24:03Z",
+            "version": "2.0",
+            "type": 2,
+            "public": false,
+            "users": [80]
+        }
+    },
+    {
+        "pk": 116,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Book-Reader_1.5.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "Book-Reader",
+            "json_description": "{\"name\": \"Book-Reader\", \"vendor\": \"Wirecloud\", \"version\": \"1.5\", \"type\": \"widget\", \"title\": \"The Best Incredible Test\", \"description\": \"This widget contains keywords wiredrawers wiretappers wirephoto wirework wireway wired wireless.\", \"contents\": {\"src\": \"test.html\"}}",
+            "creator": 80,
+            "creation_date": "2011-05-27T11:24:03Z",
+            "version": "1.5",
+            "type": 0,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 117,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "CoNWeT-Lab_Live_Sport_1.0.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT-Lab",
+            "short_name": "Live_Sports",
+            "json_description": "{\"name\": \"Live_Sports\", \"vendor\": \"CoNWeT-Lab\", \"version\": \"1.0\", \"type\": \"widget\", \"title\": \"Live Sports\", \"description\": \"This widget contains keywords like free button bluetooth.\", \"contents\": {\"src\": \"test.html\"}}",
+            "creator": 80,
+            "creation_date": "2011-05-28T11:24:03Z",
+            "version": "1.0",
+            "type": 0,
+            "public": true,
+            "users": [80]
+        }
+    }
+]

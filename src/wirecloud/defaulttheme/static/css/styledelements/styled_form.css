@@ -1,0 +1,50 @@
+.styled_form table, table.styled_form {
+    width: 100%;
+}
+
+.styled_form .buttons {
+    margin: 2em 0 0.5em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.error_desc .action_desc {
+    font-weight: bold;
+}
+
+.error_desc .cause_desc {
+    margin-left: 1em;
+}
+
+.styled_form td {
+    padding: 3px 10px;
+    text-align: left;
+}
+
+.styled_form td.label-cell {
+    text-align: right;
+    width: 160px;
+    line-height: 31px;
+}
+
+.styled_form td.label-cell > label {
+    display: inline-block;
+    margin-bottom: 0px;
+}
+
+.styled_form td.label-cell > .required_mark {
+    margin: 0px 0px 0px 5px;
+}
+
+.styled_form td > .se-text-field,
+.styled_form td > .se-text-area,
+.styled_form td > .se-numeric-field,
+.styled_form td > .se-password-field,
+.styled_form td > .se-file-field,
+.styled_form td > .se-layout-field,
+.styled_form td > .se-mac-field,
+.styled_form td > .se-select
+{
+    width: 100%;
+    margin: 0;
+}

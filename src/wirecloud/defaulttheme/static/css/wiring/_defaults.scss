@@ -1,0 +1,87 @@
+@import 'variables';
+
+
+// ============================================================================
+// WIRING VIEW - COMPONENTS
+// ============================================================================
+
+$component-title-max-width: 180px !default;
+$component-body-bg:         rgba(255, 255, 255, 0.9) !default;
+$component-z-index:         10 !default;
+
+$component-options-padding-horizontal: 10px !default;
+
+$component-text-color:        rgb(255, 255, 255) !default;
+$component-text-shadow:       0 -1px 0 rgba(0, 0, 0, 0.2) !default;
+$component-text-hover-shadow: 0 1px 0 rgba(0, 0, 0, 0.75) !default;
+
+$component-operator-bg:           transparentize($brand-operator, 0.1) !default;
+$component-operator-border-color: darken($component-operator-bg, 15%) !default;
+$component-operator-text-color:   darken($component-operator-bg, 25%) !default;
+
+$component-widget-bg:           transparentize($brand-widget, 0.1) !default;
+$component-widget-border-color: darken($component-widget-bg, 15%) !default;
+$component-widget-text-color:   darken($component-widget-bg, 25%) !default;
+
+$component-background-text-color: rgba(0, 0, 0, 0.2) !default;
+$component-background-body-bg:    transparent !default;
+$component-background-z-index:    ($component-z-index / 2) !default;
+
+$component-background-operator-bg:           transparentize(lighten($component-operator-bg, 25%), 0.5) !default;
+$component-background-operator-border-color: transparentize(lighten($component-operator-border-color, 25%), 0.5) !default;
+
+$component-background-widget-bg:           transparentize(lighten($component-widget-bg, 25%), 0.5) !default;
+$component-background-widget-border-color: transparentize(lighten($component-widget-border-color, 25%), 0.5) !default;
+
+$component-active-bg:           rgb(180, 230, 250) !default;
+$component-active-border-color: darken($component-active-bg, 20%) !default;
+$component-active-z-index:      ($component-z-index / 2) * 3 !default;
+
+$component-active-text-color:       rgb(050, 150, 200) !default;
+$component-active-text-shadow:      0 1px 0 rgb(255, 255, 255) !default;
+$component-active-text-hover-color: darken($component-active-text-color, 10%) !default;
+
+// ============================================================================
+// WIRING VIEW - ENDPOINTS
+// ============================================================================
+
+$endpoint-margin-vertical:    5px !default;
+$endpoint-padding-horizontal: 5px !default;
+$endpoint-max-width:          120px !default;
+
+$endpoint-text-size:   12px !default;
+$endpoint-text-height: 20px !default;
+$endpoint-text-color:  rgb(70, 70, 70) !default;
+
+$endpoint-anchor-width:       10px !default;
+$endpoint-anchor-offsetwidth: - ($endpoint-anchor-width + 1) !default;
+
+$source-endpoint-anchor-bg:   rgba(100, 200, 230, 0.9) !default;
+$target-endpoint-anchor-bg:   rgba(030, 170, 220, 0.9) !default;
+
+$endpoint-active-bg:         rgb(090, 155, 235) !default;
+$endpoint-active-text-color: rgb(255, 255, 255) !default;
+
+$endpoint-background-text-color:       rgba(0, 0, 0, 0.3) !default;
+$source-endpoint-background-anchor-bg: transparentize(lighten($source-endpoint-anchor-bg, 20%), 0.3) !default;
+$target-endpoint-background-anchor-bg: transparentize(lighten($target-endpoint-anchor-bg, 20%), 0.3) !default;
+
+$endpoint-missing-bg:            rgba($brand-danger, 0.9) !default;
+$endpoint-missing-active-bg:     darken($brand-danger, 10%) !default;
+$endpoint-missing-background-bg: transparentize(lighten($endpoint-missing-bg, 20%), 0.3) !default;
+
+$endpoint-orderable-box-shadow:        0 1px 5px rgba(0, 0, 0, 0.25) !default;
+$endpoint-orderable-active-box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.35) !default;
+$endpoint-orderable-active-bg:         #f9f9f9 !default;
+
+$endpoint-orderable-active-text-color: transparentize($endpoint-text-color, 0.3) !default;
+
+$endpoint-cloned-z-index: ($component-z-index / 2) * 4 !default;
+
+// ============================================================================
+// WIRING VIEW - BEHAVIOURS
+// ============================================================================
+
+$behaviour-description-maxheight: ($line-height-base * 5) !default;
+$behaviour-description-font-color: rgb(70, 80, 90) !default;
+$behaviour-title-width: 75%;

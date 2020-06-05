@@ -1,0 +1,79 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+.disabled_background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 101111;
+    background-color: #000;
+}
+
+.disabled_background.in {
+    opacity: 0.8;
+}
+
+.window_menu {
+    color: contrast-color($modal-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background: $modal-bg;
+    border: 1px solid $modal-content-border-color;
+    border-radius: $border-radius-large;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+    position: absolute;
+    text-align: left;
+    z-index: 101112;
+    overflow: hidden;
+    font-weight: normal;
+    width: 560px;
+    box-sizing: border-box;
+}
+
+.window_menu > .window_top {
+    cursor: move;
+    padding: 9px 15px;
+    background: $modal-header-bg;
+    color: contrast-color($modal-header-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+
+    @if ($modal-header-border-color != "none") {
+        border-bottom: 1px solid $modal-header-border-color;
+    }
+}
+
+.window_menu > .window_top > h3 {
+    margin: 0;
+}
+
+.window_menu > .window_top > .fa-remove {
+    margin-top: ((($headings-line-height * $font-size-h3) - 20px) / 2);
+    float: right;
+    font-size: 20px;
+}
+
+.window_menu > .window_content {
+    box-sizing: border-box;
+}
+
+.window_menu > .window_content, .window_menu > .styled_form > div > table {
+    padding: $modal-inner-padding;
+    clear: both;
+    overflow: auto;
+}
+
+.window_menu > .window_bottom {
+    @if ($modal-footer-border-color != "none") {
+        border-top: 1px solid $modal-footer-border-color;
+    }
+    padding: $modal-inner-padding;
+    background: $modal-footer-bg;
+    text-align: right;
+}
+
+.window_menu > .msg {
+    margin: 2ex;
+    border: 1px solid #888;
+    padding: 1ex;
+    border-radius: 1ex;
+}

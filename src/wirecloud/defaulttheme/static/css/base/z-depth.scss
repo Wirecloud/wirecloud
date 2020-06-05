@@ -1,0 +1,11 @@
+@import 'base/z-depth_mixins';
+
+.z-depth-0 {
+    box-shadow: none !important;
+}
+
+@for $depth from 0 through 5 {
+    .z-depth-#{$depth}-bottom {
+        @include z-depth($depth, $important: true);
+    }
+}

@@ -1,0 +1,221 @@
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Comfortaa'), local('Comfortaa-Regular'),
+       url("../fonts/comfortaa_regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_regular-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_regular-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_regular-webfont.svg#ComfortaaRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Comfortaa Bold'), local('Comfortaa-Bold'),
+       url("../fonts/comfortaa_bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_bold-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_bold-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_bold-webfont.svg#ComfortaaBold") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Open Sans'), local('OpenSans'),
+       url("../fonts/opensans-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-regular-webfont.woff") format("woff"),
+       url("../fonts/opensans-regular-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-regular-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Open Sans Bold'), local('OpenSansBold'),
+       url("../fonts/opensans-bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-bold-webfont.woff") format("woff"),
+       url("../fonts/opensans-bold-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'NeoTech';
+  font-style: normal;
+  font-weight: normal;
+  src: local("Neo Tech"), local("NeoTech"),
+       url("../fonts/neotech-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/neotech-regular-webfont.woff") format("woff"),
+       url("../fonts/neotech-regular-webfont.ttf") format("truetype");
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+a:hover {
+    color: #60C1CF;
+}
+
+footer {
+    font-size: 12px;
+    font-family: Verdana, sans-serif;
+    line-height: 17px;
+    padding: 0px;
+    border-top: 1px solid #48b9c9;
+}
+
+footer:before {
+    content: "";
+    display: block;
+    height: 0px;
+    border-top: 1px solid #F2E826;
+}
+
+footer .container-fluid {
+    border-top: 1px solid #193B6B;
+}
+
+footer .container-fluid .footer-content .cred {
+    box-sizing: border-box;
+    padding-top: 12px;
+    padding-bottom: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+footer a {
+    text-decoration: underline;
+}
+
+footer a:hover {
+    text-decoration: none;
+}
+
+.footer-content {
+    padding: 0px 15px;
+}
+
+/* Loading window */
+
+#loading-window, #loading-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10000;
+}
+
+#loading-background {
+    z-index: 3;
+}
+
+#loading-window:not(.in) #loading-background {
+    display: none;
+}
+
+#loading-window:not(.in) {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+#loading-window.fade {
+    transition: opacity 4s linear;
+
+    &.in {
+        transition: none;
+    }
+}
+
+#loading-message {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 70%;
+    max-width: 100%;
+    z-index: 4;
+    margin-bottom: 4ex;
+    margin-right: 4ex;
+}
+
+#loading-subtask-title {
+    margin: 0;
+}
+
+.window_menu .styled_form .notebook {
+    height: 400px;
+}
+
+.parametrizable_input > * {
+    display: inline-block;
+}
+
+.powered-by-wirecloud {
+    vertical-align: middle;
+}
+
+.powered-by-wirecloud:before {
+    content: 'Powered by ';
+    vertical-align: middle;
+}
+
+.powered-by-wirecloud:after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    width: 33px;
+    height: 20px;
+    background: url("../images/logos/wc1-mini.png");
+    background-size: 33px 20px;
+}
+
+/* Cookies banner */
+
+#cookie-law {
+    background: rgba(44,44,44,0.9);
+    position: fixed;
+    font-family: Arial;
+    z-index: 10000;
+    bottom: 0;
+    left: 0;
+}
+
+#cookie-law p {
+    color: white;
+    padding: 10px;
+    font-size: 15px;
+    line-height: 19px;
+    text-align: center;
+    margin: 0;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-bottom: 0;
+}
+
+#cookie-law a {
+    color: white;
+    font-weight: bold;
+}
+
+#close-cookie-banner {
+    color: white;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    opacity: 1;
+    margin: 0;
+    line-height: 20px;
+}

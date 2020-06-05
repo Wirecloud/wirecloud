@@ -1,0 +1,313 @@
+/* FIWARE Lab Header */
+
+.fiware-header {
+    background-color: #f1f1f2;
+    padding: 0;
+    border-bottom: 1px solid transparent;
+    box-shadow: 0px 1px 8px rgba(50,51,51,0.15);
+    margin-bottom: 18px;
+    height: 43px;
+}
+
+.fiware-header .container-fluid {
+    max-width: 1200px;
+}
+
+.logo-fl-header {
+    float: left;
+}
+
+.logo-fl-header, .logo-fl-header > a {
+    display: inline-block;
+}
+
+.logo-fl-header > .brand {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    font-size: 23px;
+    font-weight: 200;
+    color: #60c1cf;
+    text-shadow: 0 1px 0 #fff;
+    vertical-align: top;
+    line-height: 21px;
+    font-family: "NeoTech";
+}
+
+.logo-fl-header > .brand:hover {
+    text-decoration: none;
+}
+
+.logo-fl-header > .brand.unofficial {
+    margin: 12px 0px 0px;
+}
+
+.logo-fl-header .fiware-logo {
+    border: 0px none;
+    display: block;
+    height: 40px;
+    padding-top: 2px;
+}
+
+.logo-fl-header > .brand > .fiware-logo {
+    width: 150px;
+    margin-top: 4px;
+}
+
+.fiware-symbol {
+    width: 38px;
+    display: none;
+    margin-top: 6px;
+    margin-left: -2px;
+}
+
+.logo-fl-header > .brand > span {
+    color: #002d67;
+}
+
+/*
+.fiware-header .collapse {
+    display: none;
+}
+*/
+
+.fiware-header ul.nav {
+    height: 36px;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-top: 0px;
+    display: inline-block;
+    vertical-align: top;
+    font-family: "NeoTech";
+}
+
+.fiware-header ul.nav > li {
+    display: inline-block;
+    padding: 0;
+    list-style-type: none;
+    line-height: 20px;
+    vertical-align: top;
+    font-size: 14px;
+    margin-right: 0px;
+}
+
+.fiware-header ul.nav > li:hover {
+    background-color: rgba(152, 152, 152, 0.1);
+}
+
+.fiware-header ul.nav > li.active {
+    background: #fcfcfc;
+}
+
+.fiware-header ul.nav > li > a {
+    padding: 14px 15px 8px;
+    color: #777;
+    float: none;
+    display: block;
+    text-decoration: none;
+}
+
+.fiware-header ul.nav > li.active:hover > a, .fiware-header ul.nav > li.active > a {
+    color: #002d67;
+}
+
+.fiware-header .nav {
+    list-style: none;
+}
+
+.fiware-header .pull-right {
+    float: right;
+}
+
+.fiware-header .nav > li {
+    float: left;
+    line-height: 20px;
+}
+
+.fiware-header .user-menu {
+}
+
+.fiware-header .user-menu > a:hover, .fiware-header .user-menu > a:focus {
+    text-decoration: none;
+}
+
+.fiware-header .user-menu .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    font-size: 13px;
+    font-family: "Verdana", sans-serif;
+    vertical-align: middle;
+    margin-top: -1px;
+}
+
+.fiware-header .user-menu .arrow-down-settings {
+    font-size: 13px;
+    margin: 0px 0px 0px 4px;
+    color: #002B67;
+    opacity: 1;
+    vertical-align: -1px;
+}
+
+.fiware-header .user-menu .arrow-down-settings:hover {
+    color: #48b9c9;
+}
+
+@media (max-width: 480px) {
+    .logo-fl-header .fiware-logo {
+        display: none;
+    }
+
+    .logo-fl-header .fiware-symbol {
+        display: block;
+    }
+}
+
+/*
+@media (min-width: 768px) {
+    .fiware-header .collapse {
+        display: block;
+    }
+}
+*/
+
+/* END FIWARE Lab Header */
+
+.wirecloud_app_bar {
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+}
+
+.wirecloud_header_nav {
+    margin: 0 0 0 5px;
+}
+
+#wirecloud_header > .breadcrum_wrapper {
+    font-family: "Courier New", courier;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 0.5ex;
+    line-height: 41px;
+    position: relative;
+}
+
+.wc-toolbar {
+    overflow: visible;
+    margin: 0 5px;
+}
+
+.breadcrum {
+    font-family: "Open Sans";
+    font-size: 16px;
+    text-align: center;
+    font-weight: normal;
+    width: 500px;
+    transition: width 0.30s ease-in;
+}
+
+@media (min-width: 1024px) {
+    .breadcrum {
+        width: 700px;
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .breadcrum {
+        width: 800px;
+        font-size: 20px;
+    }
+}
+
+#wirecloud_header .menu_wrapper {
+    right: 0px;
+    text-align: right;
+    font-family: "Arial";
+    font-size: 12px;
+    font-weight: normal;
+    color: #990000;
+}
+
+#wirecloud_header .menu_wrapper > .menu {
+    display: inline-block;
+    padding: 0 0 0 1ex;
+    vertical-align: top;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span {
+    padding: 0.5ex 0.75ex;
+    cursor: pointer;
+    color: #002B67;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    padding: 8px 12px;
+    margin: 2px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span.wiring.error:before {
+    content: "\f071";
+    vertical-align: baseline;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+    color: #f89406;
+    margin-right: 3px;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span:hover {
+    text-decoration: none;
+    background-color: #FDFFFF;
+    color: #60C1CF;
+}
+
+#wc-user-menu {
+    display: inline-block;
+    margin-top: 10px;
+
+    & > span {
+        margin-left: 4px;
+    }
+
+    & > img {
+        width: 24px;
+        height: auto;
+        vertical-align: middle;
+        border: 0;
+        border-radius: 2px;
+        -ms-interpolation-mode: bicubic;
+    }
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span.selected {
+    cursor: default;
+    background-color: #002B67;
+    color: white;
+}
+
+#wirecloud_header > .menu_wrapper > .menu .mark {
+    display: none;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .selected > .mark {
+    height: 2ex;
+}
+
+#wirecloud_header > .submenu {
+    display: none;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+#wirecloud_breadcrum {
+    vertical-align: middle;
+}
+
+#wirecloud_breadcrum > span {
+    padding: 0 5px;
+}

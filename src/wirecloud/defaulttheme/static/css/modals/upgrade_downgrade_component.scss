@@ -1,0 +1,30 @@
+@import 'variables';
+
+.wc-upgrade-component-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wc-upgrade-component-modal article {
+    height: 300px;
+}
+
+.wc-upgrade-component-modal article {
+
+    &.uprade {
+        color: $state-success-text;
+
+        h1, h2, h3, h4, h5, h6 {
+            color: $state-success-text;
+        }
+    }
+
+    &.downgrade {
+        color: $state-danger-text;
+
+        h1, h2, h3, h4, h5, h6 {
+            color: $state-danger-text;
+        }
+    }
+}

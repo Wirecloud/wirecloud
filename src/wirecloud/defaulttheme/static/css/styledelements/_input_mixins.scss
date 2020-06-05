@@ -1,0 +1,51 @@
+@import 'compass/css3';
+
+@mixin input-root-style() {
+    font-size: $font-size-base;
+    position: relative;
+    line-height: $line-height-base;
+}
+
+@mixin input-box() {
+    height: $input-height-base;
+    padding: $input-padding-vertical $input-padding-horizontal;
+    border: 1px solid $input-border;
+    border-radius: $input-border-radius-base;
+    background-color: $input-bg;
+    color: $input-color;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+@mixin input-variant($color, $border) {
+    color: $color;
+    border-color: $border;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+
+    &:focus {
+        border-color: darken($border, 10%);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba($border, 0.6);
+    }
+}
+
+@mixin input-base() {
+    @include input-root-style();
+    @include input-box();
+
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    width:   10em;
+    margin: 1px 4px 9px 4px;
+
+    &:focus {
+        outline: 0;
+        z-index: 2;
+        border-color: $input-border-color-focus;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba($input-border-color-focus, 0.6);
+    }
+
+    &.error {
+        @include input-variant($state-danger-text, $state-danger-border);
+    }
+}

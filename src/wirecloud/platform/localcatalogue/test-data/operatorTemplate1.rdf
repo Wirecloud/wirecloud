@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:usdl-core="http://www.linked-usdl.org/ns/usdl-core#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+    xmlns:vCard = "http://www.w3.org/2006/vcard/ns#"
+    xmlns:gr="http://purl.org/goodrelations/v1#">
+
+    <wire:Operator rdf:about="http://wirecloud.com/test">
+        <dcterms:title>test operator</dcterms:title>
+        <dcterms:description>Test operator description</dcterms:description>
+        <dcterms:creator rdf:resource="http://creatoruri/"/>
+        <usdl-core:versionInfo>0.1</usdl-core:versionInfo>
+        <wire:hasImageUri rdf:resource="images/catalogue.png"/>
+
+        <usdl-core:utilizedResource rdf:resource="/examplecode1.js"/>
+
+        <usdl-core:utilizedResource rdf:resource="/examplecode2.js"/>
+
+        <usdl-core:utilizedResource rdf:resource="/examplecode3.js"/>
+
+        <usdl-core:utilizedResource rdf:resource="/examplecode4.js"/>
+
+        <usdl-core:utilizedResource rdf:resource="/examplecode5.js"/>
+
+        <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
+
+        <vCard:addr>
+            <vCard:Work>
+                <vCard:email>test@example.com</vCard:email>
+            </vCard:Work>
+        </vCard:addr>
+
+        <wire:hasPlatformPreference>
+            <wire:PlatformPreference rdf:ID="preference_1">
+                <dcterms:title>pref</dcterms:title>
+                <wire:type>text</wire:type>
+                <dcterms:description>Preference description</dcterms:description>
+                <rdfs:label>Preference label</rdfs:label>
+                <wire:default>value</wire:default>
+            </wire:PlatformPreference>
+        </wire:hasPlatformPreference>
+
+        <wire:hasPlatformWiring>
+            <wire:PlatformWiring rdf:ID="wiring">
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:ID="slot_1">
+                        <dcterms:title>slot</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label>slot</rdfs:label>
+                        <wire:friendcode>test_friend_code</wire:friendcode>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:ID="event_1">
+                        <dcterms:title>event</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label>event</rdfs:label>
+                        <wire:friendcode>test_friend_code</wire:friendcode>
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+            </wire:PlatformWiring>
+        </wire:hasPlatformWiring>
+    </wire:Operator>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode1.js">
+        <wire:index>0</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode2.js">
+        <wire:index>1</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode3.js">
+        <wire:index>2</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode4.js">
+        <wire:index>3</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode5.js">
+        <wire:index>4</wire:index>
+    </usdl-core:utilizedResource>
+
+    <foaf:Person rdf:about="http://creatoruri/">
+        <foaf:name>admin</foaf:name>
+    </foaf:Person>
+
+    <gr:BusinessEntity rdf:about="http://vendoruri/">
+        <foaf:name>Wirecloud</foaf:name>
+    </gr:BusinessEntity>
+
+    <foaf:Image rdf:about="images/catalogue.png">
+        <dcterms:title>ImageURI</dcterms:title>
+    </foaf:Image>
+
+</rdf:RDF>

@@ -1,0 +1,166 @@
+[
+    {
+        "pk": 1,
+        "model": "platform.xhtml",
+        "fields": {
+            "cacheable": true,
+            "url": "Wirecloud/Test/1.0/test.html",
+            "code": "",
+            "content_type": "text/html",
+            "code_timestamp": null
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.widget",
+        "fields": {
+            "resource": 14,
+            "xhtml": 1
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 1,
+        "fields": {
+            "name": "ExistingWorkspace",
+            "title": "ExistingWorkspace",
+            "creator": 4,
+            "description": "This is an <b>example</b> of workspace",
+            "longdescription": "This is an **example** of workspace",
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 2,
+        "fields": {
+            "name": "Workspace",
+            "title": "Workspace",
+            "creator": 4,
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 8,
+        "fields": {
+            "name": "Workspace",
+            "title": "Workspace",
+            "creator": 1,
+            "description": "This is an <b>example</b> of workspace",
+            "longdescription": "This is an **example** of workspace",
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 9,
+        "fields": {
+            "name": "Workspace",
+            "title": "Workspace",
+            "creator": 2,
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 10,
+        "fields": {
+            "name": "SharedWorkspace",
+            "title": "SharedWorkspace",
+            "creator": 4,
+            "description": "This is an <b>example</b> of workspace",
+            "longdescription": "This is an **example** of workspace",
+            "wiringStatus": "{\"version\": \"2.0\", \"connections\":[], \"operators\": {}, \"visualdescription\": {\"behaviours\": [], \"components\": {\"operator\": {}, \"widget\": {}}, \"connections\": []}}"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "ExistingTab",
+            "title": "ExistingTab",
+            "workspace": 1,
+            "position": 0
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "OtherTab",
+            "title": "OtherTab",
+            "workspace": 1,
+            "position": 1
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 1,
+        "fields": {
+            "user": 4,
+            "workspace": 1
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 2,
+        "fields": {
+            "user": 4,
+            "workspace": 2
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 8,
+        "fields": {
+            "user": 1,
+            "workspace": 8
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 9,
+        "fields": {
+            "user": 2,
+            "workspace": 9
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 10,
+        "fields": {
+            "user": 4,
+            "workspace": 10
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 11,
+        "fields": {
+            "user": 2,
+            "workspace": 10
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.market",
+        "fields": {
+            "name": "deleteme",
+            "options": "{\"url\": \"http://deletemecatalogue.example.com\", \"type\":\"wirecloud\", \"label\":\"deleteme\"}",
+            "user": 3
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.market",
+        "fields": {
+            "name": "origin",
+            "public": true,
+            "options": "{\"public\": true, \"url\": \"http://wcatalogue.example.com\", \"type\":\"wirecloud\", \"label\":\"origin\"}",
+            "user": 1
+        }
+    }
+]

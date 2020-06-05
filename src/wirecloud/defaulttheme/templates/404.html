@@ -1,0 +1,6 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+{% block path %}{% block title %}{% trans "Error 404 - Not Found" %}{% endblock %}{% endblock %}
+{% block content %}
+    <p>{% blocktrans %}The requested URL "{{request_path}}" was not found on this server.{% endblocktrans %}</p>
+{% endblock %}

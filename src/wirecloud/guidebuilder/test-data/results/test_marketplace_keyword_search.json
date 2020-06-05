@@ -1,0 +1,98 @@
+{
+    "resources": [
+        {
+            "vendor": "CoNWeT",
+            "name": "Smart City Lights application",
+            "resources": [],
+            "pricing": [
+                {
+                    "priceComponents": [
+                        {
+                            "currency": "EUR",
+                            "unit": "single payment",
+                            "description": "",
+                            "value": "1000",
+                            "title": "Initial payment"
+                        },
+                        {
+                            "currency": "EUR",
+                            "unit": "issue",
+                            "description": "",
+                            "value": "0.10",
+                            "title": "Pay per issue"
+                        }
+                    ],
+                    "description": "This price plan defines an initial payment and a pay-per-use model based on issues created",
+                    "label": "Initial payment + pay per issue price plan"
+                }
+            ],
+            "longDescription": "Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FIWARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.",
+            "shortDescription": "Smart City Lights is an application that allows the management and analysis of Smart City entities status.",
+            "displayName": "Smart City Lights application",
+            "uriImage": "http://static.example.com/smart_lights_icon.png",
+            "legal": [
+                {
+                    "clauses": [
+                        {
+                            "text": "The History Mod included in this application is free software you can redistribute and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                            "name": "History Mod Licence"
+                        },
+                        {
+                            "text": "The mashups included in this application are free software you can redistribute and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                            "name": "Mashups Licence"
+                        }
+                    ],
+                    "type": "http://www.linked-usdl.org/ns/usdl-legal#TermsAndConditions",
+                    "description": "",
+                    "label": "Terms and conditions"
+                }
+            ],
+            "page": "",
+            "version": "1.0",
+            "sla": [],
+            "uriTemplate": "http://repository.example.com/CoNWeT/service1.rdf",
+            "vcard": {
+                "BEGIN": [
+                    {
+                        "properties": {},
+                        "value": "VCARD"
+                    }
+                ],
+                "TEL": [
+                    {
+                        "properties": {},
+                        "value": "+34913367394"
+                    }
+                ],
+                "END": [
+                    {
+                        "properties": {},
+                        "value": "VCARD"
+                    }
+                ],
+                "ADR": [
+                    {
+                        "properties": {},
+                        "value": "Campus de Montegancedo s/n;28660;Boadilla del Monte, Madrid;Spain"
+                    }
+                ],
+                "EMAIL": [
+                    {
+                        "properties": {},
+                        "value": "conwet@conwet.com"
+                    }
+                ],
+                "FN": [
+                    {
+                        "properties": {},
+                        "value": "CoNWeT"
+                    }
+                ]
+            },
+            "id": null,
+            "usdl_url": "http://repository.example.com/CoNWeT/service1.rdf",
+            "type": "unknown",
+            "store": "Store 1"
+        }
+    ]
+}

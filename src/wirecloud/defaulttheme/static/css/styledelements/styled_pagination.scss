@@ -1,0 +1,10 @@
+@import 'variables';
+
+.pagination {
+    font-size: $font-size-base;
+}
+
+.pagination .icon-first-page:before { content: "\f048"; }
+.pagination .icon-last-page:before  { content: "\f051"; }
+.pagination .icon-prev-page:before  { content: "\f0d9"; }
+.pagination .icon-next-page:before  { content: "\f0da"; }

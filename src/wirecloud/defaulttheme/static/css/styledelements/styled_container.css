@@ -1,0 +1,38 @@
+.se-container {
+    position: relative;
+    background: transparent;
+}
+
+.se-container.loading.disabled {
+    opacity: 1;
+}
+
+.se-container-disable-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 0px;
+    margin: 0px;
+    z-index: 100111;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading > .se-container-disable-layer {
+    background: rgba(255, 255, 255, 0.40);
+}
+
+.se-container-disable-layer > i {
+    display: none;
+    font-size: 40pt;
+    color: #002d67;
+    text-shadow: 0px 0px 3px #60c1cf;
+}
+
+.loading > .se-container-disable-layer > i {
+    display: inline-block;
+}

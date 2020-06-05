@@ -1,0 +1,8 @@
+include LICENSE
+include MANIFEST.in
+recursive-include wirecloud *
+recursive-exclude * __pycache__
+global-exclude *.py[co]
+global-exclude *.po
+global-exclude .DS_Store
+prune wirecloud/guidebuilder

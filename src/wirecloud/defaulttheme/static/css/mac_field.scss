@@ -1,0 +1,31 @@
+@import 'variables';
+
+.se-mac-field {
+    margin: 3px 4px 9px 4px;
+    position: relative;
+    padding: 0;
+    width:   10em;
+    box-sizing: border-box;
+    overflow: visible;
+    border-radius: $button-border-radius;
+}
+
+.se-mac-field > .se-add-on {
+    display: block;
+    width:   auto;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.se-mac-field.focus {
+    box-shadow: 0 0 6px 2px rgba($input-border-color-focus, 0.6);
+}
+
+.se-mac-field.focus > .se-add-on {
+    border-color: rgba($input-border-color-focus, 0.8);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.se-mac-field.focus > .se-btn {
+    border-color: rgba($input-border-color-focus, 0.8);
+}

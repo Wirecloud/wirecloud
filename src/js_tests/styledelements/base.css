@@ -1,0 +1,54 @@
+html, body {
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+li {
+    display: inline-block;
+    text-align: center;
+    width: 50px;
+    margin: 0px 1px;
+}
+
+.fade {
+    opacity: 0;
+    transition: opacity 0.15s linear;
+}
+
+.fade.in {
+    opacity: 1;
+}
+
+.se-btn {
+    display: inline-block;
+    position: relative;
+}
+
+.popover {
+    position: absolute;
+    background: red;
+    display: flex;
+    flex-direction: column;
+}
+
+.popover-content {
+    overflow: auto;
+}
+
+.se-notebook-tab-area {
+    overflow: hidden;
+    padding: 0px 12px;
+    white-space: nowrap;
+    width: 50px;
+}
+
+.se-popup-menu {
+    position: absolute;
+}
+
+.se-tooltip {
+    position: absolute;
+    opacity: 1;
+}

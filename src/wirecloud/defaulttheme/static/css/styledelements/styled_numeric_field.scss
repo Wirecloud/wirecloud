@@ -1,0 +1,124 @@
+@import 'variables';
+@import 'styledelements/input_mixins';
+
+@mixin numeric-field-variant($color, $border) {
+    color: $color;
+    border-color: $border;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+
+    &.focus {
+        border-color: darken($border, 10%);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $border;
+    }
+
+    &.focus .se-numeric-field-top-button {
+        border-top-color: darken($border, 10%);
+        border-left-color: darken($border, 10%);
+        border-right-color: darken($border, 10%);
+    }
+
+    &.focus .se-numeric-field-bottom-button {
+        border-bottom-color: darken($border, 10%);
+        border-left-color: darken($border, 10%);
+        border-right-color: darken($border, 10%);
+    }
+}
+
+.se-numeric-field {
+    @include input-root-style();
+    margin:   1px 4px 9px 4px;
+    padding:  0 24px 0 0;
+    position: relative;
+    width:    10em;
+
+    border: 1px solid $input-border;
+    border-radius: $input-border-radius-base;
+    background-color: $input-bg;
+    color: $input-color;
+
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-sizing: border-box;
+}
+
+.se-numeric-field-top-button, .se-numeric-field-bottom-button {
+    position: absolute;
+    z-index: 2;
+    padding: 0;
+    margin: 0;
+    right: -1px;
+    text-align: center;
+    line-height: 11px;
+    font-size: inherit;
+    height: $input-height-base / 2;
+}
+
+.se-numeric-field-top-button {
+    top:    -1px;
+    width:  25px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.se-numeric-field-bottom-button {
+    bottom: -1px;
+    width:  25px;
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.se-numeric-field > input {
+    background: transparent;
+    border: 0 none;
+    color: rgb(85, 85, 85);
+    display: block;
+    height: inherit;
+    padding: 4px 6px;
+    line-height: inherit;
+    margin: 0;
+    width: 100%;
+    font-size: inherit;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.se-numeric-field > input:focus {
+    outline: 0 none;
+}
+
+.se-numeric-field.focus {
+    outline: 0 none;
+    z-index: 2;
+    border-color: rgba(82, 168, 236, 0.8);
+    outline: 0;
+    outline: thin dotted \9;
+    /* IE6-9 */
+
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.se-numeric-field.focus .se-numeric-field-top-button {
+    border-top-color: rgba(82, 168, 236, 0.8);
+    border-left-color: rgba(82, 168, 236, 0.8);
+    border-right-color: rgba(82, 168, 236, 0.8);
+}
+
+.se-numeric-field.focus .se-numeric-field-bottom-button {
+    border-bottom-color: rgba(82, 168, 236, 0.8);
+    border-left-color: rgba(82, 168, 236, 0.8);
+    border-right-color: rgba(82, 168, 236, 0.8);
+}
+
+.se-numeric-field.error {
+    @include numeric-field-variant($state-danger-text, $state-danger-border);
+}
+
+.se-input-group-lg > .se-numeric-field {
+    font-size: $font-size-large;
+    height: $input-height-large;
+
+    & > .se-numeric-field-top-button, .se-numeric-field-bottom-button {
+        height: $input-height-large / 2;
+    }
+}

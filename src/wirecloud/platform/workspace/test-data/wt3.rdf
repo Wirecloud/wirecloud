@@ -1,0 +1,259 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:usdl-core="http://www.linked-usdl.org/ns/usdl-core#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+     xmlns:wire-m="http://wirecloud.conwet.fi.upm.es/ns/mashup#"
+     xmlns:vCard = "http://www.w3.org/2006/vcard/ns#"
+     xmlns:gr="http://purl.org/goodrelations/v1#">
+
+    <wire-m:Mashup rdf:about="http://wirecloud.com/test">
+        <dcterms:title>test</dcterms:title>
+        <dcterms:description>Wirecloud Mashup composed of: Test, Test</dcterms:description>
+        <dcterms:creator rdf:resource="http://creatoruri/"/>
+        <usdl-core:versionInfo>1</usdl-core:versionInfo>
+        <wire:hasImageUri rdf:resource="images/mashup.png"/>
+
+        <foaf:page rdf:resource="docs/index.html"/>
+        <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
+
+        <vCard:addr>
+            <vCard:Work>
+                <vCard:email>a@b.com</vCard:email>
+            </vCard:Work>
+        </vCard:addr>
+
+        <wire-m:hasTab>
+            <wire-m:Tab rdf:ID="tab-1">
+                <wire:index>0</wire:index>
+                <dcterms:title>tab</dcterms:title>
+                <wire:displayName>Tab</wire:displayName>
+                <wire-m:hasTabPreference>
+                    <wire-m:TabPreference rdf:ID="tab_pref">
+                        <dcterms:title>smart</dcterms:title>
+                        <wire:value>False</wire:value>
+                    </wire-m:TabPreference>
+                </wire-m:hasTabPreference>
+                <wire-m:hasiWidget>
+                    <wire-m:iWidget rdf:ID="iG-1">
+                        <wire-m:iWidgetId>iG-1</wire-m:iWidgetId>
+                        <dcterms:title>Test (1)</dcterms:title>
+                        <usdl-core:versionInfo>1.0</usdl-core:versionInfo>
+                        <usdl-core:hasProvider>
+                            <foaf:Organization>
+                                <foaf:name>Wirecloud</foaf:name>
+                            </foaf:Organization>
+                        </usdl-core:hasProvider>
+                        <rdfs:label>Test</rdfs:label>
+                        <wire-m:hasPosition>
+                            <wire-m:Position>
+                                <wire-m:x>0</wire-m:x>
+                                <wire-m:y>0</wire-m:y>
+                                <wire-m:z>0</wire-m:z>
+                            </wire-m:Position>
+                        </wire-m:hasPosition>
+                        <wire-m:hasiWidgetRendering>
+                            <wire-m:iWidgetRendering>
+                                <wire:renderingWidth>6</wire:renderingWidth>
+                                <wire:renderingHeight>24</wire:renderingHeight>
+                                <wire-m:layout>0</wire-m:layout>
+                                <wire-m:minimized>False</wire-m:minimized>
+                                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                            </wire-m:iWidgetRendering>
+                        </wire-m:hasiWidgetRendering>
+                        <wire-m:hasiWidgetPreference>
+                            <wire-m:iWidgetPreference>
+                                <dcterms:title>list</dcterms:title>
+                                <wire:value>default</wire:value>
+                                <wire-m:readonly>true</wire-m:readonly>
+                                <wire-m:hidden>true</wire-m:hidden>
+                            </wire-m:iWidgetPreference>
+                        </wire-m:hasiWidgetPreference>
+                        <wire-m:hasiWidgetPreference>
+                            <wire-m:iWidgetPreference>
+                                <dcterms:title>text</dcterms:title>
+                                <wire:value>initial text</wire:value>
+                                <wire-m:readonly>true</wire-m:readonly>
+                                <wire-m:hidden>false</wire-m:hidden>
+                            </wire-m:iWidgetPreference>
+                        </wire-m:hasiWidgetPreference>
+                    </wire-m:iWidget>
+                </wire-m:hasiWidget>
+            </wire-m:Tab>
+        </wire-m:hasTab>
+
+        <wire-m:hasTab>
+            <wire-m:Tab rdf:ID="tab-2">
+                <wire:index>1</wire:index>
+                <dcterms:title>tab-2</dcterms:title>
+                <wire:displayName>Tab 2</wire:displayName>
+                <wire-m:hasiWidget>
+                    <wire-m:iWidget rdf:ID="iG-2">
+                        <wire-m:iWidgetId>iG-2</wire-m:iWidgetId>
+                        <dcterms:title>Test (2)</dcterms:title>
+                        <usdl-core:versionInfo>1.0</usdl-core:versionInfo>
+                        <usdl-core:hasProvider>
+                            <foaf:Organization>
+                                <foaf:name>Wirecloud</foaf:name>
+                            </foaf:Organization>
+                        </usdl-core:hasProvider>
+                        <rdfs:label>Test</rdfs:label>
+                        <wire-m:hasPosition>
+                            <wire-m:Position>
+                                <wire-m:x>0</wire-m:x>
+                                <wire-m:y>0</wire-m:y>
+                                <wire-m:z>0</wire-m:z>
+                            </wire-m:Position>
+                        </wire-m:hasPosition>
+                        <wire-m:hasiWidgetRendering>
+                            <wire-m:iWidgetRendering>
+                                <wire:renderingWidth>6</wire:renderingWidth>
+                                <wire:renderingHeight>24</wire:renderingHeight>
+                                <wire-m:layout>0</wire-m:layout>
+                                <wire-m:minimized>False</wire-m:minimized>
+                                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                            </wire-m:iWidgetRendering>
+                        </wire-m:hasiWidgetRendering>
+                        <wire-m:hasiWidgetPreference>
+                            <wire-m:iWidgetPreference>
+                                <dcterms:title>list</dcterms:title>
+                                <wire:value>default</wire:value>
+                            </wire-m:iWidgetPreference>
+                        </wire-m:hasiWidgetPreference>
+                        <wire-m:hasiWidgetPreference>
+                            <wire-m:iWidgetPreference>
+                                <dcterms:title>text</dcterms:title>
+                                <wire:value>initial text</wire:value>
+                                <wire-m:readonly>true</wire-m:readonly>
+                                <wire-m:hidden>true</wire-m:hidden>
+                            </wire-m:iWidgetPreference>
+                        </wire-m:hasiWidgetPreference>
+                    </wire-m:iWidget>
+                </wire-m:hasiWidget>
+            </wire-m:Tab>
+        </wire-m:hasTab>
+
+        <wire-m:hasTab>
+            <wire-m:Tab rdf:ID="tab-3">
+                <wire:index>2</wire:index>
+                <dcterms:title>tab-3</dcterms:title>
+                <wire:displayName>Tab 3</wire:displayName>
+            </wire-m:Tab>
+        </wire-m:hasTab>
+
+        <wire-m:hasTab>
+            <wire-m:Tab rdf:ID="tab-4">
+                <wire:index>3</wire:index>
+                <dcterms:title>tab-4</dcterms:title>
+                <wire:displayName>Tab 4</wire:displayName>
+            </wire-m:Tab>
+        </wire-m:hasTab>
+
+        <wire-m:hasMashupWiring>
+
+            <wire:PlatformWiring rdf:ID="wiring">
+
+                <wire-m:hasiOperator>
+                    <wire-m:iOperator rdf:nodeID="N08ee5d3d358b47d5a603ed8c1fca0147">
+                        <dcterms:title>Wirecloud/TestOperator/1.0</dcterms:title>
+                        <wire-m:iOperatorId>1</wire-m:iOperatorId>
+                        <wire-m:hasiOperatorPreference>
+                            <wire-m:iOperatorPreference rdf:nodeID="N5e3017c026d04ed6bba6887c9e4350c5">
+                                <dcterms:title>pref_with_val</dcterms:title>
+                                <wire:value>value1</wire:value>
+                            </wire-m:iOperatorPreference>
+                        </wire-m:hasiOperatorPreference>
+                        <wire-m:hasiOperatorPreference>
+                            <wire-m:iOperatorPreference rdf:nodeID="N4060b855eb2f4869b7d031e83fdf8fe1">
+                                <dcterms:title>readonly_pref</dcterms:title>
+                                <wire-m:readonly>true</wire-m:readonly>
+                                <wire:value>value2</wire:value>
+                            </wire-m:iOperatorPreference>
+                        </wire-m:hasiOperatorPreference>
+                        <wire-m:hasiOperatorPreference>
+                            <wire-m:iOperatorPreference rdf:nodeID="Nb79253e9262445f691b0bf0ace41a9ac">
+                                <dcterms:title>hidden_pref</dcterms:title>
+                                <wire-m:readonly>true</wire-m:readonly>
+                                <wire-m:hidden>true</wire-m:hidden>
+                                <wire:value>value3</wire:value>
+                            </wire-m:iOperatorPreference>
+                        </wire-m:hasiOperatorPreference>
+                    </wire-m:iOperator>
+                </wire-m:hasiOperator>
+
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:ID="event_1">
+                        <dcterms:title>event</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label>event</rdfs:label>
+                        <wire:eventFriendcode>event</wire:eventFriendcode>
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:ID="slot_1">
+                        <dcterms:title>slot</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label>slot</rdfs:label>
+                        <wire:slotFriendcode>slot</wire:slotFriendcode>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:ID="event_2">
+                        <dcterms:title>event</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label>event</rdfs:label>
+                        <wire:eventFriendcode>event</wire:eventFriendcode>
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:ID="slot_2">
+                        <dcterms:title>slot</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label>slot</rdfs:label>
+                        <wire:slotFriendcode>slot</wire:slotFriendcode>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+                <wire-m:hasConnection>
+                    <wire-m:Connection>
+                        <wire-m:hasSource>
+                            <wire-m:Source>
+                                <wire-m:endpoint>event</wire-m:endpoint>
+                                <wire-m:sourceId>iG-1</wire-m:sourceId>
+                                <wire:type>iwidget</wire:type>
+                            </wire-m:Source>
+                        </wire-m:hasSource>
+                        <wire-m:hasTarget>
+                            <wire-m:Target>
+                                <wire-m:endpoint>slot</wire-m:endpoint>
+                                <wire-m:targetId>iG-2</wire-m:targetId>
+                                <wire:type>iwidget</wire:type>
+                            </wire-m:Target>
+                        </wire-m:hasTarget>
+                    </wire-m:Connection>
+                </wire-m:hasConnection>
+            </wire:PlatformWiring>
+        </wire-m:hasMashupWiring>
+
+    </wire-m:Mashup>
+
+
+    <foaf:Person rdf:about="http://creatoruri/">
+        <foaf:name>admin</foaf:name>
+    </foaf:Person>
+
+    <gr:BusinessEntity rdf:about="http://vendoruri/">
+        <foaf:name>Wirecloud Test Suite</foaf:name>
+    </gr:BusinessEntity>
+
+    <usdl-core:Resource rdf:about="docs/index.html">
+        <dcterms:title>WikiURI</dcterms:title>
+    </usdl-core:Resource>
+
+    <foaf:Image rdf:about="images/mashup.png">
+        <dcterms:title>ImageURI</dcterms:title>
+    </foaf:Image>
+
+</rdf:RDF>

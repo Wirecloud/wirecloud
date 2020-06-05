@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud/" name="test" version="0.1">
+    <details>
+        <email>test@example.com</email>
+        <image>images/catalogue.png</image>
+        <smartphoneimage>images/catalogue_smartphone.png</smartphoneimage>
+        <description>description</description>
+        <authors>admin</authors>
+    </details>
+    <contents src="test.html"/>
+    <rendering height="24" width="10"/>
+</widget>

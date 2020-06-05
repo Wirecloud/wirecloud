@@ -1,0 +1,116 @@
+@import 'variables';
+@import 'styledelements/input_mixins';
+@import 'compass/css3';
+
+.se-select {
+    @include input-root-style();
+    @include input-box();
+
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    width: 10em;
+    margin: 1px 4px 9px 4px;
+
+    &.focus {
+        border-color: $input-border-color-focus;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+        z-index: 2;
+    }
+}
+
+.se-select-text {
+    height: $line-height-base;
+    margin: 0 22px 0px 0px;
+    overflow: hidden;
+    padding: 0px 0;
+    width: auto;
+    white-space: nowrap;
+}
+
+.se-select-arrow {
+    height:      $line-height-base;
+    line-height: $line-height-base;
+    position: absolute;
+    right:    6px;
+    top:      $padding-vertical-base;
+    padding:  0px 5px;
+    z-index:  2;
+}
+
+.se-select > select {
+    border:   0 none;
+    outline:  0 none;
+    display:  block;
+    height:   100%;
+    opacity:  0;
+    position: absolute;
+    left:     0;
+    top:      0;
+    width:    100%;
+    padding:  0;
+    margin:   0;
+    z-index:  3;
+}
+
+.btn-group > .se-select {
+    margin: 0px;
+}
+
+.input-append > .se-hl-west-container > .se-select {
+    margin: 0;
+}
+
+.input-append > .se-hl-west-container > .se-select:last-child {
+    margin: 0 -1px 0 0;
+}
+
+.input-append > .se-hl-west-container > .se-select, .input-prepend > .se-hl-east-container > .se-select {
+    border-radius: 0px;
+}
+
+.input-append > .se-hl-west-container > .se-select:first-child,
+.btn-group > .se-select:last-child {
+    border-top-left-radius: $border-radius-base;
+    border-bottom-left-radius: $border-radius-base;
+}
+
+.input-append > .se-hl-east-container > .se-select:last-child,
+.btn-group > .se-select:last-child {
+    border-top-right-radius: $border-radius-base;
+    border-bottom-right-radius: $border-radius-base;
+}
+
+/******************************************************************************
+ *  Size variants
+ ******************************************************************************/
+
+.se-select.se-select-lg, .btn-group-lg .se-select, .se-input-group-lg .se-select {
+    font-size: $font-size-large;
+    height:    $input-height-large;
+    padding:   $padding-vertical-large $padding-horizontal-large;
+
+    .se-select-arrow {
+        top:   $padding-vertical-large;
+    }
+}
+
+.se-select.se-select-sm, .btn-group-sm .se-select, .se-input-group-sm .se-select {
+    font-size: $font-size-small;
+    height:    $input-height-small;
+    padding:   $padding-vertical-small $padding-horizontal-small;
+
+    .se-select-arrow {
+        top:   $padding-vertical-small;
+    }
+}
+
+.se-select.se-select-xs, .btn-group-xs .se-select, .se-input-group-xs .se-select {
+    font-size: $font-size-xs;
+    height:    $input-height-xs;
+    padding:   $padding-vertical-xs $padding-horizontal-xs;
+
+    .se-select-arrow {
+        top:   $padding-vertical-xs;
+    }
+}

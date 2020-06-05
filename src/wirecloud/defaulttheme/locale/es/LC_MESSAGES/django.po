@@ -1,0 +1,391 @@
+# Spanish/Spain translation of WireCloud.
+# Copyright (C) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# This file is distributed under the same license as the WireCloud package.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015-2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WireCloud 1.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-06-04 10:32+0200\n"
+"PO-Revision-Date: 2019-06-04 10:34+0200\n"
+"Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
+"Language-Team: Español/España\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.2\n"
+
+#: __init__.py:23
+msgid "Basic"
+msgstr "Básico"
+
+#: templates/400.html:3
+msgid "error400"
+msgstr "error400"
+
+#: templates/400.html:5 templates/wirecloud/widget_error.html:6
+msgid "Error 400 - Bad request"
+msgstr "Error 400 - Solicitud incorrecta"
+
+#: templates/401.html:3
+msgid "error401"
+msgstr "error401"
+
+#: templates/401.html:5
+msgid "Error 401 - Unauthorized"
+msgstr "Error 401 - No autorizado"
+
+#: templates/401.html:6
+#, python-format
+msgid ""
+"This server could not verify that you are authorized to access the document "
+"you requested (%(request_path)s). Either you supplied the wrong credentials "
+"(e.g., bad password), or your browser/application does not understand how to "
+"supply the credentials required."
+msgstr ""
+"El servidor no ha podido verificar si usted está autorizado a acceder al "
+"documento solicitado (%(request_path)s). O bien, usted ha proporcionado unos "
+"credenciales incorrectos (por ejemplo, una contraseña incorrecta), o tu "
+"navegador/aplicación no sabe como proporcionar los credenciales requeridos."
+
+#: templates/401.html:7
+msgid "Authentication required"
+msgstr "Se requiere autenticación"
+
+#: templates/403.html:3
+msgid "Error 403 - Forbidden"
+msgstr "Error 403 - Prohibido"
+
+#: templates/403.html:5
+#, python-format
+msgid ""
+"You don't have permission to access the requested URL \"%(request_path)s\"."
+msgstr ""
+"No tienes permiso para acceder a la URL solicitada \"%(request_path)s\"."
+
+#: templates/404.html:3
+msgid "Error 404 - Not Found"
+msgstr "Error 404 - No encontrado"
+
+#: templates/404.html:5
+#, python-format
+msgid "The requested URL \"%(request_path)s\" was not found on this server."
+msgstr ""
+"La URL pedida \"%(request_path)s\" no se ha encontrado en este servidor."
+
+#: templates/500.html:3
+msgid "Error 500 - Internal Server Error"
+msgstr "Error 500 - Error interno del servidor"
+
+#: templates/registration/login.html:8
+msgid "WireCloud Platform - Sign in"
+msgstr "Plataforma WireCloud - Iniciar sesión"
+
+#: templates/registration/login.html:30 templates/wirecloud/views/base.html:48
+msgid "Your browser seems to lack some required features"
+msgstr "Parece que tu navegador no soporta ciertas funcionalidades necesarias"
+
+#: templates/registration/login.html:31 templates/wirecloud/views/base.html:49
+msgid ""
+"We recommend you to upgrade your browser to the newest version of either <a "
+"href=\"https://www.mozilla.org/firefox\">Firefox</a> or <a href=\"https://"
+"www.google.com/chrome\">Google Chrome</a> as these are the browsers "
+"currently supported by WireCloud."
+msgstr ""
+"Te recomendamos actualizar tu navegador a la versión más reciente tanto de "
+"<a href=\"https://www.mozilla.org/firefox\">Firefox</a> como de <a "
+"href=\"https://www.google.com/chrome\">Google Chrome</a> dado que estos "
+"navegadores son los que actualmente soporta WireCloud."
+
+#: templates/registration/login.html:40
+msgid ""
+"<h4>Your username and password didn't match.</h4><p>Please try again.</p>"
+msgstr ""
+"<h4>El nombre de usuario y la contraseña no coinciden.</h4><p>Por favor, "
+"prueba de nuevo.</p>"
+
+#: templates/registration/login.html:45
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: templates/registration/login.html:47
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/registration/login.html:48 templates/wirecloud/signin.html:3
+msgid "Sign in"
+msgstr "Iniciar sessión"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:3
+msgid "Description"
+msgstr "Descripción"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:6
+msgid "Tags"
+msgstr "Etiquetas"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:9
+msgid "Detailed data"
+msgstr "Información detallada"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:11
+msgid "Internal ID"
+msgstr "ID interno"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:13
+msgid "Author(s)"
+msgstr "Autor(es)"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:15
+msgid "Contributor(s)"
+msgstr "Colaborador(es)"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:17
+msgid "Size"
+msgstr "Tamaño"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:21
+msgid "Advanced operations"
+msgstr "Operaciones avanzadas"
+
+#: templates/wirecloud/catalogue/modals/upload.html:6
+msgid ""
+"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
+"upload it to the catalogue by means of this dialog."
+msgstr ""
+"¿Tienes un widget, un operador o un mashap empaquetado en un fichero wgt? "
+"Entonces puedes subirlo al catalogo haciendo uso de esta ventana."
+
+#: templates/wirecloud/catalogue/modals/upload.html:8
+msgid "Drag files here"
+msgstr "Arrastra los ficheros aquí"
+
+#: templates/wirecloud/catalogue/modals/upload.html:9
+msgid "- or -"
+msgstr "- ó -"
+
+#: templates/wirecloud/catalogue/order_by_template.html:3
+msgid "Popularity"
+msgstr "Popularidad"
+
+#: templates/wirecloud/catalogue/order_by_template.html:4
+msgid "Creation date"
+msgstr "Fecha de creación"
+
+#: templates/wirecloud/catalogue/order_by_template.html:5
+msgid "Short name"
+msgstr "Nombre"
+
+#: templates/wirecloud/catalogue/order_by_template.html:6
+#: templates/wirecloud/catalogue/resource_details.html:16
+msgid "Vendor"
+msgstr "Distribuidor"
+
+#: templates/wirecloud/catalogue/resource_details.html:18
+msgid "Version"
+msgstr "Versión"
+
+#: templates/wirecloud/catalogue/resource_details.html:20
+msgid "License"
+msgstr "Licencia"
+
+#: templates/wirecloud/catalogue/resource_details.html:22
+msgid "Last Updated"
+msgstr "Última actualización"
+
+#: templates/wirecloud/catalogue/search_interface.html:18
+msgid "Keywords:"
+msgstr "Términos:"
+
+#: templates/wirecloud/catalogue/search_interface.html:23
+msgid "Type:"
+msgstr "Tipo:"
+
+#: templates/wirecloud/component_sidebar.html:8
+msgid "Components"
+msgstr "Componentes"
+
+#: templates/wirecloud/landing_page.html:3
+msgid "WireCloud · Build application mashups"
+msgstr "WireCloud · Construye aplicaciones composicionales"
+
+#: templates/wirecloud/landing_page.html:4
+msgid "Welcome to WireCloud!"
+msgstr "¡Bienvenido a WireCloud!"
+
+#: templates/wirecloud/landing_page.html:13
+msgid ""
+"Welcome to the next-generation application mashup platform aimed at "
+"leveraging the long tail of the Internet of Services."
+msgstr ""
+"Bienvenido a la plataforma de creación de aplicaciones mashups de última "
+"generación destinada a impulsar la larga cola de la Internet de los "
+"Servicios."
+
+#: templates/wirecloud/landing_page.html:19
+msgid "Innovation"
+msgstr "Innovación"
+
+#: templates/wirecloud/landing_page.html:20
+msgid ""
+"Innovate through experimentation by choosing the best suited widgets and "
+"prefab mashup-lets for your devised mashup from a vast, ever-growing "
+"distributed catalogue"
+msgstr ""
+"Innova a través de la experimentación eligiendo los widgets y mashups "
+"prefabricados más adecuados de un extenso, y siempre creciente, catálogo "
+"distribuido"
+
+#: templates/wirecloud/landing_page.html:27
+msgid "Generic Features"
+msgstr "Funcionalidades Genéricas"
+
+#: templates/wirecloud/landing_page.html:29
+msgid "JavaScript pub/sub API for event-driven widgets"
+msgstr "API pub/sub JavaScript para crear widgets dirigidos por eventos"
+
+#: templates/wirecloud/landing_page.html:30
+msgid "NGSI API compatible with FIWARE's Orion Context Broker Generic Enabler"
+msgstr "API NGSI compatible con el Orion Context Broker de FIWARE"
+
+#: templates/wirecloud/landing_page.html:31
+msgid "Server-side state persistence for widgets and mashups"
+msgstr "Soporte para guardar el estado de los widgets y mashups en el servidor"
+
+#: templates/wirecloud/landing_page.html:39
+msgid "Wiring &amp; Piping"
+msgstr "Wiring &amp; Piping"
+
+#: templates/wirecloud/landing_page.html:40
+msgid ""
+"Wiring allows you to easily connect widgets in a mashup to create a full-"
+"fledged dashboard with RIA functionality."
+msgstr ""
+"Mediante el wiring, podrás conectar fácilmente los widgets de un mashup para "
+"crear un panel en toda regla con funcionalidades RIA."
+
+#: templates/wirecloud/landing_page.html:41
+msgid ""
+"Piping links your widgets to back-end services or data sources through an "
+"extendable set of operators, including filters, aggregators, adapters, etc."
+msgstr ""
+"Piping permite enlazar widgets a los servicios de backend y fuentes de datos "
+"a través de un conjunto ampliable de operadores, incluyendo filtros, "
+"agregadores, adaptadores, etcétera."
+
+#: templates/wirecloud/landing_page.html:48
+#, python-format
+msgid "100%% FIWARE"
+msgstr "100%% FIWARE"
+
+#: templates/wirecloud/landing_page.html:50
+msgid "1st OSS reference implementation of the Application Mashup GE"
+msgstr "Primera implementación OSS de referencia del Application Mashup GE"
+
+#: templates/wirecloud/landing_page.html:51
+msgid "Support for linked-USDL"
+msgstr "Soporte para Linked-USDL"
+
+#: templates/wirecloud/landing_page.html:52
+msgid "Full integration with FIWARE's:"
+msgstr "Integración con FIWARE's:"
+
+#: templates/wirecloud/logs/details.html:2
+msgid "Exception details"
+msgstr "Detalles de la excepción"
+
+#: templates/wirecloud/logs/details.html:4
+msgid "Stacktrace"
+msgstr "Stacktrace"
+
+#: templates/wirecloud/modals/embed_code.html:2
+msgid "Theme"
+msgstr "Estilo"
+
+#: templates/wirecloud/modals/upgrade_downgrade_component.html:2
+msgid "Current version"
+msgstr "Versión actual"
+
+#: templates/wirecloud/modals/upgrade_downgrade_component.html:2
+msgid "New version"
+msgstr "Nueva versión"
+
+#: templates/wirecloud/modals/upgrade_downgrade_component.html:3
+msgid "Change Log"
+msgstr "Registro de cambios"
+
+#: templates/wirecloud/views/base.html:38
+msgid "Loading WireCloud"
+msgstr "Iniciando WireCloud"
+
+#: templates/wirecloud/views/base.html:42
+msgid "Retrieving WireCloud code"
+msgstr "Obteniendo el código de WireCloud"
+
+#: templates/wirecloud/views/base_plain.html:7
+#: templates/wirecloud/views/classic.html:5
+#: templates/wirecloud/views/embedded.html:5
+#: templates/wirecloud/views/smartphone.html:5
+msgid "WireCloud Platform"
+msgstr "Plataforma WireCloud"
+
+#: templates/wirecloud/wiring/behaviour_sidebar.html:6
+msgid "Behaviours"
+msgstr "Comportamientos"
+
+#: templates/wirecloud/wiring/footer.html:8
+msgid "Connections"
+msgstr "Conexiones"
+
+#: templates/wirecloud/wiring/footer.html:11
+msgid "Operators"
+msgstr "Operadores"
+
+#: templates/wirecloud/wiring/footer.html:14
+msgid "Widgets"
+msgstr "Widgets"
+
+#: templates/wirecloud/workspace/empty_tab_message.html:4
+msgid "Hey! This tab is empty"
+msgstr "Hola! Esta pestaña está vacía"
+
+#: templates/wirecloud/workspace/empty_tab_message.html:5
+msgid ""
+"Add some widgets using the add widget button (<t:button/>) available on the "
+"top right part of the workspace view."
+msgstr ""
+"Agrega algunos widgets usando el botón de añadir widget (<t:button/>) en la "
+"parte superior derecha del entorno de trabajo."
+
+#: templates/wirecloud/workspace/missing_widget.html:11
+msgid "Missing widget"
+msgstr "Widget ausente"
+
+#: templates/wirecloud/workspace/missing_widget.html:12
+msgid ""
+"This widget is currently not available. Probably you or an administrator "
+"uninstalled it."
+msgstr ""
+"Este widget no está actualmente disponible. Probablemente lo has "
+"desinstalado (o un administrador)."
+
+#: templates/wirecloud/workspace/missing_widget.html:13
+msgid ""
+"<h5>Suggestions:</h5>\n"
+"            <ul>\n"
+"                <li>Remove this widget from the dashboard</li>\n"
+"                <li>Reinstall the appropiated version of the widget</li>\n"
+"                <li>Install another version of the widget and use the "
+"<em>Upgrade/Downgrade</em> option</li>\n"
+"            </ul>"
+msgstr ""
+"<h5>Sugerencias:</h5>\n"
+"            <ul>\n"
+"                <li>Eliminar el widget del panel</li>\n"
+"                <li>Reinstalar una versión adecuada del widget</li>\n"
+"                <li>Instalar otra versión del widget y usar la opción "
+"<em>Actualizar/Desactualizar</em></li>\n"
+"            </ul>"

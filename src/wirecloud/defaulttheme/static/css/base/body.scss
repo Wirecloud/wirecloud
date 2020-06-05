@@ -1,0 +1,116 @@
+@import 'variables';
+@import 'utils';
+
+@if ($context == 'widget') {
+    $body-bg: $widget-bg;
+}
+
+body {
+    background: $body-bg;
+    font-family: $font-family-base;
+    @include font-styled("base", "normal");
+    color: contrast-text-color($body-bg);
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: ($line-height-base / 2) 0;
+    font-family: $headings-font-family;
+    font-weight: $headings-font-weight;
+    line-height: $headings-line-height;
+    color: $headings-color;
+    text-rendering: optimizelegibility;
+}
+
+h1, h2, h3 {
+    margin-top: $line-height-base;
+    margin-bottom: ($line-height-base / 2);
+}
+
+h4, h5, h6 {
+    margin-top: ($line-height-base / 2);
+    margin-bottom: ($line-height-base / 2);
+}
+
+h1 { font-size: $font-size-h1; }
+h2 { font-size: $font-size-h2; }
+h3 { font-size: $font-size-h3; }
+h4 { font-size: $font-size-h4; }
+h5 { font-size: $font-size-h5; }
+h6 { font-size: $font-size-h6; }
+
+a, .se-link {
+    color: $link-color;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        color: $link-hover-color;
+        text-decoration: $link-hover-decoration;
+    }
+}
+
+p {
+    position: relative;
+    display: block;
+    margin: 0 0 floor($line-height-base / 2) 0;
+}
+
+.lead {
+    margin-bottom: $line-height-base;
+    font-size: floor(($font-size-base * 1.15));
+    font-weight: 300;
+    line-height: 1.4;
+
+    @media (min-width: 768px) {
+        font-size: floor(($font-size-base * 1.5));
+    }
+}
+
+ul, ol {
+    margin-top: 0;
+    margin-bottom: floor($line-height-base / 2);
+
+    ul, ol {
+        margin-bottom: 0;
+    }
+}
+
+dl {
+    margin-top: 0;
+    margin-bottom: $line-height-base;
+}
+
+dl, dt {
+    line-height: $line-height-base;
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd {
+    margin-left: 0;
+
+    & > *:last-child {
+        margin-bottom: 0;
+    }
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+blockquote {
+    padding: 0 ($line-height-base / 2);
+    margin: 0 0 ($line-height-base / 2);
+    font-size: $blockquote-font-size;
+    border-left: 4px solid $blockquote-border-color;
+
+    & > *:last-child {
+        margin-bottom: 0;
+    }
+}

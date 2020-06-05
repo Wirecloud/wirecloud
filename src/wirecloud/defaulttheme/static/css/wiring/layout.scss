@@ -1,0 +1,62 @@
+@import "compass/css3/user-interface";
+@import "variables";
+
+.wc-workspace-wiring {
+    padding: 0px $margin-horizontal-small;
+}
+
+.wiring-diagram {
+    background-color: $wiring-content-bg;
+    border: solid 1px $panel-default-border-color;
+    border-radius: $border-radius-base;
+}
+
+.we-connections-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    &.dragging {
+        cursor: -webkit-grabbing;
+        cursor: -moz-grabbing;
+        cursor: grabbing;
+    }
+}
+
+.we-panel-components {
+
+    margin: 0px;
+
+    .se-text-field {
+        margin: $margin-vertical-base 0;
+        width: 100%;
+    }
+
+    .se-input-group-block {
+        margin: 0;
+    }
+
+    .wc-macsearch-list {
+        padding-top: 0;
+
+        .alert {
+            margin: 0 0 $margin-vertical-base;
+        }
+    }
+}
+
+.we-panel-behaviours {
+
+    .panel-heading .btn-group {
+        margin-top: $margin-vertical-base;
+    }
+
+    &.disabled {
+        opacity: 1;
+    }
+}
+
+.wiring-footer {
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    @include user-select(none);
+}

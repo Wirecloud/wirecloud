@@ -1,0 +1,77 @@
+.disabled_background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 101111;
+    background-color: #000;
+}
+
+.disabled_background.in {
+    opacity: 0.8;
+}
+
+.window_menu {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+    position: absolute;
+    text-align: left;
+    z-index: 101112;
+    overflow: hidden;
+    font-weight: normal;
+    width: 560px;
+}
+
+.window_menu > .window_top {
+    padding: 9px 15px;
+    border-bottom: 1px solid #EEE;
+    font-weight: bold;
+    cursor: move;
+}
+
+.window_menu > .window_top > h3 {
+    margin: 0;
+}
+
+.window_menu > .window_top > .fa-remove {
+    float: right;
+    font-size: 20px;
+    opacity: 0.2;
+    line-height: 40px;
+}
+
+.window_menu > .window_top > .fa-remove:hover, .window_menu > .window_top > .fa-remove:focus {
+    opacity: 0.4;
+}
+
+.window_menu > .window_content {
+    padding: 15px;
+}
+
+.window_menu > .window_content, .window_menu > .styled_form > div > table {
+    clear: both;
+    overflow: auto;
+}
+
+.window_menu > .window_bottom {
+    padding: 14px 15px 15px;
+    margin-bottom: 0;
+    text-align: right;
+    background-color: whiteSmoke;
+    border-top: 1px solid #DDD;
+    border-radius: 0 0 6px 6px;
+    box-shadow: inset 0 1px 0 white;
+}
+
+.window_menu > .msg {
+    margin: 2ex;
+    border: 1px solid #888;
+    padding: 1ex;
+    border-radius: 1ex;
+}
+
+

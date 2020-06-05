@@ -1,0 +1,107 @@
+@import 'variables';
+
+$list-group-item-hover-text-color: rgb(75, 75, 75);
+$list-group-item-hover-bg: rgb(245, 245, 245);
+
+.wc-share-visibility-option {
+
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 5px;
+
+    &:hover {
+        color: $list-group-item-hover-text-color;
+        background-color: $list-group-item-hover-bg;
+    }
+
+}
+
+.wc-share-option-btn,
+.wc-share-option-heading-img,
+.wc-share-option-heading-content {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.wc-share-option-btn > input {
+    margin: 0 10px;
+}
+
+.wc-share-option-heading-img {
+    text-align: center;
+    width: 40px;
+
+    span {
+        font-size: 20px;
+    }
+}
+
+.wc-share-option-description {
+    font-weight: 400;
+}
+
+.wc-dashboard-share-input {
+    display: block;
+    margin: 0 0 10px 0;
+    width: 100%;
+}
+
+.wc-dashboard-share-list {
+    display: block;
+    margin: 0 0 10px 0;
+    overflow-y: auto;
+    height: 156px;
+    border: solid 1px $state-default-border;
+    border-radius: $input-border-radius-base;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.wc-dashboard-share-item {
+    border-bottom: solid 1px $state-default-border;
+    padding: 5px 5px;
+}
+
+.wc-dashboard-share-item:last-child {
+    margin-bottom: -1px;
+}
+
+.wc-dashboard-share-item-icon,
+.wc-dashboard-share-item-description,
+.wc-dashboard-share-item-permission,
+.wc-dashboard-share-item-options {
+    display: table-cell;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.wc-dashboard-share-item-icon {
+    padding-right: 10px;
+
+    .fa-stack {
+        line-height: 40px;
+        font-size: 18px;
+    }
+}
+
+.wc-dashboard-share-item-description {
+    padding-right: 10px;
+    width: 100%;
+}
+
+.wc-dashboard-share-item-permission {
+    padding-right: 10px;
+}
+
+.wc-dashboard-share-item-description > .user-fullname {
+    font-weight: 700;
+}
+
+.wc-dashboard-share-item-description > .user-username {
+    color: #777;
+    font-size: 12px;
+}
+
+.wc-dashboard-share-item-options .se-btn {
+    width: 18px;
+    text-align: center;
+}

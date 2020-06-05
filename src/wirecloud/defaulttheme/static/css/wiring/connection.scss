@@ -1,0 +1,107 @@
+@import 'compass/css3/user-interface';
+@import 'compass/css3/transform';
+@import 'variables';
+
+
+// ============================================================================
+// WIRING COMPONENT - CONNECTION
+// ============================================================================
+
+.connection {
+    @include user-select(none);
+
+    .connection-path {
+        cursor: pointer;
+        fill: none;
+        stroke-width: 6px;
+    }
+}
+
+.connection-options {
+    position: absolute;
+    @include transform(translate(-50%, -50%));
+}
+
+// ============================================================================
+// WIRING COMPONENT - CONNECTION - STATES
+// ============================================================================
+
+.connection {
+
+    & .connection-path {
+        stroke: $connection-bg;
+    }
+
+    &.temporal .connection-path {
+        stroke: $connection-temporal-bg;
+    }
+
+    &.background .connection-path {
+        stroke: $connection-background-bg;
+    }
+
+    &.missing,
+    &.has-error {
+
+        .connection-path {
+            stroke: $connection-missing-bg;
+        }
+
+        &.background .connection-path {
+            stroke: $connection-missing-background-bg;
+        }
+    }
+
+    &,
+    &.missing,
+    &.has-error {
+
+        &.active,
+        &.editable,
+        &.incomplete,
+        &.highlighted {
+
+            .connection-path {
+                stroke: $connection-active-bg;
+            }
+        }
+    }
+
+    &.editable .connection-path {
+        cursor: default;
+    }
+
+    &.incomplete .connection-path {
+        cursor: -webkit-grabbing;
+        cursor: -moz-grabbing;
+        cursor: grabbing;
+    }
+}
+
+// ============================================================================
+// WIRING COMPONENT - CONNECTION HANDLE
+// ============================================================================
+
+.we-connection-handle-line {
+    cursor: default;
+    fill: none;
+    stroke: $gray-dark;
+    stroke-width: 1px;
+}
+
+.we-connection-handle-ball {
+    cursor: pointer;
+    fill: $button-background-primary;
+    stroke: $button-border-primary;
+    stroke-width: 1px;
+
+    &:hover,
+    &.active {
+        fill: darken($button-background-primary, 10%);
+        stroke: darken($button-background-primary, 10%);
+    }
+}
+
+.we-connection-handle.auto .we-connection-handle-line {
+    stroke-dasharray: 5;
+}

@@ -1,0 +1,93 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix msm: <http://cms-wg.sti2.org/ns/minimal-service-model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix usdl-core: <http://www.linked-usdl.org/ns/usdl-core#> .
+@prefix legal: <http://www.linked-usdl.org/ns/usdl-legal#> .
+@prefix price: <http://www.linked-usdl.org/ns/usdl-pricing#> .
+@prefix sla: <http://www.linked-usdl.org/ns/usdl-servicelevel#> .
+@prefix blueprint: <http://bizweb.sap.com/TR/blueprint#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ctag: <http://commontag.org/ns#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix gr: <http://purl.org/goodrelations/v1#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix wire: <http://wirecloud/gadget#> .
+
+<http://wirecloud.com/test>
+	a wire:Gadget ;
+	dcterms:title "test" ;
+	dcterms:description "Test Gadget description" ;
+	dcterms:creator <http://creatoruri/> ;
+	usdl-core:versionInfo "0.1" ;
+	wire:hasImageUri <images/catalogue.png> ;
+	wire:hasiPhoneImageUri <images/catalogue_smartphone.png> ;
+	usdl-core:exposes <test.html> ;
+	usdl-core:hasProvider <http://vendoruri/> ;
+	vcard:addr _:b1 ;
+	wire:hasPlatformPreference _:b2 ;
+	wire:hasPlatformStateProperty _:b3 ;
+	wire:hasPlatformWiring _:b4 ;
+	wire:hasPlatformRendering _:b5 .
+
+
+<http://creatoruri/>
+	a foaf:Person ;
+	foaf:name "admin" .
+
+<http://vendoruri/>
+	a gr:BusinessEntity ;
+	foaf:name "Wirecloud" .
+
+_:b1
+	a vcard:Work ;
+	vcard:email "test@example.com" .
+
+_:b2
+	a wire:PlatformPreference ;
+	dcterms:title "pref" ;
+	wire:type "list" ;
+	dcterms:description "Preference description" ;
+	rdfs:label "Preference label" ;
+	wire:default "value" ;
+	wire:hasOption _:b7 .
+
+_:b7
+	a wire:Option ;
+	dcterms:title "Option name" ;
+	wire:value "1" .
+
+_:b3
+	a wire:PlatformStateProperty ;
+	dcterms:title "prop" ;
+	wire:type "text" ;
+	rdfs:label "Property label" .
+
+_:b4
+	a wire:PlatformWiring ;
+	wire:hasInputEndpoint _:b8 ;
+	wire:hasOutputEndpoint _:b9 .
+
+_:b8
+	a wire:InputEndpoint ;
+	dcterms:title "slot" ;
+	wire:type "text" ;
+	rdfs:label "slot" ;
+	wire:slotFriendcode "test_friend_code" .
+
+_:b9
+	a wire:OutputEndpoint ;
+	dcterms:title "event" ;
+	wire:type "text" ;
+	rdfs:label "event" ;
+	wire:eventFriendcode "test_friend_code" .
+
+_:b5
+	a wire:PlatformRendering ;
+	wire:renderingWidth "24" ;
+	wire:renderingHeight "10" .
