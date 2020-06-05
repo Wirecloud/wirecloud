@@ -1,22 +1,20 @@
 {% load compress i18n wirecloudtags %}{% load static from staticfiles %}
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:og="http://ogp.me/ns#"
-      xml:lang="{{ LANGUAGE_CODE }}"
-      lang="{{ LANGUAGE_CODE }}">
+
+<html lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#">
 <head>
-    <title>{{ title }}</title>
-    <meta property="og:title" content="{{ title }}"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:description" content="{{ description }}"/>
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<title>{{ title }}</title>
+<meta content="{{ title }}" property="og:title"/>
+<meta content="website" property="og:type"/>
+<meta content="{{ description }}" property="og:description"/>
+<meta content="{{ request.build_absolute_uri }}" property="og:url"/>
 
     {% block meta %}
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-    <meta name="google" value="notranslate" />
-    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico"|theme_path:THEME_ACTIVE %}" />
+    <meta content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="application/xhtml+xml; charset=utf-8" http-equiv="content-type"/>
+<meta name="google" value="notranslate"/>
+<link %}"="" favicon.ico"|theme_path:theme_active="" href="{% static " images="" rel="shortcut icon" type="image/x-icon"/>
     {% endblock %}
 
     <!-- Theme css -->
@@ -27,56 +25,47 @@
     {% endblock %}
 
 </head>
-
 <body>
-
 <!-- Loading indicator -->
-<div id="loading-window" class="fade in">
-  <div id="loading-background"></div>
-  <div id="loading-message" class="window_menu">
-    <div class="window_top">
-      <h3 id="loading-task-title" class="window_title">{% trans "Loading WireCloud" %} 0%</h3>
-    </div>
-    <div class="window_content">
-      <div id="loading-indicator"></div>
-      <div id="loading-subtask-title" class="msg">{% trans "Retrieving WireCloud code" %}: 0%</div>
-    </div>
-  </div>
+<div class="fade in" id="loading-window">
+<div id="loading-background"></div>
+<div class="window_menu" id="loading-message">
+<div class="window_top">
+<h3 class="window_title" id="loading-task-title">{% trans "Loading WireCloud" %} 0%</h3>
 </div>
-
-<div id="unsupported-browser-msg" class="alert alert-error" style="display: none; text-align: left;">
-    <h4>{% trans "Your browser seems to lack some required features" %}</h4>
-    <p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a href="https://www.mozilla.org/firefox">Firefox</a> or <a href="https://www.google.com/chrome">Google Chrome</a> as these are the browsers currently supported by WireCloud.{% endblocktrans %}</p>
+<div class="window_content">
+<div id="loading-indicator"></div>
+<div class="msg" id="loading-subtask-title">{% trans "Retrieving WireCloud code" %}: 0%</div>
 </div>
-
+</div>
+</div>
+<div class="alert alert-error" id="unsupported-browser-msg" style="display: none; text-align: left;">
+<h4>{% trans "Your browser seems to lack some required features" %}</h4>
+<p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a href="https://www.mozilla.org/firefox">Firefox</a> or <a href="https://www.google.com/chrome">Google Chrome</a> as these are the browsers currently supported by WireCloud.{% endblocktrans %}</p>
+</div>
 <div class="se-vertical-layout">
-
-    <div class="se-container se-vl-north-container">
+<div class="se-container se-vl-north-container">
 {% block header %}
 {% include "wirecloud/views/header.html" %}
 {% endblock %}
     </div>
-
-    <div class="se-container se-vl-center-container" id="wc-body">
-    </div>
-
-    <div class="se-container se-vl-south-container">
+<div class="se-container se-vl-center-container" id="wc-body">
+</div>
+<div class="se-container se-vl-south-container">
 {% block footer %}
 {% include "wirecloud/views/footer.html" %}
 {% endblock %}
     </div>
-
 </div>
-
 <!-- JavaScript code -->
 
 {% compress js %}
-<script type="text/javascript" src="{% static "js/lib/moment-with-locales.min.js" %}"></script>
-<script type="text/javascript" src="{% static "js/lib/moment-timezone-with-data.min.js" %}"></script>
-<script type="text/javascript" src="{% static "js/lib/urlify.js" %}"></script>
+<script %}"="" js="" lib="" moment-with-locales.min.js"="" src="{% static " type="text/javascript"></script>
+<script %}"="" js="" lib="" moment-timezone-with-data.min.js"="" src="{% static " type="text/javascript"></script>
+<script %}"="" js="" lib="" src="{% static " type="text/javascript" urlify.js"=""></script>
 {% endcompress %}
 
-<script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
+<script %}?language="{{" language_code="" src="{% url " type="text/javascript" wirecloud.javascript_translation_catalogue"="" wirecloud_version_hash="" }}"="" }}&amp;v="{{"></script>
 
 {% compress js %}
 {% block core_scripts %}

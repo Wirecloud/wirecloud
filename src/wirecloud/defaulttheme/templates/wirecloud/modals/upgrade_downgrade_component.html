@@ -1,6 +1,5 @@
-{% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
-    <div class="wc-upgrade-component-info"><div><b>{% trans "Current version" %}</b>: <t:currentversion/></div><div><b>{% trans "New version" %}</b>: <t:versionselect/></div></div>
-    <h3>{% trans "Change Log" %}</h3>
-    <t:changelog/>
+{% load i18n %}<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
+<div class="wc-upgrade-component-info"><div><b>{% trans "Current version" %}</b>: <t:currentversion></t:currentversion></div><div><b>{% trans "New version" %}</b>: <t:versionselect></t:versionselect></div></div>
+<h3>{% trans "Change Log" %}</h3>
+<t:changelog></t:changelog>
 </s:styledgui>
-
