@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <!--
 Copyright 2010 Google Inc.
 
@@ -23,40 +22,40 @@ landslide modifications: Adam Zapletal (adamzap@gmail.com)
 Nicolas Perriault (nperriault@gmail.com)
 -->
 <html>
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<meta content="width=device-width, user-scalable=no" name="viewport"/>
-<meta content="chrome=1" http-equiv="X-UA-Compatible"/>
-<title>{{ head_title }}</title>
-<!-- Styles -->
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <title>{{ head_title }}</title>
+        <!-- Styles -->
         {% if embed %}
-        <style media="print" type="text/css">
+        <style type="text/css" media="print">
             {{ css.print.contents }}
         </style>
-<style media="screen, projection" type="text/css">
+        <style type="text/css" media="screen, projection">
             {{ css.screen.contents }}
         </style>
         {% else %}
-        <link href="{{ css.print.path_url }}" media="print" rel="stylesheet"/>
-<link href="{{ css.screen.path_url }}" media="screen, projection" rel="stylesheet"/>
+        <link rel="stylesheet" media="print" href="{{ css.print.path_url }}">
+        <link rel="stylesheet" media="screen, projection" href="{{ css.screen.path_url }}">
         {% endif %}
         {% for css in user_css %}
         {% if embed %}
-        <style media="screen, projection" type="text/css">
+        <style type="text/css" media="screen, projection">
             {{ css.contents }}
         </style>
         {% else %}
-        <link href="{{ css.path_url }}" rel="stylesheet"/>
+        <link rel="stylesheet" href="{{ css.path_url }}">
         {% endif %}
         {% endfor %}
         <!-- /Styles -->
-<!-- Javascripts -->
+        <!-- Javascripts -->
         {% if embed %}
         <script>
             {{ js.contents }}
         </script>
         {% else %}
-        <script src="{{ js.path_url }}" type="text/javascript"></script>
+        <script type="text/javascript" src="{{ js.path_url }}"></script>
         {% endif %}
         {% for js in user_js %}
         {% if embed %}
@@ -64,40 +63,41 @@ Nicolas Perriault (nperriault@gmail.com)
             {{ js.contents }}
         </script>
         {% else %}
-        <script src="{{ js.path_url }}" type="text/javascript"></script>
+        <script type="text/javascript" src="{{ js.path_url }}"></script>
         {% endif %}
         {% endfor %}
         <!-- /Javascripts -->
-</head>
-<body>
-<div id="blank"></div>
-<div class="presentation">
-<div id="current_presenter_notes">
-<div id="presenter_note"></div>
-</div>
-<div class="slides">
+    </head>
+    <body>
+        <div id="blank"></div>
+        <div class="presentation">
+            <div id="current_presenter_notes">
+                <div id="presenter_note"></div>
+            </div>
+            <div class="slides">
                 {% for slide in slides %}
                 <div class="slide-wrapper">
-<section class="slide{% if slide.classes %}{% for class in slide.classes %} {{ class }}{% endfor %}{% endif %}">
+                    <section class="slide{% if slide.classes %}{% for class in slide.classes %} {{ class }}{% endfor %}{% endif %}">
                         {% if 'cover' in slide.classes %}
 
                         <header class="slide-header"><h1>{{ head_title }}</h1><h2>Application Mashup (WireCloud) course @ https://fiware-academy.readthedocs.io/</h2></header>
-<img alt="Image can not be loaded." class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
-<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
-<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
-<div class="navigation-tip">画面の切り替えは <kbd class="key">←</kbd> と <kbd class="key">→</kbd> です。詳細情報は <kbd class="key">h</kbd> です</div>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+
+                        <div class="navigation-tip">画面の切り替えは <kbd class="key">←</kbd> と <kbd class="key">→</kbd> です。詳細情報は <kbd class="key">h</kbd> です</div>
                         {% elif 'section-title' in slide.classes %}
 
                         <header class="section-title-header">
-<h1>{{ head_title }}</h1>
-<h2>{{ slide.header }}</h2>
-</header>
+                            <h1>{{ head_title }}</h1>
+                            <h2>{{ slide.header }}</h2>
+                        </header>
 
                         {% elif 'back-cover' in slide.classes %}
                         <div>Thanks!</div>
-<img alt="Image can not be loaded." class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
-<img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
-<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
                         {% else %}
 
                         {% if 'tutorialhard' in slide.classes %}
@@ -125,91 +125,91 @@ Nicolas Perriault (nperriault@gmail.com)
                             </aside>
                             {% endif %}
                             {% if 'cover' not in slide.classes %}
-                            <img alt="Image can not be loaded." class="fiware-logo" src="fiwaretheme/images/FIWARE.png"/>
-<img alt="Image can not be loaded." class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png"/>
+                            <img class="fiware-logo" src="fiwaretheme/images/FIWARE.png" />
+                            <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops.png" />
                             {% endif %}
                         </footer>
-<div class="presenter_notes">
-<header><h1>Presenter Notes</h1></header>
-<section>
+                        <div class="presenter_notes">
+                            <header><h1>Presenter Notes</h1></header>
+                            <section>
                             {% if slide.presenter_notes %}
                             {{ slide.presenter_notes }}
                             {% endif %}
                             </section>
-</div>
-</section>
-</div>
+                        </div>
+                    </section>
+                </div>
                 {% endfor %}
             </div>
-</div>
+        </div>
         {% if toc %}
-        <div class="sidebar hidden" id="toc">
-<h2>目次</h2>
-<table>
-<caption>Table of Contents</caption>
+        <div id="toc" class="sidebar hidden">
+            <h2>目次</h2>
+            <table>
+                <caption>Table of Contents</caption>
                 {% for section in toc %}
                 <tr id="toc-row-{{ section.number }}">
-<th><a href="#slide{{ section.number }}">{{ section.title }}</a></th>
-<td><a href="#slide{{ section.number }}">{{ section.number }}</a></td>
-</tr>
+                    <th><a href="#slide{{ section.number }}">{{ section.title }}</a></th>
+                    <td><a href="#slide{{ section.number }}">{{ section.number }}</a></td>
+                </tr>
                 {% if section.sub %}
                 {% for subsection in section.sub %}
-                <tr class="sub" id="toc-row-{{ subsection.number }}">
-<th><a href="#slide{{ subsection.number }}">{{ subsection.title }}</a></th>
-<td><a href="#slide{{ subsection.number }}">{{ subsection.number }}</a></td>
-</tr>
+                <tr id="toc-row-{{ subsection.number }}" class="sub">
+                    <th><a href="#slide{{ subsection.number }}">{{ subsection.title }}</a></th>
+                    <td><a href="#slide{{ subsection.number }}">{{ subsection.number }}</a></td>
+                </tr>
                 {% endfor %}
                 {% endif %}
                 {% endfor %}
             </table>
-</div>
+        </div>
         {% endif %}
-        <div class="sidebar hidden" id="help">
-<h2>ヘルプ</h2>
-<table>
-<caption>Help</caption>
-<tr>
-<th>目次</th>
-<td>t</td>
-</tr>
-<tr>
-<th>スライド一覧</th>
-<td>ESC</td>
-</tr>
-<tr>
-<th>フルスクリーン</th>
-<td>e</td>
-</tr>
-<tr>
-<th>発表者ビュー</th>
-<td>p</td>
-</tr>
-<tr>
-<th>ソースファイル</th>
-<td>s</td>
-</tr>
-<tr>
-<th>スライド番号</th>
-<td>n</td>
-</tr>
-<tr>
-<th>画面ブランキングの切り替え</th>
-<td>b</td>
-</tr>
-<tr>
-<th>スライド・コンテキストの表示/非表示</th>
-<td>c</td>
-</tr>
-<tr>
-<th>ノート</th>
-<td>2</td>
-</tr>
-<tr>
-<th>ヘルプ</th>
-<td>h</td>
-</tr>
-</table>
-</div>
-<script>main()</script>
-</body>
+        <div id="help" class="sidebar hidden">
+            <h2>ヘルプ</h2>
+            <table>
+                <caption>Help</caption>
+                <tr>
+                    <th>目次</th>
+                    <td>t</td>
+                </tr>
+                <tr>
+                    <th>スライド一覧</th>
+                    <td>ESC</td>
+                </tr>
+                <tr>
+                    <th>フルスクリーン</th>
+                    <td>e</td>
+                </tr>
+                <tr>
+                    <th>発表者ビュー</th>
+                    <td>p</td>
+                </tr>
+                <tr>
+                    <th>ソースファイル</th>
+                    <td>s</td>
+                </tr>
+                <tr>
+                    <th>スライド番号</th>
+                    <td>n</td>
+                </tr>
+                <tr>
+                    <th>画面ブランキングの切り替え</th>
+                    <td>b</td>
+                </tr>
+                <tr>
+                    <th>スライド・コンテキストの表示/非表示</th>
+                    <td>c</td>
+                </tr>
+                <tr>
+                    <th>ノート</th>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th>ヘルプ</th>
+                    <td>h</td>
+                </tr>
+            </table>
+        </div>
+        <script>main()</script>
+    </body>
 </html>

@@ -5,58 +5,63 @@
 {% block css %}
     {% compress css %}
     {% platform_css "classic" %}
-    <link %}"="" css="" href="{% theme_static " landing_page.css"="" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="{% theme_static "css/landing_page.css" %}" />
     {% endcompress %}
 {% endblock %}
 {% block content %}
 
     <h3>{% trans "Welcome to the next-generation application mashup platform aimed at leveraging the long tail of the Internet of Services."%}</h3>
-<section class="grid-block" id="innertop">
-<div class="grid-box width25">
-<div class="panel module">
-<p class="img"> <img %}"="" alt="Image can not be loaded." images="" innovation3.png"="" src="{% theme_static "/> </p>
-<h3>{% trans "Innovation" %}</h3>
-<p>{% trans "Innovate through experimentation by choosing the best suited widgets and prefab mashup-lets for your devised mashup from a vast, ever-growing distributed catalogue" %}</p>
-</div>
-</div>
-<div class="grid-box width25">
-<div class="panel module">
-<p class="img"> <img %}"="" alt="Image can not be loaded." features.png"="" images="" src="{% theme_static "/> </p>
-<h3>{% trans "Generic Features" %}</h3>
-<ul>
-<li>{% trans "JavaScript pub/sub API for event-driven widgets" %}</li>
-<li>{% trans "NGSI API compatible with FIWARE's Orion Context Broker Generic Enabler" %}</li>
-<li>{% trans "Server-side state persistence for widgets and mashups" %}</li>
-</ul>
-</div>
-</div>
-<div class="grid-box width25">
-<div class="panel module">
-<p class="img"> <img %}"="" alt="Image can not be loaded." images="" piping.png"="" src="{% theme_static "/> </p>
-<h3>{% trans "Wiring &amp; Piping" %}</h3>
-<p>{% trans "Wiring allows you to easily connect widgets in a mashup to create a full-fledged dashboard with RIA functionality." %}</p>
-<p>{% trans "Piping links your widgets to back-end services or data sources through an extendable set of operators, including filters, aggregators, adapters, etc." %}</p>
-</div>
-</div>
-<div class="grid-box width25">
-<div class="panel module">
-<p class="img"> <img %}"="" alt="Image can not be loaded." fiware2.png"="" images="" src="{% theme_static "/></p>
-<h3>{% trans "100% FIWARE" %}</h3>
-<ul>
-<li>{% trans "1st OSS reference implementation of the Application Mashup GE" %}</li>
-<li>{% trans "Support for linked-USDL" %}</li>
-<li>{% trans "Full integration with FIWARE's:" %}
+    <section id="innertop" class="grid-block">
+
+        <div class="grid-box width25">
+            <div class="panel module">
+                <p class="img"> <img src="{% theme_static "images/innovation3.png" %}" alt="Innovation"/> </p>
+                <h3>{% trans "Innovation" %}</h3>
+                <p>{% trans "Innovate through experimentation by choosing the best suited widgets and prefab mashup-lets for your devised mashup from a vast, ever-growing distributed catalogue" %}</p>
+            </div>
+        </div>
+
+        <div class="grid-box width25">
+            <div class="panel module">
+                <p class="img"> <img src="{% theme_static "images/features.png" %}" alt="Features"/> </p>
+                <h3>{% trans "Generic Features" %}</h3>
+                <ul>
+                    <li>{% trans "JavaScript pub/sub API for event-driven widgets" %}</li>
+                    <li>{% trans "NGSI API compatible with FIWARE's Orion Context Broker Generic Enabler" %}</li>
+                    <li>{% trans "Server-side state persistence for widgets and mashups" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid-box width25">
+            <div class="panel module">
+                <p class="img"> <img src="{% theme_static "images/piping.png" %}" alt="Wiring &amp; Piping"/> </p>
+                <h3>{% trans "Wiring &amp; Piping" %}</h3>
+                <p>{% trans "Wiring allows you to easily connect widgets in a mashup to create a full-fledged dashboard with RIA functionality." %}</p>
+                <p>{% trans "Piping links your widgets to back-end services or data sources through an extendable set of operators, including filters, aggregators, adapters, etc." %}</p>
+            </div>
+        </div>
+
+        <div class="grid-box width25">
+            <div class="panel module">
+                <p class="img"> <img src="{% theme_static "images/fiware2.png" %}" alt="Fiware" /></p>
+                <h3>{% trans "100% FIWARE" %}</h3>
+                <ul>
+                    <li>{% trans "1st OSS reference implementation of the Application Mashup GE" %}</li>
+                    <li>{% trans "Support for linked-USDL" %}</li>
+                    <li>{% trans "Full integration with FIWARE's:" %}
                         <ul>
-<li>Marketplace</li>
-<li>Store</li>
-<li>Context Broker</li>
-<li>Object Storage</li>
-<li>...</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-</section>
+                            <li>Marketplace</li>
+                            <li>Store</li>
+                            <li>Context Broker</li>
+                            <li>Object Storage</li>
+                            <li>...</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
 
 {% endblock %}

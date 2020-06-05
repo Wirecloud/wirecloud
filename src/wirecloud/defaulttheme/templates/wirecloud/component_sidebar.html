@@ -1,15 +1,19 @@
 {% load i18n %}
-<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
-<s:verticallayout class="panel panel-default we-panel-components">
-<s:northcontainer class="panel-heading">
-<div class="panel-title">
-<strong>{% trans "Components" %}</strong>
-</div>
-<t:searchinput></t:searchinput>
-<div class="btn-group btn-group-justified"><t:typebuttons></t:typebuttons></div>
-</s:northcontainer>
-<s:centercontainer class="panel-body">
-<t:list></t:list>
-</s:centercontainer>
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+
+<s:verticallayout class="panel panel-default we-panel-components" >
+
+    <s:northcontainer class="panel-heading">
+        <div class="panel-title">
+            <strong>{% trans "Components" %}</strong>
+        </div>
+        <t:searchinput/>
+        <div class="btn-group btn-group-justified"><t:typebuttons/></div>
+    </s:northcontainer>
+
+    <s:centercontainer class="panel-body">
+        <t:list/>
+    </s:centercontainer>
+
 </s:verticallayout>
 </s:styledgui>

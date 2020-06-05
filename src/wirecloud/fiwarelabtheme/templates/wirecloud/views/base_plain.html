@@ -1,16 +1,17 @@
 {% load compress i18n wirecloudtags %}{% load static from staticfiles %}
 <!DOCTYPE html>
-
-<html lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="{{ LANGUAGE_CODE }}"
+      lang="{{ LANGUAGE_CODE }}">
 <head>
-<title>{% block title %}{% trans "WireCloud Platform" %}{% endblock %}</title>
+    <title>{% block title %}{% trans "WireCloud Platform" %}{% endblock %}</title>
 
     {% block meta %}
-    <meta content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<meta content="yes" name="apple-mobile-web-app-capable"/>
-<meta content="application/xhtml+xml; charset=utf-8" http-equiv="content-type"/>
-<meta name="google" value="notranslate"/>
-<link %}"="" favicon.ico"="" href="{% static " images="" rel="shortcut icon" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="google" value="notranslate" />
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" />
     {% endblock %}
 
     {% block basecss %}
@@ -23,10 +24,10 @@
     {% endblock %}
 
     {% block basejs %}
-        <script %}?language="{{" language_code="" src="{% url " type="text/javascript" wirecloud.javascript_translation_catalogue"="" wirecloud_version_hash="" }}"="" }}&amp;v="{{"></script>
+        <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
         {% compress js %}
-        <script %}"="" js="" lib="" moment-with-locales.min.js"="" src="{% static " type="text/javascript"></script>
-<script %}"="" js="" lib="" moment-timezone-with-data.min.js"="" src="{% static " type="text/javascript"></script>
+        <script type="text/javascript" src="{% static "js/lib/moment-with-locales.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/lib/moment-timezone-with-data.min.js" %}"></script>
         {% wirecloud_bootstrap "classic" %}
         {% extra_javascripts "classic" %}
         {% endcompress %}
@@ -42,12 +43,13 @@
     </script>
     {% endblock %}
 </head>
+
 <body>
-<header id="wirecloud_header">
+    <header id="wirecloud_header">
         {% include "wirecloud/views/header_common.html" %}
-        <div class="wirecloud_app_bar"><div class="se-input-group se-input-group-lg wirecloud_header_nav"><span class="breadcrum se-add-on" id="wirecloud_breadcrum">{% block path %}{% endblock %}</span></div></div>
-</header>
-<div class="plain_content">
+        <div class="wirecloud_app_bar"><div class="se-input-group se-input-group-lg wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum se-add-on">{% block path %}{% endblock %}</span></div></div>
+    </header>
+    <div class="plain_content">
     {% block content %}
     {% endblock %}
     </div>

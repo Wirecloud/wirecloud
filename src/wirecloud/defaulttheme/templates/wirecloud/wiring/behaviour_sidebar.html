@@ -1,13 +1,13 @@
 {% load i18n %}
-<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
 <div class="panel panel-default se-vertical-layout we-panel-behaviours">
-<div class="panel-heading se-vl-north-container">
-<div class="panel-title">
-<strong>{% trans "Behaviours" %}</strong>
-<div class="panel-options"><t:enablebutton></t:enablebutton></div>
-</div>
-<div class="btn-group pull-right"><t:createbutton></t:createbutton><t:orderbutton></t:orderbutton></div>
-</div>
-<t:behaviourlist class="panel-body se-vl-center-container"></t:behaviourlist>
+    <div class="panel-heading se-vl-north-container">
+        <div class="panel-title">
+            <strong>{% trans "Behaviours" %}</strong>
+            <div class="panel-options"><t:enablebutton/></div>
+        </div>
+        <div class="btn-group pull-right"><t:createbutton/><t:orderbutton/></div>
+    </div>
+    <t:behaviourlist class="panel-body se-vl-center-container"/>
 </div>
 </s:styledgui>

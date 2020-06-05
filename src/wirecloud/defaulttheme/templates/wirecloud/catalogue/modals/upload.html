@@ -1,12 +1,12 @@
 {% load i18n %}{% load wirecloudtags %}
-<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
-<div class="wc-upload-mac-message">
-<div class="alert alert-info">
-<img %}"="" alt="Image can not be loaded." catalogue="" class="mac-package" images="" mac_package.png"="" src="{% theme_static "/>
-<p>{% trans "Do you have a widget, operator or mashup stored in a wgt file? Then you can upload it to the catalogue by means of this dialog." %}</p>
-</div>
-<div class="wc-upload-mac-title">{% trans "Drag files here" %}</div>
-<div class="wc-upload-mac-or">{% trans "- or -" %}</div>
-<div class="wc-upload-mac-button"><t:uploadfilebutton></t:uploadfilebutton></div>
-</div>
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="wc-upload-mac-message">
+        <div class="alert alert-info">
+            <img class="mac-package" src="{% theme_static "images/catalogue/mac_package.png" %}" />
+            <p>{% trans "Do you have a widget, operator or mashup stored in a wgt file? Then you can upload it to the catalogue by means of this dialog." %}</p>
+        </div>
+        <div class="wc-upload-mac-title">{% trans "Drag files here" %}</div>
+        <div class="wc-upload-mac-or">{% trans "- or -" %}</div>
+        <div class="wc-upload-mac-button"><t:uploadfilebutton/></div>
+    </div>
 </s:styledgui>

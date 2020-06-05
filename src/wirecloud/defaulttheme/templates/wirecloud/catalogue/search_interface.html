@@ -1,24 +1,34 @@
 {% load i18n %}
-<s:styledgui xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template">
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
 <s:borderlayout>
-<s:northcontainer>
-<s:options>{"class": "search_bar"}</s:options>
-<t:pagination></t:pagination>
-</s:northcontainer>
-<s:westcontainer>
-<s:options>{"class": "search_bar"}</s:options>
-<t:reset_button></t:reset_button>
-<div>
-<label>{% trans 'Keywords:' %}</label>
-<t:searchinput></t:searchinput>
-</div>
-<div>
-<label>{% trans 'Type:' %}</label>
-<t:scope></t:scope>
-</div>
-</s:westcontainer>
-<s:centercontainer>
-<t:resourcelist></t:resourcelist>
-</s:centercontainer>
+
+    <s:northcontainer>
+
+        <s:options>{"class": "search_bar"}</s:options>
+
+        <t:pagination />
+
+    </s:northcontainer>
+
+    <s:westcontainer>
+        <s:options>{"class": "search_bar"}</s:options>
+
+        <t:reset_button />
+        <div>
+            <label>{% trans 'Keywords:' %}</label>
+            <t:searchinput />
+        </div>
+
+        <div>
+            <label>{% trans 'Type:' %}</label>
+            <t:scope />
+        </div>
+
+    </s:westcontainer>
+
+    <s:centercontainer>
+        <t:resourcelist />
+    </s:centercontainer>
+
 </s:borderlayout>
 </s:styledgui>
