@@ -324,7 +324,11 @@
                     workspace: workspace
                 });
                 let widgetmodel = {id: 80};
-                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                model.createWidget.and.callFake((resource, options) => {
+                    expect(options.left).toEqual(1);
+                    expect(options.top).toEqual(2);
+                    return Promise.resolve(widgetmodel);
+                });
                 let widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
@@ -351,7 +355,11 @@
                     workspace: workspace
                 });
                 let widgetmodel = {id: 80};
-                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                model.createWidget.and.callFake((resource, options) => {
+                    expect(options.left).toEqual(0);
+                    expect(options.top).toEqual(0);
+                    return Promise.resolve(widgetmodel);
+                });
                 let widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
