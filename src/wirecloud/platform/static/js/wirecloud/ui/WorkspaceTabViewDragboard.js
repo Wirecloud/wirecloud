@@ -48,12 +48,23 @@
         this.dragboardHeight = 600;
         this.widgetToMove = null;
         this.painted = false;
+        this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
         this.baseLayout = this._buildLayoutFromPreferences();
         this.freeLayout = new Wirecloud.ui.FreeLayout(this);
-        this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
         this.leftLayout = new Wirecloud.ui.SidebarLayout(this);
         this.rightLayout = new Wirecloud.ui.SidebarLayout(this, {position: "right"});
-
+        Object.defineProperties(this, {
+            layouts: {
+                get: () => {
+                    return [
+                        this.baseLayout,
+                        this.freeLayout,
+                        this.leftLayout,
+                        this.rightLayout,
+                    ];
+                }
+            }
+        });
         if (this.tab.workspace.restricted) {
             this.tab.wrapperElement.classList.add("fixed");
         }

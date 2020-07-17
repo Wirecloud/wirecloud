@@ -88,6 +88,7 @@
 
         const create_tab_mock = function create_tab_mock() {
             let tab = {
+                id: "123",
                 model: {},
                 workspace: {
                     addEventListener: jasmine.createSpy("addEventListener")
@@ -97,12 +98,19 @@
                 tab: tab,
                 leftMargin: 1,
                 topMargin: 2,
+                lowerToBottom: jasmine.createSpy("lowerToBottom"),
                 update: jasmine.createSpy("update")
             };
             tab.dragboard.baseLayout = create_layout_mock(tab, ns.SmartColumnLayout);
             tab.dragboard.freeLayout = create_layout_mock(tab, ns.FreeLayout);
             tab.dragboard.leftLayout = create_layout_mock(tab, ns.SidebarLayout);
             tab.dragboard.rightLayout = create_layout_mock(tab, ns.SidebarLayout);
+            tab.dragboard.layouts = [
+                tab.dragboard.baseLayout,
+                tab.dragboard.freeLayout,
+                tab.dragboard.leftLayout,
+                tab.dragboard.rightLayout
+            ];
             tab.dragboard.fulldragboardLayout = create_layout_mock(tab, ns.FullDragboardLayout);
             return tab;
         };
@@ -131,22 +139,30 @@
                     }
                 },
                 position: {
+                    anchor: options.anchor != null ? options.anchor : "topleft",
+                    relx: options.relx != null ? options.relx : true,
                     x: 3,
+                    rely: options.rely != null ? options.rely : true,
                     y: 0,
                     z: 0
                 },
                 reload: jasmine.createSpy("reload"),
                 shape: {
+                    relwidth: options.relwidth != null ? options.relwidth : true,
                     width: 5,
+                    relheight: options.relheight != null ? options.relheight : true,
                     height: 1
                 },
                 remove: jasmine.createSpy("remove"),
+                setPosition: jasmine.createSpy("setPosition"),
                 setPermissions: jasmine.createSpy("setPermissions").and.returnValue(new Wirecloud.Task("", () => {})),
+                setShape: jasmine.createSpy("setShape"),
                 setTitleVisibility: jasmine.createSpy("setTitleVisibility").and.returnValue(new Wirecloud.Task("", () => {})),
                 showLogs: jasmine.createSpy("showLogs"),
                 showSettings: jasmine.createSpy("showSettings"),
                 title: "My Widget",
                 titlevisible: true,
+                volatile: !!options.volatile,
                 wrapperElement: document.createElement('div')
             };
         };
@@ -373,6 +389,32 @@
 
         });
 
+        describe("persist()", () => {
+
+            it("should update model data on normal widgets", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.persist()).toBe(widget);
+
+                expect(widget.model.setPosition).toHaveBeenCalled();
+                expect(widget.model.setShape).toHaveBeenCalled();
+            });
+
+            it("should ignore volatile widgets", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock({volatile: true});
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.persist()).toBe(widget);
+
+                expect(widget.model.setPosition).not.toHaveBeenCalled();
+                expect(widget.model.setShape).not.toHaveBeenCalled();
+            });
+
+        });
+
         describe("reload()", () => {
 
             it("should work", () => {
@@ -386,6 +428,58 @@
 
         });
 
+        describe("setFullDragboardMode(enable)", () => {
+
+            it("should work for moving a widget into full dragboard mode", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.setFullDragboardMode(true)).toBe(widget);
+
+                expect(widget.model.fulldragboard).toBe(true);
+                expect(widget.layout).toBe(tab.dragboard.fulldragboardLayout);
+                expect(tab.dragboard.lowerToBottom).toHaveBeenCalledWith(widget);
+            });
+
+            it("should work for extracting a widget from full dragboard mode", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock({fulldragboard: true});
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.setFullDragboardMode(false)).toBe(widget);
+
+                expect(widget.model.fulldragboard).toBe(false);
+                expect(widget.layout).toBe(tab.dragboard.leftLayout);
+                expect(tab.dragboard.lowerToBottom).not.toHaveBeenCalled();
+            });
+
+            it("do nothing if widget is already in full dragboard mode", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock({fulldragboard: true});
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.setFullDragboardMode(true)).toBe(widget);
+
+                expect(widget.model.fulldragboard).toBe(true);
+                expect(widget.layout).toBe(tab.dragboard.fulldragboardLayout);
+                expect(tab.dragboard.lowerToBottom).not.toHaveBeenCalled();
+            });
+
+            it("do nothing if widget is already not in full dragboard mode", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.setFullDragboardMode(false)).toBe(widget);
+
+                expect(widget.model.fulldragboard).toBe(false);
+                expect(widget.layout).toBe(tab.dragboard.leftLayout);
+                expect(tab.dragboard.lowerToBottom).not.toHaveBeenCalled();
+            });
+
+        });
+
         describe("showLogs()", () => {
 
             it("should work", () => {
@@ -395,19 +489,6 @@
 
                 expect(widget.showLogs()).toBe(widget);
                 expect(widget.model.showLogs).toHaveBeenCalledWith();
-            });
-
-        });
-
-        describe("showSettings()", () => {
-
-            it("should work", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
-
-                expect(widget.showSettings()).toBe(widget);
-                expect(widget.model.showSettings).toHaveBeenCalledWith();
             });
 
         });
@@ -432,6 +513,73 @@
                 let widget = new ns.WidgetView(tab, model);
 
                 expect(widget.remove()).toBe(widget);
+            });
+
+        });
+
+        describe("showSettings()", () => {
+
+            it("should work", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock();
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.showSettings()).toBe(widget);
+                expect(widget.model.showSettings).toHaveBeenCalledWith();
+            });
+
+        });
+
+        describe("toJSON()", () => {
+
+            it("should work on normal widgets", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock({layout: 0});
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.toJSON()).toEqual({
+                    id: "23",
+                    tab: "123",
+                    layout: 0,
+                    minimized: false,
+                    anchor: "topleft",
+                    relx: true,
+                    rely: true,
+                    top: 0,
+                    left: 3,
+                    zIndex: 0,
+                    relwidth: true,
+                    width: 5,
+                    relheight: true,
+                    height: 1,
+                    fulldragboard: false,
+                    titlevisible: true
+                });
+            });
+
+            it("should work on fulldragboard widgets", () => {
+                let tab = create_tab_mock();
+                let model = create_widget_mock({layout: 0, fulldragboard: true});
+                let widget = new ns.WidgetView(tab, model);
+
+                expect(widget.toJSON()).toEqual({
+                    id: "23",
+                    tab: "123",
+                    layout: 0,
+                    minimized: false,
+                    anchor: "topleft",
+                    relx: true,
+                    rely: true,
+                    top: 0,
+                    left: 3,
+                    zIndex: 0,
+                    relwidth: true,
+                    width: 5,
+                    relheight: true,
+                    height: 1,
+                    fulldragboard: true,
+                    titlevisible: true
+                });
             });
 
         });
