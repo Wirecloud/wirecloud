@@ -182,7 +182,7 @@
                 var element = new StyledElements.EditableElement({initialContent: view.model.title});
 
                 element.addEventListener('change', function (element, new_title) {
-                    view.rename(new_title);
+                    view.model.rename(new_title);
                 });
                 view.titleelement = element;
                 return element;
@@ -261,24 +261,11 @@
         var layout;
         if (model.fulldragboard) {
             layout = tab.dragboard.fulldragboardLayout;
-            this.previousLayout = model.layout === 0 ? tab.dragboard.baseLayout : tab.dragboard.freeLayout;
+            this.previousLayout = tab.dragboard.layouts[model.layout];
             this.previousPosition = model.position;
+            this.previousShape = model.shape;
         } else {
-            switch (model.layout) {
-            default:
-            case 0:
-                layout = tab.dragboard.baseLayout;
-                break;
-            case 1:
-                layout = tab.dragboard.freeLayout;
-                break;
-            case 2:
-                layout = tab.dragboard.leftLayout;
-                break;
-            case 3:
-                layout = tab.dragboard.rightLayout;
-                break;
-            }
+            layout = tab.dragboard.layouts[model.layout];
         }
         layout.addWidget(this, true);
 
@@ -597,10 +584,10 @@
 
         setFullDragboardMode: function setFullDragboardMode(enable) {
             if ((this.layout === this.tab.dragboard.fulldragboardLayout) === enable) {
-                return;
+                return this;
             }
 
-            var dragboard = this.layout.dragboard;
+            const dragboard = this.layout.dragboard;
 
             if (enable) {
                 this.previousShape = this.shape;
@@ -615,54 +602,33 @@
             this.model.fulldragboard = enable;
 
             update.call(this);
+            return this;
         },
 
         toJSON: function toJSON() {
-            const layouts = [
-                this.tab.dragboard.baseLayout,
-                this.tab.dragboard.freeLayout,
-                this.tab.dragboard.leftLayout,
-                this.tab.dragboard.rightLayout
-            ];
-
-            var data = {
+            let fulldragboard = this.layout === this.tab.dragboard.fulldragboardLayout;
+            let shape = fulldragboard ? this.previousShape : this.shape;
+            let position = fulldragboard ? this.previousPosition : this.position;
+            return {
                 id: this.id,
                 tab: this.tab.id,
-                layout: layouts.indexOf(this.layout)
+                layout: this.tab.dragboard.layouts.indexOf(fulldragboard ? this.previousLayout : this.layout),
+                // position
+                anchor: position.anchor,
+                relx: position.relx,
+                rely: position.rely,
+                top: position.y,
+                left: position.x,
+                zIndex: position.z,
+                // shape
+                minimized: this.minimized,
+                relwidth: shape.relwidth,
+                width: shape.width,
+                relheight: shape.relheight,
+                height: privates.get(this).shape.height,
+                fulldragboard: fulldragboard,
+                titlevisible: this.titlevisible
             };
-
-            if (!this.tab.workspace.restricted) {
-                data.minimized = this.minimized;
-            }
-
-            if (this.layout !== this.tab.dragboard.fulldragboardLayout) {
-                data.anchor = this.position.anchor;
-                data.relx = this.position.relx;
-                data.rely = this.position.rely;
-                data.top = this.position.y;
-                data.left = this.position.x;
-                data.zIndex = this.position.z;
-                data.relwidth = this.shape.relwidth;
-                data.width = this.shape.width;
-                data.relheight = this.shape.relheight;
-                data.height = privates.get(this).shape.height;
-                data.fulldragboard = false;
-            } else {
-                data.top = this.previousPosition.y;
-                data.left = this.previousPosition.x;
-                data.zIndex = this.previousPosition.z;
-                if (this.previousShape != null) {
-                    data.width = this.previousShape.width;
-                    data.height = this.previousShape.height;
-                } else {
-                    data.width = this.shape.width;
-                    data.height = this.shape.height;
-                }
-                data.fulldragboard = true;
-            }
-            data.titlevisible = this.titlevisible;
-
-            return data;
         },
 
         persist: function persist() {
@@ -676,11 +642,6 @@
 
         remove: function remove() {
             this.model.remove();
-            return this;
-        },
-
-        rename: function rename(title) {
-            this.model.rename(title);
             return this;
         }
 

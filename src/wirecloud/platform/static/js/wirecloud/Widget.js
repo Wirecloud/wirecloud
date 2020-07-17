@@ -792,7 +792,7 @@
         var old_value = privates.get(this).meta;
         privates.get(this).meta = meta;
 
-        if (!meta.missing) {
+        if (!this.volatile && !meta.missing) {
             var process_response = (response) => {
                 if (response.status !== 200) {
                     return Promise.reject(new Error("Unexpected response from server"));

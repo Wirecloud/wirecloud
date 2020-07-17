@@ -226,8 +226,8 @@
                     options.left = position.x;
                     options.top = position.y;
                 } else {
-                    options.left = "0";
-                    options.top = "0";
+                    options.left = 0;
+                    options.top = 0;
                 }
             }
 
