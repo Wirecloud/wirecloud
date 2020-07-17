@@ -10,8 +10,8 @@
     "grunt-lcov-merge": "^1.2.3",
     "gruntify-eslint": "^5.0.0",
     "jasmine-core": "<2.5.0",
-    "karma": "^4.3.0",
-    "karma-coverage": "^2.0.1",
+    "karma": "^5.1.0",
+    "karma-coverage": "^2.0.2",
     "karma-firefox-launcher": "^1.2.0",
     "karma-jasmine": "^1.0.2"
   }
