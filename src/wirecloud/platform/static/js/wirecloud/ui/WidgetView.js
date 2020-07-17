@@ -182,7 +182,7 @@
                 var element = new StyledElements.EditableElement({initialContent: view.model.title});
 
                 element.addEventListener('change', function (element, new_title) {
-                    view.rename(new_title);
+                    view.model.rename(new_title);
                 });
                 view.titleelement = element;
                 return element;
@@ -642,11 +642,6 @@
 
         remove: function remove() {
             this.model.remove();
-            return this;
-        },
-
-        rename: function rename(title) {
-            this.model.rename(title);
             return this;
         }
 
