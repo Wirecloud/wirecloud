@@ -2012,11 +2012,11 @@ msgstr "折り畳む"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:140
 msgid "Stop ordering"
-msgstr "オーダーを停止"
+msgstr "並び替えを中止"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:142
 msgid "Order endpoints"
-msgstr "エンドポイントを注文"
+msgstr "エンドポイントを並び替え"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:150
 #: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:102
