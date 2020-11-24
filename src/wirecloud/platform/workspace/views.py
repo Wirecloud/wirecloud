@@ -122,7 +122,7 @@ class WorkspaceCollection(Resource):
                     return build_error_response(request, 403, _('You are not allowed to read from workspace %s') % workspace_id)
 
             try:
-                workspace = create_workspace(request.user, mashup, allow_renaming=allow_renaming, new_name=workspace_name, dry_run=dry_run)
+                workspace = create_workspace(request.user, mashup, allow_renaming=allow_renaming, new_name=workspace_name, new_title=workspace_title, dry_run=dry_run)
             except ValueError as e:
                 return build_error_response(request, 422, e)
             except MissingDependencies as e:
