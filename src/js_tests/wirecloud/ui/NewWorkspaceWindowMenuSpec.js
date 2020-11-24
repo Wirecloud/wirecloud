@@ -34,8 +34,8 @@
             Wirecloud.contextManager = {
                 "get": jasmine.createSpy("get").and.callFake((name) => {
                     switch (name) {
-                        case "username":
-                            return "currentuser";
+                    case "username":
+                        return "currentuser";
                     };
                 })
             };
@@ -89,31 +89,32 @@
                 const dialog = new ns.NewWorkspaceWindowMenu();
                 const workspace = {};
                 Wirecloud.createWorkspace.and.returnValue(
-                    new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});})
+                    new Wirecloud.Task("Sending request", (resolve) => {resolve(workspace);})
                 );
 
                 dialog.executeOperation({
                     title: "",
                     mashup: null
                 });
+                expect(Wirecloud.changeActiveWorkspace).toHaveBeenCalledWith(workspace);
             });
 
             it("should work when a title is provided", () => {
                 const dialog = new ns.NewWorkspaceWindowMenu();
                 const workspace = {};
                 Wirecloud.createWorkspace.and.returnValue(
-                    new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});})
+                    new Wirecloud.Task("Sending request", (resolve) => {resolve(workspace);})
                 );
 
                 dialog.executeOperation({
                     title: "New Workspace",
                     mashup: null
                 });
+                expect(Wirecloud.changeActiveWorkspace).toHaveBeenCalledWith(workspace);
             });
 
             it("should manage generic errors", () => {
                 const dialog = new ns.NewWorkspaceWindowMenu();
-                const workspace = {};
                 Wirecloud.createWorkspace.and.returnValue(
                     new Wirecloud.Task("Sending request", (resolve, reject) => {reject({});})
                 );
@@ -122,11 +123,11 @@
                     title: "New Workspace",
                     mashup: null
                 });
+                expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
             });
 
             it("should manage missingDependencies error", () => {
                 const dialog = new ns.NewWorkspaceWindowMenu();
-                const workspace = {};
                 Wirecloud.createWorkspace.and.returnValue(
                     new Wirecloud.Task("Sending request", (resolve, reject) => {reject({details: {missingDependencies: []}});})
                 );
@@ -136,8 +137,58 @@
                     mashup: "CoNWeT/bae-marketplace/0.1.1"
                 });
 
+                expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
                 expect(Wirecloud.ui.MessageWindowMenu).not.toHaveBeenCalled();
                 expect(Wirecloud.ui.MissingDependenciesWindowMenu).toHaveBeenCalled();
+            });
+
+            it("should manage missingDependencies error (retry - success)", () => {
+                const dialog = new ns.NewWorkspaceWindowMenu();
+                Wirecloud.createWorkspace.and.returnValue(
+                    new Wirecloud.Task("Sending request", (resolve, reject) => {reject({details: {missingDependencies: []}});})
+                );
+
+                dialog.executeOperation({
+                    title: "",
+                    mashup: "CoNWeT/bae-marketplace/0.1.1"
+                });
+                expect(Wirecloud.ui.MissingDependenciesWindowMenu).toHaveBeenCalled();
+
+                const retry = Wirecloud.ui.MissingDependenciesWindowMenu.calls.argsFor(0)[0];
+
+                const workspace = {};
+                Wirecloud.createWorkspace.and.returnValue(
+                    new Wirecloud.Task("Sending request", (resolve) => {resolve(workspace);})
+                );
+
+                retry();
+
+                expect(Wirecloud.ui.MessageWindowMenu).not.toHaveBeenCalled();
+                expect(Wirecloud.changeActiveWorkspace).toHaveBeenCalledWith(workspace);
+            });
+
+            it("should manage missingDependencies error (retry - error)", () => {
+                // Error retry
+                const dialog = new ns.NewWorkspaceWindowMenu();
+                Wirecloud.createWorkspace.and.returnValue(
+                    new Wirecloud.Task("Sending request", (resolve, reject) => {reject({details: {missingDependencies: []}});})
+                );
+
+                dialog.executeOperation({
+                    title: "",
+                    mashup: "CoNWeT/bae-marketplace/0.1.1"
+                });
+                expect(Wirecloud.ui.MissingDependenciesWindowMenu).toHaveBeenCalled();
+
+                const retry = Wirecloud.ui.MissingDependenciesWindowMenu.calls.argsFor(0)[0];
+                Wirecloud.createWorkspace.and.returnValue(
+                    new Wirecloud.Task("Sending request", (resolve, reject) => {reject({});})
+                );
+
+                retry();
+
+                expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
+                expect(Wirecloud.ui.MessageWindowMenu).toHaveBeenCalled();
             });
 
         });
