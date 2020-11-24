@@ -367,8 +367,12 @@
      * @param {Object} options
      * - `allow_renaming` (Boolean, default: `true`)
      * - `mashup` (String): Mashup reference to use as template.
-     * - `name` (String): This options is required if the `mashup` and
-     *   `workspace` options are not used and optional in any other case.
+     * - `name` (String): This options is required if neither the `mashup` nor
+     *   the `workspace` options are used and the `title` option is also not
+     *   used. This parameter is optional in any other case.
+     * - `title` (String): This options is required if neither the `mashup` nor
+     *   the `workspace` options are used and the `name` option is also not
+     *   used. This parameter is optional in any other case.
      * - `workspace` (String): id of the workspace to clone.
      *
      * @returns {Wirecloud.Task}

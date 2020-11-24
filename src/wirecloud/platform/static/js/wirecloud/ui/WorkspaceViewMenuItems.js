@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -58,20 +58,20 @@
             item = new se.MenuItem(utils.gettext("New workspace"), function () {
                 (new Wirecloud.ui.NewWorkspaceWindowMenu()).show();
             }.bind(this.workspace));
-            item.addIconClass("fa fa-plus");
+            item.addIconClass("fas fa-plus");
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Rename"), function () {
                 (new Wirecloud.ui.RenameWindowMenu(this, utils.gettext('Rename Workspace'))).show();
             }.bind(this.workspace.model));
-            item.addIconClass("fa fa-pencil");
+            item.addIconClass("fas fa-pencil-alt");
             item.setDisabled(!this.workspace.editing || !this.workspace.model.isAllowed('rename'));
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Share"), function () {
                 (new Wirecloud.ui.SharingWindowMenu(this)).show();
             }.bind(this.workspace));
-            item.addIconClass("fa fa-share");
+            item.addIconClass("fas fa-share");
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Upload to my resources"), function () {
@@ -82,20 +82,29 @@
                     }.bind(this)
                 });
             }.bind(this.workspace.model));
-            item.addIconClass("fa fa-archive");
+            item.addIconClass("fas fa-archive");
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Embed"), function () {
                 (new Wirecloud.ui.EmbedCodeWindowMenu(utils.gettext("Embed Code"), this)).show();
             }.bind(this.workspace));
-            item.addIconClass("fa fa-code");
+            item.addIconClass("fas fa-code");
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Settings"), function () {
                 this.showSettings();
             }.bind(this.workspace));
-            item.addIconClass("fa fa-cog");
+            item.addIconClass("fas fa-cog");
             item.setDisabled(!this.workspace.editing || !this.workspace.model.isAllowed('update_preferences'));
+            items.push(item);
+
+            item = new se.MenuItem(utils.gettext("Duplicate"), () => {
+                (new Wirecloud.ui.NewWorkspaceWindowMenu({
+                    title: utils.interpolate(utils.gettext("Copy of %(title)s"), this.workspace.model),
+                    workspace: this.workspace.model.id
+                })).show();
+            });
+            item.addIconClass("fas fa-clone");
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Remove"), () => {
@@ -108,7 +117,7 @@
                     return this.workspace.model.remove();
                 }).show();
             });
-            item.addIconClass("fa fa-trash");
+            item.addIconClass("fas fa-trash");
             item.setDisabled(!this.workspace.model.isAllowed('remove'));
             items.push(item);
 

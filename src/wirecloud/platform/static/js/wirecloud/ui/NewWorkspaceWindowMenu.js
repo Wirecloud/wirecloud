@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,76 +27,85 @@
 
     "use strict";
 
-    var retry = function retry(data) {
+    const retry = function retry(data) {
         Wirecloud.UserInterfaceManager.monitorTask(
-            Wirecloud.createWorkspace({
-                title: data.title,
-                mashup: data.mashup
-            }).then(
-                function (workspace) {
+            Wirecloud.createWorkspace(data).then(
+                (workspace) => {
                     Wirecloud.changeActiveWorkspace(workspace);
                 },
-                function (msg, details) {
-                    var dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
+                (msg, details) => {
+                    const dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
                     dialog.show();
                 }
             )
         );
     };
 
-    var NewWorkspaceWindowMenu = function NewWorkspaceWindowMenu() {
-        var fields = {
-            'title': {
-                label: utils.gettext('Name'),
-                type: 'text'
-            },
-            'mashup': {
-                label: utils.gettext('Template'),
-                type: 'mac',
-                scope: 'mashup',
-                dialog_title: utils.gettext('Select a mashup template'),
-                required: false,
-                parent_dialog: this
+    const NewWorkspaceWindowMenu = function NewWorkspaceWindowMenu(options) {
+        if (options == null) {
+            options = {};
+        }
+        const fields = {
+            "title": {
+                label: utils.gettext("Name"),
+                type: "text",
+                initialValue: options.title
             }
         };
-        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Create Workspace'), 'wc-new-workspace-modal');
+        const title = options.workspace == null ? utils.gettext("Create Workspace") : utils.gettext("Copy Workspace");
+        if (options.workspace == null) {
+            fields.mashup = {
+                label: utils.gettext("Template"),
+                type: "mac",
+                scope: "mashup",
+                dialog_title: utils.gettext("Select a mashup template"),
+                required: false,
+                parent_dialog: this
+            };
+        } else {
+            fields.workspace = {
+                type: "hidden",
+                initialValue: options.workspace
+            };
+        }
+        Wirecloud.ui.FormWindowMenu.call(this, fields, title, "wc-new-workspace-modal");
     };
     NewWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
-        var task_title;
+        let task_title;
 
-        if (data.name) {
+        if (data.title) {
             if (data.mashup) {
-                task_title = utils.gettext("Creating a %(owner)s/%(name)s workspace using %(mashup)s as template");
+                task_title = utils.gettext("Creating a %(owner)s/%(title)s workspace using %(mashup)s as template");
             } else {
-                task_title = utils.gettext("Creating a %(owner)s/%(name)s workspace");
+                task_title = utils.gettext("Creating a %(owner)s/%(title)s workspace");
             }
         } else {
             task_title = utils.gettext("Creating a new workspace using %(mashup)s as template");
         }
         task_title = utils.interpolate(task_title, {
-            owner: Wirecloud.contextManager.get('username'),
-            name: data.name,
+            owner: Wirecloud.contextManager.get("username"),
+            title: data.title,
             mashup: data.mashup
         });
 
         Wirecloud.UserInterfaceManager.monitorTask(
-            Wirecloud.createWorkspace({
-                title: data.title,
-                mashup: data.mashup
-            }).then(function (workspace) {
-                return Wirecloud.changeActiveWorkspace(workspace);
-            }, function (error) {
-                var dialog;
-                if (error.details != null && 'missingDependencies' in error.details) {
-                    // Show missing dependencies
-                    dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(retry.bind(null, data), error.details);
-                } else {
-                    dialog = new Wirecloud.ui.MessageWindowMenu(error, Wirecloud.constants.LOGGING.ERROR_MSG);
+            Wirecloud.createWorkspace(data).then(
+                (workspace) => {
+                    return Wirecloud.changeActiveWorkspace(workspace);
+                },
+                (error) => {
+                    let dialog;
+                    if (error.details != null && "missingDependencies" in error.details) {
+                        // Show missing dependencies
+                        dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(retry.bind(null, data), error.details);
+                    } else {
+                        dialog = new Wirecloud.ui.MessageWindowMenu(error, Wirecloud.constants.LOGGING.ERROR_MSG);
+                    }
+                    dialog.show();
                 }
-                dialog.show();
-            }).toTask(task_title)
+            ).toTask(task_title)
         );
     };
 
