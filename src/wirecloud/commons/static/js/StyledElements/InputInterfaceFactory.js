@@ -49,7 +49,7 @@
         var mapping = StyledElements.Utils.clone(default_mapping);
 
         this.createInterface = function createInterface(fieldId, fieldDesc) {
-            var Class_ = mapping[fieldDesc.type];
+            var Class_ = mapping[fieldDesc.type != null ? fieldDesc.type : 'text'];
             if (Class_ == null) {
                 throw new Error(fieldDesc.type);
             }

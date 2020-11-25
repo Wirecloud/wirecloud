@@ -380,7 +380,7 @@
     var HiddenInputInterface = function HiddenInputInterface(fieldId, options) {
         StyledElements.InputInterface.call(this, fieldId, options);
 
-        this.inputElement = new StyledElements.StyledHiddenField(options);
+        this.inputElement = new StyledElements.HiddenField(options);
     };
     HiddenInputInterface.prototype = new StyledElements.InputInterface();
 

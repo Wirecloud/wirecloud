@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -518,6 +518,29 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(response_data['owner'], 'emptyuser')
         self.assertEqual(response_data['name'], 'public-workspace')
         self.assertEqual(response_data['title'], 'Public Workspace')
+        public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
+        self.assertEqual(public_preference['value'], 'false')
+
+    def test_workspace_collection_post_from_workspace_custom_name_title(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # workspace 3 (owner: user_with_workspaces, name: Pending Events)
+        data = {
+            'name': 'newname',
+            'title': 'Custom Title',
+            'workspace': '3',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['owner'], 'user_with_workspaces')
+        self.assertEqual(response_data['name'], 'newname')
+        self.assertEqual(response_data['title'], 'Custom Title')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
         self.assertEqual(public_preference['value'], 'false')
 
