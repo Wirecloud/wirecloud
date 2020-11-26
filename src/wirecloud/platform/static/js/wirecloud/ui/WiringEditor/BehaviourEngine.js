@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -713,13 +713,13 @@
     };
 
     var btncreate_onclick = function btncreate_onclick() {
-        var dialog = new Wirecloud.ui.FormWindowMenu(
+        const dialog = new Wirecloud.ui.FormWindowMenu(
             [
-                {name: 'title', label: utils.gettext("Title"), type: 'text'},
-                {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
+                {name: "title", label: utils.gettext("Title"), required: true, initialValue: utils.gettext("New behaviour"), type: "text"},
+                {name: "description", label: utils.gettext("Description"), type: "longtext"}
             ],
             utils.gettext("New behaviour"),
-            'we-new-behaviour-modal'
+            "we-new-behaviour-modal"
         );
 
         dialog.executeOperation = this.createBehaviour.bind(this);

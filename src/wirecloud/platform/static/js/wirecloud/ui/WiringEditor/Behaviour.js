@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -43,14 +43,6 @@
         var descriptionElement;
 
         options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
-
-        if (options.title == null || options.title.trim() === "") {
-            options.title = ns.Behaviour.JSON_TEMPLATE.title;
-        }
-
-        if (options.description == null || options.description.trim() === "") {
-            options.description = ns.Behaviour.JSON_TEMPLATE.description;
-        }
 
         this.title_tooltip = new se.Tooltip({content: options.title, placement: ["top", "bottom", "right", "left"]});
 
@@ -117,8 +109,8 @@
     };
 
     ns.Behaviour.JSON_TEMPLATE = {
-        title: utils.gettext("New behaviour"),
-        description: utils.gettext("No description provided."),
+        title: "",
+        description: "",
         active: false,
         components: {operator: {}, widget: {}},
         connections: []
@@ -279,7 +271,7 @@
         },
 
         /**
-         * [TODO: showSettings description]
+         * Displays a FormWindowMenu to update behaviour details
          *
          * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
@@ -288,15 +280,15 @@
 
             var dialog = new Wirecloud.ui.FormWindowMenu(
                 [
-                    {name: 'title', label: utils.gettext("Title"), type: 'text'},
-                    {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
+                    {name: "title", label: utils.gettext("Title"), required: true, type: "text"},
+                    {name: "description", label: utils.gettext("Description"), type: "longtext"}
                 ],
                 utils.gettext("Behaviour settings"),
-                'behaviour-update-form'
+                "behaviour-update-form"
             );
 
             dialog.executeOperation = updateInfo.bind(this);
-            dialog.setValue(this).show();
+            dialog.show().setValue(this);
 
             return this;
         },
