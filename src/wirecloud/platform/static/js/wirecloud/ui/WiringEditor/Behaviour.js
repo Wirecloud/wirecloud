@@ -40,9 +40,11 @@
      *      [TODO: description]
      */
     ns.Behaviour = function Behaviour(index, options) {
-        var descriptionElement;
-
         options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
+
+        if (options.title.trim() === "") {
+            throw new TypeError("invalid title option");
+        }
 
         this.title_tooltip = new se.Tooltip({content: options.title, placement: ["top", "bottom", "right", "left"]});
 
@@ -70,7 +72,7 @@
 
         this.heading.title.addClassName("se-link behaviour-title text-truncate");
 
-        descriptionElement = document.createElement('p');
+        const descriptionElement = document.createElement('p');
         descriptionElement.className = "behaviour-description";
         descriptionElement.textContent = options.description;
         this.body.appendChild(descriptionElement);
@@ -145,9 +147,7 @@
          * @override
          */
         setTitle: function setTitle(title) {
-            var span;
-
-            span = document.createElement('span');
+            const span = document.createElement('span');
             span.textContent = title;
             this.title_tooltip.options.content = title;
             this.title_tooltip.bind(span);
@@ -168,10 +168,8 @@
         },
 
         getConnectionIndex: function getConnectionIndex(connection) {
-            var _connection, i;
-
-            for (i = 0; i < this.connections.length; i++) {
-                _connection = this.connections[i];
+            for (let i = 0; i < this.connections.length; i++) {
+                const _connection = this.connections[i];
 
                 if (_connection.sourcename === connection.sourceId && _connection.targetname === connection.targetId) {
                     return i;
@@ -243,7 +241,7 @@
          *      The instance on which the member is called.
          */
         removeConnection: function removeConnection(connection) {
-            var index = this.getConnectionIndex(connection);
+            const index = this.getConnectionIndex(connection);
 
             if (index !== -1) {
                 this.connections.splice(index, 1);
@@ -260,12 +258,12 @@
          *      The instance on which the member is called.
          */
         showLogs: function showLogs() {
-            var modal = new Wirecloud.ui.LogWindowMenu(this.logManager, {
+            const dialog = new Wirecloud.ui.LogWindowMenu(this.logManager, {
                 title: utils.interpolate(utils.gettext("%(behaviour_title)s's logs"), {
                     behaviour_title: this.title
                 })
             });
-            modal.show();
+            dialog.show();
 
             return this;
         },
@@ -277,8 +275,7 @@
          *      The instance on which the member is called.
          */
         showSettings: function showSettings() {
-
-            var dialog = new Wirecloud.ui.FormWindowMenu(
+            const dialog = new Wirecloud.ui.FormWindowMenu(
                 [
                     {name: "title", label: utils.gettext("Title"), required: true, type: "text"},
                     {name: "description", label: utils.gettext("Description"), type: "longtext"}
@@ -356,14 +353,12 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var events = ['change', 'optremove'];
+    const events = ['change', 'optremove'];
 
-    var btnremove_onclick = function btnremove_onclick(event) {
-        var dialog, message;
+    const btnremove_onclick = function btnremove_onclick(event) {
+        const message = utils.gettext("The following operation is irreversible and removes the behaviour completely. Would you like to continue?");
 
-        message = utils.gettext("The following operation is irreversible and removes the behaviour completely. Would you like to continue?");
-
-        dialog = new Wirecloud.ui.AlertWindowMenu({
+        const dialog = new Wirecloud.ui.AlertWindowMenu({
             message: message,
             acceptLabel: utils.gettext("Continue"),
             cancelLabel: utils.gettext("No, thank you")
@@ -373,7 +368,7 @@
         }).show();
     };
 
-    var updateInfo = function updateInfo(data) {
+    const updateInfo = function updateInfo(data) {
         this.setTitle(data.title != null && data.title.trim() !== "" ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
         this.dispatchEvent('change');
