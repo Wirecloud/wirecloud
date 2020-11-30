@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,58 +27,50 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    se.Typeahead = class Typeahead extends se.ObjectWithEvents {
 
-    /**
-     * Create a new instance of class Typeahead.
-     *
-     * @constructor
-     * @mixes {StyledElements.ObjectWithEvents}
-     *
-     * @since 0.6.2
-     * @name StyledElements.Typeahead
-     *
-     * @param {Object} [options] - [TODO: description]
-     */
-    se.Typeahead = function Typeahead(options) {
-        options = utils.merge(utils.clone(defaults), options);
+        /**
+         * Create a new instance of class Typeahead.
+         *
+         * @constructor
+         * @mixes {StyledElements.ObjectWithEvents}
+         *
+         * @since 0.6.2
+         * @name StyledElements.Typeahead
+         *
+         * @param {Object} [options] - [TODO: description]
+         */
+        constructor(options) {
+            options = utils.merge(utils.clone(defaults), options);
 
-        if (typeof options.build !== "function") {
-            throw new TypeError("build option must be a function");
+            if (typeof options.build !== "function") {
+                throw new TypeError("build option must be a function");
+            }
+            if (typeof options.lookup !== "function") {
+                throw new TypeError("lookup option must be a function");
+            }
+            if (options.compare != null && typeof options.compare !== "function") {
+                throw new TypeError("compare option must be a function");
+            }
+            super(events);
+
+            this.notFoundMessage = options.notFoundMessage;
+
+            this.timeout = null;
+            this.currentRequest = null;
+            var popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
+            popupMenu.addEventListener('click', popupMenu_onselect.bind(this));
+
+            Object.defineProperties(this, {
+                autocomplete: {value: options.autocomplete},
+                build: {value: options.build},
+                cleanedQuery: {get: property_cleanedQuery_get},
+                compare: {value: options.compare},
+                lookup: {value: options.lookup},
+                minLength: {value: options.minLength},
+                popupMenu: {value: popupMenu}
+            });
         }
-        if (typeof options.lookup !== "function") {
-            throw new TypeError("lookup option must be a function");
-        }
-        if (options.compare != null && typeof options.compare !== "function") {
-            throw new TypeError("compare option must be a function");
-        }
-        se.ObjectWithEvents.call(this, events);
-
-        this.notFoundMessage = options.notFoundMessage;
-
-        this.timeout = null;
-        this.currentRequest = null;
-        var popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
-        popupMenu.addEventListener('click', popupMenu_onselect.bind(this));
-
-        Object.defineProperties(this, {
-            autocomplete: {value: options.autocomplete},
-            build: {value: options.build},
-            cleanedQuery: {get: property_cleanedQuery_get},
-            compare: {value: options.compare},
-            lookup: {value: options.lookup},
-            minLength: {value: options.minLength},
-            popupMenu: {value: popupMenu}
-        });
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(se.Typeahead, se.ObjectWithEvents, /** @lends StyledElements.Typeahead.prototype */{
 
         /**
          * [TODO: bind description]
@@ -88,7 +80,7 @@
          * @param {StyledElements.TextField} textField - [TODO: description]
          * @returns {StyledElements.Typeahead} - The instance on which the member is called.
          */
-        bind: function bind(textField) {
+        bind(textField) {
 
             if (!(textField instanceof se.TextField)) {
                 throw new TypeError();
@@ -109,7 +101,7 @@
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

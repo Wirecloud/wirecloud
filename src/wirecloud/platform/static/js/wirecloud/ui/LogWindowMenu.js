@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,47 +27,38 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.LogWindowMenu = class LogWindowMenu extends ns.WindowMenu {
 
-    var LogWindowMenu = function LogWindowMenu(logManager, options) {
-        var priv = {
-            fadeTimeout: null,
-            on_fade: on_fade.bind(this),
-            on_newentry: on_newentry.bind(this)
-        };
+        constructor(logManager, options) {
+            options = utils.update({
+                title: utils.gettext("Logs")
+            }, options);
 
-        options = utils.update({
-            title: utils.gettext("Logs")
-        }, options);
+            super(options.title, 'logwindowmenu');
 
-        ns.WindowMenu.call(this, options.title, 'logwindowmenu');
+            const priv = {
+                fadeTimeout: null,
+                on_fade: on_fade.bind(this),
+                on_newentry: on_newentry.bind(this)
+            };
+            privates.set(this, priv);
 
-        privates.set(this, priv);
+            Object.defineProperties(this, {
+                logManager: {
+                    value: logManager
+                }
+            });
 
-        Object.defineProperties(this, {
-            logManager: {
-                value: logManager
-            }
-        });
+            // Accept button
+            this.button = new se.Button({
+                text: utils.gettext("Close"),
+                class: "btn-primary btn-accept"
+            });
+            this.button.insertInto(this.windowBottom);
+            this.button.addEventListener("click", this._closeListener);
+        }
 
-        // Accept button
-        this.button = new se.Button({
-            text: utils.gettext("Close"),
-            class: "btn-primary btn-accept"
-        });
-        this.button.insertInto(this.windowBottom);
-        this.button.addEventListener("click", this._closeListener);
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(LogWindowMenu, Wirecloud.ui.WindowMenu, {
-
-        hide: function hide(parentWindow) {
+        hide(parentWindow) {
             var priv = privates.get(this);
 
             this.windowContent.innerHTML = "";
@@ -74,9 +66,9 @@
 
             ns.WindowMenu.prototype.hide.call(this, parentWindow);
             return this;
-        },
+        }
 
-        show: function show(parentWindow) {
+        show(parentWindow) {
             var priv = privates.get(this);
 
             this.logManager.entries.forEach(appendEntry, this);
@@ -88,14 +80,14 @@
 
             ns.WindowMenu.prototype.show.call(this, parentWindow);
             return this;
-        },
+        }
 
-        setFocus: function setFocus() {
+        setFocus() {
             this.button.focus();
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -188,7 +180,5 @@
         }
         priv.fadeTimeout = setTimeout(priv.on_fade, 200);
     };
-
-    ns.LogWindowMenu = LogWindowMenu;
 
 })(Wirecloud.ui, StyledElements, Wirecloud.Utils);

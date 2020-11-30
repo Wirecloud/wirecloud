@@ -1,5 +1,6 @@
 /*
  *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,82 +23,74 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    /**
-     * Form dialog.
-     */
-    var FormWindowMenu = function FormWindowMenu(fields, title, extra_class, options) {
+    ns.FormWindowMenu = class FormWindowMenu extends ns.WindowMenu {
 
-        // Allow hierarchy
-        if (arguments.length === 0) {
-            return;
+        constructor(fields, title, extra_class, options) {
+            super(title, extra_class);
+
+            options = Wirecloud.Utils.merge({
+                factory: Wirecloud.ui.InputInterfaceFactory,
+                autoHide: true
+            }, options);
+            options.buttonArea = this.windowBottom;
+
+            this.form = new se.Form(fields, options);
+            this.form.insertInto(this.windowContent);
+            this.form.acceptButton.addClassName('btn-accept');
+            this.form.cancelButton.addClassName('btn-cancel');
+            this.form.addEventListener('submit', function (form, data) {
+                this.form.acceptButton.disable();
+                this.form.cancelButton.disable();
+                try {
+                    var operation = this.executeOperation(data);
+                } catch (e) {}
+                if (operation != null && typeof operation.then === "function") {
+                    this.form.acceptButton.addClassName('busy');
+                    operation.then(
+                        function () {
+                            this.hide();
+                        }.bind(this),
+                        function (error) {
+                            this.form.displayMessage(error);
+                            this.form.acceptButton.removeClassName('busy');
+                            this.form.acceptButton.enable();
+                            this.form.cancelButton.enable();
+
+                        }.bind(this)
+                    );
+                } else if (options.autoHide === true) {
+                    this.hide();
+                }
+            }.bind(this));
+            this.form.addEventListener('cancel', this._closeListener);
         }
 
-        Wirecloud.ui.WindowMenu.call(this, title, extra_class);
+        setValue(newValue) {
+            this.form.setData(newValue);
 
-        options = Wirecloud.Utils.merge({
-            factory: Wirecloud.ui.InputInterfaceFactory,
-            autoHide: true
-        }, options);
-        options.buttonArea = this.windowBottom;
+            return this;
+        }
 
-        this.form = new se.Form(fields, options);
-        this.form.insertInto(this.windowContent);
-        this.form.acceptButton.addClassName('btn-accept');
-        this.form.cancelButton.addClassName('btn-cancel');
-        this.form.addEventListener('submit', function (form, data) {
-            this.form.acceptButton.disable();
-            this.form.cancelButton.disable();
-            try {
-                var operation = this.executeOperation(data);
-            } catch (e) {}
-            if (operation != null && typeof operation.then === "function") {
-                this.form.acceptButton.addClassName('busy');
-                operation.then(
-                    function () {
-                        this.hide();
-                    }.bind(this),
-                    function (error) {
-                        this.form.displayMessage(error);
-                        this.form.acceptButton.removeClassName('busy');
-                        this.form.acceptButton.enable();
-                        this.form.cancelButton.enable();
+        setFocus() {
+            this.form.focus();
 
-                    }.bind(this)
-                );
-            } else if (options.autoHide === true) {
-                this.hide();
-            }
-        }.bind(this));
-        this.form.addEventListener('cancel', this._closeListener);
-    };
-    utils.inherit(FormWindowMenu, Wirecloud.ui.WindowMenu);
+            return this;
+        }
 
-    FormWindowMenu.prototype.setValue = function setValue(newValue) {
-        this.form.setData(newValue);
+        show(parentWindow) {
+            this.form.reset();
+            this.form.acceptButton.enable();
+            this.form.cancelButton.enable();
+            super.show(parentWindow);
+            this.form.repaint();
 
-        return this;
-    };
+            return this;
+        }
 
-    FormWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.focus();
+    }
 
-        return this;
-    };
-
-    FormWindowMenu.prototype.show = function show(parentWindow) {
-        this.form.reset();
-        this.form.acceptButton.enable();
-        this.form.cancelButton.enable();
-        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
-        this.form.repaint();
-
-        return this;
-    };
-
-    Wirecloud.ui.FormWindowMenu = FormWindowMenu;
-
-})(StyledElements, Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

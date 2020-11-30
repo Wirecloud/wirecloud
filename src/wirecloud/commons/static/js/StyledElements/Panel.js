@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,108 +27,116 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    const defaultOptions = {
+        class: "",
+        events: [],
+        title: "",
+        subtitle: "",
+        state: "default",
+        selectable: false,
+        noBody: false,
+        buttons: []
+    };
+    Object.freeze(defaultOptions);
 
-    /**
-     * Create a new instance of class Panel.
-     *
-     * @constructor
-     * @param {Object.<String, *>} options [description]
-     */
-    se.Panel = function Panel(options) {
-        options = utils.merge(utils.clone(defaults), options);
-        se.StyledElement.call(this, ['click'].concat(options.events));
+    se.Panel = class Panel extends se.StyledElement {
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'panel';
+        /**
+         * Creates a new instance of class Panel.
+         *
+         * @constructor
+         * @param {Object.<String, *>} options [description]
+         */
+        constructor(options) {
+            options = utils.merge({}, defaultOptions, options);
+            super(['click'].concat(options.events));
 
-        if (options.state) {
-            this.addClassName('panel-' + options.state);
-        }
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = 'panel';
 
-        if (options.selectable) {
-            this.addClassName('panel-selectable');
-        }
-
-        this.addClassName(options.class);
-
-        this.heading = new se.Container({class: "panel-heading"});
-        this.heading.insertInto(this.wrapperElement);
-
-        if (options.title) {
-            this.setTitle(options.title);
-        }
-
-        if (options.buttons.length) {
-            this.buttons = new se.Container({class: "panel-options"});
-            options.buttons.forEach(function (button) {
-                this.buttons.appendChild(button);
-            }, this);
-            this.heading.appendChild(this.buttons);
-        }
-
-        if (options.subtitle) {
-            this.setSubtitle(options.subtitle);
-        }
-
-        if (!options.noBody) {
-            this.body = new se.Container({class: "panel-body"});
-            this.body.insertInto(this.wrapperElement);
-        }
-
-        Object.defineProperties(this, {
-
-            active: {
-                get: function get() {return this.hasClassName('active');},
-                set: function set(value) {
-                    if (this.active !== value) {
-                        this.toggleClassName('active', value)._onactive(value);
-                    }
-                }
-            },
-
-            title: {
-                get: function get() {return this.heading.title.text();}
+            if (options.state) {
+                this.addClassName('panel-' + options.state);
             }
 
-        });
+            if (options.selectable) {
+                this.addClassName('panel-selectable');
+            }
 
-        this.wrapperElement.addEventListener('click', this._onclick.bind(this));
-    };
+            this.addClassName(options.class);
 
-    utils.inherit(se.Panel, se.StyledElement, {
+            this.heading = new se.Container({class: "panel-heading"});
+            this.heading.insertInto(this.wrapperElement);
+
+            if (options.title) {
+                this.setTitle(options.title);
+            }
+
+            if (options.buttons.length) {
+                this.buttons = new se.Container({class: "panel-options"});
+                options.buttons.forEach(function (button) {
+                    this.buttons.appendChild(button);
+                }, this);
+                this.heading.appendChild(this.buttons);
+            }
+
+            if (options.subtitle) {
+                this.setSubtitle(options.subtitle);
+            }
+
+            if (!options.noBody) {
+                this.body = new se.Container({class: "panel-body"});
+                this.body.insertInto(this.wrapperElement);
+            }
+
+            Object.defineProperties(this, {
+
+                active: {
+                    get: function get() {return this.hasClassName('active');},
+                    set: function set(value) {
+                        if (this.active !== value) {
+                            this.toggleClassName('active', value)._onactive(value);
+                        }
+                    }
+                },
+
+                title: {
+                    get: function get() {return this.heading.title.text();}
+                }
+
+            });
+
+            this.wrapperElement.addEventListener('click', this._onclick.bind(this));
+        };
 
         /**
          * @since 0.6.0
          * @abstract
          */
-        _onactive: function _onactive(active) {
+        _onactive(active) {
             // This member can be implemented by subclass.
-        },
+        }
 
         /**
          * @override
          */
-        _onclick: function _onclick(event) {
+        _onclick(event) {
             event.stopPropagation();
             return this.dispatchEvent('click', event);
-        },
+        }
 
         /**
          * @override
          */
-        clear: function clear() {
+        clear() {
 
             if (this.body != null) {
                 this.body.clear();
             }
 
             return this;
-        },
+        }
 
-        setTitle: function setTitle(title) {
+        setTitle(title) {
 
             if (this.heading.title == null) {
                 this.heading.title = new se.Container({class: "panel-title"});
@@ -137,9 +146,9 @@
             this.heading.title.clear().appendChild(title);
 
             return this;
-        },
+        }
 
-        setSubtitle: function setSubtitle(subtitle) {
+        setSubtitle(subtitle) {
 
             if (this.heading.subtitle == null) {
                 this.heading.subtitle = new se.Container({class: "panel-subtitle"});
@@ -151,21 +160,6 @@
             return this;
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var defaults = {
-        class: "",
-        events: [],
-        title: "",
-        subtitle: "",
-        state: 'default',
-        selectable: false,
-        noBody: false,
-        buttons: []
-    };
+    }
 
 })(StyledElements, StyledElements.Utils);

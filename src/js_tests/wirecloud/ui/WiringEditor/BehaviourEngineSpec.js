@@ -77,9 +77,8 @@
             it("should allow to create behaviours", () => {
                 let engine = new ns.BehaviourEngine();
                 engine.enable = true;
-                var dialog;
-                // TODO convert into spyOn
-                Wirecloud.ui.FormWindowMenu = jasmine.createSpy("FormWindowMenu").and.callFake(function () {
+                let dialog;
+                spyOn(Wirecloud.ui, "FormWindowMenu").and.callFake(function () {
                     dialog = this;
                     this.show = jasmine.createSpy("show").and.returnValue(this);
                 });

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,60 +20,61 @@
  *
  */
 
-/* globals Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var ParametrizeWindowMenu = function ParametrizeWindowMenu(inputInterface) {
-        var fields, sourceOptions, statusOptions;
+    ns.ParametrizeWindowMenu = class ParametrizeWindowMenu extends ns.WindowMenu {
 
-        statusOptions = [
-            {label: utils.gettext('Normal'), value: 'normal'},
-            {label: utils.gettext('Read Only'), value: 'readonly'}
-        ];
+        constructor(inputInterface) {
+            var fields, sourceOptions, statusOptions;
 
-        if (inputInterface.canBeHidden) {
-            statusOptions.push({label: utils.gettext('Hidden'), value: 'hidden'});
+            statusOptions = [
+                {label: utils.gettext('Normal'), value: 'normal'},
+                {label: utils.gettext('Read Only'), value: 'readonly'}
+            ];
+
+            if (inputInterface.canBeHidden) {
+                statusOptions.push({label: utils.gettext('Hidden'), value: 'hidden'});
+            }
+
+            sourceOptions = [
+                {label: utils.gettext('Current value'), value: 'current'},
+                {label: utils.gettext('Default value'), value: 'default'},
+                {label: utils.gettext('Parametrized value'), value: 'custom'}
+            ];
+
+            fields = {
+                'status': {label: utils.gettext('Status'), type: 'select', initialEntries: statusOptions, required: true},
+                'source': {label: utils.gettext('Value source'), type: 'select', initialEntries: sourceOptions, required: true},
+                'separator': {type: 'separator'},
+                'value': {label: utils.gettext('Value'), type: 'parametrizedText', variable: inputInterface.variable}
+            };
+            super(fields, utils.gettext('Parametrization'), 'variable_parametrization');
+
+            this.inputInterface = inputInterface;
+
+            // TODO
+            var valueInput = this.form.fieldInterfaces.value;
+            var sourceInput = this.form.fieldInterfaces.source.inputElement;
+            var updateFunc = function () {
+                this.valueInput.setDisabled(this.sourceInput.getValue() !== 'custom');
+            }.bind({valueInput: valueInput, sourceInput: sourceInput});
+            valueInput.update = updateFunc;
+            sourceInput.inputElement.addEventListener('change', updateFunc);
         }
 
-        sourceOptions = [
-            {label: utils.gettext('Current value'), value: 'current'},
-            {label: utils.gettext('Default value'), value: 'default'},
-            {label: utils.gettext('Parametrized value'), value: 'custom'}
-        ];
+        setFocus() {
+            this.form.fieldInterfaces.status.focus();
+        }
 
-        fields = {
-            'status': {label: utils.gettext('Status'), type: 'select', initialEntries: statusOptions, required: true},
-            'source': {label: utils.gettext('Value source'), type: 'select', initialEntries: sourceOptions, required: true},
-            'separator': {type: 'separator'},
-            'value': {label: utils.gettext('Value'), type: 'parametrizedText', variable: inputInterface.variable}
-        };
-        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Parametrization'), 'variable_parametrization');
+        executeOperation(newValue) {
+            this.inputInterface.setValue(newValue);
+        }
 
-        this.inputInterface = inputInterface;
+    }
 
-        // TODO
-        var valueInput = this.form.fieldInterfaces.value;
-        var sourceInput = this.form.fieldInterfaces.source.inputElement;
-        var updateFunc = function () {
-            this.valueInput.setDisabled(this.sourceInput.getValue() !== 'custom');
-        }.bind({valueInput: valueInput, sourceInput: sourceInput});
-        valueInput.update = updateFunc;
-        sourceInput.inputElement.addEventListener('change', updateFunc);
-    };
-    ParametrizeWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
-
-    ParametrizeWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.fieldInterfaces.status.focus();
-    };
-
-    ParametrizeWindowMenu.prototype.executeOperation = function executeOperation(newValue) {
-        this.inputInterface.setValue(newValue);
-    };
-
-    Wirecloud.ui.ParametrizeWindowMenu = ParametrizeWindowMenu;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

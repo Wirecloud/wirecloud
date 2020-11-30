@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -40,35 +41,35 @@
      * @param {Object.<String, *>} options [description]
      * @param {String[]} events [description]
      */
-    se.Container = function Container(options, events) {
-        options = utils.merge(utils.clone(defaults), options);
-        se.StyledElement.call(this, events);
+    se.Container = class Container extends se.StyledElement {
 
-        this.wrapperElement = document.createElement(options.tagname);
-        this.wrapperElement.className = 'se-container';
+        constructor(options, events) {
+            options = utils.merge(utils.clone(defaults), options);
+            super(events);
 
-        if (options.id) {
-            this.wrapperElement.setAttribute('id', options.id);
-        }
+            this.wrapperElement = document.createElement(options.tagname);
+            this.wrapperElement.className = 'se-container';
 
-        this.addClassName(options.class);
-
-        var priv = {
-            children: []
-        };
-
-        privates.set(this, priv);
-
-        Object.defineProperties(this, {
-            'children': {
-                get: function () {
-                    return priv.children.slice(0);
-                }
+            if (options.id) {
+                this.wrapperElement.setAttribute('id', options.id);
             }
-        });
-    };
 
-    utils.inherit(se.Container, se.StyledElement, /** @lends StyledElements.Container.prototype */ {
+            this.addClassName(options.class);
+
+            var priv = {
+                children: []
+            };
+
+            privates.set(this, priv);
+
+            Object.defineProperties(this, {
+                'children': {
+                    get: function () {
+                        return priv.children.slice(0);
+                    }
+                }
+            });
+        }
 
         /**
          * Checks if the given element is a direct descendant of this
@@ -82,7 +83,7 @@
          * @returns {Boolean}
          *      If the given element is a child of this `Container`.
          */
-        has: function has(childElement) {
+        has(childElement) {
 
             var priv = privates.get(this);
 
@@ -91,7 +92,7 @@
             }
 
             return childElement.parentElement === this.get();
-        },
+        }
 
         /**
          * Inserts the `newElement` either to the end of this Container
@@ -107,11 +108,11 @@
          * @returns {StyledElements.Container}
          *     The instance on which the member is called.
          */
-        appendChild: function appendChild(newElement, refElement) {
+        appendChild(newElement, refElement) {
             utils.appendChild(this, newElement, refElement).forEach(addChild, this);
             orderbyIndex.call(this);
             return this;
-        },
+        }
 
         /**
          * Inserts the `newElement` to the beginning of this `Container`
@@ -127,11 +128,11 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        prependChild: function prependChild(newElement, refElement) {
+        prependChild(newElement, refElement) {
             utils.prependChild(this, newElement, refElement).forEach(addChild, this);
             orderbyIndex.call(this);
             return this;
-        },
+        }
 
         /**
          * Removes the `childElement` from this `Container`.
@@ -144,7 +145,7 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        removeChild: function removeChild(childElement) {
+        removeChild(childElement) {
             utils.removeChild(this, childElement);
 
             if (childElement instanceof se.StyledElement) {
@@ -153,7 +154,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Removes the `childElement` from this `Container`.
@@ -166,14 +167,14 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        repaint: function repaint(temporal) {
+        repaint(temporal) {
             temporal = temporal !== undefined ? temporal : false;
 
             var priv = privates.get(this);
             for (var i = 0; i < priv.children.length; i++) {
                 priv.children[i].repaint(temporal);
             }
-        },
+        }
 
         /**
          * Removes all children from this `Container`.
@@ -183,7 +184,7 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        clear: function clear() {
+        clear() {
             var priv = privates.get(this);
 
             priv.children = [];
@@ -195,7 +196,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Gets the combined text content of this `Container`.
@@ -208,23 +209,23 @@
          *      `newText` parameter is not used. Otherways, the instance on
          *      which the member is called.
          */
-        text: function text(text) {
+        text(text) {
             if (text == null) {
                 return this.get().textContent;
             } else {
                 return this.clear().appendChild("" + text);
             }
-        },
+        }
 
         /**
          * @deprecated since version 0.6.0
          * @see {@link StyledElements.Container#enabled}
          */
-        isDisabled: function isDisabled() {
+        isDisabled() {
             return !this.enabled;
-        },
+        }
 
-        _onenabled: function _onenabled(enabled) {
+        _onenabled(enabled) {
             var icon, priv;
 
             priv = privates.get(this);
@@ -246,7 +247,7 @@
             }
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

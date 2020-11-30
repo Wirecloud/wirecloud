@@ -27,315 +27,307 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.Widget = class Widget extends se.ObjectWithEvents {
 
-    /**
-     * @name Wirecloud.Widget
-     *
-     * @extends {StyledElements.ObjectWithEvents}
-     * @constructor
-     *
-     * @param {Wirecloud.WorkspaceTab} tab
-     * @param {Wirecloud.WidgetMeta} meta
-     * @param {Object} data
-     */
-    ns.Widget = function Widget(tab, meta, data) {
-        se.ObjectWithEvents.call(this, [
-            'change',
-            'load',
-            'remove',
-            'unload'
-        ]);
+        /**
+         * @name Wirecloud.Widget
+         *
+         * @extends {StyledElements.ObjectWithEvents}
+         * @constructor
+         *
+         * @param {Wirecloud.WorkspaceTab} tab
+         * @param {Wirecloud.WidgetMeta} meta
+         * @param {Object} data
+         */
+        constructor(tab, meta, data) {
+            super([
+                'change',
+                'load',
+                'remove',
+                'unload'
+            ]);
 
-        if (data == null) {
-            throw new TypeError("invalid data parameter");
-        }
+            if (data == null) {
+                throw new TypeError("invalid data parameter");
+            }
 
-        data = utils.merge({
-            title: meta.title,
-            preferences: {},
-            properties: {},
-            titlevisible: true
-        }, data);
+            data = utils.merge({
+                title: meta.title,
+                preferences: {},
+                properties: {},
+                titlevisible: true
+            }, data);
 
-        this.pending_events = [];
-        this.prefCallback = null;
+            this.pending_events = [];
+            this.prefCallback = null;
 
-        if (data.permissions == null) {
-            data.permissions = {};
-        }
+            if (data.permissions == null) {
+                data.permissions = {};
+            }
 
-        let permissions = {
-            'editor': Wirecloud.Utils.merge({
-                close: true,
-                configure: true,
-                move: true,
-                rename: true,
-                resize: true,
-                minimize: true,
-                upgrade: true
-            }, data.permissions.editor),
-            'viewer': Wirecloud.Utils.merge({
-                close: false,
-                configure: false,
-                move: false,
-                rename: false,
-                resize: false,
-                minimize: false,
-                upgrade: false
-            }, data.permissions.viewer)
-        };
+            let permissions = {
+                'editor': Wirecloud.Utils.merge({
+                    close: true,
+                    configure: true,
+                    move: true,
+                    rename: true,
+                    resize: true,
+                    minimize: true,
+                    upgrade: true
+                }, data.permissions.editor),
+                'viewer': Wirecloud.Utils.merge({
+                    close: false,
+                    configure: false,
+                    move: false,
+                    rename: false,
+                    resize: false,
+                    minimize: false,
+                    upgrade: false
+                }, data.permissions.viewer)
+            };
 
-        // TODO
-        if (data.readonly) {
-            permissions.editor.close = false;
-            permissions.editor.upgrade = false;
-            permissions.viewer.close = false;
-            permissions.viewer.upgrade = false;
-            permissions.viewer.upgrade = false;
-        }
+            // TODO
+            if (data.readonly) {
+                permissions.editor.close = false;
+                permissions.editor.upgrade = false;
+                permissions.viewer.close = false;
+                permissions.viewer.upgrade = false;
+                permissions.viewer.upgrade = false;
+            }
 
-        privates.set(this, {
-            permissions: permissions,
-            position: {
-                anchor: data.anchor,
-                relx: data.relx,
-                rely: data.rely,
-                x: data.left,
-                y: data.top,
-                z: data.zIndex
-            },
-            meta: meta,
-            shape: {
-                relheight: data.relheight,
-                relwidth: data.relwidth,
-                width: data.width,
-                height: data.height
-            },
-            status: STATUS.CREATED,
-            tab: tab,
-            titlevisible: !!data.titlevisible,
-            on_preremovetab: on_preremovetab.bind(this)
-        });
+            privates.set(this, {
+                permissions: permissions,
+                position: {
+                    anchor: data.anchor,
+                    relx: data.relx,
+                    rely: data.rely,
+                    x: data.left,
+                    y: data.top,
+                    z: data.zIndex
+                },
+                meta: meta,
+                shape: {
+                    relheight: data.relheight,
+                    relwidth: data.relwidth,
+                    width: data.width,
+                    height: data.height
+                },
+                status: STATUS.CREATED,
+                tab: tab,
+                titlevisible: !!data.titlevisible,
+                on_preremovetab: on_preremovetab.bind(this)
+            });
 
-        Object.defineProperties(this, {
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {String}
-             */
-            codeurl: {
-                get: function () {
-                    var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
-                    if ('workspaceview' in this.tab.workspace.view) {
-                        url += "&workspaceview=" + encodeURIComponent(this.tab.workspace.view.workspaceview);
+            Object.defineProperties(this, {
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {String}
+                 */
+                codeurl: {
+                    get: function () {
+                        var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
+                        if ('workspaceview' in this.tab.workspace.view) {
+                            url += "&workspaceview=" + encodeURIComponent(this.tab.workspace.view.workspaceview);
+                        }
+                        return url;
                     }
-                    return url;
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {String}
+                 */
+                id: {
+                    value: data.id
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Boolean}
+                 */
+                loaded: {
+                    get: function () {
+                        return privates.get(this).status === STATUS.RUNNING;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Boolean}
+                 */
+                logManager: {
+                    value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Wirecloud.WidgetMeta}
+                 */
+                meta: {
+                    get: function () {
+                        return privates.get(this).meta;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Boolean}
+                 */
+                missing: {
+                    get: function () {
+                        return this.meta.missing;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Wirecloud.WorkspaceTab}
+                 */
+                tab: {
+                    get: function () {
+                        return privates.get(this).tab;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {String}
+                 */
+                title: {
+                    get: function () {
+                        return this.contextManager.get('title');
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Boolean}
+                 */
+                volatile: {
+                    value: !!data.volatile
                 }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {String}
-             */
-            id: {
-                value: data.id
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Boolean}
-             */
-            loaded: {
-                get: function () {
-                    return privates.get(this).status === STATUS.RUNNING;
+            });
+            this.fulldragboard = data.fulldragboard;
+
+            this.wrapperElement = document.createElement('iframe');
+            this.wrapperElement.className = "wc-widget-content";
+            this.wrapperElement.setAttribute('frameBorder', "0");
+            this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+
+            this.meta.requirements.some(function (requirement) {
+                if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
+                    this.wrapperElement.setAttribute('allowfullscreen', 'true');
+                    return true;
                 }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Boolean}
-             */
-            logManager: {
-                value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Wirecloud.WidgetMeta}
-             */
-            meta: {
-                get: function () {
-                    return privates.get(this).meta;
+            }, this);
+
+
+            build_endpoints.call(this);
+            build_prefs.call(this, data.preferences);
+            build_props.call(this, data.properties);
+
+            Object.defineProperties(this, {
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Number}
+                 */
+                layout: {
+                    writable: true,
+                    value: data.layout
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Boolean}
+                 */
+                minimized: {
+                    writable: true,
+                    value: data.minimized
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Object}
+                 */
+                permissions: {
+                    get: function () {
+                        return utils.clone(privates.get(this).permissions);
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Object}
+                 */
+                position: {
+                    get: function () {
+                        return utils.clone(privates.get(this).position);
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Object}
+                 */
+                shape: {
+                    get: function () {
+                        return utils.clone(privates.get(this).shape);
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Boolean}
+                 */
+                titlevisible: {
+                    get: () => {
+                        return privates.get(this).titlevisible;
+                    }
                 }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Boolean}
-             */
-            missing: {
-                get: function () {
-                    return this.meta.missing;
+            });
+
+            this.callbacks = {
+                'iwidget': [],
+                'mashup': [],
+                'platform': []
+            };
+
+            this.contextManager = new Wirecloud.ContextManager(this, {
+                'title': {
+                    label: utils.gettext("Title"),
+                    description: utils.gettext("Widget's title"),
+                    value: data.title
+                },
+                'xPosition': {
+                    label: utils.gettext("X-Position"),
+                    description: utils.gettext("Specifies the x-coordinate at which the widget is placed"),
+                    value: data.left
+                },
+                'yPosition': {
+                    label: utils.gettext("Y-Position"),
+                    description: utils.gettext("Specifies the y-coordinate at which the widget is placed"),
+                    value: data.top
+                },
+                'zPosition': {
+                    label: utils.gettext("Z-Position"),
+                    description: utils.gettext("Specifies the z-coordinate at which the widget is placed"),
+                    value: data.zIndex
+                },
+                'height': {
+                    label: utils.gettext("Height"),
+                    description: utils.gettext("Widget's height in layout cells"),
+                    value: data.height
+                },
+                'width': {
+                    label: utils.gettext("Width"),
+                    description: utils.gettext("Widget's width in layout cells"),
+                    value: data.width
+                },
+                'heightInPixels': {
+                    label: utils.gettext("Height in pixels (deprecated)"),
+                    description: utils.gettext("Widget's height in pixels"),
+                    value: 0
+                },
+                'widthInPixels': {
+                    label: utils.gettext("Width in pixels"),
+                    description: utils.gettext("Widget's width in pixels"),
+                    value: 0
                 }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Wirecloud.WorkspaceTab}
-             */
-            tab: {
-                get: function () {
-                    return privates.get(this).tab;
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {String}
-             */
-            title: {
-                get: function () {
-                    return this.contextManager.get('title');
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Boolean}
-             */
-            volatile: {
-                value: !!data.volatile
-            }
-        });
-        this.fulldragboard = data.fulldragboard;
+            });
 
-        this.wrapperElement = document.createElement('iframe');
-        this.wrapperElement.className = "wc-widget-content";
-        this.wrapperElement.setAttribute('frameBorder', "0");
-        this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+            this.tab.addEventListener('preremove', privates.get(this).on_preremovetab);
 
-        this.meta.requirements.some(function (requirement) {
-            if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
-                this.wrapperElement.setAttribute('allowfullscreen', 'true');
-                return true;
-            }
-        }, this);
+            this.logManager.log(utils.gettext("Widget created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
+        }
 
-
-        build_endpoints.call(this);
-        build_prefs.call(this, data.preferences);
-        build_props.call(this, data.properties);
-
-        Object.defineProperties(this, {
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Number}
-             */
-            layout: {
-                writable: true,
-                value: data.layout
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Boolean}
-             */
-            minimized: {
-                writable: true,
-                value: data.minimized
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Object}
-             */
-            permissions: {
-                get: function () {
-                    return utils.clone(privates.get(this).permissions);
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Object}
-             */
-            position: {
-                get: function () {
-                    return utils.clone(privates.get(this).position);
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Object}
-             */
-            shape: {
-                get: function () {
-                    return utils.clone(privates.get(this).shape);
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Widget#
-             * @type {Boolean}
-             */
-            titlevisible: {
-                get: () => {
-                    return privates.get(this).titlevisible;
-                }
-            }
-        });
-
-        this.callbacks = {
-            'iwidget': [],
-            'mashup': [],
-            'platform': []
-        };
-
-        this.contextManager = new Wirecloud.ContextManager(this, {
-            'title': {
-                label: utils.gettext("Title"),
-                description: utils.gettext("Widget's title"),
-                value: data.title
-            },
-            'xPosition': {
-                label: utils.gettext("X-Position"),
-                description: utils.gettext("Specifies the x-coordinate at which the widget is placed"),
-                value: data.left
-            },
-            'yPosition': {
-                label: utils.gettext("Y-Position"),
-                description: utils.gettext("Specifies the y-coordinate at which the widget is placed"),
-                value: data.top
-            },
-            'zPosition': {
-                label: utils.gettext("Z-Position"),
-                description: utils.gettext("Specifies the z-coordinate at which the widget is placed"),
-                value: data.zIndex
-            },
-            'height': {
-                label: utils.gettext("Height"),
-                description: utils.gettext("Widget's height in layout cells"),
-                value: data.height
-            },
-            'width': {
-                label: utils.gettext("Width"),
-                description: utils.gettext("Widget's width in layout cells"),
-                value: data.width
-            },
-            'heightInPixels': {
-                label: utils.gettext("Height in pixels (deprecated)"),
-                description: utils.gettext("Widget's height in pixels"),
-                value: 0
-            },
-            'widthInPixels': {
-                label: utils.gettext("Width in pixels"),
-                description: utils.gettext("Widget's width in pixels"),
-                value: 0
-            }
-        });
-
-        this.tab.addEventListener('preremove', privates.get(this).on_preremovetab);
-
-        this.logManager.log(utils.gettext("Widget created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.Widget, se.ObjectWithEvents, /** @lends Wirecloud.Widget.prototype */{
-
-        changeTab: function changeTab(tab) {
+        changeTab(tab) {
             var priv = privates.get(this);
 
             if (priv.tab === tab) {
@@ -366,9 +358,9 @@
                     }
                 });
             }
-        },
+        }
 
-        fullDisconnect: function fullDisconnect() {
+        fullDisconnect() {
             var name;
 
             for (name in this.inputs) {
@@ -380,19 +372,19 @@
             }
 
             return this;
-        },
+        }
 
-        hasEndpoints: function hasEndpoints() {
+        hasEndpoints() {
             return this.meta.hasEndpoints();
-        },
+        }
 
-        hasPreferences: function hasPreferences() {
+        hasPreferences() {
             return this.meta.hasPreferences();
-        },
+        }
 
-        is: function is(component) {
+        is(component) {
             return this.meta.type === component.meta.type && this.id === component.id;
-        },
+        }
 
         /**
          * @param {String} name
@@ -400,7 +392,7 @@
          *
          * @returns {Boolean}
          */
-        isAllowed: function isAllowed(name, role) {
+        isAllowed(name, role) {
 
             if (role == null) {
                 role = "viewer";
@@ -425,12 +417,12 @@
             } else {
                 return permissions[name];
             }
-        },
+        }
 
         /**
          * @returns {Wirecloud.Widget}
          */
-        load: function load() {
+        load() {
 
             if (privates.get(this).status !== STATUS.CREATED) {
                 return this;
@@ -441,21 +433,21 @@
             this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
 
             return this;
-        },
+        }
 
         /**
          * @returns {Wirecloud.Widget}
          */
-        reload: function reload() {
+        reload() {
             let priv = privates.get(this);
             priv.status = STATUS.UNLOADING;
             this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
             this.wrapperElement.contentWindow.location.reload();
 
             return this;
-        },
+        }
 
-        registerContextAPICallback: function registerContextAPICallback(scope, callback) {
+        registerContextAPICallback(scope, callback) {
             switch (scope) {
             case 'iwidget':
                 this.contextManager.addCallback(callback);
@@ -471,22 +463,22 @@
             }
 
             this.callbacks[scope].push(callback);
-        },
+        }
 
         /**
          * @param {Function} callback
          *
          * @returns {Wirecloud.Widget}
          */
-        registerPrefCallback: function registerPrefCallback(callback) {
+        registerPrefCallback(callback) {
             this.prefCallback = callback;
             return this;
-        },
+        }
 
         /**
          * @returns {Promise}
          */
-        remove: function remove() {
+        remove() {
             if (this.volatile) {
                 _remove.call(this);
                 return Promise.resolve(this);
@@ -509,14 +501,14 @@
                     }
                 });
             }
-        },
+        }
 
         /**
          * @param {String} title
          *
          * @returns {Promise}
          */
-        rename: function rename(title) {
+        rename(title) {
             title = clean_title.call(this, title);
 
             if (this.volatile) {
@@ -547,7 +539,7 @@
                     }
                 });
             }
-        },
+        }
 
         /**
          * Updates viewer permissions over the widget.
@@ -556,7 +548,7 @@
          *
          * @returns {Wirecloud.Task}
          */
-        setPermissions: function setPermissions(permissions) {
+        setPermissions(permissions) {
             if (this.volatile) {
                 return _setPermissions(this, permissions);
             } else {
@@ -585,25 +577,25 @@
                     }
                 });
             }
-        },
+        }
 
-        setPosition: function setPosition(position) {
+        setPosition(position) {
             utils.update(privates.get(this).position, position);
             return this;
-        },
+        }
 
-        setShape: function setShape(shape) {
+        setShape(shape) {
             // TODO: is minimized
             utils.update(privates.get(this).shape, shape);
             return this;
-        },
+        }
 
         /**
          * Set title visibility on persistence
          *
          * @returns {Promise}
          */
-        setTitleVisibility: function setTitleVisibility(visibility, persistence) {
+        setTitleVisibility(visibility, persistence) {
             visibility = !!visibility;
 
             if (this.volatile) {
@@ -636,31 +628,31 @@
                 this.dispatchEvent('change', ['titlevisible']);
                 return Promise.resolve(this);
             }
-        },
+        }
 
         /**
          * @returns {Wirecloud.Widget}
          */
-        showLogs: function showLogs() {
+        showLogs() {
             var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
             dialog.htmlElement.classList.add("wc-component-logs-modal");
             dialog.show();
             return this;
-        },
+        }
 
         /**
          * @returns {Wirecloud.Widget}
          */
-        showSettings: function showSettings() {
+        showSettings() {
             var dialog = new Wirecloud.Widget.PreferencesWindowMenu();
             dialog.show(this);
             return this;
-        },
+        }
 
         /**
          * @param {Wirecloud.WidgetMeta} meta
          */
-        upgrade: function upgrade(meta) {
+        upgrade(meta) {
 
             if (!is_valid_meta.call(this, meta)) {
                 throw new TypeError("invalid meta parameter");
@@ -714,7 +706,7 @@
             }
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

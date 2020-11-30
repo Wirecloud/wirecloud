@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -20,140 +20,143 @@
  *
  */
 
-/* globals gettext, StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
-(function () {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var ResourceDetailsView = function ResourceDetailsView(id, options) {
-        var extra_context;
+    ns.ResourceDetailsView = class ResourceDetailsView extends se.Alternative {
 
-        this.mainview = options.catalogue;
-        options['class'] = 'details_interface loading';
-        StyledElements.Alternative.call(this, id, options);
+        constructor(id, options) {
+            super(id, options);
 
-        extra_context = function (resource) {
-            return {
-                'details': function (options, context) {
-                    var details, i, entries, versions;
+            var extra_context;
 
-                    details = new StyledElements.Notebook();
-                    details.addEventListener('changed', function (notebook, oldTab, newTab, context) {
-                        if (context == null || context.init !== true) {
-                            let new_status;
-                            if ('mainview' in this.mainview) {
-                                new_status = this.mainview.mainview.buildStateData();
-                            } else {
-                                new_status = this.mainview.buildStateData();
+            this.mainview = options.catalogue;
+            options['class'] = 'details_interface loading';
+
+            extra_context = function (resource) {
+                return {
+                    'details': function (options, context) {
+                        var details, i, entries, versions;
+
+                        details = new StyledElements.Notebook();
+                        details.addEventListener('changed', function (notebook, oldTab, newTab, context) {
+                            if (context == null || context.init !== true) {
+                                let new_status;
+                                if ('mainview' in this.mainview) {
+                                    new_status = this.mainview.mainview.buildStateData();
+                                } else {
+                                    new_status = this.mainview.buildStateData();
+                                }
+
+                                Wirecloud.HistoryManager.pushState(new_status);
                             }
+                            Wirecloud.dispatchEvent('viewcontextchanged');
+                        }.bind(this));
 
-                            Wirecloud.HistoryManager.pushState(new_status);
+                        var select = new StyledElements.Select({'class': 'versions'});
+                        entries = [];
+                        versions = resource.getAllVersions();
+                        for (i = 0; i < versions.length; i++) {
+                            entries.push({
+                                'label': 'v' + versions[i].text,
+                                'value': versions[i].text
+                            });
                         }
-                        Wirecloud.dispatchEvent('viewcontextchanged');
-                    }.bind(this));
-
-                    var select = new StyledElements.Select({'class': 'versions'});
-                    entries = [];
-                    versions = resource.getAllVersions();
-                    for (i = 0; i < versions.length; i++) {
-                        entries.push({
-                            'label': 'v' + versions[i].text,
-                            'value': versions[i].text
-                        });
-                    }
-                    select.addEntries(entries);
-                    details.addButton(select, 'left');
-                    select.setDisabled(versions.length === 1);
-                    select.setValue(resource.version.text);
-                    select.addEventListener('change', function (select) {
-                        resource.changeVersion(select.getValue());
-                        this.mainview.createUserCommand('showDetails', resource)();
-                    }.bind(this));
-
-                    var main_description = details.createTab({label: gettext('Main Info'), closable: false});
-                    main_description.appendChild(this.main_details_painter.paint(resource));
-
-                    if (resource.doc) {
-                        var documentation = details.createTab({label: gettext('Documentation'), containerOptions: {class: 'documentation loading'}, closable: false});
-                        documentation.addEventListener('show', function (tab) {
-                            tab.disable();
-                            var doc_url = resource.catalogue.RESOURCE_USERGUIDE_ENTRY.evaluate(resource);
-                            Wirecloud.io.makeRequest(doc_url, {
-                                method: 'GET',
-                                onSuccess: function (response) {
-                                    var article = document.createElement('article');
-                                    article.className = 'markdown-body';
-                                    article.innerHTML = response.responseText;
-                                    documentation.clear();
-                                    documentation.appendChild(article);
-                                }.bind(this),
-                                onComplete: function () {
-                                    tab.enable();
-                                }
-                            });
+                        select.addEntries(entries);
+                        details.addButton(select, 'left');
+                        select.setDisabled(versions.length === 1);
+                        select.setValue(resource.version.text);
+                        select.addEventListener('change', function (select) {
+                            resource.changeVersion(select.getValue());
+                            this.mainview.createUserCommand('showDetails', resource)();
                         }.bind(this));
-                    }
 
-                    if (resource.changelog) {
-                        var changelog = details.createTab({label: gettext('Change Log'), containerOptions: {class: 'changelog loading'}, closable: false});
-                        changelog.addEventListener('show', function (tab) {
-                            tab.disable();
-                            Wirecloud.io.makeRequest(this.mainview.catalogue.RESOURCE_CHANGELOG_ENTRY.evaluate(resource), {
-                                method: 'GET',
-                                onSuccess: function (response) {
-                                    var article = document.createElement('article');
-                                    article.className = 'markdown-body';
-                                    article.innerHTML = response.responseText;
-                                    changelog.clear();
-                                    changelog.appendChild(article);
-                                }.bind(this),
-                                onComplete: function () {
-                                    tab.enable();
-                                }
-                            });
-                        }.bind(this));
-                    }
+                        var main_description = details.createTab({label: utils.gettext('Main Info'), closable: false});
+                        main_description.appendChild(this.main_details_painter.paint(resource));
 
-                    this.currentNotebook = details;
-                    return details;
-                }.bind(this)
-            };
-        }.bind(this);
+                        if (resource.doc) {
+                            var documentation = details.createTab({label: utils.gettext('Documentation'), containerOptions: {class: 'documentation loading'}, closable: false});
+                            documentation.addEventListener('show', function (tab) {
+                                tab.disable();
+                                var doc_url = resource.catalogue.RESOURCE_USERGUIDE_ENTRY.evaluate(resource);
+                                Wirecloud.io.makeRequest(doc_url, {
+                                    method: 'GET',
+                                    onSuccess: function (response) {
+                                        var article = document.createElement('article');
+                                        article.className = 'markdown-body';
+                                        article.innerHTML = response.responseText;
+                                        documentation.clear();
+                                        documentation.appendChild(article);
+                                    }.bind(this),
+                                    onComplete: function () {
+                                        tab.enable();
+                                    }
+                                });
+                            }.bind(this));
+                        }
 
-        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['wirecloud/catalogue/main_resource_details'], this);
-        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['wirecloud/catalogue/resource_details'], this, extra_context);
-    };
-    ResourceDetailsView.prototype = new StyledElements.Alternative();
+                        if (resource.changelog) {
+                            var changelog = details.createTab({label: utils.gettext('Change Log'), containerOptions: {class: 'changelog loading'}, closable: false});
+                            changelog.addEventListener('show', function (tab) {
+                                tab.disable();
+                                Wirecloud.io.makeRequest(this.mainview.catalogue.RESOURCE_CHANGELOG_ENTRY.evaluate(resource), {
+                                    method: 'GET',
+                                    onSuccess: function (response) {
+                                        var article = document.createElement('article');
+                                        article.className = 'markdown-body';
+                                        article.innerHTML = response.responseText;
+                                        changelog.clear();
+                                        changelog.appendChild(article);
+                                    }.bind(this),
+                                    onComplete: function () {
+                                        tab.enable();
+                                    }
+                                });
+                            }.bind(this));
+                        }
 
-    ResourceDetailsView.prototype.view_name = 'details';
+                        this.currentNotebook = details;
+                        return details;
+                    }.bind(this)
+                };
+            }.bind(this);
 
-    ResourceDetailsView.prototype.buildStateData = function buildStateData(data) {
-        if (this.currentEntry != null) {
-            data.resource = this.currentEntry.uri;
+            this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['wirecloud/catalogue/main_resource_details'], this);
+            this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['wirecloud/catalogue/resource_details'], this, extra_context);
+        }
 
-            if (this.currentNotebook) {
-                data.tab = this.currentNotebook.visibleTab.label;
+        buildStateData(data) {
+            if (this.currentEntry != null) {
+                data.resource = this.currentEntry.uri;
+
+                if (this.currentNotebook) {
+                    data.tab = this.currentNotebook.visibleTab.label;
+                }
             }
         }
-    };
 
-    ResourceDetailsView.prototype.paint = function paint(resource, options) {
-        if (options == null) {
-            options = {};
+        paint(resource, options) {
+            if (options == null) {
+                options = {};
+            }
+
+            this.currentEntry = resource;
+            this.clear();
+            this.appendChild(this.resource_details_painter.paint(resource));
+
+            if (options.tab != null) {
+                this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(options.tab), {
+                    context: {init: true}
+                });
+            }
+            Wirecloud.dispatchEvent('viewcontextchanged');
         }
 
-        this.currentEntry = resource;
-        this.clear();
-        this.appendChild(this.resource_details_painter.paint(resource));
+    }
 
-        if (options.tab != null) {
-            this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(options.tab), {
-                context: {init: true}
-            });
-        }
-        Wirecloud.dispatchEvent('viewcontextchanged');
-    };
+    ns.ResourceDetailsView.prototype.view_name = 'details';
 
-    Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView = ResourceDetailsView;
-})();
+})(Wirecloud.ui.WirecloudCatalogue, StyledElements, Wirecloud.Utils);

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -23,7 +23,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
@@ -35,82 +35,83 @@
      * var dialog = new Wirecloud.ui.AlertWindowMenu("Do you really want to continue?");
      * dialog.show();
      */
-    var AlertWindowMenu = function AlertWindowMenu(options) {
+    ns.AlertWindowMenu = class AlertWindowMenu extends ns.WindowMenu {
 
-        // Process options
-        if (options == null) {
-            throw new TypeError("missing options parameter");
-        } else if (typeof options === "string" || options instanceof se.StyledElement) {
-            options = {
-                message: options
-            };
+        constructor(options) {
+            // Process options
+            if (options == null) {
+                throw new TypeError("missing options parameter");
+            } else if (typeof options === "string" || options instanceof se.StyledElement) {
+                options = {
+                    message: options
+                };
+            }
+
+            options = utils.merge({
+                acceptLabel: utils.gettext('Yes'),
+                cancelLabel: utils.gettext('No')
+            }, options);
+
+            if (options.message == null) {
+                throw new TypeError("invalid message option");
+            }
+
+            super(utils.gettext('Warning'), 'wc-alert-modal');
+
+            this.msgElement = document.createElement('div');
+            this.msgElement.className = "msg";
+            this.windowContent.appendChild(this.msgElement);
+
+            // Accept button
+            this.acceptButton = new se.Button({
+                text: options.acceptLabel,
+                state: 'danger',
+                class: "btn-accept"
+            });
+            this.acceptButton.addEventListener("click", _acceptListener.bind(this));
+            this.acceptButton.insertInto(this.windowBottom);
+
+            // Cancel button
+            this.cancelButton = new se.Button({
+                text: options.cancelLabel,
+                state: 'primary',
+                class: "btn-cancel"
+            });
+            this._closeListener = _closeListener.bind(this);
+            this.cancelButton.addEventListener("click", this._closeListener);
+            this.cancelButton.insertInto(this.windowBottom);
+
+            this.setMsg(options.message);
+            this.acceptHandler = null;
+            this.cancelHandler = null;
         }
 
-        options = utils.merge({
-            acceptLabel: utils.gettext('Yes'),
-            cancelLabel: utils.gettext('No')
-        }, options);
+        /**
+         * Updates the message displayed by this <code>WindowMenu</code>
+         */
+        setMsg(msg) {
+            if (msg instanceof se.StyledElement) {
+                this.msgElement.innerHTML = '';
+                msg.insertInto(this.msgElement);
+            } else {
+                this.msgElement.textContent = msg;
+            }
 
-        if (options.message == null) {
-            throw new TypeError("invalid message option");
+            return this.repaint();
         }
 
-        // Basic structure
-        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Warning'), 'wc-alert-modal');
-
-        this.msgElement = document.createElement('div');
-        this.msgElement.className = "msg";
-        this.windowContent.appendChild(this.msgElement);
-
-        // Accept button
-        this.acceptButton = new se.Button({
-            text: options.acceptLabel,
-            state: 'danger',
-            class: "btn-accept"
-        });
-        this.acceptButton.addEventListener("click", _acceptListener.bind(this));
-        this.acceptButton.insertInto(this.windowBottom);
-
-        // Cancel button
-        this.cancelButton = new se.Button({
-            text: options.cancelLabel,
-            state: 'primary',
-            class: "btn-cancel"
-        });
-        this._closeListener = _closeListener.bind(this);
-        this.cancelButton.addEventListener("click", this._closeListener);
-        this.cancelButton.insertInto(this.windowBottom);
-
-        this.setMsg(options.message);
-        this.acceptHandler = null;
-        this.cancelHandler = null;
-    };
-    utils.inherit(AlertWindowMenu, Wirecloud.ui.WindowMenu);
-
-    /**
-     * Updates the message displayed by this <code>WindowMenu</code>
-     */
-    AlertWindowMenu.prototype.setMsg = function setMsg(msg) {
-        if (msg instanceof se.StyledElement) {
-            this.msgElement.innerHTML = '';
-            msg.insertInto(this.msgElement);
-        } else {
-            this.msgElement.textContent = msg;
+        setHandler(acceptHandler, cancelHandler) {
+            this.acceptHandler = acceptHandler;
+            this.cancelHandler = cancelHandler;
+            return this;
         }
 
-        return this.repaint();
-    };
+        setFocus() {
+            this.cancelButton.focus();
+            return this;
+        }
 
-    AlertWindowMenu.prototype.setHandler = function setHandler(acceptHandler, cancelHandler) {
-        this.acceptHandler = acceptHandler;
-        this.cancelHandler = cancelHandler;
-        return this;
-    };
-
-    AlertWindowMenu.prototype.setFocus = function setFocus() {
-        this.cancelButton.focus();
-        return this;
-    };
+    }
 
     var _acceptListener = function _acceptListener(e) {
         var task = this.acceptHandler();
@@ -138,6 +139,4 @@
         }
     };
 
-    Wirecloud.ui.AlertWindowMenu = AlertWindowMenu;
-
-})(StyledElements, StyledElements.Utils);
+})(Wirecloud.ui, StyledElements, StyledElements.Utils);

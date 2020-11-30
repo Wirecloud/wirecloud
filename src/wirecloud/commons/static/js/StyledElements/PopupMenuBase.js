@@ -27,7 +27,7 @@
 
     "use strict";
 
-    var POPUP_POSITION_CLASSES = [
+    const POPUP_POSITION_CLASSES = [
         'se-popup-menu-left-bottom',
         'se-popup-menu-right-bottom',
         'se-popup-menu-top-left',
@@ -37,11 +37,11 @@
     ];
     Object.freeze(POPUP_POSITION_CLASSES);
 
-    var DEFAULT_PLACEMENT = ['bottom-left', 'bottom-right', 'top-left', 'top-right'];
+    const DEFAULT_PLACEMENT = ['bottom-left', 'bottom-right', 'top-left', 'top-right'];
     Object.freeze(DEFAULT_PLACEMENT);
 
 
-    var setPosition = function setPosition(refPosition, placement) {
+    const setPosition = function setPosition(refPosition, placement) {
         this.wrapperElement.classList.remove.apply(
             this.wrapperElement.classList,
             POPUP_POSITION_CLASSES
@@ -80,14 +80,14 @@
         }
     };
 
-    var standsOut = function standsOut() {
-        var parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
-        var element_box = this.wrapperElement.getBoundingClientRect();
+    const standsOut = function standsOut() {
+        const parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
+        const element_box = this.wrapperElement.getBoundingClientRect();
 
-        var visible_width = element_box.width - Math.max(element_box.right - parent_box.right, 0) - Math.max(parent_box.left - element_box.left, 0);
-        var visible_height = element_box.height - Math.max(element_box.bottom - parent_box.bottom, 0) - Math.max(parent_box.top - element_box.top, 0);
-        var element_area = element_box.width * element_box.height;
-        var visible_area = visible_width * visible_height;
+        const visible_width = element_box.width - Math.max(element_box.right - parent_box.right, 0) - Math.max(parent_box.left - element_box.left, 0);
+        const visible_height = element_box.height - Math.max(element_box.bottom - parent_box.bottom, 0) - Math.max(parent_box.top - element_box.top, 0);
+        const element_area = element_box.width * element_box.height;
+        const visible_area = visible_width * visible_height;
         return element_area - visible_area;
     };
 
@@ -98,17 +98,17 @@
         "top": ["left", "right", "bottom", "top"],
     };
 
-    var fixPosition = function fixPosition(refPosition, weights, placements) {
-        var best_weight = Math.min.apply(Math, weights);
-        var index = weights.indexOf(best_weight);
-        var placement = placements[index];
+    const fixPosition = function fixPosition(refPosition, weights, placements) {
+        const best_weight = Math.min.apply(Math, weights);
+        const index = weights.indexOf(best_weight);
+        const placement = placements[index];
 
         setPosition.call(this, refPosition, placement);
 
-        var parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
-        var element_box = this.wrapperElement.getBoundingClientRect();
+        const parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
+        const element_box = this.wrapperElement.getBoundingClientRect();
 
-        var plan = FIX_PLANS[placement.split('-')[0]];
+        const plan = FIX_PLANS[placement.split('-')[0]];
         plan.forEach((placement) => {
             if (
                 (placement === "top" || placement === "left") && element_box[placement] < parent_box[placement]
@@ -120,53 +120,7 @@
         });
     };
 
-    /**
-     * @interface
-     * @mixes StyledElements.ObjectWithEvents
-     */
-    var PopupMenuBase = function PopupMenuBase(options) {
-        var defaultOptions = {
-            oneActiveAtLeast: false,
-            placement: null,
-            useRefElementWidth: false
-        };
-        options = StyledElements.Utils.merge(defaultOptions, options);
-
-        StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange', 'click']);
-
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'se-popup-menu hidden';
-        this._context = null;
-        if (Array.isArray(options.placement)) {
-            this._placement = options.placement;
-        } else if (typeof options.placement === 'string') {
-            this._placement = [options.placement];
-        } else {
-            this._placement = DEFAULT_PLACEMENT;
-        }
-
-        Object.defineProperties(this, {
-            activeItem: {get: property_activeItem_get},
-            firstEnabledItem: {get: on_firstEnabledItem_get},
-            hidden: {get: property_hidden_get},
-            lastEnabledItem: {get: property_lastEnabledItem_get},
-            oneActiveAtLeast: {value: options.oneActiveAtLeast},
-            useRefElementWidth: {value: options.useRefElementWidth}
-        });
-
-        this._items = [];
-        this._dynamicItems = [];
-        this._submenus = [];
-        this._menuItemCallback = this._menuItemCallback.bind(this);
-
-        this._menuItem_onmouseenter_bound = menuItem_onmouseenter.bind(this);
-        this._menuItem_onmouseleave_bound = menuItem_onmouseleave.bind(this);
-        this._menuItem_onfocus_bound = menuItem_onfocus.bind(this);
-        this._menuItem_onblur_bound = menuItem_onblur.bind(this);
-    };
-    utils.inherit(PopupMenuBase, StyledElements.ObjectWithEvents);
-
-    var _append = function _append(child, where) {
+    const _append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
             child.addEventListener('mouseenter', this._menuItem_onmouseenter_bound);
@@ -188,71 +142,6 @@
             throw new TypeError('child parameter cannot be null');
         }
         where.push(child);
-    };
-
-    PopupMenuBase.prototype.append = function append(child) {
-        _append.call(this, child, this._items);
-
-        if (this.isVisible()) {
-            display.call(this, child);
-
-            if (this._activeMenuItem == null && this.oneActiveAtLeast && this._enabledItems.length > 0) {
-                activateMenuItem.call(this, this._enabledItems[0]);
-            }
-        }
-
-        return this;
-    };
-
-    PopupMenuBase.prototype.appendSeparator = function appendSeparator() {
-        this.append(new StyledElements.Separator());
-    };
-
-    /**
-     * Remove all child nodes from the wrapperElement.
-     * @since 0.6.1
-     *
-     * @returns {PopupMenuBase}
-     *      The instance on which the member is called.
-     */
-    PopupMenuBase.prototype.clear = function clear() {
-        var i;
-
-        if (!this.hidden) {
-            hideContent.call(this);
-        }
-
-        for (i = 0; i < this._items.length; i++) {
-            this._items[i].removeEventListener('click', this._menuItemCallback);
-        }
-
-        this._items = [];
-
-        return this;
-    };
-
-    PopupMenuBase.prototype.setContext = function setContext(context) {
-        this._context = context;
-    };
-
-    PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuitem) {
-        this.dispatchEvent('click', menuitem);
-
-        // This if is necessary for touch screens where mouseenter and
-        // mouseleave events are not raised
-        // In that case, the user will "click" the menu item and
-        // the popup menu should continue to be displayed
-        if (!menuitem.hasClassName('submenu')) {
-            this.hide();
-        }
-
-        if (typeof menuitem.run === 'function') {
-            menuitem.run(this._context, menuitem.context);
-        }
-    };
-
-    PopupMenuBase.prototype.isVisible = function isVisible() {
-        return !this.hidden;
     };
 
     var display = function display(item) {
@@ -316,196 +205,310 @@
         }
     };
 
-    PopupMenuBase.prototype.show = function show(refPosition) {
+    se.PopupMenuBase = class PopupMenuBase extends se.ObjectWithEvents {
 
-        if (this.isVisible()) {
-            return this; // This Popup Menu is already visible => nothing to do
+        /**
+         * @interface
+         * @mixes StyledElements.ObjectWithEvents
+         */
+        constructor(options) {
+            var defaultOptions = {
+                oneActiveAtLeast: false,
+                placement: null,
+                useRefElementWidth: false
+            };
+            options = StyledElements.Utils.merge(defaultOptions, options);
+
+            super(['itemOver', 'visibilityChange', 'click']);
+
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = 'se-popup-menu hidden';
+            this._context = null;
+            if (Array.isArray(options.placement)) {
+                this._placement = options.placement;
+            } else if (typeof options.placement === 'string') {
+                this._placement = [options.placement];
+            } else {
+                this._placement = DEFAULT_PLACEMENT;
+            }
+
+            Object.defineProperties(this, {
+                activeItem: {get: property_activeItem_get},
+                firstEnabledItem: {get: on_firstEnabledItem_get},
+                hidden: {get: property_hidden_get},
+                lastEnabledItem: {get: property_lastEnabledItem_get},
+                oneActiveAtLeast: {value: options.oneActiveAtLeast},
+                useRefElementWidth: {value: options.useRefElementWidth}
+            });
+
+            this._items = [];
+            this._dynamicItems = [];
+            this._submenus = [];
+            this._menuItemCallback = this._menuItemCallback.bind(this);
+
+            this._menuItem_onmouseenter_bound = menuItem_onmouseenter.bind(this);
+            this._menuItem_onmouseleave_bound = menuItem_onmouseleave.bind(this);
+            this._menuItem_onfocus_bound = menuItem_onfocus.bind(this);
+            this._menuItem_onblur_bound = menuItem_onblur.bind(this);
         }
 
-        this._enabledItems = [];
-        this._activeMenuItem = null;
-        this._focusedMenuItem = null;
+        append(child) {
+            _append.call(this, child, this._items);
 
-        for (let i = 0; i < this._items.length; i += 1) {
-            display.call(this, this._items[i]);
-        }
+            if (this.isVisible()) {
+                display.call(this, child);
 
-        if ((this._enabledItems.length > 0) && this.oneActiveAtLeast) {
-            activateMenuItem.call(this, this._enabledItems[0]);
-        }
+                if (this._activeMenuItem == null && this.oneActiveAtLeast && this._enabledItems.length > 0) {
+                    activateMenuItem.call(this, this._enabledItems[0]);
+                }
+            }
 
-        this.wrapperElement.classList.remove('hidden');
-
-        var baseelement = utils.getFullscreenElement() || document.body;
-        baseelement.appendChild(this.wrapperElement);
-
-        if ('Wirecloud' in window) {
-            Wirecloud.UserInterfaceManager._registerPopup(this);
-        }
-        this.dispatchEvent("visibilityChange");
-
-        this.refPosition = refPosition;
-
-        if (this.useRefElementWidth) {
-            this.wrapperElement.style.width = this.refPosition.width + "px";
-        }
-
-        searchBestPosition.call(this, this.refPosition, this._placement);
-
-        return this;
-    };
-
-    PopupMenuBase.prototype.repaint = function repaint() {
-        if (this.refPosition) {
-            searchBestPosition.call(this, this.refPosition, this._placement);
-        }
-
-        return this;
-    };
-
-    PopupMenuBase.prototype.moveCursorDown = function moveCursorDown() {
-        var index;
-
-        if (!this.hasEnabledItem()) {
             return this;
         }
 
-        if (this._activeMenuItem != null) {
-            this._activeMenuItem.deactivate();
-            index = this._enabledItems.indexOf(this._activeMenuItem);
+        appendSeparator() {
+            this.append(new StyledElements.Separator());
+        }
 
-            if (index !== (this._enabledItems.length - 1)) {
-                this._activeMenuItem = this._enabledItems[index + 1];
+        /**
+         * Remove all child nodes from the wrapperElement.
+         * @since 0.6.1
+         *
+         * @returns {PopupMenuBase}
+         *      The instance on which the member is called.
+         */
+        clear() {
+            var i;
+
+            if (!this.hidden) {
+                hideContent.call(this);
+            }
+
+            for (i = 0; i < this._items.length; i++) {
+                this._items[i].removeEventListener('click', this._menuItemCallback);
+            }
+
+            this._items = [];
+
+            return this;
+        }
+
+        setContext(context) {
+            this._context = context;
+        }
+
+        _menuItemCallback(menuitem) {
+            this.dispatchEvent('click', menuitem);
+
+            // This if is necessary for touch screens where mouseenter and
+            // mouseleave events are not raised
+            // In that case, the user will "click" the menu item and
+            // the popup menu should continue to be displayed
+            if (!menuitem.hasClassName('submenu')) {
+                this.hide();
+            }
+
+            if (typeof menuitem.run === 'function') {
+                menuitem.run(this._context, menuitem.context);
+            }
+        }
+
+        isVisible() {
+            return !this.hidden;
+        }
+
+        show(refPosition) {
+
+            if (this.isVisible()) {
+                return this; // This Popup Menu is already visible => nothing to do
+            }
+
+            this._enabledItems = [];
+            this._activeMenuItem = null;
+            this._focusedMenuItem = null;
+
+            for (let i = 0; i < this._items.length; i += 1) {
+                display.call(this, this._items[i]);
+            }
+
+            if ((this._enabledItems.length > 0) && this.oneActiveAtLeast) {
+                activateMenuItem.call(this, this._enabledItems[0]);
+            }
+
+            this.wrapperElement.classList.remove('hidden');
+
+            var baseelement = utils.getFullscreenElement() || document.body;
+            baseelement.appendChild(this.wrapperElement);
+
+            if ('Wirecloud' in window) {
+                Wirecloud.UserInterfaceManager._registerPopup(this);
+            }
+            this.dispatchEvent("visibilityChange");
+
+            this.refPosition = refPosition;
+
+            if (this.useRefElementWidth) {
+                this.wrapperElement.style.width = this.refPosition.width + "px";
+            }
+
+            searchBestPosition.call(this, this.refPosition, this._placement);
+
+            return this;
+        }
+
+        repaint() {
+            if (this.refPosition) {
+                searchBestPosition.call(this, this.refPosition, this._placement);
+            }
+
+            return this;
+        }
+
+        moveCursorDown() {
+            var index;
+
+            if (!this.hasEnabledItem()) {
+                return this;
+            }
+
+            if (this._activeMenuItem != null) {
+                this._activeMenuItem.deactivate();
+                index = this._enabledItems.indexOf(this._activeMenuItem);
+
+                if (index !== (this._enabledItems.length - 1)) {
+                    this._activeMenuItem = this._enabledItems[index + 1];
+                } else {
+                    this._activeMenuItem = this.firstEnabledItem;
+                }
             } else {
                 this._activeMenuItem = this.firstEnabledItem;
             }
-        } else {
-            this._activeMenuItem = this.firstEnabledItem;
-        }
 
-        this._activeMenuItem.activate();
-        this.dispatchEvent('itemOver', this._activeMenuItem);
+            this._activeMenuItem.activate();
+            this.dispatchEvent('itemOver', this._activeMenuItem);
 
-        return this;
-    };
-
-    PopupMenuBase.prototype.moveCursorUp = function moveCursorUp() {
-        var index;
-
-        if (!this.hasEnabledItem()) {
             return this;
         }
 
-        if (this._activeMenuItem != null) {
-            this._activeMenuItem.deactivate();
-            index = this._enabledItems.indexOf(this._activeMenuItem);
+        moveCursorUp() {
+            var index;
 
-            if (index !== 0) {
-                this._activeMenuItem = this._enabledItems[index - 1];
+            if (!this.hasEnabledItem()) {
+                return this;
+            }
+
+            if (this._activeMenuItem != null) {
+                this._activeMenuItem.deactivate();
+                index = this._enabledItems.indexOf(this._activeMenuItem);
+
+                if (index !== 0) {
+                    this._activeMenuItem = this._enabledItems[index - 1];
+                } else {
+                    this._activeMenuItem = this.lastEnabledItem;
+                }
             } else {
                 this._activeMenuItem = this.lastEnabledItem;
             }
-        } else {
-            this._activeMenuItem = this.lastEnabledItem;
-        }
 
-        this._activeMenuItem.activate();
-        this.dispatchEvent('itemOver', this._activeMenuItem);
+            this._activeMenuItem.activate();
+            this.dispatchEvent('itemOver', this._activeMenuItem);
 
-        return this;
-    };
-
-    PopupMenuBase.prototype.moveFocusDown = function moveFocusDown() {
-        var index;
-
-        if (!this.hasEnabledItem()) {
             return this;
         }
 
-        if (this._focusedMenuItem != null) {
-            index = this._enabledItems.indexOf(this._focusedMenuItem);
+        moveFocusDown() {
+            var index;
 
-            if (index !== (this._enabledItems.length - 1)) {
-                this._enabledItems[index + 1].focus();
+            if (!this.hasEnabledItem()) {
+                return this;
+            }
+
+            if (this._focusedMenuItem != null) {
+                index = this._enabledItems.indexOf(this._focusedMenuItem);
+
+                if (index !== (this._enabledItems.length - 1)) {
+                    this._enabledItems[index + 1].focus();
+                } else {
+                    this.firstEnabledItem.focus();
+                }
             } else {
                 this.firstEnabledItem.focus();
             }
-        } else {
-            this.firstEnabledItem.focus();
-        }
 
-        return this;
-    };
-
-    PopupMenuBase.prototype.moveFocusUp = function moveFocusUp() {
-        var index;
-
-        if (!this.hasEnabledItem()) {
             return this;
         }
 
-        if (this._focusedMenuItem != null) {
-            index = this._enabledItems.indexOf(this._focusedMenuItem);
+        moveFocusUp() {
+            var index;
 
-            if (index !== 0) {
-                this._enabledItems[index - 1].focus();
+            if (!this.hasEnabledItem()) {
+                return this;
+            }
+
+            if (this._focusedMenuItem != null) {
+                index = this._enabledItems.indexOf(this._focusedMenuItem);
+
+                if (index !== 0) {
+                    this._enabledItems[index - 1].focus();
+                } else {
+                    this.lastEnabledItem.focus();
+                }
             } else {
                 this.lastEnabledItem.focus();
             }
-        } else {
-            this.lastEnabledItem.focus();
-        }
 
-        return this;
-    };
-
-    PopupMenuBase.prototype.hide = function hide() {
-
-        this.refPosition = null;
-        if (this.hidden) {
             return this;
         }
 
-        this.wrapperElement.classList.add("hidden");
-        this.wrapperElement.style.bottom = "";
-        hideContent.call(this);
+        hide() {
 
-        this.wrapperElement.remove();
-        if ('Wirecloud' in window) {
-            Wirecloud.UserInterfaceManager._unregisterPopup(this);
-        }
-
-        return this.dispatchEvent('visibilityChange');
-    };
-
-    PopupMenuBase.prototype.destroy = function destroy() {
-        var i, item;
-
-        this.hide();
-        for (i = 0; i < this._items.length; i += 1) {
-            item = this._items[i];
-            if (item instanceof StyledElements.MenuItem) {
-                item.destroy();
+            this.refPosition = null;
+            if (this.hidden) {
+                return this;
             }
+
+            this.wrapperElement.classList.add("hidden");
+            this.wrapperElement.style.bottom = "";
+            hideContent.call(this);
+
+            this.wrapperElement.remove();
+            if ('Wirecloud' in window) {
+                Wirecloud.UserInterfaceManager._unregisterPopup(this);
+            }
+
+            return this.dispatchEvent('visibilityChange');
         }
-        this._items = null;
-        this._menuItemCallback = null;
-        this._context = null;
 
-        return StyledElements.ObjectWithEvents.prototype.destroy.call(this);
-    };
+        destroy() {
+            var i, item;
 
-    /**
-     * Checks whether this Popup Menu contains at least one enabled menu item
-     *
-     * @since 0.6.2
-     *
-     * @returns {Boolean} true if this Popup Menu has at least one enabled
-     * child, false in other case
-     */
-    PopupMenuBase.prototype.hasEnabledItem = function hasEnabledItem() {
-        return !this.hidden && (this._enabledItems.length > 0);
-    };
+            this.hide();
+            for (i = 0; i < this._items.length; i += 1) {
+                item = this._items[i];
+                if (item instanceof StyledElements.MenuItem) {
+                    item.destroy();
+                }
+            }
+            this._items = null;
+            this._menuItemCallback = null;
+            this._context = null;
+
+            return super.destroy();
+        }
+
+        /**
+         * Checks whether this Popup Menu contains at least one enabled menu item
+         *
+         * @since 0.6.2
+         *
+         * @returns {Boolean} true if this Popup Menu has at least one enabled
+         * child, false in other case
+         */
+        hasEnabledItem() {
+            return !this.hidden && (this._enabledItems.length > 0);
+        }
+
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -588,7 +591,5 @@
             this._focusedMenuItem = null;
         }
     };
-
-    StyledElements.PopupMenuBase = PopupMenuBase;
 
 })(StyledElements, StyledElements.Utils);

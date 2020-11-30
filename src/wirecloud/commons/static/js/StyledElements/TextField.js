@@ -26,106 +26,105 @@
 
     "use strict";
 
-    var TextField, oninput, onfocus, onblur, onkeypress;
-
-    oninput = function oninput() {
+    const oninput = function oninput() {
         this.dispatchEvent('change');
     };
 
-    onfocus = function onfocus() {
+    const onfocus = function onfocus() {
         this.dispatchEvent('focus');
     };
 
-    onblur = function onblur() {
+    const onblur = function onblur() {
         this.dispatchEvent('blur');
     };
 
-    onkeypress = function onkeypress(event) {
+    const onkeypress = function onkeypress(event) {
         if (utils.normalizeKey(event) === "Enter") {
             this.dispatchEvent('submit');
         }
     };
 
-    /**
-     * @constructor
-     * @name StyledElements.TextField
-     * @extends StyledElements.InputElement
-     */
-    TextField = function TextField(options) {
-        var defaultOptions = {
-            'initialValue': '',
-            'class': '',
-            'placeholder': null
-        };
-        options = utils.merge(defaultOptions, options);
+    se.TextField = class TextField extends se.InputElement {
 
-        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit', 'keydown']);
+        /**
+         * @constructor
+         * @name StyledElements.TextField
+         * @extends StyledElements.InputElement
+         */
+        constructor(options) {
+            const defaultOptions = {
+                'initialValue': '',
+                'class': '',
+                'placeholder': null
+            };
+            options = utils.merge({}, defaultOptions, options);
 
-        this.inputElement = document.createElement("input");
-        this.inputElement.setAttribute("type", "text");
+            super(options.initialValue, ['change', 'focus', 'blur', 'submit', 'keydown']);
 
-        this.wrapperElement = this.inputElement;
-        this.wrapperElement.className = "se-text-field";
-        if (options.class !== "") {
-            this.wrapperElement.className += " " + options.class;
+            this.inputElement = document.createElement("input");
+            this.inputElement.setAttribute("type", "text");
+
+            this.wrapperElement = this.inputElement;
+            this.wrapperElement.className = "se-text-field";
+            if (options.class !== "") {
+                this.wrapperElement.className += " " + options.class;
+            }
+
+            if (options.name) {
+                this.inputElement.setAttribute("name", options.name);
+            }
+
+            if (options.placeholder != null) {
+                this.setPlaceholder(options.placeholder);
+            }
+
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
+
+            this.inputElement.setAttribute("value", options.initialValue);
+
+            /* Internal events */
+            this._oninput = oninput.bind(this);
+            this._onfocus = onfocus.bind(this);
+            this._onblur = onblur.bind(this);
+            this._onkeypress = onkeypress.bind(this);
+
+            this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener('input', this._oninput, true);
+            this.inputElement.addEventListener('focus', this._onfocus, true);
+            this.inputElement.addEventListener('blur', this._onblur, true);
+            this.inputElement.addEventListener('keypress', this._onkeypress, true);
+
+            this._onkeydown_bound = element_onkeydown.bind(this);
+            this.inputElement.addEventListener('keydown', this._onkeydown_bound, false);
         }
 
-        if (options.name) {
-            this.inputElement.setAttribute("name", options.name);
+        setPlaceholder(placeholder) {
+            this.inputElement.setAttribute('placeholder', placeholder);
         }
 
-        if (options.placeholder != null) {
-            this.setPlaceholder(options.placeholder);
+        destroy() {
+
+            this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
+            this.inputElement.removeEventListener('click', utils.stopPropagationListener, true);
+            this.inputElement.removeEventListener('input', this._oninput, true);
+            this.inputElement.removeEventListener('focus', this._onfocus, true);
+            this.inputElement.removeEventListener('blur', this._onblur, true);
+            this.inputElement.removeEventListener('keypress', this._onkeypress, true);
+            this.inputElement.removeEventListener('keydown', this._onkeydown_bound, false);
+
+            delete this._oninput;
+            delete this._onfocus;
+            delete this._onblur;
+            delete this._onkeypress;
+            delete this._onkeydown_bound;
+
+            super.destroy();
         }
 
-        if (options.id != null) {
-            this.wrapperElement.setAttribute("id", options.id);
-        }
-
-        this.inputElement.setAttribute("value", options.initialValue);
-
-        /* Internal events */
-        this._oninput = oninput.bind(this);
-        this._onfocus = onfocus.bind(this);
-        this._onblur = onblur.bind(this);
-        this._onkeypress = onkeypress.bind(this);
-
-        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('input', this._oninput, true);
-        this.inputElement.addEventListener('focus', this._onfocus, true);
-        this.inputElement.addEventListener('blur', this._onblur, true);
-        this.inputElement.addEventListener('keypress', this._onkeypress, true);
-
-        this._onkeydown_bound = element_onkeydown.bind(this);
-        this.inputElement.addEventListener('keydown', this._onkeydown_bound, false);
-    };
-    utils.inherit(TextField, StyledElements.InputElement);
-
-    TextField.prototype.setPlaceholder = function setPlaceholder(placeholder) {
-        this.inputElement.setAttribute('placeholder', placeholder);
-    };
-
-    TextField.prototype.destroy = function destroy() {
-
-        this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', utils.stopPropagationListener, true);
-        this.inputElement.removeEventListener('input', this._oninput, true);
-        this.inputElement.removeEventListener('focus', this._onfocus, true);
-        this.inputElement.removeEventListener('blur', this._onblur, true);
-        this.inputElement.removeEventListener('keypress', this._onkeypress, true);
-        this.inputElement.removeEventListener('keydown', this._onkeydown_bound, false);
-
-        delete this._oninput;
-        delete this._onfocus;
-        delete this._onblur;
-        delete this._onkeypress;
-        delete this._onkeydown_bound;
-
-        StyledElements.InputElement.prototype.destroy.call(this);
-    };
-
-    StyledElements.TextField = TextField;
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

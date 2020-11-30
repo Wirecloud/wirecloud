@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,99 +23,98 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
     /**
      *
      */
-    var CheckBox = function CheckBox(options) {
+    se.CheckBox = class CheckBox extends se.InputElement {
 
-        var defaultOptions = {
-            'initialValue': false,
-            'class': '',
-            'group': null,
-            'secondInput': null,
-            'value': true
-        };
-        options = utils.merge(defaultOptions, options);
+        constructor(options) {
+            var defaultOptions = {
+                'initialValue': false,
+                'class': '',
+                'group': null,
+                'secondInput': null,
+                'value': true
+            };
+            options = utils.merge(defaultOptions, options);
 
-        // This is needed for backward compatibility
-        if ('initiallyChecked' in options) {
-            options.initialValue = options.initiallyChecked;
-        }
-        StyledElements.InputElement.call(this, options.initialValue, ['change']);
+            // This is needed for backward compatibility
+            if ('initiallyChecked' in options) {
+                options.initialValue = options.initiallyChecked;
+            }
+            super(options.initialValue, ['change']);
 
-        this.wrapperElement = document.createElement("input");
-        this.wrapperElement.className = 'checkbox';
+            this.wrapperElement = document.createElement("input");
+            this.wrapperElement.className = 'checkbox';
 
-        this.wrapperElement.setAttribute("type", "checkbox");
-        this.inputElement = this.wrapperElement;
+            this.wrapperElement.setAttribute("type", "checkbox");
+            this.inputElement = this.wrapperElement;
 
-        if (options.name != null) {
-            this.inputElement.setAttribute("name", options.name);
-        }
+            if (options.name != null) {
+                this.inputElement.setAttribute("name", options.name);
+            }
 
-        if (options.id != null) {
-            this.wrapperElement.setAttribute("id", options.id);
-        }
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
 
-        this.checkedValue = options.value;
-        this.inputElement.setAttribute("value", options.value);
-        this.secondInput = options.secondInput;
-        this.setValue(options.initialValue);
+            this.checkedValue = options.value;
+            this.inputElement.setAttribute("value", options.value);
+            this.secondInput = options.secondInput;
+            this.setValue(options.initialValue);
 
-        if (options.group instanceof StyledElements.ButtonsGroup) {
-            this.wrapperElement.setAttribute("name", options.group.name);
-            options.group.insertButton(this);
-        } else if (typeof options.group === 'string') {
-            this.wrapperElement.setAttribute("name", options.group);
-        }
+            if (options.group instanceof StyledElements.ButtonsGroup) {
+                this.wrapperElement.setAttribute("name", options.group.name);
+                options.group.insertButton(this);
+            } else if (typeof options.group === 'string') {
+                this.wrapperElement.setAttribute("name", options.group);
+            }
 
-        /* Internal events */
-        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener(
-            'change',
-            () => {
-                if (this.enabled) {
-                    if (this.secondInput != null) {
-                        this.secondInput.setDisabled(!this.inputElement.checked);
+            /* Internal events */
+            this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener(
+                'change',
+                () => {
+                    if (this.enabled) {
+                        if (this.secondInput != null) {
+                            this.secondInput.setDisabled(!this.inputElement.checked);
+                        }
+                        this.dispatchEvent('change');
                     }
-                    this.dispatchEvent('change');
-                }
-            },
-            true
-        );
-    };
-
-    utils.inherit(CheckBox, StyledElements.InputElement);
-
-    CheckBox.prototype.reset = function reset() {
-        this.setValue(this.defaultValue);
-    };
-
-    CheckBox.prototype.getValue = function getValue() {
-        if (this.checkedValue === true && this.secondInput == null) {
-            return this.inputElement.checked;
-        } else if (this.secondInput == null) {
-            return this.inputElement.checked ? this.checkedValue : null;
-        } else {
-            return this.secondInput.getValue();
+                },
+                true
+            );
         }
-    };
 
-    CheckBox.prototype.setValue = function setValue(newValue) {
-        this.inputElement.checked = newValue != null && newValue !== false;
-        if (this.secondInput != null) {
-            this.secondInput.setDisabled(!this.inputElement.checked);
-            if (this.inputElement.checked) {
-                this.secondInput.setValue(newValue);
+        reset() {
+            this.setValue(this.defaultValue);
+        }
+
+        getValue() {
+            if (this.checkedValue === true && this.secondInput == null) {
+                return this.inputElement.checked;
+            } else if (this.secondInput == null) {
+                return this.inputElement.checked ? this.checkedValue : null;
+            } else {
+                return this.secondInput.getValue();
             }
         }
-    };
 
-    StyledElements.CheckBox = CheckBox;
+        setValue(newValue) {
+            this.inputElement.checked = newValue != null && newValue !== false;
+            if (this.secondInput != null) {
+                this.secondInput.setDisabled(!this.inputElement.checked);
+                if (this.inputElement.checked) {
+                    this.secondInput.setValue(newValue);
+                }
+            }
+        }
 
-})(StyledElements.Utils);
+    }
+
+})(StyledElements, StyledElements.Utils);

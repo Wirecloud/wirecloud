@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,62 +27,53 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.ConnectionEngine = class ConnectionEngine extends se.StyledElement {
 
-    /**
-     * Create a new instance of class ConnectionEngine.
-     * @extends {StyledElement}
-     *
-     * @constructor
-     * @param {Container} container
-     *      [TODO: description]
-     * @param {Function} findWiringEngine
-     *      [TODO: description]
-     */
-    ns.ConnectionEngine = function ConnectionEngine(container, findWiringEngine) {
-        se.StyledElement.call(this, events);
+        /**
+         * Create a new instance of class ConnectionEngine.
+         * @extends {StyledElement}
+         *
+         * @constructor
+         * @param {Container} container
+         *      [TODO: description]
+         * @param {Function} findWiringEngine
+         *      [TODO: description]
+         */
+        constructor(container, findWiringEngine) {
+            super(events);
 
-        this.wrapperElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'svg');
-        this.wrapperElement.setAttribute('class', "we-connections-layer");
+            this.wrapperElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'svg');
+            this.wrapperElement.setAttribute('class', "we-connections-layer");
 
-        this.connections = [];
-        this.connectionsElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'g');
-        this.wrapperElement.appendChild(this.connectionsElement);
+            this.connections = [];
+            this.connectionsElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'g');
+            this.wrapperElement.appendChild(this.connectionsElement);
 
-        this.optionsElement = document.createElement('div');
+            this.optionsElement = document.createElement('div');
 
-        this.endpoints = {source: [], target: []};
+            this.endpoints = {source: [], target: []};
 
-        this.container = container;
-        this.container.appendChild(this.wrapperElement);
-        this.container.appendChild(this.optionsElement);
-        this.container.get().addEventListener('scroll', container_onscroll.bind(this));
+            this.container = container;
+            this.container.appendChild(this.wrapperElement);
+            this.container.appendChild(this.optionsElement);
+            this.container.get().addEventListener('scroll', container_onscroll.bind(this));
 
-        this._ondrag = connection_ondrag.bind(this);
-        this._ondragend = connection_ondragend.bind(this);
+            this._ondrag = connection_ondrag.bind(this);
+            this._ondragend = connection_ondragend.bind(this);
 
-        Object.defineProperties(this, {
+            Object.defineProperties(this, {
 
-            wiringEngine: {
-                get: function get() {return findWiringEngine();}
-            }
+                wiringEngine: {
+                    get: function get() {return findWiringEngine();}
+                }
 
-        });
+            });
 
-        this.endpoint_ondragstart = endpoint_ondragstart.bind(this);
-        this.endpoint_onmouseenter = endpoint_onmouseenter.bind(this);
-        this.endpoint_onmouseleave = endpoint_onmouseleave.bind(this);
-        this.endpoint_ondragend = endpoint_ondragend.bind(this);
-    };
-
-    ns.ConnectionEngine.CONNECTION_INVALID = -1;
-    ns.ConnectionEngine.CONNECTION_ESTABLISHED =  0;
-    ns.ConnectionEngine.CONNECTION_DUPLICATE = 1,
-    ns.ConnectionEngine.SVG_NS = "http://www.w3.org/2000/svg";
-
-    utils.inherit(ns.ConnectionEngine, se.StyledElement, {
+            this.endpoint_ondragstart = endpoint_ondragstart.bind(this);
+            this.endpoint_onmouseenter = endpoint_onmouseenter.bind(this);
+            this.endpoint_onmouseleave = endpoint_onmouseleave.bind(this);
+            this.endpoint_ondragend = endpoint_ondragend.bind(this);
+        }
 
         /**
          * [TODO: appendEndpoint description]
@@ -91,7 +83,7 @@
          * @returns {ConnectionEngine}
          *      The instance on which the member is called.
          */
-        appendEndpoint: function appendEndpoint(endpoint) {
+        appendEndpoint(endpoint) {
 
             this.endpoints[endpoint.type].push(endpoint);
 
@@ -102,7 +94,7 @@
                 .addEventListener('mouseup', this.endpoint_ondragend);
 
             return this;
-        },
+        }
 
         /**
          * [TODO: connect description]
@@ -118,7 +110,7 @@
          * @returns {Connection}
          *      [TODO: description]
          */
-        connect: function connect(wiringConnection, source, target, options) {
+        connect(wiringConnection, source, target, options) {
             var connection;
 
             options = options || {};
@@ -132,7 +124,7 @@
             appendConnection.call(this, connection);
 
             return this;
-        },
+        }
 
         /**
          * [deactivateAll description]
@@ -140,19 +132,19 @@
          * @returns {ConnectionEngine}
          *      The instance on which the member is called.
          */
-        deactivateAll: function deactivateAll() {
+        deactivateAll() {
 
             if (this.hasActiveConnection()) {
                 this.activeConnection.click();
             }
 
             return this;
-        },
+        }
 
         /**
          * @override
          */
-        clear: function clear() {
+        clear() {
             var i;
 
             this.setUp();
@@ -164,7 +156,7 @@
             this.connections.length = 0;
 
             return this;
-        },
+        }
 
         /**
          * [TODO: forEachConnection description]
@@ -174,16 +166,16 @@
          * @returns {ConnectionEngine}
          *      The instance on which the member is called.
          */
-        forEachConnection: function forEachConnection(callback) {
+        forEachConnection(callback) {
 
             this.connections.forEach(function (connection, index) {
                 callback(connection, index);
             });
 
             return this;
-        },
+        }
 
-        getConnection: function getConnection(sourceId, targetId) {
+        getConnection(sourceId, targetId) {
             var i, connection;
 
             for (i = 0; i < this.connections.length && !connection; i++) {
@@ -193,7 +185,7 @@
             }
 
             return connection;
-        },
+        }
 
         /**
          * [TODO: hasActiveConnection description]
@@ -201,9 +193,9 @@
          * @returns {Boolean}
          *      [TODO: description]
          */
-        hasActiveConnection: function hasActiveConnection() {
+        hasActiveConnection() {
             return this.activeConnection != null;
-        },
+        }
 
         /**
          * [TODO: removeEndpoint description]
@@ -213,7 +205,7 @@
          * @returns {ConnectionEngine}
          *      The instance on which the member is called.
          */
-        removeEndpoint: function removeEndpoint(endpoint) {
+        removeEndpoint(endpoint) {
             var index = this.endpoints[endpoint.type].indexOf(endpoint);
 
             if (index !== -1) {
@@ -227,7 +219,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * [TODO: setUp description]
@@ -235,7 +227,7 @@
          * @returns {ConnectionEngine}
          *      The instance on which the member is called.
          */
-        setUp: function setUp() {
+        setUp() {
 
             stopCustomizing.call(this);
             this.deactivateAll();
@@ -243,7 +235,12 @@
             return this;
         }
 
-    });
+    }
+
+    ns.ConnectionEngine.CONNECTION_INVALID = -1;
+    ns.ConnectionEngine.CONNECTION_ESTABLISHED =  0;
+    ns.ConnectionEngine.CONNECTION_DUPLICATE = 1,
+    ns.ConnectionEngine.SVG_NS = "http://www.w3.org/2000/svg";
 
     // =========================================================================
     // PRIVATE MEMBERS

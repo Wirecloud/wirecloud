@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,57 +23,11 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var OperatorPreferencesWindowMenu = function OperatorPreferencesWindowMenu() {
-        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Operator Settings'), 'wc-component-preferences-modal');
-    };
-    utils.inherit(OperatorPreferencesWindowMenu, Wirecloud.ui.WindowMenu);
-
-    OperatorPreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var key;
-        var requestBody = [];
-
-        for (key in new_values) {
-            if (this._current_ioperator.preferences[key].value !== new_values[key]) {
-
-                // Censor preference
-                if (this._current_ioperator.preferences[key].meta.secure && new_values[key] !== "") {
-                    this._current_ioperator.preferences[key].value = "********";
-                } else {
-                    this._current_ioperator.preferences[key].value = new_values[key];
-                }
-
-                // Build patch
-                requestBody.push({
-                    op: "replace",
-                    path: "/operators/" + this._current_ioperator.id + "/preferences/" + key + "/value",
-                    value: new_values[key],
-                });
-            } else {
-                delete new_values[key];
-            }
-        }
-
-        this.hide();
-
-        if (!this._current_ioperator.volatile) {
-            Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
-                    workspace_id: this._current_ioperator.wiring.workspace.id,
-                }), {
-                    method: 'PATCH',
-                    contentType: 'application/json-patch+json',
-                    requestHeaders: {'Accept': 'application/json'},
-                    postBody: JSON.stringify(requestBody),
-                    onSuccess: operatorCallback.call(this, new_values)
-                }
-            );
-        }
-    };
-
-    var operatorCallback = function operatorCallback(new_values) {
+    const operatorCallback = function operatorCallback(new_values) {
         if (typeof this._current_ioperator.prefCallback === 'function') {
             try {
                 // Censor secure preferences
@@ -89,32 +44,78 @@
         }
     };
 
-    OperatorPreferencesWindowMenu.prototype.show = function show(ioperator, parentWindow) {
-        var i, prefs, pref, fields;
+    ns.OperatorPreferencesWindowMenu = class OperatorPreferencesWindowMenu extends ns.WindowMenu {
 
-        fields = {};
-        prefs = ioperator.preferenceList;
+        constructor() {
+            super(utils.gettext('Operator Settings'), 'wc-component-preferences-modal');
+        }
 
-        for (i = 0; i < prefs.length; i++) {
-            pref = prefs[i];
+        _savePrefs(form, new_values) {
+            var key;
+            var requestBody = [];
 
-            if (!pref.hidden) {
-                fields[pref.meta.name] = pref.getInterfaceDescription();
+            for (key in new_values) {
+                if (this._current_ioperator.preferences[key].value !== new_values[key]) {
+
+                    // Censor preference
+                    if (this._current_ioperator.preferences[key].meta.secure && new_values[key] !== "") {
+                        this._current_ioperator.preferences[key].value = "********";
+                    } else {
+                        this._current_ioperator.preferences[key].value = new_values[key];
+                    }
+
+                    // Build patch
+                    requestBody.push({
+                        op: "replace",
+                        path: "/operators/" + this._current_ioperator.id + "/preferences/" + key + "/value",
+                        value: new_values[key],
+                    });
+                } else {
+                    delete new_values[key];
+                }
+            }
+
+            this.hide();
+
+            if (!this._current_ioperator.volatile) {
+                Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                    workspace_id: this._current_ioperator.wiring.workspace.id,
+                }), {
+                    method: 'PATCH',
+                    contentType: 'application/json-patch+json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(requestBody),
+                    onSuccess: operatorCallback.call(this, new_values)
+                });
             }
         }
-        this._current_ioperator = ioperator;
-        this.form = new se.Form(fields, {
-            setdefaultsButton: true,
-            buttonArea: this.windowBottom
-        });
-        this.form.insertInto(this.windowContent);
-        this.form.acceptButton.addClassName('btn-accept');
-        this.form.addEventListener('submit', this._savePrefs.bind(this));
-        this.form.addEventListener('cancel', this.hide.bind(this));
 
-        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
-    };
+        show(ioperator, parentWindow) {
+            var i, prefs, pref, fields;
 
-    Wirecloud.ui.OperatorPreferencesWindowMenu = OperatorPreferencesWindowMenu;
+            fields = {};
+            prefs = ioperator.preferenceList;
 
-})(StyledElements, Wirecloud.Utils);
+            for (i = 0; i < prefs.length; i++) {
+                pref = prefs[i];
+
+                if (!pref.hidden) {
+                    fields[pref.meta.name] = pref.getInterfaceDescription();
+                }
+            }
+            this._current_ioperator = ioperator;
+            this.form = new se.Form(fields, {
+                setdefaultsButton: true,
+                buttonArea: this.windowBottom
+            });
+            this.form.insertInto(this.windowContent);
+            this.form.acceptButton.addClassName('btn-accept');
+            this.form.addEventListener('submit', this._savePrefs.bind(this));
+            this.form.addEventListener('cancel', this.hide.bind(this));
+
+            super.show(parentWindow);
+        }
+
+    }
+
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

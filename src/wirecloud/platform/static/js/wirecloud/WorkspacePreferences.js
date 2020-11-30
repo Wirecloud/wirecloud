@@ -23,37 +23,38 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var WorkspacePreferences = function WorkspacePreferences(definitions, workspace, values) {
-        Wirecloud.Preferences.call(this, definitions, values);
-        this._workspace = workspace;
+    ns.WorkspacePreferences = class WorkspacePreferences extends ns.Preferences {
 
-        Wirecloud.preferences.addEventListener('post-commit', this._handleParentChanges);
-    };
-    utils.inherit(WorkspacePreferences, Wirecloud.Preferences);
+        constructor(definitions, workspace, values) {
+            super(definitions, values);
+            this._workspace = workspace;
 
-    WorkspacePreferences.prototype.buildTitle = function buildTitle() {
-        return utils.gettext("Settings");
-    };
+            Wirecloud.preferences.addEventListener('post-commit', this._handleParentChanges);
+        }
 
-    WorkspacePreferences.prototype.getParentValue = function getParentValue(name) {
-        return Wirecloud.preferences.get(name);
-    };
+        buildTitle() {
+            return utils.gettext("Settings");
+        }
 
-    WorkspacePreferences.prototype._build_save_url = function _build_save_url() {
-        return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.id});
-    };
+        getParentValue(name) {
+            return Wirecloud.preferences.get(name);
+        }
 
-    WorkspacePreferences.prototype.destroy = function destroy() {
-        Wirecloud.preferences.removeEventListener('post-commit', this._handleParentChanges);
+        _build_save_url() {
+            return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.id});
+        }
 
-        Wirecloud.Preferences.prototype.destroy.call(this);
-        this._workspace = null;
-    };
+        destroy() {
+            Wirecloud.preferences.removeEventListener('post-commit', this._handleParentChanges);
 
-    Wirecloud.WorkspacePreferences = WorkspacePreferences;
+            super.destroy();
+            this._workspace = null;
+        }
 
-})(Wirecloud.Utils);
+    }
+
+})(Wirecloud, Wirecloud.Utils);

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,203 +23,219 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var builder = new StyledElements.GUIBuilder();
+    const builder = new StyledElements.GUIBuilder();
 
-    var WindowMenu = function WindowMenu(title, extra_class, events) {
+    ns.WindowMenu = class WindowMenu extends se.ObjectWithEvents {
 
-        var ui_fragment, i, element;
+        constructor(title, extra_class, events) {
+            super(events || []);
 
-        privates.set(this, {
-            parent: null,
-            child: null,
-            insert: insert.bind(this)
-        });
+            privates.set(this, {
+                parent: null,
+                child: null,
+                insert: insert.bind(this)
+            });
 
-        StyledElements.ObjectWithEvents.call(this, events || []);
-        this._closeListener = this._closeListener.bind(this);
+            this._closeListener = this._closeListener.bind(this);
 
-        ui_fragment = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/base'], {
-            'title': function (options) {
-                this.titleElement = document.createElement('h3');
-                return this.titleElement;
-            }.bind(this),
-            'body': function (options) {
-                this.windowContent = document.createElement('div');
-                if (options && typeof options.class === 'string') {
-                    this.windowContent.className = options.class;
+            const ui_fragment = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/base'], {
+                'title': function (options) {
+                    this.titleElement = document.createElement('h3');
+                    return this.titleElement;
+                }.bind(this),
+                'body': function (options) {
+                    this.windowContent = document.createElement('div');
+                    if (options && typeof options.class === 'string') {
+                        this.windowContent.className = options.class;
+                    }
+                    return this.windowContent;
+                }.bind(this),
+                'closebutton': function (options) {
+                    var button = new StyledElements.Button({
+                        plain: true,
+                        class: 'fa-remove',
+                        iconClass: 'fa fa-remove',
+                        title: utils.gettext("Close")
+                    });
+                    button.addEventListener('click', this._closeListener);
+                    return button;
+                }.bind(this),
+                'footer': function (options) {
+                    this.windowBottom = document.createElement('div');
+                    if (options && typeof options.class === 'string') {
+                        this.windowBottom.className = options.class;
+                    }
+                    return this.windowBottom;
+                }.bind(this)
+            });
+
+            for (let i = 0; i < ui_fragment.elements.length; i += 1) {
+                const element = ui_fragment.elements[i];
+                if (element instanceof Element) {
+                    this.htmlElement = element;
+                    break;
                 }
-                return this.windowContent;
-            }.bind(this),
-            'closebutton': function (options) {
-                var button = new StyledElements.Button({
-                    plain: true,
-                    class: 'fa-remove',
-                    iconClass: 'fa fa-remove',
-                    title: utils.gettext("Close")
-                });
-                button.addEventListener('click', this._closeListener);
-                return button;
-            }.bind(this),
-            'footer': function (options) {
-                this.windowBottom = document.createElement('div');
-                if (options && typeof options.class === 'string') {
-                    this.windowBottom.className = options.class;
-                }
-                return this.windowBottom;
-            }.bind(this)
-        });
-
-        for (i = 0; i < ui_fragment.elements.length; i += 1) {
-            element = ui_fragment.elements[i];
-            if (element instanceof Element) {
-                this.htmlElement = element;
-                break;
             }
+            this.htmlElement.classList.add('window_menu');
+            if (extra_class != null) {
+                this.htmlElement.classList.add(extra_class);
+            }
+            this.windowHeader = this.htmlElement.querySelector('.window_top');
+
+            // Initial title
+            this.setTitle(title);
+
+            // Make draggable
+            makeDraggable.call(this, this.titleElement);
         }
-        this.htmlElement.classList.add('window_menu');
-        if (extra_class != null) {
-            this.htmlElement.classList.add(extra_class);
+
+        /**
+         * set position.
+         */
+        setPosition(coordinates) {
+            this.htmlElement.style.left = coordinates.posX + 'px';
+            this.htmlElement.style.top = coordinates.posY + 'px';
         }
-        this.windowHeader = this.htmlElement.querySelector('.window_top');
 
-        // Initial title
-        this.setTitle(title);
+        /**
+         * get style position.
+         */
+        getStylePosition() {
+            return {
+                posX: parseInt(this.htmlElement.style.left, 10),
+                posY: parseInt(this.htmlElement.style.top, 10)
+            };
+        }
 
-        // Make draggable
-        makeDraggable.call(this, this.titleElement);
-    };
-    WindowMenu.prototype = new StyledElements.ObjectWithEvents();
+        setTitle(title) {
+            this.titleElement.textContent = title;
+        }
 
-    /**
-     * set position.
-     */
-    WindowMenu.prototype.setPosition = function setPosition(coordinates) {
-        this.htmlElement.style.left = coordinates.posX + 'px';
-        this.htmlElement.style.top = coordinates.posY + 'px';
-    };
+        /**
+         * @private
+         *
+         * Click Listener for the close button.
+         */
+        _closeListener(e) {
+            this.hide();
+        }
 
-    /**
-     * get style position.
-     */
-    WindowMenu.prototype.getStylePosition = function getStylePosition() {
-        return {
-            posX: parseInt(this.htmlElement.style.left, 10),
-            posY: parseInt(this.htmlElement.style.top, 10)
-        };
-    };
+        /**
+         * Calculates a usable absolute position for the window
+         */
+        repaint() {
 
-    WindowMenu.prototype.setTitle = function setTitle(title) {
-        this.titleElement.textContent = title;
-    };
+            if (this.htmlElement.parentNode == null) {
+                return this;
+            }
 
-    /**
-     * @private
-     *
-     * Click Listener for the close button.
-     */
-    WindowMenu.prototype._closeListener = function _closeListener(e) {
-        this.hide();
-    };
+            var priv = privates.get(this);
+            var coordenates = [];
+            var windowHeight = window.innerHeight;
+            var windowWidth = window.innerWidth;
 
-    /**
-     * Calculates a usable absolute position for the window
-     */
-    WindowMenu.prototype.repaint = function repaint() {
+            this.htmlElement.style.maxHeight = '';
+            this.htmlElement.style.maxWidth = '';
+            this.windowContent.style.maxHeight = '';
+            var menuWidth = this.htmlElement.offsetWidth;
 
-        if (this.htmlElement.parentNode == null) {
+            if (menuWidth > windowWidth) {
+                menuWidth = windowWidth;
+                this.htmlElement.style.maxWidth = menuWidth + 'px';
+            }
+            var menuHeight = this.htmlElement.offsetHeight;
+
+            coordenates[1] = (windowHeight - menuHeight) / 2;
+            coordenates[0] = (windowWidth - menuWidth) / 2;
+
+            if (windowHeight < menuHeight) {
+                this.htmlElement.style.maxHeight = windowHeight + 'px';
+                this.htmlElement.style.top = '0px';
+                this.windowContent.style.maxHeight = (windowHeight - this.windowHeader.offsetHeight - this.windowBottom.offsetHeight) + 'px';
+            } else {
+                this.htmlElement.style.top = coordenates[1] + "px";
+            }
+            this.htmlElement.style.left = coordenates[0] + "px";
+
+            if (priv.child != null) {
+                priv.child.repaint();
+            }
+
             return this;
         }
 
-        var priv = privates.get(this);
-        var coordenates = [];
-        var windowHeight = window.innerHeight;
-        var windowWidth = window.innerWidth;
+        /**
+         * Makes this WindowMenu visible.
+         *
+         * @param parentWindow
+         */
+        show(parentWindow) {
+            if (parentWindow != null) {
+                addChildWindow(parentWindow, this);
+                Wirecloud.UserInterfaceManager._registerPopup(this);
+            } else {
+                Wirecloud.UserInterfaceManager._registerRootWindowMenu(this);
+            }
 
-        this.htmlElement.style.maxHeight = '';
-        this.htmlElement.style.maxWidth = '';
-        this.windowContent.style.maxHeight = '';
-        var menuWidth = this.htmlElement.offsetWidth;
+            var priv = privates.get(this);
+            priv.insert();
+            utils.onFullscreenChange(document.body, priv.insert);
 
-        if (menuWidth > windowWidth) {
-            menuWidth = windowWidth;
-            this.htmlElement.style.maxWidth = menuWidth + 'px';
-        }
-        var menuHeight = this.htmlElement.offsetHeight;
-
-        coordenates[1] = (windowHeight - menuHeight) / 2;
-        coordenates[0] = (windowWidth - menuWidth) / 2;
-
-        if (windowHeight < menuHeight) {
-            this.htmlElement.style.maxHeight = windowHeight + 'px';
-            this.htmlElement.style.top = '0px';
-            this.windowContent.style.maxHeight = (windowHeight - this.windowHeader.offsetHeight - this.windowBottom.offsetHeight) + 'px';
-        } else {
-            this.htmlElement.style.top = coordenates[1] + "px";
-        }
-        this.htmlElement.style.left = coordenates[0] + "px";
-
-        if (priv.child != null) {
-            priv.child.repaint();
+            this.htmlElement.style.display = "block";
+            this.setFocus();
         }
 
-        return this;
-    };
+        /**
+         * Makes this WindowMenu hidden.
+         */
+        hide() {
 
-    /**
-     * Makes this WindowMenu visible.
-     *
-     * @param parentWindow
-     */
-    WindowMenu.prototype.show = function show(parentWindow) {
-        if (parentWindow != null) {
-            addChildWindow(parentWindow, this);
-            Wirecloud.UserInterfaceManager._registerPopup(this);
-        } else {
-            Wirecloud.UserInterfaceManager._registerRootWindowMenu(this);
+            var priv = privates.get(this);
+
+            if (this.htmlElement.parentElement == null) {
+                // This windowmenu is currently hidden => Nothing to do
+                return;
+            }
+
+            this.htmlElement.parentNode.removeChild(this.htmlElement);
+            if (this.msgElement != null) {
+                this.msgElement.textContent = '';
+            }
+
+            // Remove fullscreen listener
+            utils.removeFullscreenChangeCallback(document.body, priv.insert);
+            if (this.child != null) {
+                this.child.hide();
+            }
+
+            if (priv.parent != null) {
+                removeChildWindow(priv.parent, this);
+                Wirecloud.UserInterfaceManager._unregisterPopup(this);
+            } else {
+                Wirecloud.UserInterfaceManager._unregisterRootWindowMenu(this);
+            }
         }
 
-        var priv = privates.get(this);
-        priv.insert();
-        utils.onFullscreenChange(document.body, priv.insert);
-
-        this.htmlElement.style.display = "block";
-        this.setFocus();
-    };
-
-    /**
-     * Makes this WindowMenu hidden.
-     */
-    WindowMenu.prototype.hide = function hide() {
-
-        var priv = privates.get(this);
-
-        if (this.htmlElement.parentElement == null) {
-            // This windowmenu is currently hidden => Nothing to do
-            return;
+        setFocus() {
         }
 
-        this.htmlElement.parentNode.removeChild(this.htmlElement);
-        if (this.msgElement != null) {
-            this.msgElement.textContent = '';
+        destroy() {
+            this.hide();
+
+            this._closeListener = null;
         }
 
-        // Remove fullscreen listener
-        utils.removeFullscreenChangeCallback(document.body, priv.insert);
-        if (this.child != null) {
-            this.child.hide();
-        }
+    }
 
-        if (priv.parent != null) {
-            removeChildWindow(priv.parent, this);
-            Wirecloud.UserInterfaceManager._unregisterPopup(this);
-        } else {
-            Wirecloud.UserInterfaceManager._unregisterRootWindowMenu(this);
-        }
-    };
+    // =========================================================================
+    // PRIVATE MEMBERS
+    // =========================================================================
+
+    var privates = new WeakMap();
 
     var addChildWindow = function addChildWindow(parent, child) {
 
@@ -260,21 +277,6 @@
         }
     };
 
-    WindowMenu.prototype.setFocus = function setFocus() {
-    };
-
-    WindowMenu.prototype.destroy = function destroy() {
-        this.hide();
-
-        this._closeListener = null;
-    };
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
     var makeDraggable = function makeDraggable(handler) {
         this.draggable = new Wirecloud.ui.Draggable(handler, {window_menu: this},
             function onStart(draggable, context) {
@@ -305,6 +307,4 @@
         this.repaint();
     };
 
-    Wirecloud.ui.WindowMenu = WindowMenu;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

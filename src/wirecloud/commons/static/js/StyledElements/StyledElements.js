@@ -38,74 +38,74 @@
      * @name StyledElements.StyledElement
      * @param {String[]} events [description]
      */
-    se.StyledElement = function StyledElement(events) {
-        this.wrapperElement = null;
-        this.parentElement = null;
+    se.StyledElement = class StyledElement extends se.ObjectWithEvents {
 
-        Object.defineProperties(this, {
+        constructor(events) {
+            events = Array.isArray(events) ? events : [];
+            super(['hide', 'show'].concat(events));
 
-            /**
-             * `true` if this element is enabled. This property is
-             * writable.
-             *
-             * @memberof StyledElements.StyledElement#
-             * @since 0.6.0
-             *
-             * @type {Boolean}
-             */
-            enabled: {
-                get: function get() {
-                    return !this.hasClassName('disabled');
+            this.wrapperElement = null;
+            this.parentElement = null;
+
+            Object.defineProperties(this, {
+
+                /**
+                 * `true` if this element is enabled. This property is
+                 * writable.
+                 *
+                 * @memberof StyledElements.StyledElement#
+                 * @since 0.6.0
+                 *
+                 * @type {Boolean}
+                 */
+                enabled: {
+                    get: function get() {
+                        return !this.hasClassName('disabled');
+                    },
+                    set: function set(value) {
+                        value = !!value; // Convert into boolean
+                        if (this.enabled !== value) {
+                            this.toggleClassName('disabled', !value)
+                                ._onenabled(value);
+                        }
+                    }
                 },
-                set: function set(value) {
-                    value = !!value; // Convert into boolean
-                    if (this.enabled !== value) {
-                        this.toggleClassName('disabled', !value)
-                            ._onenabled(value);
+
+                /**
+                 * `true` if this element is hidden. This property isArray
+                 * writable.
+                 *
+                 * @memberof StyledElements.StyledElement#
+                 * @since 0.6.0
+                 *
+                 * @type {Boolean}
+                 */
+                hidden: {
+                    get: function get() {
+                        return this.hasClassName('hidden');
+                    },
+                    set: function set(value) {
+                        this.toggleClassName('hidden', value)
+                            ._onhidden(value);
                     }
                 }
-            },
 
-            /**
-             * `true` if this element is hidden. This property isArray
-             * writable.
-             *
-             * @memberof StyledElements.StyledElement#
-             * @since 0.6.0
-             *
-             * @type {Boolean}
-             */
-            hidden: {
-                get: function get() {
-                    return this.hasClassName('hidden');
-                },
-                set: function set(value) {
-                    this.toggleClassName('hidden', value)
-                        ._onhidden(value);
-                }
-            }
-
-        });
-
-        events = Array.isArray(events) ? events : [];
-        se.ObjectWithEvents.call(this, ['hide', 'show'].concat(events));
-    };
-
-    utils.inherit(se.StyledElement, se.ObjectWithEvents, /** @lends StyledElements.StyledElement.prototype */ {
+            });
+        }
 
         /**
          * @protected
          */
-        _onenabled: function _onenabled(enabled) {
+        _onenabled(enabled) {
             // This member can be implemented by subclass.
-        },
+        }
 
         /**
          * @protected
          */
-        _onhidden: function _onhidden(hidden) {
+        _onhidden(hidden) {
             // This member can be implemented by subclass.
-        },
+        }
 
         /**
          * Adds one or more classes to this StyledElement.
@@ -116,7 +116,7 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        addClassName: function addClassName(classList) {
+        addClassName(classList) {
 
             if (!Array.isArray(classList)) {
                 classList = classList == null ? "" : classList.toString().trim();
@@ -129,7 +129,7 @@
             classList.forEach(add_individual_class, this);
 
             return this;
-        },
+        }
 
         /**
          * Inserts this StyledElement either to the end of the `parentElement`
@@ -144,22 +144,22 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        appendTo: function appendTo(parentElement, refElement) {
+        appendTo(parentElement, refElement) {
             if (parentElement instanceof se.StyledElement && typeof parentElement.appendChild === 'function') {
                 parentElement.appendChild(this, refElement);
             } else {
                 utils.appendChild(parentElement, this, refElement);
             }
             return this;
-        },
+        }
 
         /**
          * Removes any circular reference to this element
          */
-        destroy: function destroy() {
+        destroy() {
             this.remove();
-            se.ObjectWithEvents.prototype.destroy.call(this);
-        },
+            super.destroy(this);
+        }
 
         /**
          * Disables this StyledElement
@@ -168,11 +168,11 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        disable: function disable() {
+        disable() {
             this.enabled = false;
 
             return this;
-        },
+        }
 
         /**
          * Enables this StyledElement
@@ -181,11 +181,11 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        enable: function enable() {
+        enable() {
             this.enabled = true;
 
             return this;
-        },
+        }
 
         /**
          * Gets the root element for this StyledElement
@@ -195,9 +195,9 @@
          *      If the wrapperElement is not instance of HTMLElement, the member
          *      throws TypeError exception.
          */
-        get: function get() {
+        get() {
             return this.wrapperElement;
-        },
+        }
 
         /**
          * Hides this StyledElement
@@ -206,7 +206,7 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        hide: function hide() {
+        hide() {
 
             if (!this.hidden) {
                 this.hidden = true;
@@ -214,7 +214,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Gets the parent of this StyledElement
@@ -223,14 +223,14 @@
          * @returns {HTMLElement}
          *      The parent element of the wrapperElement.
          */
-        parent: function parent() {
+        parent() {
 
             if (this.parentElement != null) {
                 return this.parentElement.get();
             }
 
             return this.get().parentElement;
-        },
+        }
 
         /**
          * Inserts this StyledElement either to the beginning of the `parentElement`
@@ -245,14 +245,14 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        prependTo: function prependTo(parentElement, refElement) {
+        prependTo(parentElement, refElement) {
             if (parentElement instanceof se.StyledElement && typeof parentElement.prependChild === 'function') {
                 parentElement.prependChild(this, refElement);
             } else {
                 utils.prependChild(parentElement, this, refElement);
             }
             return this;
-        },
+        }
 
         /**
          * Remove this StyledElement from the DOM.
@@ -261,8 +261,7 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        remove: function remove() {
-
+        remove() {
             if (this.parentElement instanceof se.StyledElement && typeof this.parentElement.removeChild === 'function') {
                 this.parentElement.removeChild(this);
             } else {
@@ -270,7 +269,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Replaces CSS classes with others. This method is a shortcut for
@@ -302,12 +301,12 @@
          * => "fa fa-plus";
          *
          */
-        replaceClassName: function replaceClassName(removeList, addList) {
+        replaceClassName(removeList, addList) {
             this.removeClassName(removeList);
             this.addClassName(addList);
 
             return this;
-        },
+        }
 
         /**
          * Display the wrapperElement.
@@ -316,7 +315,7 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        show: function show() {
+        show() {
 
             if (this.hidden) {
                 this.hidden = false;
@@ -324,7 +323,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Get the value of a computed style property or set one or more CSS
@@ -338,7 +337,7 @@
          * @returns {StyledElements.StyledElement|String}
          *      The instance on which the member is called or the CSS property value.
          */
-        style: function style(properties, value) {
+        style(properties, value) {
 
             if (arguments.length === 1) {
                 if (typeof properties === 'string') {
@@ -353,7 +352,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Add or remove one or more classes from this StyledElement,
@@ -370,7 +369,7 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        toggleClassName: function toggleClassName(classList, state) {
+        toggleClassName(classList, state) {
             var method;
 
             if (!Array.isArray(classList)) {
@@ -389,9 +388,9 @@
             }
 
             return this;
-        },
+        }
 
-        _getUsableHeight: function _getUsableHeight() {
+        _getUsableHeight() {
             var parentElement = this.wrapperElement.parentElement;
             if (parentElement == null) {
                 return null;
@@ -414,9 +413,9 @@
                          containerStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
             return height;
-        },
+        }
 
-        _getUsableWidth: function _getUsableWidth() {
+        _getUsableWidth() {
             var parentElement = this.wrapperElement.parentElement;
             if (parentElement == null) {
                 return null;
@@ -432,11 +431,11 @@
                         containerStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
             return width;
-        },
+        }
 
-        getBoundingClientRect: function getBoundingClientRect() {
+        getBoundingClientRect() {
             return this.wrapperElement.getBoundingClientRect();
-        },
+        }
 
         /**
          * Returns `true` if this StyledElement is usig the CSS class name
@@ -448,11 +447,11 @@
          *      `true` if this StyledElement is usig the CSS class name
          * `className`, otherwise `false`
          */
-        hasClassName: function hasClassName(className) {
+        hasClassName(className) {
             className = className == null ? "" : className.toString().trim();
 
             return this.get().classList.contains(className);
-        },
+        }
 
         /**
          * Inserts this StyledElement either at the end of the `parentElement` or
@@ -466,9 +465,9 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        insertInto: function insertInto(parentElement, refElement) {
+        insertInto(parentElement, refElement) {
             return refElement != null ? this.prependTo(parentElement, refElement) : this.appendTo(parentElement);
-        },
+        }
 
         /**
          * Removes multiple or all classes from this StyledElement
@@ -481,7 +480,7 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        removeClassName: function removeClassName(classList) {
+        removeClassName(classList) {
             if (!Array.isArray(classList)) {
                 classList = classList == null ? "" : classList.toString().trim();
                 if (classList === "") {
@@ -494,7 +493,7 @@
             classList.forEach(remove_individual_class, this);
 
             return this;
-        },
+        }
 
         /**
          * Repaints this StyledElement.
@@ -508,7 +507,9 @@
          * @returns {StyledElements.StyledElement}
          *      The instance on which the member is called.
          */
-        repaint: function repaint(temporal) {return this;},
+        repaint(temporal) {
+            return this;
+        }
 
         /**
          * @deprecated since version 0.6
@@ -517,7 +518,7 @@
          *     {@link StyledElements.StyledElement#disable} and
          *     {@link StyledElements.StyledElement#enabled}
          */
-        setDisabled: function setDisabled(disable) {
+        setDisabled(disable) {
             if (disable) {
                 return this.disable();
             } else {
@@ -525,7 +526,7 @@
             }
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

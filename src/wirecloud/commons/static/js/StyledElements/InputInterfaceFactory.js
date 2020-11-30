@@ -26,22 +26,22 @@
 
     "use strict";
 
-    var default_mapping = {
-        'boolean': StyledElements.BooleanInputInterface,
-        'text': StyledElements.TextInputInterface,
-        'version': StyledElements.VersionInputInterface,
-        'password': StyledElements.PasswordInputInterface,
-        'hidden': StyledElements.HiddenInputInterface,
-        'list': StyledElements.ListInputInterface,
-        'number': StyledElements.NumberInputInterface,
-        'longtext': StyledElements.LongTextInputInterface,
-        'url': StyledElements.URLInputInterface,
-        'email': StyledElements.EMailInputInterface,
-        'select': StyledElements.SelectInputInterface,
-        'buttons': StyledElements.ButtonGroupInputInterface,
-        'file': StyledElements.FileInputInterface,
-        'fieldset': StyledElements.FieldSetInterface,
-        'multivalued': StyledElements.MultivaluedInputInterface
+    const default_mapping = {
+        boolean: StyledElements.BooleanInputInterface,
+        text: StyledElements.TextInputInterface,
+        version: StyledElements.VersionInputInterface,
+        password: StyledElements.PasswordInputInterface,
+        hidden: StyledElements.HiddenInputInterface,
+        list: StyledElements.ListInputInterface,
+        number: StyledElements.NumberInputInterface,
+        longtext: StyledElements.LongTextInputInterface,
+        url: StyledElements.URLInputInterface,
+        email: StyledElements.EMailInputInterface,
+        select: StyledElements.SelectInputInterface,
+        buttons: StyledElements.ButtonGroupInputInterface,
+        file: StyledElements.FileInputInterface,
+        fieldset: StyledElements.FieldSetInterface,
+        multivalued: StyledElements.MultivaluedInputInterface
     };
 
     var InputInterfaceFactory = function InputInterfaceFactory() {

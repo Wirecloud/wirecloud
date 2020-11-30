@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,96 +27,74 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.Connection = class Connection extends se.ObjectWithEvents {
 
-    /**
-     * Creates a new instance of class Connection.
-     *
-     * @name Wirecloud.wiring.Connection
-     * @mixes {StyledElement.ObjectWithEvents}
-     *
-     * @constructor
-     * @param {Wirecloud.Wiring} wiring
-     *      [TODO: description]
-     * @param {SourceEndpoint} source
-     *      [TODO: description]
-     * @param {TargetEndpoint} target
-     *      [TODO: description]
-     * @param {Object} options
-     *      [TODO: description]
-     */
-    ns.Connection = function Connection(wiring, source, target, options) {
-        se.ObjectWithEvents.call(this, ['detach', 'establish', 'remove']);
-        this.established = false;
+        /**
+         * Creates a new instance of class Connection.
+         *
+         * @name Wirecloud.wiring.Connection
+         * @mixes {StyledElement.ObjectWithEvents}
+         *
+         * @constructor
+         * @param {Wirecloud.Wiring} wiring
+         *      [TODO: description]
+         * @param {SourceEndpoint} source
+         *      [TODO: description]
+         * @param {TargetEndpoint} target
+         *      [TODO: description]
+         * @param {Object} options
+         *      [TODO: description]
+         */
+        constructor(wiring, source, target, options) {
+            super(['detach', 'establish', 'remove']);
+            this.established = false;
 
-        options = utils.merge({
-            readonly: false
-        }, options);
+            options = utils.merge({
+                readonly: false
+            }, options);
 
-        Object.defineProperties(this, {
-            id: {
-                get: function get() {
-                    return this.source.id + "//" + this.target.id;
+            Object.defineProperties(this, {
+                id: {
+                    get: function get() {
+                        return this.source.id + "//" + this.target.id;
+                    }
+                },
+                logManager: {value: new Wirecloud.LogManager(wiring.logManager)},
+                readonly: {
+                    value: options.readonly
+                },
+                source: {value: source, writable: true},
+                target: {value: target, writable: true},
+                volatile: {
+                    get: function get() {
+                        return source.component.volatile || target.component.volatile;
+                    }
+                },
+                wiring: {
+                    value: wiring
                 }
-            },
-            logManager: {value: new Wirecloud.LogManager(wiring.logManager)},
-            readonly: {
-                value: options.readonly
-            },
-            source: {value: source, writable: true},
-            target: {value: target, writable: true},
-            volatile: {
-                get: function get() {
-                    return source.component.volatile || target.component.volatile;
-                }
-            },
-            wiring: {
-                value: wiring
-            }
-        });
-    };
-
-    ns.Connection.JSON_TEMPLATE = {
-        readonly: false,
-        source: {
-            type: "",
-            id: null,
-            endpoint: ""
-        },
-        target: {
-            type: "",
-            id: null,
-            endpoint: ""
+            });
         }
-    };
 
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.Connection, se.ObjectWithEvents, /** @lends Wirecloud.wiring.Connection.prototype */ {
-
-        _connect: function _connect() {
+        _connect() {
             var message = utils.gettext("The connection ('%(source)s'-'%(target)s') was established.");
 
             this.established = true;
             this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.INFO_MSG);
 
             return this.dispatchEvent('establish');
-        },
+        }
 
-        _disconnect: function _disconnect() {
+        _disconnect() {
             var message = utils.gettext("The connection ('%(source)s'-'%(target)s') was detached.");
 
             this.established = false;
             this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.INFO_MSG);
 
             return this.dispatchEvent('detach');
-        },
+        }
 
-        detach: function detach() {
+        detach() {
 
             if (!this.established) {
                 return this;
@@ -125,13 +104,13 @@
             this.established = false;
 
             return this;
-        },
+        }
 
-        equals: function equals(connection) {
+        equals(connection) {
             return connection instanceof ns.Connection && this.id === connection.id;
-        },
+        }
 
-        establish: function establish() {
+        establish() {
 
             if (this.source.missing || this.target.missing) {
                 var message = utils.gettext("The connection ('%(source)s'-'%(target)s') has a missing endpoint.");
@@ -147,9 +126,9 @@
             this.established = true;
 
             return this;
-        },
+        }
 
-        updateEndpoint: function updateEndpoint(endpoint) {
+        updateEndpoint(endpoint) {
 
             if (!(endpoint instanceof Wirecloud.wiring.Endpoint)) {
                 throw new TypeError("endpoint must be a Wirecloud.wiring.Endpoint instance");
@@ -165,23 +144,23 @@
             }
 
             return this.establish();
-        },
+        }
 
-        remove: function remove() {
+        remove() {
             this.detach();
             return this.dispatchEvent('remove');
-        },
+        }
 
-        showLogs: function showLogs() {
+        showLogs() {
             var modal = new Wirecloud.ui.LogWindowMenu(this.logManager, {
                 title: utils.gettext("Connection's logs")
             });
             modal.show();
 
             return this;
-        },
+        }
 
-        toJSON: function toJSON() {
+        toJSON() {
             return JSON.parse(JSON.stringify({
                 readonly: this.readonly,
                 source: this.source,
@@ -189,10 +168,6 @@
             }));
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
+    }
 
 })(Wirecloud.wiring, StyledElements, StyledElements.Utils);

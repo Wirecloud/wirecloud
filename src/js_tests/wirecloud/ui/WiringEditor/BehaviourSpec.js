@@ -29,6 +29,8 @@
     describe("Behaviour", () => {
 
         beforeAll(() => {
+            // TODO
+            Wirecloud.ui.InputInterfaceFactory = se.DefaultInputInterfaceFactory;
             ns.BehaviourPrefs = jasmine.createSpy("BehaviourPrefs");
             se.Utils.inherit(ns.BehaviourPrefs, se.DynamicMenuItems);
         });
@@ -81,18 +83,31 @@
 
         describe("btnRemove", () => {
 
-            it("should send an optremove event if the user like to remove the behaviour", () => {
+            it("should send an optremove event if the behaviour is empty", () => {
                 const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const listener = jasmine.createSpy("listener");
+                behaviour.addEventListener("optremove", listener);
+
+                behaviour.btnRemove.click();
+
+                expect(listener).toHaveBeenCalledWith(behaviour);
+                expect(listener.calls.count()).toBe(1);
+            });
+
+            it("should open an alert dialog if the behaviour is not empty", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                behaviour.updateConnection({
+                    sourceId: "sourcename",
+                    targetId: "targetname"
+                });
                 const listener = jasmine.createSpy("listener");
                 let alert_handler;
                 behaviour.addEventListener("optremove", listener);
-                spyOn(Wirecloud.ui, "AlertWindowMenu").and.callFake(function () {
-                    this.setHandler = jasmine.createSpy("setHandler").and.callFake((listener) => {
-                        alert_handler = listener;
-                        return this;
-                    });
-                    this.show = jasmine.createSpy("show").and.returnValue(this);
+                spyOn(Wirecloud.ui.AlertWindowMenu.prototype, "setHandler").and.callFake(function (listener) {
+                    alert_handler = listener;
+                    return this;
                 });
+                spyOn(Wirecloud.ui.AlertWindowMenu.prototype, "show").and.callFake(function () {return this;});
 
                 behaviour.btnRemove.click();
                 alert_handler();
@@ -422,10 +437,9 @@
                 const new_title = "New Title";
                 const new_description = "New description";
                 const listener = jasmine.createSpy("listener");
-                let dialog;
                 behaviour.addEventListener("change", listener);
-                // TODO change to spyOn on FormWindowMenu inclusion to the tested classes
-                Wirecloud.ui.FormWindowMenu = jasmine.createSpy("FormWindowMenu").and.callFake(function () {
+                let dialog;
+                spyOn(Wirecloud.ui, "FormWindowMenu").and.callFake(function () {
                     dialog = this;
                     this.setValue = jasmine.createSpy("setValue").and.returnValue(this);
                     this.show = jasmine.createSpy("show").and.returnValue(this);
@@ -443,15 +457,14 @@
                 expect(behaviour.description).toBe(new_description);
             });
 
-            it("should provide default values for empty titles and descriptions", () => {
+            it("should trim titles", () => {
                 const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
-                const new_title = "   ";
-                const new_description = "  \n  ";
+                const new_title = " new title ";
+                const new_description = " a b ";
                 const listener = jasmine.createSpy("listener");
-                let dialog;
                 behaviour.addEventListener("change", listener);
-                // TODO change to spyOn on FormWindowMenu inclusion to the tested classes
-                Wirecloud.ui.FormWindowMenu = jasmine.createSpy("FormWindowMenu").and.callFake(function () {
+                let dialog;
+                spyOn(Wirecloud.ui, "FormWindowMenu").and.callFake(function () {
                     dialog = this;
                     this.setValue = jasmine.createSpy("setValue").and.returnValue(this);
                     this.show = jasmine.createSpy("show").and.returnValue(this);
@@ -465,8 +478,8 @@
 
                 expect(listener).toHaveBeenCalledWith(behaviour);
                 expect(listener.calls.count()).toBe(1);
-                expect(behaviour.title).not.toBe(new_title);
-                expect(behaviour.description).not.toBe(new_description);
+                expect(behaviour.title).toBe(new_title.trim());
+                expect(behaviour.description).toBe(new_description);
             });
 
         });

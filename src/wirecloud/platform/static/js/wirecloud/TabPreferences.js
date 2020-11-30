@@ -27,36 +27,37 @@
 
     "use strict";
 
-    var TabPreferences = function TabPreferences(definitions, tab, values) {
-        Wirecloud.Preferences.call(this, definitions, values);
+    ns.TabPreferences = class TabPreferences extends ns.Preferences {
 
-        Object.defineProperties(this, {
-            tab: {
-                value: tab
-            }
-        });
+        constructor(definitions, tab, values) {
+            super(definitions, values);
 
-        this.tab.workspace.preferences.addEventListener('post-commit', this._handleParentChanges);
-    };
-    utils.inherit(TabPreferences, Wirecloud.Preferences);
+            Object.defineProperties(this, {
+                tab: {
+                    value: tab
+                }
+            });
 
-    TabPreferences.prototype.buildTitle = function buildTitle() {
-        return utils.gettext("Settings");
-    };
+            this.tab.workspace.preferences.addEventListener('post-commit', this._handleParentChanges);
+        }
 
-    TabPreferences.prototype.getParentValue = function getParentValue(name) {
-        return this.tab.workspace.preferences.get(name);
-    };
+        buildTitle() {
+            return utils.gettext("Settings");
+        }
 
-    TabPreferences.prototype._build_save_url = function _build_save_url(modifiedValues) {
-        return Wirecloud.URLs.TAB_PREFERENCES.evaluate({workspace_id: this.tab.workspace.id, tab_id: this.tab.id});
-    };
+        getParentValue(name) {
+            return this.tab.workspace.preferences.get(name);
+        }
 
-    TabPreferences.prototype.destroy = function destroy() {
-        this.tab.workspace.preferences.removeEventListener('post-commit', this._handleParentChanges);
-        Wirecloud.Preferences.prototype.destroy.call(this);
-    };
+        _build_save_url(modifiedValues) {
+            return Wirecloud.URLs.TAB_PREFERENCES.evaluate({workspace_id: this.tab.workspace.id, tab_id: this.tab.id});
+        }
 
-    Wirecloud.TabPreferences = TabPreferences;
+        destroy() {
+            this.tab.workspace.preferences.removeEventListener('post-commit', this._handleParentChanges);
+            super.destroy();
+        }
+
+    }
 
 })(Wirecloud, Wirecloud.Utils);

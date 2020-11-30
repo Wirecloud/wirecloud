@@ -27,141 +27,133 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.WorkspaceTabView = class WorkspaceTabView extends se.Tab {
 
-    ns.WorkspaceTabView = function WorkspaceTabView(id, notebook, options) {
-        var model = options.model,
-            workspace = options.workspace;
+        constructor(id, notebook, options) {
+            var model = options.model,
+                workspace = options.workspace;
 
-        se.Tab.call(this, id, notebook, {
-            closable: false,
-            name: model.title
-        });
+            super(id, notebook, {
+                closable: false,
+                name: model.title
+            });
 
-        var priv = {
-            widgets: [],
-            on_changetab: on_changetab.bind(this),
-            on_addwidget: on_addwidget.bind(this),
-            on_removetab: on_removetab.bind(this),
-            on_removewidget: on_removewidget.bind(this)
-        };
-        privates.set(this, priv);
+            var priv = {
+                widgets: [],
+                on_changetab: on_changetab.bind(this),
+                on_addwidget: on_addwidget.bind(this),
+                on_removetab: on_removetab.bind(this),
+                on_removewidget: on_removewidget.bind(this)
+            };
+            privates.set(this, priv);
 
-        Object.defineProperties(this, {
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {String}
-             */
-            id: {
-                value: model.id
-            },
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {Wirecloud.LogManager}
-             */
-            logManager: {
-                value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
-            },
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {Wirecloud.WorkspaceTab}
-             */
-            model: {
-                value: model
-            },
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {String}
-             */
-            name: {
-                get: function () {
-                    return this.model.name;
-                }
-            },
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {String}
-             */
-            title: {
-                get: function () {
-                    return this.model.title;
-                }
-            },
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {Array.<Wirecloud.ui.WidgetView>}
-             */
-            widgets: {
-                get: function () {
-                    return priv.widgets.slice(0);
-                }
-            },
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {Object.<String, Wirecloud.ui.WidgetView>}
-             */
-            widgetsById: {
-                get: function () {
-                    return get_widgets_by_id.call(this);
-                }
-            },
-            /**
-             * @memberOf Wirecloud.ui.WorkspaceTabView#
-             * @type {Wirecloud.ui.WorkspaceView}
-             */
-            workspace: {
-                value: workspace
-            }
-        });
-
-        this.tabElement.classList.add("wc-workspace-tab");
-        this.tabElement.setAttribute('data-id', this.id);
-        this.tabElement.setAttribute('data-name', this.name);
-
-        this.wrapperElement.classList.add("wc-workspace-tab-content");
-        this.wrapperElement.setAttribute('data-id', this.id);
-
-        if (this.workspace.model.isAllowed("edit")) {
-            this.prefbutton = new se.PopupButton({
-                title: utils.gettext("Preferences"),
-                class: 'icon-tab-menu',
-                iconClass: 'fa fa-caret-up',
-                plain: true,
-                menuOptions: {
-                    position: ['top-left', 'top-right']
+            Object.defineProperties(this, {
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {String}
+                 */
+                id: {
+                    value: model.id
+                },
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {Wirecloud.LogManager}
+                 */
+                logManager: {
+                    value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
+                },
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {Wirecloud.WorkspaceTab}
+                 */
+                model: {
+                    value: model
+                },
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {String}
+                 */
+                name: {
+                    get: function () {
+                        return this.model.name;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {String}
+                 */
+                title: {
+                    get: function () {
+                        return this.model.title;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {Array.<Wirecloud.ui.WidgetView>}
+                 */
+                widgets: {
+                    get: function () {
+                        return priv.widgets.slice(0);
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {Object.<String, Wirecloud.ui.WidgetView>}
+                 */
+                widgetsById: {
+                    get: function () {
+                        return get_widgets_by_id.call(this);
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.ui.WorkspaceTabView#
+                 * @type {Wirecloud.ui.WorkspaceView}
+                 */
+                workspace: {
+                    value: workspace
                 }
             });
-            this.prefbutton.popup_menu.append(new ns.WorkspaceTabViewMenuItems(this));
-            this.prefbutton.insertInto(this.tabElement);
-            this.workspace.addEventListener('editmode', update_pref_button.bind(this));
-            update_pref_button.call(this);
+
+            this.tabElement.classList.add("wc-workspace-tab");
+            this.tabElement.setAttribute('data-id', this.id);
+            this.tabElement.setAttribute('data-name', this.name);
+
+            this.wrapperElement.classList.add("wc-workspace-tab-content");
+            this.wrapperElement.setAttribute('data-id', this.id);
+
+            if (this.workspace.model.isAllowed("edit")) {
+                this.prefbutton = new se.PopupButton({
+                    title: utils.gettext("Preferences"),
+                    class: 'icon-tab-menu',
+                    iconClass: 'fa fa-caret-up',
+                    plain: true,
+                    menuOptions: {
+                        position: ['top-left', 'top-right']
+                    }
+                });
+                this.prefbutton.popup_menu.append(new ns.WorkspaceTabViewMenuItems(this));
+                this.prefbutton.insertInto(this.tabElement);
+                this.workspace.addEventListener('editmode', update_pref_button.bind(this));
+                update_pref_button.call(this);
+            }
+
+            this.dragboard = new ns.WorkspaceTabViewDragboard(this);
+
+            this.initialMessage = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/workspace/empty_tab_message'], {
+                button: this.workspace.buildAddWidgetButton.bind(this.workspace),
+                tutorials: Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts'])
+            }).children[1];
+            this.appendChild(this.initialMessage);
+
+            this.model.preferences.addEventListener('post-commit', on_change_preferences.bind(this));
+            this.model.widgets.forEach(_create_widget, this);
+            this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || this.widgets.length > 0;
+
+            this.model.addEventListener('change', priv.on_changetab);
+            this.model.addEventListener('addwidget', priv.on_addwidget);
+            this.model.addEventListener('remove', priv.on_removetab);
+            this.model.addEventListener('removewidget', priv.on_removewidget);
         }
-
-        this.dragboard = new ns.WorkspaceTabViewDragboard(this);
-
-        this.initialMessage = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/workspace/empty_tab_message'], {
-            button: this.workspace.buildAddWidgetButton.bind(this.workspace),
-            tutorials: Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts'])
-        }).children[1];
-        this.appendChild(this.initialMessage);
-
-        this.model.preferences.addEventListener('post-commit', on_change_preferences.bind(this));
-        this.model.widgets.forEach(_create_widget, this);
-        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || this.widgets.length > 0;
-
-        this.model.addEventListener('change', priv.on_changetab);
-        this.model.addEventListener('addwidget', priv.on_addwidget);
-        this.model.addEventListener('remove', priv.on_removetab);
-        this.model.addEventListener('removewidget', priv.on_removewidget);
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.WorkspaceTabView, se.Tab, /** @lends Wirecloud.WorkspaceTabView.prototype */{
 
         /**
          * @param {Wirecloud.WidgetMeta} resource
@@ -170,7 +162,7 @@
          * @returns {Promise} A promise that returns a {Widget} instance if
          * resolved, or an Error if rejected.
          */
-        createWidget: function createWidget(resource, options) {
+        createWidget(resource, options) {
             var layout, position;
 
             options = utils.merge({
@@ -240,32 +232,32 @@
                     return Promise.resolve(this.findWidget(model.id));
                 }
             );
-        },
+        }
 
         /**
          * Highlights this tab
          */
-        highlight: function highlight() {
+        highlight() {
             this.tabElement.classList.add("highlight");
             return this;
-        },
+        }
 
         /**
          * @param {String} id
          *
          * @returns {*}
          */
-        findWidget: function findWidget(id) {
+        findWidget(id) {
             return this.widgetsById[id];
-        },
+        }
 
-        repaint: function repaint() {
+        repaint() {
             this.dragboard.paint();
             this.dragboard._notifyWindowResizeEvent();
             return this;
-        },
+        }
 
-        show: function show() {
+        show() {
             se.Tab.prototype.show.call(this);
 
             if (this.workspace.editing) {
@@ -278,19 +270,19 @@
             });
 
             return this.repaint();
-        },
+        }
 
-        showSettings: function showSettings() {
+        showSettings() {
             (new Wirecloud.ui.PreferencesWindowMenu('tab', this.model.preferences)).show();
             return this;
-        },
+        }
 
-        unhighlight: function unhighlight() {
+        unhighlight() {
             this.tabElement.classList.remove("highlight");
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

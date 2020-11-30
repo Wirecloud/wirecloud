@@ -27,133 +27,127 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.Behaviour = class Behaviour extends se.Panel {
 
-    /**
-     * Create a new instance of class Behaviour.
-     * @extends {Panel}
-     *
-     * @constructor
-     * @param {PlainObject} [options]
-     *      [TODO: description]
-     */
-    ns.Behaviour = function Behaviour(index, options) {
-        options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
+        /**
+         * Creates a new instance of class Behaviour.
+         * @extends {StyledElements.Panel}
+         *
+         * @constructor
+         * @param {PlainObject} [options]
+         *      [TODO: description]
+         */
+        constructor(index, options) {
+            options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
 
-        if (options.title.trim() === "") {
-            throw new TypeError("invalid title option");
+            if (options.title.trim() === "") {
+                throw new TypeError("invalid title option");
+            }
+
+            const btnPrefs = new se.PopupButton({
+                title: utils.gettext("Preferences"),
+                class: "we-prefs-btn",
+                iconClass: "fa fa-reorder"
+            });
+            const btnRemove = new se.Button({
+                title: utils.gettext("Remove"),
+                class: "btn-remove",
+                iconClass: "fa fa-times-circle"
+            });
+
+            super({
+                events: events,
+                class: "behaviour",
+                title: options.title,
+                selectable: true,
+                buttons: [btnPrefs, btnRemove]
+            });
+
+            this.btnPrefs = btnPrefs;
+            this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
+            this.btnRemove = btnRemove;
+            this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
+
+            this.heading.title.addClassName("se-link behaviour-title text-truncate");
+
+            const descriptionElement = document.createElement('p');
+            descriptionElement.className = "behaviour-description";
+            descriptionElement.textContent = options.description;
+            this.body.appendChild(descriptionElement);
+
+            Object.defineProperties(this, {
+
+                description: {
+                    get: function get() {return descriptionElement.textContent;},
+                    set: function set(value) {
+                        descriptionElement.textContent = value != null && value.trim() !== "" ? value : ns.Behaviour.JSON_TEMPLATE.description;
+                    }
+                },
+
+                index: {
+                    get: function () {
+                        return Number(this.get().getAttribute('data-index'));
+                    },
+                    set: function (value) {
+                        value = Number(value);
+                        if (isNaN(value)) {
+                            throw new TypeError("Invalid index value");
+                        }
+                        this.get().setAttribute('data-index', value);
+                    }
+                },
+
+                logManager: {value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)}
+
+            });
+
+            this.active = options.active;
+            this.index = index;
+
+            this.components = options.components;
+            this.connections = options.connections;
         }
 
-        this.title_tooltip = new se.Tooltip({content: options.title, placement: ["top", "bottom", "right", "left"]});
-
-        this.btnPrefs = new se.PopupButton({
-            title: utils.gettext("Preferences"),
-            class: "we-prefs-btn",
-            iconClass: "fa fa-reorder"
-        });
-        this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
-
-        this.btnRemove = new se.Button({
-            title: utils.gettext("Remove"),
-            class: "btn-remove",
-            iconClass: "fa fa-times-circle"
-        });
-        this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
-
-        se.Panel.call(this, {
-            events: events,
-            class: "behaviour",
-            title: options.title,
-            selectable: true,
-            buttons: [this.btnPrefs, this.btnRemove]
-        });
-
-        this.heading.title.addClassName("se-link behaviour-title text-truncate");
-
-        const descriptionElement = document.createElement('p');
-        descriptionElement.className = "behaviour-description";
-        descriptionElement.textContent = options.description;
-        this.body.appendChild(descriptionElement);
-
-        Object.defineProperties(this, {
-
-            description: {
-                get: function get() {return descriptionElement.textContent;},
-                set: function set(value) {
-                    descriptionElement.textContent = value != null && value.trim() !== "" ? value : ns.Behaviour.JSON_TEMPLATE.description;
-                }
-            },
-
-            index: {
-                get: function () {
-                    return Number(this.get().getAttribute('data-index'));
-                },
-                set: function (value) {
-                    value = Number(value);
-                    if (isNaN(value)) {
-                        throw new TypeError("Invalid index value");
-                    }
-                    this.get().setAttribute('data-index', value);
-                }
-            },
-
-            logManager: {value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)}
-
-        });
-
-        this.active = options.active;
-        this.index = index;
-
-        this.components = options.components;
-        this.connections = options.connections;
-    };
-
-    ns.Behaviour.JSON_TEMPLATE = {
-        title: "",
-        description: "",
-        active: false,
-        components: {operator: {}, widget: {}},
-        connections: []
-    };
-
-    utils.inherit(ns.Behaviour, se.Panel, {
+        get titletooltip() {
+            const tooltip = new se.Tooltip({placement: ["top", "bottom", "right", "left"]});
+            Object.defineProperty(this, "titletooltip", {value: tooltip});
+            return tooltip;
+        }
 
         /**
          * @override
          */
-        _onclick: function _onclick(event) {
+        _onclick(event) {
 
             if (!this.active) {
-                se.Panel.prototype._onclick.call(this, event);
+                super._onclick(event);
             }
 
             return this;
-        },
+        }
 
         /**
          * @override
          */
-        clear: function clear() {
+        clear() {
 
             this.components = {operator: {}, widget: {}};
             this.connections = [];
 
             return this.dispatchEvent('change');
-        },
+        }
 
         /**
          * @override
          */
-        setTitle: function setTitle(title) {
+        setTitle(title) {
             const span = document.createElement('span');
             span.textContent = title;
-            this.title_tooltip.options.content = title;
-            this.title_tooltip.bind(span);
+            this.titletooltip.options.content = title;
+            this.titletooltip.bind(span);
 
-            return se.Panel.prototype.setTitle.call(this, span);
-        },
+            return super.setTitle(span);
+        }
 
         /**
          * [TODO: equals description]
@@ -163,11 +157,11 @@
          * @returns {Boolean}
          *      [TODO: description]
          */
-        equals: function equals(behaviour) {
+        equals(behaviour) {
             return this === behaviour;
-        },
+        }
 
-        getConnectionIndex: function getConnectionIndex(connection) {
+        getConnectionIndex(connection) {
             for (let i = 0; i < this.connections.length; i++) {
                 const _connection = this.connections[i];
 
@@ -177,9 +171,9 @@
             }
 
             return -1;
-        },
+        }
 
-        getCurrentStatus: function getCurrentStatus() {
+        getCurrentStatus() {
             return {
                 title: this.title,
                 connections: this.connections.length,
@@ -188,7 +182,7 @@
                     widget: Object.keys(this.components.widget).length
                 }
             };
-        },
+        }
 
         /**
          * Checks if the given component is present in the behaviour
@@ -198,9 +192,9 @@
          * @returns {Boolean}
          *      true if the component is present on this behaviour
          */
-        hasComponent: function hasComponent(component) {
+        hasComponent(component) {
             return component.id in this.components[component.type];
-        },
+        }
 
         /**
          * Checks if the given connection is present in the behaviour
@@ -210,11 +204,11 @@
          * @returns {Boolean}
          *      true if the connection is present on this behaviour
          */
-        hasConnection: function hasConnection(connection) {
+        hasConnection(connection) {
             return this.connections.some(function (vInfo) {
                 return vInfo.sourcename === connection.sourceId && vInfo.targetname === connection.targetId;
             });
-        },
+        }
 
         /**
          * Removes a component from the behaviour
@@ -224,13 +218,13 @@
          * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
-        removeComponent: function removeComponent(component) {
+        removeComponent(component) {
             if (this.hasComponent(component)) {
                 delete this.components[component.type][component.id];
                 this.dispatchEvent('change');
             }
             return this;
-        },
+        }
 
         /**
          * Removes a connection from the behaviour
@@ -240,7 +234,7 @@
          * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
-        removeConnection: function removeConnection(connection) {
+        removeConnection(connection) {
             const index = this.getConnectionIndex(connection);
 
             if (index !== -1) {
@@ -249,7 +243,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * [TODO: showLogs description]
@@ -257,7 +251,7 @@
          * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
-        showLogs: function showLogs() {
+        showLogs() {
             const dialog = new Wirecloud.ui.LogWindowMenu(this.logManager, {
                 title: utils.interpolate(utils.gettext("%(behaviour_title)s's logs"), {
                     behaviour_title: this.title
@@ -266,7 +260,7 @@
             dialog.show();
 
             return this;
-        },
+        }
 
         /**
          * Displays a FormWindowMenu to update behaviour details
@@ -274,7 +268,7 @@
          * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
-        showSettings: function showSettings() {
+        showSettings() {
             const dialog = new Wirecloud.ui.FormWindowMenu(
                 [
                     {name: "title", label: utils.gettext("Title"), required: true, type: "text"},
@@ -288,7 +282,7 @@
             dialog.show().setValue(this);
 
             return this;
-        },
+        }
 
         /**
          * [TODO: toJSON description]
@@ -296,7 +290,7 @@
          * @returns {PlainObject}
          *      [TODO: description]
          */
-        toJSON: function toJSON() {
+        toJSON() {
             return {
                 title: this.title,
                 description: this.description,
@@ -304,7 +298,7 @@
                 components: this.components,
                 connections: this.connections
             };
-        },
+        }
 
         /**
          * Adds or updates a component
@@ -314,14 +308,14 @@
          * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
-        updateComponent: function updateComponent(component) {
+        updateComponent(component) {
             if (!this.hasComponent(component)) {
                 this.components[component.type][component.id] = {};
                 this.dispatchEvent('change');
             }
 
             return this;
-        },
+        }
 
         /**
          * Adds or updates a connection in the behaviour
@@ -331,7 +325,7 @@
          * @returns {Wirecloud.ui.WiringEditor.Behaviour}
          *      The instance on which the member is called.
          */
-        updateConnection: function updateConnection(connection, view) {
+        updateConnection(connection, view) {
 
             let index = this.getConnectionIndex(connection);
 
@@ -347,7 +341,15 @@
             return this;
         }
 
-    });
+    }
+
+    ns.Behaviour.JSON_TEMPLATE = {
+        title: "",
+        description: "",
+        active: false,
+        components: {operator: {}, widget: {}},
+        connections: []
+    };
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -356,20 +358,24 @@
     const events = ['change', 'optremove'];
 
     const btnremove_onclick = function btnremove_onclick(event) {
-        const message = utils.gettext("The following operation is irreversible and removes the behaviour completely. Would you like to continue?");
+        if (this.connections.length > 0) {
+            const message = utils.gettext("The following operation is irreversible and removes the behaviour completely. Would you like to continue?");
 
-        const dialog = new Wirecloud.ui.AlertWindowMenu({
-            message: message,
-            acceptLabel: utils.gettext("Continue"),
-            cancelLabel: utils.gettext("No, thank you")
-        });
-        dialog.setHandler(() => {
-            this.dispatchEvent('optremove');
-        }).show();
+            const dialog = new Wirecloud.ui.AlertWindowMenu({
+                message: message,
+                acceptLabel: utils.gettext("Continue"),
+                cancelLabel: utils.gettext("No, thank you")
+            });
+            dialog.setHandler(() => {
+                this.dispatchEvent("optremove");
+            }).show();
+        } else {
+            this.dispatchEvent("optremove");
+        }
     };
 
     const updateInfo = function updateInfo(data) {
-        this.setTitle(data.title != null && data.title.trim() !== "" ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
+        this.setTitle(data.title.trim());
         this.description = data.description;
         this.dispatchEvent('change');
     };

@@ -34,7 +34,13 @@
             item = null;
         });
 
-        describe("SubMenuItem(title[, options])", () => {
+        describe("new SubMenuItem(title[, options])", () => {
+
+            it("is a class constructor", () => {
+                expect(() => {
+                    se.SubMenuItem("item");  // eslint-disable-line new-cap
+                }).toThrowError(TypeError);
+            });
 
             it("should work only by providing a title", () => {
                 let item = new se.SubMenuItem("item");

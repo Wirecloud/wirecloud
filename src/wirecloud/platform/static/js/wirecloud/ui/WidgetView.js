@@ -27,295 +27,287 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.WidgetView = class WidgetView extends se.StyledElement {
 
-    /**
-     * @name Wirecloud.UI.WidgetView
-     *
-     * @extends {StyledElements.StyledElement}
-     * @constructor
-     *
-     * @param {Wirecloud.UI.WorkspaceTabView} tab
-     * @param {Wirecloud.Widget} model
-     * @param {Object} [options]
-     */
-    ns.WidgetView = function WidgetView(tab, model, options) {
-        se.StyledElement.call(this, [
-            'highlight',
-            'remove',
-            'unhighlight'
-        ]);
+        /**
+         * @name Wirecloud.UI.WidgetView
+         *
+         * @extends {StyledElements.StyledElement}
+         * @constructor
+         *
+         * @param {Wirecloud.UI.WorkspaceTabView} tab
+         * @param {Wirecloud.Widget} model
+         * @param {Object} [options]
+         */
+        constructor(tab, model, options) {
+            super([
+                'highlight',
+                'remove',
+                'unhighlight'
+            ]);
 
-        options = utils.merge({
-            template: Wirecloud.currentTheme.templates['wirecloud/workspace/widget']
-        }, options);
+            options = utils.merge({
+                template: Wirecloud.currentTheme.templates['wirecloud/workspace/widget']
+            }, options);
 
-        privates.set(this, {
-            layout: null,
-            minimized: false,
-            minimized_shape: null,
-            position: model.position,
-            shape: model.shape,
-            tab: tab
-        });
+            privates.set(this, {
+                layout: null,
+                minimized: false,
+                minimized_shape: null,
+                position: model.position,
+                shape: model.shape,
+                tab: tab
+            });
 
-        Object.defineProperties(this, {
-            id: {
-                value: model.id
-            },
-            layout: {
-                get: function () {
-                    return privates.get(this).layout;
+            Object.defineProperties(this, {
+                id: {
+                    value: model.id
                 },
-                set: function (new_layout) {
-                    privates.get(this).layout = new_layout;
+                layout: {
+                    get: function () {
+                        return privates.get(this).layout;
+                    },
+                    set: function (new_layout) {
+                        privates.get(this).layout = new_layout;
+                        update.call(this);
+                    }
+                },
+                minimized: {
+                    get: function () {
+                        return privates.get(this).minimized;
+                    }
+                },
+                model: {
+                    value: model
+                },
+                position: {
+                    get: function () {
+                        return utils.clone(privates.get(this).position);
+                    }
+                },
+                shape: {
+                    get: function () {
+                        return utils.clone(privates.get(this)[this.minimized ? 'minimized_shape' : 'shape']);
+                    }
+                },
+                tab: {
+                    get: function () {
+                        return privates.get(this).tab;
+                    }
+                },
+                title: {
+                    get: () => {
+                        return this.model.title;
+                    }
+                },
+                titlevisible: {
+                    get: () => {
+                        return this.model.titlevisible;
+                    }
+                }
+            });
+
+            this.wrapperElement = (new se.GUIBuilder()).parse(options.template, {
+                'closebutton': function (options, tcomponents, view) {
+                    var button = new se.Button({
+                        plain: true,
+                        class: 'wc-remove',
+                        iconClass: 'fas fa-times',
+                        title: utils.gettext("Remove")
+                    });
+
+                    view.closebutton = button;
+                    button.addEventListener('click', function () {
+                        view.remove();
+                    });
+                    return button;
+                },
+                'errorbutton': function (options, tcomponents, view) {
+                    var button = new StyledElements.Button({
+                        plain: true,
+                        class: 'errorbutton',
+                        iconClass: 'fas fa-exclamation-triangle'
+                    });
+
+                    button.hide().addEventListener('click', function (button) {
+                        var dialog = new Wirecloud.ui.LogWindowMenu(view.model.logManager);
+                        dialog.show();
+                    });
+                    view.errorbutton = button;
+                    return button;
+                },
+                'grip': (options, tcomponents, view) => {
+                    view.grip = new StyledElements.Button({
+                        plain: true,
+                        class: 'wc-grip-button',
+                        iconClass: 'fa-fw fas fa-grip-vertical'
+                    });
+                    view.grip.addEventListener('click', (button) => {
+                        button.disable().addClassName('busy');
+                        view.togglePermission('move', true).finally(() => {
+                            button.enable().removeClassName('busy');
+                        });
+                    });
+                    return view.grip;
+                },
+                'menubutton': function (options, tcomponents, view) {
+                    var button = new StyledElements.PopupButton({
+                        class: 'wc-menu-button',
+                        iconClass: 'fas fa-cogs',
+                        plain: true,
+                        title: utils.gettext("Menu")
+                    });
+
+                    view.menubutton = button;
+                    button.popup_menu.append(new ns.WidgetViewMenuItems(view));
+                    return button;
+                },
+                'minimizebutton': function (options, tcomponents, view) {
+                    var button = new StyledElements.Button({
+                        iconClass: 'fas fa-minus',
+                        plain: true,
+                        title: utils.gettext("Minimize")
+                    });
+
+                    button.enable = view.model.isAllowed('minimize');
+                    button.addEventListener('click', function (button) {
+                        view.toggleMinimizeStatus(true);
+                    });
+                    view.minimizebutton = button;
+                    return button;
+                },
+                'title': function (options, tcomponents, view) {
+                    var element = new StyledElements.EditableElement({initialContent: view.model.title});
+
+                    element.addEventListener('change', function (element, new_title) {
+                        view.model.rename(new_title);
+                    });
+                    view.titleelement = element;
+                    return element;
+                },
+                'titlevisibilitybutton': (options, tcomponents, view) => {
+                    var button = new StyledElements.Button({
+                        plain: true,
+                        class: 'wc-titlevisibility-button',
+                        iconClass: 'fa-fw fas fa-eye-slash'
+                    });
+
+                    button.addEventListener('click', (button) => {
+                        view.toggleTitleVisibility(true);
+                    });
+                    view.titlevisibilitybutton = button;
+                    return button;
+                },
+                'bottomresizehandle': function (options, tcomponents, view) {
+                    var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
+
+                    handle.addClassName("wc-bottom-resize-handle");
+                    view.bottomresizehandle = handle;
+                    return handle;
+                },
+                'leftresizehandle': function (options, tcomponents, view) {
+                    var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true});
+
+                    handle.addClassName("wc-bottom-left-resize-handle");
+                    view.leftresizehandle = handle;
+                    return handle;
+                },
+                'rightresizehandle': function (options, tcomponents, view) {
+                    var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: false});
+
+                    handle.addClassName("wc-bottom-right-resize-handle");
+                    view.rightresizehandle = handle;
+                    return handle;
+                },
+                'iframe': function (options, tcomponents, view) {
+                    return view.model.wrapperElement;
+                }
+            }, this).children[1];
+
+            if ('bottomresizehandle' in this) {
+                this.bottomresizehandle.setResizableElement(this.wrapperElement);
+            }
+            if ('leftresizehandle' in this) {
+                this.leftresizehandle.setResizableElement(this.wrapperElement);
+            }
+            if ('rightresizehandle' in this) {
+                this.rightresizehandle.setResizableElement(this.wrapperElement);
+            }
+
+            this.wrapperElement.classList.add("wc-widget");
+            this.wrapperElement.setAttribute('data-id', model.id);
+
+            model.addEventListener('change', (widget, changes) => {
+                if (changes.indexOf('title') !== -1) {
+                    this.titleelement.setTextContent(widget.title);
+                }
+
+                if (changes.indexOf('meta') !== -1 || changes.indexOf('permissions') !== -1 || changes.indexOf('titlevisible') !== -1) {
                     update.call(this);
                 }
-            },
-            minimized: {
-                get: function () {
-                    return privates.get(this).minimized;
-                }
-            },
-            model: {
-                value: model
-            },
-            position: {
-                get: function () {
-                    return utils.clone(privates.get(this).position);
-                }
-            },
-            shape: {
-                get: function () {
-                    return utils.clone(privates.get(this)[this.minimized ? 'minimized_shape' : 'shape']);
-                }
-            },
-            tab: {
-                get: function () {
-                    return privates.get(this).tab;
-                }
-            },
-            title: {
-                get: () => {
-                    return this.model.title;
-                }
-            },
-            titlevisible: {
-                get: () => {
-                    return this.model.titlevisible;
-                }
-            }
-        });
+            });
 
-        this.wrapperElement = (new se.GUIBuilder()).parse(options.template, {
-            'closebutton': function (options, tcomponents, view) {
-                var button = new se.Button({
-                    plain: true,
-                    class: 'wc-remove',
-                    iconClass: 'fas fa-times',
-                    title: utils.gettext("Remove")
-                });
-
-                view.closebutton = button;
-                button.addEventListener('click', function () {
-                    view.remove();
-                });
-                return button;
-            },
-            'errorbutton': function (options, tcomponents, view) {
-                var button = new StyledElements.Button({
-                    plain: true,
-                    class: 'errorbutton',
-                    iconClass: 'fas fa-exclamation-triangle'
-                });
-
-                button.hide().addEventListener('click', function (button) {
-                    var dialog = new Wirecloud.ui.LogWindowMenu(view.model.logManager);
-                    dialog.show();
-                });
-                view.errorbutton = button;
-                return button;
-            },
-            'grip': (options, tcomponents, view) => {
-                view.grip = new StyledElements.Button({
-                    plain: true,
-                    class: 'wc-grip-button',
-                    iconClass: 'fa-fw fas fa-grip-vertical'
-                });
-                view.grip.addEventListener('click', (button) => {
-                    button.disable().addClassName('busy');
-                    view.togglePermission('move', true).finally(() => {
-                        button.enable().removeClassName('busy');
-                    });
-                });
-                return view.grip;
-            },
-            'menubutton': function (options, tcomponents, view) {
-                var button = new StyledElements.PopupButton({
-                    class: 'wc-menu-button',
-                    iconClass: 'fas fa-cogs',
-                    plain: true,
-                    title: utils.gettext("Menu")
-                });
-
-                view.menubutton = button;
-                button.popup_menu.append(new ns.WidgetViewMenuItems(view));
-                return button;
-            },
-            'minimizebutton': function (options, tcomponents, view) {
-                var button = new StyledElements.Button({
-                    iconClass: 'fas fa-minus',
-                    plain: true,
-                    title: utils.gettext("Minimize")
-                });
-
-                button.enable = view.model.isAllowed('minimize');
-                button.addEventListener('click', function (button) {
-                    view.toggleMinimizeStatus(true);
-                });
-                view.minimizebutton = button;
-                return button;
-            },
-            'title': function (options, tcomponents, view) {
-                var element = new StyledElements.EditableElement({initialContent: view.model.title});
-
-                element.addEventListener('change', function (element, new_title) {
-                    view.model.rename(new_title);
-                });
-                view.titleelement = element;
-                return element;
-            },
-            'titlevisibilitybutton': (options, tcomponents, view) => {
-                var button = new StyledElements.Button({
-                    plain: true,
-                    class: 'wc-titlevisibility-button',
-                    iconClass: 'fa-fw fas fa-eye-slash'
-                });
-
-                button.addEventListener('click', (button) => {
-                    view.toggleTitleVisibility(true);
-                });
-                view.titlevisibilitybutton = button;
-                return button;
-            },
-            'bottomresizehandle': function (options, tcomponents, view) {
-                var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
-
-                handle.addClassName("wc-bottom-resize-handle");
-                view.bottomresizehandle = handle;
-                return handle;
-            },
-            'leftresizehandle': function (options, tcomponents, view) {
-                var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true});
-
-                handle.addClassName("wc-bottom-left-resize-handle");
-                view.leftresizehandle = handle;
-                return handle;
-            },
-            'rightresizehandle': function (options, tcomponents, view) {
-                var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: false});
-
-                handle.addClassName("wc-bottom-right-resize-handle");
-                view.rightresizehandle = handle;
-                return handle;
-            },
-            'iframe': function (options, tcomponents, view) {
-                return view.model.wrapperElement;
-            }
-        }, this).children[1];
-
-        if ('bottomresizehandle' in this) {
-            this.bottomresizehandle.setResizableElement(this.wrapperElement);
-        }
-        if ('leftresizehandle' in this) {
-            this.leftresizehandle.setResizableElement(this.wrapperElement);
-        }
-        if ('rightresizehandle' in this) {
-            this.rightresizehandle.setResizableElement(this.wrapperElement);
-        }
-
-        this.wrapperElement.classList.add("wc-widget");
-        this.wrapperElement.setAttribute('data-id', model.id);
-
-        model.addEventListener('change', (widget, changes) => {
-            if (changes.indexOf('title') !== -1) {
-                this.titleelement.setTextContent(widget.title);
-            }
-
-            if (changes.indexOf('meta') !== -1 || changes.indexOf('permissions') !== -1 || changes.indexOf('titlevisible') !== -1) {
-                update.call(this);
-            }
-        });
-
-        model.addEventListener('unload', (widget) => {
-            this.unhighlight();
-        });
-
-        this.heading = this.wrapperElement.getElementsByClassName('wc-widget-heading')[0];
-        this.draggable = new Wirecloud.ui.WidgetViewDraggable(this);
-
-
-        // TODO: review
-        var layout;
-        if (model.fulldragboard) {
-            layout = tab.dragboard.fulldragboardLayout;
-            this.previousLayout = tab.dragboard.layouts[model.layout];
-            this.previousPosition = model.position;
-            this.previousShape = model.shape;
-        } else {
-            layout = tab.dragboard.layouts[model.layout];
-        }
-        layout.addWidget(this, true);
-
-        // Init minimized and title visibility options
-        this.setMinimizeStatus(model.minimized, false, true);
-
-        this.model.logManager.addEventListener('newentry', on_add_log.bind(this));
-
-        this.wrapperElement.addEventListener('transitionend', function (e) {
-            if (this.layout.iwidgetToMove == null && ['width', 'height', 'top', 'left'].indexOf(e.propertyName) !== -1) {
-                this.repaint();
-                notify_shape.call(this);
-            }
-        }.bind(this), true);
-
-        model.addEventListener('load', (model) => {
-
-            this.wrapperElement.classList.add('in');
-
-            model.wrapperElement.contentDocument.defaultView.addEventListener('keydown', (event) => {
-                if (event.keyCode === 27) { // escape
-                    Wirecloud.UserInterfaceManager.handleEscapeEvent();
-                }
-            }, true);
-
-            model.wrapperElement.contentDocument.defaultView.addEventListener('click', () => {
-                Wirecloud.UserInterfaceManager.handleEscapeEvent();
+            model.addEventListener('unload', (widget) => {
                 this.unhighlight();
-            }, true);
+            });
 
-            this.repaint();
-        });
+            this.heading = this.wrapperElement.getElementsByClassName('wc-widget-heading')[0];
+            this.draggable = new Wirecloud.ui.WidgetViewDraggable(this);
 
-        this.tab.workspace.addEventListener('editmode', update.bind(this));
-        model.addEventListener('remove', on_remove.bind(this));
-        update.call(this);
-    };
 
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
+            // TODO: review
+            var layout;
+            if (model.fulldragboard) {
+                layout = tab.dragboard.fulldragboardLayout;
+                this.previousLayout = tab.dragboard.layouts[model.layout];
+                this.previousPosition = model.position;
+                this.previousShape = model.shape;
+            } else {
+                layout = tab.dragboard.layouts[model.layout];
+            }
+            layout.addWidget(this, true);
 
-    utils.inherit(ns.WidgetView, se.StyledElement, {
+            // Init minimized and title visibility options
+            this.setMinimizeStatus(model.minimized, false, true);
+
+            this.model.logManager.addEventListener('newentry', on_add_log.bind(this));
+
+            this.wrapperElement.addEventListener('transitionend', function (e) {
+                if (this.layout.iwidgetToMove == null && ['width', 'height', 'top', 'left'].indexOf(e.propertyName) !== -1) {
+                    this.repaint();
+                    notify_shape.call(this);
+                }
+            }.bind(this), true);
+
+            model.addEventListener('load', (model) => {
+
+                this.wrapperElement.classList.add('in');
+
+                model.wrapperElement.contentDocument.defaultView.addEventListener('keydown', (event) => {
+                    if (event.keyCode === 27) { // escape
+                        Wirecloud.UserInterfaceManager.handleEscapeEvent();
+                    }
+                }, true);
+
+                model.wrapperElement.contentDocument.defaultView.addEventListener('click', () => {
+                    Wirecloud.UserInterfaceManager.handleEscapeEvent();
+                    this.unhighlight();
+                }, true);
+
+                this.repaint();
+            });
+
+            this.tab.workspace.addEventListener('editmode', update.bind(this));
+            model.addEventListener('remove', on_remove.bind(this));
+            update.call(this);
+        }
 
         /**
          * Changes minimize status of this iwidget
          *
          * @param newStatus new minimize status of the iwidget
          */
-        setMinimizeStatus: function setMinimizeStatus(newStatus, persistence, reserveSpace) {
+        setMinimizeStatus(newStatus, persistence, reserveSpace) {
             const priv = privates.get(this);
 
             // Sanitize newStatus value
@@ -362,19 +354,19 @@
 
             update.call(this);
             return this;
-        },
+        }
 
         /**
          * Toggles title visibility
          *
          * @param {Boolean} persistence save change on server
          */
-        toggleTitleVisibility: function toggleTitleVisibility(persistence) {
+        toggleTitleVisibility(persistence) {
             this.titlevisibilitybutton.disable().addClassName('busy');
             let t = this.model.setTitleVisibility(!this.titlevisible, persistence);
             t.finally(() => {this.titlevisibilitybutton.enable().removeClassName('busy');});
             return t;
-        },
+        }
 
         /**
          * Toggles a widget permission
@@ -384,23 +376,23 @@
          *
          * @return {Wirecloud.Task} task instance controlling the progress
          */
-        togglePermission: function togglePermission(permission, persistence) {
+        togglePermission(permission, persistence) {
             let changes = {
                 [permission]: !this.model.permissions.viewer[permission]
             };
             return this.model.setPermissions(changes, persistence);
-        },
+        }
 
-        setPosition: function setPosition(position) {
+        setPosition(position) {
             utils.update(privates.get(this).position, position);
             if (this.layout != null) {
                 update_position.call(this);
                 notify_position.call(this);
             }
             return this;
-        },
+        }
 
-        setShape: function setShape(shape, resizeLeftSide, resizeTopSide, persist) {
+        setShape(shape, resizeLeftSide, resizeTopSide, persist) {
             var oldWidth = this.shape.width;
             var oldHeight = this.shape.height;
 
@@ -415,9 +407,9 @@
 
             // Notify resize event
             this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.shape.width, this.shape.height, resizeLeftSide, resizeTopSide, persist);
-        },
+        }
 
-        load: function load() {
+        load() {
 
             if (!this.model.loaded) {
                 this.wrapperElement.classList.add('in');
@@ -425,12 +417,12 @@
             }
 
             return this.repaint();
-        },
+        }
 
         /**
          * Updates widget size and position css
          */
-        repaint: function repaint() {
+        repaint() {
 
             update_position.call(this);
             update_shape.call(this);
@@ -439,24 +431,24 @@
             notify_shape.call(this);
 
             return this;
-        },
+        }
 
-        reload: function reload() {
+        reload() {
             this.model.reload();
             return this;
-        },
+        }
 
-        showLogs: function showLogs() {
+        showLogs() {
             this.model.showLogs();
             return this;
-        },
+        }
 
-        showSettings: function showSettings() {
+        showSettings() {
             this.model.showSettings();
             return this;
-        },
+        }
 
-        highlight: function highlight() {
+        highlight() {
             this.wrapperElement.classList.add('panel-success');
             this.wrapperElement.classList.remove('panel-default');
             if (!this.wrapperElement.classList.contains('wc-widget-highlight')) {
@@ -471,9 +463,9 @@
             }
 
             return this;
-        },
+        }
 
-        unhighlight: function unhighlight() {
+        unhighlight() {
             this.wrapperElement.classList.remove('panel-success');
             this.wrapperElement.classList.add('panel-default');
             if (this.wrapperElement.classList.contains('wc-widget-highlight')) {
@@ -482,9 +474,9 @@
             }
 
             return this;
-        },
+        }
 
-        moveToLayout: function moveToLayout(newLayout) {
+        moveToLayout(newLayout) {
             var affectedWidgetsRemoving, affectedWidgetsAdding,
                 minimizeOnFinish, previousWidth, previousHeight,
                 dragboardChange, oldLayout, oldPositionPixels;
@@ -576,13 +568,13 @@
                     newLayout.dragboard.update([...utils.setupdate(affectedWidgetsAdding, affectedWidgetsRemoving)]);
                 }
             });
-        },
+        }
 
-        toggleMinimizeStatus: function toggleMinimizeStatus(persistence) {
+        toggleMinimizeStatus(persistence) {
             this.setMinimizeStatus(!this.minimized, persistence);
-        },
+        }
 
-        setFullDragboardMode: function setFullDragboardMode(enable) {
+        setFullDragboardMode(enable) {
             if ((this.layout === this.tab.dragboard.fulldragboardLayout) === enable) {
                 return this;
             }
@@ -603,9 +595,9 @@
 
             update.call(this);
             return this;
-        },
+        }
 
-        toJSON: function toJSON() {
+        toJSON() {
             let fulldragboard = this.layout === this.tab.dragboard.fulldragboardLayout;
             let shape = fulldragboard ? this.previousShape : this.shape;
             let position = fulldragboard ? this.previousPosition : this.position;
@@ -629,23 +621,23 @@
                 fulldragboard: fulldragboard,
                 titlevisible: this.titlevisible
             };
-        },
+        }
 
-        persist: function persist() {
+        persist() {
             if (!this.model.volatile) {
                 this.model.setPosition(this.position);
                 this.model.setShape(privates.get(this).shape);
             }
 
             return this;
-        },
+        }
 
-        remove: function remove() {
+        remove() {
             this.model.remove();
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

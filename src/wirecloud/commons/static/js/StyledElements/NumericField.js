@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,12 +23,12 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var update = function update(inc) {
-        var value = Number(this.inputElement.value);
+    const update = function update(inc) {
+        let value = this.getValue();
         if (!isNaN(value)) {
             value = Math.round((value + inc) * 100) / 100;
 
@@ -48,80 +49,82 @@
         this.inputElement.value = value;
     };
 
-    var onfocus = function onfocus() {
+    const onfocus = function onfocus() {
         this.wrapperElement.classList.add('focus');
         this.dispatchEvent('focus');
     };
 
-    var onblur = function onblur() {
+    const onblur = function onblur() {
         this.wrapperElement.classList.remove('focus');
         this.dispatchEvent('blur');
     };
 
-    /**
-     * @param options Una tabla hash con opciones. Los posibles valores son los
-     * siguientes:
-     *   - name: nombre que tendrá el elemento input (sólo es necesario cuando se
-     *     está creando un formulario).
-     *   - class: lista de clases separada por espacios que se asignará al div
-     *     principal de este Numeric Field. Independientemente del valor de esta
-     *     opción, siempre se le asignará la clase "styled_numeric_field" al div
-     *     principal.
-     *   - min: valor mínimo que permitirá este Numeric Field.
-     *   - max: valor máximo que permitirá este Numeric Field.
-     *
-     */
-    var NumericField = function NumericField(options) {
-        var defaultOptions = {
-            'initialValue': 0,
-            'class': '',
-            'min': Number.NEGATIVE_INFINITY,
-            'max': Number.POSITIVE_INFINITY,
-            'inc': 1
-        };
-        this.options = options = utils.merge(defaultOptions, options);
-        options.min = Number(options.min);
-        options.max = Number(options.max);
-        options.inc = Number(options.inc);
-        options.initialValue = Number(options.initialValue);
+    se.NumericField = class NumericField extends se.InputElement {
 
-        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        /**
+         * @param options Una tabla hash con opciones. Los posibles valores son los
+         * siguientes:
+         *   - name: nombre que tendrá el elemento input (sólo es necesario cuando se
+         *     está creando un formulario).
+         *   - class: lista de clases separada por espacios que se asignará al div
+         *     principal de este Numeric Field. Independientemente del valor de esta
+         *     opción, siempre se le asignará la clase "styled_numeric_field" al div
+         *     principal.
+         *   - min: valor mínimo que permitirá este Numeric Field.
+         *   - max: valor máximo que permitirá este Numeric Field.
+         *
+         */
+        constructor(options) {
+            const defaultOptions = {
+                'initialValue': 0,
+                'class': '',
+                'min': Number.NEGATIVE_INFINITY,
+                'max': Number.POSITIVE_INFINITY,
+                'inc': 1
+            };
+            options.min = Number(options.min);
+            options.max = Number(options.max);
+            options.inc = Number(options.inc);
+            options.initialValue = Number(options.initialValue);
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = "se-numeric-field";
-        this.inputElement = document.createElement("input");
-        this.inputElement.setAttribute("type", "text");
+            super(options.initialValue, ['change', 'focus', 'blur']);
 
-        if (options.name != null) {
-            this.inputElement.setAttribute("name", options.name);
+            this.options = options = utils.merge({}, defaultOptions, options);
+
+            this.wrapperElement = document.createElement("div");
+            this.wrapperElement.className = "se-numeric-field";
+            this.inputElement = document.createElement("input");
+            this.inputElement.setAttribute("type", "text");
+
+            if (options.name != null) {
+                this.inputElement.setAttribute("name", options.name);
+            }
+
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
+
+            this.inputElement.setAttribute("value", options.initialValue);
+
+            const topButton = new StyledElements.Button({'class': 'se-numeric-field-top-button', iconClass: 'fa fa-caret-up'});
+            const bottomButton = new StyledElements.Button({'class': 'se-numeric-field-bottom-button', iconClass: 'fa fa-caret-down'});
+
+            /* Internal events */
+            topButton.addEventListener("click", update.bind(this, options.inc));
+            bottomButton.addEventListener("click", update.bind(this, -options.inc));
+            this.inputElement.addEventListener("focus", onfocus.bind(this), true);
+            this.inputElement.addEventListener("blur", onblur.bind(this), true);
+            this.inputElement.addEventListener("keydown", utils.stopInputKeydownPropagationListener, false);
+
+            this.wrapperElement.appendChild(this.inputElement);
+            topButton.insertInto(this.wrapperElement);
+            bottomButton.insertInto(this.wrapperElement);
         }
 
-        if (options.id != null) {
-            this.wrapperElement.setAttribute("id", options.id);
+        getValue() {
+            return Number(this.inputElement.value);
         }
 
-        this.inputElement.setAttribute("value", options.initialValue);
+    }
 
-        var topButton = new StyledElements.Button({'class': 'se-numeric-field-top-button', iconClass: 'fa fa-caret-up'});
-        var bottomButton = new StyledElements.Button({'class': 'se-numeric-field-bottom-button', iconClass: 'fa fa-caret-down'});
-
-        /* Internal events */
-        topButton.addEventListener("click", update.bind(this, options.inc));
-        bottomButton.addEventListener("click", update.bind(this, -options.inc));
-        this.inputElement.addEventListener("focus", onfocus.bind(this), true);
-        this.inputElement.addEventListener("blur", onblur.bind(this), true);
-        this.inputElement.addEventListener("keydown", utils.stopInputKeydownPropagationListener, false);
-
-        this.wrapperElement.appendChild(this.inputElement);
-        topButton.insertInto(this.wrapperElement);
-        bottomButton.insertInto(this.wrapperElement);
-    };
-    utils.inherit(NumericField, StyledElements.InputElement);
-
-    NumericField.prototype.getValue = function getValue() {
-        return Number(this.inputElement.value);
-    };
-
-    StyledElements.NumericField = NumericField;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

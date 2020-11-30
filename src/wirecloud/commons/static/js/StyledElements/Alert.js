@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,9 +27,14 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    const defaultOptions = {
+        state: "warning",
+        alignment: "",
+        class: "",
+        title: "",
+        message: ""
+    };
+    Object.freeze(defaultOptions);
 
     /**
      * Create a new instance of class Alert.
@@ -38,35 +44,36 @@
      * @since 0.6
      * @param {Object.<String, *>} [options] [description]
      */
-    se.Alert = function Alert(options) {
-        options = utils.merge(utils.clone(defaults), options);
-        se.StyledElement.call(this);
+    se.Alert = class Alert extends se.StyledElement {
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'alert';
+        constructor(options) {
+            options = utils.merge({}, defaultOptions, options);
 
-        if (options.state != null && options.state.trim() !== "") {
-            this.addClassName('alert-' + options.state);
+            super();
+
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = 'alert';
+
+            if (options.state != null && options.state.trim() !== "") {
+                this.addClassName('alert-' + options.state);
+            }
+
+            if (options.alignment) {
+                this.addClassName('se-alert-' + options.alignment);
+            }
+
+            this.addClassName(options.class);
+
+            this.heading = new se.Container({
+                class: "se-alert-heading"
+            });
+            this.heading.appendChild(options.title).insertInto(this.wrapperElement);
+
+            this.body = new se.Container({
+                class: "se-alert-body"
+            });
+            this.body.appendChild(options.message).insertInto(this.wrapperElement);
         }
-
-        if (options.alignment) {
-            this.addClassName('se-alert-' + options.alignment);
-        }
-
-        this.addClassName(options.class);
-
-        this.heading = new se.Container({
-            class: "se-alert-heading"
-        });
-        this.heading.appendChild(options.title).insertInto(this.wrapperElement);
-
-        this.body = new se.Container({
-            class: "se-alert-body"
-        });
-        this.body.appendChild(options.message).insertInto(this.wrapperElement);
-    };
-
-    utils.inherit(se.Alert, se.StyledElement, /** @lends StyledElements.Alert.prototype */ {
 
         /**
          * [addNote description]
@@ -76,7 +83,7 @@
          * @returns {Alert}
          *      The instance on which the member is called.
          */
-        addNote: function addNote(textContent) {
+        addNote(textContent) {
             var blockquote = document.createElement('blockquote');
 
             if (textContent instanceof StyledElements.StyledElement) {
@@ -89,18 +96,6 @@
             return blockquote;
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var defaults = {
-        state: 'warning',
-        alignment: "",
-        class: "",
-        title: "",
-        message: ""
-    };
+    }
 
 })(StyledElements, StyledElements.Utils);

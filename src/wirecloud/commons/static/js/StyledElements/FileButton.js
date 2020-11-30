@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,51 +23,49 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var FileButton, onchange;
-
-    onchange = function onchange() {
+    const onchange = function onchange() {
         if (this.inputElement.files) {
             this.dispatchEvent('fileselect', this.inputElement.files);
             this.inputElement.value = '';
         }
     };
 
-    FileButton = function FileButton(options) {
-        var defaultOptions = {
-            'multiple': true
-        };
-        options = utils.merge(defaultOptions, options);
+    se.FileButton = class FileButton extends se.Button {
 
-        StyledElements.Button.call(this, options);
+        constructor(options) {
+            var defaultOptions = {
+                'multiple': true
+            };
+            options = utils.merge(defaultOptions, options);
 
-        Object.defineProperty(this, 'inputElement', {value: document.createElement("input")});
-        this.inputElement.setAttribute("type", "file");
-        this.inputElement.setAttribute("tabindex", "-1");
-        this.inputElement.multiple = options.multiple;
-        this.wrapperElement.appendChild(this.inputElement);
+            super(options);
 
-        this.events.fileselect = new StyledElements.Event();
+            Object.defineProperty(this, 'inputElement', {value: document.createElement("input")});
+            this.inputElement.setAttribute("type", "file");
+            this.inputElement.setAttribute("tabindex", "-1");
+            this.inputElement.multiple = options.multiple;
+            this.wrapperElement.appendChild(this.inputElement);
 
-        /* Internal events */
-        this._onchange = onchange.bind(this);
+            this.events.fileselect = new StyledElements.Event();
 
-        this.inputElement.addEventListener('change', this._onchange, true);
-    };
-    utils.inherit(FileButton, StyledElements.Button);
+            /* Internal events */
+            this._onchange = onchange.bind(this);
 
-    FileButton.prototype.destroy = function destroy() {
+            this.inputElement.addEventListener('change', this._onchange, true);
+        }
 
-        this.inputElement.removeEventListener('change', this._onchange, true);
+        destroy() {
+            this.inputElement.removeEventListener('change', this._onchange, true);
 
-        delete this._onchange;
+            delete this._onchange;
 
-        StyledElements.Button.prototype.destroy.call(this);
-    };
+            super.destroy();
+        }
 
-    StyledElements.FileButton = FileButton;
+    }
 
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

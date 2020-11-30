@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,11 +23,11 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var MarketplaceView, onGetMarketsSuccess, auto_select_initial_market, notifyError, builder, ERROR_TEMPLATE;
+    var onGetMarketsSuccess, auto_select_initial_market, notifyError, builder, ERROR_TEMPLATE;
 
     ERROR_TEMPLATE = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-error"><t:message/></div></s:styledgui>';
 
@@ -111,167 +112,248 @@
         });
     };
 
-    MarketplaceView = function MarketplaceView(id, options) {
-        options.id = 'marketplace';
-        StyledElements.Alternative.call(this, id, options);
+    ns.MarketplaceView = class MarketplaceView extends se.Alternative {
 
-        this.viewsByName = {};
-        this.alternatives = new StyledElements.Alternatives();
-        this.emptyAlternative = this.alternatives.createAlternative();
-        this.errorsAlternative = this.alternatives.createAlternative({containerOptions: {'class': 'marketplace-error-view'}});
-        this.temporalAlternatives = [this.emptyAlternative, this.errorsAlternative];
+        constructor(id, options) {
+            options.id = 'marketplace';
+            super(id, options);
 
-        this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative, in_alternative) {
-            Wirecloud.dispatchEvent('viewcontextchanged', this);
-        }.bind(this));
-        this.appendChild(this.alternatives);
+            this.viewsByName = {};
+            this.alternatives = new StyledElements.Alternatives();
+            this.emptyAlternative = this.alternatives.createAlternative();
+            this.errorsAlternative = this.alternatives.createAlternative({containerOptions: {'class': 'marketplace-error-view'}});
+            this.temporalAlternatives = [this.emptyAlternative, this.errorsAlternative];
 
-        this.marketMenu = new StyledElements.PopupMenu();
-        this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
+            this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative, in_alternative) {
+                Wirecloud.dispatchEvent('viewcontextchanged', this);
+            }.bind(this));
+            this.appendChild(this.alternatives);
 
-        options.parentElement.addEventListener("postTransition", function (alts, outalt, inalt) {
-            if (inalt === this && this.loading === null) {
-                this.refreshViewInfo();
-            }
-        }.bind(this));
+            this.marketMenu = new StyledElements.PopupMenu();
+            this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
 
-        this.addEventListener('show', function (view) {
-
-            if (view.loading === false && !view.error) {
-                if (view.alternatives.getCurrentAlternative() === view.emptyAlternative) {
-                    auto_select_initial_market.call(view);
-                } else {
-                    view.alternatives.getCurrentAlternative().refresh_if_needed();
+            options.parentElement.addEventListener("postTransition", function (alts, outalt, inalt) {
+                if (inalt === this && this.loading === null) {
+                    this.refreshViewInfo();
                 }
-            }
-        });
+            }.bind(this));
 
-        Object.defineProperty(this, 'error', {
-            get: function () {
-                return this.alternatives.getCurrentAlternative() === this.errorsAlternative;
-            }
-        });
+            this.addEventListener('show', function (view) {
 
-        this.myresourcesButton = new StyledElements.Button({
-            iconClass: 'fa fa-archive',
-            class: "wc-show-myresources-button",
-            title: utils.gettext('My Resources')
-        });
-        this.myresourcesButton.addEventListener('click', function () {
-            Wirecloud.UserInterfaceManager.changeCurrentView('myresources', {history: "push"});
-        });
-
-        this.number_of_alternatives = 0;
-        this.loading = null;
-        this.callbacks = [];
-    };
-    MarketplaceView.prototype = new StyledElements.Alternative();
-
-    MarketplaceView.prototype.view_name = 'marketplace';
-
-    MarketplaceView.prototype.buildStateData = function buildStateData() {
-        var currentState, data, subview;
-
-        currentState = Wirecloud.HistoryManager.getCurrentState();
-        data = {
-            workspace_owner: currentState.workspace_owner,
-            workspace_name: currentState.workspace_name,
-            view: 'marketplace'
-        };
-
-        if (this.loading === false && this.error === false && this.alternatives.getCurrentAlternative() !== this.emptyAlternative) {
-            // TODO
-            if (this.alternatives.getCurrentAlternative().alternatives != null) {
-                subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();
-                if (subview.view_name != null) {
-                    data.subview = subview.view_name;
-                    if ('buildStateData' in subview) {
-                        subview.buildStateData(data);
+                if (view.loading === false && !view.error) {
+                    if (view.alternatives.getCurrentAlternative() === view.emptyAlternative) {
+                        auto_select_initial_market.call(view);
+                    } else {
+                        view.alternatives.getCurrentAlternative().refresh_if_needed();
                     }
                 }
+            });
+
+            Object.defineProperty(this, 'error', {
+                get: function () {
+                    return this.alternatives.getCurrentAlternative() === this.errorsAlternative;
+                }
+            });
+
+            this.myresourcesButton = new StyledElements.Button({
+                iconClass: 'fa fa-archive',
+                class: "wc-show-myresources-button",
+                title: utils.gettext('My Resources')
+            });
+            this.myresourcesButton.addEventListener('click', function () {
+                Wirecloud.UserInterfaceManager.changeCurrentView('myresources', {history: "push"});
+            });
+
+            this.number_of_alternatives = 0;
+            this.loading = null;
+            this.callbacks = [];
+        }
+
+        buildStateData() {
+            var currentState, data, subview;
+
+            currentState = Wirecloud.HistoryManager.getCurrentState();
+            data = {
+                workspace_owner: currentState.workspace_owner,
+                workspace_name: currentState.workspace_name,
+                view: 'marketplace'
+            };
+
+            if (this.loading === false && this.error === false && this.alternatives.getCurrentAlternative() !== this.emptyAlternative) {
+                // TODO
+                if (this.alternatives.getCurrentAlternative().alternatives != null) {
+                    subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();
+                    if (subview.view_name != null) {
+                        data.subview = subview.view_name;
+                        if ('buildStateData' in subview) {
+                            subview.buildStateData(data);
+                        }
+                    }
+                }
+                data.market = this.alternatives.getCurrentAlternative().market_id;
             }
-            data.market = this.alternatives.getCurrentAlternative().market_id;
+
+            return data;
         }
 
-        return data;
-    };
-
-    MarketplaceView.prototype.onHistoryChange = function onHistoryChange(state) {
-        if (this.loading === false && state.market in this.viewsByName) {
-            this.changeCurrentMarket(state.market, {history: "ignore"});
-            if ('onHistoryChange' in this.viewsByName[state.market]) {
-                this.viewsByName[state.market].onHistoryChange(state);
-            }
-        }
-    };
-
-    MarketplaceView.prototype.goUp = function goUp() {
-        var current_alternative, change = false;
-
-        current_alternative = this.alternatives.getCurrentAlternative();
-        if (this.temporalAlternatives.indexOf(current_alternative) === -1) {
-            change = this.alternatives.getCurrentAlternative().goUp();
-        }
-
-        if (!change) {
-            Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
-        }
-    };
-
-    MarketplaceView.prototype.getBreadcrumb = function getBreadcrumb() {
-        var breadcrum, current_alternative, subalternative;
-
-        current_alternative = this.alternatives.getCurrentAlternative();
-        if (current_alternative === this.emptyAlternative) {
-            return [utils.gettext('loading marketplace view...')];
-        } else if (current_alternative === this.errorsAlternative) {
-            return [utils.gettext('marketplace list not available')];
-        } else {
-            breadcrum = ['marketplace'];
-            breadcrum.push(current_alternative.getLabel());
-            // TODO
-            if (current_alternative.alternatives != null) {
-                subalternative = current_alternative.alternatives.getCurrentAlternative();
-
-                if (subalternative.view_name === 'details' && subalternative.currentEntry != null) {
-                    breadcrum.push({
-                        label: subalternative.currentEntry.title,
-                        'class': 'resource_title'
-                    });
+        onHistoryChange(state) {
+            if (this.loading === false && state.market in this.viewsByName) {
+                this.changeCurrentMarket(state.market, {history: "ignore"});
+                if ('onHistoryChange' in this.viewsByName[state.market]) {
+                    this.viewsByName[state.market].onHistoryChange(state);
                 }
             }
-            return breadcrum;
         }
-    };
 
-    MarketplaceView.prototype.getTitle = function getTitle() {
-        var current_alternative, subalternative, marketname, title;
+        goUp() {
+            var current_alternative, change = false;
 
-        current_alternative = this.alternatives.getCurrentAlternative();
-        if (current_alternative === this.emptyAlternative || current_alternative === this.errorsAlternative) {
-            return utils.gettext('Marketplace');
-        } else {
-            marketname = current_alternative.getLabel();
-            title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
-            // Deprecated code, currently used for WireCloud and for the deprecated FIWARE Marketplace (now replaced by the BAE)
-            if (current_alternative.alternatives) {
-                subalternative = current_alternative.alternatives.getCurrentAlternative();
-                if (subalternative.view_name === "details" && subalternative.currentEntry != null) {
-                    title += ' - ' + subalternative.currentEntry.title;
-                }
+            current_alternative = this.alternatives.getCurrentAlternative();
+            if (this.temporalAlternatives.indexOf(current_alternative) === -1) {
+                change = this.alternatives.getCurrentAlternative().goUp();
             }
 
-            return title;
+            if (!change) {
+                Wirecloud.UserInterfaceManager.changeCurrentView('workspace');
+            }
         }
-    };
 
-    MarketplaceView.prototype.getToolbarMenu = function getToolbarMenu() {
-        return this.marketMenu;
-    };
+        getBreadcrumb() {
+            var breadcrum, current_alternative, subalternative;
 
-    MarketplaceView.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.myresourcesButton];
-    };
+            current_alternative = this.alternatives.getCurrentAlternative();
+            if (current_alternative === this.emptyAlternative) {
+                return [utils.gettext('loading marketplace view...')];
+            } else if (current_alternative === this.errorsAlternative) {
+                return [utils.gettext('marketplace list not available')];
+            } else {
+                breadcrum = ['marketplace'];
+                breadcrum.push(current_alternative.getLabel());
+                // TODO
+                if (current_alternative.alternatives != null) {
+                    subalternative = current_alternative.alternatives.getCurrentAlternative();
+
+                    if (subalternative.view_name === 'details' && subalternative.currentEntry != null) {
+                        breadcrum.push({
+                            label: subalternative.currentEntry.title,
+                            'class': 'resource_title'
+                        });
+                    }
+                }
+                return breadcrum;
+            }
+        }
+
+        getTitle() {
+            var current_alternative, subalternative, marketname, title;
+
+            current_alternative = this.alternatives.getCurrentAlternative();
+            if (current_alternative === this.emptyAlternative || current_alternative === this.errorsAlternative) {
+                return utils.gettext('Marketplace');
+            } else {
+                marketname = current_alternative.getLabel();
+                title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
+                // Deprecated code, currently used for WireCloud and for the deprecated FIWARE Marketplace (now replaced by the BAE)
+                if (current_alternative.alternatives) {
+                    subalternative = current_alternative.alternatives.getCurrentAlternative();
+                    if (subalternative.view_name === "details" && subalternative.currentEntry != null) {
+                        title += ' - ' + subalternative.currentEntry.title;
+                    }
+                }
+
+                return title;
+            }
+        }
+
+        getToolbarMenu() {
+            return this.marketMenu;
+        }
+
+        getToolbarButtons() {
+            return [this.myresourcesButton];
+        }
+
+        waitMarketListReady(options) {
+            if (options == null || typeof options.onComplete !== 'function') {
+                throw new TypeError('missing onComplete callback');
+            }
+
+            if (options.include_markets === true) {
+                options.onComplete = function (onComplete) {
+                    var count = Object.keys(this.viewsByName).length;
+
+                    if (count === 0) {
+                        try {
+                            onComplete();
+                        } catch (e) {}
+                        return;
+                    }
+
+                    var listener = function () {
+                        if (--count === 0) {
+                            onComplete();
+                        }
+                    };
+                    for (var key in this.viewsByName) {
+                        this.viewsByName[key].wait_ready(listener);
+                    }
+                }.bind(this, options.onComplete);
+            }
+
+            if (this.loading === false) {
+                utils.callCallback(options.onComplete);
+                return;
+            }
+
+            if (this.loading === null) {
+                refresh_view_info.call(this);
+            }
+            this.loadtask.then(options.onComplete);
+        }
+
+        refreshViewInfo() {
+            return new Wirecloud.Task("Refreshing marketplace view", function (resolve, reject) {
+                if (this.loading === true) {
+                    return resolve();
+                }
+
+                refresh_view_info.call(this);
+                this.loadtask.then(resolve, reject);
+            }.bind(this));
+        }
+
+        addMarket(market_info) {
+            var market_key = market_info.user + '/' + market_info.name;
+            var view_constructor = Wirecloud.MarketManager.getMarketViewClass(market_info.type);
+            market_info.permissions = {'delete': true};
+            this.viewsByName[market_key] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: market_info}});
+            Wirecloud.UserInterfaceManager.workspaceviews[market_key] = this.viewsByName[market_key];
+            this.viewList.push(this.viewsByName[market_key]);
+
+            this.number_of_alternatives += 1;
+            this.changeCurrentMarket(market_key);
+        }
+
+        changeCurrentMarket(market, options) {
+            options = utils.merge({
+                history: "push",
+            }, options);
+
+            this.alternatives.showAlternative(this.viewsByName[market], {
+                onComplete: function () {
+                    var new_status = this.buildStateData();
+                    if (options.history === "push") {
+                        Wirecloud.HistoryManager.pushState(new_status);
+                    } else if (options.history === "replace") {
+                        Wirecloud.HistoryManager.replaceState(new_status);
+                    }
+                }.bind(this)
+            });
+        }
+
+    }
+
+    ns.MarketplaceView.prototype.view_name = 'marketplace';
 
     var refresh_view_info = function refresh_view_info() {
         this.loading = true;
@@ -290,84 +372,6 @@
         );
     };
 
-    MarketplaceView.prototype.waitMarketListReady = function waitMarketListReady(options) {
-        if (options == null || typeof options.onComplete !== 'function') {
-            throw new TypeError('missing onComplete callback');
-        }
-
-        if (options.include_markets === true) {
-            options.onComplete = function (onComplete) {
-                var count = Object.keys(this.viewsByName).length;
-
-                if (count === 0) {
-                    try {
-                        onComplete();
-                    } catch (e) {}
-                    return;
-                }
-
-                var listener = function () {
-                    if (--count === 0) {
-                        onComplete();
-                    }
-                };
-                for (var key in this.viewsByName) {
-                    this.viewsByName[key].wait_ready(listener);
-                }
-            }.bind(this, options.onComplete);
-        }
-
-        if (this.loading === false) {
-            utils.callCallback(options.onComplete);
-            return;
-        }
-
-        if (this.loading === null) {
-            refresh_view_info.call(this);
-        }
-        this.loadtask.then(options.onComplete);
-    };
-
-    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo() {
-        return new Wirecloud.Task("Refreshing marketplace view", function (resolve, reject) {
-            if (this.loading === true) {
-                return resolve();
-            }
-
-            refresh_view_info.call(this);
-            this.loadtask.then(resolve, reject);
-        }.bind(this));
-    };
-
-    MarketplaceView.prototype.addMarket = function addMarket(market_info) {
-        var market_key = market_info.user + '/' + market_info.name;
-        var view_constructor = Wirecloud.MarketManager.getMarketViewClass(market_info.type);
-        market_info.permissions = {'delete': true};
-        this.viewsByName[market_key] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: market_info}});
-        Wirecloud.UserInterfaceManager.workspaceviews[market_key] = this.viewsByName[market_key];
-        this.viewList.push(this.viewsByName[market_key]);
-
-        this.number_of_alternatives += 1;
-        this.changeCurrentMarket(market_key);
-    };
-
-    MarketplaceView.prototype.changeCurrentMarket = function changeCurrentMarket(market, options) {
-        options = utils.merge({
-            history: "push",
-        }, options);
-
-        this.alternatives.showAlternative(this.viewsByName[market], {
-            onComplete: function () {
-                var new_status = this.buildStateData();
-                if (options.history === "push") {
-                    Wirecloud.HistoryManager.pushState(new_status);
-                } else if (options.history === "replace") {
-                    Wirecloud.HistoryManager.replaceState(new_status);
-                }
-            }.bind(this)
-        });
-    };
-
     var remove_market = function remove_market(market_view) {
         return new Promise(function (alt, resolve) {
             delete Wirecloud.UserInterfaceManager.workspaceviews[market_view.market_id];
@@ -375,6 +379,4 @@
         }.bind(this, market_view));
     };
 
-    Wirecloud.ui.MarketplaceView = MarketplaceView;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

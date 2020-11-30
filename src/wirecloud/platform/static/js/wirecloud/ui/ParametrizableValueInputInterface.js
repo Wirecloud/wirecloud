@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +23,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
@@ -69,87 +70,88 @@
     /**
      *
      */
-    var ParametrizableValueInputInterface = function ParametrizableValueInputInterface(fieldId, options) {
-        StyledElements.InputInterface.call(this, fieldId, options);
+    ns.ParametrizableValueInputInterface = class ParametrizableValueInputInterface extends se.InputInterface {
 
-        this.parentWindow = options.parentWindow;
-        this.variable = options.variable;
-        this.canBeHidden = options.canBeHidden;
+        constructor(fieldId, options) {
+            super(fieldId, options);
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "parametrizable_input";
+            this.parentWindow = options.parentWindow;
+            this.variable = options.variable;
+            this.canBeHidden = options.canBeHidden;
 
-        this.readOnlyIcon = document.createElement('div');
-        this.readOnlyIcon.className = 'readOnlyIcon';
-        this.wrapperElement.appendChild(this.readOnlyIcon);
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = "parametrizable_input";
 
-        this.visibilityIcon = document.createElement('div');
-        this.visibilityIcon.className = 'visibilityIcon';
-        this.wrapperElement.appendChild(this.visibilityIcon);
-        if (!this.canBeHidden) {
-            this.visibilityIcon.style.visibility = 'hidden';
+            this.readOnlyIcon = document.createElement('div');
+            this.readOnlyIcon.className = 'readOnlyIcon';
+            this.wrapperElement.appendChild(this.readOnlyIcon);
+
+            this.visibilityIcon = document.createElement('div');
+            this.visibilityIcon.className = 'visibilityIcon';
+            this.wrapperElement.appendChild(this.visibilityIcon);
+            if (!this.canBeHidden) {
+                this.visibilityIcon.style.visibility = 'hidden';
+            }
+
+            this.inputElement = new StyledElements.TextField();
+            this.inputElement.disable();
+            this.inputElement.insertInto(this.wrapperElement);
+
+            this.buttonElement = new StyledElements.Button({text: ''});
+            this.buttonElement.addEventListener('click', function () {
+                var dialog = new Wirecloud.ui.ParametrizeWindowMenu(this);
+                dialog.show(this.parentWindow);
+                dialog.setValue(this.getValue());
+            }.bind(this));
+            this.buttonElement.insertInto(this.wrapperElement);
         }
 
-        this.inputElement = new StyledElements.TextField();
-        this.inputElement.disable();
-        this.inputElement.insertInto(this.wrapperElement);
-
-        this.buttonElement = new StyledElements.Button({text: ''});
-        this.buttonElement.addEventListener('click', function () {
-            var dialog = new Wirecloud.ui.ParametrizeWindowMenu(this);
-            dialog.show(this.parentWindow);
-            dialog.setValue(this.getValue());
-        }.bind(this));
-        this.buttonElement.insertInto(this.wrapperElement);
-    };
-    ParametrizableValueInputInterface.prototype = new StyledElements.InputInterface();
-
-    ParametrizableValueInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        return StyledElements.InputValidationError.NO_ERROR;
-    };
-
-    ParametrizableValueInputInterface.prototype.getValue = function getValue() {
-        var value = {
-            'source': this.source,
-            'status': this.status
-        };
-
-        if (this.source !== 'default') {
-            value.value = this.inputElement.getValue();
+        _checkValue(newValue) {
+            return StyledElements.InputValidationError.NO_ERROR;
         }
 
-        return value;
-    };
+        getValue() {
+            var value = {
+                'source': this.source,
+                'status': this.status
+            };
 
-    ParametrizableValueInputInterface.prototype._setValue = function _setValue(newValue) {
-        if (newValue == null || VALID_SOURCE_VALUES.indexOf(newValue.source) === -1) {
-            this.source = 'current';
-        } else {
-            this.source = newValue.source;
+            if (this.source !== 'default') {
+                value.value = this.inputElement.getValue();
+            }
+
+            return value;
         }
 
-        if (newValue == null || typeof newValue.value !== 'string') {
-            this.value = '';
-        } else {
-            this.value = newValue.value;
+        _setValue(newValue) {
+            if (newValue == null || VALID_SOURCE_VALUES.indexOf(newValue.source) === -1) {
+                this.source = 'current';
+            } else {
+                this.source = newValue.source;
+            }
+
+            if (newValue == null || typeof newValue.value !== 'string') {
+                this.value = '';
+            } else {
+                this.value = newValue.value;
+            }
+
+            if (newValue == null || VALID_STATUS_VALUES.indexOf(newValue.status) === -1) {
+                this.status = 'normal';
+            } else if (!this.canBeHidden && newValue.status === 'hidden') {
+                this.status = 'readonly';
+            } else {
+                this.status = newValue.status;
+            }
+
+            updateInputElement.call(this);
+            updateButton.call(this);
         }
 
-        if (newValue == null || VALID_STATUS_VALUES.indexOf(newValue.status) === -1) {
-            this.status = 'normal';
-        } else if (!this.canBeHidden && newValue.status === 'hidden') {
-            this.status = 'readonly';
-        } else {
-            this.status = newValue.status;
+        insertInto(element) {
+            element.appendChild(this.wrapperElement);
         }
 
-        updateInputElement.call(this);
-        updateButton.call(this);
-    };
+    }
 
-    ParametrizableValueInputInterface.prototype.insertInto = function insertInto(element) {
-        element.appendChild(this.wrapperElement);
-    };
-
-    Wirecloud.ui.ParametrizableValueInputInterface = ParametrizableValueInputInterface;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +23,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
@@ -129,11 +130,11 @@
             var inheritSettingChange = false;
             if ('inherit' in inputs) {
                 newInheritanceSetting = inputs.inherit.getValue();
-                inheritSettingChange = newInheritanceSetting != preference.inherit;
+                inheritSettingChange = newInheritanceSetting !== preference.inherit;
             }
 
             var newValue = inputs.base.getValue();
-            var valueChange = preference.value != newValue;
+            var valueChange = preference.value !== newValue;
 
             if (!inheritSettingChange && !valueChange) {
                 continue; // This preference has not changed
@@ -184,87 +185,88 @@
      * @param manager
      *
      */
-    var PreferencesWindowMenu = function PreferencesWindowMenu(scope, manager) {
-        Wirecloud.ui.WindowMenu.call(this, '', 'wc-' + scope + '-preferences-modal');
+    ns.PreferencesWindowMenu = class PreferencesWindowMenu extends ns.WindowMenu {
 
-        Object.defineProperty(this, 'manager', {value: manager});
+        constructor(scope, manager) {
+            super("", "wc-" + scope + "-preferences-modal");
 
-        // Reset button
-        this.resetButton = new se.Button({
-            class: 'btn-set-defaults',
-            text: utils.gettext('Set Defaults'),
-        });
-        this.resetButton.addEventListener("click", function () {
-            var pref_name, preference;
+            Object.defineProperty(this, 'manager', {value: manager});
 
-            for (pref_name in this.interfaces) {
-                preference = this.manager.preferences[pref_name].meta;
+            // Reset button
+            this.resetButton = new se.Button({
+                class: 'btn-set-defaults',
+                text: utils.gettext('Set Defaults'),
+            });
+            this.resetButton.addEventListener("click", function () {
+                var pref_name, preference;
 
-                this.interfaces[pref_name].base.setValue(preference.default);
+                for (pref_name in this.interfaces) {
+                    preference = this.manager.preferences[pref_name].meta;
+
+                    this.interfaces[pref_name].base.setValue(preference.default);
+                    if ('inherit' in this.interfaces[pref_name]) {
+                        this.interfaces[pref_name].inherit.setValue(preference.inheritByDefault);
+                        this.interfaces[pref_name].base.setDisabled(preference.inheritByDefault);
+                    }
+                }
+            }.bind(this));
+            this.resetButton.insertInto(this.windowBottom);
+
+            // Accept button
+            this.acceptButton = new se.Button({
+                class: 'btn-accept btn-primary',
+                text: utils.gettext('Save')
+            });
+            this.acceptButton.addEventListener("click", _executeOperation.bind(this));
+            this.acceptButton.insertInto(this.windowBottom);
+
+            // Cancel button
+            this.cancelButton = new se.Button({
+                class: 'btn-cancel',
+                text: utils.gettext('Cancel')
+            });
+
+            this.cancelButton.addEventListener("click", this._closeListener);
+            this.cancelButton.insertInto(this.windowBottom);
+        }
+
+        setCancelable(cancelable) {
+            this.cancelButton.setDisabled(!cancelable);
+        }
+
+        show(parentWindow) {
+            var pref_name;
+
+            this.setTitle(this.manager.buildTitle());
+
+            if (!('interfaces' in this)) {
+                build_form.call(this);
+            }
+
+            for (pref_name in this.manager.preferences) {
+                if (this.manager.preferences[pref_name].meta.hidden === true) {
+                    continue;
+                }
+                this.interfaces[pref_name].base.setValue(this.manager.preferences[pref_name].value);
                 if ('inherit' in this.interfaces[pref_name]) {
-                    this.interfaces[pref_name].inherit.setValue(preference.inheritByDefault);
-                    this.interfaces[pref_name].base.setDisabled(preference.inheritByDefault);
+                    this.interfaces[pref_name].inherit.setValue(this.manager.preferences[pref_name].inherit);
+                    this.interfaces[pref_name].base.setDisabled(this.manager.preferences[pref_name].inherit);
                 }
             }
-        }.bind(this));
-        this.resetButton.insertInto(this.windowBottom);
+            Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
 
-        // Accept button
-        this.acceptButton = new se.Button({
-            class: 'btn-accept btn-primary',
-            text: utils.gettext('Save')
-        });
-        this.acceptButton.addEventListener("click", _executeOperation.bind(this));
-        this.acceptButton.insertInto(this.windowBottom);
-
-        // Cancel button
-        this.cancelButton = new se.Button({
-            class: 'btn-cancel',
-            text: utils.gettext('Cancel')
-        });
-
-        this.cancelButton.addEventListener("click", this._closeListener);
-        this.cancelButton.insertInto(this.windowBottom);
-    };
-    utils.inherit(PreferencesWindowMenu, Wirecloud.ui.WindowMenu);
-
-    PreferencesWindowMenu.prototype.setCancelable = function setCancelable(cancelable) {
-        this.cancelButton.setDisabled(!cancelable);
-    };
-
-    PreferencesWindowMenu.prototype.show = function show(parentWindow) {
-        var pref_name;
-
-        this.setTitle(this.manager.buildTitle());
-
-        if (!('interfaces' in this)) {
-            build_form.call(this);
-        }
-
-        for (pref_name in this.manager.preferences) {
-            if (this.manager.preferences[pref_name].meta.hidden === true) {
-                continue;
-            }
-            this.interfaces[pref_name].base.setValue(this.manager.preferences[pref_name].value);
-            if ('inherit' in this.interfaces[pref_name]) {
-                this.interfaces[pref_name].inherit.setValue(this.manager.preferences[pref_name].inherit);
-                this.interfaces[pref_name].base.setDisabled(this.manager.preferences[pref_name].inherit);
+            for (pref_name in this.interfaces) {
+                this.interfaces[pref_name].base.repaint();
             }
         }
-        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
 
-        for (pref_name in this.interfaces) {
-            this.interfaces[pref_name].base.repaint();
+        destroy() {
+            this.acceptButton.destroy();
+            this.cancelButton.destroy();
+
+            super.destroy();
         }
-    };
 
-    PreferencesWindowMenu.prototype.destroy = function destroy() {
-        this.acceptButton.destroy();
-        this.cancelButton.destroy();
+    }
 
-        Wirecloud.ui.WindowMenu.prototype.destroy.call(this);
-    };
-
-    Wirecloud.ui.PreferencesWindowMenu = PreferencesWindowMenu;
-
-})(StyledElements, Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

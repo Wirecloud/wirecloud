@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,137 +33,129 @@
      */
     ns.wiring = {};
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.Wiring = class Wiring extends se.ObjectWithEvents {
 
-    /**
-     * @name Wirecloud.Wiring
-     *
-     * @extends {StyledElements.ObjectWithEvents}
-     * @constructor
-     *
-     * @param {Wirecloud.Workspace} workspace
-     * @param {Object} data
-     * @param {Array.<Object>} data.connections
-     * @param {Object} data.operators
-     */
-    ns.Wiring = function Wiring(workspace, data) {
-        se.ObjectWithEvents.call(this, [
-            'createoperator',
-            'load',
-            'removeoperator'
-        ]);
+        /**
+         * @name Wirecloud.Wiring
+         *
+         * @extends {StyledElements.ObjectWithEvents}
+         * @constructor
+         *
+         * @param {Wirecloud.Workspace} workspace
+         * @param {Object} data
+         * @param {Array.<Object>} data.connections
+         * @param {Object} data.operators
+         */
+        constructor(workspace, data) {
+            super([
+                'createoperator',
+                'load',
+                'removeoperator'
+            ]);
 
-        privates.set(this, {
-            fixederrors: 0,
-            freezedOperatorsById: null,
-            operatorId: 1,
-            operators: [],
-            operatorsById: {},
-            connections: [],
-            on_changecomponent: on_changecomponent.bind(this),
-            on_createwidget: on_createwidget.bind(this),
-            on_removeconnection: on_removeconnection.bind(this),
-            on_removeoperator: on_removeoperator.bind(this),
-            on_removewidget: on_removewidget.bind(this)
-        });
+            privates.set(this, {
+                fixederrors: 0,
+                freezedOperatorsById: null,
+                operatorId: 1,
+                operators: [],
+                operatorsById: {},
+                connections: [],
+                on_changecomponent: on_changecomponent.bind(this),
+                on_createwidget: on_createwidget.bind(this),
+                on_removeconnection: on_removeconnection.bind(this),
+                on_removeoperator: on_removeoperator.bind(this),
+                on_removewidget: on_removewidget.bind(this)
+            });
 
-        Object.defineProperties(this, /** @lends Wirecloud.Wiring# */{
-            /**
-             * List of the connections handled by the current wiring
-             * configuration.
-             *
-             * @type {Array.<Wirecloud.Wiring.Connection>}
-             */
-            connections: {
-                get: on_connections_get
-            },
-            errorCount: {
-                get: on_error_count_get
-            },
-            /**
-             * @type {Wirecloud.LogManager}
-             */
-            logManager: {
-                value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
-            },
-            /**
-             * List of the operators handled by the current wiring
-             * configuration.
-             *
-             * @type {Array.<Wirecloud.Wiring.Operator>}
-             */
-            operators: {
-                get: on_operators_get
-            },
-            /**
-             * Operators handled by the current wiring configuration indexed by
-             * id.
-             *
-             * @type {Object.<String, Wirecloud.Wiring.Operator>}
-             */
-            operatorsById: {
-                get: on_operators_by_id_get
-            },
-            status: {
-                get: on_status_get
-            },
-            visualdescription: {
-                get: on_visualdescription_get
-            },
-            /**
-             * Workspace owning this wiring engine.
-             *
-             * @type {Wirecloud.Workspace}
-             */
-            workspace: {
-                value: workspace
-            }
-        });
-
-        this.workspace.widgets.forEach(function (widget) {
-            on_createwidget.call(this, this.workspace, widget);
-        }, this);
-        this.workspace.addEventListener('createwidget', privates.get(this).on_createwidget);
-
-        this.load(unmarshall.call(this, utils.clone(data)));
-    };
-
-    ns.Wiring.normalize = function normalize(status) {
-        var new_status = utils.update({
-            version: '2.0',
-            connections: [],
-            operators: {},
-            visualdescription: {
-                behaviours: [],
-                components: {
-                    operator: {},
-                    widget: {}
+            Object.defineProperties(this, /** @lends Wirecloud.Wiring# */{
+                /**
+                 * List of the connections handled by the current wiring
+                 * configuration.
+                 *
+                 * @type {Array.<Wirecloud.Wiring.Connection>}
+                 */
+                connections: {
+                    get: on_connections_get
                 },
-                connections: []
-            }
-        }, status);
+                errorCount: {
+                    get: on_error_count_get
+                },
+                /**
+                 * @type {Wirecloud.LogManager}
+                 */
+                logManager: {
+                    value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)
+                },
+                /**
+                 * List of the operators handled by the current wiring
+                 * configuration.
+                 *
+                 * @type {Array.<Wirecloud.Wiring.Operator>}
+                 */
+                operators: {
+                    get: on_operators_get
+                },
+                /**
+                 * Operators handled by the current wiring configuration indexed by
+                 * id.
+                 *
+                 * @type {Object.<String, Wirecloud.Wiring.Operator>}
+                 */
+                operatorsById: {
+                    get: on_operators_by_id_get
+                },
+                status: {
+                    get: on_status_get
+                },
+                visualdescription: {
+                    get: on_visualdescription_get
+                },
+                /**
+                 * Workspace owning this wiring engine.
+                 *
+                 * @type {Wirecloud.Workspace}
+                 */
+                workspace: {
+                    value: workspace
+                }
+            });
 
-        normalize_object(new_status.visualdescription.components.operator, normalize_visual_component);
-        normalize_object(new_status.visualdescription.components.widget, normalize_visual_component);
+            this.workspace.widgets.forEach(function (widget) {
+                on_createwidget.call(this, this.workspace, widget);
+            }, this);
+            this.workspace.addEventListener('createwidget', privates.get(this).on_createwidget);
 
-        return new_status;
-    };
+            this.load(unmarshall.call(this, utils.clone(data)));
+        }
 
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
+        static normalize(status) {
+            var new_status = utils.update({
+                version: '2.0',
+                connections: [],
+                operators: {},
+                visualdescription: {
+                    behaviours: [],
+                    components: {
+                        operator: {},
+                        widget: {}
+                    },
+                    connections: []
+                }
+            }, status);
 
-    utils.inherit(ns.Wiring, se.ObjectWithEvents, /** @lends Wirecloud.Wiring.prototype */{
+            normalize_object(new_status.visualdescription.components.operator, normalize_visual_component);
+            normalize_object(new_status.visualdescription.components.widget, normalize_visual_component);
 
-        _notifyOperatorInstall: function _notifyOperatorInstall(resource) {
+            return new_status;
+        }
+
+        _notifyOperatorInstall(resource) {
             privates.get(this).operators.forEach(function (operator) {
                 if (operator.missing && operator.meta.uri === resource.uri) {
                     operator.upgrade(resource);
                 }
             });
-        },
+        }
 
         /**
          * @param {Wirecloud.Wiring.SourceEndpoint} source
@@ -173,7 +165,7 @@
          *
          * @returns {Wirecloud.Wiring.Connection}
          */
-        createConnection: function createConnection(source, target, options) {
+        createConnection(source, target, options) {
 
             const connection = new Wirecloud.wiring.Connection(this, source, target, options);
             const priv = privates.get(this);
@@ -214,7 +206,7 @@
                     resolve(connection);
                 });
             }
-        },
+        }
 
         /**
          * Adds a new operator instance into the wiring status on the WireCloud
@@ -230,7 +222,7 @@
          *     operators. This method will return a {@link Wirecloud.Operator}
          *     when creating volatile operators.
          */
-        createOperator: function createOperator(meta, data) {
+        createOperator(meta, data) {
             var priv = privates.get(this);
 
             data = utils.merge({
@@ -267,7 +259,7 @@
                 append_operator.call(this, operator);
                 return Promise.resolve(operator);
             });
-        },
+        }
 
         /**
          * Looks up for an operator with the given id inside the list of operators handled by this wiring engine instance.
@@ -276,7 +268,7 @@
          *
          * @returns {Wirecloud.wiring.Operator}
          */
-        findOperator: function findOperator(id) {
+        findOperator(id) {
             if (id == null) {
                 throw new TypeError("Missing id parameter");
             }
@@ -285,9 +277,9 @@
             id = String(id);
 
             return this.operatorsById[id] || null;
-        },
+        }
 
-        load: function load(status) {
+        load(status) {
             var connection, i, id, operator, priv;
 
             status = ns.Wiring.normalize(status);
@@ -356,14 +348,14 @@
             priv.visualdescription = status.visualdescription;
 
             return this.dispatchEvent('load');
-        },
+        }
 
         /**
          * Persists current wiring status into the WireCloud server.
          *
          * @returns {Promise}
          */
-        save: function save() {
+        save() {
             var url = Wirecloud.URLs.WIRING_ENTRY.evaluate({
                 workspace_id: this.workspace.id
             });
@@ -381,7 +373,7 @@
                     return Promise.reject(new Error("Unexpected error response"));
                 }
             });
-        },
+        }
 
         /**
          * Creates a representation of the status of this wiring engine to be
@@ -390,7 +382,7 @@
          *
          * @returns {Object}
          */
-        toJSON: function toJSON() {
+        toJSON() {
             var operators = {}, id, priv;
 
             priv = privates.get(this);
@@ -411,7 +403,7 @@
             };
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

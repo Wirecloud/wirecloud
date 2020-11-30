@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,289 +23,289 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    /**
-     * Creates an Alternatives component. An Alternative container allows
-     * contents to share the same placement, being only one of the configured
-     * {@link StyledElements.Alternative} able to be displayed at one time.
-     *
-     * @constructor
-     * @extends StyledElements.StyledElement
-     * @name StyledElements.Alternatives
-     * @since 0.5
-     *
-     * @param {Object.<String, *>} options
-     *    Available options:
-     */
-    var Alternatives = function Alternatives(options) {
-        var defaultOptions = {
-            'class': '',
-            'full': true,
-            'defaultEffect': StyledElements.Alternatives.NONE
-        };
+    se.Alternatives = class Alternatives extends se.StyledElement {
 
-        options = utils.merge(defaultOptions, options);
-        StyledElements.StyledElement.call(this, ['preTransition', 'postTransition']);
+        /**
+         * Creates an Alternatives component. An Alternative container allows
+         * contents to share the same placement, being only one of the configured
+         * {@link StyledElements.Alternative} able to be displayed at one time.
+         *
+         * @constructor
+         * @extends StyledElements.StyledElement
+         * @name StyledElements.Alternatives
+         * @since 0.5
+         *
+         * @param {Object.<String, *>} options
+         *    Available options:
+         */
+        constructor(options) {
+            var defaultOptions = {
+                'class': '',
+                'full': true,
+                'defaultEffect': StyledElements.Alternatives.NONE
+            };
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = utils.prependWord(options.class, "se-alternatives");
+            options = utils.merge(defaultOptions, options);
+            super(['preTransition', 'postTransition']);
 
-        /* Process options */
-        if (options.id) {
-            this.wrapperElement.setAttribute("id", options.id);
-        }
+            this.wrapperElement = document.createElement("div");
+            this.wrapperElement.className = utils.prependWord(options.class, "se-alternatives");
 
-        if (options.full) {
-            this.wrapperElement.classList.add("full");
-        }
-
-        Object.defineProperties(this, {
-            alternatives: {
-                get: on_alternatives_get
-            },
-            alternativeList: {
-                get: on_alternative_list_get
-            },
-            defaultEffect: {
-                value: options.defaultEffect,
-                writable: true
-            }
-        });
-
-        /* Transitions code */
-        var initFunc = function initFunc(context, command) {
-            var inAlternative, outAlternative, p, priv = privates.get(context);
-
-            p = Promise.resolve();
-
-            switch (command.type) {
-            case "transit":
-                inAlternative = command.inAlternative;
-                outAlternative = context.visibleAlt;
-
-                if (inAlternative === outAlternative) {
-                    utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
-                    return {in: inAlternative, out: outAlternative}; // we are not going to process this command
-                }
-
-                p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
-                break;
-            case "remove":
-                outAlternative = command.outAlternative;
-                if (priv.visibleAlt === outAlternative) {
-                    if (priv.alternativeList.length > 0) {
-                        inAlternative = priv.alternativeList[command.index];
-                        if (!inAlternative) {
-                            inAlternative = priv.alternativeList[command.index - 1];
-                        }
-                        p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
-                    } else {
-                        priv.visibleAlt = null;
-                    }
-                }
-                p = p.then(function () {
-                    context.wrapperElement.removeChild(outAlternative.wrapperElement);
-                }.bind(this));
+            /* Process options */
+            if (options.id) {
+                this.wrapperElement.setAttribute("id", options.id);
             }
 
-            return p.then((result) => {
-                // Call the onComplete callback
-                utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
-                return result;
+            if (options.full) {
+                this.wrapperElement.classList.add("full");
+            }
+
+            Object.defineProperties(this, {
+                alternatives: {
+                    get: on_alternatives_get
+                },
+                alternativeList: {
+                    get: on_alternative_list_get
+                },
+                defaultEffect: {
+                    value: options.defaultEffect,
+                    writable: true
+                }
             });
-        };
 
-        privates.set(this, {
-            nextAltId: 0,
-            transitionsQueue: new StyledElements.CommandQueue(this, initFunc),
-            visibleAlt: null,
-            alternatives: {},
-            alternativeList: []
-        });
-    };
-    utils.inherit(Alternatives, StyledElements.StyledElement);
+            /* Transitions code */
+            var initFunc = function initFunc(context, command) {
+                var inAlternative, outAlternative, p, priv = privates.get(context);
 
-    Alternatives.HORIZONTAL_FLIP = "horizontalflip";
-    Alternatives.HORIZONTAL_SLIDE = "horizontalslide";
-    Alternatives.CROSS_DISSOLVE = "dissolve";
-    Alternatives.NONE = "none";
+                p = Promise.resolve();
 
-    Alternatives.prototype.repaint = function repaint(temporal) {
-        var priv = privates.get(this);
+                switch (command.type) {
+                case "transit":
+                    inAlternative = command.inAlternative;
+                    outAlternative = context.visibleAlt;
 
-        // Resize content
-        if (priv.visibleAlt != null) {
-            priv.visibleAlt.repaint(!!temporal);  // Convert temporal to boolean
+                    if (inAlternative === outAlternative) {
+                        utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
+                        return {in: inAlternative, out: outAlternative}; // we are not going to process this command
+                    }
+
+                    p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
+                    break;
+                case "remove":
+                    outAlternative = command.outAlternative;
+                    if (priv.visibleAlt === outAlternative) {
+                        if (priv.alternativeList.length > 0) {
+                            inAlternative = priv.alternativeList[command.index];
+                            if (!inAlternative) {
+                                inAlternative = priv.alternativeList[command.index - 1];
+                            }
+                            p = build_transit_promise(command.effect, outAlternative, inAlternative, context);
+                        } else {
+                            priv.visibleAlt = null;
+                        }
+                    }
+                    p = p.then(function () {
+                        context.wrapperElement.removeChild(outAlternative.wrapperElement);
+                    }.bind(this));
+                }
+
+                return p.then((result) => {
+                    // Call the onComplete callback
+                    utils.callCallback(command.onComplete, context, outAlternative, inAlternative);
+                    return result;
+                });
+            };
+
+            privates.set(this, {
+                nextAltId: 0,
+                transitionsQueue: new StyledElements.CommandQueue(this, initFunc),
+                visibleAlt: null,
+                alternatives: {},
+                alternativeList: []
+            });
         }
 
-        return this;
-    };
+        repaint(temporal) {
+            var priv = privates.get(this);
 
-    Alternatives.prototype.createAlternative = function createAlternative(options) {
-        var priv = privates.get(this);
-
-        var defaultOptions = {
-            alternative_constructor: StyledElements.Alternative,
-            containerOptions: {},
-            initiallyVisible: false
-        };
-        options = utils.update(defaultOptions, options);
-        options.containerOptions.parentElement = this;
-
-        var altId = privates.get(this).nextAltId++;
-
-        if ((options.alternative_constructor !== StyledElements.Alternative) && !(options.alternative_constructor.prototype instanceof StyledElements.Alternative)) {
-            throw new TypeError();
-        }
-        // eslint-disable-next-line new-cap
-        var alt = new options.alternative_constructor(altId, options.containerOptions);
-        alt.parentElement = this;
-
-        alt.insertInto(this.wrapperElement);
-
-        priv.alternatives[altId] = alt;
-        priv.alternativeList.push(alt);
-
-        if (!priv.visibleAlt) {
-            priv.visibleAlt = alt;
-            alt.setVisible(true);
-        } else if (options.initiallyVisible) {
-            this.showAlternative(alt);
-        }
-
-        /* Return the alternative container */
-        return alt;
-    };
-
-    /**
-     * Removes an alternative from this Alternatives instance
-     *
-     * @param {Number|StyledElements.Alternative} Alternative to remove. Must
-     * belong to this instance of Alternatives.
-     *
-     * @param {Object} [options]
-     *
-     * Optional object with extra options:
-     * - `effect`: effect to use in case of requiring switching to another
-     *   alternative
-     * - `onComplete`: callback to call on completion (deprecated, use the
-     *   returned promise)
-     *
-     * @returns {Promise}
-     *     A promise tracking the progress of visually removing the alternative.
-     *     The alternative itself is removed immediatelly from the list of
-     *     available alternatives.
-     */
-    Alternatives.prototype.removeAlternative = function removeAlternative(alternative, options) {
-        var index, id, priv;
-
-        priv = privates.get(this);
-
-        options = utils.update({
-            effect: this.defaultEffect,
-            onComplete: null
-        }, options);
-
-        if (alternative instanceof StyledElements.Alternative) {
-            id = alternative.altId;
-            if (priv.alternatives[id] !== alternative) {
-                throw new TypeError('alternative is not owner by this alternatives element');
+            // Resize content
+            if (priv.visibleAlt != null) {
+                priv.visibleAlt.repaint(!!temporal);  // Convert temporal to boolean
             }
-        } else {
-            id = alternative;
-            alternative = priv.alternatives[alternative];
-            if (!alternative) {
-                // Do nothing
-                utils.callCallback(options.onComplete);
-                return Promise.resolve();
-            }
+
+            return this;
         }
 
-        delete priv.alternatives[id];
-        index = priv.alternativeList.indexOf(alternative);
-        priv.alternativeList.splice(index, 1);
+        createAlternative(options) {
+            var priv = privates.get(this);
 
-        return priv.transitionsQueue.addCommand({
-            effect: options.effect,
-            index: index,
-            type: "remove",
-            onComplete: options.onComplete,
-            outAlternative: alternative
-        });
-    };
+            var defaultOptions = {
+                alternative_constructor: StyledElements.Alternative,
+                containerOptions: {},
+                initiallyVisible: false
+            };
+            options = utils.update(defaultOptions, options);
+            options.containerOptions.parentElement = this;
 
-    Alternatives.prototype.clear = function clear() {
-        var priv = privates.get(this);
-        priv.alternatives = {};
-        priv.alternativeList = [];
-        priv.nextAltId = 0;
-        priv.visibleAlt = null;
-        this.wrapperElement.innerHTML = '';
+            var altId = privates.get(this).nextAltId++;
 
-        return this;
-    };
-
-    Alternatives.prototype.getCurrentAlternative = function getCurrentAlternative() {
-        return privates.get(this).visibleAlt;
-    };
-
-    Object.defineProperties(Alternatives.prototype, {
-        visibleAlt: {
-            get: Alternatives.prototype.getCurrentAlternative
-        }
-    });
-
-
-    /**
-     * Changes current visible alternative.
-     *
-     * @since 0.5
-     * @name StyledElements.Alternative#showAlternative
-     *
-     * @param {Number|StyledElements.Alternative} Alternative to show. Must belong
-     * to this instance of Alternatives.
-     *
-     * @param {Object} [options]
-     *
-     * Optional object with extra options:
-     * - `effect`: effect to use in the transition
-     * - `onComplete`: callback to call on completion (deprecated, use the
-     *   returned promise)
-     *
-     * @returns {Promise}
-     *     A promise tracking the progress of the alternative switch.
-     */
-    Alternatives.prototype.showAlternative = function showAlternative(alternative, options) {
-        var priv, command = {};
-
-        options = utils.update({
-            effect: this.defaultEffect,
-            onComplete: null
-        }, options);
-
-        priv = privates.get(this);
-
-        if (alternative instanceof StyledElements.Alternative) {
-            if (priv.alternatives[alternative.altId] !== alternative) {
-                throw new TypeError('Invalid alternative');
+            if ((options.alternative_constructor !== StyledElements.Alternative) && !(options.alternative_constructor.prototype instanceof StyledElements.Alternative)) {
+                throw new TypeError();
             }
-            command.inAlternative = alternative;
-        } else {
-            if (priv.alternatives[alternative] == null) {
-                throw new TypeError('Invalid alternative');
+            // eslint-disable-next-line new-cap
+            var alt = new options.alternative_constructor(altId, options.containerOptions);
+            alt.parentElement = this;
+
+            alt.insertInto(this.wrapperElement);
+
+            priv.alternatives[altId] = alt;
+            priv.alternativeList.push(alt);
+
+            if (!priv.visibleAlt) {
+                priv.visibleAlt = alt;
+                alt.setVisible(true);
+            } else if (options.initiallyVisible) {
+                this.showAlternative(alt);
             }
-            command.inAlternative = priv.alternatives[alternative];
+
+            /* Return the alternative container */
+            return alt;
         }
 
-        command.type = "transit";
-        command.onComplete = options.onComplete;
-        command.effect = options.effect;
+        /**
+         * Removes an alternative from this Alternatives instance
+         *
+         * @param {Number|StyledElements.Alternative} Alternative to remove. Must
+         * belong to this instance of Alternatives.
+         *
+         * @param {Object} [options]
+         *
+         * Optional object with extra options:
+         * - `effect`: effect to use in case of requiring switching to another
+         *   alternative
+         * - `onComplete`: callback to call on completion (deprecated, use the
+         *   returned promise)
+         *
+         * @returns {Promise}
+         *     A promise tracking the progress of visually removing the alternative.
+         *     The alternative itself is removed immediatelly from the list of
+         *     available alternatives.
+         */
+        removeAlternative(alternative, options) {
+            var index, id, priv;
 
-        return priv.transitionsQueue.addCommand(command);
-    };
+            priv = privates.get(this);
+
+            options = utils.update({
+                effect: this.defaultEffect,
+                onComplete: null
+            }, options);
+
+            if (alternative instanceof StyledElements.Alternative) {
+                id = alternative.altId;
+                if (priv.alternatives[id] !== alternative) {
+                    throw new TypeError('alternative is not owner by this alternatives element');
+                }
+            } else {
+                id = alternative;
+                alternative = priv.alternatives[alternative];
+                if (!alternative) {
+                    // Do nothing
+                    utils.callCallback(options.onComplete);
+                    return Promise.resolve();
+                }
+            }
+
+            delete priv.alternatives[id];
+            index = priv.alternativeList.indexOf(alternative);
+            priv.alternativeList.splice(index, 1);
+
+            return priv.transitionsQueue.addCommand({
+                effect: options.effect,
+                index: index,
+                type: "remove",
+                onComplete: options.onComplete,
+                outAlternative: alternative
+            });
+        }
+
+        clear() {
+            var priv = privates.get(this);
+            priv.alternatives = {};
+            priv.alternativeList = [];
+            priv.nextAltId = 0;
+            priv.visibleAlt = null;
+            this.wrapperElement.innerHTML = '';
+
+            return this;
+        }
+
+        getCurrentAlternative() {
+            return privates.get(this).visibleAlt;
+        }
+
+        get visibleAlt() {
+            return this.getCurrentAlternative();
+        }
+
+        /**
+         * Changes current visible alternative.
+         *
+         * @since 0.5
+         * @name StyledElements.Alternative#showAlternative
+         *
+         * @param {Number|StyledElements.Alternative} Alternative to show. Must belong
+         * to this instance of Alternatives.
+         *
+         * @param {Object} [options]
+         *
+         * Optional object with extra options:
+         * - `effect`: effect to use in the transition
+         * - `onComplete`: callback to call on completion (deprecated, use the
+         *   returned promise)
+         *
+         * @returns {Promise}
+         *     A promise tracking the progress of the alternative switch.
+         */
+        showAlternative(alternative, options) {
+            var priv, command = {};
+
+            options = utils.update({
+                effect: this.defaultEffect,
+                onComplete: null
+            }, options);
+
+            priv = privates.get(this);
+
+            if (alternative instanceof StyledElements.Alternative) {
+                if (priv.alternatives[alternative.altId] !== alternative) {
+                    throw new TypeError('Invalid alternative');
+                }
+                command.inAlternative = alternative;
+            } else {
+                if (priv.alternatives[alternative] == null) {
+                    throw new TypeError('Invalid alternative');
+                }
+                command.inAlternative = priv.alternatives[alternative];
+            }
+
+            command.type = "transit";
+            command.onComplete = options.onComplete;
+            command.effect = options.effect;
+
+            return priv.transitionsQueue.addCommand(command);
+        }
+
+    }
+
+    se.Alternatives.HORIZONTAL_FLIP = "horizontalflip";
+    se.Alternatives.HORIZONTAL_SLIDE = "horizontalslide";
+    se.Alternatives.CROSS_DISSOLVE = "dissolve";
+    se.Alternatives.NONE = "none";
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -385,6 +386,4 @@
         });
     };
 
-    StyledElements.Alternatives = Alternatives;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

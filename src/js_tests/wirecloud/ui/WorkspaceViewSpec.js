@@ -106,23 +106,24 @@
             });
             utils.inherit(ns.ComponentSidebar, StyledElements.StyledElement);
 
-            ns.WorkspaceTabView = jasmine.createSpy("WorkspaceTabView").and.callFake(function (id, notebook, options) {
-                StyledElements.Tab.call(this, id, notebook, options);
-                this.id = "8";
-                this.createWidget = jasmine.createSpy("createWidget");
-                this.findWidget = jasmine.createSpy("findWidget");
-                this.widgets = [];
-                this.dragboard = {
-                    _updateIWidgetSizes: jasmine.createSpy("_updateIWidgetSizes"),
-                    leftLayout: {
-                        active: false
-                    },
-                    rightLayout: {
-                        active: false
-                    }
-                };
-            });
-            utils.inherit(ns.WorkspaceTabView, StyledElements.Tab);
+            ns.WorkspaceTabView = class WorkspaceTabView extends StyledElements.Tab {
+                constructor(id, notebook, options) {
+                    super(id, notebook, options);
+                    this.id = "8";
+                    this.createWidget = jasmine.createSpy("createWidget");
+                    this.findWidget = jasmine.createSpy("findWidget");
+                    this.widgets = [];
+                    this.dragboard = {
+                        _updateIWidgetSizes: jasmine.createSpy("_updateIWidgetSizes"),
+                        leftLayout: {
+                            active: false
+                        },
+                        rightLayout: {
+                            active: false
+                        }
+                    };
+                }
+            };
 
             spyOn(Wirecloud, "Workspace").and.callFake(function () {
                 this.operators = [];
@@ -750,13 +751,8 @@
                 let view = new ns.WorkspaceView(1);
                 let workspace = create_workspace();
                 workspace.isAllowed.and.returnValue(true);
-                let real_notebook = StyledElements.Notebook;
-                spyOn(StyledElements, "Notebook").and.callFake(function () {
-                    real_notebook.call(this);
-                    this.addButton = jasmine.createSpy("addButton");
-                    spyOn(this, "createTab").and.callThrough();
-                });
-                utils.inherit(StyledElements.Notebook, real_notebook);
+                spyOn(StyledElements.Notebook.prototype, "addButton");
+                spyOn(StyledElements.Notebook.prototype, "createTab").and.callThrough();
                 view.loadWorkspace(workspace);
 
                 // Check the interface provides a button for creating tabs
@@ -785,13 +781,8 @@
                 let view = new ns.WorkspaceView(1);
                 let workspace = create_workspace();
                 workspace.isAllowed.and.returnValue(true);
-                let real_notebook = StyledElements.Notebook;
-                spyOn(StyledElements, "Notebook").and.callFake(function () {
-                    real_notebook.call(this);
-                    this.addButton = jasmine.createSpy("addButton");
-                    spyOn(this, "createTab").and.callThrough();
-                });
-                utils.inherit(StyledElements.Notebook, real_notebook);
+                spyOn(StyledElements.Notebook.prototype, "addButton");
+                spyOn(StyledElements.Notebook.prototype, "createTab").and.callThrough();
                 view.loadWorkspace(workspace);
                 workspace.createTab.and.returnValue(Promise.reject());
 

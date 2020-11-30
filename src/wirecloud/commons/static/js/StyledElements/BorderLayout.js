@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,98 +23,99 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
     /**
      * Permite distribuir contenidos según un border layout.
      */
-    var BorderLayout = function BorderLayout(options) {
-        StyledElements.StyledElement.call(this, []);
+    se.BorderLayout = class BorderLayout extends se.StyledElement {
 
-        options = utils.merge({
-            'class': ''
-        }, options);
+        constructor(options) {
+            super([]);
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord(options.class, "se-border-layout");
+            options = utils.merge({
+                'class': ''
+            }, options);
 
-        Object.defineProperties(this, {
-            north: {value: new StyledElements.Container({'class': 'se-bl-north-container'})},
-            west: {value: new StyledElements.Container({'class': 'se-bl-west-container'})},
-            center: {value: new StyledElements.Container({'class': 'se-bl-center-container'})},
-            east: {value: new StyledElements.Container({'class': 'se-bl-east-container'})},
-            south: {value: new StyledElements.Container({'class': 'se-bl-south-container'})}
-        });
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = utils.appendWord(options.class, "se-border-layout");
 
-        this.north.insertInto(this.wrapperElement);
-        this.west.insertInto(this.wrapperElement);
-        this.center.insertInto(this.wrapperElement);
-        this.east.insertInto(this.wrapperElement);
-        this.south.insertInto(this.wrapperElement);
-    };
-    utils.inherit(BorderLayout, StyledElements.StyledElement);
+            Object.defineProperties(this, {
+                north: {value: new StyledElements.Container({'class': 'se-bl-north-container'})},
+                west: {value: new StyledElements.Container({'class': 'se-bl-west-container'})},
+                center: {value: new StyledElements.Container({'class': 'se-bl-center-container'})},
+                east: {value: new StyledElements.Container({'class': 'se-bl-east-container'})},
+                south: {value: new StyledElements.Container({'class': 'se-bl-south-container'})}
+            });
 
-    BorderLayout.prototype.repaint = function repaint(temporal) {
-        var usableArea = {
-            'width': this.wrapperElement.offsetWidth,
-            'height': this.wrapperElement.offsetHeight
-        };
-
-        var h1 = this.north.wrapperElement.offsetHeight;
-        var h2 = usableArea.height - this.south.wrapperElement.offsetHeight;
-        var centerHeight = h2 - h1;
-        if (centerHeight < 0) {
-            centerHeight = 0;
+            this.north.insertInto(this.wrapperElement);
+            this.west.insertInto(this.wrapperElement);
+            this.center.insertInto(this.wrapperElement);
+            this.east.insertInto(this.wrapperElement);
+            this.south.insertInto(this.wrapperElement);
         }
 
-        var v1 = this.west.wrapperElement.offsetWidth;
-        var v2 = usableArea.width - this.east.wrapperElement.offsetWidth;
-        var centerWidth = v2 - v1;
-        if (centerWidth < 0) {
-            centerWidth = 0;
+        repaint(temporal) {
+            var usableArea = {
+                'width': this.wrapperElement.offsetWidth,
+                'height': this.wrapperElement.offsetHeight
+            };
+
+            var h1 = this.north.wrapperElement.offsetHeight;
+            var h2 = usableArea.height - this.south.wrapperElement.offsetHeight;
+            var centerHeight = h2 - h1;
+            if (centerHeight < 0) {
+                centerHeight = 0;
+            }
+
+            var v1 = this.west.wrapperElement.offsetWidth;
+            var v2 = usableArea.width - this.east.wrapperElement.offsetWidth;
+            var centerWidth = v2 - v1;
+            if (centerWidth < 0) {
+                centerWidth = 0;
+            }
+
+            this.west.wrapperElement.style.top = h1 + 'px';
+            this.west.wrapperElement.style.height = centerHeight + 'px';
+            this.center.wrapperElement.style.top = h1 + 'px';
+            this.center.wrapperElement.style.height = centerHeight + 'px';
+            this.center.wrapperElement.style.width = centerWidth + 'px';
+            this.center.wrapperElement.style.left = v1 + 'px';
+            this.east.wrapperElement.style.top = h1 + 'px';
+            this.east.wrapperElement.style.height = centerHeight + 'px';
+            this.east.wrapperElement.style.left = v2 + 'px';
+
+            this.south.wrapperElement.style.top = h2 + 'px';
+
+            this.north.repaint(temporal);
+            this.west.repaint(temporal);
+            this.center.repaint(temporal);
+            this.east.repaint(temporal);
+            this.south.repaint(temporal);
         }
 
-        this.west.wrapperElement.style.top = h1 + 'px';
-        this.west.wrapperElement.style.height = centerHeight + 'px';
-        this.center.wrapperElement.style.top = h1 + 'px';
-        this.center.wrapperElement.style.height = centerHeight + 'px';
-        this.center.wrapperElement.style.width = centerWidth + 'px';
-        this.center.wrapperElement.style.left = v1 + 'px';
-        this.east.wrapperElement.style.top = h1 + 'px';
-        this.east.wrapperElement.style.height = centerHeight + 'px';
-        this.east.wrapperElement.style.left = v2 + 'px';
+        getNorthContainer() {
+            return this.north;
+        }
 
-        this.south.wrapperElement.style.top = h2 + 'px';
+        getWestContainer() {
+            return this.west;
+        }
 
-        this.north.repaint(temporal);
-        this.west.repaint(temporal);
-        this.center.repaint(temporal);
-        this.east.repaint(temporal);
-        this.south.repaint(temporal);
-    };
+        getCenterContainer() {
+            return this.center;
+        }
 
-    BorderLayout.prototype.getNorthContainer = function getNorthContainer() {
-        return this.north;
-    };
+        getEastContainer() {
+            return this.east;
+        }
 
-    BorderLayout.prototype.getWestContainer = function getWestContainer() {
-        return this.west;
-    };
+        getSouthContainer() {
+            return this.south;
+        }
 
-    BorderLayout.prototype.getCenterContainer = function getCenterContainer() {
-        return this.center;
-    };
+    }
 
-    BorderLayout.prototype.getEastContainer = function getEastContainer() {
-        return this.east;
-    };
-
-    BorderLayout.prototype.getSouthContainer = function getSouthContainer() {
-        return this.south;
-    };
-
-    StyledElements.BorderLayout = BorderLayout;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,250 +23,248 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    /**
-     * @constructor
-     * @name StyledElements.InputInterface
-     * @interface
-     */
-    var InputInterface = function InputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
-        }
+    se.InputInterface = class InputInterface extends se.StyledElement {
 
-        StyledElements.StyledElement.call(this, []);
+        /**
+         * @constructor
+         * @name StyledElements.InputInterface
+         * @interface
+         */
+        constructor(fieldId, options) {
 
-        options.name = fieldId;
-        this._fieldId = fieldId;
-        this._initialValue = options.initialValue;
-        this._defaultValue = options.defaultValue;
-        this._label = options.label;
-        Object.defineProperties(this, {
-            id: {
-                value: fieldId
-            },
-            required: {
-                value: 'required' in options ? !!options.required : false
+            super([]);
+
+            options.name = fieldId;
+            this._fieldId = fieldId;
+            this._initialValue = options.initialValue;
+            this._defaultValue = options.defaultValue;
+            this._label = options.label;
+            Object.defineProperties(this, {
+                id: {
+                    value: fieldId
+                },
+                required: {
+                    value: 'required' in options ? !!options.required : false
+                }
+            });
+            this._readOnly = !!options.readOnly;
+            this._hidden = !!options.hidden;
+
+            if (options.description) {
+                this._description = options.description;
+            } else {
+                this._description = options.label;
             }
-        });
-        this._readOnly = !!options.readOnly;
-        this._hidden = !!options.hidden;
-
-        if (options.description) {
-            this._description = options.description;
-        } else {
-            this._description = options.label;
         }
-    };
-    utils.inherit(InputInterface, StyledElements.StyledElement);
 
-    InputInterface.prototype.repaint = function repaint() {
-        this.inputElement.repaint();
-    };
-
-    InputInterface.prototype.getValue = function getValue() {
-        return this.inputElement.getValue();
-    };
-
-    InputInterface.prototype.setValue = function setValue(newValue) {
-        if (this.isValidValue(newValue)) {
-            this._setValue(newValue);
+        repaint() {
+            this.inputElement.repaint();
         }
-    };
 
-    /**
-     * Returns the label for this InputInterface.
-     *
-     * @returns {String}
-     */
-    InputInterface.prototype.getLabel = function getLabel() {
-        return this._label;
-    };
-
-    /**
-     * Returns the description for this InputInterface.
-     *
-     * @returns {String}
-     */
-    InputInterface.prototype.getDescription = function getDescription() {
-        return this._description;
-    };
-
-    /**
-     * Returns the defaultValue for this InputInterface.
-     *
-     * @returns {Object}
-     */
-    InputInterface.prototype.getDefaultValue = function getDefaultValue() {
-        return this._defaultValue;
-    };
-
-    /**
-     * Checks if this InputInterface is currently empty.
-     *
-     * @returns {Boolean}
-     */
-    InputInterface.prototype.isEmpty = function isEmpty() {
-        return this._isEmptyValue(this.getValue());
-    };
-
-    /**
-     * Checks if value is considered Empty by this InputInterface.
-     * The value must be normalized before doing the check.
-     *
-     * @returns {Boolean}
-     */
-    InputInterface.prototype._isEmptyValue = function _isEmptyValue(value) {
-        return value === "" || value == null;
-    };
-
-    InputInterface.prototype._normalize = function _normalize(value) {
-        if (value == null) {
-            return "";
-        } else {
-            return ("" + value).trim();
+        getValue() {
+            return this.inputElement.getValue();
         }
-    };
 
-    /**
-     * @private
-     *
-     * Must be implemented by child classes. This method checks that the given value
-     * is valid for this <code>InputInterface</code>. Things as checking if the
-     * value is empty but required is out of scope of this method.
-     */
-    InputInterface.prototype._checkValue = function _checkValue(newValue) {
-        return StyledElements.InputValidationError.NO_ERROR;
-    };
+        setValue(newValue) {
+            if (this.isValidValue(newValue)) {
+                this._setValue(newValue);
+            }
+        }
 
-    /**
-     * Checks if the given value is valid for this InputInterface.
-     *
-     */
-    InputInterface.prototype.checkValue = function checkValue(newValue) {
-        if (newValue === undefined) {
-            newValue = this.getValue();
-        } else {
+        /**
+         * Returns the label for this InputInterface.
+         *
+         * @returns {String}
+         */
+        getLabel() {
+            return this._label;
+        }
+
+        /**
+         * Returns the description for this InputInterface.
+         *
+         * @returns {String}
+         */
+        getDescription() {
+            return this._description;
+        }
+
+        /**
+         * Returns the defaultValue for this InputInterface.
+         *
+         * @returns {Object}
+         */
+        getDefaultValue() {
+            return this._defaultValue;
+        }
+
+        /**
+         * Checks if this InputInterface is currently empty.
+         *
+         * @returns {Boolean}
+         */
+        isEmpty() {
+            return this._isEmptyValue(this.getValue());
+        }
+
+        /**
+         * Checks if value is considered Empty by this InputInterface.
+         * The value must be normalized before doing the check.
+         *
+         * @returns {Boolean}
+         */
+        _isEmptyValue(value) {
+            return value === "" || value == null;
+        }
+
+        _normalize(value) {
+            if (value == null) {
+                return "";
+            } else {
+                return ("" + value).trim();
+            }
+        }
+
+        /**
+         * @private
+         *
+         * Must be implemented by child classes. This method checks that the given value
+         * is valid for this <code>InputInterface</code>. Things as checking if the
+         * value is empty but required is out of scope of this method.
+         */
+        _checkValue(newValue) {
+            return StyledElements.InputValidationError.NO_ERROR;
+        }
+
+        /**
+         * Checks if the given value is valid for this InputInterface.
+         *
+         */
+        checkValue(newValue) {
+            if (newValue === undefined) {
+                newValue = this.getValue();
+            } else {
+                newValue = this._normalize(newValue);
+            }
+
+            if (!(this instanceof StyledElements.SelectInputInterface)) {
+                if (this.required && this._isEmptyValue(newValue)) {
+                    return StyledElements.InputValidationError.REQUIRED_ERROR;
+                }
+
+                if (!this.required && this._isEmptyValue(newValue)) {
+                    return StyledElements.InputValidationError.NO_ERROR;
+                }
+            }
+
+            return this._checkValue(newValue);
+        }
+
+        validate() {
+            if (this.timeout != null) {
+                clearTimeout(this.timeout);
+            }
+
+            var errorCode = this.checkValue();
+            this._setError(errorCode !== StyledElements.InputValidationError.NO_ERROR);
+        }
+
+        /**
+         * Checks if the given value is valid for this InputInterface.
+         *
+         * @retuns {Boolean}
+         */
+        isValidValue(newValue) {
+            return this.checkValue(newValue) === StyledElements.InputValidationError.NO_ERROR;
+        }
+
+        /**
+         * Sets the value for this interface without checking its correctness.
+         *
+         * @param newValue
+         *
+         * @see <code>InputInterface.setValue</code>
+         */
+        _setValue(newValue) {
             newValue = this._normalize(newValue);
+
+            this.inputElement.setValue(newValue);
         }
 
-        if (!(this instanceof StyledElements.SelectInputInterface)) {
-            if (this.required && this._isEmptyValue(newValue)) {
-                return StyledElements.InputValidationError.REQUIRED_ERROR;
+        /**
+         * Sets the error status for this interface.
+         *
+         * @param {Boolean} error
+         */
+        _setError(error) {
+            if (error) {
+                this.inputElement.wrapperElement.classList.add('error');
+            } else {
+                this.inputElement.wrapperElement.classList.remove('error');
             }
-
-            if (!this.required && this._isEmptyValue(newValue)) {
-                return StyledElements.InputValidationError.NO_ERROR;
-            }
         }
 
-        return this._checkValue(newValue);
-    };
-
-    InputInterface.prototype.validate = function validate() {
-        if (this.timeout != null) {
-            clearTimeout(this.timeout);
+        /**
+         * Resets the current interface using its default value.
+         */
+        resetToDefault() {
+            this._setError(false);
+            this._setValue(this._defaultValue);
         }
 
-        var errorCode = this.checkValue();
-        this._setError(errorCode !== StyledElements.InputValidationError.NO_ERROR);
-    };
-
-    /**
-     * Checks if the given value is valid for this InputInterface.
-     *
-     * @retuns {Boolean}
-     */
-    InputInterface.prototype.isValidValue = function isValidValue(newValue) {
-        return this.checkValue(newValue) === StyledElements.InputValidationError.NO_ERROR;
-    };
-
-    /**
-     * Sets the value for this interface without checking its correctness.
-     *
-     * @param newValue
-     *
-     * @see <code>InputInterface.setValue</code>
-     */
-    InputInterface.prototype._setValue = function _setValue(newValue) {
-        newValue = this._normalize(newValue);
-
-        this.inputElement.setValue(newValue);
-    };
-
-    /**
-     * Sets the error status for this interface.
-     *
-     * @param {Boolean} error
-     */
-    InputInterface.prototype._setError = function _setError(error) {
-        if (error) {
-            this.inputElement.wrapperElement.classList.add('error');
-        } else {
-            this.inputElement.wrapperElement.classList.remove('error');
+        /**
+         * Resets the current interface using the initial value.
+         */
+        reset() {
+            this._setError(false);
+            this._setValue(this._initialValue);
         }
-    };
 
-    /**
-     * Resets the current interface using its default value.
-     */
-    InputInterface.prototype.resetToDefault = function resetToDefault() {
-        this._setError(false);
-        this._setValue(this._defaultValue);
-    };
+        /**
+         * Sets the focus on this input interface.
+         */
+        focus() {
 
-    /**
-     * Resets the current interface using the initial value.
-     */
-    InputInterface.prototype.reset = function reset() {
-        this._setError(false);
-        this._setValue(this._initialValue);
-    };
+            this.inputElement.focus();
+        }
 
-    /**
-     * Sets the focus on this input interface.
-     */
-    InputInterface.prototype.focus = function focus() {
+        /**
+         * Disables/enables this input interface.
+         */
+        setDisabled(disable) {
+            this.inputElement.setDisabled(this._readOnly || disable);
+        }
 
-        this.inputElement.focus();
-    };
+        /**
+         * Enables this input interface.
+         */
+        enable() {
+            this.setDisabled(false);
+        }
 
-    /**
-     * Disables/enables this input interface.
-     */
-    InputInterface.prototype.setDisabled = function setDisabled(disable) {
-        this.inputElement.setDisabled(this._readOnly || disable);
-    };
+        /**
+         * Disables this input interface.
+         */
+        disable() {
+            this.setDisabled(true);
+        }
 
-    /**
-     * Enables this input interface.
-     */
-    InputInterface.prototype.enable = function enable() {
-        this.setDisabled(false);
-    };
+        /**
+         * Inserts this InputInterface into the given DOM Element.
+         *
+         * @param {Element} element
+         */
+        insertInto(element) {
+            this.inputElement.insertInto(element);
+        }
 
-    /**
-     * Disables this input interface.
-     */
-    InputInterface.prototype.disable = function disable() {
-        this.setDisabled(true);
-    };
+        assignDefaultButton(button) {
+        }
 
-    /**
-     * Inserts this InputInterface into the given DOM Element.
-     *
-     * @param {Element} element
-     */
-    InputInterface.prototype.insertInto = function insertInto(element) {
-        this.inputElement.insertInto(element);
-    };
+    }
 
-    InputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
-    };
-
-    StyledElements.InputInterface = InputInterface;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

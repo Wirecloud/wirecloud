@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -20,11 +20,13 @@
  *
  */
 
-/* globals moment, StyledElements, WeakMap */
+/* globals moment, StyledElements */
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
+
+    const privates = new WeakMap();
 
     var buildHeader = function buildHeader() {
         var i, column, cell, label, tooltip;
@@ -185,225 +187,6 @@
             message.textContent = error;
             priv.tableBody.appendChild(message);
         }
-    };
-
-    /**
-     * Each column must provide the following options:
-     * * `field` (String): name of the attribute
-     * * `type` (String): date, number, string, boolean
-     *
-     * And can provide these other optional options:
-     * * `label` (String, default: null): . If not provided, the value of the `field` option will be used as label for this columns
-     * * `sortable`: `false` by default.
-     */
-    var ModelTable = function ModelTable(columns, options) {
-        var className, i, column, sort_info, sort_id, defaultOptions;
-
-        defaultOptions = {
-            'initialSortColumn': -1,
-            'pageSize': 5,
-            'emptyMessage': utils.gettext('No data available'),
-            'selectionType': "none"
-        };
-
-        options = utils.merge(defaultOptions, options);
-
-        if (options.class != null) {
-            className = utils.appendWord('se-model-table full', options.class);
-        } else {
-            className = 'se-model-table full';
-        }
-
-        // Initialize private variables
-        var priv = {};
-        privates.set(this, priv);
-
-        StyledElements.StyledElement.call(this, ['click', 'select']);
-
-        // Initialize private variables
-        var priv = {};
-        privates.set(this, priv);
-
-        priv.selection = [];
-        priv.selectionType = options.selectionType;
-        var source;
-        if (options.source != null) {
-            source = options.source;
-        } else if (options.pagination != null) {
-            // Backwards compatilibity
-            source = options.pagination;
-        } else {
-            sort_info = {};
-            for (i = 0; i < columns.length; i += 1) {
-                column = columns[i];
-
-                if (sort_id in column) {
-                    sort_id = column.sort_id;
-                } else {
-                    sort_id = column.field;
-                }
-                sort_info[sort_id] = column;
-            }
-            source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info, idAttr: options.id});
-        }
-
-        priv.layout = new StyledElements.VerticalLayout({'class': className});
-
-        Object.defineProperties(this, {
-            columns: {
-                writable: true,
-                value: columns
-            },
-            emptyMessage: {
-                writable: true,
-                value: options.emptyMessage
-            },
-            selection: {
-                get: function () {
-                    return priv.selection;
-                },
-                set: function (value) {
-                    // Check if selection is ignored
-                    if (!isSelectionEnabled(priv.selectionType)) {
-                        throw new Error("Selection is disabled");
-                    }
-                    if (!Array.isArray(value)) {
-                        throw new TypeError();
-                    }
-                    if (priv.selectionType === "single" && value.length > 1) {
-                        throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
-                    }
-                    // Unhighlihgt previous selection
-                    priv.selection.forEach(function (id) {
-                        if (id in priv.current_elements) {
-                            priv.current_elements[id].row.classList.remove('highlight');
-                        }
-                    }, this);
-
-                    priv.selection = value;
-
-                    // Highlight the new selection
-                    highlight_selection.call(this);
-                }
-            },
-            source: {
-                writable: false,
-                value: source
-            },
-            statusBar: {
-                get: function () {
-                    return priv.statusBar;
-                }
-            }
-
-        });
-
-        this.wrapperElement = priv.layout.wrapperElement;
-
-        // Deselect rows if clicked no row is clicked
-        this.wrapperElement.addEventListener("click", function (evt) {
-            var priv = privates.get(this);
-            if (!isSelectionEnabled(priv.selectionType)) {
-                return;
-            }
-
-            // Only deselect if no modifier key is pressed
-            if (!evt.shiftKey && !evt.ctrlKey && !evt.metaKey) {
-                this.select([]);
-                // this.trigger("select", []);
-                this.events.select.dispatch([]);
-            }
-
-        }.bind(this));
-
-        /*
-         * Table body
-         */
-        priv.components = [];
-        priv.listeners = [];
-        priv.tableBody = priv.layout.center;
-        priv.tableBody.addClassName('se-model-table-body');
-        buildHeader.call(this);
-
-        /*
-         * Status bar
-         */
-        priv.statusBar = priv.layout.south;
-        priv.statusBar.addClassName('se-model-table-statusrow');
-
-        priv.sortColumn = null;
-
-        Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
-
-        this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
-
-        if (this.source.options.pageSize !== 0) {
-
-            priv.paginationInterface = new StyledElements.PaginationInterface(this.source);
-            priv.statusBar.appendChild(priv.paginationInterface);
-        }
-
-        if (options.initialSortColumn === -1) {
-            for (i = 0; i < this.columns.length; i += 1) {
-                if (this.columns[i].sortable !== false) {
-                    options.initialSortColumn = i;
-                    break;
-                }
-            }
-            if (options.initialSortColumn === -1) {
-                options.initialSortColumn = null;
-            }
-        } else if (typeof options.initialSortColumn === 'string') {
-            for (i = 0; i < this.columns.length; i += 1) {
-                if (this.columns[i].field === options.initialSortColumn) {
-                    options.initialSortColumn = i;
-                    break;
-                }
-            }
-            if (typeof options.initialSortColumn === 'string') {
-                options.initialSortColumn = null;
-            }
-        }
-
-        sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
-
-        priv.current_elements = {};
-        if (typeof options.id === 'string') {
-            priv.extractIdFunc = function (data) {
-                return data[options.id];
-            };
-        } else if (typeof options.id === 'function') {
-            priv.extractIdFunc = options.id;
-        }
-
-        if (typeof options.stateFunc === 'function') {
-            priv.stateFunc = options.stateFunc;
-        } else {
-            priv.stateFunc = function () {};
-        }
-    };
-    utils.inherit(ModelTable, StyledElements.StyledElement);
-
-    ModelTable.prototype.Tooltip = StyledElements.Tooltip;
-
-    /**
-     * Changes current selection. Removes the selection when no passing any parameter
-     *
-     * @since 0.6.3
-     *
-     * @param {String|String[]} [selection]
-     * @returns {StyledElements.ModelTable}
-     *     The instance on which the member is called.
-     */
-    ModelTable.prototype.select = function select(selection) {
-        if (selection != null) {
-            // Update current selection
-            this.selection = Array.isArray(selection) ? selection : [selection];
-        } else {
-            this.selection = [];
-        }
-
-        return this;
     };
 
     var sortByColumn = function sortByColumn(column, descending) {
@@ -651,38 +434,249 @@
         priv.current_elements = {};
     };
 
-    ModelTable.prototype.reload = function reload() {
-        paintTable.call(this, this.source.getCurrentPage());
-    };
+    /**
+     * Each column must provide the following options:
+     * * `field` (String): name of the attribute
+     *
+     * And can provide these other optional options:
+     * * `type` (String, default: `"text"`): Type of data stored on the field: text, date, number, string, boolean.
+     * * `label` (String, default: `null`): Label to useIf not provided, the value of the `field` option will be used as label for this columns
+     * * `sort_id` (String, default: `null`). Id to use when making request sorting by this field. `field` option will be used if not provided.
+     * * `sortable` (Boolean, default: `false`)
+     */
+    se.ModelTable = class ModelTable extends se.StyledElement {
 
-    ModelTable.prototype.destroy = function destroy() {
-        var i, cell;
-        var priv = privates.get(this);
+        constructor(columns, options) {
+            var className, i, sort_info, defaultOptions;
 
-        for (i = 0; i < priv.headerCells.length; i += 1) {
-            cell = priv.headerCells[i];
-            if (cell.callback) {
-                cell.removeEventListener('click', cell.callback, true);
-                cell.callback = null;
+            defaultOptions = {
+                'initialSortColumn': -1,
+                'pageSize': 5,
+                'emptyMessage': utils.gettext('No data available'),
+                'selectionType': "none"
+            };
+
+            options = utils.merge(defaultOptions, options);
+
+            if (options.class != null) {
+                className = utils.appendWord('se-model-table full', options.class);
+            } else {
+                className = 'se-model-table full';
+            }
+            super(['click', 'select']);
+
+            // Initialize private variables
+            var priv = {};
+            privates.set(this, priv);
+
+            // Initialize private variables
+            var priv = {};
+            privates.set(this, priv);
+
+            priv.selection = [];
+            priv.selectionType = options.selectionType;
+            var source;
+            if (options.source != null) {
+                source = options.source;
+            } else if (options.pagination != null) {
+                // Backwards compatilibity
+                source = options.pagination;
+            } else {
+                sort_info = {};
+                columns.forEach((column) => {
+                    const sort_id = column.sort_id != null ? column.sort_id : column.field;
+                    sort_info[sort_id] = column;
+                })
+                source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info, idAttr: options.id});
+            }
+
+            priv.layout = new StyledElements.VerticalLayout({'class': className});
+
+            Object.defineProperties(this, {
+                columns: {
+                    writable: true,
+                    value: columns
+                },
+                emptyMessage: {
+                    writable: true,
+                    value: options.emptyMessage
+                },
+                selection: {
+                    get: function () {
+                        return priv.selection;
+                    },
+                    set: function (value) {
+                        // Check if selection is ignored
+                        if (!isSelectionEnabled(priv.selectionType)) {
+                            throw new Error("Selection is disabled");
+                        }
+                        if (!Array.isArray(value)) {
+                            throw new TypeError();
+                        }
+                        if (priv.selectionType === "single" && value.length > 1) {
+                            throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
+                        }
+                        // Unhighlihgt previous selection
+                        priv.selection.forEach(function (id) {
+                            if (id in priv.current_elements) {
+                                priv.current_elements[id].row.classList.remove('highlight');
+                            }
+                        }, this);
+
+                        priv.selection = value;
+
+                        // Highlight the new selection
+                        highlight_selection.call(this);
+                    }
+                },
+                source: {
+                    writable: false,
+                    value: source
+                },
+                statusBar: {
+                    get: function () {
+                        return priv.statusBar;
+                    }
+                }
+
+            });
+
+            this.wrapperElement = priv.layout.wrapperElement;
+
+            // Deselect rows if clicked no row is clicked
+            this.wrapperElement.addEventListener("click", function (evt) {
+                var priv = privates.get(this);
+                if (!isSelectionEnabled(priv.selectionType)) {
+                    return;
+                }
+
+                // Only deselect if no modifier key is pressed
+                if (!evt.shiftKey && !evt.ctrlKey && !evt.metaKey) {
+                    this.select([]);
+                    // this.trigger("select", []);
+                    this.events.select.dispatch([]);
+                }
+
+            }.bind(this));
+
+            /*
+             * Table body
+             */
+            priv.components = [];
+            priv.listeners = [];
+            priv.tableBody = priv.layout.center;
+            priv.tableBody.addClassName('se-model-table-body');
+            buildHeader.call(this);
+
+            /*
+             * Status bar
+             */
+            priv.statusBar = priv.layout.south;
+            priv.statusBar.addClassName('se-model-table-statusrow');
+
+            priv.sortColumn = null;
+
+            Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
+
+            this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
+
+            if (this.source.options.pageSize !== 0) {
+
+                priv.paginationInterface = new StyledElements.PaginationInterface(this.source);
+                priv.statusBar.appendChild(priv.paginationInterface);
+            }
+
+            if (options.initialSortColumn === -1) {
+                for (i = 0; i < this.columns.length; i += 1) {
+                    if (this.columns[i].sortable !== false) {
+                        options.initialSortColumn = i;
+                        break;
+                    }
+                }
+                if (options.initialSortColumn === -1) {
+                    options.initialSortColumn = null;
+                }
+            } else if (typeof options.initialSortColumn === 'string') {
+                for (i = 0; i < this.columns.length; i += 1) {
+                    if (this.columns[i].field === options.initialSortColumn) {
+                        options.initialSortColumn = i;
+                        break;
+                    }
+                }
+                if (typeof options.initialSortColumn === 'string') {
+                    options.initialSortColumn = null;
+                }
+            }
+
+            sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
+
+            priv.current_elements = {};
+            if (typeof options.id === 'string') {
+                priv.extractIdFunc = function (data) {
+                    return data[options.id];
+                };
+            } else if (typeof options.id === 'function') {
+                priv.extractIdFunc = options.id;
+            }
+
+            if (typeof options.stateFunc === 'function') {
+                priv.stateFunc = options.stateFunc;
+            } else {
+                priv.stateFunc = function () {};
             }
         }
-        clearTable.call(this);
 
-        priv.layout.destroy();
-        priv.layout = null;
+        /**
+         * Changes current selection. Removes the selection when no passing any parameter
+         *
+         * @since 0.6.3
+         *
+         * @param {String|String[]} [selection]
+         * @returns {StyledElements.ModelTable}
+         *     The instance on which the member is called.
+         */
+        select(selection) {
+            if (selection != null) {
+                // Update current selection
+                this.selection = Array.isArray(selection) ? selection : [selection];
+            } else {
+                this.selection = [];
+            }
 
-        if (priv.paginationInterface) {
-            priv.paginationInterface.destroy();
-            priv.paginationInterface = null;
+            return this;
         }
 
-        this.source.destroy();
+        reload() {
+            paintTable.call(this, this.source.getCurrentPage());
+        }
 
-        return this;
-    };
+        destroy() {
+            var i, cell;
+            var priv = privates.get(this);
 
-    var privates = new WeakMap();
+            for (i = 0; i < priv.headerCells.length; i += 1) {
+                cell = priv.headerCells[i];
+                if (cell.callback) {
+                    cell.removeEventListener('click', cell.callback, true);
+                    cell.callback = null;
+                }
+            }
+            clearTable.call(this);
 
-    StyledElements.ModelTable = ModelTable;
+            priv.layout.destroy();
+            priv.layout = null;
 
-})(StyledElements.Utils);
+            if (priv.paginationInterface) {
+                priv.paginationInterface.destroy();
+                priv.paginationInterface = null;
+            }
+
+            this.source.destroy();
+
+            return this;
+        }
+
+    }
+    se.ModelTable.prototype.Tooltip = StyledElements.Tooltip;
+
+})(StyledElements, StyledElements.Utils);

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,13 +23,11 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var Select, onchange, onfocus, onblur;
-
-    onchange = function onchange(event) {
+    const onchange = function onchange(event) {
         if (this.enabled) {
             var optionList = event.target;
             this.textDiv.textContent = optionList[optionList.selectedIndex].text;
@@ -36,11 +35,11 @@
         }
     };
 
-    onfocus = function onfocus() {
+    const onfocus = function onfocus() {
         this.addClassName('focus').dispatchEvent('focus');
     };
 
-    onblur = function onblur() {
+    const onblur = function onblur() {
         this.removeClassName('focus').dispatchEvent('blur');
     };
 
@@ -52,178 +51,179 @@
      *     * idFunc: In case you want to assign non-string values, you must provide
      *     a function for converting them into strings.
      */
-    Select = function Select(options) {
-        options = utils.merge({
-            'class': '',
-            'initialEntries': [],
-            'initialValue': null,
-            'idFunc': function (value) {
-                return value == null ? '' : value.toString();
+    se.Select = class Select extends se.InputElement {
+
+        constructor(options) {
+            options = utils.merge({
+                class: '',
+                initialEntries: [],
+                initialValue: null,
+                idFunc: function (value) {
+                    return value == null ? '' : value.toString();
+                }
+            },  options);
+
+            super(options.initialValue, ['change', 'focus', 'blur']);
+
+            this.wrapperElement = document.createElement("div");
+            this.wrapperElement.className = "se-select";
+            this.addClassName(options.class);
+
+            var div =  document.createElement("div");
+            div.className = "se-select-arrow fas fa-caret-down";
+            this.inputElement = document.createElement("select");
+
+            if (options.name) {
+                this.inputElement.setAttribute("name", options.name);
             }
-        },  options);
 
-        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+            if (options.id) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = "se-select";
-        this.addClassName(options.class);
+            this.textDiv = document.createElement("div");
+            this.textDiv.className = "se-select-text";
 
-        var div =  document.createElement("div");
-        div.className = "se-select-arrow fas fa-caret-down";
-        this.inputElement = document.createElement("select");
+            this.wrapperElement.appendChild(this.textDiv);
+            this.wrapperElement.appendChild(div);
+            this.wrapperElement.appendChild(this.inputElement);
 
-        if (options.name) {
-            this.inputElement.setAttribute("name", options.name);
-        }
+            this.optionsByValue = {};
+            this.optionValues = {};
+            this.idFunc = options.idFunc;
+            this.addEntries(options.initialEntries);
 
-        if (options.id) {
-            this.wrapperElement.setAttribute("id", options.id);
-        }
+            /* Internal events */
+            this._onchange = onchange.bind(this);
+            this._onfocus = onfocus.bind(this);
+            this._onblur = onblur.bind(this);
 
-        this.textDiv = document.createElement("div");
-        this.textDiv.className = "se-select-text";
+            this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener('change', this._onchange, true);
+            this.inputElement.addEventListener('focus', this._onfocus, true);
+            this.inputElement.addEventListener('blur', this._onblur, true);
 
-        this.wrapperElement.appendChild(this.textDiv);
-        this.wrapperElement.appendChild(div);
-        this.wrapperElement.appendChild(this.inputElement);
-
-        this.optionsByValue = {};
-        this.optionValues = {};
-        this.idFunc = options.idFunc;
-        this.addEntries(options.initialEntries);
-
-        /* Internal events */
-        this._onchange = onchange.bind(this);
-        this._onfocus = onfocus.bind(this);
-        this._onblur = onblur.bind(this);
-
-        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('change', this._onchange, true);
-        this.inputElement.addEventListener('focus', this._onfocus, true);
-        this.inputElement.addEventListener('blur', this._onblur, true);
-
-        // initialize the textDiv with the initial selection
-        var selectedIndex = this.inputElement.options.selectedIndex;
-        if (selectedIndex !== -1) {
-            this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
-        }
-    };
-    utils.inherit(Select, StyledElements.InputElement);
-
-    Select.prototype.getLabel = function getLabel() {
-        return this.textDiv.textContent;
-    };
-
-    Select.prototype.getValue = function getValue() {
-        return this.optionValues[this.inputElement.value];
-    };
-
-    Select.prototype.setValue = function setValue(newValue) {
-        if (typeof newValue !== 'string') {
-            try {
-                newValue = this.idFunc(newValue);
-            } catch (e) {
-                newValue = null;
+            // initialize the textDiv with the initial selection
+            var selectedIndex = this.inputElement.options.selectedIndex;
+            if (selectedIndex !== -1) {
+                this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
             }
         }
 
-        // TODO exception if the newValue is not listened in the option list?
-        if (newValue === null || !(newValue in this.optionValues)) {
-            if (this.defaultValue != null) {
-                newValue = this.defaultValue;
-            } else if (this.inputElement.options.length > 0) {
-                newValue = this.inputElement.options[0].value;
-            } else {
-                StyledElements.InputElement.prototype.setValue.call(this, '');
-                this.textDiv.textContent = '';
+        getLabel() {
+            return this.textDiv.textContent;
+        }
+
+        getValue() {
+            return this.optionValues[this.inputElement.value];
+        }
+
+        setValue(newValue) {
+            if (typeof newValue !== 'string') {
+                try {
+                    newValue = this.idFunc(newValue);
+                } catch (e) {
+                    newValue = null;
+                }
+            }
+
+            // TODO exception if the newValue is not listened in the option list?
+            if (newValue === null || !(newValue in this.optionValues)) {
+                if (this.defaultValue != null) {
+                    newValue = this.defaultValue;
+                } else if (this.inputElement.options.length > 0) {
+                    newValue = this.inputElement.options[0].value;
+                } else {
+                    StyledElements.InputElement.prototype.setValue.call(this, '');
+                    this.textDiv.textContent = '';
+                    return;
+                }
+            }
+
+            StyledElements.InputElement.prototype.setValue.call(this, newValue);
+            this.textDiv.textContent = this.optionsByValue[newValue];
+        }
+
+        /**
+         * @param {null|Array} newEntries Entries to add. This method does nothing if
+         * newEntries is null.
+         */
+        addEntries(newEntries) {
+            var oldSelectedIndex, optionValue, optionLabel, newEntry, defaultValue;
+
+            oldSelectedIndex = this.inputElement.options.selectedIndex;
+            defaultValue = this.defaultValue !== undefined ? this.idFunc(this.defaultValue) : null;
+
+            if (newEntries == null || newEntries.length === 0) {
                 return;
             }
-        }
 
-        StyledElements.InputElement.prototype.setValue.call(this, newValue);
-        this.textDiv.textContent = this.optionsByValue[newValue];
-    };
+            for (var i = 0; i < newEntries.length; i++) {
+                newEntry = newEntries[i];
+                var option = document.createElement("option");
 
-    /**
-     * @param {null|Array} newEntries Entries to add. This method does nothing if
-     * newEntries is null.
-     */
-    Select.prototype.addEntries = function addEntries(newEntries) {
-        var oldSelectedIndex, optionValue, optionLabel, newEntry, defaultValue;
+                if (Array.isArray(newEntry)) {
+                    optionValue = newEntry[0];
+                    optionLabel = newEntry[1];
+                } else if (newEntry.value != null) {
+                    optionValue = newEntry.value;
+                    optionLabel = newEntry.label;
+                } else {
+                    optionValue = newEntry;
+                    optionLabel = newEntry;
+                }
+                optionLabel = optionLabel ? optionLabel : optionValue;
 
-        oldSelectedIndex = this.inputElement.options.selectedIndex;
-        defaultValue = this.defaultValue !== undefined ? this.idFunc(this.defaultValue) : null;
+                var realValue = optionValue;
+                if (typeof optionValue !== 'string') {
+                    optionValue = this.idFunc(optionValue);
+                }
+                option.setAttribute("value", optionValue);
+                option.appendChild(document.createTextNode(optionLabel));
 
-        if (newEntries == null || newEntries.length === 0) {
-            return;
-        }
+                if (defaultValue === optionValue) {
+                    option.setAttribute("selected", "selected");
+                }
 
-        for (var i = 0; i < newEntries.length; i++) {
-            newEntry = newEntries[i];
-            var option = document.createElement("option");
-
-            if (Array.isArray(newEntry)) {
-                optionValue = newEntry[0];
-                optionLabel = newEntry[1];
-            } else if (newEntry.value != null) {
-                optionValue = newEntry.value;
-                optionLabel = newEntry.label;
-            } else {
-                optionValue = newEntry;
-                optionLabel = newEntry;
-            }
-            optionLabel = optionLabel ? optionLabel : optionValue;
-
-            var realValue = optionValue;
-            if (typeof optionValue !== 'string') {
-                optionValue = this.idFunc(optionValue);
-            }
-            option.setAttribute("value", optionValue);
-            option.appendChild(document.createTextNode(optionLabel));
-
-            if (defaultValue === optionValue) {
-                option.setAttribute("selected", "selected");
+                this.inputElement.appendChild(option);
+                this.optionValues[optionValue] = realValue;
+                this.optionsByValue[optionValue] = optionLabel;
             }
 
-            this.inputElement.appendChild(option);
-            this.optionValues[optionValue] = realValue;
-            this.optionsByValue[optionValue] = optionLabel;
+            // initialize the textDiv with the initial selection
+            var selectedIndex = this.inputElement.options.selectedIndex;
+            if (oldSelectedIndex !== selectedIndex) {
+                this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
+            }
         }
 
-        // initialize the textDiv with the initial selection
-        var selectedIndex = this.inputElement.options.selectedIndex;
-        if (oldSelectedIndex !== selectedIndex) {
-            this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
+        clear() {
+            // Clear textDiv
+            this.textDiv.textContent = "";
+
+            // Clear select element options
+            this.inputElement.textContent = "";
+
+            this.optionsByValue = {};
+            this.optionValues = {};
         }
-    };
 
-    Select.prototype.clear = function clear() {
-        // Clear textDiv
-        this.textDiv.textContent = "";
+        destroy() {
 
-        // Clear select element options
-        this.inputElement.textContent = "";
+            this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
+            this.inputElement.removeEventListener('click', utils.stopPropagationListener, true);
+            this.inputElement.removeEventListener('change', this._onchange, true);
+            this.inputElement.removeEventListener('focus', this._onfocus, true);
+            this.inputElement.removeEventListener('blur', this._onblur, true);
 
-        this.optionsByValue = {};
-        this.optionValues = {};
-    };
+            delete this._onchange;
+            delete this._onfocus;
+            delete this._onblur;
 
-    Select.prototype.destroy = function destroy() {
+            StyledElements.InputElement.prototype.destroy.call(this);
+        }
 
-        this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', utils.stopPropagationListener, true);
-        this.inputElement.removeEventListener('change', this._onchange, true);
-        this.inputElement.removeEventListener('focus', this._onfocus, true);
-        this.inputElement.removeEventListener('blur', this._onblur, true);
+    }
 
-        delete this._onchange;
-        delete this._onfocus;
-        delete this._onblur;
-
-        StyledElements.InputElement.prototype.destroy.call(this);
-    };
-
-    StyledElements.Select = Select;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

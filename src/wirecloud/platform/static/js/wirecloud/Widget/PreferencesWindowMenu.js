@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,52 +23,12 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var PreferencesWindowMenu = function PreferencesWindowMenu() {
-        Wirecloud.ui.WindowMenu.call(this, utils.gettext("Settings"), 'wc-component-preferences-modal');
-    };
-    utils.inherit(PreferencesWindowMenu, Wirecloud.ui.WindowMenu);
-
-    PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var oldValue, newValue, varName;
-
-        for (varName in new_values) {
-            oldValue = this.widgetModel.preferences[varName].value;
-            newValue = new_values[varName];
-
-            if (newValue !== oldValue) {
-                if (this.widgetModel.preferences[varName].meta.secure && newValue !== "") {
-                    this.widgetModel.preferences[varName].value = "********";
-                } else {
-                    this.widgetModel.preferences[varName].value = newValue;
-                }
-            } else {
-                delete new_values[varName];
-            }
-        }
-
-        this.hide();
-        if (!this.widgetModel.volatile) {
-            Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
-                    workspace_id: this.widgetModel.tab.workspace.id,
-                    tab_id: this.widgetModel.tab.id,
-                    iwidget_id: this.widgetModel.id
-                }), {
-                    method: 'POST',
-                    contentType: 'application/json',
-                    requestHeaders: {'Accept': 'application/json'},
-                    postBody: JSON.stringify(new_values),
-                    onSuccess: widgetCallback.call(this, new_values)
-                }
-            );
-        }
-    };
-
     // Notify preference changes to widget
-    var widgetCallback = function widgetCallback(new_values) {
+    const widgetCallback = function widgetCallback(new_values) {
         if (typeof this.widgetModel.prefCallback === 'function') {
             try {
                 // Censor secure preferences
@@ -84,34 +45,74 @@
         }
     };
 
-    PreferencesWindowMenu.prototype.show = function show(widgetModel, parentWindow) {
-        var i, prefs, pref, fields;
+    ns.PreferencesWindowMenu = class PreferencesWindowMenu extends Wirecloud.ui.WindowMenu {
 
-        fields = {};
-        prefs = widgetModel.preferenceList;
+        constructor() {
+            super(utils.gettext("Settings"), 'wc-component-preferences-modal');
+        }
 
-        for (i = 0; i < prefs.length; i++) {
-            pref = prefs[i];
+        _savePrefs(form, new_values) {
+            var oldValue, newValue, varName;
 
-            if (!pref.hidden) {
-                fields[pref.meta.name] = pref.getInterfaceDescription();
+            for (varName in new_values) {
+                oldValue = this.widgetModel.preferences[varName].value;
+                newValue = new_values[varName];
+
+                if (newValue !== oldValue) {
+                    if (this.widgetModel.preferences[varName].meta.secure && newValue !== "") {
+                        this.widgetModel.preferences[varName].value = "********";
+                    } else {
+                        this.widgetModel.preferences[varName].value = newValue;
+                    }
+                } else {
+                    delete new_values[varName];
+                }
+            }
+
+            this.hide();
+            if (!this.widgetModel.volatile) {
+                Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
+                    workspace_id: this.widgetModel.tab.workspace.id,
+                    tab_id: this.widgetModel.tab.id,
+                    iwidget_id: this.widgetModel.id
+                }), {
+                    method: 'POST',
+                    contentType: 'application/json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(new_values),
+                    onSuccess: widgetCallback.call(this, new_values)
+                });
             }
         }
-        this.widgetModel = widgetModel;
-        this.form = new se.Form(fields, {
-            setdefaultsButton: true,
-            buttonArea: this.windowBottom
-        });
-        this.form.insertInto(this.windowContent);
-        this.form.setdefaultsButton.addClassName('btn-set-defaults');
-        this.form.cancelButton.addClassName('btn-cancel');
-        this.form.acceptButton.addClassName('btn-accept');
-        this.form.addEventListener('submit', this._savePrefs.bind(this));
-        this.form.addEventListener('cancel', this.hide.bind(this));
 
-        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
-    };
+        show(widgetModel, parentWindow) {
+            var i, prefs, pref, fields;
 
-    Wirecloud.Widget.PreferencesWindowMenu = PreferencesWindowMenu;
+            fields = {};
+            prefs = widgetModel.preferenceList;
 
-})(StyledElements, Wirecloud.Utils);
+            for (i = 0; i < prefs.length; i++) {
+                pref = prefs[i];
+
+                if (!pref.hidden) {
+                    fields[pref.meta.name] = pref.getInterfaceDescription();
+                }
+            }
+            this.widgetModel = widgetModel;
+            this.form = new se.Form(fields, {
+                setdefaultsButton: true,
+                buttonArea: this.windowBottom
+            });
+            this.form.insertInto(this.windowContent);
+            this.form.setdefaultsButton.addClassName('btn-set-defaults');
+            this.form.cancelButton.addClassName('btn-cancel');
+            this.form.acceptButton.addClassName('btn-accept');
+            this.form.addEventListener('submit', this._savePrefs.bind(this));
+            this.form.addEventListener('cancel', this.hide.bind(this));
+
+            super.show(parentWindow);
+        }
+
+    }
+
+})(Wirecloud.Widget, StyledElements, Wirecloud.Utils);

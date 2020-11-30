@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,21 +23,22 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
     /**
-     * @experimental
+     *
      *
      */
-    var Separator = function Separator() {
-        StyledElements.StyledElement.call(this, []);
+    se.Separator = class Separator extends se.StyledElement {
 
-        this.wrapperElement = document.createElement("hr");
-    };
-    utils.inherit(Separator, StyledElements.StyledElement);
+        constructor() {
+            super([]);
 
-    StyledElements.Separator = Separator;
+            this.wrapperElement = document.createElement("hr");
+        };
 
-})(StyledElements.Utils);
+    }
+
+})(StyledElements, StyledElements.Utils);

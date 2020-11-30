@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,13 +27,9 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
-
     /**
      * Create a new instance of class ConnectionHandle.
-     * @extends {StyledElement}
+     * @extends {StyledElements.StyledElement}
      *
      * @constructor
      * @param {Endpoint} endpoint
@@ -40,67 +37,60 @@
      * @param {PlainObject} [options]
      *      [TODO: description]
      */
-    ns.ConnectionHandle = function ConnectionHandle(endpoint, options) {
+    ns.ConnectionHandle = class ConnectionHandle extends se.StyledElement {
 
-        options = utils.merge({}, defaults, options);
-        se.StyledElement.call(this, events.concat(options.events));
+        constructor(endpoint, options) {
+            options = utils.merge({}, defaults, options);
+            super(events.concat(options.events));
 
-        this.wrapperElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'g');
-        this.wrapperElement.setAttribute('class', "we-connection-handle");
-        this.addClassName(endpoint.type + "-handle");
-        this.addClassName(options.class);
+            this.wrapperElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'g');
+            this.wrapperElement.setAttribute('class', "we-connection-handle");
+            this.addClassName(endpoint.type + "-handle");
+            this.addClassName(options.class);
 
-        this.lineElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'path');
-        this.lineElement.setAttribute('class', "we-connection-handle-line");
-        this.wrapperElement.appendChild(this.lineElement);
+            this.lineElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'path');
+            this.lineElement.setAttribute('class', "we-connection-handle-line");
+            this.wrapperElement.appendChild(this.lineElement);
 
-        this.ballElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'circle');
-        this.ballElement.setAttribute('class', "we-connection-handle-ball");
-        this.ballElement.setAttribute('r', options.radius);
-        this.ballElement.addEventListener('click', utils.stopPropagationListener);
-        this.wrapperElement.appendChild(this.ballElement);
+            this.ballElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'circle');
+            this.ballElement.setAttribute('class', "we-connection-handle-ball");
+            this.ballElement.setAttribute('r', options.radius);
+            this.ballElement.addEventListener('click', utils.stopPropagationListener);
+            this.wrapperElement.appendChild(this.ballElement);
 
-        Object.defineProperties(this, {
-            auto: {
-                get: function get() {return this.hasClassName("auto");},
-                set: function set(value) {this.toggleClassName("auto", value);}
+            Object.defineProperties(this, {
+                auto: {
+                    get: function get() {return this.hasClassName("auto");},
+                    set: function set(value) {this.toggleClassName("auto", value);}
+                }
+            });
+
+            this.endpoint = endpoint;
+
+            this.tooltip = new se.Tooltip({content: utils.gettext("Drag & Drop"), placement: ['top']});
+            this.tooltip.bind(this.ballElement);
+
+            setRelativePosition.call(this, options.position);
+            startDraggableElement.call(this);
+        }
+
+        static getRelativePosition(startPosition, endPosition, invert) {
+            var offsetX = Math.abs(startPosition.x - endPosition.x);
+
+            if (offsetX > ns.ConnectionHandle.MAXOFFSET_X) {
+                offsetX = ns.ConnectionHandle.MAXOFFSET_X;
             }
-        });
 
-        this.endpoint = endpoint;
+            if (offsetX < ns.ConnectionHandle.MINOFFSET_X) {
+                offsetX = ns.ConnectionHandle.MINOFFSET_X;
+            }
 
-        this.tooltip = new se.Tooltip({content: utils.gettext("Drag & Drop"), placement: ['top']});
-        this.tooltip.bind(this.ballElement);
+            if (invert) {
+                offsetX *= -1;
+            }
 
-        setRelativePosition.call(this, options.position);
-        startDraggableElement.call(this);
-    };
-
-    ns.ConnectionHandle.getRelativePosition = function getRelativePosition(startPosition, endPosition, invert) {
-        var offsetX = Math.abs(startPosition.x - endPosition.x);
-
-        if (offsetX > ns.ConnectionHandle.MAXOFFSET_X) {
-            offsetX = ns.ConnectionHandle.MAXOFFSET_X;
+            return {x: offsetX, y: 0};
         }
-
-        if (offsetX < ns.ConnectionHandle.MINOFFSET_X) {
-            offsetX = ns.ConnectionHandle.MINOFFSET_X;
-        }
-
-        if (invert) {
-            offsetX *= -1;
-        }
-
-        return {x: offsetX, y: 0};
-    };
-
-    ns.ConnectionHandle.MAXOFFSET_X = 90;
-
-    ns.ConnectionHandle.MINOFFSET_X = 20;
-
-    ns.ConnectionHandle.SVG_NS = "http://www.w3.org/2000/svg";
-
-    utils.inherit(ns.ConnectionHandle, se.StyledElement, {
 
         /**
          * [TODO: position description]
@@ -110,7 +100,7 @@
          * @returns {ConnectionHandle|PlainObject}
          *     [TODO: description]
          */
-        position: function position(relativePosition) {
+        position(relativePosition) {
             var anchorPosition = this.endpoint.anchorPosition;
 
             if (relativePosition != null) {
@@ -133,7 +123,7 @@
                 x: this.ballElement.getAttribute('cx'),
                 y: this.ballElement.getAttribute('cy')
             };
-        },
+        }
 
         /**
          * [TODO: toJSON description]
@@ -141,9 +131,9 @@
          * @returns {String|PlainObject}
          *     [TODO: description]
          */
-        toJSON: function toJSON() {
+        toJSON() {
             return this.auto ? "auto" : this.relativePosition;
-        },
+        }
 
         /**
          * [TODO: updateDistance description]
@@ -155,7 +145,7 @@
          * @returns {ConnectionHandle}
          *      The instance on which the member is called.
          */
-        updateDistance: function updateDistance(endPosition, invert) {
+        updateDistance(endPosition, invert) {
             var startPosition = this.endpoint.anchorPosition;
 
             if (this.auto) {
@@ -175,7 +165,11 @@
             return this;
         }
 
-    });
+    }
+    ns.ConnectionHandle.MINOFFSET_X = 20;
+    ns.ConnectionHandle.MAXOFFSET_X = 90;
+    ns.ConnectionHandle.SVG_NS = "http://www.w3.org/2000/svg";
+
 
     // =========================================================================
     // PRIVATE MEMBERS

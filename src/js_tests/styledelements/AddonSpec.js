@@ -141,7 +141,9 @@
             it("should remove the addon from the DOM", function () {
                 var element = new StyledElements.Addon({text: "%"});
                 element.appendTo(dom);
+
                 expect(element.destroy()).toEqual(undefined);
+
                 expect(dom.innerHTML.trim()).toBe("");
             });
 

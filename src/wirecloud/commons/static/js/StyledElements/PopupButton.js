@@ -22,11 +22,11 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var visibilityChangeListener = function visibilityChangeListener() {
+    const visibilityChangeListener = function visibilityChangeListener() {
         if (this.popup_menu.isVisible()) {
             this.wrapperElement.classList.add('open');
         } else {
@@ -34,90 +34,93 @@
         }
     };
 
-    var PopupButton = function PopupButton(options) {
-        var defaultOptions = {
-            'menuOptions': null,
-            'menu': null
-        };
-        options = utils.merge(defaultOptions, options);
+    const defaultOptions = {
+        menuOptions: null,
+        menu: null
+    };
 
-        StyledElements.Button.call(this, options);
+    se.PopupButton = class PopupButton extends se.Button {
 
-        if (options.menu != null) {
-            this.popup_menu = options.menu;
-            this._owned_popup_menu = false;
-        } else {
-            this.popup_menu = new this.PopupMenu(options.menuOptions);
-            this._owned_popup_menu = true;
-        }
+        constructor(options) {
+            options = utils.merge({}, defaultOptions, options);
 
-        this.addEventListener('click', () => {
-            if (this.popup_menu.isVisible()) {
-                this.popup_menu.hide();
+            super(options);
+
+            if (options.menu != null) {
+                this.popup_menu = options.menu;
+                this._owned_popup_menu = false;
             } else {
-                this.popup_menu.show(this);
+                this.popup_menu = new this.PopupMenu(options.menuOptions);
+                this._owned_popup_menu = true;
             }
-        });
 
-        this._visibilityChangeListener = visibilityChangeListener.bind(this);
-        this.popup_menu.addEventListener('visibilityChange', this._visibilityChangeListener);
-    };
-    utils.inherit(PopupButton, StyledElements.Button);
-    PopupButton.prototype.PopupMenu = StyledElements.PopupMenu;
+            this.addEventListener('click', () => {
+                if (this.popup_menu.isVisible()) {
+                    this.popup_menu.hide();
+                } else {
+                    this.popup_menu.show(this);
+                }
+            });
 
-    /**
-     * @override
-     */
-    PopupButton.prototype._onkeydown = function _onkeydown(event, key) {
+            this._visibilityChangeListener = visibilityChangeListener.bind(this);
+            this.popup_menu.addEventListener('visibilityChange', this._visibilityChangeListener);
+        }
 
-        switch (key) {
-        case 'ArrowDown':
-            event.preventDefault();
-            this.popup_menu.show(this.getBoundingClientRect()).moveFocusDown();
-            break;
-        case 'ArrowUp':
-            event.preventDefault();
-            this.popup_menu.show(this.getBoundingClientRect()).moveFocusUp();
-            break;
-        case ' ':
-        case 'Enter':
-            this._clickCallback(event);
-            break;
-        case 'Tab':
-            if (this.popup_menu.hasEnabledItem()) {
+        /**
+         * @override
+         */
+        _onkeydown(event, key) {
+
+            switch (key) {
+            case 'ArrowDown':
                 event.preventDefault();
-                this.popup_menu.moveFocusDown();
+                this.popup_menu.show(this.getBoundingClientRect()).moveFocusDown();
+                break;
+            case 'ArrowUp':
+                event.preventDefault();
+                this.popup_menu.show(this.getBoundingClientRect()).moveFocusUp();
+                break;
+            case ' ':
+            case 'Enter':
+                this._clickCallback(event);
+                break;
+            case 'Tab':
+                if (this.popup_menu.hasEnabledItem()) {
+                    event.preventDefault();
+                    this.popup_menu.moveFocusDown();
+                }
+                break;
+            default:
+                // Quit when this doesn't handle the key event.
+                break;
             }
-            break;
-        default:
-            // Quit when this doesn't handle the key event.
-            break;
         }
-    };
 
-    PopupButton.prototype.getPopupMenu = function getPopupMenu() {
-        return this.popup_menu;
-    };
-
-    PopupButton.prototype.replacePopupMenu = function replacePopupMenu(new_popup_menu) {
-        if (this._owned_popup_menu) {
-            this.popup_menu.destroy();
-            this._owned_popup_menu = false;
+        getPopupMenu() {
+            return this.popup_menu;
         }
-        this.popup_menu = new_popup_menu;
-    };
 
-    PopupButton.prototype.destroy = function destroy() {
-        StyledElements.Button.prototype.destroy.call(this);
-
-        if (this._owned_popup_menu) {
-            this.popup_menu.destroy();
-        } else {
-            this.popup_menu.removeEventListener('visibilityChange', this._visibilityChangeListener);
+        replacePopupMenu(new_popup_menu) {
+            if (this._owned_popup_menu) {
+                this.popup_menu.destroy();
+                this._owned_popup_menu = false;
+            }
+            this.popup_menu = new_popup_menu;
         }
-        this.popup_menu = null;
-    };
 
-    StyledElements.PopupButton = PopupButton;
+        destroy() {
+            StyledElements.Button.prototype.destroy.call(this);
 
-})(StyledElements.Utils);
+            if (this._owned_popup_menu) {
+                this.popup_menu.destroy();
+            } else {
+                this.popup_menu.removeEventListener('visibilityChange', this._visibilityChangeListener);
+            }
+            this.popup_menu = null;
+        }
+
+    }
+
+    se.PopupButton.prototype.PopupMenu = StyledElements.PopupMenu;
+
+})(StyledElements, StyledElements.Utils);

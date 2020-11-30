@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,143 +23,144 @@
 /* globals CSSPrimitiveValue, StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var Expander = function Expander(options) {
-        var defaultOptions = {
-            'buttonFloat': 'left',
-            'class': '',
-            'expandButton': true,
-            'listenOnTitle': false,
-            'state': 'default',
-            'title': null
-        };
-        options = utils.merge(defaultOptions, options);
-        if (!options.expandButton && !options.listenOnTitle) {
-            throw new TypeError();
-        }
+    se.Expander = class Expander extends se.StyledElement {
 
-        StyledElements.StyledElement.call(this, ['expandChange']);
-
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord("panel se-expander", options.class);
-
-        if (options.state != null && options.state.trim() !== "") {
-            this.addClassName('panel-' + options.state);
-        }
-
-        var header = document.createElement('div');
-        header.className = 'panel-heading';
-        this.wrapperElement.appendChild(header);
-
-        this.toggleButton = null;
-        if (options.expandButton) {
-            this.toggleButton = new StyledElements.ToggleButton({
-                class: 'icon-expand',
-                iconClass: 'fas',
-                plain: true
-            });
-            this.toggleButton.insertInto(header);
-        }
-
-        this.titleContainer = new StyledElements.Container({'class': 'title'});
-        this.titleContainer.insertInto(header);
-        if (options.title) {
-            this.titleContainer.appendChild(document.createTextNode(options.title));
-        }
-
-        this.contentContainer = new StyledElements.Container({'class': 'panel-body'});
-        this.contentContainer.insertInto(this.wrapperElement);
-
-        // Internal event handlers
-        var callback = function () {
-            this.setExpanded(!this.isExpanded());
-        }.bind(this);
-
-        if (this.toggleButton) {
-            this.toggleButton.addEventListener('click', callback);
-        }
-        if (options.listenOnTitle) {
-            header.style.cursor = "pointer";
-            header.addEventListener('click', callback, false);
-        }
-    };
-    utils.inherit(Expander, StyledElements.StyledElement);
-
-    Expander.prototype.repaint = function repaint(temporal) {
-        var height, computedStyle;
-
-        if (this.isExpanded()) {
-
-            height = this.wrapperElement.clientHeight;
-            if (height == null) {
-                return; // nothing to do
+        constructor(options) {
+            var defaultOptions = {
+                'buttonFloat': 'left',
+                'class': '',
+                'expandButton': true,
+                'listenOnTitle': false,
+                'state': 'default',
+                'title': null
+            };
+            options = utils.merge(defaultOptions, options);
+            if (!options.expandButton && !options.listenOnTitle) {
+                throw new TypeError();
             }
 
-            computedStyle = document.defaultView.getComputedStyle(this.titleContainer.wrapperElement, null);
+            super(['expandChange']);
 
-            height -= this.titleContainer.wrapperElement.offsetHeight;
-            height -= computedStyle.getPropertyCSSValue('margin-top').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            height -= computedStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = utils.appendWord("panel se-expander", options.class);
 
-            computedStyle = document.defaultView.getComputedStyle(this.contentContainer.wrapperElement, null);
-            height -= computedStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            height -= computedStyle.getPropertyCSSValue('border-bottom-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            height -= computedStyle.getPropertyCSSValue('padding-top').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            height -= computedStyle.getPropertyCSSValue('padding-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-            if (height < 0) {
-                height = 0;
+            if (options.state != null && options.state.trim() !== "") {
+                this.addClassName('panel-' + options.state);
             }
 
-            this.contentContainer.wrapperElement.style.height = height + 'px';
-            this.contentContainer.repaint(temporal);
+            var header = document.createElement('div');
+            header.className = 'panel-heading';
+            this.wrapperElement.appendChild(header);
+
+            this.toggleButton = null;
+            if (options.expandButton) {
+                this.toggleButton = new StyledElements.ToggleButton({
+                    class: 'icon-expand',
+                    iconClass: 'fas',
+                    plain: true
+                });
+                this.toggleButton.insertInto(header);
+            }
+
+            this.titleContainer = new StyledElements.Container({'class': 'title'});
+            this.titleContainer.insertInto(header);
+            if (options.title) {
+                this.titleContainer.appendChild(document.createTextNode(options.title));
+            }
+
+            this.contentContainer = new StyledElements.Container({'class': 'panel-body'});
+            this.contentContainer.insertInto(this.wrapperElement);
+
+            // Internal event handlers
+            var callback = function () {
+                this.setExpanded(!this.isExpanded());
+            }.bind(this);
+
+            if (this.toggleButton) {
+                this.toggleButton.addEventListener('click', callback);
+            }
+            if (options.listenOnTitle) {
+                header.style.cursor = "pointer";
+                header.addEventListener('click', callback, false);
+            }
         }
-    };
 
-    Expander.prototype.isExpanded = function isExpanded() {
-        return this.hasClassName('expanded');
-    };
+        repaint(temporal) {
+            var height, computedStyle;
 
-    Expander.prototype.setExpanded = function setExpanded(expanded) {
-        // Force boolean value
-        expanded = !!expanded;
+            if (this.isExpanded()) {
 
-        if (this.isExpanded() === expanded) {
-            return;
+                height = this.wrapperElement.clientHeight;
+                if (height == null) {
+                    return; // nothing to do
+                }
+
+                computedStyle = document.defaultView.getComputedStyle(this.titleContainer.wrapperElement, null);
+
+                height -= this.titleContainer.wrapperElement.offsetHeight;
+                height -= computedStyle.getPropertyCSSValue('margin-top').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                height -= computedStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+                computedStyle = document.defaultView.getComputedStyle(this.contentContainer.wrapperElement, null);
+                height -= computedStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                height -= computedStyle.getPropertyCSSValue('border-bottom-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                height -= computedStyle.getPropertyCSSValue('padding-top').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                height -= computedStyle.getPropertyCSSValue('padding-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+                if (height < 0) {
+                    height = 0;
+                }
+
+                this.contentContainer.wrapperElement.style.height = height + 'px';
+                this.contentContainer.repaint(temporal);
+            }
         }
 
-        if (expanded) {
-            this.addClassName('expanded');
-        } else {
-            this.removeClassName('expanded');
-            this.contentContainer.wrapperElement.style.height = '';
-        }
-        if (this.toggleButton) {
-            this.toggleButton.active = expanded;
+        isExpanded() {
+            return this.hasClassName('expanded');
         }
 
-        this.dispatchEvent('expandChange', expanded);
-    };
+        setExpanded(expanded) {
+            // Force boolean value
+            expanded = !!expanded;
 
-    Expander.prototype.getTitleContainer = function getTitleContainer() {
-        return this.titleContainer;
-    };
+            if (this.isExpanded() === expanded) {
+                return;
+            }
 
-    Expander.prototype.appendChild = function appendChild(element) {
-        this.contentContainer.appendChild(element);
-    };
+            if (expanded) {
+                this.addClassName('expanded');
+            } else {
+                this.removeClassName('expanded');
+                this.contentContainer.wrapperElement.style.height = '';
+            }
+            if (this.toggleButton) {
+                this.toggleButton.active = expanded;
+            }
 
-    Expander.prototype.removeChild = function removeChild(element) {
-        this.contentContainer.removeChild(element);
-    };
+            this.dispatchEvent('expandChange', expanded);
+        }
 
-    Expander.prototype.clear = function clear() {
-        this.contentContainer.clear();
-    };
+        getTitleContainer() {
+            return this.titleContainer;
+        }
 
-    StyledElements.Expander = Expander;
+        appendChild(element) {
+            this.contentContainer.appendChild(element);
+        }
 
-})(StyledElements.Utils);
+        removeChild(element) {
+            this.contentContainer.removeChild(element);
+        }
+
+        clear() {
+            this.contentContainer.clear();
+        }
+
+    }
+
+})(StyledElements, StyledElements.Utils);

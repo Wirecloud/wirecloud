@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -524,11 +525,8 @@
             });
 
             it("should handle context errors", (done) => {
-                var show_spy = jasmine.createSpy("show");
                 spyOn(Wirecloud.GlobalLogManager, "log");
-                spyOn(Wirecloud.ui, "MessageWindowMenu").and.callFake(function () {
-                    this.show = show_spy;
-                });
+                spyOn(Wirecloud.ui.MessageWindowMenu.prototype, "show");
                 Wirecloud.HistoryManager.getCurrentState.and.returnValue({
                     workspace_owner: "wirecloud",
                     workspace_name: "home",
@@ -546,13 +544,13 @@
                     expect(Wirecloud.HistoryManager.init).not.toHaveBeenCalledWith();
                     expect(Wirecloud.UserInterfaceManager.monitorTask).toHaveBeenCalled();
                     expect(Wirecloud.changeActiveWorkspace).not.toHaveBeenCalled();
-                    expect(show_spy).toHaveBeenCalled();
+                    expect(Wirecloud.ui.MessageWindowMenu.prototype.show).toHaveBeenCalled();
                     done();
                 });
             });
 
             it("should init live synchornization support when available", (done) => {
-                var addEventListenerSpy = jasmine.createSpy("addEventListener");
+                const addEventListenerSpy = jasmine.createSpy("addEventListener");
                 spyOn(window, "WebSocket").and.callFake(function () {
                     this.addEventListener = addEventListenerSpy;
                 });
@@ -564,7 +562,7 @@
                     view: "workspace"
                 });
 
-                var task = Wirecloud.init();
+                const task = Wirecloud.init();
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(() => {

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,121 +20,114 @@
  *
  */
 
-/* globals StyledElements, Wirecloud */
+/* globals StyledElements, URLify, Wirecloud */
 
 
 (function (ns, se, utils) {
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.WorkspaceTab = class WorkspaceTab extends se.ObjectWithEvents {
 
-    /**
-     * @name Wirecloud.WorkspaceTab
-     *
-     * @extends {StyledElements.ObjectWithEvents}
-     * @constructor
-     *
-     * @param {Wirecloud.Workspace} workspace
-     * @param {Object} data
-     * @param {String} data.id
-     * @param {String} datan.name
-     * @param {Boolean} [data.initial]
-     */
-    ns.WorkspaceTab = function WorkspaceTab(workspace, data) {
+        /**
+         * @name Wirecloud.WorkspaceTab
+         *
+         * @extends {StyledElements.ObjectWithEvents}
+         * @constructor
+         *
+         * @param {Wirecloud.Workspace} workspace
+         * @param {Object} data
+         * @param {String} data.id
+         * @param {String} datan.name
+         * @param {Boolean} [data.initial]
+         */
+        constructor(workspace, data) {
 
-        if (!(workspace instanceof Wirecloud.Workspace)) {
-            throw new TypeError("invalid workspace parameter");
+            if (!(workspace instanceof Wirecloud.Workspace)) {
+                throw new TypeError("invalid workspace parameter");
+            }
+
+            super(events);
+
+            data = clean_data.call(this, data);
+
+            const priv = {
+                initial: data.initial,
+                name: data.name,
+                title: data.title != null && data.title.trim() !== "" ? data.title : data.name,
+                widgets: [],
+                on_changetab: on_changetab.bind(this),
+                on_changewidget: on_changewidget.bind(this),
+                on_removewidget: on_removewidget.bind(this)
+            };
+            privates.set(this, priv);
+
+            Object.defineProperties(this, /** @lends Wirecloud.WorkspaceTab# */{
+                /**
+                 * @type {String}
+                 */
+                id: {
+                    value: data.id
+                },
+                /**
+                 * @type {Boolean}
+                 */
+                initial: {
+                    get: function () {
+                        return priv.initial;
+                    }
+                },
+                /**
+                 * @type {String}
+                 */
+                name: {
+                    get: function () {
+                        return priv.name;
+                    }
+                },
+                /**
+                 * @type {String}
+                 */
+                title: {
+                    get: function () {
+                        return priv.title;
+                    }
+                },
+                /**
+                 * @type {Array.<Wirecloud.Widget>}
+                 */
+                widgets: {
+                    get: function () {
+                        return priv.widgets.slice(0);
+                    }
+                },
+                /**
+                 * @type {Object.<String, Wirecloud.Widget>}
+                 */
+                widgetsById: {
+                    get: function () {
+                        return get_widgets_by_id.call(this);
+                    }
+                },
+                /**
+                 * @type {Wirecloud.Workspace}
+                 */
+                workspace: {
+                    value: workspace
+                }
+            });
+
+            Object.defineProperties(this, /** @lends Wirecloud.WorkspaceTab# */{
+                /**
+                 * @type {Wirecloud.WorkspaceTabPreferences}
+                 */
+                preferences: {
+                    value: create_preferences.call(this, data.preferences)
+                }
+            });
+
+            this.workspace.addEventListener('changetab', priv.on_changetab);
         }
-
-        se.ObjectWithEvents.call(this, events);
-        data = clean_data.call(this, data);
-
-        const priv = {
-            initial: data.initial,
-            name: data.name,
-            title: data.title != null && data.title.trim() != "" ? data.title : data.name,
-            widgets: [],
-            on_changetab: on_changetab.bind(this),
-            on_changewidget: on_changewidget.bind(this),
-            on_removewidget: on_removewidget.bind(this)
-        };
-        privates.set(this, priv);
-
-        Object.defineProperties(this, /** @lends Wirecloud.WorkspaceTab# */{
-            /**
-             * @type {String}
-             */
-            id: {
-                value: data.id
-            },
-            /**
-             * @type {Boolean}
-             */
-            initial: {
-                get: function () {
-                    return priv.initial;
-                }
-            },
-            /**
-             * @type {String}
-             */
-            name: {
-                get: function () {
-                    return priv.name;
-                }
-            },
-            /**
-             * @type {String}
-             */
-            title: {
-                get: function () {
-                    return priv.title;
-                }
-            },
-            /**
-             * @type {Array.<Wirecloud.Widget>}
-             */
-            widgets: {
-                get: function () {
-                    return priv.widgets.slice(0);
-                }
-            },
-            /**
-             * @type {Object.<String, Wirecloud.Widget>}
-             */
-            widgetsById: {
-                get: function () {
-                    return get_widgets_by_id.call(this);
-                }
-            },
-            /**
-             * @type {Wirecloud.Workspace}
-             */
-            workspace: {
-                value: workspace
-            }
-        });
-
-        Object.defineProperties(this, /** @lends Wirecloud.WorkspaceTab# */{
-            /**
-             * @type {Wirecloud.WorkspaceTabPreferences}
-             */
-            preferences: {
-                value: create_preferences.call(this, data.preferences)
-            }
-        });
-
-        this.workspace.addEventListener('changetab', priv.on_changetab);
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.WorkspaceTab, se.ObjectWithEvents, /** @lends Wirecloud.WorkspaceTab.prototype */{
 
         /**
          * @param {Wirecloud.WidgetMeta} resource
@@ -143,7 +137,7 @@
          * @returns {Promise} A promise that returns a {Widget} instance if
          * resolved, or an Error if rejected.
          */
-        createWidget: function createWidget(resource, options) {
+        createWidget(resource, options) {
             options = utils.merge({
                 commit: true,
                 title: resource.title
@@ -166,7 +160,8 @@
                 }
 
                 var content = utils.merge(options, {
-                    widget: resource.uri
+                    widget: resource.uri,
+                    settings: options.preferences
                 });
 
                 Wirecloud.io.makeRequest(url, {
@@ -183,19 +178,19 @@
                     }.bind(this)
                 });
             }.bind(this));
-        },
+        }
 
         /**
          * @param {String} id
          */
-        findWidget: function findWidget(id) {
+        findWidget(id) {
             return get_widgets_by_id.call(this)[id];
-        },
+        }
 
         /**
          * @param {String} permission
          */
-        isAllowed: function isAllowed(permission) {
+        isAllowed(permission) {
             switch (permission) {
             case 'remove':
                 return !this.workspace.restricted && Object.keys(this.workspace.tabs).length > 1 && !privates.get(this).widgets.some(function (widget) {
@@ -204,14 +199,14 @@
             default:
                 throw new TypeError("invalid permission parameter");
             }
-        },
+        }
 
         /**
          * Removes this workspace tab from the server.
          *
          * @returns {Wirecloud.Task}
          */
-        remove: function remove() {
+        remove() {
             var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
                 workspace_id: this.workspace.id,
                 tab_id: this.id
@@ -230,7 +225,7 @@
                 remove_tab.call(this);
                 return Promise.resolve(this);
             });
-        },
+        }
 
         /**
          * Renames this tab.
@@ -240,7 +235,7 @@
          *
          * @returns {Wirecloud.Task}
          */
-        rename: function rename(title, name) {
+        rename(title, name) {
 
             if (typeof title !== 'string' || !title.trim().length) {
                 throw new TypeError("invalid title parameter");
@@ -274,11 +269,11 @@
                 change_name.call(this, title, name);
                 return Promise.resolve(this);
             });
-        },
+        }
 
         /**
          */
-        setInitial: function setInitial() {
+        setInitial() {
             return new Promise(function (resolve, reject) {
                 var url = Wirecloud.URLs.TAB_ENTRY.evaluate({
                     workspace_id: this.workspace.id,
@@ -306,7 +301,7 @@
             }.bind(this));
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

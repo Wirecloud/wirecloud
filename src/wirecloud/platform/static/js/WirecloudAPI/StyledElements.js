@@ -20,7 +20,7 @@
  *
  */
 
-/* globals MashupPlatform */
+/* globals MashupPlatform, StyledElements */
 
 
 (function () {
@@ -74,15 +74,9 @@
         'VerticalLayout': window.parent.StyledElements.VerticalLayout
     };
 
-    var extend = function (parent_class, extra) {
-        var new_class = {};
-
-        new_class[parent_class.name] = function () {
-            parent_class.apply(this, arguments);
-        };
-        new_class = new_class[parent_class.name];
-
-        platform.StyledElements.Utils.inherit(new_class, parent_class, extra);
+    const extend = function extend(parent_class, extra) {
+        const new_class = class extends parent_class {};
+        Object.assign(new_class.prototype, extra);
         return new_class;
     };
 

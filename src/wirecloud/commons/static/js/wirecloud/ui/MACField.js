@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,13 +23,11 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var MACField, onclick, onfocus, onblur;
-
-    onclick = function onclick(e) {
+    const onclick = function onclick(e) {
 
         if ('target' in e && e.target === this.wrapperElement) {
             e.stopPropagation();
@@ -45,119 +44,116 @@
 
     };
 
-    onfocus = function onfocus() {
+    const onfocus = function onfocus() {
         this.wrapperElement.classList.add('focus');
         this.dispatchEvent('focus');
     };
 
-    onblur = function onblur() {
+    const onblur = function onblur() {
         this.wrapperElement.classList.remove('focus');
         this.dispatchEvent('blur');
     };
 
     /**
-     * Añade un campo de texto.
+     * Field for selecting a mashable application component
      */
-    MACField = function MACField(options) {
-        var defaultOptions = {
-            'class': '',
-            'scope': '',
-            'dialog': null
-        };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+    ns.MACField = class MACField extends se.InputElement {
 
-        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        constructor(options) {
+            var defaultOptions = {
+                'class': '',
+                'scope': '',
+                'dialog': null
+            };
+            options = Wirecloud.Utils.merge({}, defaultOptions, options);
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'se-mac-field se-input-group';
-        if (options.class !== "") {
-            this.wrapperElement.className += " " + options.class;
+            super(options.initialValue, ['change', 'focus', 'blur']);
+
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = 'se-mac-field se-input-group';
+            if (options.class !== "") {
+                this.wrapperElement.className += " " + options.class;
+            }
+
+            this.inputElement = document.createElement("input");
+            this.inputElement.setAttribute("type", "hidden");
+
+            if (options.name) {
+                this.inputElement.setAttribute("name", options.name);
+            }
+
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
+
+            var close_button = new StyledElements.Button({iconClass: 'fa fa-remove', title: utils.gettext('Clear current selection')});
+            close_button.appendTo(this.wrapperElement);
+            close_button.disable().addEventListener('click', function () {
+                this.setValue('');
+            }.bind(this));
+
+            this.name_preview = document.createElement('div');
+            this.name_preview.className = 'se-add-on';
+            this.wrapperElement.appendChild(this.name_preview);
+            this.wrapperElement.appendChild(this.inputElement);
+
+            var button = new StyledElements.Button({iconClass: 'fa fa-search', title: utils.gettext('Search')});
+            button.appendTo(this.wrapperElement);
+
+            /* Public fields */
+            Object.defineProperties(this, {
+                'close_button': {value: close_button},
+                'scope': {value: options.scope},
+                'parent_dialog': {value: options.parent_dialog},
+                'dialog_title': {value: options.dialog_title}
+            });
+
+            /* Internal events */
+            this.wrapperElement.addEventListener('click', onclick.bind(this), false);
+            button.addEventListener('click', onclick.bind(this), true);
+            close_button.addEventListener('focus', onfocus.bind(this));
+            close_button.addEventListener('blur', onblur.bind(this));
+            button.addEventListener('focus', onfocus.bind(this));
+            button.addEventListener('blur', onblur.bind(this));
         }
 
-        this.inputElement = document.createElement("input");
-        this.inputElement.setAttribute("type", "hidden");
-
-        if (options.name) {
-            this.inputElement.setAttribute("name", options.name);
+        insertInto(element, refElement) {
+            StyledElements.InputElement.prototype.insertInto.call(this, element, refElement);
+            this.repaint();
         }
 
-        if (options.id != null) {
-            this.wrapperElement.setAttribute("id", options.id);
+        setValue(new_value) {
+            var mac_id, mac_title;
+
+            if (typeof new_value !== 'string') {
+                mac_id = new_value.uri;
+                mac_title = new_value.title;
+            } else {
+                mac_id = new_value;
+                mac_title = new_value;
+            }
+
+            this.inputElement.value = mac_id;
+
+            this.name_preview.textContent = mac_title;
+            this.close_button.setDisabled(new_value === '');
+            this.dispatchEvent('change');
         }
 
-        var close_button = new StyledElements.Button({iconClass: 'fa fa-remove', title: utils.gettext('Clear current selection')});
-        close_button.appendTo(this.wrapperElement);
-        close_button.disable().addEventListener('click', function () {
-            this.setValue('');
-        }.bind(this));
-
-        this.name_preview = document.createElement('div');
-        this.name_preview.className = 'se-add-on';
-        this.wrapperElement.appendChild(this.name_preview);
-        this.wrapperElement.appendChild(this.inputElement);
-
-        var button = new StyledElements.Button({iconClass: 'fa fa-search', title: utils.gettext('Search')});
-        button.appendTo(this.wrapperElement);
-
-        /* Public fields */
-        Object.defineProperties(this, {
-            'close_button': {value: close_button},
-            'scope': {value: options.scope},
-            'parent_dialog': {value: options.parent_dialog},
-            'dialog_title': {value: options.dialog_title}
-        });
-
-        /* Internal events */
-        this.wrapperElement.addEventListener('click', onclick.bind(this), false);
-        button.addEventListener('click', onclick.bind(this), true);
-        close_button.addEventListener('focus', onfocus.bind(this));
-        close_button.addEventListener('blur', onblur.bind(this));
-        button.addEventListener('focus', onfocus.bind(this));
-        button.addEventListener('blur', onblur.bind(this));
-    };
-    MACField.prototype = new StyledElements.InputElement();
-
-    MACField.prototype.insertInto = function insertInto(element, refElement) {
-        StyledElements.InputElement.prototype.insertInto.call(this, element, refElement);
-        this.repaint();
-    };
-
-    MACField.prototype.setValue = function setValue(new_value) {
-        var mac_id, mac_title;
-
-        if (typeof new_value !== 'string') {
-            mac_id = new_value.uri;
-            mac_title = new_value.title;
-        } else {
-            mac_id = new_value;
-            mac_title = new_value;
+        getValue() {
+            return this.inputElement.value;
         }
 
-        this.inputElement.value = mac_id;
+    }
 
-        this.name_preview.textContent = mac_title;
-        this.close_button.setDisabled(new_value === '');
-        this.dispatchEvent('change');
-    };
+    ns.MACInputInterface = class MACInputInterface extends se.InputInterface {
 
-    MACField.prototype.getValue = function getValue() {
-        return this.inputElement.value;
-    };
+        constructor(fieldId, options) {
+            super(fieldId, options);
 
-    Wirecloud.ui.MACField = MACField;
-
-
-    var MACInputInterface = function MACInputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
+            this.inputElement = new Wirecloud.ui.MACField(options);
         }
 
-        StyledElements.InputInterface.call(this, fieldId, options);
+    }
 
-        this.inputElement = new Wirecloud.ui.MACField(options);
-    };
-    MACInputInterface.prototype = new StyledElements.InputInterface();
-
-    Wirecloud.ui.MACInputInterface = MACInputInterface;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

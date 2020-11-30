@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +23,7 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
@@ -31,97 +32,101 @@
      * @name StyledElements.InputElement
      * @extends {StyledElements.StyledElement}
      */
-    var InputElement = function InputElement(defaultValue, events) {
-        this.inputElement = null;
-        this.defaultValue = defaultValue;
+    se.InputElement = class InputElement extends se.StyledElement {
 
-        StyledElements.StyledElement.call(this, events);
-    };
-    utils.inherit(InputElement, StyledElements.StyledElement);
+        constructor(defaultValue, events) {
+            super(events);
 
-    /**
-     * Current value of this Input Element
-     *
-     * @since 0.6.2
-     * @member {String}
-     * @name StyledElements.InputElement#value
-     */
-    Object.defineProperty(InputElement.prototype, 'value', {
-        get: function () {return this.getValue();},
-        set: function (value) {return this.setValue(value);}
-    });
-
-    /**
-     * Returns current value of this Input Element
-     *
-     * @since 0.5
-     * @kind function
-     * @name StyledElements.InputElement#getValue
-     * @returns {} current value
-     */
-    InputElement.prototype.getValue = function getValue() {
-        return this.inputElement.value;
-    };
-
-    /**
-     * Sets a new value for this InputElement
-     *
-     * @since 0.5
-     * @kind function
-     * @name StyledElements.InputElement#setValue
-     * @param {} newValue - A new value
-     * @returns {StyledElements.InputElement}
-     *      The instance on which the method has been called
-     */
-    InputElement.prototype.setValue = function setValue(newValue) {
-        var oldValue = this.inputElement.value;
-
-        this.inputElement.value = newValue;
-
-        if ('change' in this.events && newValue !== oldValue) {
-            this.dispatchEvent('change');
+            this.inputElement = null;
+            this.defaultValue = defaultValue;
         }
 
-        return this;
-    };
+        /**
+         * Current value of this Input Element
+         *
+         * @since 0.6.2
+         * @member {String}
+         * @name StyledElements.InputElement#value
+         */
+        get value() {
+            return this.getValue();
+        }
 
-    /**
-     * Resets the value for this InputElement using the default value
-     *
-     * @since 0.5
-     * @kind function
-     * @name StyledElements.InputElement#reset
-     */
-    InputElement.prototype.reset = function reset() {
-        return this.setValue(this.defaultValue);
-    };
+        set value(value) {
+            return this.setValue(value);
+        }
 
-    InputElement.prototype.enable = function enable() {
-        StyledElements.StyledElement.prototype.enable.call(this);
-        this.inputElement.disabled = false;
+        /**
+         * Returns current value of this Input Element
+         *
+         * @since 0.5
+         * @kind function
+         * @name StyledElements.InputElement#getValue
+         * @returns {} current value
+         */
+        getValue() {
+            return this.inputElement.value;
+        }
 
-        return this;
-    };
+        /**
+         * Sets a new value for this InputElement
+         *
+         * @since 0.5
+         * @kind function
+         * @name StyledElements.InputElement#setValue
+         * @param {} newValue - A new value
+         * @returns {StyledElements.InputElement}
+         *      The instance on which the method has been called
+         */
+        setValue(newValue) {
+            var oldValue = this.inputElement.value;
 
-    InputElement.prototype.disable = function disable() {
-        StyledElements.StyledElement.prototype.disable.call(this);
-        this.inputElement.disabled = true;
+            this.inputElement.value = newValue;
 
-        return this;
-    };
+            if ('change' in this.events && newValue !== oldValue) {
+                this.dispatchEvent('change');
+            }
 
-    InputElement.prototype.blur = function blur() {
-        this.inputElement.blur();
+            return this;
+        }
 
-        return this;
-    };
+        /**
+         * Resets the value for this InputElement using the default value
+         *
+         * @since 0.5
+         * @kind function
+         * @name StyledElements.InputElement#reset
+         */
+        reset() {
+            return this.setValue(this.defaultValue);
+        }
 
-    InputElement.prototype.focus = function focus() {
-        this.inputElement.focus();
+        enable() {
+            StyledElements.StyledElement.prototype.enable.call(this);
+            this.inputElement.disabled = false;
 
-        return this;
-    };
+            return this;
+        }
 
-    StyledElements.InputElement = InputElement;
+        disable() {
+            StyledElements.StyledElement.prototype.disable.call(this);
+            this.inputElement.disabled = true;
 
-})(StyledElements.Utils);
+            return this;
+        }
+
+        blur() {
+            this.inputElement.blur();
+
+            return this;
+        }
+
+        focus() {
+            this.inputElement.focus();
+
+            return this;
+        }
+
+    }
+
+})(StyledElements, StyledElements.Utils);
