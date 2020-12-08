@@ -79,6 +79,14 @@
                 expect(behaviour.index).toBe(2);
             });
 
+            it("index attribute must be a number", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+
+                expect(() => {
+                    behaviour.index = "a";
+                }).toThrowError(TypeError);
+            });
+
         });
 
         describe("btnRemove", () => {

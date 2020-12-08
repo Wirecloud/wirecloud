@@ -70,35 +70,13 @@
 
             this.heading.title.addClassName("se-link behaviour-title text-truncate");
 
-            const descriptionElement = document.createElement('p');
-            descriptionElement.className = "behaviour-description";
-            descriptionElement.textContent = options.description;
-            this.body.appendChild(descriptionElement);
+            this.descriptionElement = document.createElement("p");
+            this.descriptionElement.className = "behaviour-description";
+            this.descriptionElement.textContent = options.description;
+            this.body.appendChild(this.descriptionElement);
 
             Object.defineProperties(this, {
-
-                description: {
-                    get: function get() {return descriptionElement.textContent;},
-                    set: function set(value) {
-                        descriptionElement.textContent = value != null && value.trim() !== "" ? value : ns.Behaviour.JSON_TEMPLATE.description;
-                    }
-                },
-
-                index: {
-                    get: function () {
-                        return Number(this.get().getAttribute('data-index'));
-                    },
-                    set: function (value) {
-                        value = Number(value);
-                        if (isNaN(value)) {
-                            throw new TypeError("Invalid index value");
-                        }
-                        this.get().setAttribute('data-index', value);
-                    }
-                },
-
                 logManager: {value: new Wirecloud.LogManager(Wirecloud.GlobalLogManager)}
-
             });
 
             this.active = options.active;
@@ -106,6 +84,26 @@
 
             this.components = options.components;
             this.connections = options.connections;
+        }
+
+        get description() {
+            return this.descriptionElement.textContent;
+        }
+
+        set description(value) {
+            this.descriptionElement.textContent = value;
+        }
+
+        get index() {
+            return Number(this.get().getAttribute("data-index"));
+        }
+
+        set index(value) {
+            value = Number(value);
+            if (isNaN(value)) {
+                throw new TypeError("Invalid index value");
+            }
+            this.get().setAttribute("data-index", value);
         }
 
         get titletooltip() {

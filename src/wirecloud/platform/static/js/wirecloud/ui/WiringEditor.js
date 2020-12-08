@@ -3,7 +3,7 @@
  *
  *     Copyright (c) 2012-2016 Universidad Politécnica de Madrid
  *     Copyright (c) 2012-2014 the Center for Open Middleware
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     Licensed under the Apache License, Version 2.0 (the
  *     "License"); you may not use this file except in compliance
@@ -30,10 +30,6 @@ Wirecloud.ui = Wirecloud.ui || {};
 (function (ns, se, utils) {
 
     "use strict";
-
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
 
     /**
      * Creates a new wiring editor usable for adding operators, creating and
@@ -571,18 +567,18 @@ Wirecloud.ui = Wirecloud.ui || {};
     };
 
     var behaviourengine_onenable = function behaviourengine_onenable(behaviourEngine, enabled) {
-        this.connectionEngine.forEachConnection(function (connection) {
+        this.connectionEngine.forEachConnection((connection) => {
             connection.removeAllowed = true;
             connection.background = false;
             this.behaviourEngine.updateConnection(connection);
-        }.bind(this));
+        });
 
-        this.behaviourEngine.forEachComponent(function (component) {
+        this.behaviourEngine.forEachComponent((component) => {
             component.removeCascadeAllowed = enabled;
             component.removeAllowed = true;
             component.background = false;
             this.behaviourEngine.updateComponent(component);
-        }.bind(this));
+        });
     };
 
     var behaviour_onactivate = function behaviour_onactivate(behaviourEngine, behaviour, viewpoint) {

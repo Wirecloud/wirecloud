@@ -122,12 +122,13 @@
                 this.btnCreate.hide();
                 this.body.appendChild(this.disabledAlert);
                 this.btnCreate.get().parentElement.classList.add('hidden');
+                this.viewpoint = ns.BehaviourEngine.GLOBAL;
                 this.stopOrdering();
             }
 
             onchange_ordering.call(this);
 
-            return this.dispatchEvent('enable', this.enabled);
+            return this.ready ? this.dispatchEvent('enable', this.enabled) : this;
         }
 
         /**
@@ -145,8 +146,7 @@
             }
 
             if (this.behaviour !== behaviour) {
-                desactivateAllExcept.call(this, behaviour);
-                this.dispatchEvent('activate', this.behaviour, this.viewpoint);
+                deactivateAllExcept.call(this, behaviour);
             }
 
             return this;
@@ -161,7 +161,7 @@
          *      The created behaviour instance
          */
         createBehaviour(behaviourInfo) {
-            var behaviour = (new ns.Behaviour(this.behaviours.length, behaviourInfo))
+            const behaviour = (new ns.Behaviour(this.behaviours.length, behaviourInfo))
                 .addEventListener('change', () => {
                     if (this.behaviour.equals(behaviour)) {
                         this.dispatchEvent('change', behaviour.getCurrentStatus(), this.enabled);
@@ -210,6 +210,8 @@
 
             this.description = Wirecloud.Wiring.normalize().visualdescription;
             this.enabled = false;
+            this.ready = false;
+
             return this;
         }
 
@@ -396,10 +398,10 @@
 
             if (behaviours.length) {
                 this.enabled = true;
-                this.activate();
             } else {
                 this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
             }
+            this.ready = true;
 
             return this;
         }
@@ -682,10 +684,8 @@
         return this;
     };
 
-    var desactivateAllExcept = function desactivateAllExcept(behaviour) {
-        var i, found;
-
-        for (found = false, i = 0; i < this.behaviours.length; i++) {
+    const deactivateAllExcept = function deactivateAllExcept(behaviour) {
+        for (let found = false, i = 0; i < this.behaviours.length; i++) {
             this.behaviours[i].active = false;
 
             if (!found && this.behaviours[i].equals(behaviour)) {
@@ -695,6 +695,7 @@
         }
 
         this.behaviour.active = true;
+        this.dispatchEvent('activate', this.behaviour, this.viewpoint);
 
         return this;
     };
@@ -724,12 +725,10 @@
     };
 
     var btnenable_onclick = function btnenable_onclick() {
-        var dialog, message;
-
         if (this.enabled) {
-            message = utils.gettext("The behaviours will be removed but the components and connections will still exist, would you like to continue?");
+            const message = utils.gettext("The behaviours will be removed but the components and connections will still exist, would you like to continue?");
 
-            dialog = new Wirecloud.ui.AlertWindowMenu({
+            const dialog = new Wirecloud.ui.AlertWindowMenu({
                 acceptLabel: utils.gettext("Continue"),
                 cancelLabel: utils.gettext("Cancel"),
                 message: message
@@ -738,8 +737,8 @@
                 this.enabled = false;
             }).show();
         } else {
+            this.createBehaviour({title: utils.gettext("Initial behaviour")});
             this.enabled = true;
-            this.createBehaviour();
         }
     };
 
@@ -748,7 +747,7 @@
         this.behaviours.push(behaviour);
 
         if (behaviour.active || !this.behaviour) {
-            desactivateAllExcept.call(this, behaviour);
+            deactivateAllExcept.call(this, behaviour);
         }
 
         enableToRemoveBehaviour.call(this);

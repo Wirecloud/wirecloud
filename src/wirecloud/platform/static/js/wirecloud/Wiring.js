@@ -129,7 +129,7 @@
         }
 
         static normalize(status) {
-            var new_status = utils.update({
+            const new_status = utils.update({
                 version: '2.0',
                 connections: [],
                 operators: {},
