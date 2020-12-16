@@ -552,7 +552,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js',
                 'js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/AlertWindowMenu.js',
-                'js/wirecloud/ui/ExternalProcessWindowMenu.js',
                 'js/wirecloud/ui/HTMLWindowMenu.js',
                 'js/wirecloud/Widget/PreferencesWindowMenu.js',
                 'js/wirecloud/ui/MissingDependenciesWindowMenu.js',
