@@ -140,7 +140,8 @@
         }
 
         if (this.userQuery.length >= this.minLength) {
-            this.currentRequest = this.lookup(this.userQuery, sortResult.bind(this));
+            this.currentRequest = this.lookup(this.userQuery);
+            this.currentRequest.then(sortResult.bind(this));
         } else {
             this.popupMenu.hide();
         }
@@ -151,8 +152,6 @@
     };
 
     var sortResult = function sortResult(data) {
-        var i, msg, item;
-
         this.currentRequest = null;
         this.popupMenu.clear();
 
@@ -161,16 +160,15 @@
                 data = filterData.call(this, data);
             }
 
-            for (i = 0; i < data.length; i++) {
-                this.popupMenu.append(createMenuItem.call(this, this.build(this, data[i])));
-            }
+            data.forEach((result) => {
+                this.popupMenu.append(createMenuItem.call(this, this.build(this, result)));
+            });
         } else {
-            msg = this.notFoundMessage != null ? this.notFoundMessage : utils.gettext("No results found for <em><t:query/></em>");
+            let msg = this.notFoundMessage != null ? this.notFoundMessage : utils.gettext("No results found for <em><t:query/></em>");
             msg = builder.DEFAULT_OPENING + msg + builder.DEFAULT_CLOSING;
             msg = builder.parse(msg, {query: this.cleanedQuery});
-            item = new StyledElements.MenuItem(msg);
-            item.disable();
-            this.popupMenu.append(item);
+            const item = new StyledElements.MenuItem(msg);
+            this.popupMenu.append(item.disable());
         }
         this.popupMenu.show(this.textField.getBoundingClientRect());
 

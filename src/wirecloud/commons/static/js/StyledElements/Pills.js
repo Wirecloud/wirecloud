@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,63 +23,59 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var clickCallback = function clickCallback(id, e) {
+    const clickCallback = function clickCallback(id, e) {
         e.preventDefault();
         e.stopPropagation();
 
         this.switchPill(id);
     };
 
-    var Pills = function Pills(options) {
-        var defaultOptions = {
-            'class': ''
-        };
-        options = utils.merge(defaultOptions, options);
+    se.Pills = class Pills extends se.Container {
 
-        StyledElements.StyledElement.call(this, ['change']);
+        constructor(options) {
+            super(options, ['change']);
 
-        this.wrapperElement = document.createElement("ul");
-        this.wrapperElement.className = utils.appendWord(options.class, "se-pills");
+            this.wrapperElement = document.createElement("ul");
+            this.wrapperElement.className = utils.appendWord(options.class, "se-pills");
 
-        this.activePill = null;
-        this.pills = {};
-    };
-    utils.inherit(Pills, StyledElements.Container);
-
-    Pills.prototype.add = function add(id, label) {
-        var pill = document.createElement('li');
-        pill.className = 'se-pill';
-        pill.textContent = label;
-        pill.addEventListener('click', clickCallback.bind(this, id), true);
-
-        this.wrapperElement.appendChild(pill);
-
-        this.pills[id] = pill;
-    };
-
-    Pills.prototype.switchPill = function switchPill(id) {
-        if (!(id in this.pills)) {
-            throw new TypeError('Invalid pill id');
+            this.activePill = null;
+            this.pills = {};
         }
 
-        if (id === this.activePill) {
-            return;
+        add(id, label) {
+            var pill = document.createElement('li');
+            pill.className = 'se-pill';
+            pill.textContent = label;
+            pill.addEventListener('click', clickCallback.bind(this, id), true);
+
+            this.wrapperElement.appendChild(pill);
+
+            this.pills[id] = pill;
         }
 
-        if (this.activePill != null) {
-            this.pills[this.activePill].classList.remove('active');
+        switchPill(id) {
+            if (!(id in this.pills)) {
+                throw new TypeError('Invalid pill id');
+            }
+
+            if (id === this.activePill) {
+                return;
+            }
+
+            if (this.activePill != null) {
+                this.pills[this.activePill].classList.remove('active');
+            }
+
+            this.activePill = id;
+            this.pills[this.activePill].classList.add('active');
+
+            this.dispatchEvent('change', id);
         }
 
-        this.activePill = id;
-        this.pills[this.activePill].classList.add('active');
+    }
 
-        this.dispatchEvent('change', id);
-    };
-
-    StyledElements.Pills = Pills;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

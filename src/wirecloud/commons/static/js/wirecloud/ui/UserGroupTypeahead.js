@@ -32,42 +32,41 @@
         user: "user"
     };
 
-    ns.UserGroupTypeahead = function UserGroupTypeahead(options) {
-        options = utils.merge(utils.clone(defaults), options);
-
-        se.Typeahead.call(this, {
-            autocomplete: options.autocomplete,
-            lookup: searchForUserGroup,
-            build: function build(typeahead, data) {
-                return {
-                    value: data.name,
-                    title: data.fullname || data.name,
-                    description: data.name,
-                    iconClass: "fas fa-" + ICON_MAPPING[data.type],
-                    context: data
-                };
-            }
-        });
-    };
-    utils.inherit(ns.UserGroupTypeahead, se.Typeahead);
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var defaults = {
+    const defaultOptions = {
         autocomplete: true
     };
 
-    var searchForUserGroup = function searchForUserGroup(querytext, next) {
+    const searchForUserGroup = function searchForUserGroup(querytext) {
         return Wirecloud.io.makeRequest(Wirecloud.URLs.SEARCH_SERVICE, {
             parameters: {namespace: 'usergroup', q: querytext},
             method: 'GET',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'}
         }).then((response) => {
-            next(JSON.parse(response.responseText).results);
+            return JSON.parse(response.responseText).results;
         });
     };
+
+    ns.UserGroupTypeahead = class UserGroupTypeahead extends se.Typeahead {
+
+        constructor(options) {
+            options = utils.merge({}, defaultOptions, options);
+
+            super({
+                autocomplete: options.autocomplete,
+                lookup: searchForUserGroup,
+                build: (typeahead, data) => {
+                    return {
+                        value: data.name,
+                        title: data.fullname || data.name,
+                        description: data.name,
+                        iconClass: "fas fa-" + ICON_MAPPING[data.type],
+                        context: data
+                    };
+                }
+            });
+        };
+
+    }
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

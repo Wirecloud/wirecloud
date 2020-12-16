@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,58 +20,29 @@
  *
  */
 
-/* globals Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
-(function () {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var AutoAction = function AutoAction(tutorial, options) {
-        this.options = options;
-        // Normalize asynchronous option
-        this.options.asynchronous = !!this.options.asynchronous;
-        this.layer = tutorial.msgLayer;
-        this.last = false;
-        this.tutorial = tutorial;
-        this.element = options.elem;
-        this.position = options.pos;
-        this.event = options.event;
-        this.action = options.action;
-    };
-
-    /**
-     * set this SimpleDescription as the last one, don't need next button.
-     */
-    AutoAction.prototype.setLast = function setLast() {
-        this.last = true;
-    };
-
     /**
      * set next handler
      */
-    AutoAction.prototype.setNext = function setNext() {
-        this.nextHandler = nextHandler.bind(this);
-    };
-
-    /**
-     * set next handler
-     */
-    var nextHandler = function nextHandler() {
-        if (this.element != null) {
-            this.element.classList.remove('tuto_highlight');
+    const nextHandler = function nextHandler() {
+        if (this.currentElement != null) {
+            this.currentElement.classList.remove('tuto_highlight');
         }
         this.tutorial.nextStep();
     };
 
-    var _activate = function _activate(element) {
-        if (element != null) {
-            this.element = element;
-        }
+    const _activate = function _activate(element) {
+        this.currentElement = typeof(element) === "function" ? element() : element;
 
-        if (element != null) {
+        if (this.currentElement != null) {
             if (this.options.msg) {
-                this.popup = new Wirecloud.ui.Tutorial.PopUp(this.element, {
+                this.popup = new Wirecloud.ui.Tutorial.PopUp(this.currentElement, {
                     highlight: true,
                     msg: this.options.msg,
                     position: this.position,
@@ -80,44 +52,72 @@
                 this.popup.repaint();
                 this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
             }
-            this.tutorial.setControlLayer(element, true);
+            this.tutorial.setControlLayer(this.currentElement, true);
         } else {
             // transparent Control Layer
             this.tutorial.resetControlLayer();
         }
 
-        this.action(this, this.element);
+        this.action(this, this.currentElement);
     };
 
-    /**
-     * activate this step
-     */
-    AutoAction.prototype.activate = function activate() {
-        if (this.element == null) {
-            _activate.call(this, null);
-        } else if (this.options.asynchronous) {
-            this.element(_activate.bind(this));
-        } else {
-            _activate.call(this, this.element());
-        }
-    };
+    ns.AutoAction = class AutoAction {
 
-    /**
-     * Destroy
-     */
-    AutoAction.prototype.destroy = function destroy() {
-        if (typeof this.element === 'function') {
-            this.element = null;
-        } else if (this.element != null) {
-            this.element.removeEventListener('click', this.nextHandler, true);
+        constructor(tutorial, options) {
+            this.options = options;
+            // Normalize asynchronous option
+            this.options.asynchronous = !!this.options.asynchronous;
+            this.layer = tutorial.msgLayer;
+            this.last = false;
+            this.tutorial = tutorial;
+            this.element = options.elem;
+            this.currentElement = null;
+            this.position = options.pos;
+            this.event = options.event;
+            this.action = options.action;
         }
-        if (this.popup) {
-            this.popup.destroy();
+
+        /**
+         * set this SimpleDescription as the last one, don't need next button.
+         */
+        setLast() {
+            this.last = true;
         }
-        this.textElement = null;
-        this.arrow = null;
-    };
 
-    Wirecloud.ui.Tutorial.AutoAction = AutoAction;
+        /**
+         * set next handler
+         */
+        setNext() {
+            this.nextHandler = nextHandler.bind(this);
+        }
 
-})();
+        /**
+         * activate this step
+         */
+        activate() {
+            if (this.options.asynchronous) {
+                this.element(_activate.bind(this));
+            } else {
+                _activate.call(this, this.element);
+            }
+        }
+
+        /**
+         * Destroy
+         */
+        destroy() {
+            if (typeof this.element === 'function') {
+                this.element = null;
+            } else if (this.element != null) {
+                this.element.removeEventListener('click', this.nextHandler, true);
+            }
+            if (this.popup) {
+                this.popup.destroy();
+            }
+            this.textElement = null;
+            this.arrow = null;
+        }
+
+    }
+
+})(Wirecloud.ui.Tutorial, StyledElements, Wirecloud.Utils);

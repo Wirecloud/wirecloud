@@ -37,7 +37,7 @@
         var dialog = new Wirecloud.ui.MACSelectionWindowMenu(this.dialog_title, {
             scope: this.scope,
         });
-        dialog.show(this.parent_dialog);
+        dialog.show(Wirecloud.UserInterfaceManager.currentWindowMenu);
         dialog.addEventListener('select', function (menu, selected_mashup) {
             this.setValue(selected_mashup);
         }.bind(this));
@@ -104,7 +104,6 @@
             Object.defineProperties(this, {
                 'close_button': {value: close_button},
                 'scope': {value: options.scope},
-                'parent_dialog': {value: options.parent_dialog},
                 'dialog_title': {value: options.dialog_title}
             });
 

@@ -27,24 +27,27 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    const defaultOptions = {
+        class: "",
+        id: "",
+        tagname: "div",
+        useFullHeight: false
+    };
 
-    /**
-     * Creates a new instance of class Container.
-     *
-     * @constructor
-     * @extends StyledElements.StyledElement
-     * @name StyledElements.Container
-     * @since 0.5
-     * @param {Object.<String, *>} options [description]
-     * @param {String[]} events [description]
-     */
     se.Container = class Container extends se.StyledElement {
 
+        /**
+         * Creates a new instance of class Container.
+         *
+         * @constructor
+         * @extends StyledElements.StyledElement
+         * @name StyledElements.Container
+         * @since 0.5
+         * @param {Object.<String, *>} options [description]
+         * @param {String[]} events [description]
+         */
         constructor(options, events) {
-            options = utils.merge(utils.clone(defaults), options);
+            options = utils.merge({}, defaultOptions, options);
             super(events);
 
             this.wrapperElement = document.createElement(options.tagname);
@@ -254,13 +257,6 @@
     // =========================================================================
 
     var privates = new WeakMap();
-
-    var defaults = {
-        class: "",
-        id: "",
-        tagname: 'div',
-        useFullHeight: false
-    };
 
     var addChild = function addChild(newElement) {
         var priv = privates.get(this);

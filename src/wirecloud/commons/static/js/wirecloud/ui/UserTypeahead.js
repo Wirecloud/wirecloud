@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,43 +27,41 @@
 
     "use strict";
 
-    ns.UserTypeahead = function UserTypeahead(options) {
-        options = utils.merge(utils.clone(defaults), options);
-
-        se.Typeahead.call(this, {
-            autocomplete: options.autocomplete,
-            lookup: searchForUser,
-            build: function build(typeahead, data) {
-                return {
-                    value: data.username,
-                    title: data.fullname,
-                    description: data.username,
-                    iconClass: data.organization ? "fa fa-building" : "fa fa-user",
-                    context: data
-                };
-            }
-        });
-    };
-    utils.inherit(ns.UserTypeahead, se.Typeahead);
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var defaults = {
+    const defaultOptions = {
         autocomplete: true
     };
 
-    var searchForUser = function searchForUser(querytext, next) {
+    const searchForUser = function searchForUser(querytext) {
         return Wirecloud.io.makeRequest(Wirecloud.URLs.SEARCH_SERVICE, {
             parameters: {namespace: 'user', q: querytext},
             method: 'GET',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
-            onSuccess: function (response) {
-                next(JSON.parse(response.responseText).results);
-            }
+        }).then((response) => {
+            return JSON.parse(response.responseText).results;
         });
     };
+
+    ns.UserTypeahead = class UserTypeahead extends se.Typeahead {
+
+        constructor(options) {
+            options = utils.merge({}, defaultOptions, options);
+
+            super({
+                autocomplete: options.autocomplete,
+                lookup: searchForUser,
+                build: (typeahead, data) => {
+                    return {
+                        value: data.username,
+                        title: data.fullname,
+                        description: data.username,
+                        iconClass: data.organization ? "fa fa-building" : "fa fa-user",
+                        context: data
+                    };
+                }
+            });
+        };
+
+    }
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

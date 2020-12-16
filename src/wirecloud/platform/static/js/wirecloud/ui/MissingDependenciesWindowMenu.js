@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,66 +23,62 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var onContinue = function onContinue(next) {
+    const onContinue = function onContinue(next) {
     };
 
-    /*
-     * Constructor
-     */
-    var MissingDependenciesWindowMenu = function MissingDependenciesWindowMenu(next, details) {
-        var list, i, item;
+    ns.MissingDependenciesWindowMenu = class MissingDependenciesWindowMenu extends ns.WindowMenu {
 
-        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Missing dependencies'), 'wc-missing-dependencies-modal');
+        constructor(next, details) {
+            super(utils.gettext('Missing dependencies'), 'wc-missing-dependencies-modal');
 
-        this.msg1Element = document.createElement('p');
-        this.windowContent.appendChild(this.msg1Element);
-        this.msg1Element.textContent = utils.gettext('The following dependencies are missing:');
+            this.msg1Element = document.createElement('p');
+            this.windowContent.appendChild(this.msg1Element);
+            this.msg1Element.textContent = utils.gettext('The following dependencies are missing:');
 
-        list = document.createElement('ul');
-        for (i = 0; i < details.missingDependencies.length; i++) {
-            item = document.createElement('li');
-            item.textContent = details.missingDependencies[i];
-            list.appendChild(item);
+            const list = document.createElement('ul');
+            details.missingDependencies.forEach((missingDependency) => {
+                const item = document.createElement('li');
+                item.textContent = details.missingDependency;
+                list.appendChild(item);
+            });
+            this.windowContent.appendChild(list);
+
+            this.msg2Element = document.createElement('p');
+            this.windowContent.appendChild(this.msg2Element);
+            this.msg2Element.textContent = utils.gettext('You will be able to continue after installing all the required dependencies.');
+
+            // New Workspace button
+            this.continueButton = new se.Button({
+                class: 'btn-accept',
+                text: utils.gettext('Continue'),
+            });
+            this.continueButton.addEventListener("click", onContinue.bind(this, next));
+            this.continueButton.insertInto(this.windowBottom);
+            this.continueButton.disable();
+
+            // Cancel button
+            this.cancelButton = new se.Button({
+                class: 'btn-cancel btn-primary',
+                text: utils.gettext('Cancel')
+            });
+            this.cancelButton.addEventListener("click", this._closeListener);
+            this.cancelButton.insertInto(this.windowBottom);
         }
-        this.windowContent.appendChild(list);
 
-        this.msg2Element = document.createElement('p');
-        this.windowContent.appendChild(this.msg2Element);
-        this.msg2Element.textContent = utils.gettext('You will be able to continue after installing all the required dependencies.');
+        setFocus() {
+            this.continueButton.focus();
+        }
 
-        // New Workspace button
-        this.continueButton = new se.Button({
-            class: 'btn-accept',
-            text: utils.gettext('Continue'),
-        });
-        this.continueButton.addEventListener("click", onContinue.bind(this, next));
-        this.continueButton.insertInto(this.windowBottom);
-        this.continueButton.disable();
+        destroy() {
+            this.hide();
+            this.continueButton.destroy();
+            this.cancelButton.destroy();
+        }
 
-        // Cancel button
-        this.cancelButton = new se.Button({
-            class: 'btn-cancel btn-primary',
-            text: utils.gettext('Cancel')
-        });
-        this.cancelButton.addEventListener("click", this._closeListener);
-        this.cancelButton.insertInto(this.windowBottom);
-    };
-    utils.inherit(MissingDependenciesWindowMenu, Wirecloud.ui.WindowMenu);
+    }
 
-    MissingDependenciesWindowMenu.prototype.setFocus = function setFocus() {
-        this.continueButton.focus();
-    };
-
-    MissingDependenciesWindowMenu.prototype.destroy = function destroy() {
-        this.hide();
-        this.continueButton.destroy();
-        this.cancelButton.destroy();
-    };
-
-    Wirecloud.ui.MissingDependenciesWindowMenu = MissingDependenciesWindowMenu;
-
-})(StyledElements, Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

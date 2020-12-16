@@ -1,5 +1,6 @@
 /*
  *     Copyright 2013-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,11 +23,11 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var setDialogPosition = function setDialogPosition(ref_pos, pos) {
+    const setDialogPosition = function setDialogPosition(ref_pos, pos) {
         switch (pos) {
         case 'up':
             this.htmlElement.style.top = (ref_pos.top - this.htmlElement.offsetHeight - 20) + 'px';
@@ -47,21 +48,21 @@
         }
     };
 
-    var standsOut = function standsOut() {
-        var parent_box = document.body.getBoundingClientRect();
-        var element_box = this.htmlElement.getBoundingClientRect();
+    const standsOut = function standsOut() {
+        const parent_box = document.body.getBoundingClientRect();
+        const element_box = this.htmlElement.getBoundingClientRect();
 
-        var visible_width = element_box.width - Math.max(element_box.right - parent_box.right, 0) - Math.max(parent_box.left - element_box.left, 0);
-        var visible_height = element_box.height - Math.max(element_box.bottom - parent_box.bottom, 0) - Math.max(parent_box.top - element_box.top, 0);
-        var element_area = element_box.width * element_box.height;
-        var visible_area = visible_width * visible_height;
+        const visible_width = element_box.width - Math.max(element_box.right - parent_box.right, 0) - Math.max(parent_box.left - element_box.left, 0);
+        const visible_height = element_box.height - Math.max(element_box.bottom - parent_box.bottom, 0) - Math.max(parent_box.top - element_box.top, 0);
+        const element_area = element_box.width * element_box.height;
+        const visible_area = visible_width * visible_height;
         return element_area - visible_area;
     };
 
-    var fixPosition = function fixPosition(refPosition, weights, positions) {
-        var best_weight = Math.min.apply(Math, weights);
-        var index = weights.indexOf(best_weight);
-        var position = positions[index];
+    const fixPosition = function fixPosition(refPosition, weights, positions) {
+        const best_weight = Math.min.apply(Math, weights);
+        const index = weights.indexOf(best_weight);
+        const position = positions[index];
 
         setDialogPosition.call(this, refPosition, position);
 
@@ -69,107 +70,11 @@
     };
 
     /**
-     * Simple Description Constructor
-     *
-     */
-    var SimpleDescription = function SimpleDescription(tutorial, options) {
-        this.options = options;
-        this.element = options.elem;
-        this.tutorial = tutorial;
-        this.layer = tutorial.msgLayer;
-        this.last = false;
-        this.pos = options.pos;
-        this.title = options.title;
-        this.nextButtonText = utils.gettext('Next');
-        if (options.nextButtonText) {
-            this.nextButtonText = options.nextButtonText;
-        }
-
-        Wirecloud.ui.WindowMenu.call(this, this.title, 'simpleDescription');
-
-        this.windowContent.innerHTML = options.msg;
-
-        this.nextButton = new se.Button({
-            'class': 'nextButton btn-primary',
-            'text': utils.gettext(this.nextButtonText),
-        });
-
-        this.nextButton.insertInto(this.windowBottom);
-
-        // Cancel button
-        this.cancelButton = new se.Button({
-            'class': 'cancelButton',
-            'text': utils.gettext("Cancel"),
-        });
-        this.cancelButton.insertInto(this.windowBottom);
-        this.cancelButton.addEventListener('click', this._closeListener);
-
-        this.layer.appendChild(this.htmlElement);
-
-        this.wrapperElement = this.htmlElement;
-    };
-    utils.inherit(SimpleDescription, Wirecloud.ui.WindowMenu);
-
-    SimpleDescription.prototype._closeListener = function _closeListener(e) {
-        Wirecloud.ui.WindowMenu.prototype._closeListener.call(this, e);
-        this.tutorial.destroy();
-    };
-
-    /**
-     * get style position.
-     */
-    SimpleDescription.prototype.getStylePosition = function getStylePosition() {
-        var coordinates;
-        coordinates = {
-            posX: parseInt(this.htmlElement.style.left, 10),
-            posY: parseInt(this.htmlElement.style.top, 10)
-        };
-        return coordinates;
-    };
-
-    /**
-     * set position.
-     */
-    SimpleDescription.prototype.setPosition = function setPosition(coordinates) {
-        this.htmlElement.style.left = coordinates.posX + 'px';
-        this.htmlElement.style.top = coordinates.posY + 'px';
-    };
-
-    /**
-     * set this SimpleDescription as the last one, don't need next button.
-     */
-    SimpleDescription.prototype.setLast = function setLast(buttonLabel, optionalHandler) {
-        this.last = true;
-        this.nextButton.remove();
-        if (buttonLabel == null) {
-            buttonLabel = utils.gettext('Close');
-        }
-        this.cancelButton.setLabel(utils.gettext(buttonLabel));
-        if (optionalHandler != null) {
-            this.cancelButton.removeEventListener('click', this._closeListener);
-            this.cancelButton.addEventListener('click', optionalHandler.bind(this));
-        }
-    };
-
-    /**
-     * set next handler
-     */
-    SimpleDescription.prototype.setNext = function setNext() {
-        this.nextButton.addEventListener('click', function () {
-            if (this.currentElement != null) {
-                this.currentElement.classList.remove('tuto_highlight');
-            }
-            this.tutorial.nextStep();
-        }.bind(this));
-    };
-
-    /**
      * activate this step
      */
-    var _activate = function _activate() {
-        var i = 0, ref_pos, weights, positions;
-
+    const _activate = function _activate() {
         this.htmlElement.classList.add("activeStep");
+
         if (typeof this.element === 'function') {
             this.currentElement = this.element();
             this.tutorial.setControlLayer(this.currentElement, true);
@@ -178,9 +83,10 @@
             this.tutorial.resetControlLayer(false);
         }
         if (this.currentElement != null) {
-            ref_pos = this.currentElement.getBoundingClientRect();
-            weights = [];
-            positions = ['down', 'left', 'top', 'right'];
+            const ref_pos = this.currentElement.getBoundingClientRect();
+            const weights = [];
+            const positions = ['down', 'left', 'top', 'right'];
+            let i = 0;
             do {
                 setDialogPosition.call(this, ref_pos, positions[i]);
                 weights.push(standsOut.call(this));
@@ -199,16 +105,110 @@
     };
 
     /**
-     * activate this step
+     * Simple Description Constructor
+     *
      */
-    SimpleDescription.prototype.activate = function activate() {
-        if (this.options.asynchronous) {
-            this.element(_activate.bind(this));
-        } else {
-            _activate.call(this);
+    ns.SimpleDescription = class SimpleDescription extends Wirecloud.ui.WindowMenu {
+
+        constructor(tutorial, options) {
+            super(options.title, 'simpleDescription');
+
+            this.options = options;
+            this.element = options.elem;
+            this.tutorial = tutorial;
+            this.layer = tutorial.msgLayer;
+            this.last = false;
+            this.pos = options.pos;
+            this.title = options.title;
+            this.nextButtonText = utils.gettext('Next');
+            if (options.nextButtonText) {
+                this.nextButtonText = options.nextButtonText;
+            }
+
+            this.windowContent.innerHTML = options.msg;
+
+            this.nextButton = new se.Button({
+                'class': 'nextButton btn-primary',
+                'text': utils.gettext(this.nextButtonText),
+            });
+
+            this.nextButton.insertInto(this.windowBottom);
+
+            // Cancel button
+            this.cancelButton = new se.Button({
+                'class': 'cancelButton',
+                'text': utils.gettext("Cancel"),
+            });
+            this.cancelButton.insertInto(this.windowBottom);
+            this.cancelButton.addEventListener('click', this._closeListener);
+
+            this.layer.appendChild(this.htmlElement);
+
+            this.wrapperElement = this.htmlElement;
         }
-    };
 
-    Wirecloud.ui.Tutorial.SimpleDescription = SimpleDescription;
+        _closeListener(e) {
+            super._closeListener(e);
+            this.tutorial.destroy();
+        }
 
-})(StyledElements, Wirecloud.Utils);
+        /**
+         * get style position.
+         */
+        getStylePosition() {
+            return {
+                posX: parseInt(this.htmlElement.style.left, 10),
+                posY: parseInt(this.htmlElement.style.top, 10)
+            };
+        }
+
+        /**
+         * set position.
+         */
+        setPosition(coordinates) {
+            this.htmlElement.style.left = coordinates.posX + 'px';
+            this.htmlElement.style.top = coordinates.posY + 'px';
+        }
+
+        /**
+         * set this SimpleDescription as the last one, don't need next button.
+         */
+        setLast(buttonLabel, optionalHandler) {
+            this.last = true;
+            this.nextButton.remove();
+            if (buttonLabel == null) {
+                buttonLabel = utils.gettext('Close');
+            }
+            this.cancelButton.setLabel(utils.gettext(buttonLabel));
+            if (optionalHandler != null) {
+                this.cancelButton.removeEventListener('click', this._closeListener);
+                this.cancelButton.addEventListener('click', optionalHandler.bind(this));
+            }
+        }
+
+        /**
+         * set next handler
+         */
+        setNext() {
+            this.nextButton.addEventListener('click', function () {
+                if (this.currentElement != null) {
+                    this.currentElement.classList.remove('tuto_highlight');
+                }
+                this.tutorial.nextStep();
+            }.bind(this));
+        }
+
+        /**
+         * activate this step
+         */
+        activate() {
+            if (this.options.asynchronous) {
+                this.element(_activate.bind(this));
+            } else {
+                _activate.call(this);
+            }
+        }
+
+    }
+
+})(Wirecloud.ui.Tutorial, StyledElements, Wirecloud.Utils);

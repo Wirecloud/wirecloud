@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,49 +23,50 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var MACSelectionWindowMenu = function MACSelectionWindowMenu(title, options) {
-        Wirecloud.ui.WindowMenu.call(this, title, 'mac_selection_dialog', ['select']);
+    ns.MACSelectionWindowMenu = class MACSelectionWindowMenu extends ns.WindowMenu {
 
-        this.macsearch = new Wirecloud.ui.MACSearch({
-            scope: options.scope,
-            resourceButtonIconClass: 'fa fa-check',
-            resourceButtonTooltip: utils.gettext('Select'),
-            resourceButtonListener: function (resource) {
-                this._closeListener();
-                this.dispatchEvent('select', resource);
-            }.bind(this)
-        });
-        this.macsearch.insertInto(this.windowContent);
+        constructor(title, options) {
+            super(title, 'mac_selection_dialog', ['select']);
 
-        // Accept button
-        this.button = new se.Button({
-            text: utils.gettext('Close'),
-            class: 'btn-primary'
-        });
-        this.button.insertInto(this.windowBottom);
-        this.button.addEventListener("click", this._closeListener);
-    };
-    utils.inherit(MACSelectionWindowMenu, Wirecloud.ui.WindowMenu);
+            this.macsearch = new Wirecloud.ui.MACSearch({
+                scope: options.scope,
+                resourceButtonIconClass: 'fa fa-check',
+                resourceButtonTooltip: utils.gettext('Select'),
+                resourceButtonListener: function (resource) {
+                    this._closeListener();
+                    this.dispatchEvent('select', resource);
+                }.bind(this)
+            });
+            this.macsearch.insertInto(this.windowContent);
 
-    MACSelectionWindowMenu.prototype.addEventListener = se.ObjectWithEvents.prototype.addEventListener;
-    MACSelectionWindowMenu.prototype.removeEventListener = se.ObjectWithEvents.prototype.removeEventListener;
+            // Accept button
+            this.button = new se.Button({
+                text: utils.gettext('Close'),
+                class: 'btn-primary'
+            });
+            this.button.insertInto(this.windowBottom);
+            this.button.addEventListener("click", this._closeListener);
+        }
 
-    MACSelectionWindowMenu.prototype.setFocus = function setFocus() {
-        this.macsearch.focus();
-    };
+        /**
+         * @override
+         */
+        setFocus() {
+            this.macsearch.focus();
+        }
 
-    /**
-     * @override
-     */
-    MACSelectionWindowMenu.prototype.show = function show(parentWindow) {
-        this.macsearch.refresh();
-        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
-    };
+        /**
+         * @override
+         */
+        show(parentWindow) {
+            this.macsearch.refresh();
+            super.show(parentWindow);
+        }
 
-    Wirecloud.ui.MACSelectionWindowMenu = MACSelectionWindowMenu;
+    }
 
-})(StyledElements, Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

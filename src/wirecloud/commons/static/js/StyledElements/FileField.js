@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,13 +23,11 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var FileField, onchange, onclick, onfocus, onblur;
-
-    onclick = function onclick(e) {
+    const onclick = function onclick(e) {
         if (e.target === this.inputElement) {
             return;
         }
@@ -39,117 +38,108 @@
         return false;
     };
 
-    onchange = function onchange() {
-        var file, filename;
-
-        file = this.getValue();
-        if (file != null) {
-            filename = file.name;
-        } else {
-            filename = '';
-        }
+    const onchange = function onchange() {
+        const file = this.getValue();
+        const filename = file != null ? file.name : "";
         this.name_preview.textContent = filename;
         this.name_preview.setAttribute('title', filename);
         this.dispatchEvent('change');
     };
 
-    onfocus = function onfocus() {
+    const onfocus = function onfocus() {
         this.wrapperElement.classList.add('focus');
         this.dispatchEvent('focus');
     };
 
-    onblur = function onblur() {
+    const onblur = function onblur() {
         this.wrapperElement.classList.remove('focus');
         this.dispatchEvent('blur');
     };
 
-    /**
-     * Añade un campo de texto.
-     */
-    FileField = function FileField(options) {
-        var defaultOptions = {
-            'class': ''
-        };
-        options = utils.merge(defaultOptions, options);
+    se.FileField = class FileField extends se.InputElement {
 
-        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        constructor(options) {
+            var defaultOptions = {
+                'class': ''
+            };
+            options = utils.merge(defaultOptions, options);
 
-        this.layout = new StyledElements.HorizontalLayout({'class': 'se-file-field input input-append'});
-        this.wrapperElement = this.layout.wrapperElement;
-        if (options.class !== "") {
-            this.wrapperElement.className += " " + options.class;
+            super(options.initialValue, ['change', 'focus', 'blur']);
+
+            this.layout = new StyledElements.HorizontalLayout({'class': 'se-file-field input input-append'});
+            this.wrapperElement = this.layout.wrapperElement;
+            if (options.class !== "") {
+                this.wrapperElement.className += " " + options.class;
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'input_wrapper';
+            this.wrapperElement.appendChild(wrapper);
+            this.inputElement = document.createElement("input");
+            this.inputElement.setAttribute("type", "file");
+            this.inputElement.setAttribute('tabindex', 0);
+            wrapper.appendChild(this.inputElement);
+
+            if (options.name) {
+                this.inputElement.setAttribute("name", options.name);
+            }
+
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
+
+            this.name_preview = document.createElement('div');
+            this.name_preview.className = 'filename';
+            this.layout.getCenterContainer().appendChild(this.name_preview);
+
+            /* Pseudo button */
+            var button = document.createElement('div');
+            button.className = 'se-btn';
+            var button_span = document.createElement('span');
+            button_span.textContent = utils.gettext('Select');
+            button.appendChild(button_span);
+            this.layout.getEastContainer().appendChild(button);
+
+            /* Internal events */
+            this._onchange = onchange.bind(this);
+            this._onclick = onclick.bind(this);
+            this._onfocus = onfocus.bind(this);
+            this._onblur = onblur.bind(this);
+
+            this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+            this.wrapperElement.addEventListener('click', this._onclick, true);
+            this.inputElement.addEventListener('change', this._onchange, true);
+            this.inputElement.addEventListener('focus', this._onfocus, true);
+            this.inputElement.addEventListener('blur', this._onblur, true);
         }
 
-        var wrapper = document.createElement('div');
-        wrapper.className = 'input_wrapper';
-        this.wrapperElement.appendChild(wrapper);
-        this.inputElement = document.createElement("input");
-        this.inputElement.setAttribute("type", "file");
-        this.inputElement.setAttribute('tabindex', 0);
-        wrapper.appendChild(this.inputElement);
-
-        if (options.name) {
-            this.inputElement.setAttribute("name", options.name);
+        repaint() {
+            this.layout.repaint();
         }
 
-        if (options.id != null) {
-            this.wrapperElement.setAttribute("id", options.id);
+        insertInto(element, refElement) {
+            super.insertInto(element, refElement);
+            this.repaint();
         }
 
-        this.name_preview = document.createElement('div');
-        this.name_preview.className = 'filename';
-        this.layout.getCenterContainer().appendChild(this.name_preview);
+        getValue() {
+            return this.inputElement.files[0];
+        }
 
-        /* Pseudo button */
-        var button = document.createElement('div');
-        button.className = 'se-btn';
-        var button_span = document.createElement('span');
-        button_span.textContent = utils.gettext('Select');
-        button.appendChild(button_span);
-        this.layout.getEastContainer().appendChild(button);
+        destroy() {
+            this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
+            this.wrapperElement.removeEventListener('click', this._onclick, true);
+            this.inputElement.removeEventListener('change', this._onchange, true);
+            this.inputElement.removeEventListener('focus', this._onfocus, true);
+            this.inputElement.removeEventListener('blur', this._onblur, true);
 
-        /* Internal events */
-        this._onchange = onchange.bind(this);
-        this._onclick = onclick.bind(this);
-        this._onfocus = onfocus.bind(this);
-        this._onblur = onblur.bind(this);
+            delete this._onchange;
+            delete this._onfocus;
+            delete this._onblur;
 
-        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
-        this.wrapperElement.addEventListener('click', this._onclick, true);
-        this.inputElement.addEventListener('change', this._onchange, true);
-        this.inputElement.addEventListener('focus', this._onfocus, true);
-        this.inputElement.addEventListener('blur', this._onblur, true);
-    };
-    utils.inherit(FileField, StyledElements.InputElement);
+            super.destroy();
+        }
 
-    FileField.prototype.repaint = function repaint() {
-        this.layout.repaint();
-    };
+    }
 
-    FileField.prototype.insertInto = function insertInto(element, refElement) {
-        StyledElements.InputElement.prototype.insertInto.call(this, element, refElement);
-        this.repaint();
-    };
-
-    FileField.prototype.getValue = function getValue() {
-        return this.inputElement.files[0];
-    };
-
-    FileField.prototype.destroy = function destroy() {
-
-        this.inputElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
-        this.wrapperElement.removeEventListener('click', this._onclick, true);
-        this.inputElement.removeEventListener('change', this._onchange, true);
-        this.inputElement.removeEventListener('focus', this._onfocus, true);
-        this.inputElement.removeEventListener('blur', this._onblur, true);
-
-        delete this._onchange;
-        delete this._onfocus;
-        delete this._onblur;
-
-        StyledElements.InputElement.prototype.destroy.call(this);
-    };
-
-    StyledElements.FileField = FileField;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);
