@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,7 +28,7 @@
 
     describe("Styled Typeahead", () => {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -70,7 +70,7 @@
             });
 
             it("should create typeahead instances when passing the required options", () => {
-                var typeahead = new StyledElements.Typeahead({
+                const typeahead = new StyledElements.Typeahead({
                     build: function () {},
                     lookup: function () {}
                 });
@@ -84,17 +84,17 @@
         describe('bind(textField)', () => {
 
             it("should work with text fields", () => {
-                var typeahead = new StyledElements.Typeahead({
+                const typeahead = new StyledElements.Typeahead({
                     build: function () {},
                     lookup: function () {}
                 });
-                var textfield = new StyledElements.TextField();
+                const textfield = new StyledElements.TextField();
                 typeahead.bind(textfield);
             });
 
             const testinvalidvalue = (value) => {
                 it("should throw a type error exception for invalid values (" + value + ")", () => {
-                    var typeahead = new StyledElements.Typeahead({
+                    const typeahead = new StyledElements.Typeahead({
                         build: function () {},
                         lookup: function () {}
                     });
@@ -110,9 +110,9 @@
             testinvalidvalue(5);
         });
 
-        describe('should manage user events', () => {
+        describe("should manage user events", () => {
 
-            var typeahead, textfield, build, lookup;
+            let typeahead, textfield, build, lookup, mockedclock;
 
             beforeEach(() => {
                 lookup = jasmine.createSpy("lookup");
@@ -121,17 +121,20 @@
                 textfield = new StyledElements.TextField();
                 typeahead.bind(textfield);
                 jasmine.clock().install();
+                mockedclock = true;
             });
 
             afterEach(() => {
-                jasmine.clock().uninstall();
+                if (mockedclock === true) {
+                    jasmine.clock().uninstall();
+                }
             });
 
             it("should search on input change", () => {
                 textfield.setValue("abc");
 
                 jasmine.clock().tick(200);
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
+                expect(lookup).toHaveBeenCalledWith("abc");
             });
 
             it("should wait user finishing making changes (using a timeout)", () => {
@@ -141,13 +144,12 @@
                 jasmine.clock().tick(200);
 
                 expect(lookup).toHaveBeenCalledTimes(1);
-                expect(lookup).toHaveBeenCalledWith("cba", jasmine.any(Function));
+                expect(lookup).toHaveBeenCalledWith("cba");
             });
 
             it("should support aborting current requests", () => {
-                let request = {
-                    abort: jasmine.createSpy("abort")
-                }
+                const request = Promise.resolve();
+                request.abort = jasmine.createSpy("abort");
                 lookup.and.returnValue(request);
                 textfield.setValue("abc");
                 jasmine.clock().tick(200);
@@ -156,16 +158,15 @@
                 jasmine.clock().tick(200);
 
                 expect(lookup).toHaveBeenCalledTimes(2);
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
-                expect(lookup).toHaveBeenCalledWith("cba", jasmine.any(Function));
+                expect(lookup).toHaveBeenCalledWith("abc");
+                expect(lookup).toHaveBeenCalledWith("cba");
                 expect(request.abort).toHaveBeenCalledTimes(1);
                 expect(request.abort).toHaveBeenCalledWith();
             });
 
             it("should support aborting current requests (empty search)", () => {
-                let request = {
-                    abort: jasmine.createSpy("abort")
-                }
+                const request = Promise.resolve();
+                request.abort = jasmine.createSpy("abort");
                 lookup.and.returnValue(request);
                 textfield.setValue("abc");
                 jasmine.clock().tick(200);
@@ -174,87 +175,117 @@
                 jasmine.clock().tick(200);
 
                 expect(lookup).toHaveBeenCalledTimes(1);
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
+                expect(lookup).toHaveBeenCalledWith("abc");
                 expect(request.abort).toHaveBeenCalledTimes(1);
                 expect(request.abort).toHaveBeenCalledWith();
             });
 
-            it("should provide a message for empty searches", () => {
+            it("should provide a message for empty searches", (done) => {
                 spyOn(typeahead.popupMenu, "show");
-                lookup.and.callFake((query, next) => {next([]);});
-                textfield.setValue("abc");
+                lookup.and.returnValue(Promise.resolve([]));
+                textfield.setValue("abc2");
                 jasmine.clock().tick(200);
 
-                expect(lookup).toHaveBeenCalledTimes(1);
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
-                expect(typeahead.popupMenu.show).toHaveBeenCalled();
+                jasmine.clock().uninstall();
+                mockedclock = false;
+                setTimeout(() => {
+                    expect(lookup).toHaveBeenCalledTimes(1);
+                    expect(lookup).toHaveBeenCalledWith("abc2");
+                    expect(typeahead.popupMenu.show).toHaveBeenCalled();
+                    done();
+                });
             });
 
-            it("should support customizing empty search message", () => {
+            it("should support customizing empty search message", (done) => {
                 typeahead = new StyledElements.Typeahead({build: build, lookup: lookup, notFoundMessage: "not found"});
                 let textfield = new StyledElements.TextField();
                 typeahead.bind(textfield);
 
                 spyOn(typeahead.popupMenu, "show");
-                lookup.and.callFake((query, next) => {next([]);});
-                textfield.setValue("abc");
+                textfield.setValue("abc3");
                 jasmine.clock().tick(200);
 
-                expect(lookup).toHaveBeenCalledTimes(1);
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
-                expect(typeahead.popupMenu.show).toHaveBeenCalled();
-                expect(typeahead.popupMenu._items[0].title).toBe("not found");
+                jasmine.clock().uninstall();
+                mockedclock = false;
+                setTimeout(() => {
+                    expect(lookup).toHaveBeenCalledTimes(1);
+                    expect(lookup).toHaveBeenCalledWith("abc3");
+                    expect(typeahead.popupMenu.show).toHaveBeenCalled();
+                    expect(typeahead.popupMenu._items[0].title).toBe("not found");
+                    done();
+                });
             });
 
-            it("should display popupMenu to allow user select between the available alternatives", () => {
+            it("should display popupMenu to allow user select between the available alternatives", (done) => {
                 spyOn(typeahead.popupMenu, "show");
-                lookup.and.callFake((query, next) => {next([{}, {}, {}]);});
+                lookup.and.returnValue(Promise.resolve([{}, {}, {}]));
                 build.and.returnValues({title: "a"}, {title: "b", iconClass: "fas fa-plus"}, {title: "c", description: "A description"});
-                textfield.setValue("abc");
+                textfield.setValue("abc5");
                 jasmine.clock().tick(200);
 
-                expect(lookup).toHaveBeenCalledTimes(1);
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
-                expect(typeahead.popupMenu.show).toHaveBeenCalledTimes(1);
-                expect(typeahead.popupMenu.show).toHaveBeenCalled();
-                expect(build).toHaveBeenCalledTimes(3);
+                jasmine.clock().uninstall();
+                mockedclock = false;
+                setTimeout(() => {
+                    expect(lookup).toHaveBeenCalledTimes(1);
+                    expect(lookup).toHaveBeenCalledWith("abc5");
+                    expect(typeahead.popupMenu.show).toHaveBeenCalledTimes(1);
+                    expect(typeahead.popupMenu.show).toHaveBeenCalled();
+                    expect(build).toHaveBeenCalledTimes(3);
+                    done();
+                });
             });
 
-            it("should allow to select from the proposed completions", () => {
-                var data = {};
+            it("should allow to select from the proposed completions", (done) => {
+                const data = {};
                 spyOn(typeahead.popupMenu, "show");
-                lookup.and.callFake((query, next) => {next([{}, data, {}]);});
+                lookup.and.returnValue([{}, data, {}]);
                 build.and.returnValues({title: "a"}, {title: "b", value: "newvalue"}, {title: "c"});
-                textfield.setValue("abc");
+                textfield.setValue("abc6");
                 jasmine.clock().tick(200);
-                lookup.calls.reset();
 
-                typeahead.popupMenu._items[1].click();
+                jasmine.clock().uninstall();
+                mockedclock = false;
+                setTimeout(() => {
+                    lookup.calls.reset();
+                    jasmine.clock().install();
+                    mockedclock = true;
 
-                expect(textfield.getValue()).toBe("newvalue");
-                // Changing text field value should not trigger a new search
-                jasmine.clock().tick(200);
-                expect(lookup).not.toHaveBeenCalled();
+                    typeahead.popupMenu._items[1].click();
+
+                    expect(textfield.getValue()).toBe("newvalue");
+                    // Changing text field value should not trigger a new search
+                    jasmine.clock().tick(200);
+                    expect(lookup).not.toHaveBeenCalled();
+                    done();
+                });
             });
 
-            it("should support autocomplete = false when selecting from the proposed completions", () => {
+            it("should support autocomplete = false when selecting from the proposed completions", (done) => {
                 typeahead = new StyledElements.Typeahead({build: build, lookup: lookup, autocomplete: false});
-                let textfield = new StyledElements.TextField();
+                const textfield = new StyledElements.TextField();
                 typeahead.bind(textfield);
-                var data = {};
+                const data = {};
                 spyOn(typeahead.popupMenu, "show");
-                lookup.and.callFake((query, next) => {next([{}, data, {}]);});
+                lookup.and.returnValue([{}, data, {}]);
                 build.and.returnValues({title: "a"}, {title: "b", value: "newvalue"}, {title: "c"});
                 textfield.setValue("abc");
                 jasmine.clock().tick(200);
                 lookup.calls.reset();
 
-                typeahead.popupMenu._items[1].click();
+                jasmine.clock().uninstall();
+                mockedclock = false;
+                setTimeout(() => {
+                    jasmine.clock().install();
+                    mockedclock = true;
 
-                expect(textfield.getValue()).toBe("");
-                // Changing text field value should not trigger a new search
-                jasmine.clock().tick(200);
-                expect(lookup).not.toHaveBeenCalled();
+                    typeahead.popupMenu._items[1].click();
+
+                    expect(textfield.getValue()).toBe("");
+                    // Changing text field value should not trigger a new search
+                    jasmine.clock().tick(200);
+                    expect(lookup).not.toHaveBeenCalled();
+                    done();
+                });
             });
 
             it("should manage ArrowDown events", () => {
@@ -312,9 +343,8 @@
             });
 
             it("should abort searches on blur", () => {
-                let request = {
-                    abort: jasmine.createSpy("abort")
-                }
+                const request = Promise.resolve([]);
+                request.abort = jasmine.createSpy("abort");
                 lookup.and.returnValue(request);
                 textfield.setValue("abc");
 
@@ -326,18 +356,18 @@
             });
 
             it("should abort current requests on blur", () => {
-                let request = {
-                    abort: jasmine.createSpy("abort")
-                }
+                const request = Promise.resolve([]);
+                request.abort = jasmine.createSpy("abort");
                 lookup.and.returnValue(request);
-                textfield.setValue("abc");
+                textfield.setValue("abc8");
                 // Wait until Typeahead starts the search request
                 jasmine.clock().tick(200);
+                expect(lookup).toHaveBeenCalledWith("abc8");
 
                 textfield.dispatchEvent("blur");
                 jasmine.clock().tick(200);
 
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
+                expect(lookup).toHaveBeenCalledTimes(1);
                 expect(request.abort).toHaveBeenCalledTimes(1);
                 expect(request.abort).toHaveBeenCalledWith();
             });
@@ -360,24 +390,29 @@
                 textfield.dispatchEvent("submit");
             });
 
-            it("should support filtering entries", () => {
+            it("should support filtering entries", (done) => {
                 const compare = jasmine.createSpy("compare").and.returnValues(1, 0, -1);
                 typeahead = new StyledElements.Typeahead({build: build, lookup: lookup, compare: compare});
-                let textfield = new StyledElements.TextField();
+                const textfield = new StyledElements.TextField();
                 typeahead.bind(textfield);
 
                 spyOn(typeahead.popupMenu, "show");
-                lookup.and.callFake((query, next) => {next([{}, {}, {}]);});
+                lookup.and.returnValue(Promise.resolve([{}, {}, {}]));
                 build.and.returnValues({title: "a"}, {title: "b", iconClass: "fas fa-plus"}, {title: "c", description: "A description"});
                 textfield.setValue("abc");
                 jasmine.clock().tick(200);
 
-                expect(lookup).toHaveBeenCalledTimes(1);
-                expect(lookup).toHaveBeenCalledWith("abc", jasmine.any(Function));
-                expect(typeahead.popupMenu.show).toHaveBeenCalledTimes(1);
-                expect(typeahead.popupMenu.show).toHaveBeenCalled();
-                expect(compare).toHaveBeenCalledTimes(3);
-                expect(build).toHaveBeenCalledTimes(1);
+                jasmine.clock().uninstall();
+                mockedclock = false;
+                setTimeout(() => {
+                    expect(lookup).toHaveBeenCalledTimes(1);
+                    expect(lookup).toHaveBeenCalledWith("abc");
+                    expect(typeahead.popupMenu.show).toHaveBeenCalledTimes(1);
+                    expect(typeahead.popupMenu.show).toHaveBeenCalled();
+                    expect(compare).toHaveBeenCalledTimes(3);
+                    expect(build).toHaveBeenCalledTimes(1);
+                    done();
+                });
             });
 
         });
