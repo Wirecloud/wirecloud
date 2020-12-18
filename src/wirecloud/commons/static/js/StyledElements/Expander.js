@@ -27,20 +27,23 @@
 
     "use strict";
 
+    const defaultOptions = {
+        buttonFloat: 'left',
+        class: '',
+        expandButton: true,
+        listenOnTitle: false,
+        state: 'default',
+        title: null
+    };
+    Object.freeze(defaultOptions);
+
     se.Expander = class Expander extends se.StyledElement {
 
         constructor(options) {
-            var defaultOptions = {
-                'buttonFloat': 'left',
-                'class': '',
-                'expandButton': true,
-                'listenOnTitle': false,
-                'state': 'default',
-                'title': null
-            };
-            options = utils.merge(defaultOptions, options);
+            options = utils.merge({}, defaultOptions, options);
+
             if (!options.expandButton && !options.listenOnTitle) {
-                throw new TypeError();
+                throw new TypeError("at least one of the expandButton or the listenOnTitle options has to be used");
             }
 
             super(['expandChange']);

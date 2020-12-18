@@ -64,15 +64,20 @@
 
             this.addClassName(options.class);
 
-            this.heading = new se.Container({
+            const heading = new se.Container({
                 class: "se-alert-heading"
             });
-            this.heading.appendChild(options.title).insertInto(this.wrapperElement);
+            heading.appendChild(options.title).insertInto(this.wrapperElement);
 
-            this.body = new se.Container({
+            const body = new se.Container({
                 class: "se-alert-body"
             });
-            this.body.appendChild(options.message).insertInto(this.wrapperElement);
+            body.appendChild(options.message).insertInto(this.wrapperElement);
+
+            Object.defineProperties(this, {
+                heading: {value: heading},
+                body: {value: body}
+            });
         }
 
         /**
@@ -84,7 +89,7 @@
          *      The instance on which the member is called.
          */
         addNote(textContent) {
-            var blockquote = document.createElement('blockquote');
+            const blockquote = document.createElement('blockquote');
 
             if (textContent instanceof StyledElements.StyledElement) {
                 textContent.appendTo(blockquote);

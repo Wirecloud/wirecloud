@@ -61,11 +61,18 @@
         this.disableEdition();
     };
 
+    const defaultOptions = {
+        initialContent: ""
+    };
+    Object.freeze(defaultOptions);
+
     se.EditableElement = class EditableElement extends se.StyledElement {
 
         constructor(options) {
 
             super(['change']);
+
+            options = utils.merge({}, defaultOptions, options);
 
             this.wrapperElement = document.createElement('span');
             this.setTextContent(options.initialContent);
@@ -77,6 +84,10 @@
             this.wrapperElement.addEventListener('focus', this._onFocus, true);
             this.wrapperElement.addEventListener('keydown', this._onKeydown, true);
             this.wrapperElement.addEventListener('blur', this._onBlur, true);
+        }
+
+        get editing() {
+            return this.wrapperElement.hasAttribute("contenteditable");
         }
 
         disableEdition() {

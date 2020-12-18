@@ -27,6 +27,142 @@
 
     "use strict";
 
+    const builder = new se.GUIBuilder();
+
+    const defaultOptions = {
+        autocomplete: true,
+        minLength: 1
+    };
+
+    const textField_onchange = function textField_onchange() {
+        if (this.disableChangeEvents) {
+            return;
+        }
+
+        if (this.timeout != null) {
+            clearTimeout(this.timeout);
+        }
+        this.timeout = setTimeout(search.bind(this), 150);
+    };
+
+    const search = function search() {
+        this.timeout = null;
+        this.userQuery = this.cleanedQuery;
+
+        if (this.currentRequest != null && 'abort' in this.currentRequest) {
+            this.currentRequest.abort();
+        }
+        this.currentRequest = null;
+
+        if (this.userQuery.length >= this.minLength) {
+            this.currentRequest = this.lookup(this.userQuery);
+            if (
+                this.currentRequest == null ||
+                typeof(this.currentRequest) !== "object" ||
+                !("then" in this.currentRequest)
+            ) {
+                this.currentRequest = Promise.resolve(this.currentRequest);
+            }
+            this.currentRequest.then(sortResult.bind(this));
+        } else {
+            this.popupMenu.hide();
+        }
+    };
+
+    const filterData = function filterData(data) {
+        return data.filter((entry) => {return this.compare(this.userQuery, entry) === 0;});
+    };
+
+    const sortResult = function sortResult(data) {
+        this.currentRequest = null;
+        this.popupMenu.clear();
+
+        if (Array.isArray(data) && data.length > 0) {
+            if (this.compare) {
+                data = filterData.call(this, data);
+            }
+
+            data.forEach((result) => {
+                this.popupMenu.append(createMenuItem.call(this, this.build(this, result)));
+            });
+        } else {
+            let msg = this.notFoundMessage != null ? this.notFoundMessage : utils.gettext("No results found for <em><t:query/></em>");
+            msg = builder.DEFAULT_OPENING + msg + builder.DEFAULT_CLOSING;
+            msg = builder.parse(msg, {query: this.cleanedQuery});
+            const item = new StyledElements.MenuItem(msg);
+            this.popupMenu.append(item.disable());
+        }
+        this.popupMenu.show(this.textField);
+
+        return this.dispatchEvent('show', data);
+    };
+
+    const popupMenu_onselect = function popupMenu_onselect(popupMenu, menuitem) {
+        // Disable change events to avoid
+        this.disableChangeEvents = true;
+        this.textField.setValue(this.autocomplete ? menuitem.context.value : "");
+        this.textField.focus();
+        this.disableChangeEvents = false;
+
+        menuitem.context = menuitem.context.context;
+        this.dispatchEvent('select', menuitem);
+    };
+
+    const createMenuItem = function createMenuItem(data) {
+        const menuitem = new se.MenuItem(new se.Fragment(utils.highlight(data.title, this.userQuery)), null, data);
+
+        if (data.iconClass) {
+            menuitem.addIconClass(data.iconClass);
+        }
+
+        if (data.description) {
+            menuitem.setDescription(new se.Fragment(utils.highlight(data.description, this.userQuery)));
+        }
+
+        return menuitem;
+    };
+
+    const textField_onkeydown = function textField_onkeydown(textField, event, key) {
+
+        if (this.popupMenu.hasEnabledItem()) {
+            switch (key) {
+            case 'Tab':
+            case 'Enter':
+                event.preventDefault();
+                this.popupMenu.activeItem.click();
+                break;
+            case 'ArrowDown':
+                event.preventDefault();
+                this.popupMenu.moveCursorDown();
+                break;
+            case 'ArrowUp':
+                event.preventDefault();
+                this.popupMenu.moveCursorUp();
+                break;
+            default:
+                // Quit when this doesn't handle the key event.
+            }
+        }
+    };
+
+    const textField_onsubmit = function textField_onsubmit(textField) {
+        if (this.popupMenu.hasEnabledItem()) {
+            this.popupMenu.activeItem.click();
+        }
+    };
+
+    const textField_onblur = function textField_onblur(textField) {
+        if (this.timeout != null) {
+            clearTimeout(this.timeout);
+        }
+        if (this.currentRequest != null && "abort" in this.currentRequest) {
+            this.currentRequest.abort();
+        }
+        this.timeout = null;
+        this.currentRequest = null;
+        setTimeout(this.popupMenu.hide.bind(this.popupMenu), 100);
+    };
+
     se.Typeahead = class Typeahead extends se.ObjectWithEvents {
 
         /**
@@ -41,7 +177,7 @@
          * @param {Object} [options] - [TODO: description]
          */
         constructor(options) {
-            options = utils.merge(utils.clone(defaults), options);
+            options = utils.merge({}, defaultOptions, options);
 
             if (typeof options.build !== "function") {
                 throw new TypeError("build option must be a function");
@@ -52,24 +188,27 @@
             if (options.compare != null && typeof options.compare !== "function") {
                 throw new TypeError("compare option must be a function");
             }
-            super(events);
+            super(["select", "show"]);
 
             this.notFoundMessage = options.notFoundMessage;
 
             this.timeout = null;
             this.currentRequest = null;
-            var popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
+            const popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
             popupMenu.addEventListener('click', popupMenu_onselect.bind(this));
 
             Object.defineProperties(this, {
                 autocomplete: {value: options.autocomplete},
                 build: {value: options.build},
-                cleanedQuery: {get: property_cleanedQuery_get},
                 compare: {value: options.compare},
                 lookup: {value: options.lookup},
                 minLength: {value: options.minLength},
                 popupMenu: {value: popupMenu}
             });
+        }
+
+        get cleanedQuery() {
+            return this.textField != null ? this.textField.value.trim().split(/\s+/).join(" ") : "";
         }
 
         /**
@@ -102,143 +241,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var builder = new se.GUIBuilder();
-    var events = ['select', 'show'];
-
-    var defaults = {
-        autocomplete: true,
-        minLength: 1
-    };
-
-    var property_cleanedQuery_get = function property_cleanedQuery_get() {
-        return this.textField != null ? this.textField.value.trim().split(/\s+/).join(" ") : "";
-    };
-
-    var textField_onchange = function textField_onchange() {
-        if (this.disableChangeEvents) {
-            return;
-        }
-
-        if (this.timeout != null) {
-            clearTimeout(this.timeout);
-        }
-        this.timeout = setTimeout(search.bind(this), 150);
-    };
-
-    var search = function search() {
-        this.timeout = null;
-        this.userQuery = this.cleanedQuery;
-
-        if (this.currentRequest != null && 'abort' in this.currentRequest) {
-            this.currentRequest.abort();
-            this.currentRequest = null;
-        }
-
-        if (this.userQuery.length >= this.minLength) {
-            this.currentRequest = this.lookup(this.userQuery);
-            this.currentRequest.then(sortResult.bind(this));
-        } else {
-            this.popupMenu.hide();
-        }
-    };
-
-    var filterData = function filterData(data) {
-        return data.filter((entry) => {return this.compare(this.userQuery, entry) === 0;});
-    };
-
-    var sortResult = function sortResult(data) {
-        this.currentRequest = null;
-        this.popupMenu.clear();
-
-        if (data.length > 0) {
-            if (this.compare) {
-                data = filterData.call(this, data);
-            }
-
-            data.forEach((result) => {
-                this.popupMenu.append(createMenuItem.call(this, this.build(this, result)));
-            });
-        } else {
-            let msg = this.notFoundMessage != null ? this.notFoundMessage : utils.gettext("No results found for <em><t:query/></em>");
-            msg = builder.DEFAULT_OPENING + msg + builder.DEFAULT_CLOSING;
-            msg = builder.parse(msg, {query: this.cleanedQuery});
-            const item = new StyledElements.MenuItem(msg);
-            this.popupMenu.append(item.disable());
-        }
-        this.popupMenu.show(this.textField.getBoundingClientRect());
-
-        return this.dispatchEvent('show', data);
-    };
-
-    var popupMenu_onselect = function popupMenu_onselect(popupMenu, menuitem) {
-        // Disable change events to avoid
-        this.disableChangeEvents = true;
-        this.textField.setValue(this.autocomplete ? menuitem.context.value : "");
-        this.textField.focus();
-        this.disableChangeEvents = false;
-
-        menuitem.context = menuitem.context.context;
-        this.dispatchEvent('select', menuitem);
-    };
-
-    var createMenuItem = function createMenuItem(data) {
-        var menuitem = new se.MenuItem(new se.Fragment(utils.highlight(data.title, this.userQuery)), null, data);
-
-        if (data.iconClass) {
-            menuitem.addIconClass(data.iconClass);
-        }
-
-        if (data.description) {
-            menuitem.setDescription(new se.Fragment(utils.highlight(data.description, this.userQuery)));
-        }
-
-        return menuitem;
-    };
-
-    var textField_onkeydown = function textField_onkeydown(textField, event, key) {
-
-        if (this.popupMenu.hasEnabledItem()) {
-            switch (key) {
-            case 'Tab':
-            case 'Enter':
-                event.preventDefault();
-                this.popupMenu.activeItem.click();
-                break;
-            case 'ArrowDown':
-                event.preventDefault();
-                this.popupMenu.moveCursorDown();
-                break;
-            case 'ArrowUp':
-                event.preventDefault();
-                this.popupMenu.moveCursorUp();
-                break;
-            default:
-                // Quit when this doesn't handle the key event.
-            }
-        }
-    };
-
-    var textField_onsubmit = function textField_onsubmit(textField) {
-        if (this.popupMenu.hasEnabledItem()) {
-            this.popupMenu.activeItem.click();
-        }
-    };
-
-    var textField_onblur = function textField_onblur(textField) {
-        if (this.timeout != null) {
-            clearTimeout(this.timeout);
-        }
-        if (this.currentRequest != null && 'abort' in this.currentRequest) {
-            this.currentRequest.abort();
-        }
-        this.timeout = null;
-        this.currentRequest = null;
-        setTimeout(this.popupMenu.hide.bind(this.popupMenu), 100);
-    };
 
 })(StyledElements, StyledElements.Utils);

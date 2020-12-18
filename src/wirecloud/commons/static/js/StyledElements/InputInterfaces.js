@@ -53,7 +53,7 @@
     };
 
     ValidationErrorManager.prototype.validate = function validate(field) {
-        var errorCode = field.checkValue();
+        const errorCode = field.checkValue();
         if (errorCode !== StyledElements.InputValidationError.NO_ERROR) {
             field._setError(true);
             this._addValidationError(errorCode, field.getLabel());
@@ -63,7 +63,7 @@
     };
 
     ValidationErrorManager.prototype._buildErrorMsg = function _buildErrorMsg(errorCode) {
-        var msg, fields, i;
+        let msg;
 
         errorCode = parseInt(errorCode, 10);
         switch (errorCode) {
@@ -90,19 +90,19 @@
             break;
         }
 
-        fields = "";
-        for (i = 0; i < this.fieldsWithErrorById[errorCode].length; i += 1) {
+        let fields = "";
+        for (let i = 0; i < this.fieldsWithErrorById[errorCode].length; i += 1) {
             fields += ", " + this.fieldsWithErrorById[errorCode][i];
         }
 
         fields = fields.substring(2);
-        return StyledElements.Utils.interpolate(msg, {'fields': fields});
+        return utils.interpolate(msg, {'fields': fields});
     };
 
     ValidationErrorManager.prototype.toHTML = function toHTML() {
-        var errorCode, errorMsgs = [];
+        const errorMsgs = [];
 
-        for (errorCode in this.fieldsWithErrorById) {
+        for (let errorCode in this.fieldsWithErrorById) {
             if (this.fieldsWithErrorById.hasOwnProperty(errorCode)) {
                 errorMsgs.push(this._buildErrorMsg(errorCode));
             }
@@ -212,6 +212,7 @@
             this.inputElement = new StyledElements.TextArea(options);
             this.events.blur = this.inputElement.events.blur;
         }
+
     }
 
     se.LongTextInputInterface.prototype.parse = StyledElements.TextInputInterface.prototype.parse;
@@ -328,7 +329,7 @@
         }
 
         _setValue(newValue) {
-            var entries;
+            let entries;
 
             if (this._update) {
                 this.inputElement.clear();
@@ -342,7 +343,7 @@
         }
 
         _checkValue(newValue) {
-            var newValueId;
+            let newValueId;
 
             if (typeof newValue !== 'string') {
                 try {
@@ -499,4 +500,4 @@
 
     }
 
-})(StyledElements, StyledElements.utils);
+})(StyledElements, StyledElements.Utils);

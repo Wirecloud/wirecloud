@@ -347,11 +347,12 @@
 
             this.refPosition = refPosition;
 
+            const box = "getBoundingClientRect" in refPosition ? refPosition.getBoundingClientRect() : refPosition;
             if (this.useRefElementWidth) {
-                this.wrapperElement.style.width = this.refPosition.width + "px";
+                this.wrapperElement.style.width = box.width + "px";
             }
 
-            searchBestPosition.call(this, this.refPosition, this._placement);
+            searchBestPosition.call(this, box, this._placement);
 
             return this;
         }

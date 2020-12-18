@@ -36,6 +36,10 @@
          */
         constructor(fieldId, options) {
 
+            if (fieldId == null) {
+                throw new TypeError("missing fieldId parameter");
+            }
+
             super([]);
 
             options.name = fieldId;
@@ -137,7 +141,7 @@
          * value is empty but required is out of scope of this method.
          */
         _checkValue(newValue) {
-            return StyledElements.InputValidationError.NO_ERROR;
+            return se.InputValidationError.NO_ERROR;
         }
 
         /**

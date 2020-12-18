@@ -26,9 +26,9 @@
 
     "use strict";
 
-    describe("Styled MultivaluedInputInterface", () => {
+    describe("MultivaluedInputInterface", () => {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');

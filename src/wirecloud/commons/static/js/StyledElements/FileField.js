@@ -56,13 +56,15 @@
         this.dispatchEvent('blur');
     };
 
+    const defaultOptions = {
+        class: ""
+    };
+    Object.freeze(defaultOptions);
+
     se.FileField = class FileField extends se.InputElement {
 
         constructor(options) {
-            var defaultOptions = {
-                'class': ''
-            };
-            options = utils.merge(defaultOptions, options);
+            options = utils.merge({}, defaultOptions, options);
 
             super(options.initialValue, ['change', 'focus', 'blur']);
 

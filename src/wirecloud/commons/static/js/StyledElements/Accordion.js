@@ -36,7 +36,9 @@
     se.Accordion = class Accordion extends se.StyledElement {
 
         constructor(options) {
-            options = StyledElements.Utils.merge(defaultOptions, options);
+            super();
+
+            options = utils.merge({}, defaultOptions, options);
 
             this.exclusive = options.exclusive;
             this.full = options.full;
