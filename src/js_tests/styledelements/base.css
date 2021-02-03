@@ -41,7 +41,14 @@ li {
     overflow: hidden;
     padding: 0px 12px;
     white-space: nowrap;
-    width: 50px;
+    width: 39px;
+    margin: 0;
+    display: block;
+}
+
+.se-notebook-tab {
+    display: inline-flex;
+    position: relative;
 }
 
 .se-popup-menu {

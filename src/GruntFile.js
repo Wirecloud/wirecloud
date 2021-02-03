@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,13 +25,13 @@
  * version and passing the tests for this framework
  */
 
-var dependencies = [
+const dependencies = [
     'wirecloud/platform/static/js/common/ComputedStyle.js',
     'wirecloud/commons/static/js/lib/urlify.js',
     'wirecloud/commons/static/js/lib/moment-with-locales.min.js',
 ];
 
-var styledElementsFiles = [
+const styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/Utils.js',
     'wirecloud/commons/static/js/StyledElements/Event.js',
     'wirecloud/commons/static/js/StyledElements/ObjectWithEvents.js',
@@ -196,7 +196,7 @@ module.exports = function (grunt) {
             options: {
                 frameworks: ['jasmine'],
                 reporters: ['progress', 'coverage'],
-                browsers: ['Firefox'],
+                browsers: ["FirefoxHeadless"],
                 singleRun: true
             },
             styledelements: {
@@ -216,7 +216,7 @@ module.exports = function (grunt) {
             },
             styledelementsdebug: {
                 options: {
-                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/*Spec.js']),
+                    files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/base.css', 'js_tests/styledelements/*Spec.js']),
                     browsers: ['Firefox'],
                     singleRun: false
                 }
