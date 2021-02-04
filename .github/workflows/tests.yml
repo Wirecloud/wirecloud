@@ -1,0 +1,132 @@
+name: Tests
+
+on:
+
+  push:
+    branches:
+      - develop
+
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+
+  js-unit-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+      - run: cd src
+      - run: npm ci
+      - run: npm install grunt-cli -g
+      - run: grunt ci
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          flag-name: browsers
+          path-to-lcov: src/build/coverage/lcov.info
+          parallel: true
+
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Python
+        uses: actions/setup-python@v2
+      - run: cd src
+      - run: ./setup.py bdist_wheel
+      - name: Upload build wheel
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheel
+          path: src/dist/*.whl
+
+
+  django-unit-tests:
+
+    runs-on: ubuntu-latest
+
+    needs:
+      - build
+
+    strategy:
+      matrix:
+        django-version:
+          - 2.0
+          - 2.1
+          - 2.2
+        python-version:
+          - 3.5
+          - 3.6
+          - 3.7
+          - pypy-3.6
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - run: cd src
+      - name: Download WireCloud wheel
+        uses: actions/download-artifact@v2
+        with:
+          name: wheel
+      - run: pip install "Django>=2.0,<2.1"
+      - run: pip install psycopg2
+      - run: pip install wirecloud*.whl
+      - run: pip install -r requirements-dev.txt
+      - run: python manage.py collectstatic -v 0 -c --noinput
+
+
+  django-search-indexes-tests:
+
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Python
+        uses: actions/setup-python@v2
+
+
+  django-selenium-tests:
+
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Python
+        uses: actions/setup-python@v2
+
+
+  finish:
+
+    needs:
+      - django-unit-tests
+      - django-search-indexes-tests
+      - django-selenium-tests
+      - js-unit-tests
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
