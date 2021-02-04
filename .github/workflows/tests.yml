@@ -20,10 +20,12 @@ jobs:
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v1
-      - run: cd src
-      - run: npm ci
-      - run: npm install grunt-cli -g
-      - run: grunt ci
+      - name: Setup and run tests
+        working-directory: ./src
+        run: |
+          npm ci
+          npm install grunt-cli -g
+          grunt ci
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
         with:
@@ -41,8 +43,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
-      - run: cd src
-      - run: ./setup.py bdist_wheel
+      - name: Build
+        working-directory: ./src
+        run: ./setup.py bdist_wheel
       - name: Upload build wheel
         uses: actions/upload-artifact@v2
         with:
@@ -81,16 +84,19 @@ jobs:
         with:
           postgresql db: wirecloud
           postgresql user: postgres
-      - run: cd src
       - name: Download WireCloud wheel
         uses: actions/download-artifact@v2
         with:
           name: wheel
-      - run: pip install "Django>=2.0,<2.1"
-      - run: pip install psycopg2
-      - run: pip install wirecloud*.whl
-      - run: pip install -r requirements-dev.txt
-      - run: python manage.py collectstatic -v 0 -c --noinput
+          path: src
+      - name: Setup and run tests
+        working-directory: ./src
+        run: |
+          pip install "Django>=2.0,<2.1"
+          pip install psycopg2
+          pip install wirecloud*.whl
+          pip install -r requirements-dev.txt
+          python manage.py collectstatic -v 0 -c --noinput
 
 
   django-search-indexes-tests:
@@ -109,6 +115,11 @@ jobs:
         with:
           postgresql db: wirecloud
           postgresql user: postgres
+      - name: Download WireCloud wheel
+        uses: actions/download-artifact@v2
+        with:
+          name: wheel
+          path: src
 
 
   django-selenium-tests:
@@ -127,6 +138,11 @@ jobs:
         with:
           postgresql db: wirecloud
           postgresql user: postgres
+      - name: Download WireCloud wheel
+        uses: actions/download-artifact@v2
+        with:
+          name: wheel
+          path: src
 
 
   finish:
