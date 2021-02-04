@@ -113,13 +113,19 @@ CACHES = {
     }
 }
 
-# WireCloud autodiscover Wirecloud plugins by default. Uncomment this for settings
-# the list of plugins manually.
-#
-# WIRECLOUD_PLUGINS = (
-#     'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
-#     'wirecloud.fiware.plugins.FiWarePlugin',
-# )
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'wirecloud'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': '',
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+        'TEST': {
+            'NAME': os.environ.get('DB_NAME', 'wirecloud'),
+        },
+    }
+}
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 

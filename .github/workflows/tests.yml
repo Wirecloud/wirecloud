@@ -76,6 +76,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
+      - name: Setup PostgreSQL
+        uses: Harmon758/postgresql-action@v1.0.0
+        with:
+          postgresql db: wirecloud
+          postgresql user: postgres
       - run: cd src
       - name: Download WireCloud wheel
         uses: actions/download-artifact@v2
@@ -99,6 +104,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
+      - name: Setup PostgreSQL
+        uses: Harmon758/postgresql-action@v1.0.0
+        with:
+          postgresql db: wirecloud
+          postgresql user: postgres
 
 
   django-selenium-tests:
@@ -112,6 +122,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
+      - name: Setup PostgreSQL
+        uses: Harmon758/postgresql-action@v1.0.0
+        with:
+          postgresql db: wirecloud
+          postgresql user: postgres
 
 
   finish:
