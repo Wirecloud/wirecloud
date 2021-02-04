@@ -3,6 +3,7 @@ repos:
     rev: v2.5.0
     hooks:
     -   id: flake8
+        exclude: ^src/ci_scripts/
 -   repo: local
     hooks:
     -   id: eslint

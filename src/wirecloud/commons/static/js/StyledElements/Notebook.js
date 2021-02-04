@@ -142,7 +142,7 @@
         };
 
         var initFunc = function initFunc(context, command) {
-            var firstVisibleTab, currentTab, maxScrollLeft, baseTime, stepTimes, computedStyle, padding;
+            var firstVisibleTab, maxScrollLeft, baseTime, stepTimes, computedStyle, padding;
 
             context.initialScrollLeft = context.control.tabArea.wrapperElement.scrollLeft;
             computedStyle = document.defaultView.getComputedStyle(context.control.tabArea.wrapperElement, null);
@@ -156,8 +156,8 @@
                 }
 
                 firstVisibleTab = getFirstVisibleTab.call(context.control);
-                currentTab = context.control.tabs[firstVisibleTab - 1].getTabElement();
-                context.finalScrollLeft = currentTab.offsetLeft - padding;
+                context.tab = context.control.tabs[firstVisibleTab - 1];
+                context.finalScrollLeft = context.tab.getTabElement().offsetLeft - padding;
                 break;
 
             case 'shiftRight':
@@ -166,19 +166,20 @@
                 }
 
                 firstVisibleTab = getFirstVisibleTab.call(context.control);
-                currentTab = context.control.tabs[firstVisibleTab + 1].getTabElement();
-                context.finalScrollLeft = currentTab.offsetLeft - padding;
+                context.tab = context.control.tabs[firstVisibleTab + 1];
+                context.finalScrollLeft = context.tab.getTabElement().offsetLeft - padding;
                 break;
             case 'focus':
-                if (context.control.tabsById[command.tabId] == null) {
+                if (command.tab == null || context.control.tabsById[command.tab.tabId] !== command.tab) {
+                    // Tab removed
                     return false;
                 }
-                currentTab = context.control.tabsById[command.tabId].getTabElement();
+                context.tab = command.tab;
 
-                if (isTabVisible.call(context.control, context.control.getTabIndex(command.tabId), true)) {
+                if (isTabVisible.call(context.control, context.control.getTabIndex(command.tab), true)) {
                     return false;
                 }
-                context.finalScrollLeft = currentTab.offsetLeft - padding;
+                context.finalScrollLeft = context.tab.getTabElement().offsetLeft - padding;
                 break;
             }
 
@@ -197,7 +198,12 @@
             context.step = 0;
             context.inc = Math.floor((context.finalScrollLeft - context.initialScrollLeft) / context.steps);
             return new Promise((resolve, reject) => {
-                var doStep = function doStep() {
+                var doStep = () => {
+                    if (context.control.tabsById[context.tab.tabId] !== context.tab) {
+                        // Tab removed
+                        return resolve();
+                    }
+
                     var cont = stepFunc(context.step, context);
 
                     if (cont) {
@@ -213,7 +219,7 @@
                     }
                 };
 
-                doStep();
+                setTimeout(doStep, 0);
             });
         };
 
@@ -305,7 +311,7 @@
      *     A promise tracking the progress of animation
      */
     Notebook.prototype.shiftLeftTabs = function shiftLeftTabs() {
-        return this.transitionsQueue.addCommand({type: 'shiftLeft'});
+        return this.transitionsQueue.addCommand({type: "shiftLeft"});
     };
 
     /**
@@ -317,7 +323,7 @@
      *     A promise tracking the progress of animation
      */
     Notebook.prototype.shiftRightTabs = function shiftRightTabs() {
-        return this.transitionsQueue.addCommand({type: 'shiftRight'});
+        return this.transitionsQueue.addCommand({type: "shiftRight"});
     };
 
     /**
@@ -448,6 +454,13 @@
      * actual.
      */
     Notebook.prototype.getTabIndex = function getTabIndex(id) {
+        if (id instanceof StyledElements.Tab) {
+            if (this.tabsById[id.tabId] !== id) {
+                return null;
+            }
+            id = id.tabId;
+        }
+
         for (var i = 0; i < this.tabs.length; i++) {
             if (this.tabs[i].tabId === id) {
                 return i;
@@ -576,7 +589,7 @@
                 throw new TypeError('Invalid tab id');
             }
         }
-        return this.transitionsQueue.addCommand({type: 'focus', tabId: tab.tabId});
+        return this.transitionsQueue.addCommand({type: "focus", tab: tab});
     };
 
     Notebook.prototype.repaint = function repaint(temporal) {
