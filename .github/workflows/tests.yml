@@ -63,14 +63,13 @@ jobs:
     strategy:
       matrix:
         django-version:
-          - 2.0
-          - 2.1
-          - 2.2
+          - "2.0"
+          - "2.1"
+          - "2.2"
         python-version:
-          - 3.5
-          - 3.6
-          - 3.7
-          - pypy-3.6
+          - "3.5"
+          - "3.6"
+          - "3.7"
 
     steps:
       - uses: actions/checkout@v2
@@ -97,6 +96,7 @@ jobs:
           pip install wirecloud*.whl
           pip install -r requirements-dev.txt
           python manage.py collectstatic -v 0 -c --noinput
+          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-noselenium'
 
 
   django-search-indexes-tests:
