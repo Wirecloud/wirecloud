@@ -196,7 +196,7 @@ module.exports = function (grunt) {
             options: {
                 frameworks: ['jasmine'],
                 reporters: ['progress', 'coverage'],
-                browsers: ["FirefoxHeadless"],
+                browsers: ["ChromeHeadless"],
                 singleRun: true
             },
             styledelements: {
@@ -217,7 +217,7 @@ module.exports = function (grunt) {
             styledelementsdebug: {
                 options: {
                     files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/base.css', 'js_tests/styledelements/*Spec.js']),
-                    browsers: ['Firefox'],
+                    browsers: ['Chrome', 'Firefox'],
                     singleRun: false
                 }
             },
@@ -241,7 +241,7 @@ module.exports = function (grunt) {
             wireclouddebug: {
                 options: {
                     files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/**/*Spec.js']),
-                    browsers: ['Firefox'],
+                    browsers: ['Chrome', 'Firefox'],
                     singleRun: false
                 }
             }
