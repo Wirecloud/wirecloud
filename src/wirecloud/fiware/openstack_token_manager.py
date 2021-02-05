@@ -124,7 +124,7 @@ class OpenstackTokenManager(object):
                 # Ask for permissions for every project
                 response = getProjectPermissions("{}/keystone/v3/projects/{}".format(self.url, projectid), generalToken)
                 responseJson = response.json()
-                if responseJson.get("project").get("is_cloud_project") and (tenantid is "__default__" or responseJson.get("project").get("id") == tenantid):
+                if responseJson.get("project").get("is_cloud_project") and (tenantid == "__default__" or responseJson.get("project").get("id") == tenantid):
 
                     # And if the project was cloud, we finally ask for the token
                     projectTokenR = get_openstack_project_token("{}/keystone/v3/auth/tokens".format(self.url), projectid, idmtoken)

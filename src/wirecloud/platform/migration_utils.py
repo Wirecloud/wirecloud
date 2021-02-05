@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -24,15 +25,15 @@ def workspace_and_tab_title_data_forwards(apps, schema_editor):
     # Migrate workspace titles
     workspaces = apps.get_model("platform", "workspace")
     for workspace in workspaces.objects.all():
-        if workspace.title is None or workspace.title.strip() is "":
+        if workspace.title is None or workspace.title.strip() == "":
             workspace.title = workspace.name
             workspace.save()
-            #workspace.title if workspace.title is not None and workspace.title.strip() != "" else workspace.name
+            # workspace.title if workspace.title is not None and workspace.title.strip() != "" else workspace.name
 
     # Migrate tab titles
     tabs = apps.get_model("platform", "tab")
     for tab in tabs.objects.all():
-        if tab.title is None or tab.title.strip() is "":
+        if tab.title is None or tab.title.strip() == "":
             tab.title = tab.name
             tab.save()
 

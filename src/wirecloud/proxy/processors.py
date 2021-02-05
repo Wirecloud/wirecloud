@@ -41,7 +41,7 @@ def get_variable_value_by_ref(ref, user, cache_manager, component_type, componen
 
     try:
         return cache_manager.get_variable_value_from_varname("i" + component_type, component_id, result.group('var_name'))
-    except:
+    except Exception:
         return None
 
 

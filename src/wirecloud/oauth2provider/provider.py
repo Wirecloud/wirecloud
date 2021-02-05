@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -270,7 +271,7 @@ class WirecloudAuthorizationProvider(object):
         # Check conditions
         try:
             client = self.get_client(client_id)
-        except:
+        except Application.DoesNotExist:
             return self._make_error_response(request, 'invalid_client')
 
         # Validate grant info
@@ -330,7 +331,7 @@ class WirecloudAuthorizationProvider(object):
         # Check conditions
         try:
             client = self.get_client(client_id)
-        except:
+        except Application.DoesNotExist:
             return self._make_error_response(request, 'invalid_client')
 
         # Validate grant info

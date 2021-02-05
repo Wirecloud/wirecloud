@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -48,10 +49,7 @@ class Version(object):
         else:
             self.prerelease = None
 
-        if dev:
-            self.dev = True
-        else:
-            self.dev = False
+        self.dev = True if dev else False
 
         self.reverse = reverse
 

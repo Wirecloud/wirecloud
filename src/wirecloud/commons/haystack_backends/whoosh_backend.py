@@ -15,8 +15,6 @@ from haystack.constants import DJANGO_CT, DJANGO_ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
 from haystack.utils import get_model_ct
-from haystack import indexes
-from haystack.fields import FacetMultiValueField
 from haystack.utils.app_loading import haystack_get_model
 from whoosh.query import And, Or, Term
 from whoosh.sorting import FieldFacet

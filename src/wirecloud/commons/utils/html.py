@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -26,7 +27,7 @@ from urllib.parse import urljoin, urlparse
 from wirecloud.commons.utils.version import Version
 
 
-VERSION_HEADER_RE = re.compile('[\s(]')
+VERSION_HEADER_RE = re.compile(r"[\s(]")
 
 
 def clean_html(code, base_url=None):
@@ -81,7 +82,7 @@ def filter_changelog(code, from_version):
         title = header.text[1:] if header.text.startswith('v') else header.text
         try:
             version = Version(VERSION_HEADER_RE.split(title, 1)[0])
-        except:
+        except ValueError:
             continue
 
         parentelement = header.getparent()
@@ -97,7 +98,7 @@ def filter_changelog(code, from_version):
             title = header.text[1:] if header.text.startswith('v') else header.text
             try:
                 version = Version(VERSION_HEADER_RE.split(title, 1)[0])
-            except:
+            except ValueError:
                 continue
 
             if version <= from_version:

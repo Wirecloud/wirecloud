@@ -12,8 +12,6 @@ from haystack.backends.solr_backend import SolrEngine as OriginalSolrEngine, Sol
 from haystack.constants import DJANGO_CT, DJANGO_ID, ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
-from haystack import indexes
-from haystack.fields import FacetField
 from haystack.utils.app_loading import haystack_get_model
 
 

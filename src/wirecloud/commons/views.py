@@ -127,9 +127,9 @@ def get_javascript_catalog(locale, domain, packages):
                 t = locale_t
     plural = None
     if '' in t:
-        for l in t[''].split('\n'):
-            if l.startswith('Plural-Forms:'):
-                plural = l.split(':', 1)[1].strip()
+        for line in t[''].split('\n'):
+            if line.startswith('Plural-Forms:'):
+                plural = line.split(':', 1)[1].strip()
     if plural is not None:
         # this should actually be a compiled function of a typical plural-form:
         # Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 :

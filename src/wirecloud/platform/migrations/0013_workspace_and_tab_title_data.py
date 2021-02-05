@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from django.db import migrations, models
+from django.db import migrations
 
 from wirecloud.platform.migration_utils import workspace_and_tab_title_data_forwards
+
 
 class Migration(migrations.Migration):
 
