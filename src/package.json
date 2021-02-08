@@ -4,7 +4,6 @@
   "devDependencies": {
     "grunt": "^1.0.4",
     "grunt-contrib-uglify-es": "^3.3.0",
-    "grunt-coveralls": "^2.0.0",
     "grunt-jsdoc": "^2.4.0",
     "grunt-karma": "^3.0.2",
     "grunt-lcov-merge": "^1.2.3",
