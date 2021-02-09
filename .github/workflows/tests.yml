@@ -31,6 +31,7 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
           flag-name: browsers
+          base-path: src
           path-to-lcov: src/build/coverage/lcov.info
           parallel: true
 
@@ -55,10 +56,10 @@ jobs:
 
   django-unit-tests:
 
-    runs-on: ubuntu-latest
-
     needs:
       - build
+
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -73,17 +74,15 @@ jobs:
           - "3.9"
 
     steps:
+      - name: Setup PostgreSQL
+        run: |
+          docker run -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 postgres:latest
       - uses: actions/checkout@v2
       - name: Use Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - name: Setup PostgreSQL
-        uses: Harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql db: wirecloud
-          postgresql user: postgres
       - name: Download WireCloud wheel
         uses: actions/download-artifact@v2
         with:
@@ -116,20 +115,34 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        engine:
+          - "Elasticsearch"
+          - "Solr"
+
     steps:
+      - name: Setup PostgreSQL
+        run: |
+          docker run -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 postgres:latest
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
-      - name: Setup PostgreSQL
-        uses: Harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql db: wirecloud
-          postgresql user: postgres
       - name: Download WireCloud wheel
         uses: actions/download-artifact@v2
         with:
           name: wheel
           path: src
+      - name: Use Elasticsearch
+        working-directory: ./src
+        run: |
+          docker run -p 9200:9200 --rm -d elasticsearch:2.4
+        if: ${{ matrix.engine == 'Elasticsearch' }}
+      - name: Use Solr
+        working-directory: ./src
+        run: |
+          docker run -p 8983:8983 --rm --name solr -d solr:6
+        if: ${{ matrix.engine == 'Solr' }}
       - name: Setup and run tests
         working-directory: ./src
         run: |
@@ -137,6 +150,23 @@ jobs:
           pip install psycopg2
           pip install wirecloud*.whl
           pip install -r requirements-dev.txt
+          cp ci_scripts/base_settings.py settings.py
+          if [ "${{ matrix.engine }}" == "Elasticsearch" ]; then
+            pip install elasticsearch==2.4.1
+            cat ci_scripts/templates/elasticsearch-conf.template >> settings.py
+          else
+            pip install pysolr
+            cat ci_scripts/templates/solr-conf.template >> settings.py
+            mkdir solr_conf
+            python manage.py build_solr_schema --configure-directory solr_conf
+            docker exec --user=solr solr bin/solr create -c tester -n basic_config
+            docker exec solr rm -f /opt/solr/server/solr/tester/conf/managed-schema.xml
+            docker cp solr_conf/schema.xml solr:/opt/solr/server/solr/tester/conf/
+            docker cp solr_conf/solrconfig.xml solr:/opt/solr/server/solr/tester/conf/
+
+            # Reload the Solr core
+            curl "http://localhost:8983/solr/admin/cores?action=RELOAD&core=tester"
+          fi
           python manage.py collectstatic -v 0 -c --noinput
           coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-search-api'
       - name: Coveralls Parallel
@@ -156,14 +186,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Setup PostgreSQL
+        run: |
+          docker run -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 postgres:latest
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
-      - name: Setup PostgreSQL
-        uses: Harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql db: wirecloud
-          postgresql user: postgres
       - name: Download WireCloud wheel
         uses: actions/download-artifact@v2
         with:
@@ -177,7 +205,7 @@ jobs:
           pip install wirecloud*.whl
           pip install -r requirements-dev.txt
           python manage.py collectstatic -v 0 -c --noinput
-          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-search-api'
+          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-selenium'
       - name: Coveralls Parallel
         uses: AndreMiras/coveralls-python-action@develop
         with:

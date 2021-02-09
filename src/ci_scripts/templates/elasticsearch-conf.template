@@ -1,7 +1,7 @@
 TEST_HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
-        'URL': os.environ['INDEX_URI'],
+        'URL': 'http://localhost:9200',
         'INDEX_NAME': 'wirecloud_testing',
     },
 }

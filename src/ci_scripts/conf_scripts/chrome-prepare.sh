@@ -1,1 +1,0 @@
-export BROWSER_TYPE="CHROME"
