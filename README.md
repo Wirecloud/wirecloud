@@ -13,7 +13,7 @@
 [![Current stable version](https://img.shields.io/pypi/v/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
 <br/>
 [![Documentation badge](https://img.shields.io/readthedocs/wirecloud.svg)](http://wirecloud.readthedocs.org/en/latest/)
-[![Build Status](https://travis-ci.org/Wirecloud/wirecloud.svg?branch=develop)](https://travis-ci.org/Wirecloud/wirecloud)
+[![Tests](https://github.com/Wirecloud/wirecloud/workflows/Tests/badge.svg)](https://github.com/Wirecloud/wirecloud/actions?query=workflow%3A%22Tests%22)
 [![Coverage Status](https://coveralls.io/repos/github/Wirecloud/wirecloud/badge.svg?branch=develop)](https://coveralls.io/github/Wirecloud/wirecloud?branch=develop)
 ![Status](https://nexus.lab.fiware.org/static/badges/statuses/wirecloud.svg)
 
