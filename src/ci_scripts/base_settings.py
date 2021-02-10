@@ -132,4 +132,8 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # By default, no selenium test is passed
-WIRECLOUD_SELENIUM_TEST_BROWSERS = {}
+WIRECLOUD_SELENIUM_TEST_BROWSERS = {
+    'Firefox': {
+        'CLASS': 'selenium.webdriver.Firefox',
+    },
+}

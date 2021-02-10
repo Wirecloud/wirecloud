@@ -189,9 +189,15 @@ jobs:
       - name: Setup PostgreSQL
         run: |
           docker run -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 postgres:latest
+      - name: Use Geckodriver
+        uses: browser-actions/setup-geckodriver@latest
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
+      - name: Use Elasticsearch
+        working-directory: ./src
+        run: |
+          docker run -p 9200:9200 --rm -d elasticsearch:2.4
       - name: Download WireCloud wheel
         uses: actions/download-artifact@v2
         with:
@@ -199,11 +205,16 @@ jobs:
           path: src
       - name: Setup and run tests
         working-directory: ./src
+        env:
+          MOZ_HEADLESS: 1
         run: |
           pip install "Django>=2.2,<2.3"
           pip install psycopg2
           pip install wirecloud*.whl
           pip install -r requirements-dev.txt
+          cp ci_scripts/base_settings.py settings.py
+          pip install elasticsearch==2.4.1
+          cat ci_scripts/templates/elasticsearch-conf.template >> settings.py
           python manage.py collectstatic -v 0 -c --noinput
           coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-selenium'
       - name: Coveralls Parallel
