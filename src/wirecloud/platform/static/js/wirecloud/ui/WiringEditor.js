@@ -867,12 +867,18 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.orderableComponent = component;
         this.connectionEngine.enabled = false;
         this.suggestionManager.disable();
+
+        this.layout.content.get().removeEventListener('click', this._layout_onclick);
     };
 
     var component_onorderend = function component_onorderend(component) {
         this.orderableComponent = null;
         this.connectionEngine.enabled = true;
         this.suggestionManager.enable();
+
+        setTimeout(() => {
+            this.layout.content.get().addEventListener('click', this._layout_onclick);
+        }, 0);
     };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);
