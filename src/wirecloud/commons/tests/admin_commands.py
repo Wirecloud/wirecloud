@@ -23,7 +23,6 @@ import shutil
 from tempfile import mkdtemp
 from unittest.mock import DEFAULT, Mock, patch
 
-import django
 from django.core.management.base import CommandError
 from django.test import TestCase
 

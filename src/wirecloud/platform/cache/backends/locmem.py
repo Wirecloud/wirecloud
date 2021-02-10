@@ -15,11 +15,11 @@ import sys
 
 class LocMemCache(locmem.LocMemCache):
     def add(self, key, value, timeout=None, version=None):
-        if timeout is 0:
+        if timeout == 0:
             timeout = sys.maxint
         return super(LocMemCache, self).add(smart_str(key), value, timeout, version)
 
     def set(self, key, value, timeout=None, version=None):
-        if timeout is 0:
+        if timeout == 0:
             timeout = sys.maxint
         return super(LocMemCache, self).set(smart_str(key), value, timeout, version)

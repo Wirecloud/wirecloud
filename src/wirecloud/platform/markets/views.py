@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -72,7 +73,7 @@ class MarketCollection(Resource):
         else:
             try:
                 target_user = User.objects.get(username=received_data['user'])
-            except:
+            except User.DoesNotExist:
                 return build_error_response(request, 422, _("invalid user option"))
 
         if target_user != request.user and not request.user.is_superuser:

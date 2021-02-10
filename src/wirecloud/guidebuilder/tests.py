@@ -89,8 +89,8 @@ def merge_images(img1, img2, position):
 def add_image(imgp, position, imagename):
     lp = image_path(imagename, resource=True)
     base = Image.open(imgp)
-    l = Image.open(lp)
-    merge_images(base, l, position)
+    image = Image.open(lp)
+    merge_images(base, image, position)
     base.save(imgp)
 
 
@@ -1061,7 +1061,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 # - Locate Technicians
                 # - Allow technician searches
                 behaviour1 = sidebar.find_behaviour("Allow technician searches")
-                behaviour2 = sidebar.find_behaviour("Display technician profiles")
+                sidebar.find_behaviour("Display technician profiles")
                 behaviour3 = sidebar.find_behaviour("Locate technicians")
 
                 # Reorder the behaviours
@@ -1209,6 +1209,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         time.sleep(3)
         imgp = take_capture(self.driver, "weather_dashboard")
 
-        import ipdb; ipdb.sset_trace()
+        # import ipdb; ipdb.sset_trace()
         imgp = take_capture(self.driver, "example_usage")
     test_sanity_check.tags = tags + ('wirecloud-guide-sanity-check',)

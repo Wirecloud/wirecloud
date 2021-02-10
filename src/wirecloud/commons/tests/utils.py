@@ -22,7 +22,6 @@ import os
 from unittest.mock import DEFAULT, patch, Mock, ANY
 import zipfile
 
-import django
 from django.http import Http404, UnreadablePostError
 from django.test import TestCase
 from django.test.utils import override_settings

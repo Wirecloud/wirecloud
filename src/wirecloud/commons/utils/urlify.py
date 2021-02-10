@@ -166,10 +166,10 @@ def URLify(s, num_chars=0):
     s = re.sub(REMOVE_WORD_RE, '', s)
 
     # if downcode doesn't hit, the char will be stripped here
-    s = re.sub(REMOVE_UNNEEDED_RE, '', s)         # remove unneeded chars
-    s = s.strip()                                 # trim leading/trailing spaces
-    s = re.sub(REMOVE_SPACES_RE, '-', s)          # convert spaces to hyphens
+    s = re.sub(REMOVE_UNNEEDED_RE, '', s)          # remove unneeded chars
+    s = s.strip()                                  # trim leading/trailing spaces
+    s = re.sub(REMOVE_SPACES_RE, '-', s)           # convert spaces to hyphens
     if num_chars > 0:
-        s = s[0:num_chars]                        # trim to first num_chars chars
-    s = re.sub(REMOVE_TRAILING_HYPHENS_RE, '', s) # trim any trailing hyphens
-    return s.lower()                              # convert to lowercase
+        s = s[0:num_chars]                         # trim to first num_chars chars
+    s = re.sub(REMOVE_TRAILING_HYPHENS_RE, '', s)  # trim any trailing hyphens
+    return s.lower()                               # convert to lowercase

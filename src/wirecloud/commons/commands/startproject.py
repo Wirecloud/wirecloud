@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -22,7 +23,6 @@ import os
 import subprocess
 import sys
 
-import django
 from django.core.management.base import CommandError
 from django.core.management.commands.startproject import Command
 from django.utils.safestring import mark_safe

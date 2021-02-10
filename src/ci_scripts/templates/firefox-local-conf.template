@@ -1,5 +1,0 @@
-WIRECLOUD_SELENIUM_TEST_BROWSERS.update({
-    'Firefox': {
-        'CLASS': 'selenium.webdriver.Firefox',
-    },
-})

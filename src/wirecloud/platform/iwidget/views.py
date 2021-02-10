@@ -66,7 +66,7 @@ class IWidgetCollection(Resource):
             iwidget_data = get_iwidget_data(iwidget, tab.workspace, user=request.user)
 
             return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8', status=201)
-        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
+        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist):
             msg = _('refered widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
         except TypeError as e:
@@ -132,7 +132,7 @@ class IWidgetEntry(Resource):
             UpdateIWidget(iwidget, request.user, tab)
         except Tab.DoesNotExist:
             return build_error_response(request, 422, _("Target tab {id} does not exist").format(id=iwidget['tab']))
-        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
+        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist):
             msg = _('refered widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
         except TypeError as e:
@@ -178,7 +178,7 @@ class IWidgetPreferences(Resource):
 
         try:
             iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
-        except:
+        except Exception:
             return build_error_response(request, 403, _('Missing widget variables cannot be updated'))
 
         new_values = parse_json_request(request)
@@ -226,7 +226,7 @@ class IWidgetPreferences(Resource):
 
         try:
             iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
-        except:
+        except Exception:
             return build_error_response(request, 403, _('Missing widget variables cannot be updated'))
 
         cache_manager = VariableValueCacheManager(workspace, request.user)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -23,7 +24,7 @@ import shutil
 import sys
 import time
 
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException, WebDriverException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -36,10 +37,8 @@ from wirecloud.commons.utils import expected_conditions as WEC
 def marketplace_loaded(driver):
     try:
         return driver.find_element_by_css_selector('#wirecloud_breadcrum').text != 'loading marketplace view...'
-    except:
-        pass
-
-    return False
+    except WebDriverException:
+        return False
 
 
 class PopupMenuTester(object):
@@ -264,7 +263,7 @@ class WebElementTester(object):
     def find_elements(self, css_selector):
         try:
             elements = self.element.find_elements_by_css_selector(css_selector)
-        except:
+        except WebDriverException:
             return []
 
         return elements
@@ -1306,8 +1305,8 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         cls.driver = getattr(module, klass_name)(**webdriver_args)
         cls.driver.set_window_size(1024, 800)
         cls._driver_needs_unload = (
-            cls.driver.capabilities['browserName'] == 'firefox' and
-            cls.driver.capabilities.get('browserVersion', '0').split('.') > ['52', '3']
+            cls.driver.capabilities['browserName'] == 'firefox'
+            and cls.driver.capabilities.get('browserVersion', '0').split('.') > ['52', '3']
         )
 
     @classmethod
@@ -1343,7 +1342,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         # Work around chrome and firefox driver bugs
         try:
             self.driver.execute_script("arguments[0].scrollIntoView(false);", element)
-        except:
+        except WebDriverException:
             pass
         ActionChains(self.driver).click(element).perform()
 
@@ -1387,7 +1386,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             loading_message = loading_window.find_element_by_id('loading-message')
             try:
                 self.driver.execute_script("arguments[0].click();", loading_message)
-            except:
+            except WebDriverException:
                 pass
 
         if embedded:
@@ -1419,7 +1418,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         try:
             return self.driver.execute_script("return document.querySelector('.wc-body').classList.contains('se-on-transition') ? '' : Wirecloud.UserInterfaceManager.header.currentView.view_name;")
-        except:
+        except WebDriverException:
             return ""
 
     def open_menu(self):

@@ -118,7 +118,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'wirecloud'),
         'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': '',
+        'PASSWORD': "wirecloud",
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
         'TEST': {
@@ -132,4 +132,8 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # By default, no selenium test is passed
-WIRECLOUD_SELENIUM_TEST_BROWSERS = {}
+WIRECLOUD_SELENIUM_TEST_BROWSERS = {
+    'Firefox': {
+        'CLASS': 'selenium.webdriver.Firefox',
+    },
+}

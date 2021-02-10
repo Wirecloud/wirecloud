@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -35,6 +36,9 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.workspace.utils import encrypt_value, VariableValueCacheManager
 from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_operator_cache_key
+
+
+OPERATOR_PATH_RE = re.compile(r'^/?operators/(?P<operator_id>[0-9]+)/(preferences/|properties/)', re.S)
 
 
 class WiringEntry(Resource):
@@ -139,7 +143,7 @@ class WiringEntry(Resource):
                                 else:
                                     new_property = old_property
                                     continue
-                        except:
+                        except (AttributeError, ValueError):
                             pass
                         new_property = self.handleMultiuser(request, property_secure, new_property, old_property)
 
@@ -311,26 +315,25 @@ class WiringEntry(Resource):
 
         # Cant explicitly update missing operator preferences / properties
         # Check if its modifying directly a preference / property
-        regex = re.compile(r'^/?operators/(?P<operator_id>[0-9]+)/(preferences/|properties/)', re.S)
         for p in req:
-            try:
-                if p["op"] is "test":
-                    continue
-            except:
+            if "op" not in p:
                 return build_error_response(request, 400, _('Invalid JSON patch'))
 
-            result = regex.match(p["path"])
+            if p["op"] == "test":
+                continue
+
+            result = OPERATOR_PATH_RE.match(p["path"])
             if result is not None:
 
                 try:
                     vendor, name, version = workspace.wiringStatus["operators"][result.group("operator_id")]["name"].split("/")
-                except:
+                except ValueError:
                     raise Http404
 
                 # If the operator is missing -> 403
                 try:
                     CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-                except:
+                except CatalogueResource.DoesNotExist:
                     return build_error_response(request, 403, _('Missing operators variables cannot be updated'))
 
         try:
@@ -408,7 +411,7 @@ class OperatorVariablesEntry(Resource):
         try:
             operator = workspace.wiringStatus["operators"][operator_id]
             vendor, name, version = operator["name"].split("/")
-        except:
+        except (KeyError, ValueError):
             raise Http404
 
         # Check if operator resource exists

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -28,6 +29,7 @@ from django.shortcuts import render
 
 from wirecloud.commons.utils.http import get_absolute_reverse_url, build_error_response
 from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
+from wirecloud.oauth2provider.models import Application
 from wirecloud.platform.core.plugins import get_version_hash
 
 
@@ -64,7 +66,7 @@ def provide_authorization_code(request):
 
     try:
         client = provider.get_client(params['client_id'])
-    except:
+    except Application.DoesNotExist:
         client = None
     error_response = provider.validate_authorization_code_request(request, request.user, client=client, **params)
     if error_response is not None:

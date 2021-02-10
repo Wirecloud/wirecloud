@@ -171,12 +171,6 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        coveralls: {
-            ci: {
-                src: 'build/coverage/lcov.info'
-            }
-        },
-
         eslint: {
             styledelements: {
                 src: styledElementsFiles
@@ -196,7 +190,7 @@ module.exports = function (grunt) {
             options: {
                 frameworks: ['jasmine'],
                 reporters: ['progress', 'coverage'],
-                browsers: ["FirefoxHeadless"],
+                browsers: ["ChromeHeadless"],
                 singleRun: true
             },
             styledelements: {
@@ -217,7 +211,7 @@ module.exports = function (grunt) {
             styledelementsdebug: {
                 options: {
                     files: dependencies.concat(styledElementsFiles).concat(['js_tests/styledelements/base.css', 'js_tests/styledelements/*Spec.js']),
-                    browsers: ['Firefox'],
+                    browsers: ['Chrome', 'Firefox'],
                     singleRun: false
                 }
             },
@@ -241,7 +235,7 @@ module.exports = function (grunt) {
             wireclouddebug: {
                 options: {
                     files: dependencies.concat(styledElementsFiles).concat(wc_dependencies).concat(WirecloudFiles).concat(['js_tests/wirecloud/**/*Spec.js']),
-                    browsers: ['Firefox'],
+                    browsers: ['Chrome', 'Firefox'],
                     singleRun: false
                 }
             }
@@ -286,7 +280,6 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks("gruntify-eslint");
     grunt.loadNpmTasks('grunt-contrib-uglify-es');
-    grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-lcov-merge');
     grunt.loadNpmTasks("grunt-jsdoc");
@@ -297,7 +290,7 @@ module.exports = function (grunt) {
         'karma:wirecloud',
     ]);
 
-    grunt.registerTask('ci', ['test', 'lcovMerge', 'coveralls']);
+    grunt.registerTask('ci', ['test', 'lcovMerge']);
 
     grunt.registerTask('default', [
         'test',

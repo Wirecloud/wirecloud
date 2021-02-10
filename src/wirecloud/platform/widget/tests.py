@@ -40,7 +40,7 @@ class CodeTransformationTestCase(TestCase):
     tags = ('wirecloud-widget-module', 'wirecloud-widget-code-transformation', 'wirecloud-noselenium')
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
-    COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\.js')
+    COMPRESS_HASH_RE = re.compile(b'/[a-z0-9]{12}\\.js')
 
     @classmethod
     def setUpClass(cls):

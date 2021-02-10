@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -18,17 +18,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-import os
-import requests
-from urllib.parse import urljoin
-
-from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 
-from wirecloud.catalogue.models import CatalogueResource
-import wirecloud.catalogue.utils as catalogue_utils
-from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.localcatalogue.utils import install_component
 from wirecloud.platform.markets.utils import MarketManager

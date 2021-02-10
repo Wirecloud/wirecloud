@@ -62,7 +62,7 @@ class TemplateParser(object):
                 # ObsoleteFormatError is raised), but that something is not
                 # correct
                 raise
-            except:
+            except Exception:
                 # Any other exception means that the document cannot be read
                 # by the current parser, try the next one
                 pass

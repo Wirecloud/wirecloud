@@ -36,7 +36,7 @@ def resource_installed(sender, **kwargs):
     # add semantic relations
     try:
         add_widget_semantic_data(user, sender)
-    except:
+    except Exception:
         logger = logging.getLogger('wirecloud.semanticwiring')
         logger.exception('Error adding widget to the semantic status')
 
@@ -51,6 +51,6 @@ def resource_uninstalled(sender, **kwargs):
     # remove semantic relations
     try:
         remove_widget_semantic_data(user, sender)
-    except:
+    except Exception:
         logger = logging.getLogger('wirecloud.semanticwiring')
         logger.exception('Error removing widget from the semantic status')
