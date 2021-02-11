@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -55,26 +55,21 @@
         }
 
         getValue() {
-            var i, result = [];
-
             if (this.buttons[0] instanceof StyledElements.CheckBox) {
-
-                for (i = 0; i < this.buttons.length; i++) {
-                    if (this.buttons[i].inputElement.checked) {
-                        result.push(this.buttons[i].getValue());
+                const result = [];
+                this.buttons.forEach((button) => {
+                    if (button.inputElement.checked) {
+                        result.push(button.getValue());
                     }
-                }
-
+                });
+                return result;
             } else {
-
-                for (i = 0; i < this.buttons.length; i++) {
+                for (let i = 0; i < this.buttons.length; i++) {
                     if (this.buttons[i].inputElement.checked) {
                         return this.buttons[i].getValue();
                     }
                 }
             }
-
-            return result;
         }
 
         setValue(newValue) {
@@ -84,21 +79,17 @@
                 newValue = [newValue];
             }
 
-            for (var i = 0; i < this.buttons.length; i++) {
-                if (newValue.indexOf(this.buttons[i].inputElement.value) !== -1) {
-                    this.buttons[i].setValue(true);
-                } else {
-                    this.buttons[i].setValue(false);
-                }
-            }
+            this.buttons.forEach((button) => {
+                button.setValue(newValue.indexOf(button.inputElement.value) !== -1);
+            });
 
             return this;
         }
 
         reset() {
-            for (var i = 0; i < this.buttons.length; i++) {
-                this.buttons[i].reset();
-            }
+            this.buttons.forEach((button) => {
+                button.reset();
+            });
 
             return this;
         }
@@ -110,16 +101,14 @@
          * RadioButtons, la selección será como mucho de un elemento.
          */
         getSelectedButtons() {
-            var i;
-
             if (this.buttons.length === 0) {
                 return [];
             }
 
             if (this.buttons[0] instanceof StyledElements.CheckBox) {
-                var result = [];
+                const result = [];
 
-                for (i = 0; i < this.buttons.length; i++) {
+                for (let i = 0; i < this.buttons.length; i++) {
                     if (this.buttons[i].inputElement.checked) {
                         result[result.length] = this.buttons[i];
                     }
@@ -127,7 +116,7 @@
 
                 return result;
             } else {
-                for (i = 0; i < this.buttons.length; i++) {
+                for (let i = 0; i < this.buttons.length; i++) {
                     if (this.buttons[i].inputElement.checked) {
                         return [this.buttons[i]];
                     }

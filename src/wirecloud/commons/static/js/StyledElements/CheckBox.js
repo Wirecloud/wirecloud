@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,7 +33,7 @@
     se.CheckBox = class CheckBox extends se.InputElement {
 
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'initialValue': false,
                 'class': '',
                 'group': null,

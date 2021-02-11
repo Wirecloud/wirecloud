@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,6 +26,22 @@
 (function (se, utils) {
 
     "use strict";
+
+    const add_individual_class = function add_individual_class(className) {
+        this.get().classList.add(className);
+    };
+
+    const remove_individual_class = function remove_individual_class(className) {
+        this.get().classList.remove(className);
+    };
+
+    const toggle_individual_class = function toggle_individual_class(className) {
+        if (this.get().classList.contains(className)) {
+            this.get().classList.remove(className);
+        } else {
+            this.get().classList.add(className);
+        }
+    };
 
     // =========================================================================
     // CLASS DEFINITION
@@ -344,7 +361,7 @@
                     return this.get().style[properties];
                 }
 
-                for (var name in properties) {
+                for (let name in properties) {
                     this.get().style[name] = properties[name];
                 }
             } else {
@@ -370,8 +387,6 @@
          *      The instance on which the member is called.
          */
         toggleClassName(classList, state) {
-            var method;
-
             if (!Array.isArray(classList)) {
                 classList = classList == null ? [] : classList.toString().trim();
                 classList = classList !== "" ? classList.split(/\s+/) : [];
@@ -381,7 +396,7 @@
                 if (typeof state !== 'boolean') {
                     classList.forEach(toggle_individual_class, this);
                 } else {
-                    method = state ? add_individual_class : remove_individual_class;
+                    const method = state ? add_individual_class : remove_individual_class;
 
                     classList.forEach(method, this);
                 }
@@ -391,18 +406,18 @@
         }
 
         _getUsableHeight() {
-            var parentElement = this.wrapperElement.parentElement;
+            const parentElement = this.wrapperElement.parentElement;
             if (parentElement == null) {
                 return null;
             }
 
-            var parentStyle = document.defaultView.getComputedStyle(parentElement, null);
+            const parentStyle = document.defaultView.getComputedStyle(parentElement, null);
             if (parentStyle.getPropertyCSSValue('display') == null) {
                 return null;
             }
-            var containerStyle = document.defaultView.getComputedStyle(this.wrapperElement, null);
+            const containerStyle = document.defaultView.getComputedStyle(this.wrapperElement, null);
 
-            var height = parentElement.offsetHeight -
+            const height = parentElement.offsetHeight -
                          parentStyle.getPropertyCSSValue('padding-top').getFloatValue(CSSPrimitiveValue.CSS_PX) -
                          parentStyle.getPropertyCSSValue('padding-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX) -
                          containerStyle.getPropertyCSSValue('padding-top').getFloatValue(CSSPrimitiveValue.CSS_PX) -
@@ -416,15 +431,15 @@
         }
 
         _getUsableWidth() {
-            var parentElement = this.wrapperElement.parentElement;
+            const parentElement = this.wrapperElement.parentElement;
             if (parentElement == null) {
                 return null;
             }
 
-            var parentStyle = document.defaultView.getComputedStyle(parentElement, null);
-            var containerStyle = document.defaultView.getComputedStyle(this.wrapperElement, null);
+            const parentStyle = document.defaultView.getComputedStyle(parentElement, null);
+            const containerStyle = document.defaultView.getComputedStyle(this.wrapperElement, null);
 
-            var width = parentElement.offsetWidth -
+            const width = parentElement.offsetWidth -
                         parentStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX) -
                         parentStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX) -
                         containerStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX) -
@@ -527,25 +542,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var add_individual_class = function add_individual_class(className) {
-        this.get().classList.add(className);
-    };
-
-    var remove_individual_class = function remove_individual_class(className) {
-        this.get().classList.remove(className);
-    };
-
-    var toggle_individual_class = function toggle_individual_class(className) {
-        if (this.get().classList.contains(className)) {
-            this.get().classList.remove(className);
-        } else {
-            this.get().classList.add(className);
-        }
-    };
 
 })(StyledElements, StyledElements.Utils);

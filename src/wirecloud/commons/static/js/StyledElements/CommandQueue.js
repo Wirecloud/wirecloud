@@ -27,12 +27,12 @@
 
     "use strict";
 
-    var privates = new WeakMap();
+    const privates = new WeakMap();
 
     /**
      * Creates an asyncrhonous FIFO queue.
      */
-    var CommandQueue = function CommandQueue(context, callback) {
+    const CommandQueue = function CommandQueue(context, callback) {
         if (typeof callback !== "function") {
             throw new TypeError("callback parameter must be a function");
         }
@@ -67,8 +67,8 @@
             return Promise.resolve();
         }
 
-        var priv = privates.get(this);
-        var p = new Promise(function (resolve, reject) {
+        const priv = privates.get(this);
+        const p = new Promise(function (resolve, reject) {
             priv.elements.push({
                 command: command,
                 resolve: resolve,
@@ -84,7 +84,7 @@
         return p;
     };
 
-    var doInit = function doInit() {
+    const doInit = function doInit() {
         var element, action;
 
         element = this.elements.shift();
@@ -116,7 +116,7 @@
         }
     };
 
-    var running_getter = function running_getter() {
+    const running_getter = function running_getter() {
         return privates.get(this).running;
     };
 

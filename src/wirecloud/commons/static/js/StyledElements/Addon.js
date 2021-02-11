@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -57,7 +57,7 @@
          * @param {Object.<String, *>} options [description]
          */
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'text': null,
                 'title': '',
                 'class': ''
@@ -114,7 +114,7 @@
          *     The instance on which the member is called.
          */
         setTitle(title) {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             if (title == null || title === "") {
                 if (priv.tooltip != null) {
                     priv.tooltip.destroy();

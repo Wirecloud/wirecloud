@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,11 +27,40 @@
 
     "use strict";
 
+    const privates = new WeakMap();
+
     const defaultOptions = {
         class: "",
         id: "",
         tagname: "div",
         useFullHeight: false
+    };
+
+    const addChild = function addChild(newElement) {
+        const priv = privates.get(this);
+        if (newElement instanceof se.StyledElement) {
+            const index = priv.children.indexOf(newElement);
+
+            if (index === -1) {
+                priv.children.push(newElement);
+            }
+        }
+    };
+
+    const orderbyIndex = function orderbyIndex() {
+        const children = [];
+        const priv = privates.get(this);
+
+        Array.prototype.forEach.call(this.get().childNodes, function (childNode) {
+            for (let i = 0; i < priv.children.length; i++) {
+                if (priv.children[i].get() === childNode) {
+                    children.push(priv.children.splice(i, 1)[0]);
+                    return;
+                }
+            }
+        });
+
+        priv.children = children;
     };
 
     se.Container = class Container extends se.StyledElement {
@@ -59,7 +88,7 @@
 
             this.addClassName(options.class);
 
-            var priv = {
+            const priv = {
                 children: []
             };
 
@@ -88,7 +117,7 @@
          */
         has(childElement) {
 
-            var priv = privates.get(this);
+            const priv = privates.get(this);
 
             if (childElement instanceof se.StyledElement && priv.children.indexOf(childElement) !== -1) {
                 return true;
@@ -152,7 +181,7 @@
             utils.removeChild(this, childElement);
 
             if (childElement instanceof se.StyledElement) {
-                var priv = privates.get(this);
+                const priv = privates.get(this);
                 priv.children.splice(priv.children.indexOf(childElement), 1);
             }
 
@@ -173,10 +202,10 @@
         repaint(temporal) {
             temporal = temporal !== undefined ? temporal : false;
 
-            var priv = privates.get(this);
-            for (var i = 0; i < priv.children.length; i++) {
-                priv.children[i].repaint(temporal);
-            }
+            const priv = privates.get(this);
+            priv.children.forEach((child) => {
+                child.repaint(temporal);
+            });
         }
 
         /**
@@ -188,7 +217,7 @@
          *      The instance on which the member is called.
          */
         clear() {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
 
             priv.children = [];
             this.wrapperElement.innerHTML = "";
@@ -229,9 +258,7 @@
         }
 
         _onenabled(enabled) {
-            var icon, priv;
-
-            priv = privates.get(this);
+            const priv = privates.get(this);
 
             if (enabled) {
                 if (priv.disabledLayer != null) {
@@ -242,7 +269,7 @@
                 priv.disabledLayer = document.createElement('div');
                 priv.disabledLayer.className = 'se-container-disable-layer';
 
-                icon = document.createElement('i');
+                const icon = document.createElement('i');
                 icon.className = 'disable-icon fa fa-spin fa-spinner';
                 priv.disabledLayer.appendChild(icon);
 
@@ -251,40 +278,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
-    var addChild = function addChild(newElement) {
-        var priv = privates.get(this);
-        if (newElement instanceof se.StyledElement) {
-            var index = priv.children.indexOf(newElement);
-
-            if (index === -1) {
-                priv.children.push(newElement);
-            }
-        }
-    };
-
-    var orderbyIndex = function orderbyIndex() {
-        var children = [], priv;
-
-        priv = privates.get(this);
-        Array.prototype.forEach.call(this.get().childNodes, function (childNode) {
-            var i, elementFound = false;
-
-            for (i = 0; i < priv.children.length && !elementFound; i++) {
-                if (priv.children[i].get() === childNode) {
-                    children.push(priv.children.splice(i, 1)[0]);
-                    elementFound = true;
-                }
-            }
-        });
-
-        priv.children = children;
-    };
 
 })(StyledElements, StyledElements.Utils);

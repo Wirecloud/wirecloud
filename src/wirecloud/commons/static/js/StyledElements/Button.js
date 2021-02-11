@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,7 +27,121 @@
 
     "use strict";
 
-    var clickCallback = function clickCallback(e) {
+    const defaults = {
+        id: "",
+        class: "",
+        iconClass: "",
+        stackedIconClass: "",
+        state: "",
+        plain: false,
+        usedInForm: false,
+        text: "",
+        depth: null,
+        title: "",
+        stackedIconPlacement: "bottom-right",
+        tabindex: 0
+    };
+    Object.freeze(defaults);
+
+    const prop_state_get = function prop_state_get(state) {
+        return state;
+    };
+
+    const prop_state_set = function prop_state_set(state, newState) {
+        const states = ["default", "primary", "success", "info", "warning", "danger"];
+
+        if (states.indexOf(newState) !== -1) {
+            if (newState !== state) {
+                if (state) {
+                    this.removeClassName("btn-" + state);
+                }
+                state = newState;
+                this.addClassName("btn-" + state);
+            }
+        } else {
+            if (state) {
+                this.removeClassName("btn-" + state);
+            }
+            state = "";
+        }
+
+        return state;
+    };
+
+    const prop_depth_set = function prop_depth_set(depth, newDepth) {
+
+        if (typeof newDepth === "number" && newDepth >= 0 && newDepth <= 5) {
+            if (newDepth !== depth) {
+                if (depth >= 0) {
+                    this.removeClassName("z-depth-" + depth);
+                }
+                depth = newDepth;
+                this.addClassName("z-depth-" + depth);
+            }
+        } else {
+            if (depth != null) {
+                this.removeClassName("z-depth-" + depth);
+            }
+            depth = null;
+        }
+
+        return depth;
+    };
+
+    const removeLabel = function removeLabel() {
+
+        if (this.label != null) {
+            this.label.remove();
+            this.label = null;
+        }
+
+        return this;
+    };
+
+    const addLabel = function addLabel(textContent) {
+
+        if (this.label == null) {
+            this.label = document.createElement("span");
+            this.wrapperElement.appendChild(this.label);
+        }
+
+        this.label.textContent = textContent;
+
+        return this;
+    };
+
+    const insertBadge = function insertBadge(content, state, isAlert) {
+        const states = ["inverse", "primary", "success", "info", "warning", "danger"];
+
+        if (this.badgeElement == null) {
+            this.badgeElement = document.createElement("span");
+            this.wrapperElement.insertBefore(this.badgeElement, this.wrapperElement.firstChild);
+        }
+
+        this.badgeElement.className = "badge";
+        if (states.indexOf(state) !== -1) {
+            this.badgeElement.classList.add("badge-" + state);
+        }
+        this.badgeElement.classList.add("z-depth-" + (this.depth + 1));
+        this.toggleClassName("has-alert", isAlert);
+        this.badgeElement.textContent = content;
+
+        return this;
+    };
+
+    const removeBadge = function removeBadge() {
+
+        if (this.badgeElement != null) {
+            this.badgeElement.remove();
+            this.badgeElement = null;
+        }
+
+        this.removeClassName("has-alert");
+
+        return this;
+    };
+
+    const clickCallback = function clickCallback(e) {
         if (this.inputElement != null && e.target === this.inputElement) {
             return;
         }
@@ -38,50 +152,48 @@
             if (this.inputElement != null) {
                 this.inputElement.click();
             }
-            this.dispatchEvent('click');
+            this.dispatchEvent("click");
         }
     };
 
-    var dblclickCallback = function dblclickCallback(e) {
+    const dblclickCallback = function dblclickCallback(e) {
         e.preventDefault();
         e.stopPropagation();
         if (this.enabled) {
-            this.dispatchEvent('dblclick');
+            this.dispatchEvent("dblclick");
         }
     };
 
-    var element_onkeydown = function element_onkeydown(event) {
-        var modifiers;
-
+    const element_onkeydown = function element_onkeydown(event) {
         if (this.enabled) {
-            modifiers = utils.extractModifiers(event);
+            const modifiers = utils.extractModifiers(event);
             modifiers.preventDefault = event.preventDefault.bind(event);
             modifiers.stopPropagation = event.stopPropagation.bind(event);
             this._onkeydown(modifiers, utils.normalizeKey(event));
         }
     };
 
-    var onmouseenter = function onmouseenter() {
-        this.dispatchEvent('mouseenter');
+    const onmouseenter = function onmouseenter() {
+        this.dispatchEvent("mouseenter");
     };
 
-    var onmouseleave = function onmouseleave() {
-        this.dispatchEvent('mouseleave');
+    const onmouseleave = function onmouseleave() {
+        this.dispatchEvent("mouseleave");
     };
 
-    var onfocus = function onfocus() {
-        this.dispatchEvent('focus');
+    const onfocus = function onfocus() {
+        this.dispatchEvent("focus");
     };
 
-    var onblur = function onblur() {
-        this.dispatchEvent('blur');
+    const onblur = function onblur() {
+        this.dispatchEvent("blur");
     };
 
-    var update_tabindex = function update_tabindex() {
+    const update_tabindex = function update_tabindex() {
         if (this.enabled) {
-            this.wrapperElement.setAttribute('tabindex', this.tabindex);
+            this.wrapperElement.setAttribute("tabindex", this.tabindex);
         } else {
-            this.wrapperElement.setAttribute('tabindex', -1);
+            this.wrapperElement.setAttribute("tabindex", -1);
         }
     };
 
@@ -95,11 +207,11 @@
         constructor(options) {
             options = utils.merge(utils.clone(defaults), options);
 
-            super(events);
+            super(["blur", "click", "dblclick", "focus", "mouseenter", "mouseleave"]);
 
             if (options.usedInForm) {
                 this.wrapperElement = document.createElement("button");
-                this.wrapperElement.setAttribute('type', 'button');
+                this.wrapperElement.setAttribute("type", "button");
             } else {
                 this.wrapperElement = document.createElement("div");
             }
@@ -113,7 +225,7 @@
             this.addClassName(options.class);
 
             if (options.id.trim() !== "") {
-                this.wrapperElement.setAttribute('id', options.id);
+                this.wrapperElement.setAttribute("id", options.id);
             }
 
             if (options.plain) {
@@ -126,13 +238,13 @@
             this.setTitle(options.title);
 
             if (options.iconClass && options.stackedIconClass) {
-                this.stackedIcon = document.createElement('span');
-                this.stackedIcon.className = [options.stackedIconClass, 'se-stacked-icon', options.stackedIconPlacement].join(' ');
+                this.stackedIcon = document.createElement("span");
+                this.stackedIcon.className = [options.stackedIconClass, "se-stacked-icon", options.stackedIconPlacement].join(" ");
                 this.icon.appendChild(this.stackedIcon);
             }
 
             /* Properties */
-            var tabindex, state, depth;
+            let tabindex, state, depth;
             Object.defineProperties(this, {
 
                 /**
@@ -186,23 +298,23 @@
             this.tabindex = options.tabindex;
 
             /* Event handlers */
-            var prototype = Object.getPrototypeOf(this);
-            if (typeof prototype._clickCallback === 'function') {
+            const prototype = Object.getPrototypeOf(this);
+            if (typeof prototype._clickCallback === "function") {
                 this._clickCallback = prototype._clickCallback.bind(this);
             } else {
                 this._clickCallback = clickCallback.bind(this);
             }
             this._onkeydown_bound = element_onkeydown.bind(this);
 
-            this.wrapperElement.addEventListener('touchstart', StyledElements.Utils.stopPropagationListener, true);
-            this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-            this.wrapperElement.addEventListener('click', this._clickCallback, false);
-            this.wrapperElement.addEventListener('dblclick', dblclickCallback.bind(this), true);
-            this.wrapperElement.addEventListener('keydown', this._onkeydown_bound, false);
-            this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
-            this.wrapperElement.addEventListener('blur', onblur.bind(this), true);
-            this.wrapperElement.addEventListener('mouseenter', onmouseenter.bind(this), false);
-            this.wrapperElement.addEventListener('mouseleave', onmouseleave.bind(this), false);
+            this.wrapperElement.addEventListener("touchstart", StyledElements.Utils.stopPropagationListener, true);
+            this.wrapperElement.addEventListener("mousedown", StyledElements.Utils.stopPropagationListener, true);
+            this.wrapperElement.addEventListener("click", this._clickCallback, false);
+            this.wrapperElement.addEventListener("dblclick", dblclickCallback.bind(this), true);
+            this.wrapperElement.addEventListener("keydown", this._onkeydown_bound, false);
+            this.wrapperElement.addEventListener("focus", onfocus.bind(this), true);
+            this.wrapperElement.addEventListener("blur", onblur.bind(this), true);
+            this.wrapperElement.addEventListener("mouseenter", onmouseenter.bind(this), false);
+            this.wrapperElement.addEventListener("mouseleave", onmouseleave.bind(this), false);
         }
 
         /**
@@ -223,8 +335,8 @@
          */
         _onkeydown(event, key) {
             switch (key) {
-            case ' ':
-            case 'Enter':
+            case " ":
+            case "Enter":
                 this._clickCallback(event);
                 break;
             default:
@@ -287,8 +399,8 @@
                 // Nothing to do
                 return this;
             } else if (this.icon == null) {
-                this.icon = document.createElement('i');
-                this.icon.classList.add('se-icon');
+                this.icon = document.createElement("i");
+                this.icon.classList.add("se-icon");
                 this.wrapperElement.appendChild(this.icon);
             }
 
@@ -319,7 +431,7 @@
                 this.icon.classList.remove(classname);
             }, this);
 
-            if (this.icon.className.trim() === 'se-icon') {
+            if (this.icon.className.trim() === "se-icon") {
                 this.icon.remove();
                 this.icon = null;
             }
@@ -333,14 +445,14 @@
         }
 
         setTitle(title) {
-            if (title == null || title === '') {
+            if (title == null || title === "") {
                 if (this.tooltip != null) {
                     this.tooltip.destroy();
                     this.tooltip = null;
                 }
             } else {
                 if (this.tooltip == null) {
-                    this.tooltip = new this.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
+                    this.tooltip = new this.Tooltip({content: title, placement: ["bottom", "top", "right", "left"]});
                     this.tooltip.bind(this);
                 }
                 this.tooltip.options.content = title;
@@ -351,17 +463,17 @@
 
         click() {
             if (this.enabled) {
-                this.dispatchEvent('click');
+                this.dispatchEvent("click");
             }
             return this;
         }
 
         destroy() {
 
-            this.wrapperElement.removeEventListener('touchstart', StyledElements.Utils.stopPropagationListener, true);
-            this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-            this.wrapperElement.removeEventListener('click', this._clickCallback, true);
-            this.wrapperElement.removeEventListener('keydown', this._onkeydown_bound, false);
+            this.wrapperElement.removeEventListener("touchstart", StyledElements.Utils.stopPropagationListener, true);
+            this.wrapperElement.removeEventListener("mousedown", StyledElements.Utils.stopPropagationListener, true);
+            this.wrapperElement.removeEventListener("click", this._clickCallback, true);
+            this.wrapperElement.removeEventListener("keydown", this._onkeydown_bound, false);
 
             delete this._clickCallback;
             delete this._onkeydown_bound;
@@ -386,124 +498,5 @@
     }
 
     se.Button.prototype.Tooltip = StyledElements.Tooltip;
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var defaults = {
-        id: "",
-        class: "",
-        iconClass: "",
-        stackedIconClass: "",
-        state: '',
-        plain: false,
-        usedInForm: false,
-        text: "",
-        depth: null,
-        title: '',
-        stackedIconPlacement: 'bottom-right',
-        tabindex: 0
-    };
-
-    var events = ['blur', 'click', 'dblclick', 'focus', 'mouseenter', 'mouseleave'];
-
-    var prop_state_get = function prop_state_get(state) {
-        return state;
-    };
-
-    var prop_state_set = function prop_state_set(state, newState) {
-        var states = ['default', 'primary', 'success', 'info', 'warning', 'danger'];
-
-        if (states.indexOf(newState) !== -1) {
-            if (newState !== state) {
-                if (state) {
-                    this.removeClassName('btn-' + state);
-                }
-                state = newState;
-                this.addClassName('btn-' + state);
-            }
-        } else {
-            if (state) {
-                this.removeClassName('btn-' + state);
-            }
-            state = "";
-        }
-
-        return state;
-    };
-
-    var prop_depth_set = function prop_depth_set(depth, newDepth) {
-
-        if (typeof newDepth === 'number' && newDepth >= 0 && newDepth <= 5) {
-            if (newDepth !== depth) {
-                if (depth >= 0) {
-                    this.removeClassName('z-depth-' + depth);
-                }
-                depth = newDepth;
-                this.addClassName('z-depth-' + depth);
-            }
-        } else {
-            if (depth != null) {
-                this.removeClassName('z-depth-' + depth);
-            }
-            depth = null;
-        }
-
-        return depth;
-    };
-
-    var removeLabel = function removeLabel() {
-
-        if (this.label != null) {
-            this.label.remove();
-            this.label = null;
-        }
-
-        return this;
-    };
-
-    var addLabel = function addLabel(textContent) {
-
-        if (this.label == null) {
-            this.label = document.createElement('span');
-            this.wrapperElement.appendChild(this.label);
-        }
-
-        this.label.textContent = textContent;
-
-        return this;
-    };
-
-    var insertBadge = function insertBadge(content, state, isAlert) {
-        var states = ['inverse', 'primary', 'success', 'info', 'warning', 'danger'];
-
-        if (this.badgeElement == null) {
-            this.badgeElement = document.createElement('span');
-            this.wrapperElement.insertBefore(this.badgeElement, this.wrapperElement.firstChild);
-        }
-
-        this.badgeElement.className = "badge";
-        if (states.indexOf(state) !== -1) {
-            this.badgeElement.classList.add("badge-" + state);
-        }
-        this.badgeElement.classList.add("z-depth-" + (this.depth + 1));
-        this.toggleClassName('has-alert', isAlert);
-        this.badgeElement.textContent = content;
-
-        return this;
-    };
-
-    var removeBadge = function removeBadge() {
-
-        if (this.badgeElement != null) {
-            this.badgeElement.remove();
-            this.badgeElement = null;
-        }
-
-        this.removeClassName('has-alert');
-
-        return this;
-    };
 
 })(StyledElements, StyledElements.Utils);

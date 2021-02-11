@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,28 +27,26 @@
 
     "use strict";
 
-    var onNewTab = function onNewTab() {
+    const onNewTab = function onNewTab() {
         this.dispatchEvent('newTab');
     };
 
-    var isTabVisible = function isTabVisible(tabIndex, full) {
-        var tabElement, tabAreaStart, tabAreaEnd, tabOffsetRight;
+    const isTabVisible = function isTabVisible(tabIndex, full) {
+        const tabElement = this.tabs[tabIndex].getTabElement();
 
-        tabElement = this.tabs[tabIndex].getTabElement();
-
-        tabAreaStart = this.tabArea.wrapperElement.scrollLeft;
-        tabAreaEnd = tabAreaStart + this.tabArea.wrapperElement.clientWidth;
+        const tabAreaStart = this.tabArea.wrapperElement.scrollLeft;
+        const tabAreaEnd = tabAreaStart + this.tabArea.wrapperElement.clientWidth;
 
         if (full) {
-            tabOffsetRight = tabElement.offsetLeft + tabElement.offsetWidth;
+            const tabOffsetRight = tabElement.offsetLeft + tabElement.offsetWidth;
             return tabElement.offsetLeft >= tabAreaStart && tabOffsetRight <= tabAreaEnd;
         } else {
             return tabElement.offsetLeft >= tabAreaStart && tabElement.offsetLeft <= tabAreaEnd;
         }
     };
 
-    var isLastTabVisible = function isLastTabVisible() {
-        var lastTab = this.tabs.length - 1;
+    const isLastTabVisible = function isLastTabVisible() {
+        const lastTab = this.tabs.length - 1;
 
         if (this.tabs.length === 0 || isTabVisible.call(this, lastTab, true)) {
             return true;
@@ -59,7 +57,7 @@
         return this.tabs.length < 2 || !isTabVisible.call(this, lastTab - 1);
     };
 
-    var enableDisableButtons = function enableDisableButtons() {
+    const enableDisableButtons = function enableDisableButtons() {
         if (this.tabs.length === 0) {
             this.moveLeftButton.disable();
             this.moveRightButton.disable();
@@ -70,8 +68,8 @@
             return;
         }
 
-        var first_tab_visible = isTabVisible.call(this, 0);
-        var last_tab_visible = isLastTabVisible.call(this);
+        let first_tab_visible = isTabVisible.call(this, 0);
+        const last_tab_visible = isLastTabVisible.call(this);
 
         this.moveLeftButton.setDisabled(first_tab_visible);
         this.moveRightButton.setDisabled(last_tab_visible);
@@ -89,7 +87,7 @@
         }
     };
 
-    var getFirstVisibleTab = function getFirstVisibleTab() {
+    const getFirstVisibleTab = function getFirstVisibleTab() {
         return this.tabs.findIndex((element, index) => {return isTabVisible.call(this, index);});
     };
 
@@ -99,6 +97,7 @@
         'full': true
     };
     Object.freeze(defaultOptions);
+
     se.Notebook = class Notebook extends se.StyledElement {
 
         /**
@@ -122,8 +121,6 @@
          *
          */
         constructor(options) {
-            var tabWrapper;
-
             super(['change', 'changed', 'tabDeletion', 'tabInsertion', 'newTab']);
 
             options = utils.merge({}, defaultOptions, options);
@@ -131,7 +128,7 @@
             this.wrapperElement = document.createElement("div");
             this.wrapperElement.className = utils.prependWord(options.class, "se-notebook");
 
-            tabWrapper = new StyledElements.HorizontalLayout({'class': 'se-notebook-tabs-wrapper', 'autoHeight': false});
+            const tabWrapper = new StyledElements.HorizontalLayout({'class': 'se-notebook-tabs-wrapper', 'autoHeight': false});
             this.tabWrapper = tabWrapper;
             tabWrapper.insertInto(this.wrapperElement);
 
@@ -165,10 +162,8 @@
 
             /* Tab creation support */
             this.events.newTab.addEventListener = function addEventListener(listener) {
-                var new_tab_main_listener;
-
                 if (this.new_tab_button_tabs == null) {
-                    new_tab_main_listener = onNewTab.bind(this);
+                    const new_tab_main_listener = onNewTab.bind(this);
 
                     this.new_tab_button_tabs = new this.Button({iconClass: 'fa fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
                     this.new_tab_button_tabs.addEventListener('click', new_tab_main_listener);
@@ -181,7 +176,7 @@
             }.bind(this);
 
             /* Transitions code */
-            var context = {
+            const context = {
                 control: this,
                 initialScrollLeft: null,
                 finalScrollLeft: null,
@@ -190,8 +185,8 @@
                 inc: null
             };
 
-            var stepFunc = function stepFunc(step, context) {
-                var scrollLeft = context.initialScrollLeft + Math.floor((step + 1) * context.inc);
+            const stepFunc = function stepFunc(step, context) {
+                const scrollLeft = context.initialScrollLeft + Math.floor((step + 1) * context.inc);
 
                 if ((context.inc < 0) && (scrollLeft > context.finalScrollLeft) ||
                     (context.inc > 0) && (scrollLeft < context.finalScrollLeft)) {
@@ -206,13 +201,12 @@
                 }
             };
 
-            var initFunc = function initFunc(context, command) {
-                var firstVisibleTab, maxScrollLeft, baseTime, stepTimes, computedStyle, padding;
-
+            const initFunc = function initFunc(context, command) {
                 context.initialScrollLeft = context.control.tabArea.wrapperElement.scrollLeft;
-                computedStyle = document.defaultView.getComputedStyle(context.control.tabArea.wrapperElement, null);
-                padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                const computedStyle = document.defaultView.getComputedStyle(context.control.tabArea.wrapperElement, null);
+                const padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
+                let firstVisibleTab;
                 switch (command.type) {
                 case 'shiftLeft':
 
@@ -234,6 +228,7 @@
                     context.tab = context.control.tabs[firstVisibleTab + 1];
                     context.finalScrollLeft = context.tab.getTabElement().offsetLeft - padding;
                     break;
+
                 case 'focus':
                     if (command.tab == null || context.control.tabsById[command.tab.tabId] !== command.tab) {
                         // Tab removed
@@ -248,31 +243,31 @@
                     break;
                 }
 
-                maxScrollLeft = context.control.tabArea.wrapperElement.scrollWidth - context.control.tabArea.wrapperElement.clientWidth;
+                const maxScrollLeft = context.control.tabArea.wrapperElement.scrollWidth - context.control.tabArea.wrapperElement.clientWidth;
                 if (context.finalScrollLeft > maxScrollLeft) {
                     context.finalScrollLeft = maxScrollLeft;
                 }
 
-                baseTime = (new Date()).getTime() + 100;
-                stepTimes = [];
+                const baseTime = (new Date()).getTime() + 100;
+                const stepTimes = [];
                 context.steps = 6;
-                for (var i = 0; i <= context.steps; i++) {
+                for (let i = 0; i <= context.steps; i++) {
                     stepTimes[i] = baseTime + (i * 100);
                 }
 
                 context.step = 0;
                 context.inc = Math.floor((context.finalScrollLeft - context.initialScrollLeft) / context.steps);
                 return new Promise((resolve, reject) => {
-                    var doStep = () => {
+                    const doStep = () => {
                         if (context.control.tabsById[context.tab.tabId] !== context.tab) {
                             // Tab removed
                             return resolve();
                         }
 
-                        var cont = stepFunc(context.step, context);
+                        const cont = stepFunc(context.step, context);
 
                         if (cont) {
-                            var timeDiff = stepTimes[context.step] - (new Date()).getTime();
+                            const timeDiff = stepTimes[context.step] - (new Date()).getTime();
                             if (timeDiff < 0) {
                                 timeDiff = 0;
                             }
@@ -344,27 +339,27 @@
          *     The created tab.
          */
         createTab(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 initiallyVisible: false,
                 tab_constructor: this.Tab
             };
             options = utils.merge(defaultOptions, options);
 
             // Reserve an id for the new tab
-            var tabId = this.tabsById.push(null);
+            const tabId = this.tabsById.push(null);
 
             // Create the tab
             if ((options.tab_constructor !== this.Tab) && !(options.tab_constructor.prototype instanceof StyledElements.Tab)) {
                 throw new TypeError();
             }
             // eslint-disable-next-line new-cap
-            var tab = new options.tab_constructor(tabId, this, options);
+            const tab = new options.tab_constructor(tabId, this, options);
 
             // Insert it into our hashes
             this.tabs[this.tabs.length] = tab;
             this.tabsById[tabId] = tab;
 
-            var tabElement = tab.getTabElement();
+            const tabElement = tab.getTabElement();
 
             if (this.new_tab_button_tabs != null) {
                 this.tabArea.prependChild(tabElement, this.new_tab_button_tabs);
@@ -422,7 +417,7 @@
          * @returns {StyledElements.Tab}
          */
         getTabByLabel(label) {
-            for (var i = 0; i < this.tabs.length; i++) {
+            for (let i = 0; i < this.tabs.length; i++) {
                 if (this.tabs[i].label === label) {
                     return this.tabs[i];
                 }
@@ -459,7 +454,7 @@
                 id = id.tabId;
             }
 
-            for (var i = 0; i < this.tabs.length; i++) {
+            for (let i = 0; i < this.tabs.length; i++) {
                 if (this.tabs[i].tabId === id) {
                     return i;
                 }
@@ -472,8 +467,6 @@
          * @param tab identificador de la pestaña que se quiere eliminar.
          */
         removeTab(tab) {
-            var index, tabToExtract, nextTab;
-
             if (tab instanceof StyledElements.Tab) {
                 if (this.tabsById[tab.tabId] !== tab) {
                     throw new TypeError('tab is not owned by this notebook');
@@ -486,8 +479,8 @@
             }
 
             delete this.tabsById[tab];
-            index = this.getTabIndex(tab);
-            tabToExtract = this.tabs.splice(index, 1)[0];
+            const index = this.getTabIndex(tab);
+            const tabToExtract = this.tabs.splice(index, 1)[0];
 
             this.tabArea.removeChild(tabToExtract.getTabElement());
             this.contentArea.removeChild(tabToExtract.wrapperElement);
@@ -496,10 +489,7 @@
             enableDisableButtons.call(this);
 
             if ((this.visibleTab === tabToExtract) && (this.tabs.length > 0)) {
-                nextTab = this.tabs[index];
-                if (!nextTab) {
-                    nextTab = this.tabs[index - 1];
-                }
+                const nextTab = this.tabs[index] != null ? this.tabs[index] : this.tabs[index - 1];
                 this.goToTab(nextTab.tabId);
             } else if (this.visibleTab === tabToExtract) {
                 this.visibleTab = null;
@@ -525,7 +515,7 @@
          * - context: context data to be sent on the change and the changed events
          */
         goToTab(tab, options) {
-            var newTab, oldTab;
+            let newTab;
 
             if (tab instanceof StyledElements.Tab) {
                 if (this.tabsById[tab.tabId] !== tab) {
@@ -538,7 +528,7 @@
                     throw new TypeError('Invalid tab id');
                 }
             }
-            oldTab = this.visibleTab;
+            const oldTab = this.visibleTab;
 
             if (options == null) {
                 options = {};
@@ -591,7 +581,6 @@
         }
 
         repaint(temporal) {
-            var i;
             temporal = temporal != null ? temporal : false;
 
             this.tabWrapper.repaint();
@@ -605,9 +594,9 @@
                     this.visibleTab.repaint(true);
                 }
             } else {
-                for (i = 0; i < this.tabs.length; i++) {
-                    this.tabs[i].repaint(false);
-                }
+                this.tabs.forEach((tab) => {
+                    tab.repaint(false);
+                });
             }
 
             return this;

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -58,21 +58,21 @@
         }
 
         repaint(temporal) {
-            var usableArea = {
+            const usableArea = {
                 'width': this.wrapperElement.offsetWidth,
                 'height': this.wrapperElement.offsetHeight
             };
 
-            var h1 = this.north.wrapperElement.offsetHeight;
-            var h2 = usableArea.height - this.south.wrapperElement.offsetHeight;
-            var centerHeight = h2 - h1;
+            const h1 = this.north.wrapperElement.offsetHeight;
+            const h2 = usableArea.height - this.south.wrapperElement.offsetHeight;
+            const centerHeight = h2 - h1;
             if (centerHeight < 0) {
                 centerHeight = 0;
             }
 
-            var v1 = this.west.wrapperElement.offsetWidth;
-            var v2 = usableArea.width - this.east.wrapperElement.offsetWidth;
-            var centerWidth = v2 - v1;
+            const v1 = this.west.wrapperElement.offsetWidth;
+            const v2 = usableArea.width - this.east.wrapperElement.offsetWidth;
+            const centerWidth = v2 - v1;
             if (centerWidth < 0) {
                 centerWidth = 0;
             }
