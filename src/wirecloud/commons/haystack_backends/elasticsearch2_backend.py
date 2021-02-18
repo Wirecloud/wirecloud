@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from haystack.backends.elasticsearch2_backend import Elasticsearch2SearchEngine as OriginalElasticsearch2SearchEngine, Elasticsearch2SearchBackend, Elasticsearch2SearchQuery
 from haystack.constants import DJANGO_CT, DJANGO_ID
 from haystack.models import SearchResult

@@ -3,7 +3,6 @@
 # NOTE: You must be running the latest PyWhoosh master - no PyPI release yet!
 # See https://gist.github.com/3750774 for the current version of this code
 # See http://wiki.apache.org/Whoosh/FieldCollapsing for the Whoosh feature documentation
-from __future__ import absolute_import
 
 import warnings
 

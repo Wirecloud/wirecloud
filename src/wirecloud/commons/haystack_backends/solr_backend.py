@@ -3,7 +3,6 @@
 # NOTE: You must be running the latest Pysolr master - no PyPI release yet!
 # See https://gist.github.com/3750774 for the current version of this code
 # See http://wiki.apache.org/solr/FieldCollapsing for the Solr feature documentation
-from __future__ import absolute_import
 
 import logging
 
