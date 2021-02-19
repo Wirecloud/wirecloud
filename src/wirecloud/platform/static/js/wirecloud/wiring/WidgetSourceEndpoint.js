@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,43 +23,36 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var WidgetSourceEndpoint = function WidgetSourceEndpoint(widget, meta) {
-        Object.defineProperties(this, {
-            component: {value: widget},
-            meta: {value: meta},
-            missing: {value: false}
-        });
+    ns.WidgetSourceEndpoint = class WidgetSourceEndpoint extends ns.SourceEndpoint {
 
-        if (meta != null) {
+        constructor(widget, meta) {
+            const id = meta != null ? 'widget/' + widget.id + '/' + meta.name : null;
+
+            super(id, meta);
+
             Object.defineProperties(this, {
-                name: {value: meta.name},
-                friendcode: {value: meta.friendcode},
-                label: {value: meta.label},
-                description: {value: meta.description ? meta.description : ""},
-                id: {value: 'widget/' + this.component.id + '/' + this.meta.name},
+                component: {value: widget},
+                meta: {value: meta},
+                missing: {value: false}
             });
         }
 
-        Wirecloud.wiring.SourceEndpoint.call(this);
-    };
-    utils.inherit(WidgetSourceEndpoint, Wirecloud.wiring.SourceEndpoint);
+        toString() {
+            return this.id;
+        }
 
-    WidgetSourceEndpoint.prototype.toString = function toString() {
-        return this.id;
-    };
+        toJSON() {
+            return {
+                type: this.component.meta.type,
+                id: this.component.id,
+                endpoint: this.name
+            };
+        }
 
-    WidgetSourceEndpoint.prototype.toJSON = function toJSON() {
-        return {
-            type: this.component.meta.type,
-            id: this.component.id,
-            endpoint: this.name
-        };
-    };
+    }
 
-    Wirecloud.wiring.WidgetSourceEndpoint = WidgetSourceEndpoint;
-
-})(Wirecloud.Utils);
+})(Wirecloud.wiring, Wirecloud.Utils);

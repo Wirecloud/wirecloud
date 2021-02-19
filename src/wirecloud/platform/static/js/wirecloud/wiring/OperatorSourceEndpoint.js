@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,43 +23,36 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var OperatorSourceEndpoint = function OperatorSourceEndpoint(operator, meta) {
-        Object.defineProperties(this, {
-            component: {value: operator},
-            meta: {value: meta},
-            missing: {value: false}
-        });
+    ns.OperatorSourceEndpoint = class OperatorSourceEndpoint extends ns.SourceEndpoint {
 
-        if (meta != null) {
+        constructor(operator, meta) {
+            const id = meta != null ? 'operator/' + operator.id + '/' + meta.name : null;
+
+            super(id, meta);
+
             Object.defineProperties(this, {
-                name: {value: meta.name},
-                friendcode: {value: meta.friendcode},
-                label: {value: meta.label},
-                description: {value: meta.description ? meta.description : ""},
-                id: {value: 'operator/' + this.component.id + '/' + this.meta.name},
+                component: {value: operator},
+                meta: {value: meta},
+                missing: {value: false}
             });
         }
 
-        Wirecloud.wiring.SourceEndpoint.call(this);
-    };
-    utils.inherit(OperatorSourceEndpoint, Wirecloud.wiring.SourceEndpoint);
+        toString() {
+            return this.id;
+        }
 
-    OperatorSourceEndpoint.prototype.toString = function toString() {
-        return this.id;
-    };
+        toJSON() {
+            return {
+                type: this.component.meta.type,
+                id: this.component.id,
+                endpoint: this.name
+            };
+        }
 
-    OperatorSourceEndpoint.prototype.toJSON = function toJSON() {
-        return {
-            type: this.component.meta.type,
-            id: this.component.id,
-            endpoint: this.name
-        };
-    };
+    }
 
-    Wirecloud.wiring.OperatorSourceEndpoint = OperatorSourceEndpoint;
-
-})(Wirecloud.Utils);
+})(Wirecloud.wiring, Wirecloud.Utils);

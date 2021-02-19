@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -35,47 +36,49 @@
      * @param {Boolean}       inherit Use the value from the parent preference group
      * @param {Object}        value   Current value
      */
-    var PlatformPref = function PlatformPref(manager, preferenceDef, inherit, value) {
-        Object.defineProperty(this, 'meta', {value: preferenceDef});
-        Object.defineProperty(this, 'manager', {value: manager});
+    Wirecloud.PlatformPref = class PlatformPref {
 
-        this.inherit = inherit;
-        if (value != null) {
-            this.value = Wirecloud.ui.InputInterfaceFactory.parse(preferenceDef.options.type, value);
-        } else {
-            this.value = preferenceDef.default;
+        constructor(manager, preferenceDef, inherit, value) {
+            Object.defineProperty(this, 'meta', {value: preferenceDef});
+            Object.defineProperty(this, 'manager', {value: manager});
+
+            this.inherit = inherit;
+            if (value != null) {
+                this.value = Wirecloud.ui.InputInterfaceFactory.parse(preferenceDef.options.type, value);
+            } else {
+                this.value = preferenceDef.default;
+            }
+
+            this.handlers = [];
         }
 
-        this.handlers = [];
-    };
+        getEffectiveValue() {
+            if (this.inherit) {
+                return this.manager.getParentValue(this.meta.name);
+            }
 
-    PlatformPref.prototype.getEffectiveValue = function getEffectiveValue() {
-        if (this.inherit) {
-            return this.manager.getParentValue(this.meta.name);
+            return this.value;
         }
 
-        return this.value;
-    };
+        addHandler(handler) {
+            this.handlers.push(handler);
+        }
 
-    PlatformPref.prototype.addHandler = function addHandler(handler) {
-        this.handlers.push(handler);
-    };
-
-    PlatformPref.prototype._propagate = function _propagate() {
-        // Handlers
-        for (var i = 0; i < this.handlers.length; i++) {
-            try {
-                this.handlers[i](this.scope, this.name, this.value);
-            } catch (e) {
-                // FIXME
+        _propagate() {
+            // Handlers
+            for (var i = 0; i < this.handlers.length; i++) {
+                try {
+                    this.handlers[i](this.scope, this.name, this.value);
+                } catch (e) {
+                    // FIXME
+                }
             }
         }
-    };
 
-    PlatformPref.prototype.setDefaultValue = function setDefaultValue() {
-        this.setValue(this.definition.inputInterface.getDefaultValue());
-    };
+        setDefaultValue() {
+            this.setValue(this.definition.inputInterface.getDefaultValue());
+        }
 
-    Wirecloud.PlatformPref = PlatformPref;
+    }
 
 })();

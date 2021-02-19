@@ -1,5 +1,6 @@
 /*
  *     Copyright 2008-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,63 +23,63 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var TargetEndpoint = function TargetEndpoint() {
-        Wirecloud.wiring.Endpoint.call(this);
-        this.inputs = [];
-        this.connections = [];
-    };
-    utils.inherit(TargetEndpoint, Wirecloud.wiring.Endpoint);
+    ns.TargetEndpoint = class TargetEndpoint extends ns.Endpoint {
 
-    TargetEndpoint.prototype.connect = function connect(input, connection) {
-        if (!(input instanceof Wirecloud.wiring.SourceEndpoint)) {
-            throw new TypeError('Invalid source endpoint');
+        constructor(id, meta) {
+            super(id, meta);
+
+            this.inputs = [];
+            this.connections = [];
         }
 
-        input.connect(this, connection);
-    };
+        connect(input, connection) {
+            if (!(input instanceof ns.SourceEndpoint)) {
+                throw new TypeError('Invalid source endpoint');
+            }
 
-    TargetEndpoint.prototype.disconnect = function disconnect(input) {
-        if (!(input instanceof Wirecloud.wiring.SourceEndpoint)) {
-            throw new TypeError('Invalid source endpoint');
+            input.connect(this, connection);
         }
 
-        input.disconnect(this);
-    };
+        disconnect(input) {
+            if (!(input instanceof ns.SourceEndpoint)) {
+                throw new TypeError('Invalid source endpoint');
+            }
 
-    TargetEndpoint.prototype.propagate = function propagate(data, options) {
-        // Do nothing by default
-    };
-
-    /**
-     * @private
-     */
-    TargetEndpoint.prototype._addInput = function _addInput(input, connection) {
-        this.inputs.push(input);
-        this.connections.push(connection);
-    };
-
-    /**
-     * @private
-     */
-    TargetEndpoint.prototype._removeInput = function _removeInput(input, connection) {
-        var index = this.inputs.indexOf(input);
-
-        this.inputs.splice(index, 1);
-        this.connections.splice(index, 1);
-    };
-
-    TargetEndpoint.prototype.fullDisconnect = function fullDisconnect() {
-        // Disconnecting inputs
-        var inputs = this.inputs.slice(0);
-        for (var i = 0; i < inputs.length; ++i) {
-            inputs[i].disconnect(this);
+            input.disconnect(this);
         }
-    };
 
-    Wirecloud.wiring.TargetEndpoint = TargetEndpoint;
+        propagate(data, options) {
+            // Do nothing by default
+        };
 
-})(Wirecloud.Utils);
+        /**
+         * @private
+         */
+        _addInput(input, connection) {
+            this.inputs.push(input);
+            this.connections.push(connection);
+        }
+
+        /**
+         * @private
+         */
+        _removeInput(input, connection) {
+            const index = this.inputs.indexOf(input);
+
+            this.inputs.splice(index, 1);
+            this.connections.splice(index, 1);
+        }
+
+        fullDisconnect() {
+            [...this.inputs].forEach((input) => {input.disconnect(this)});
+
+            return this;
+        }
+
+    }
+
+})(Wirecloud.wiring, Wirecloud.Utils);

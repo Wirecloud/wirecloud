@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -77,7 +77,7 @@
         }
 
         _connect() {
-            var message = utils.gettext("The connection ('%(source)s'-'%(target)s') was established.");
+            const message = utils.gettext("The connection ('%(source)s'-'%(target)s') was established.");
 
             this.established = true;
             this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.INFO_MSG);
@@ -86,7 +86,7 @@
         }
 
         _disconnect() {
-            var message = utils.gettext("The connection ('%(source)s'-'%(target)s') was detached.");
+            const message = utils.gettext("The connection ('%(source)s'-'%(target)s') was detached.");
 
             this.established = false;
             this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.INFO_MSG);
@@ -113,7 +113,7 @@
         establish() {
 
             if (this.source.missing || this.target.missing) {
-                var message = utils.gettext("The connection ('%(source)s'-'%(target)s') has a missing endpoint.");
+                const message = utils.gettext("The connection ('%(source)s'-'%(target)s') has a missing endpoint.");
                 this.logManager.log(utils.interpolate(message, this), Wirecloud.constants.LOGGING.ERROR_MSG);
                 return this;
             }
@@ -152,7 +152,7 @@
         }
 
         showLogs() {
-            var modal = new Wirecloud.ui.LogWindowMenu(this.logManager, {
+            const modal = new Wirecloud.ui.LogWindowMenu(this.logManager, {
                 title: utils.gettext("Connection's logs")
             });
             modal.show();

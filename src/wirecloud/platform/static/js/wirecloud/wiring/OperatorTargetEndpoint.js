@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,101 +23,17 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
-        Object.defineProperties(this, {
-            component: {value: operator},
-            meta: {value: meta},
-            missing: {value: false}
-        });
-
-        if (meta != null) {
-            Object.defineProperties(this, {
-                name: {value: meta.name},
-                friendcode: {value: meta.friendcode},
-                label: {value: meta.label},
-                description: {value: meta.description ? meta.description : ""},
-                id: {value: 'operator/' + operator.id + '/' + this.meta.name},
-            });
-        }
-
-        this.callback = null;
-
-        Wirecloud.wiring.TargetEndpoint.call(this);
-    };
-    utils.inherit(OperatorTargetEndpoint, Wirecloud.wiring.TargetEndpoint);
-
-    OperatorTargetEndpoint.prototype.toString = function toString() {
-        return this.id;
-    };
-
-    OperatorTargetEndpoint.prototype.toJSON = function toJSON() {
-        return {
-            type: this.component.meta.type,
-            id: this.component.id,
-            endpoint: this.name
-        };
-    };
-
-    OperatorTargetEndpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
-        var actionlabel = this.meta.actionlabel, result;
-        if (!actionlabel || actionlabel === '') {
-            actionlabel = utils.gettext('Use in %(endpointName)s');
-            actionlabel = utils.interpolate(actionlabel, {endpointName: this.meta.label}, true);
-        }
-
-        result = this.toJSON();
-        result.actionlabel = actionlabel;
-
-        return [result];
-    };
-
-    OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
-        var msg, details;
-
-        if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
-            if (this.component.loaded) {
-                if (this.callback == null) {
-                    msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
-                    msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
-                    details = utils.gettext('Operator has not registered a callback for this input endpoint');
-                    this.component.logManager.log(msg, {details: details});
-                    return;
-                }
-                try {
-                    this.callback.call(this.component, newValue);
-                } catch (error) {
-                    if (error instanceof Wirecloud.wiring.EndpointTypeError || error instanceof Wirecloud.wiring.EndpointValueError) {
-                        throw error;
-                    } else {
-                        msg = utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
-                        msg = utils.interpolate(msg, {inputendpoint: this.meta.name}, true);
-                        details = this.component.logManager.formatException(error);
-                        this.component.logManager.log(msg, {details: details});
-                    }
-                }
-            } else {
-                this.component.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
-            }
-        }
-    };
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var is_target_endpoint = function is_target_endpoint(list) {
-        var i, target;
-
+    const is_target_endpoint = function is_target_endpoint(list) {
         if (list == null) {
             return true;
         }
 
-        for (i = 0; i < list.length; i += 1) {
-            target = list[i];
+        for (let i = 0; i < list.length; i += 1) {
+            const target = list[i];
             if ((target.type === this.component.meta.type) && (target.id === this.component.id) && (target.endpoint === this.name)) {
                 return true;
             }
@@ -124,6 +41,81 @@
         return false;
     };
 
-    Wirecloud.wiring.OperatorTargetEndpoint = OperatorTargetEndpoint;
+    ns.OperatorTargetEndpoint = class OperatorTargetEndpoint extends ns.TargetEndpoint {
 
-})(Wirecloud.Utils);
+        constructor(operator, meta) {
+            const id = meta != null ? 'operator/' + operator.id + '/' + meta.name : null;
+
+            super(id, meta);
+
+            Object.defineProperties(this, {
+                component: {value: operator},
+                meta: {value: meta},
+                missing: {value: false}
+            });
+
+            this.callback = null;
+        }
+
+        toString() {
+            return this.id;
+        }
+
+        toJSON() {
+            return {
+                type: this.component.meta.type,
+                id: this.component.id,
+                endpoint: this.name
+            };
+        }
+
+        getReachableEndpoints() {
+            let actionlabel = this.meta.actionlabel;
+            if (!actionlabel || actionlabel === '') {
+                actionlabel = utils.gettext('Use in %(endpointName)s');
+                actionlabel = utils.interpolate(actionlabel, {endpointName: this.meta.label}, true);
+            }
+
+            const result = this.toJSON();
+            result.actionlabel = actionlabel;
+
+            return [result];
+        }
+
+        propagate(newValue, options) {
+            if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
+                if (this.component.loaded) {
+                    if (this.callback == null) {
+                        const msg = utils.interpolate(
+                            utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint'),
+                            {inputendpoint: this.meta.name},
+                            true
+                        );
+                        const details = utils.gettext('Operator has not registered a callback for this input endpoint');
+                        this.component.logManager.log(msg, {details: details});
+                        return;
+                    }
+                    try {
+                        this.callback.call(this.component, newValue);
+                    } catch (error) {
+                        if (error instanceof Wirecloud.wiring.EndpointTypeError || error instanceof Wirecloud.wiring.EndpointValueError) {
+                            throw error;
+                        } else {
+                            const msg = utils.interpolate(
+                                utils.gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint'),
+                                {inputendpoint: this.meta.name},
+                                true
+                            );
+                            const details = this.component.logManager.formatException(error);
+                            this.component.logManager.log(msg, {details: details});
+                        }
+                    }
+                } else {
+                    this.component.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
+                }
+            }
+        }
+
+    }
+
+})(Wirecloud.wiring, Wirecloud.Utils);

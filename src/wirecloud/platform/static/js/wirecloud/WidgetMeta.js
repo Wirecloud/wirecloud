@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,63 +27,56 @@
 
     "use strict";
 
-    ns.WidgetMeta = function WidgetMeta(data) {
-        var i, property;
+    ns.WidgetMeta = class WidgetMeta extends Wirecloud.MashableApplicationComponent {
 
-        if (data.type == null) {
-            data.type = 'widget';
-        } else if (data.type !== 'widget') {
-            throw new TypeError(utils.interpolate('Invalid component type for a widget: %(type)s.', {type: data.type}));
+        constructor(desc) {
+            if (desc.type == null) {
+                desc.type = 'widget';
+            } else if (desc.type !== 'widget') {
+                throw new TypeError(utils.interpolate('Invalid component type for a widget: %(type)s.', {type: desc.type}));
+            }
+
+            super(desc);
+
+            if (this.missing) {
+                this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, Wirecloud.location.base)).href + '?lang=' + Wirecloud.contextManager.get('language');
+                this.codecontenttype = "application/xhtml+xml";
+            } else {
+                this.codeurl = desc.contents.src;
+                this.codecontenttype = desc.contents.contenttype || "application/xhtml+xml";
+            }
+            if (this.codeurl.indexOf('?') === -1) {
+                this.codeurl += '?';
+            } else {
+                this.codeurl += '&';
+            }
+            this.codeurl += "entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
+
+            // Properties
+            this.properties = {};
+            this.propertyList = [];
+            desc.properties.forEach((property_info) => {
+                const property = new Wirecloud.PersistentVariableDef(property_info);
+                this.properties[property.name] = property;
+                this.propertyList.push(property);
+            });
+            Object.freeze(this.properties);
+            Object.freeze(this.propertyList);
+
+            Object.defineProperties(this, {
+                "default_width": {value: desc.widget_width},
+                "default_height": {value: desc.widget_height},
+            });
+
+            Object.freeze(this);
         }
 
-        Wirecloud.MashableApplicationComponent.call(this, data);
-
-        if (this.missing) {
-            this.codeurl = (new URL(Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY, Wirecloud.location.base)).href + '?lang=' + Wirecloud.contextManager.get('language');
-            this.codecontenttype = "application/xhtml+xml";
-        } else {
-            this.codeurl = data.contents.src;
-            this.codecontenttype = data.contents.contenttype;
-        }
-        if (this.codeurl.indexOf('?') === -1) {
-            this.codeurl += '?';
-        } else {
-            this.codeurl += '&';
-        }
-        this.codeurl += "entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
-
-        // Properties
-        this.properties = {};
-        this.propertyList = [];
-        for (i = 0; i < data.properties.length; i++) {
-            property = new Wirecloud.PersistentVariableDef(data.properties[i]);
-            this.properties[property.name] = property;
-            this.propertyList.push(property);
-        }
-        Object.freeze(this.properties);
-        Object.freeze(this.propertyList);
-
-        Object.defineProperties(this, {
-            "default_width": {value: data.widget_width},
-            "default_height": {value: data.widget_height},
-        });
-
-        /* FIXME */
-        this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
-        this.getIPhoneImageURI = this.getIcon;
-        /* END FIXME */
-
-        Object.freeze(this);
-    };
-
-    utils.inherit(ns.WidgetMeta, Wirecloud.MashableApplicationComponent, {
-
-        getInfoString: function getInfoString() {
-            var transObj = {vendor: this.vendor, name: this.name, version: this.version};
-            var msg = utils.gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
+        getInfoString() {
+            const transObj = {vendor: this.vendor, name: this.name, version: this.version};
+            const msg = utils.gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
             return utils.interpolate(msg, transObj, true);
         }
 
-    });
+    }
 
 })(Wirecloud, Wirecloud.Utils);
