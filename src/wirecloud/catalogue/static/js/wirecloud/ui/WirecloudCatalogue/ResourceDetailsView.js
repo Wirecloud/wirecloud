@@ -29,12 +29,13 @@
     ns.ResourceDetailsView = class ResourceDetailsView extends se.Alternative {
 
         constructor(id, options) {
+            options['class'] = 'details_interface loading';
+
             super(id, options);
 
             var extra_context;
 
             this.mainview = options.catalogue;
-            options['class'] = 'details_interface loading';
 
             extra_context = function (resource) {
                 return {

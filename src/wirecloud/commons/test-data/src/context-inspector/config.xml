@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="context-inspector" version="0.5">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="context-inspector" version="1.0">
 
   <details>
     <title>Context Inspector</title>
-    <authors>Álvaro Arranz &lt;aarranz@conwet.com&gt;</authors>
+    <authors>Álvaro Arranz &lt;aarranz@ficodes.com&gt;</authors>
     <email>wirecloud@conwet.com</email>
     <image>images/catalogue.png</image>
     <smartphoneimage>images/smartphone.png</smartphoneimage>

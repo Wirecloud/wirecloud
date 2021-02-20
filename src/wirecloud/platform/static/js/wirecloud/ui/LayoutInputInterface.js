@@ -188,7 +188,7 @@
             return JSON.parse(value);
         }
 
-        stringify(value) {
+        static stringify(value) {
             return JSON.stringify(value);
         }
 
