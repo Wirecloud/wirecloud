@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,18 +29,15 @@
 
     const builder = new StyledElements.GUIBuilder();
 
-    var initEmptyCatalogueInfoBox = function initEmptyCatalogueInfoBox(title, message) {
-
+    const initEmptyCatalogueInfoBox = function initEmptyCatalogueInfoBox(title, message) {
         // Build the message box used when there are no resources in the catalogue
-        var layer = builder.DEFAULT_OPENING + '<div class="catalogueEmptyBox"><div class="alert alert-info"><h4><t:title/></h4><p><t:message/></p></div></div>' + builder.DEFAULT_CLOSING;
+        const layer = builder.DEFAULT_OPENING + '<div class="catalogueEmptyBox"><div class="alert alert-info"><h4><t:title/></h4><p><t:message/></p></div></div>' + builder.DEFAULT_CLOSING;
 
         this.emptyBox = builder.parse(layer, {title: title, message: message}).elements[0];
     };
 
-    var update_resetbutton = function update_resetbutton(options) {
-        var filters_applied;
-
-        filters_applied = options.keywords !== '' || options.scope !== 'all';
+    const update_resetbutton = function update_resetbutton(options) {
+        const filters_applied = options.keywords !== '' || options.scope !== 'all';
 
         if (filters_applied) {
             this.view_allbutton.setLabel(utils.gettext('Clear filters'));
@@ -49,7 +46,7 @@
         }
     };
 
-    var onSearchInput = function onSearchInput(event) {
+    const onSearchInput = function onSearchInput(event) {
 
         // Cancel current timeout
         if (this.timeout !== null) {
@@ -62,8 +59,6 @@
     ns.CatalogueSearchView = class CatalogueSearchView extends se.Alternative {
 
         constructor(id, options) {
-            var context, extra_context, resource_template;
-
             options = utils.merge({
                 // Default options
                 emptyTitle: utils.gettext("Empty Marketplace!"),
@@ -85,12 +80,10 @@
                 'scope': 'all',
                 'requestFunc': this._search.bind(this),
                 'processFunc': function (elements, search_info) {
-                    var msg;
-
                     this.resource_list.clear();
 
                     if ('corrected_query' in search_info) {
-                        msg = utils.gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
+                        const msg = utils.gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
 
                         this.resource_list.appendChild(this.resource_painter.paintInfo(msg, {
                             corrected_query: search_info.corrected_query
@@ -115,8 +108,6 @@
             }.bind(this));
             this.source.addEventListener('requestStart', this.disable.bind(this));
             this.source.addEventListener('requestEnd', function (pagination, error) {
-                var msg;
-
                 if (error != null) {
                     this.resource_painter.setError(utils.gettext('Connection error: No resource retrieved.'));
                 }
@@ -124,7 +115,7 @@
                 if (pagination.totalCount === 0 && pagination.options.keywords.trim() === "" && pagination.options.scope === 'all') {
                     this.resource_list.appendChild(this.emptyBox);
                 } else if (pagination.totalCount === 0) {
-                    msg = utils.gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
+                    let msg = utils.gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
                     msg = utils.interpolate(msg, {keywords: utils.escapeHTML(pagination.options.keywords.trim())}, true);
                     this.resource_painter.setError(new StyledElements.Fragment(msg));
                 }
@@ -136,18 +127,15 @@
             this.simple_search_input.addEventListener('keydown', this._onSearchInputKeyPress.bind(this));
             this.simple_search_input.addEventListener('change', onSearchInput.bind(this));
 
-            if ('extra_context' in options) {
-                extra_context = options.extra_context;
-            } else {
-                extra_context = {};
-            }
-            context = utils.merge(extra_context, {
+            const extra_context = 'extra_context' in options ? options.extra_context : {};
+
+            const context = utils.merge(extra_context, {
                 'resourcelist': this.resource_list,
                 'pagination': function () {
                     return new StyledElements.PaginationInterface(this.source);
                 }.bind(this),
                 'reset_button': function () {
-                    var button = new StyledElements.Button({text: utils.gettext('Refresh')});
+                    const button = new StyledElements.Button({text: utils.gettext('Refresh')});
                     button.addEventListener('click', function () {
                         this.source.changeOptions({'correct_query': true, 'keywords': '', scope: 'all'});
                     }.bind(this));
@@ -155,7 +143,7 @@
                     return button;
                 }.bind(this),
                 'orderby': function () {
-                    var select = new StyledElements.Select({
+                    const select = new StyledElements.Select({
                         'initialValue': '-creation_date',
                         'initialEntries': [
                             {'label': utils.gettext('Creation date'), 'value': '-creation_date'},
@@ -169,7 +157,7 @@
                     return select;
                 }.bind(this),
                 'scope': function () {
-                    var select = new StyledElements.Select({
+                    const select = new StyledElements.Select({
                         'initialValue': 'all',
                         'initialEntries': [
                             {'label': utils.gettext('All'), 'value': 'all'},
@@ -187,18 +175,14 @@
                 'searchinput': this.simple_search_input
             });
 
-            var contents = builder.parse(Wirecloud.currentTheme.templates[options.gui_template], context);
+            const contents = builder.parse(Wirecloud.currentTheme.templates[options.gui_template], context);
             this.appendChild(contents);
             this.timeout = null;
             this._keywordTimeoutHandler = this._keywordTimeoutHandler.bind(this);
             this.initialized = false;
             this._last_search = false;
 
-            if ('resource_template' in options) {
-                resource_template = options.resource_template;
-            } else {
-                resource_template = 'wirecloud/catalogue/resource';
-            }
+            const resource_template = 'resource_template' in options ? options.resource_template : 'wirecloud/catalogue/resource';
 
             // eslint-disable-next-line new-cap
             this.resource_painter = new options.resource_painter(this.catalogue,
