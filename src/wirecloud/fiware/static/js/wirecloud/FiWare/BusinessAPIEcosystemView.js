@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,55 +23,11 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var BusinessAPIEcosystemView = function BusinessAPIEcosystemView(id, options) {
-        options.class = 'catalogue fiware';
-        Wirecloud.ui.WorkspaceView.call(this, id, options);
-
-        Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
-        Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
-        Object.defineProperty(this, 'workspaceview', {value: this.desc.user + '/' + this.desc.name});
-        this.addEventListener('show', load.bind(this));
-
-        this.status = "unloaded";
-    };
-    utils.inherit(BusinessAPIEcosystemView, Wirecloud.ui.WorkspaceView);
-
-    BusinessAPIEcosystemView.prototype.getLabel = function getLabel() {
-        return this.desc.title || this.desc.name;
-    };
-
-    BusinessAPIEcosystemView.prototype.isAllow = function isAllow(action) {
-        return (action in this.desc.permissions) ? this.desc.permissions[action] : false;
-    };
-
-    BusinessAPIEcosystemView.prototype.goUp = function goUp() {
-        return false;
-    };
-
-    BusinessAPIEcosystemView.prototype.wait_ready = function wait_ready(listener) {
-        listener();
-    };
-
-    BusinessAPIEcosystemView.prototype.getPublishEndpoints = function getPublishEndpoints() {
-        return null;
-    };
-
-    BusinessAPIEcosystemView.prototype.destroy = function destroy() {
-        if (this.status === "loaded") {
-            this.model.unload();
-            this.status = "unloaded";
-        }
-    };
-
-    Wirecloud.FiWare.BusinessAPIEcosystemView = BusinessAPIEcosystemView;
-
-    Wirecloud.MarketManager.addMarketType('fiware-bae', 'FIWARE Business API Ecosystem', BusinessAPIEcosystemView);
-
-    var load = function load() {
+    const load = function load() {
         if (this.status === "unloaded") {
             this.status = "loading";
             Wirecloud.loadWorkspace({owner: this.desc.user, name: this.desc.name}).then((workspace) => {
@@ -82,4 +39,49 @@
         }
     };
 
-})(Wirecloud.Utils);
+    ns.BusinessAPIEcosystemView = class BusinessAPIEcosystemView extends Wirecloud.ui.WorkspaceView {
+
+        constructor(id, options) {
+            options.class = 'catalogue fiware';
+            super(id, options);
+
+            Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
+            Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
+            Object.defineProperty(this, 'workspaceview', {value: this.desc.user + '/' + this.desc.name});
+            this.addEventListener('show', load.bind(this));
+
+            this.status = "unloaded";
+        }
+
+        getLabel() {
+            return this.desc.title || this.desc.name;
+        }
+
+        isAllow(action) {
+            return (action in this.desc.permissions) ? this.desc.permissions[action] : false;
+        }
+
+        goUp() {
+            return false;
+        }
+
+        wait_ready(listener) {
+            listener();
+        }
+
+        getPublishEndpoints() {
+            return null;
+        }
+
+        destroy() {
+            if (this.status === "loaded") {
+                this.model.unload();
+                this.status = "unloaded";
+            }
+        }
+
+    }
+
+    Wirecloud.MarketManager.addMarketType('fiware-bae', 'FIWARE Business API Ecosystem', ns.BusinessAPIEcosystemView);
+
+})(Wirecloud.FiWare, Wirecloud.Utils);

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -23,203 +23,203 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var SmartColumnLayout = function SmartColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace) {
-        Wirecloud.ui.ColumnLayout.call(
-            this,
-            dragboard,
-            columns,
-            cellHeight,
-            verticalMargin,
-            horizontalMargin,
-            scrollbarSpace
-        );
-    };
-    utils.inherit(SmartColumnLayout, Wirecloud.ui.ColumnLayout);
+    ns.SmartColumnLayout = class SmartColumnLayout extends ns.ColumnLayout {
 
-    SmartColumnLayout.prototype.initialize = function initialize() {
-        var modified = Wirecloud.ui.ColumnLayout.prototype.initialize.call(this);
-
-        // remove holes by moving widgets to the topmost position available
-        var widget, key, keys = [];
-        for (key in this.widgets) {
-            keys.push(key);
-            widget = this.widgets[key];
-            modified = modified || this.moveSpaceUp(this._buffers.base, widget);
-        }
-        if (modified) {
-            // save these changes in the server side
-            this.dragboard.update(keys);
+        constructor(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace) {
+            super(
+                dragboard,
+                columns,
+                cellHeight,
+                verticalMargin,
+                horizontalMargin,
+                scrollbarSpace
+            );
         }
 
-        return modified;
-    };
+        initialize() {
+            let modified = super.initialize();
 
-    SmartColumnLayout.prototype._notifyResizeEvent = function _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
-        var x, y;
-        var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
-        var position = widget.position;
-        var step2X, finalYPos, widthDiff, iWidgetToMove, limitX, limitY;
-        step2X = position.x;
+            // remove holes by moving widgets to the topmost position available
+            const keys = [];
+            for (let key in this.widgets) {
+                keys.push(key);
+                const widget = this.widgets[key];
+                modified = modified || this.moveSpaceUp(this._buffers.base, widget);
+            }
+            if (modified) {
+                // save these changes in the server side
+                this.dragboard.update(keys);
+            }
 
-        // First Step
-        if (newWidth > oldWidth) {
-            // Calculate the width for the next step
-            step2Width = oldWidth;
+            return modified;
+        }
 
-            finalYPos = position.y + newHeight;
+        _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
+            var x, y;
+            var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
+            var position = widget.position;
+            var step2X, finalYPos, widthDiff, iWidgetToMove, limitX, limitY;
+            step2X = position.x;
 
-            if (resizeLeftSide) {
-                // Move affected iwidgets
-                widthDiff = newWidth - oldWidth;
-                for (x = position.x - widthDiff; x < position.x; ++x) {
-                    for (y = 0; y < newHeight; ++y) {
-                        iWidgetToMove = this.matrix[x][position.y + y];
-                        if (iWidgetToMove != null) {
-                            this.moveSpaceDown(this._buffers.base, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
-                            break; // Continue with the next column
+            // First Step
+            if (newWidth > oldWidth) {
+                // Calculate the width for the next step
+                step2Width = oldWidth;
+
+                finalYPos = position.y + newHeight;
+
+                if (resizeLeftSide) {
+                    // Move affected iwidgets
+                    widthDiff = newWidth - oldWidth;
+                    for (x = position.x - widthDiff; x < position.x; ++x) {
+                        for (y = 0; y < newHeight; ++y) {
+                            iWidgetToMove = this.matrix[x][position.y + y];
+                            if (iWidgetToMove != null) {
+                                this.moveSpaceDown(this._buffers.base, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                                break; // Continue with the next column
+                            }
+                        }
+                    }
+
+                    // Move the widget
+                    position.x -= widthDiff;
+                    widget.setPosition(position);
+
+                    // Reserve the new space
+                    this._reserveSpace2(
+                        this.matrix,
+                        widget,
+                        position.x, position.y,
+                        widthDiff, newHeight
+                    );
+                } else {
+                    // Move affected iwidgets
+                    for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
+                        for (y = 0; y < newHeight; ++y) {
+                            iWidgetToMove = this.matrix[x][position.y + y];
+                            if (iWidgetToMove != null) {
+                                this.moveSpaceDown(this._buffers.base, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                                break; // Continue with the next column
+                            }
+                        }
+                    }
+
+                    // Reserve this space
+                    this._reserveSpace2(
+                        this.matrix,
+                        widget,
+                        position.x + oldWidth, position.y,
+                        newWidth - oldWidth, newHeight
+                    );
+                }
+
+            } else if (newWidth < oldWidth) {
+                // Calculate the width for the next step
+                step2Width = newWidth;
+
+                widthDiff = oldWidth - newWidth;
+                if (resizeLeftSide) {
+
+                    // Clear space
+                    this._clearSpace2(this.matrix, position.x, position.y, widthDiff, oldHeight);
+
+                    // Move affected iwidgets
+                    y = position.y + oldHeight;
+                    limitX = position.x + widthDiff;
+                    for (x = position.x; x < limitX; ++x) {
+                        if (this.matrix[x][y] != null) {
+                            this.moveSpaceUp(this._buffers.base, this.matrix[x][y]);
+                        }
+                    }
+
+                    // Move the widget
+                    position.x += widthDiff;
+                    widget.setPosition(position);
+
+                    step2X = position.x;
+                } else {
+                    // Clear space
+                    this._clearSpace2(this.matrix, position.x + newWidth, position.y, widthDiff, oldHeight);
+
+                    // Move affected iwidgets
+                    y = position.y + oldHeight;
+                    limitX = position.x + oldWidth;
+                    for (x = position.x + newWidth; x < limitX; ++x) {
+                        if (this.matrix[x][y] != null) {
+                            this.moveSpaceUp(this._buffers.base, this.matrix[x][y]);
+                        }
+                    }
+                }
+            }
+
+            // Second Step
+            if (newHeight > oldHeight) {
+                limitY = position.y + newHeight;
+                limitX = step2X + step2Width;
+                for (y = position.y + oldHeight; y < limitY; y++) {
+                    for (x = step2X; x < limitX; x++) {
+                        if (this.matrix[x][y] != null) {
+                            this.moveSpaceDown(this._buffers.base, this.matrix[x][y], limitY - y);
                         }
                     }
                 }
 
-                // Move the widget
-                position.x -= widthDiff;
-                widget.setPosition(position);
+                // Reserve Space
+                this._reserveSpace2(this.matrix, widget, step2X, position.y + oldHeight, step2Width, newHeight - oldHeight);
+            } else if (newHeight < oldHeight) {
+                // Clear freed space
+                this._clearSpace2(this.matrix, step2X, position.y + newHeight, step2Width, oldHeight - newHeight);
 
-                // Reserve the new space
-                this._reserveSpace2(
-                    this.matrix,
-                    widget,
-                    position.x, position.y,
-                    widthDiff, newHeight
-                );
-            } else {
-                // Move affected iwidgets
-                for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
-                    for (y = 0; y < newHeight; ++y) {
-                        iWidgetToMove = this.matrix[x][position.y + y];
-                        if (iWidgetToMove != null) {
-                            this.moveSpaceDown(this._buffers.base, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
-                            break; // Continue with the next column
-                        }
-                    }
-                }
-
-                // Reserve this space
-                this._reserveSpace2(
-                    this.matrix,
-                    widget,
-                    position.x + oldWidth, position.y,
-                    newWidth - oldWidth, newHeight
-                );
-            }
-
-        } else if (newWidth < oldWidth) {
-            // Calculate the width for the next step
-            step2Width = newWidth;
-
-            widthDiff = oldWidth - newWidth;
-            if (resizeLeftSide) {
-
-                // Clear space
-                this._clearSpace2(this.matrix, position.x, position.y, widthDiff, oldHeight);
-
-                // Move affected iwidgets
                 y = position.y + oldHeight;
-                limitX = position.x + widthDiff;
-                for (x = position.x; x < limitX; ++x) {
-                    if (this.matrix[x][y] != null) {
-                        this.moveSpaceUp(this._buffers.base, this.matrix[x][y]);
-                    }
-                }
-
-                // Move the widget
-                position.x += widthDiff;
-                widget.setPosition(position);
-
-                step2X = position.x;
-            } else {
-                // Clear space
-                this._clearSpace2(this.matrix, position.x + newWidth, position.y, widthDiff, oldHeight);
-
-                // Move affected iwidgets
-                y = position.y + oldHeight;
-                limitX = position.x + oldWidth;
-                for (x = position.x + newWidth; x < limitX; ++x) {
-                    if (this.matrix[x][y] != null) {
-                        this.moveSpaceUp(this._buffers.base, this.matrix[x][y]);
-                    }
-                }
-            }
-        }
-
-        // Second Step
-        if (newHeight > oldHeight) {
-            limitY = position.y + newHeight;
-            limitX = step2X + step2Width;
-            for (y = position.y + oldHeight; y < limitY; y++) {
+                limitX = step2X + step2Width;
                 for (x = step2X; x < limitX; x++) {
                     if (this.matrix[x][y] != null) {
-                        this.moveSpaceDown(this._buffers.base, this.matrix[x][y], limitY - y);
+                        this.moveSpaceUp(this._buffers.base, this.matrix[x][y]);
                     }
                 }
             }
 
-            // Reserve Space
-            this._reserveSpace2(this.matrix, widget, step2X, position.y + oldHeight, step2Width, newHeight - oldHeight);
-        } else if (newHeight < oldHeight) {
-            // Clear freed space
-            this._clearSpace2(this.matrix, step2X, position.y + newHeight, step2Width, oldHeight - newHeight);
+            this._notifyWindowResizeEvent(true, true); // TODO
+            if (persist) {
+                this.moveSpaceUp(this._buffers.base, widget);
+                // Save new positions into persistence
+                this.dragboard.update(); // FIXME
+            }
+        }
 
-            y = position.y + oldHeight;
-            limitX = step2X + step2Width;
-            for (x = step2X; x < limitX; x++) {
-                if (this.matrix[x][y] != null) {
-                    this.moveSpaceUp(this._buffers.base, this.matrix[x][y]);
+        // Returns if any widget's position has been modified
+        _insertAt(widget, x, y, buffer) {
+            var affectedwidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, widget, x, y, buffer);
+            return utils.setupdate(affectedwidgets, this.moveSpaceUp(buffer, widget));
+        }
+
+        /**
+         * @returns Returns true if any widget's position has been modified
+         */
+        _removeFromMatrix(buffer, widget) {
+            this._clearSpace(buffer, widget);
+
+            var visitedwidgets = new Set(), modifiedwidgets = new Set();
+            var position = this._getPositionOn(buffer, widget);
+            var edgeY = position.y + widget.shape.height;
+
+            let matrix = buffer.matrix;
+
+            // check if we have to update the representations of the widget instances
+            for (let x = 0; x < widget.shape.width; x++) {
+                let currentwidget = matrix[position.x + x][edgeY];
+                if (currentwidget != null && !visitedwidgets.has(currentwidget.id)) {
+                    visitedwidgets.add(currentwidget.id);
+                    utils.setupdate(modifiedwidgets, this.moveSpaceUp(buffer, currentwidget));
                 }
             }
+            return modifiedwidgets;
         }
 
-        this._notifyWindowResizeEvent(true, true); // TODO
-        if (persist) {
-            this.moveSpaceUp(this._buffers.base, widget);
-            // Save new positions into persistence
-            this.dragboard.update(); // FIXME
-        }
-    };
+    }
 
-    // Returns if any widget's position has been modified
-    SmartColumnLayout.prototype._insertAt = function (widget, x, y, buffer) {
-        var affectedwidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, widget, x, y, buffer);
-        return utils.setupdate(affectedwidgets, this.moveSpaceUp(buffer, widget));
-    };
-
-    /**
-     * @returns Returns true if any widget's position has been modified
-     */
-    SmartColumnLayout.prototype._removeFromMatrix = function _removeFromMatrix(buffer, widget) {
-        this._clearSpace(buffer, widget);
-
-        var visitedwidgets = new Set(), modifiedwidgets = new Set();
-        var position = this._getPositionOn(buffer, widget);
-        var edgeY = position.y + widget.shape.height;
-
-        let matrix = buffer.matrix;
-
-        // check if we have to update the representations of the widget instances
-        for (let x = 0; x < widget.shape.width; x++) {
-            let currentwidget = matrix[position.x + x][edgeY];
-            if (currentwidget != null && !visitedwidgets.has(currentwidget.id)) {
-                visitedwidgets.add(currentwidget.id);
-                utils.setupdate(modifiedwidgets, this.moveSpaceUp(buffer, currentwidget));
-            }
-        }
-        return modifiedwidgets;
-    };
-
-    Wirecloud.ui.SmartColumnLayout = SmartColumnLayout;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, Wirecloud.Utils);

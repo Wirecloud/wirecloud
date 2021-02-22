@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,33 +27,25 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.WidgetViewMenuItems = class WidgetViewMenuItems extends se.DynamicMenuItems {
 
-    ns.WidgetViewMenuItems = function WidgetViewMenuItems(widget) {
-        se.DynamicMenuItems.call(this);
+        constructor(widget) {
+            super();
 
-        Object.defineProperties(this, {
-            widget: {
-                value: widget
-            }
-        });
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.WidgetViewMenuItems, se.DynamicMenuItems, {
+            Object.defineProperties(this, {
+                widget: {
+                    value: widget
+                }
+            });
+        }
 
         /**
          * @override
          */
-        build: function build() {
-            var item, items, item_title, item_icon;
+        build() {
+            let item, item_title, item_icon;
 
-            items = [];
+            const items = [];
 
             item = new se.MenuItem(utils.gettext("Rename"), () => {
                 this.widget.titleelement.enableEdition();
@@ -292,10 +284,6 @@
             return items;
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
+    }
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

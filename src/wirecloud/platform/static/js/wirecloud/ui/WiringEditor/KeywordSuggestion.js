@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,36 +27,30 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
-
     /**
      * Create a new instance of class KeywordSuggestion.
      * @extends {Wiring.KeywordSuggestion}
      *
      * @constructor
      */
-    ns.KeywordSuggestion = function KeywordSuggestion() {
-        Wirecloud.wiring.KeywordSuggestion.call(this);
-        this.enabled = true;
-    };
+    ns.KeywordSuggestion = class KeywordSuggestion extends Wirecloud.wiring.KeywordSuggestion {
 
-    utils.inherit(ns.KeywordSuggestion, Wirecloud.wiring.KeywordSuggestion, {
+        constructor() {
+            super();
+            this.enabled = true;
+        }
 
-        disable: function disable() {
-
+        disable() {
             this.enabled = false;
 
             return this;
-        },
+        }
 
-        enable: function enable() {
-
+        enable() {
             this.enabled = true;
 
             return this;
-        },
+        }
 
         /**
          * [TODO: hideSuggestions description]
@@ -64,8 +59,7 @@
          * @returns {KeywordSuggestion}
          *      The instance on which the member is called.
          */
-        hideSuggestions: function hideSuggestions(endpoint) {
-
+        hideSuggestions(endpoint) {
             if (!this.enabled) {
                 return this;
             }
@@ -75,7 +69,7 @@
             return this.forEachSuggestion(endpoint, function (foundEndpoint) {
                 foundEndpoint.deactivate();
             });
-        },
+        }
 
         /**
          * [TODO: showSuggestions description]
@@ -84,8 +78,7 @@
          * @returns {KeywordSuggestion}
          *      The instance on which the member is called.
          */
-        showSuggestions: function showSuggestions(endpoint) {
-
+        showSuggestions(endpoint) {
             if (!this.enabled) {
                 return this;
             }
@@ -97,10 +90,6 @@
             });
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
+    }
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,80 +27,80 @@
 
     "use strict";
 
-    var build_pref_label = function build_pref_label(preference) {
-        var label = document.createElement("label");
+    const build_pref_label = function build_pref_label(preference) {
+        const label = document.createElement("label");
         label.appendChild(document.createTextNode(preference.label));
         if (typeof preference.description === 'string' && preference.description.trim() !== '') {
-            var tooltip = new se.Tooltip({content: preference.description, placement: ['right', 'bottom', 'top', 'left']});
+            const tooltip = new se.Tooltip({content: preference.description, placement: ['right', 'bottom', 'top', 'left']});
             tooltip.bind(label);
         }
         return label;
     };
 
-    var build_inherit_input = function build_inherit_input(preference) {
+    const build_inherit_input = function build_inherit_input(preference) {
         return Wirecloud.ui.InputInterfaceFactory.createInterface('inherit-' + preference.name, {'type': 'boolean'});
     };
 
-    var build_pref_input = function build_pref_input(preference) {
+    const build_pref_input = function build_pref_input(preference) {
         return Wirecloud.ui.InputInterfaceFactory.createInterface(preference.name, preference.options);
     };
 
-    var build_form = function build_form() {
-        var columnLabel, columnValue;
+    const build_form = function build_form() {
+        let columnLabel, columnValue;
 
         // Build a form for changing this gruop of preferences
-        var table = document.createElement('table');
+        const table = document.createElement('table');
         table.classList.add('styled_form');
         table.setAttribute('cellspacing', '0');
         table.setAttribute('cellpadding', '0');
 
-        var tbody = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
+        const tbody = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
         table.appendChild(tbody);
 
         Object.defineProperty(this, 'interfaces', {value: {}});
-        for (var key in this.manager.meta.preferences) {
-            var preference = this.manager.meta.preferences[key];
+        for (let key in this.manager.meta.preferences) {
+            const preference = this.manager.meta.preferences[key];
 
             if (preference.hidden) {
                 continue;
             }
 
-            var input_interface = build_pref_input(preference);
+            const input_interface = build_pref_input(preference);
             this.interfaces[preference.name] = {
                 'base': input_interface
             };
             if (!preference.inheritable) {
-                var row = tbody.insertRow(-1);
+                const row = tbody.insertRow(-1);
                 columnLabel = row.insertCell(-1);
                 columnLabel.className = "label-cell";
                 columnValue = row.insertCell(-1);
                 columnLabel.appendChild(build_pref_label(preference));
                 input_interface.insertInto(columnValue);
             } else {
-                var complexRow = tbody.insertRow(-1);
-                var complexCell = complexRow.insertCell(-1);
+                const complexRow = tbody.insertRow(-1);
+                const complexCell = complexRow.insertCell(-1);
                 complexCell.style.padding = "0";
                 complexCell.colSpan = "2";
 
-                var complexTable = document.createElement('table');
+                const complexTable = document.createElement('table');
                 complexTable.classList.add('complexTable');
                 complexTable.setAttribute('cellspacing', '0');
                 complexTable.setAttribute('cellpadding', '0');
                 complexCell.appendChild(complexTable);
 
-                var complexTBody = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
+                const complexTBody = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
                 complexTable.appendChild(complexTBody);
 
-                var labelRow = complexTBody.insertRow(-1);
+                const labelRow = complexTBody.insertRow(-1);
                 columnLabel = labelRow.insertCell(-1);
                 columnLabel.className = "label-cell";
                 columnLabel.colSpan = "2";
 
-                var prefRow = complexTBody.insertRow(-1);
-                var inheritCell = prefRow.insertCell(-1);
+                const prefRow = complexTBody.insertRow(-1);
+                const inheritCell = prefRow.insertCell(-1);
                 inheritCell.classList.add('inheritCell');
 
-                var inheritInput = build_inherit_input(preference);
+                const inheritInput = build_inherit_input(preference);
                 this.interfaces[preference.name].inherit = inheritInput;
                 inheritInput.insertInto(inheritCell);
                 inheritCell.appendChild(document.createTextNode(utils.gettext('Inherit')));
@@ -118,30 +118,30 @@
         this.windowContent.insertBefore(table, this.msgElement);
     };
 
-    var save_preferences = function save_preferences() {
-        var modifiedValues = {};
-        var newInheritanceSetting;
+    const save_preferences = function save_preferences() {
+        const modifiedValues = {};
+        let newInheritanceSetting;
 
-        for (var pref_name in this.interfaces) {
-            var preference = this.manager.preferences[pref_name];
-            var inputs = this.interfaces[pref_name];
+        for (let pref_name in this.interfaces) {
+            const preference = this.manager.preferences[pref_name];
+            const inputs = this.interfaces[pref_name];
 
             // Check if this preference has changed
-            var inheritSettingChange = false;
+            let inheritSettingChange = false;
             if ('inherit' in inputs) {
                 newInheritanceSetting = inputs.inherit.getValue();
                 inheritSettingChange = newInheritanceSetting !== preference.inherit;
             }
 
-            var newValue = inputs.base.getValue();
-            var valueChange = preference.value !== newValue;
+            const newValue = inputs.base.getValue();
+            const valueChange = preference.value !== newValue;
 
             if (!inheritSettingChange && !valueChange) {
                 continue; // This preference has not changed
             }
 
             // Process preference changes
-            var changes = {};
+            const changes = {};
 
             if (inheritSettingChange) {
                 changes.inherit = newInheritanceSetting;
@@ -159,15 +159,15 @@
         this.manager.set(modifiedValues);
     };
 
-    var _executeOperation = function _executeOperation() {
+    const _executeOperation = function _executeOperation() {
         // Validate input fields
-        var validationManager = new StyledElements.ValidationErrorManager();
-        for (var pref_name in this.interfaces) {
+        const validationManager = new StyledElements.ValidationErrorManager();
+        for (let pref_name in this.interfaces) {
             validationManager.validate(this.interfaces[pref_name].base);
         }
 
         // Build Error Message
-        var errorMsg = validationManager.toHTML();
+        const errorMsg = validationManager.toHTML();
 
         // Show error message if needed
         if (errorMsg.length !== 0) {
@@ -198,7 +198,7 @@
                 text: utils.gettext('Set Defaults'),
             });
             this.resetButton.addEventListener("click", function () {
-                var pref_name, preference;
+                let pref_name, preference;
 
                 for (pref_name in this.interfaces) {
                     preference = this.manager.preferences[pref_name].meta;
@@ -235,7 +235,7 @@
         }
 
         show(parentWindow) {
-            var pref_name;
+            let pref_name;
 
             this.setTitle(this.manager.buildTitle());
 
