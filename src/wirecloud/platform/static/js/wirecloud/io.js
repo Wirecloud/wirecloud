@@ -1,5 +1,6 @@
 /*
  *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -156,103 +157,109 @@
         }
     };
 
-    var Request = function Request(url, options) {
-        var key;
+    var Request = class Request extends Wirecloud.Task {
 
-        this.options = utils.merge({
-            method: 'POST',
-            asynchronous: true,
-            responseType: null,
-            contentType: null,
-            encoding: null,
-            postBody: null
-        }, options);
+        constructor(url, options) {
+            options = utils.merge({
+                method: 'POST',
+                asynchronous: true,
+                responseType: null,
+                contentType: null,
+                encoding: null,
+                postBody: null
+            }, options);
 
-        for (key in this.options) {
-            if (HANDLER_RE.test(key) && this.options[key] != null && typeof this.options[key] !== 'function') {
-                throw new TypeError(utils.interpolate('Invalid %(callback)s callback', {callback: key}, true));
-            }
-        }
-
-        if (this.options.context != null) {
-            for (key in this.options) {
-                if (HANDLER_RE.test(key) && typeof this.options[key] === 'function') {
-                    this.options[key] = this.options[key].bind(this.options.context);
+            for (let key in options) {
+                if (HANDLER_RE.test(key) && options[key] != null && typeof options[key] !== 'function') {
+                    throw new TypeError(utils.interpolate('Invalid %(callback)s callback', {callback: key}, true));
                 }
             }
-        }
 
-        Object.defineProperties(this, {
-            method: {
-                value: this.options.method.toUpperCase()
-            }
-        });
-
-        if (['PUT', 'POST'].indexOf(this.method) !== -1 && this.options.postBody == null) {
-            var parameters = toQueryString(this.options.parameters);
-            if (parameters != null) {
-                this.options.postBody = parameters;
-                if (this.options.contentType == null) {
-                    this.options.contentType = 'application/x-www-form-urlencoded';
-                }
-                if (this.options.encoding == null) {
-                    this.options.encoding = 'UTF-8';
+            if (options.context != null) {
+                for (let key in options) {
+                    if (HANDLER_RE.test(key) && typeof options[key] === 'function') {
+                        options[key] = options[key].bind(options.context);
+                    }
                 }
             }
-        }
 
-        Object.defineProperties(this, {
-            url: {
-                value: url
-            },
-            abort: {
-                value: function () {
-                    this.transport.aborted = true;
-                    this.transport.abort();
-                    return this;
+            const method = options.method.toUpperCase();
+
+            if (['PUT', 'POST'].indexOf(method) !== -1 && options.postBody == null) {
+                const parameters = toQueryString(options.parameters);
+                if (parameters != null) {
+                    options.postBody = parameters;
+                    if (options.contentType == null) {
+                        options.contentType = 'application/x-www-form-urlencoded';
+                    }
+                    if (options.encoding == null) {
+                        options.encoding = 'UTF-8';
+                    }
                 }
             }
-        });
 
-        this.transport = new XMLHttpRequest();
-        if (this.options.withCredentials === true && this.options.supportsAccessControl) {
-            this.transport.withCredentials = true;
-        }
-        if (this.options.responseType) {
-            this.transport.responseType = this.options.responseType;
-        }
-        this.transport.addEventListener('abort', onAbort.bind(this), true);
-        if (typeof this.options.onUploadProgress === 'function') {
-            this.transport.upload.addEventListener('progress', options.onUploadProgress, false);
-        }
-        if (typeof this.options.onProgress === 'function') {
-            this.transport.addEventListener('progress', options.onProgress, false);
-        }
+            const transport = new XMLHttpRequest();
+            if (options.withCredentials === true && options.supportsAccessControl) {
+                transport.withCredentials = true;
+            }
+            if (options.responseType) {
+                transport.responseType = options.responseType;
+            }
 
-        Wirecloud.Task.call(this, "making request", function (resolve, reject, update) {
-            this.transport.upload.addEventListener('progress', function (event) {
-                var progress = Math.round(event.loaded * 100 / event.total);
-                update(progress / 2);
-            });
-            this.transport.addEventListener("progress", function (event) {
-                if (event.lengthComputable) {
+            super("making request", (resolve, reject, update) => {
+                transport.upload.addEventListener('progress', (event) => {
                     var progress = Math.round(event.loaded * 100 / event.total);
-                    update(50 + (progress / 2));
-                }
-            }.bind(this));
-            this.transport.addEventListener("load", function () {
-                onReadyStateChange.call(this, resolve);
-            }.bind(this));
-            this.transport.addEventListener("error", function () {
-                onReadyStateChange.call(this, reject, true);
-            }.bind(this));
-        }.bind(this));
+                    update(progress / 2);
+                });
+                transport.addEventListener("progress", (event) => {
+                    if (event.lengthComputable) {
+                        var progress = Math.round(event.loaded * 100 / event.total);
+                        update(50 + (progress / 2));
+                    }
+                });
+                transport.addEventListener("load", () => {
+                    onReadyStateChange.call(this, resolve);
+                });
+                transport.addEventListener("error", () => {
+                    onReadyStateChange.call(this, reject, true);
+                });
+            });
 
-        this.transport.open(this.method, this.url, this.options.asynchronous);
-        setRequestHeaders.call(this);
-        this.transport.send(this.options.postBody);
-    };
-    utils.inherit(Request, Wirecloud.Task);
+            Object.defineProperties(this, {
+                options: {
+                    value: options
+                },
+                method: {
+                    value: method
+                },
+                transport: {
+                    value: transport
+                },
+                url: {
+                    value: url
+                }
+            });
+
+            transport.addEventListener('abort', onAbort.bind(this), true);
+            if (typeof this.options.onUploadProgress === 'function') {
+                this.transport.upload.addEventListener('progress', options.onUploadProgress, false);
+            }
+            if (typeof this.options.onProgress === 'function') {
+                this.transport.addEventListener('progress', options.onProgress, false);
+            }
+
+            this.transport.open(this.method, this.url, this.options.asynchronous);
+            setRequestHeaders.call(this);
+            this.transport.send(this.options.postBody);
+        }
+
+        abort() {
+            this.transport.aborted = true;
+            this.transport.abort();
+            return this;
+        }
+
+    }
 
     var io = {};
 

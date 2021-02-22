@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,49 +31,45 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    /**
-     * Creates a new instance of Fragment.
-     * @name StyledElements.Fragment
-     * @since 0.5
-     *
-     * @constructor
-     * @extends {StyledElements.StyledElement}
-     *
-     * @param {(Array|String|Node|StyledElement)} newElement
-     *     An element or list of elements.
-     */
-    se.Fragment = function Fragment(newElement) {
-        se.StyledElement.call(this);
+    se.Fragment = class Fragment extends se.StyledElement {
 
         /**
-         * The list of elements stored.
-         * @since 0.7
+         * Creates a new instance of Fragment.
+         * @name StyledElements.Fragment
+         * @since 0.5
          *
-         * @memberof StyledElements.Fragment#
-         * @type {Array.<(Node|StyledElements.StyledElement)>}
+         * @constructor
+         * @extends {StyledElements.StyledElement}
+         *
+         * @param {(Array|String|Node|StyledElement)} newElement
+         *     An element or list of elements.
          */
-        this.children = [];
+        constructor(newElement) {
+            super();
 
-        if (Array.isArray(newElement)) {
-            newElement.forEach(function (childElement) {
-                this.appendChild(childElement);
-            }.bind(this));
-        } else {
-            this.appendChild(newElement);
-        }
+            /**
+             * The list of elements stored.
+             * @since 0.7
+             *
+             * @memberof StyledElements.Fragment#
+             * @type {Array.<(Node|StyledElements.StyledElement)>}
+             */
+            this.children = [];
 
-        Object.defineProperties(this, {
-            elements: {
-                get: function get() {return this.children;}
+            if (Array.isArray(newElement)) {
+                newElement.forEach(function (childElement) {
+                    this.appendChild(childElement);
+                }.bind(this));
+            } else {
+                this.appendChild(newElement);
             }
-        });
-    };
 
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(se.Fragment, se.StyledElement, /** @lends StyledElements.Fragment.prototype */{
+            Object.defineProperties(this, {
+                elements: {
+                    get: function get() {return this.children;}
+                }
+            });
+        }
 
         /**
          * Insert the `newElement` to the end of this Fragment.
@@ -84,7 +81,7 @@
          * @returns {StyledElements.Fragment}
          *     The instance on which the member is called.
          */
-        appendChild: function appendChild(newElement) {
+        appendChild(newElement) {
 
             if (newElement == null) {
                 return this;
@@ -99,22 +96,22 @@
             }
 
             return this;
-        },
+        }
 
         /*
          * @override
          */
-        appendTo: function appendTo(parentElement, refElement) {
+        appendTo(parentElement, refElement) {
             this.children.forEach(function (childElement) {
                 utils.appendChild(parentElement, childElement, refElement);
             });
             return this;
-        },
+        }
 
         /*
          * @override
          */
-        repaint: function repaint() {
+        repaint() {
             this.children.forEach(function (childElement) {
                 if (typeof childElement.repaint === 'function') {
                     childElement.repaint();
@@ -123,7 +120,7 @@
             return this;
         }
 
-    });
+    }
 
     var getChildrenFromText = function getChildrenFromText(text) {
         var targetElement, children = [];

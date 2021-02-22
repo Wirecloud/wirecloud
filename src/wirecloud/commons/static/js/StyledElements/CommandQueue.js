@@ -23,103 +23,106 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var privates = new WeakMap();
+    const privates = new WeakMap();
 
-    /**
-     * Creates an asyncrhonous FIFO queue.
-     */
-    var CommandQueue = function CommandQueue(context, callback) {
-        if (typeof callback !== "function") {
-            throw new TypeError("callback parameter must be a function");
-        }
-
-        privates.set(this, {
-            callback: callback,
-            context: context,
-            elements: [],
-            running: false
-        });
-
-        Object.defineProperties(this, {
-            callback: {
-                value: callback
-            },
-            context: {
-                value: context
-            },
-            running: {
-                get: running_getter
-            }
-        });
-    };
-
-    /**
-     * Adds a new command into this queue
-     *
-     * @param command command to add into the queue
-     */
-    CommandQueue.prototype.addCommand = function addCommand(command) {
-        if (command === undefined) {
-            return Promise.resolve();
-        }
-
-        var priv = privates.get(this);
-        var p = new Promise(function (resolve, reject) {
-            priv.elements.push({
-                command: command,
-                resolve: resolve,
-                reject: reject
-            });
-        });
-
-        if (!priv.running) {
-            priv.running = true;
-            doInit.call(priv);
-        }
-
-        return p;
-    };
-
-    var doInit = function doInit() {
+    const doInit = function doInit(priv) {
         var element, action;
 
-        element = this.elements.shift();
+        element = priv.elements.shift();
         if (element === undefined) {
-            this.running = false;
+            priv.running = false;
+            this.dispatchEvent("stop");
             return;
         }
         try {
-            action = this.callback(this.context, element.command);
+            action = priv.callback(priv.context, element.command);
         } catch (error) {
             element.reject(error);
-            doInit.call(this);
+            doInit.call(this, priv);
         }
 
         if (action != null && typeof action.then === "function") {
             action.then(
                 (value) => {
                     element.resolve(value);
-                    doInit.call(this);
+                    doInit.call(this, priv);
                 },
                 (error) => {
                     element.reject(error);
-                    doInit.call(this);
+                    doInit.call(this, priv);
                 }
             );
         } else {
             element.resolve(action);
-            doInit.call(this);
+            doInit.call(this, priv);
         }
     };
 
-    var running_getter = function running_getter() {
-        return privates.get(this).running;
-    };
+    /**
+     * Creates an asyncrhonous FIFO queue.
+     */
+    StyledElements.CommandQueue = class CommandQueue extends se.ObjectWithEvents {
 
-    StyledElements.CommandQueue = CommandQueue;
+        constructor(context, callback) {
+            if (typeof callback !== "function") {
+                throw new TypeError("callback parameter must be a function");
+            }
 
-})(StyledElements.Utils);
+            super(["start", "stop"]);
+
+            privates.set(this, {
+                callback: callback,
+                context: context,
+                elements: [],
+                running: false
+            });
+
+            Object.defineProperties(this, {
+                callback: {
+                    value: callback
+                },
+                context: {
+                    value: context
+                }
+            });
+        }
+
+        /**
+         * Adds a new command into this queue
+         *
+         * @param command command to add into the queue
+         */
+        addCommand(command) {
+            if (command === undefined) {
+                return Promise.resolve();
+            }
+
+            const priv = privates.get(this);
+            const p = new Promise(function (resolve, reject) {
+                priv.elements.push({
+                    command: command,
+                    resolve: resolve,
+                    reject: reject
+                });
+            });
+
+            if (!priv.running) {
+                priv.running = true;
+                this.dispatchEvent("start");
+                doInit.call(this, priv);
+            }
+
+            return p;
+        }
+
+        get running() {
+            return privates.get(this).running;
+        }
+
+    }
+
+})(StyledElements, StyledElements.Utils);

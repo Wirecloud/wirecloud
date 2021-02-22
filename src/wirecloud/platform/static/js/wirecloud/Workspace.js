@@ -27,10 +27,6 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
-
     /**
      * @name Wirecloud.Workspace
      *
@@ -40,239 +36,235 @@
      * @param {Object} data
      * @param {Wirecloud.WorkspaceResourceManager} resources
      */
-    ns.Workspace = function Workspace(data, resources) {
-        var priv;
+    ns.Workspace = class Workspace extends se.ObjectWithEvents {
 
-        se.ObjectWithEvents.call(this, [
-            'createoperator',
-            'createtab',
-            'createwidget',
-            'change',
-            'changetab',
-            'remove',
-            'removeoperator',
-            'removetab',
-            'removewidget',
-            'unload'
-        ]);
+        constructor(data, resources) {
+            var priv;
 
-        priv = {
-            tabs: [],
-            on_livemessage: on_livemessage.bind(this),
-            on_changetab: on_changetab.bind(this),
-            on_createoperator: on_createoperator.bind(this),
-            on_addwidget: on_addwidget.bind(this),
-            on_removetab: on_removetab.bind(this),
-            on_removeoperator: on_removeoperator.bind(this),
-            on_removewidget: on_removewidget.bind(this)
-        };
-        privates.set(this, priv);
+            super([
+                'createoperator',
+                'createtab',
+                'createwidget',
+                'change',
+                'changetab',
+                'remove',
+                'removeoperator',
+                'removetab',
+                'removewidget',
+                'unload'
+            ]);
 
-        Object.defineProperties(this, {
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Wirecloud.ContextManager}
-             */
-            contextManager: {
-                value: new Wirecloud.ContextManager(this, Wirecloud.constants.WORKSPACE_CONTEXT)
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {String}
-             */
-            description: {
-                get: function () {
-                    return this.contextManager.get('description');
+            priv = {
+                tabs: [],
+                on_livemessage: on_livemessage.bind(this),
+                on_changetab: on_changetab.bind(this),
+                on_createoperator: on_createoperator.bind(this),
+                on_addwidget: on_addwidget.bind(this),
+                on_removetab: on_removetab.bind(this),
+                on_removeoperator: on_removeoperator.bind(this),
+                on_removewidget: on_removewidget.bind(this)
+            };
+            privates.set(this, priv);
+
+            Object.defineProperties(this, {
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Wirecloud.ContextManager}
+                 */
+                contextManager: {
+                    value: new Wirecloud.ContextManager(this, Wirecloud.constants.WORKSPACE_CONTEXT)
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {String}
+                 */
+                description: {
+                    get: function () {
+                        return this.contextManager.get('description');
+                    }
+                },
+                /**
+                 * List of required preferences in empty status.
+                 *
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Array.<String>}
+                 */
+                emptyparams: {
+                    value: data.empty_params
+                },
+                /**
+                 * Extra preferences
+                 *
+                 * @memberOf Wirecloud.Workspace#
+                 */
+                extraprefs: {
+                    value: data.extra_prefs
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Array.<Group>}
+                 */
+                groups: {
+                    value: data.groups
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {String}
+                 */
+                id: {
+                    value: data.id
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Wirecloud.WorkspaceTab}
+                 */
+                initialtab: {
+                    get: on_initial_tab_get
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {String}
+                 */
+                longdescription: {
+                    get: function () {
+                        return this.contextManager.get('longdescription');
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {String}
+                 */
+                name: {
+                    get: function () {
+                        return this.contextManager.get('name');
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {String}
+                 */
+                title: {
+                    get: function () {
+                        return this.contextManager.get('title');
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {String}
+                 */
+                owner: {
+                    get: function () {
+                        return this.contextManager.get('owner');
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Wirecloud.WorkspaceResourceManager}
+                 */
+                resources: {
+                    value: resources
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Boolean}
+                 */
+                shared: {
+                    value: !!data.shared
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Array.<Wirecloud.WorkspaceTab>}
+                 */
+                tabs: {
+                    get: on_tabs_get
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Object.<String, Wirecloud.WorkspaceTab>}
+                 */
+                tabsById: {
+                    get: on_tabs_by_id_get
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Date}
+                 */
+                updateDate: {
+                    value: new Date(data.lastmodified)
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Array.<User>}
+                 */
+                users: {
+                    value: data.users
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {String}
+                 */
+                url: {
+                    get: on_url_get
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Array.<Wirecloud.Widget>}
+                 */
+                widgets: {
+                    get: on_widgets_get
+                },
+                /**
+                 * @memberOf Wirecloud.Workspace#
+                 * @type {Object.<String, Wirecloud.Widget>}
+                 */
+                widgetsById: {
+                    get: on_widgets_by_id_get
                 }
-            },
-            /**
-             * List of required preferences in empty status.
-             *
-             * @memberOf Wirecloud.Workspace#
-             * @type {Array.<String>}
-             */
-            emptyparams: {
-                value: data.empty_params
-            },
-            /**
-             * Extra preferences
-             *
-             * @memberOf Wirecloud.Workspace#
-             */
-            extraprefs: {
-                value: data.extra_prefs
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Array.<Group>}
-             */
-            groups: {
-                value: data.groups
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {String}
-             */
-            id: {
-                value: data.id
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Wirecloud.WorkspaceTab}
-             */
-            initialtab: {
-                get: on_initial_tab_get
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {String}
-             */
-            longdescription: {
-                get: function () {
-                    return this.contextManager.get('longdescription');
+            });
+
+            this.contextManager.modify({
+                description: data.description,
+                editing: false,
+                longdescription: data.longdescription,
+                name: data.name,
+                owner: data.owner,
+                title: data.title != null && data.title.trim() !== "" ? data.title : data.name
+            });
+
+            /* FIXME */
+            this.restricted = data.owner !== Wirecloud.contextManager.get('username') || Wirecloud.contextManager.get('mode') === 'embedded';
+            this.removable = !this.restricted && data.removable;
+            /* END FIXME */
+
+            Object.defineProperties(this, {
+                preferences: {
+                    value: Wirecloud.PreferenceManager.buildPreferences('workspace', data.preferences, this, data.extra_prefs)
                 }
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {String}
-             */
-            name: {
-                get: function () {
-                    return this.contextManager.get('name');
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {String}
-             */
-            title: {
-                get: function () {
-                    return this.contextManager.get('title');
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {String}
-             */
-            owner: {
-                get: function () {
-                    return this.contextManager.get('owner');
-                }
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Wirecloud.WorkspaceResourceManager}
-             */
-            resources: {
-                value: resources
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Boolean}
-             */
-            shared: {
-                value: !!data.shared
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Array.<Wirecloud.WorkspaceTab>}
-             */
-            tabs: {
-                get: on_tabs_get
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Object.<String, Wirecloud.WorkspaceTab>}
-             */
-            tabsById: {
-                get: on_tabs_by_id_get
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Date}
-             */
-            updateDate: {
-                value: new Date(data.lastmodified)
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Array.<User>}
-             */
-            users: {
-                value: data.users
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {String}
-             */
-            url: {
-                get: on_url_get
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Array.<Wirecloud.Widget>}
-             */
-            widgets: {
-                get: on_widgets_get
-            },
-            /**
-             * @memberOf Wirecloud.Workspace#
-             * @type {Object.<String, Wirecloud.Widget>}
-             */
-            widgetsById: {
-                get: on_widgets_by_id_get
+            });
+
+            if (Array.isArray(data.tabs)) {
+                data.tabs.forEach(_create_tab, this);
             }
-        });
 
-        this.contextManager.modify({
-            description: data.description,
-            editing: false,
-            longdescription: data.longdescription,
-            name: data.name,
-            owner: data.owner,
-            title: data.title != null && data.title.trim() !== "" ? data.title : data.name
-        });
+            Object.defineProperties(this, {
+                operators: {
+                    get: on_operators_get
+                },
+                operatorsById: {
+                    get: on_operators_by_id_get
+                },
+                wiring: {
+                    value: new Wirecloud.Wiring(this, data.wiring)
+                }
+            });
 
-        /* FIXME */
-        this.restricted = data.owner !== Wirecloud.contextManager.get('username') || Wirecloud.contextManager.get('mode') === 'embedded';
-        this.removable = !this.restricted && data.removable;
-        /* END FIXME */
+            this.wiring.addEventListener('createoperator', priv.on_createoperator);
+            this.wiring.addEventListener('removeoperator', priv.on_removeoperator);
 
-        Object.defineProperties(this, {
-            preferences: {
-                value: Wirecloud.PreferenceManager.buildPreferences('workspace', data.preferences, this, data.extra_prefs)
+            if (Wirecloud.live) {
+                Wirecloud.live.addEventListener('workspace', priv.on_livemessage);
             }
-        });
-
-        if (Array.isArray(data.tabs)) {
-            data.tabs.forEach(_create_tab, this);
         }
-
-        Object.defineProperties(this, {
-            operators: {
-                get: on_operators_get
-            },
-            operatorsById: {
-                get: on_operators_by_id_get
-            },
-            wiring: {
-                value: new Wirecloud.Wiring(this, data.wiring)
-            }
-        });
-
-        this.wiring.addEventListener('createoperator', priv.on_createoperator);
-        this.wiring.addEventListener('removeoperator', priv.on_removeoperator);
-
-        if (Wirecloud.live) {
-            Wirecloud.live.addEventListener('workspace', priv.on_livemessage);
-        }
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.Workspace, se.ObjectWithEvents, /** @lends Wirecloud.Workspace.prototype */{
 
         /**
          * Creates a new tab inside this workspace
@@ -281,7 +273,7 @@
          *
          * @returns {Wirecloud.Task}
          */
-        createTab: function createTab(options) {
+        createTab(options) {
             if (options == null) {
                 options = {};
             }
@@ -318,7 +310,7 @@
                 var tab = _create_tab.call(this, JSON.parse(response.responseText));
                 return Promise.resolve(tab);
             });
-        },
+        }
 
         /**
          * Looks up an operator in this workspace.
@@ -328,9 +320,9 @@
          *     Matching {@link Wirecloud.wiring.Operator} instance, `null` if
          *     not found.
          */
-        findOperator: function findOperator(id) {
+        findOperator(id) {
             return this.wiring.findOperator(id);
-        },
+        }
 
         /**
          * Looks up a tab in this workspace.
@@ -341,7 +333,7 @@
          *     Matching {@link Wirecloud.WorkspaceTab} instance, `null` if not
          *     found.
          */
-        findTab: function findTab(id) {
+        findTab(id) {
             if (id == null) {
                 throw new TypeError("Missing id parameter");
             }
@@ -350,7 +342,7 @@
             id = String(id);
 
             return this.tabsById[id] || null;
-        },
+        }
 
         /**
          * Looks up a widget insid this workspace.
@@ -359,7 +351,7 @@
          * @returns {Wirecloud.Widget}
          *     Matching {@link Wirecloud.Widget} instance, `null` if not found.
          */
-        findWidget: function findWidget(id) {
+        findWidget(id) {
             if (id == null) {
                 throw new TypeError("Missing id parameter");
             }
@@ -374,12 +366,12 @@
             }
 
             return null;
-        },
+        }
 
         /**
          * @param {String} permission
          */
-        isAllowed: function isAllowed(permission) {
+        isAllowed(permission) {
 
             if (this.restricted) {
                 return false;
@@ -399,7 +391,7 @@
             default:
                 return is_allowed(permission);
             }
-        },
+        }
 
         /**
          * Merges other workspaces or mashups into this workspace. See
@@ -409,9 +401,9 @@
          *
          * @returns {Wirecloud.Task}
          */
-        merge: function merge(options) {
+        merge(options) {
             return Wirecloud.mergeWorkspace(this, options);
-        },
+        }
 
         /**
          * Creates a packaged version of this workspace and uploads it into My
@@ -421,7 +413,7 @@
          *
          * @returns {Wirecloud.Task}
          */
-        publish: function publish(options) {
+        publish(options) {
 
             if (options == null) {
                 throw new TypeError("missing options parameter");
@@ -454,18 +446,18 @@
                 Wirecloud.LocalCatalogue._includeResource(JSON.parse(response.responseText));
                 return Promise.resolve();
             });
-        },
+        }
 
         /**
          * Removes this workspace from the WireCloud server.
          *
          * @returns {Wirecloud.Task}
          */
-        remove: function remove() {
+        remove() {
             return Wirecloud.removeWorkspace(this).then(() => {
                 this.dispatchEvent('remove').unload();
             });
-        },
+        }
 
         /**
          * Renames this workspace.
@@ -475,7 +467,7 @@
          *
          * @returns {Wirecloud.Task}
          */
-        rename: function rename(title, name) {
+        rename(title, name) {
 
             if (typeof title !== 'string' || !title.trim().length) {
                 throw new TypeError("invalid title parameter");
@@ -515,9 +507,9 @@
                 this.dispatchEvent('change', ['name', 'title'], {name: old_name, title: old_title});
                 return Promise.resolve(this);
             });
-        },
+        }
 
-        unload: function unload() {
+        unload() {
             var priv = privates.get(this);
             if (Wirecloud.live) {
                 Wirecloud.live.removeEventListener('workspace', priv.on_livemessage);
@@ -530,7 +522,7 @@
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

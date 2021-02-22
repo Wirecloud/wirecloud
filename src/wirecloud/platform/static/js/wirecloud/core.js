@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -164,15 +164,16 @@
                 url = new URL(Wirecloud.URLs.WEBSOCKET, document.location);
                 url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
                 var livews = new WebSocket(url);
-                livews.addEventListener('message', function (event) {
-                    var msg = JSON.parse(event.data);
+                livews.addEventListener('message', (event) => {
+                    const msg = JSON.parse(event.data);
 
                     Wirecloud.live.dispatchEvent(msg.category, msg);
                 });
-                var LiveManager = function LiveManager() {
-                    StyledElements.ObjectWithEvents.call(this, ["workspace", "component"]);
+                var LiveManager = class LiveManager extends StyledElements.ObjectWithEvents {
+                    constructor() {
+                        super(["workspace", "component"]);
+                    }
                 };
-                utils.inherit(LiveManager, StyledElements.ObjectWithEvents);
                 Wirecloud.live = new LiveManager();
             }
             return Promise.resolve();

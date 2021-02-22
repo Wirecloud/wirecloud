@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -476,9 +477,9 @@
             });
 
             it("should call onComplete on request abort", function (done) {
-                var url = "http://server:1234/path?q=1";
+                const url = "http://server:1234/path?q=1";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     onComplete: function (response) {
                         expect(response.request).toBe(request);
                         expect(request.progress).toBe(0);
@@ -490,18 +491,19 @@
                 expect(request.abort()).toBe(request);
                 expect(request.transport.abort).toHaveBeenCalled();
 
-                request.transport.addEventListener.calls.argsFor(0)[1]({
+                // Simulate abort event on the transport instance
+                findListener(request.transport.addEventListener, "abort")({
                     stopPropagation: jasmine.createSpy("stopPropagation"),
                     preventDefault: jasmine.createSpy("preventDefault")
                 });
             });
 
             it("should call onException if an exception is raised on the onComplete listener (while handling request abort)", function (done) {
-                var url = "http://server:1234/path?q=1";
-                var oncomplete_response;
-                var exception;
+                const url = "http://server:1234/path?q=1";
+                let oncomplete_response;
+                let exception;
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     onComplete: function (response) {
                         oncomplete_response = response;
                         expect(response.request).toBe(request);
@@ -518,7 +520,8 @@
                 expect(request.abort()).toBe(request);
                 expect(request.transport.abort).toHaveBeenCalled();
 
-                request.transport.addEventListener.calls.argsFor(0)[1]({
+                // Simulate abort event on the transport instance
+                findListener(request.transport.addEventListener, "abort")({
                     stopPropagation: jasmine.createSpy("stopPropagation"),
                     preventDefault: jasmine.createSpy("preventDefault")
                 });

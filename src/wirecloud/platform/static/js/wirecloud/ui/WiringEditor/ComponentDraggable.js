@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,195 +27,178 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.ComponentDraggable = class ComponentDraggable extends se.Panel {
 
-    /**
-     * Create a new instance of class ComponentDraggable.
-     * @extends {Panel}
-     *
-     * @constructor
-     * @param {Wiring.Component} wiringComponent
-     *      [TODO: description]
-     * @param {PlainObject} [options]
-     *      [TODO: description]
-     */
-    ns.ComponentDraggable = function ComponentDraggable(wiringComponent, options) {
+        /**
+         * Create a new instance of class ComponentDraggable.
+         * @extends {StyledElements.Panel}
+         *
+         * @constructor
+         * @param {Wiring.Component} wiringComponent
+         *      [TODO: description]
+         * @param {PlainObject} [options]
+         *      [TODO: description]
+         */
+        constructor(wiringComponent, options) {
+            options = utils.updateObject(ns.ComponentDraggable.JSON_TEMPLATE, options);
 
-        options = utils.updateObject(ns.ComponentDraggable.JSON_TEMPLATE, options);
+            const btnPrefs = new se.PopupButton({
+                title: utils.gettext("Preferences"),
+                class: "we-prefs-btn",
+                iconClass: "fa fa-reorder"
+            });
 
-        this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
-        this.btnPrefs = new se.PopupButton({
-            title: utils.gettext("Preferences"),
-            class: "we-prefs-btn",
-            iconClass: "fa fa-reorder"
-        });
-        this.btnPrefs.popup_menu.append(new ns.ComponentDraggablePrefs(this));
+            const btnRemove = new se.Button({
+                title: utils.gettext("Remove"),
+                class: "btn-remove",
+                iconClass: "fa fa-times-circle"
+            });
 
-        this.btnRemove = new se.Button({
-            title: utils.gettext("Remove"),
-            class: "btn-remove",
-            iconClass: "fa fa-times-circle"
-        });
-        this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
+            super({
+                title: wiringComponent.title,
+                events: events,
+                class: "component-draggable component-" + wiringComponent.meta.type,
+                buttons: [btnPrefs, btnRemove]
+            });
 
-        se.Panel.call(this, {
-            title: wiringComponent.title,
-            events: events,
-            class: "component-draggable component-" + wiringComponent.meta.type,
-            buttons: [this.btnPrefs, this.btnRemove]
-        });
+            this.btnPrefs = btnPrefs;
+            this.btnPrefs.popup_menu.append(new ns.ComponentDraggablePrefs(this));
+            this.btnRemove = btnRemove;
+            this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
+            this._component = wiringComponent;
 
-        this._component = wiringComponent;
+            this.endpoints = {
+                source: new ns.EndpointGroup('source', this),
+                target: new ns.EndpointGroup('target', this)
+            };
 
-        this.endpoints = {
-            source: new ns.EndpointGroup('source', this),
-            target: new ns.EndpointGroup('target', this)
-        };
+            this.body
+                .appendChild(this.endpoints.target)
+                .appendChild(this.endpoints.source);
 
-        this.body
-            .appendChild(this.endpoints.target)
-            .appendChild(this.endpoints.source);
+            var removeAllowed = true;
 
-        var removeAllowed = true;
+            Object.defineProperties(this, {
 
-        Object.defineProperties(this, {
+                id: {value: wiringComponent.id},
 
-            id: {value: wiringComponent.id},
+                background: {
+                    get: function get() {return this.hasClassName('background');},
+                    set: function set(value) {this._onbackground(value);}
+                },
 
-            background: {
-                get: function get() {return this.hasClassName('background');},
-                set: function set(value) {this._onbackground(value);}
-            },
+                collapsed: {
+                    get: function get() {return this.hasClassName('collapsed');},
+                    set: function set(value) {this._oncollapsed(value);}
+                },
 
-            collapsed: {
-                get: function get() {return this.hasClassName('collapsed');},
-                set: function set(value) {this._oncollapsed(value);}
-            },
+                missing: {
+                    get: function get() {return this._component.missing;}
+                },
 
-            missing: {
-                get: function get() {return this._component.missing;}
-            },
+                readonly: {
+                    get: function get() {return this.hasClassName('readonly');},
+                    set: function set(value) {this.toggleClassName('readonly', value);}
+                },
 
-            readonly: {
-                get: function get() {return this.hasClassName('readonly');},
-                set: function set(value) {this.toggleClassName('readonly', value);}
-            },
-
-            removeAllowed: {
-                get: function get() {return removeAllowed;},
-                set: function set(value) {
-                    removeAllowed = !!value;
-                    if (!this.background) {
-                        updateFlagRemoveAllowed.call(this);
+                removeAllowed: {
+                    get: function get() {return removeAllowed;},
+                    set: function set(value) {
+                        removeAllowed = !!value;
+                        if (!this.background) {
+                            updateFlagRemoveAllowed.call(this);
+                        }
                     }
+                },
+
+                removeCascadeAllowed: {value: options.removecascade_allowed, writable: true},
+
+                orderingEndpoints: {
+                    get: function get() {return this.endpoints.source.orderable || this.endpoints.target.orderable;}
+                },
+
+                sources: {
+                    get: function get() {return this.endpoints.source.endpoints;}
+                },
+
+                sourceList: {
+                    get: function get() {return this.endpoints.source.children;}
+                },
+
+                targets: {
+                    get: function get() {return this.endpoints.target.endpoints;}
+                },
+
+                targetList: {
+                    get: function get() {return this.endpoints.target.children;}
+                },
+
+                type: {value: wiringComponent.meta.type}
+
+            });
+
+            this.get().setAttribute('data-id', this.id);
+
+            this.heading.noticeTitle = document.createElement('span');
+            this.heading.noticeTitle.className = "label label-danger";
+            this.heading.noticeTitle.addEventListener('mousedown', utils.stopPropagationListener, true);
+            this.heading.noticeTitle.addEventListener('click', noticetitle_onclick.bind(this));
+
+            this.heading.notice = document.createElement('div');
+            this.heading.notice.className = "component-notice";
+            this.heading.notice.appendChild(this.heading.noticeTitle);
+
+            this._endpoint_onconnectionadded_bound = endpoint_onconnectionadded.bind(this);
+            this._endpoint_onconnectionremoved_bound = endpoint_onconnectionremoved.bind(this);
+
+            appendEndpoints.call(this, 'source', wiringComponent.meta.outputList.map(function (data) {return wiringComponent.outputs[data.name];}));
+            appendEndpoints.call(this, 'target', wiringComponent.meta.inputList.map(function (data) {return wiringComponent.inputs[data.name];}));
+
+            var name, endpoint;
+
+            for (name in wiringComponent.outputs) {
+                endpoint = wiringComponent.outputs[name];
+                if (endpoint.missing) {
+                    this.appendEndpoint('source', endpoint);
                 }
-            },
-
-            removeCascadeAllowed: {value: options.removecascade_allowed, writable: true},
-
-            orderingEndpoints: {
-                get: function get() {return this.endpoints.source.orderable || this.endpoints.target.orderable;}
-            },
-
-            sources: {
-                get: function get() {return this.endpoints.source.endpoints;}
-            },
-
-            sourceList: {
-                get: function get() {return this.endpoints.source.children;}
-            },
-
-            targets: {
-                get: function get() {return this.endpoints.target.endpoints;}
-            },
-
-            targetList: {
-                get: function get() {return this.endpoints.target.children;}
-            },
-
-            type: {value: wiringComponent.meta.type}
-
-        });
-
-        this.get().setAttribute('data-id', this.id);
-
-        this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
-
-        this.heading.noticeTitle = document.createElement('span');
-        this.heading.noticeTitle.className = "label label-danger";
-        this.heading.noticeTitle.addEventListener('mousedown', utils.stopPropagationListener, true);
-        this.heading.noticeTitle.addEventListener('click', noticetitle_onclick.bind(this));
-
-        this.heading.notice = document.createElement('div');
-        this.heading.notice.className = "component-notice";
-        this.heading.notice.appendChild(this.heading.noticeTitle);
-
-        this._endpoint_onconnectionadded_bound = endpoint_onconnectionadded.bind(this);
-        this._endpoint_onconnectionremoved_bound = endpoint_onconnectionremoved.bind(this);
-
-        appendEndpoints.call(this, 'source', wiringComponent.meta.outputList.map(function (data) {return wiringComponent.outputs[data.name];}));
-        appendEndpoints.call(this, 'target', wiringComponent.meta.inputList.map(function (data) {return wiringComponent.inputs[data.name];}));
-
-        var name, endpoint;
-
-        for (name in wiringComponent.outputs) {
-            endpoint = wiringComponent.outputs[name];
-            if (endpoint.missing) {
-                this.appendEndpoint('source', endpoint);
             }
-        }
 
-        for (name in wiringComponent.inputs) {
-            endpoint = wiringComponent.inputs[name];
-            if (endpoint.missing) {
-                this.appendEndpoint('target', endpoint);
+            for (name in wiringComponent.inputs) {
+                endpoint = wiringComponent.inputs[name];
+                if (endpoint.missing) {
+                    this.appendEndpoint('target', endpoint);
+                }
             }
+
+            wiringComponent.logManager.addEventListener('newentry', notifyErrors.bind(this));
+
+            if (!this.missing) {
+                this.endpoints.source.orderEndpoints(options.endpoints.source);
+                this.endpoints.target.orderEndpoints(options.endpoints.target);
+            }
+
+            if (options.collapsed) {
+                this.collapsed = true;
+            }
+
+            this.position(options.position);
+
+            this._on_change_model = on_change_model.bind(this);
+
+            notifyErrors.call(this);
+            makeDraggable.call(this);
+
+            this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener);
+            wiringComponent.addEventListener('change', this._on_change_model);
         }
 
-        wiringComponent.logManager.addEventListener('newentry', notifyErrors.bind(this));
-
-        if (!this.missing) {
-            this.endpoints.source.orderEndpoints(options.endpoints.source);
-            this.endpoints.target.orderEndpoints(options.endpoints.target);
+        get titletooltip() {
+            const tooltip = new se.Tooltip({placement: ["top", "bottom", "right", "left"]});
+            Object.defineProperty(this, "titletooltip", {value: tooltip});
+            return tooltip;
         }
 
-        if (options.collapsed) {
-            this.collapsed = true;
-        }
-
-        this.position(options.position);
-
-        this._on_change_model = on_change_model.bind(this);
-
-        notifyErrors.call(this);
-        makeDraggable.call(this);
-
-        this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener);
-        wiringComponent.addEventListener('change', this._on_change_model);
-    };
-
-    ns.ComponentDraggable.JSON_TEMPLATE = {
-        name: "",
-        position: {
-            x: 0,
-            y: 0
-        },
-        collapsed: false,
-        endpoints: {
-            source: [],
-            target: []
-        },
-        removecascade_allowed: false
-    };
-
-    ns.ComponentDraggable.MINOFFSET_X = 20;
-    ns.ComponentDraggable.MINOFFSET_Y = 10;
-
-    utils.inherit(ns.ComponentDraggable, se.Panel, {
-
-        _onactive: function _onactive(active) {
+        _onactive(active) {
 
             if (this.orderingEndpoints) {
                 return this;
@@ -226,25 +209,25 @@
                     connection.highlighted = active;
                 });
             });
-        },
+        }
 
-        _onbackground: function _onbackground(background) {
+        _onbackground(background) {
 
             this.toggleClassName('background', background);
 
             return background ? this._showButtonAdd() : updateFlagRemoveAllowed.call(this);
-        },
+        }
 
-        _onclick: function _onclick(event) {
+        _onclick(event) {
 
             if (this.orderingEndpoints) {
                 return this;
             }
 
             return se.Panel.prototype._onclick.call(this, event);
-        },
+        }
 
-        _oncollapsed: function _oncollapsed(collapsed) {
+        _oncollapsed(collapsed) {
             var offsetWidth = this.get().offsetWidth;
 
             if (this.collapsed === collapsed) {
@@ -265,9 +248,9 @@
             });
 
             return this;
-        },
+        }
 
-        _showButtonAdd: function _showButtonAdd() {
+        _showButtonAdd() {
 
             this.btnRemove
                 .replaceClassName('btn-remove', 'btn-add')
@@ -276,9 +259,9 @@
                 .setTitle(utils.gettext("Add"));
 
             return this;
-        },
+        }
 
-        _showButtonDelete: function _showButtonDelete() {
+        _showButtonDelete() {
 
             this.btnRemove
                 .replaceClassName('btn-add', 'btn-remove')
@@ -287,9 +270,9 @@
                 .setTitle(utils.gettext("Remove"));
 
             return this;
-        },
+        }
 
-        _showButtonRemove: function _showButtonRemove() {
+        _showButtonRemove() {
 
             this.btnRemove
                 .replaceClassName('btn-add', 'btn-remove')
@@ -298,9 +281,9 @@
                 .setTitle(utils.gettext("Remove"));
 
             return this;
-        },
+        }
 
-        appendEndpoint: function appendEndpoint(type, wiringEndpoint) {
+        appendEndpoint(type, wiringEndpoint) {
             var endpoint = this.endpoints[type].appendEndpoint(wiringEndpoint);
 
             endpoint.addEventListener('connectionadded', endpoint_onconnectionadded.bind(this));
@@ -308,30 +291,30 @@
             this.dispatchEvent('endpointadded', endpoint);
 
             return this;
-        },
+        }
 
-        equals: function equals(component) {
+        equals(component) {
 
             if (!(component instanceof ns.ComponentDraggable)) {
                 return false;
             }
 
             return this.type === component.type && this.id === component.id;
-        },
+        }
 
-        getEndpoint: function getEndpoint(type, name) {
+        getEndpoint(type, name) {
             return this.endpoints[type].getEndpoint(name);
-        },
+        }
 
-        forEachConnection: function forEachConnection(callback) {
+        forEachConnection(callback) {
             return this.forEachEndpoint(function (endpoint) {
                 endpoint.forEachConnection(function (connection) {
                     callback(connection);
                 });
             });
-        },
+        }
 
-        forEachEndpoint: function forEachEndpoint(callback) {
+        forEachEndpoint(callback) {
 
             this.targetList.forEach(function (endpoint, index) {
                 callback(endpoint, index);
@@ -342,9 +325,9 @@
             });
 
             return this;
-        },
+        }
 
-        hasConnections: function hasConnections() {
+        hasConnections() {
             var found = false;
 
             found = this.targetList.some(function (endpoint) {
@@ -360,53 +343,53 @@
             });
 
             return found;
-        },
+        }
 
-        hasEndpoints: function hasEndpoints() {
+        hasEndpoints() {
             return this.sourceList.length || this.targetList.length;
-        },
+        }
 
-        hasSettings: function hasSettings() {
+        hasSettings() {
             return this._component.meta.preferenceList.length > 0;
-        },
+        }
 
-        hasOrderableEndpoints: function hasOrderableEndpoints() {
+        hasOrderableEndpoints() {
             return this.endpoints.source.canBeOrdered() || this.endpoints.target.canBeOrdered();
-        },
+        }
 
-        isRemovable: function isRemovable() {
+        isRemovable() {
             return !this.readonly && !this.background;
-        },
+        }
 
         /**
          * @override
          */
-        setTitle: function setTitle(title) {
+        setTitle(title) {
             var span;
 
             span = document.createElement('span');
             span.textContent = title;
-            this.title_tooltip.options.content = title;
-            this.title_tooltip.bind(span);
+            this.titletooltip.options.content = title;
+            this.titletooltip.bind(span);
 
             return se.Panel.prototype.setTitle.call(this, span);
-        },
+        }
 
-        showLogs: function showLogs() {
+        showLogs() {
 
             this._component.showLogs();
 
             return this;
-        },
+        }
 
-        showSettings: function showSettings() {
+        showSettings() {
 
             this._component.showSettings();
 
             return this;
-        },
+        }
 
-        startOrderingEndpoints: function startOrderingEndpoints() {
+        startOrderingEndpoints() {
 
             if (this.orderingEndpoints || !this.hasOrderableEndpoints()) {
                 return this;
@@ -424,9 +407,9 @@
             this.active = true;
 
             return this.dispatchEvent('orderstart');
-        },
+        }
 
-        stopOrderingEndpoints: function stopOrderingEndpoints() {
+        stopOrderingEndpoints() {
 
             if (!this.orderingEndpoints) {
                 return this;
@@ -450,7 +433,7 @@
             });
 
             return this.dispatchEvent('orderend');
-        },
+        }
 
         /**
          * Get or set the current coordinates of the wrapperElement relative to the
@@ -463,7 +446,7 @@
          * @returns {ComponentDraggable|Object.<String, Number>}
          *      [description]
          */
-        position: function position(offset) {
+        position(offset) {
 
             if (offset != null && (offset.x !== null || offset.y != null)) {
 
@@ -490,19 +473,19 @@
                 x: this.get().offsetLeft,
                 y: this.get().offsetTop
             };
-        },
+        }
 
-        refresh: function refresh() {
+        refresh() {
             notifyErrors.call(this);
             return this.forEachEndpoint(function (endpoint) {
                 endpoint.refresh();
             });
-        },
+        }
 
         /**
          * @override
          */
-        remove: function remove(childElement) {
+        remove(childElement) {
 
             if (!arguments.length && !this.hasClassName('cloned')) {
                 this._component.removeEventListener('change', this._on_change_model);
@@ -510,24 +493,24 @@
             }
 
             return se.Panel.prototype.remove.call(this, childElement);
-        },
+        }
 
-        setUp: function setUp() {
+        setUp() {
 
             this.stopOrderingEndpoints();
             this.active = false;
 
             return this;
-        },
+        }
 
-        toFirst: function toFirst() {
+        toFirst() {
 
             this.parentElement.appendChild(this);
 
             return this;
-        },
+        }
 
-        toJSON: function toJSON() {
+        toJSON() {
             return {
                 name: this._component.meta.uri,
                 collapsed: this.collapsed,
@@ -539,7 +522,24 @@
             };
         }
 
-    });
+    }
+
+    ns.ComponentDraggable.JSON_TEMPLATE = {
+        name: "",
+        position: {
+            x: 0,
+            y: 0
+        },
+        collapsed: false,
+        endpoints: {
+            source: [],
+            target: []
+        },
+        removecascade_allowed: false
+    };
+    ns.ComponentDraggable.MINOFFSET_X = 20;
+    ns.ComponentDraggable.MINOFFSET_Y = 10;
+
 
     // =========================================================================
     // PRIVATE MEMBERS

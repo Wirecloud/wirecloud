@@ -170,10 +170,7 @@
             });
 
             it("should allow to create new tabs using custom classes", () => {
-                const MyTab = function MyTab() {
-                    StyledElements.Tab.apply(this, arguments);
-                };
-                utils.inherit(MyTab, StyledElements.Tab);
+                const MyTab = class MyTab extends StyledElements.Tab {};
 
                 let tab = element.createTab({tab_constructor: MyTab});
 

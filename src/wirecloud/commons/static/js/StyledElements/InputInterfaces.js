@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,7 +23,7 @@
 /* globals StyledElements */
 
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -52,7 +53,7 @@
     };
 
     ValidationErrorManager.prototype.validate = function validate(field) {
-        var errorCode = field.checkValue();
+        const errorCode = field.checkValue();
         if (errorCode !== StyledElements.InputValidationError.NO_ERROR) {
             field._setError(true);
             this._addValidationError(errorCode, field.getLabel());
@@ -62,7 +63,7 @@
     };
 
     ValidationErrorManager.prototype._buildErrorMsg = function _buildErrorMsg(errorCode) {
-        var msg, fields, i;
+        let msg;
 
         errorCode = parseInt(errorCode, 10);
         switch (errorCode) {
@@ -89,19 +90,19 @@
             break;
         }
 
-        fields = "";
-        for (i = 0; i < this.fieldsWithErrorById[errorCode].length; i += 1) {
+        let fields = "";
+        for (let i = 0; i < this.fieldsWithErrorById[errorCode].length; i += 1) {
             fields += ", " + this.fieldsWithErrorById[errorCode][i];
         }
 
         fields = fields.substring(2);
-        return StyledElements.Utils.interpolate(msg, {'fields': fields});
+        return utils.interpolate(msg, {'fields': fields});
     };
 
     ValidationErrorManager.prototype.toHTML = function toHTML() {
-        var errorCode, errorMsgs = [];
+        const errorMsgs = [];
 
-        for (errorCode in this.fieldsWithErrorById) {
+        for (let errorCode in this.fieldsWithErrorById) {
             if (this.fieldsWithErrorById.hasOwnProperty(errorCode)) {
                 errorMsgs.push(this._buildErrorMsg(errorCode));
             }
@@ -114,512 +115,389 @@
     /**
      *
      */
-    var PasswordInputInterface = function PasswordInputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
+    se.PasswordInputInterface = class PasswordInputInterface extends se.InputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+
+            this.inputElement = new StyledElements.PasswordField(options);
         }
 
-        StyledElements.InputInterface.call(this, fieldId, options);
-
-        this.inputElement = new StyledElements.PasswordField(options);
     };
-    PasswordInputInterface.prototype = new StyledElements.InputInterface();
 
-    PasswordInputInterface.parse = StyledElements.TextInputInterface.parse;
-    PasswordInputInterface.stringify = StyledElements.TextInputInterface.stringify;
-
-    StyledElements.PasswordInputInterface = PasswordInputInterface;
+    se.PasswordInputInterface.parse = StyledElements.TextInputInterface.parse;
+    se.PasswordInputInterface.stringify = StyledElements.TextInputInterface.stringify;
 
     /**
      *
      */
-    var ListInputInterface = function ListInputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
+    se.ListInputInterface = class ListInputInterface extends se.InputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+
+            this.inputElement = new StyledElements.List(options);
         }
 
-        StyledElements.InputInterface.call(this, fieldId, options);
-
-        this.inputElement = new StyledElements.List(options);
-    };
-    ListInputInterface.prototype = new StyledElements.InputInterface();
-
-    ListInputInterface.prototype.parse = function parse(value) {
-        return JSON.parse(value);
-    };
-
-    ListInputInterface.prototype.stringify = function stringify(value) {
-        return JSON.stringify(value);
-    };
-
-    ListInputInterface.prototype._normalize = function _normalize(value) {
-        if (!Array.isArray(value)) {
-            value = [];
-        }
-    };
-
-    ListInputInterface.prototype._setValue = function _setValue(newValue) {
-        this.inputElement.cleanSelection();
-        this.inputElement.addSelection(newValue);
-    };
-
-    ListInputInterface.prototype.getValue = function getValue() {
-        return this.inputElement.getSelection();
-    };
-
-    ListInputInterface.prototype.isEmpty = function isEmpty() {
-        return this.getValue().length === 0;
-    };
-    StyledElements.ListInputInterface = ListInputInterface;
-
-    /**
-     *
-     */
-    var NumberInputInterface = function NumberInputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
-        }
-
-        StyledElements.InputInterface.call(this, fieldId, options);
-
-        this.inputElement = new StyledElements.NumericField(options);
-    };
-    NumberInputInterface.prototype = new StyledElements.InputInterface();
-
-    NumberInputInterface.parse = function parse(value) {
-        return Number(value);
-    };
-
-    NumberInputInterface.prototype._normalize = function _normalize(value) {
-        if (value == null) {
-            return 0;
-        } else {
-            return Number(value);
-        }
-    };
-
-    NumberInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        if (!Number.isFinite(newValue) || newValue < this.inputElement.options.min || newValue > this.inputElement.options.max) {
-            return StyledElements.InputValidationError.OUT_OF_RANGE_ERROR;
-        }
-
-        return StyledElements.InputValidationError.NO_ERROR;
-    };
-
-    StyledElements.NumberInputInterface = NumberInputInterface;
-
-    /**
-     *
-     */
-    var LongTextInputInterface = function LongTextInputInterface(fieldId, options) {
-        StyledElements.InputInterface.call(this, fieldId, options);
-
-        this.inputElement = new StyledElements.TextArea(options);
-        this.events.blur = this.inputElement.events.blur;
-    };
-    LongTextInputInterface.prototype = new StyledElements.InputInterface();
-
-    LongTextInputInterface.parse = StyledElements.TextInputInterface.parse;
-    LongTextInputInterface.stringify = StyledElements.TextInputInterface.stringify;
-
-    StyledElements.LongTextInputInterface = LongTextInputInterface;
-
-    /**
-     *
-     */
-    var URLInputInterface = function URLInputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
-        }
-
-        StyledElements.TextInputInterface.call(this, fieldId, options);
-    };
-    URLInputInterface.prototype = new StyledElements.TextInputInterface();
-
-    URLInputInterface.parse = StyledElements.TextInputInterface.parse;
-    URLInputInterface.stringify = StyledElements.TextInputInterface.stringify;
-
-    URLInputInterface.prototype._URLChecker = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-
-    URLInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        return this._URLChecker.test(newValue) ? StyledElements.InputValidationError.NO_ERROR : StyledElements.InputValidationError.URL_ERROR;
-    };
-
-    StyledElements.URLInputInterface = URLInputInterface;
-
-    /**
-     *
-     */
-    var EMailInputInterface = function EMailInputInterface(fieldId, options) {
-        StyledElements.TextInputInterface.call(this, fieldId, options);
-    };
-    EMailInputInterface.prototype = new StyledElements.TextInputInterface();
-
-    EMailInputInterface.prototype._EMailChecker = /^[\w\d._%+-]+@[\w\d.\-]+\.[\w]{2,4}$/;
-
-    EMailInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        return this._EMailChecker.test(newValue) ? StyledElements.InputValidationError.NO_ERROR : StyledElements.InputValidationError.EMAIL_ERROR;
-    };
-
-    StyledElements.EMailInputInterface = EMailInputInterface;
-
-    /**
-     *
-     */
-    var BooleanInputInterface = function BooleanInputInterface(fieldId, options) {
-        StyledElements.InputInterface.call(this, fieldId, options);
-
-        if (typeof options.initialValue === 'string') {
-            options.initiallyChecked = options.initialValue.toLowerCase() === 'true';
-        } else if (typeof options.initialValue === 'boolean') {
-            options.initiallyChecked = options.initialValue;
-        }
-        this.inputElement = new StyledElements.CheckBox(options);
-    };
-    BooleanInputInterface.prototype = new StyledElements.InputInterface();
-
-    BooleanInputInterface.parse = function parse(value) {
-        return ("" + value).trim().toLowerCase() === 'true';
-    };
-
-    BooleanInputInterface.stringify = function stringify(value) {
-        return "" + value;
-    };
-
-    BooleanInputInterface.prototype.isEmpty = function isEmpty() {
-        return false;
-    };
-
-    BooleanInputInterface.prototype._normalize = function _normalize(value) {
-        return !!value;
-    };
-
-    BooleanInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        return (typeof newValue === 'boolean') ? StyledElements.InputValidationError.NO_ERROR : StyledElements.InputValidationError.BOOLEAN_ERROR;
-    };
-
-    StyledElements.BooleanInputInterface = BooleanInputInterface;
-
-    /**
-     *
-     */
-    var SelectInputInterface = function SelectInputInterface(fieldId, desc) {
-
-        if (!('required' in desc)) {
-            desc.required = true;
-        }
-
-        StyledElements.InputInterface.call(this, fieldId, desc);
-
-        if (typeof desc.entries === 'function') {
-            this._update = desc.entries;
-        } else if (desc.initialEntries && !this.required) {
-            var i, found = false;
-
-            for (i = 0; i < desc.initialEntries.length; i += 1) {
-                if (this._isEmptyValue(desc.initialEntries[i].value)) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                desc.initialEntries = [{label: '---------', value: null}].concat(desc.initialEntries);
-            }
-        }
-        this.inputElement = new StyledElements.Select(desc);
-    };
-    SelectInputInterface.prototype = new StyledElements.InputInterface();
-
-    SelectInputInterface.parse = function parse(value) {
-        return value;
-    };
-
-    SelectInputInterface.stringify = function stringify(value) {
-        return "" + value;
-    };
-
-    SelectInputInterface.prototype._setValue = function _setValue(newValue) {
-        var entries;
-
-        if (this._update) {
-            this.inputElement.clear();
-            entries = this._update();
-            if (!this.required) {
-                entries = [{label: '---------', value: null}].concat(entries);
-            }
-            this.inputElement.addEntries(entries);
-        }
-        this.inputElement.setValue(newValue);
-    };
-
-    SelectInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        var newValueId;
-
-        if (typeof newValue !== 'string') {
-            try {
-                newValueId = this.inputElement.idFunc(newValue);
-            } catch (e) {
-            }
-        } else {
-            newValueId = newValue;
-        }
-
-        if (typeof newValueId !== 'string' || !(newValueId in this.inputElement.optionValues)) {
-            return StyledElements.InputValidationError.OUT_OF_RANGE_ERROR;
-        } else {
-            return StyledElements.InputValidationError.NO_ERROR;
-        }
-    };
-
-    StyledElements.SelectInputInterface = SelectInputInterface;
-
-    /**
-     *
-     */
-    var HiddenInputInterface = function HiddenInputInterface(fieldId, options) {
-        StyledElements.InputInterface.call(this, fieldId, options);
-
-        this.inputElement = new StyledElements.HiddenField(options);
-    };
-    HiddenInputInterface.prototype = new StyledElements.InputInterface();
-
-    StyledElements.HiddenInputInterface = HiddenInputInterface;
-
-    /**
-     *
-     */
-    var ButtonGroupInputInterface = function ButtonGroupInputInterface(fieldId, fieldDesc) {
-        var ButtonClass, buttonDesc, i, button, label;
-
-        if (arguments.length === 0) {
-            return;
-        }
-
-        StyledElements.InputInterface.call(this, fieldId, fieldDesc);
-
-        this.inputElement = new StyledElements.ButtonsGroup(fieldId);
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'button_group';
-
-        switch (fieldDesc.kind) {
-        case 'radio':
-            ButtonClass = StyledElements.RadioButton;
-            break;
-        case 'checkbox':
-            ButtonClass = StyledElements.CheckBox;
-            break;
-        default:
-            throw new Error();
-        }
-
-        for (i = 0; i < fieldDesc.buttons.length; i += 1) {
-            buttonDesc = fieldDesc.buttons[i];
-
-            label = document.createElement('label');
-            label.className = fieldDesc.kind;
-            button = new ButtonClass({group: this.inputElement, value: buttonDesc.value, secondInput: buttonDesc.secondInput});
-            button.insertInto(label);
-            label.appendChild(document.createTextNode(buttonDesc.label));
-            if (buttonDesc.secondInput) {
-                buttonDesc.secondInput.insertInto(label);
-            }
-            this.wrapperElement.appendChild(label);
-        }
-
-        if ('initialValue' in fieldDesc) {
-            this.inputElement.setValue(fieldDesc.initialValue);
-        }
-    };
-    ButtonGroupInputInterface.prototype = new StyledElements.InputInterface();
-    ButtonGroupInputInterface.prototype.insertInto = function insertInto(element) {
-        element.appendChild(this.wrapperElement);
-    };
-
-    ButtonGroupInputInterface.prototype._setValue = function _setValue(newValue) {
-        this.inputElement.setValue(newValue);
-    };
-
-    ButtonGroupInputInterface.prototype._setError = function _setError(error) {
-        // TODO
-    };
-
-    StyledElements.ButtonGroupInputInterface = ButtonGroupInputInterface;
-
-    /**
-     *
-     */
-    var FileInputInterface = function FileInputInterface(fieldId, fieldDesc) {
-
-        StyledElements.InputInterface.call(this, fieldId, fieldDesc);
-
-        this.inputElement = new StyledElements.FileField(fieldDesc);
-    };
-    FileInputInterface.prototype = new StyledElements.InputInterface();
-
-    FileInputInterface.prototype.getValue = function getValue() {
-        return this.inputElement.getValue();
-    };
-
-    FileInputInterface.prototype._setValue = function _setValue(newValue) {
-        // TODO
-    };
-
-    FileInputInterface.prototype._setError = function _setError(error) {
-        // TODO
-    };
-
-    FileInputInterface.prototype.setDisabled = function setDisabled(disable) {
-        this.inputElement.disabled = !!disable;
-    };
-
-    StyledElements.FileInputInterface = FileInputInterface;
-
-    /**
-     *
-     */
-    var MultivaluedInputInterface = function MultivaluedInputInterface(fieldId, fieldDesc) {
-        this.entries = [];
-        this.fields = fieldDesc.fields;
-        this.wrapperElement = new StyledElements.Container();
-        this._addEntry();
-    };
-    MultivaluedInputInterface.prototype = new StyledElements.InputInterface();
-
-    MultivaluedInputInterface.prototype._addEntry = function _addEntry() {
-        var entry, fields;
-
-        entry = {};
-        entry.wrapper = document.createElement('div');
-
-        fields = {
-            '': {
-                type: 'lineLayout',
-                fields: this.fields
+        static parse(value) {
+            return JSON.parse(value);
+        };
+
+        static stringify(value) {
+            return JSON.stringify(value);
+        };
+
+        _normalize(value) {
+            if (!Array.isArray(value)) {
+                value = [];
             }
         };
 
-        entry.form = new StyledElements.Form(fields, {
-            useHtmlForm: false,
-            acceptButton: false,
-            cancelButton: false,
-            legend: false
-        });
-        entry.form.wrapperElement.style.display = "inline-block";
-        entry.form.wrapperElement.style.verticalAlign = "middle";
+        _setValue(newValue) {
+            this.inputElement.cleanSelection();
+            this.inputElement.addSelection(newValue);
+        };
 
-        entry.form.insertInto(entry.wrapper);
+        getValue() {
+            return this.inputElement.getSelection();
+        };
 
-        entry.addRowButton = new StyledElements.Button({text: '+'});
-        entry.addRowButton.addEventListener('click', function () {
-            this._addEntry();
-        }.bind(this));
-        entry.addRowButton.insertInto(entry.wrapper);
+        isEmpty() {
+            return this.getValue().length === 0;
+        };
 
-        entry.removeRowButton = new StyledElements.Button({text: '-'});
-        entry.removeRowButton.addEventListener('click', function () {
-            this.control._removeEntry(entry);
-        }.bind({control: this, entry: entry}));
-        entry.removeRowButton.insertInto(entry.wrapper);
-
-        this.entries.push(entry);
-        this.wrapperElement.appendChild(entry.wrapper);
-
-        return entry;
-    };
-
-    MultivaluedInputInterface.prototype._removeEntry = function _removeEntry(entry) {
-        var index;
-
-        this.wrapperElement.removeChild(entry.wrapper);
-        index = this.entries.indexOf(entry);
-        this.entries.splice(index, 1);
-        entry.form.destroy();
-
-        if (this.entries.length === 0) {
-            this._addEntry();
-        }
-    };
-
-    MultivaluedInputInterface.prototype._removeAllEntries = function _removeAllEntries() {
-        var i, entry;
-        for (i = 0; i < this.entries.length; i += 1) {
-            entry = this.entries[i];
-            this.wrapperElement.removeChild(entry.wrapper);
-            entry.form.destroy();
-        }
-        this.entries = [];
-    };
-
-    MultivaluedInputInterface.prototype.getValue = function getValue() {
-        var i, data = [];
-
-        for (i = 0; i < this.entries.length; i += 1) {
-            data.push(this.entries[i].form.getData());
-        }
-
-        return data;
-    };
-
-    MultivaluedInputInterface.prototype._setValue = function _setValue(newValue) {
-        var i, entry;
-
-        this._removeAllEntries();
-
-        if (!(newValue instanceof Array)) {
-            newValue = [];
-        }
-
-        for (i = 0; i < newValue.length; i += 1) {
-            entry = this._addEntry();
-            entry.form.setData(newValue[i]);
-        }
-
-        if (this.entries.length === 0) {
-            this._addEntry();
-        }
-    };
-
-    MultivaluedInputInterface.prototype._setError = function _setError(error) {
-        // TODO
-    };
-
-    StyledElements.MultivaluedInputInterface = MultivaluedInputInterface;
+    }
 
     /**
      *
      */
-    var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc, factory) {
-        this.form = new StyledElements.Form(fieldDesc.fields, {
-            factory: factory,
-            useHtmlForm: false,
-            acceptButton: false,
-            cancelButton: false,
-            legend: false
-        });
+    se.NumberInputInterface = class NumberInputInterface extends se.InputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+
+            this.inputElement = new StyledElements.NumericField(options);
+        };
+
+        static parse(value) {
+            return Number(value);
+        }
+
+        _normalize(value) {
+            if (value == null) {
+                return 0;
+            } else {
+                return Number(value);
+            }
+        }
+
+        _checkValue(newValue) {
+            if (!Number.isFinite(newValue) || newValue < this.inputElement.options.min || newValue > this.inputElement.options.max) {
+                return StyledElements.InputValidationError.OUT_OF_RANGE_ERROR;
+            }
+
+            return StyledElements.InputValidationError.NO_ERROR;
+        }
+
+    }
+
+    /**
+     *
+     */
+    se.LongTextInputInterface = class LongTextInputInterface extends se.InputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+
+            this.inputElement = new StyledElements.TextArea(options);
+            this.events.blur = this.inputElement.events.blur;
+        }
+
+    }
+
+    se.LongTextInputInterface.prototype.parse = StyledElements.TextInputInterface.prototype.parse;
+    se.LongTextInputInterface.prototype.stringify = StyledElements.TextInputInterface.prototype.stringify;
+
+    /**
+     *
+     */
+    se.URLInputInterface = class URLInputInterface extends se.TextInputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+            this.inputElement.type = "url";
+        }
+
+        _checkValue(newValue) {
+            return this.inputElement.validationMessage !== "" ? se.InputValidationError.NO_ERROR : se.InputValidationError.URL_ERROR;
+        }
+
+    }
+
+
+    /**
+     *
+     */
+    se.EMailInputInterface = class EMailInputInterface extends se.TextInputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+            this.inputElement.type = "email";
+        }
+
+        _checkValue(newValue) {
+            return this.inputElement.validationMessage !== "" ? se.InputValidationError.NO_ERROR : se.InputValidationError.EMAIL_ERROR;
+        }
+
     };
-    FieldSetInterface.prototype = new StyledElements.InputInterface();
 
-    FieldSetInterface.prototype.repaint = function repaint() {
-        return this.form.repaint();
-    };
+    /**
+     *
+     */
+    se.BooleanInputInterface = class BooleanInputInterface extends se.InputInterface {
 
-    FieldSetInterface.prototype.insertInto = function insertInto(element) {
-        this.form.insertInto(element);
-    };
+        constructor(fieldId, options) {
+            super(fieldId, options);
 
-    FieldSetInterface.prototype.getValue = function getValue() {
-        return this.form.getData();
-    };
+            if (typeof options.initialValue === 'string') {
+                options.initiallyChecked = options.initialValue.toLowerCase() === 'true';
+            } else if (typeof options.initialValue === 'boolean') {
+                options.initiallyChecked = options.initialValue;
+            }
+            this.inputElement = new StyledElements.CheckBox(options);
+        }
 
-    FieldSetInterface.prototype._setValue = function _setValue(newValue) {
-        return this.form.setData(newValue);
-    };
+        static parse(value) {
+            return ("" + value).trim().toLowerCase() === 'true';
+        }
 
-    FieldSetInterface.prototype._setError = function _setError(error) {
-        // TODO
-    };
+        static stringify(value) {
+            return "" + value;
+        }
 
-    StyledElements.FieldSetInterface = FieldSetInterface;
+        isEmpty() {
+            return false;
+        }
 
-})();
+        _normalize(value) {
+            return !!value;
+        }
+
+        _checkValue(newValue) {
+            return (typeof newValue === 'boolean') ? StyledElements.InputValidationError.NO_ERROR : StyledElements.InputValidationError.BOOLEAN_ERROR;
+        }
+
+    }
+
+    /**
+     *
+     */
+    se.SelectInputInterface = class SelectInputInterface extends se.InputInterface {
+
+        constructor(fieldId, desc) {
+            if (!('required' in desc)) {
+                desc.required = true;
+            }
+
+            super(fieldId, desc);
+
+            if (typeof desc.entries === 'function') {
+                this._update = desc.entries;
+            } else if (desc.initialEntries && !this.required) {
+                var i, found = false;
+
+                for (i = 0; i < desc.initialEntries.length; i += 1) {
+                    if (this._isEmptyValue(desc.initialEntries[i].value)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    desc.initialEntries = [{label: '---------', value: null}].concat(desc.initialEntries);
+                }
+            }
+            this.inputElement = new StyledElements.Select(desc);
+        }
+
+        static parse(value) {
+            return value;
+        }
+
+        static stringify(value) {
+            return "" + value;
+        }
+
+        _setValue(newValue) {
+            let entries;
+
+            if (this._update) {
+                this.inputElement.clear();
+                entries = this._update();
+                if (!this.required) {
+                    entries = [{label: '---------', value: null}].concat(entries);
+                }
+                this.inputElement.addEntries(entries);
+            }
+            this.inputElement.setValue(newValue);
+        }
+
+        _checkValue(newValue) {
+            let newValueId;
+
+            if (typeof newValue !== 'string') {
+                try {
+                    newValueId = this.inputElement.idFunc(newValue);
+                } catch (e) {
+                }
+            } else {
+                newValueId = newValue;
+            }
+
+            if (typeof newValueId !== 'string' || !(newValueId in this.inputElement.optionValues)) {
+                return StyledElements.InputValidationError.OUT_OF_RANGE_ERROR;
+            } else {
+                return StyledElements.InputValidationError.NO_ERROR;
+            }
+        }
+
+    }
+
+    /**
+     *
+     */
+    se.HiddenInputInterface = class HiddenInputInterface extends se.InputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+
+            this.inputElement = new StyledElements.HiddenField(options);
+        }
+
+    }
+
+    /**
+     *
+     */
+    se.ButtonGroupInputInterface = class ButtonGroupInputInterface extends se.InputInterface {
+
+        constructor(fieldId, fieldDesc) {
+            var ButtonClass, buttonDesc, i, button, label;
+
+            super(fieldId, fieldDesc);
+
+            this.inputElement = new StyledElements.ButtonsGroup(fieldId);
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = 'button_group';
+
+            switch (fieldDesc.kind) {
+            case 'radio':
+                ButtonClass = StyledElements.RadioButton;
+                break;
+            case 'checkbox':
+                ButtonClass = StyledElements.CheckBox;
+                break;
+            default:
+                throw new Error();
+            }
+
+            for (i = 0; i < fieldDesc.buttons.length; i += 1) {
+                buttonDesc = fieldDesc.buttons[i];
+
+                label = document.createElement('label');
+                label.className = fieldDesc.kind;
+                button = new ButtonClass({group: this.inputElement, value: buttonDesc.value, secondInput: buttonDesc.secondInput});
+                button.insertInto(label);
+                label.appendChild(document.createTextNode(buttonDesc.label));
+                if (buttonDesc.secondInput) {
+                    buttonDesc.secondInput.insertInto(label);
+                }
+                this.wrapperElement.appendChild(label);
+            }
+
+            if ('initialValue' in fieldDesc) {
+                this.inputElement.setValue(fieldDesc.initialValue);
+            }
+        }
+
+        insertInto(element) {
+            element.appendChild(this.wrapperElement);
+        }
+
+        _setValue(newValue) {
+            this.inputElement.setValue(newValue);
+        }
+
+        _setError(error) {
+            // TODO
+        }
+
+    }
+
+    /**
+     *
+     */
+    se.FileInputInterface = class FileInputInterface extends se.InputInterface {
+
+        constructor(fieldId, fieldDesc) {
+            super(fieldId, fieldDesc);
+
+            this.inputElement = new StyledElements.FileField(fieldDesc);
+        };
+
+        getValue() {
+            return this.inputElement.getValue();
+        };
+
+        _setValue(newValue) {
+            // TODO
+        };
+
+        _setError(error) {
+            // TODO
+        };
+
+        setDisabled(disable) {
+            this.inputElement.disabled = !!disable;
+        };
+
+    }
+
+    /**
+     *
+     */
+    se.FieldSetInterface = class FieldSetInterface extends se.InputInterface {
+
+        constructor(fieldId, fieldDesc, factory) {
+            this.form = new StyledElements.Form(fieldDesc.fields, {
+                factory: factory,
+                useHtmlForm: false,
+                acceptButton: false,
+                cancelButton: false,
+                legend: false
+            });
+        }
+
+        repaint() {
+            return this.form.repaint();
+        }
+
+        insertInto(element) {
+            this.form.insertInto(element);
+        }
+
+        getValue() {
+            return this.form.getData();
+        }
+
+        _setValue(newValue) {
+            return this.form.setData(newValue);
+        }
+
+        _setError(error) {
+            // TODO
+        }
+
+    }
+
+})(StyledElements, StyledElements.Utils);

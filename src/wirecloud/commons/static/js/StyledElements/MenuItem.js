@@ -33,112 +33,102 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    /**
-     * Creates a new Menu Item instance. This instance can be added into
-     * {StyledElements.PopupMenuBase} instances
-     *
-     * @constructor
-     * @extends {StyledElements.StyledElement}
-     *
-     * @since 0.5.0
-     * @name StyledElements.MenuItem
-     *
-     * @param {String} title Label to display in the user interface
-     * @param {Object.<String, *>|Function} [options] For backwards compability,
-     * this parameter accepts function values, in that case the value will be
-     * used for the "handler" option.
-     *
-     * Available options:
-     * - `context` (`Any`) Context to be provided to the handler function.
-     * - `enabled` (`Boolean`) Initial enablement status (default: `true`)
-     * - `handler` (`Function`) Callback to be called when this Menu Item is
-     * executed
-     * - `iconClass` (`String`) Initial icon class.
-     *
-     * @param {Object} [context] Object to be passed as the second parameter
-     * of the handler callback. Not used when passing a options object as parameter.
-     */
-    se.MenuItem = function MenuItem(title, handler, context) {
+    se.MenuItem = class MenuItem extends se.StyledElement {
 
-        se.StyledElement.call(this, events);
+        /**
+         * Creates a new Menu Item instance. This instance can be added into
+         * {StyledElements.PopupMenuBase} instances
+         *
+         * @constructor
+         * @extends {StyledElements.StyledElement}
+         *
+         * @since 0.5.0
+         * @name StyledElements.MenuItem
+         *
+         * @param {String} title Label to display in the user interface
+         * @param {Object.<String, *>|Function} [options] For backwards compability,
+         * this parameter accepts function values, in that case the value will be
+         * used for the "handler" option.
+         *
+         * Available options:
+         * - `context` (`Any`) Context to be provided to the handler function.
+         * - `enabled` (`Boolean`) Initial enablement status (default: `true`)
+         * - `handler` (`Function`) Callback to be called when this Menu Item is
+         * executed
+         * - `iconClass` (`String`) Initial icon class.
+         *
+         * @param {Object} [context] Object to be passed as the second parameter
+         * of the handler callback. Not used when passing a options object as parameter.
+         */
+        constructor(title, handler, context) {
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "se-popup-menu-item";
+            super(events);
 
-        let options;
-        if (handler != null && typeof handler === "object") {
-            options = handler;
-        } else {
-            options = {
-                handler: handler,
-                context: context
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = "se-popup-menu-item";
+
+            let options;
+            if (handler != null && typeof handler === "object") {
+                options = handler;
+            } else {
+                options = {
+                    handler: handler,
+                    context: context
+                };
+            }
+
+            let priv = {
+                bodyelement: document.createElement('div'),
+                thumbnailelement: document.createElement('div'),
+                titleelement: document.createElement('div'),
+                element_onclick: element_onclick.bind(this),
+                element_onmouseenter: element_onmouseenter.bind(this),
+                element_onmouseleave: element_onmouseleave.bind(this),
+                element_onblur: element_onblur.bind(this),
+                element_onfocus: element_onfocus.bind(this),
+                element_onkeydown: element_onkeydown.bind(this)
             };
+            privates.set(this, priv);
+
+            priv.bodyelement.className = "se-popup-menu-item-body";
+            priv.thumbnailelement.className = "se-popup-menu-item-thumbnail";
+            priv.titleelement.className = "se-popup-menu-item-title";
+
+            priv.bodyelement.appendChild(priv.titleelement);
+            this.wrapperElement.appendChild(priv.bodyelement);
+
+            this.setTitle(title);
+
+            this.run = options.handler;
+            this.context = options.context;
+
+            this.wrapperElement.addEventListener('click', priv.element_onclick, true);
+            this.wrapperElement.addEventListener('mouseenter', priv.element_onmouseenter);
+            this.wrapperElement.addEventListener('mouseleave', priv.element_onmouseleave);
+            this.wrapperElement.addEventListener('blur', priv.element_onblur);
+            this.wrapperElement.addEventListener('focus', priv.element_onfocus);
+            this._onenabled(true);
+
+            this.wrapperElement.addEventListener('keydown', priv.element_onkeydown);
+
+            if (options.enabled != null) {
+                this.enabled = options.enabled;
+            }
+            if (options.iconClass != null) {
+                this.addIconClass(options.iconClass);
+            }
         }
-
-        let priv = {
-            bodyelement: document.createElement('div'),
-            thumbnailelement: document.createElement('div'),
-            titleelement: document.createElement('div'),
-            element_onclick: element_onclick.bind(this),
-            element_onmouseenter: element_onmouseenter.bind(this),
-            element_onmouseleave: element_onmouseleave.bind(this),
-            element_onblur: element_onblur.bind(this),
-            element_onfocus: element_onfocus.bind(this),
-            element_onkeydown: element_onkeydown.bind(this)
-        };
-        privates.set(this, priv);
-
-        priv.bodyelement.className = "se-popup-menu-item-body";
-        priv.thumbnailelement.className = "se-popup-menu-item-thumbnail";
-        priv.titleelement.className = "se-popup-menu-item-title";
-
-        priv.bodyelement.appendChild(priv.titleelement);
-        this.wrapperElement.appendChild(priv.bodyelement);
-
-        Object.defineProperties(this, {
-            active: {get: property_active_get, set: property_active_set},
-            description: {get: property_description_get},
-            title: {get: property_title_get}
-        });
-
-        this.setTitle(title);
-
-        this.run = options.handler;
-        this.context = options.context;
-
-        this.wrapperElement.addEventListener('click', priv.element_onclick, true);
-        this.wrapperElement.addEventListener('mouseenter', priv.element_onmouseenter);
-        this.wrapperElement.addEventListener('mouseleave', priv.element_onmouseleave);
-        this.wrapperElement.addEventListener('blur', priv.element_onblur);
-        this.wrapperElement.addEventListener('focus', priv.element_onfocus);
-        this._onenabled(true);
-
-        this.wrapperElement.addEventListener('keydown', priv.element_onkeydown);
-
-        if (options.enabled != null) {
-            this.enabled = options.enabled;
-        }
-        if (options.iconClass != null) {
-            this.addIconClass(options.iconClass);
-        }
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(se.MenuItem, se.StyledElement, /** @lends StyledElements.MenuItem.prototype */{
 
         /**
          * @override
          */
-        _onenabled: function _onenabled(enabled) {
+        _onenabled(enabled) {
             if (enabled) {
                 this.wrapperElement.setAttribute('tabindex', -1);
             } else {
                 this.wrapperElement.removeAttribute('tabindex');
             }
-        },
+        }
 
         /**
          * Activates (highlights) this Menu Item
@@ -147,10 +137,10 @@
          *
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
-        activate: function activate() {
+        activate() {
             this.active = true;
             return this;
-        },
+        }
 
         /**
          * Adds an icon class to this Menu Item
@@ -160,7 +150,7 @@
          * @param {String} iconClass - [TODO: description]
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
-        addIconClass: function addIconClass(iconClass) {
+        addIconClass(iconClass) {
             const priv = privates.get(this);
 
             if (priv.iconelement == null) {
@@ -175,7 +165,18 @@
             priv.iconelement.className = "se-icon " + iconClass;
 
             return this;
-        },
+        }
+
+
+        get active() {
+            return this.hasClassName("active");
+        }
+
+        set active(active) {
+            if (this.enabled && this.active !== active) {
+                this.toggleClassName("active", active);
+            }
+        }
 
         /**
          * Deactivates this Menu Item.
@@ -184,16 +185,16 @@
          *
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
-        deactivate: function deactivate() {
+        deactivate() {
             this.active = false;
             return this;
-        },
+        }
 
         /**
          * @deprecated since version 0.6
          * @since 0.5.0
          */
-        destroy: function destroy() {
+        destroy() {
             const priv = privates.get(this);
 
             if (this.wrapperElement.parentElement != null) {
@@ -209,7 +210,7 @@
             this.wrapperElement.removeEventListener('keydown', priv.element_onkeydown);
 
             se.StyledElement.prototype.destroy.call(this);
-        },
+        }
 
         /**
          * Assigns the focus to this menu item
@@ -218,7 +219,7 @@
          *
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
-        focus: function focus() {
+        focus() {
 
             if (this.enabled && !this.hasFocus()) {
                 this.wrapperElement.focus();
@@ -226,7 +227,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Checks if this menu item is currently focused
@@ -235,9 +236,9 @@
          *
          * @returns {Boolean} true if this menu item has the focus
          */
-        hasFocus: function hasFocus() {
+        hasFocus() {
             return utils.hasFocus(this.wrapperElement);
-        },
+        }
 
         /**
          * Simulates a click event over this Menu Item from the user interface.
@@ -247,14 +248,14 @@
          *
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
-        click: function click() {
+        click() {
 
             if (this.enabled) {
                 this.dispatchEvent('click');
             }
 
             return this;
-        },
+        }
 
         /**
          * Updates the description associated to this Menu Item
@@ -264,7 +265,7 @@
          * @param {String} description - new description
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
-        setDescription: function setDescription(description) {
+        setDescription(description) {
             const priv = privates.get(this);
 
             if (priv.descriptionelement == null) {
@@ -281,7 +282,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Updates the title associated to this Menu Item
@@ -291,7 +292,7 @@
          * @param {String} title - new title
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
-        setTitle: function setTitle(title) {
+        setTitle(title) {
             const priv = privates.get(this);
 
             if (title instanceof se.StyledElement) {
@@ -304,31 +305,21 @@
             return this;
         }
 
-    });
+        get description() {
+            return privates.get(this).descriptionelement.textContent;
+        }
+
+        get title() {
+            return privates.get(this).titleelement.textContent;
+        }
+
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS
     // =========================================================================
 
     var events = ['blur', 'click', 'focus', 'mouseenter', 'mouseleave'];
-
-    var property_active_get = function property_active_get() {
-        return this.hasClassName("active");
-    };
-
-    var property_active_set = function property_active_set(active) {
-        if (this.enabled && this.active !== active) {
-            this.toggleClassName("active", active);
-        }
-    };
-
-    var property_description_get = function property_description_get() {
-        return privates.get(this).descriptionelement.textContent;
-    };
-
-    var property_title_get = function property_title_get() {
-        return privates.get(this).titleelement.textContent;
-    };
 
     var element_onclick = function element_onclick(event) {
         event.stopPropagation();

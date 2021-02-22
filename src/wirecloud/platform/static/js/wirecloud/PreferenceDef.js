@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,23 +34,23 @@
      * @param {Boolean} hidden
      * @param {Object} options
      */
-    var PreferenceDef = function PreferenceDef(name, inheritable, inheritByDefault, hidden, options) {
-        Object.defineProperties(this, {
-            name: {value: name},
-            label: {value: options.label},
-            description: {value: options.description},
-            inheritable: {value: !!inheritable},
-            inheritByDefault: {value: !!(inheritable && inheritByDefault)},
-            default: {value: options.defaultValue},
-            hidden: {value: !!hidden},
-            options: {value: options}
-        });
+    Wirecloud.PreferenceDef = class PreferenceDef {
 
-        Object.freeze(this);
-    };
+        constructor(name, inheritable, inheritByDefault, hidden, options) {
+            Object.defineProperties(this, {
+                name: {value: name},
+                label: {value: options.label},
+                description: {value: options.description},
+                inheritable: {value: !!inheritable},
+                inheritByDefault: {value: !!(inheritable && inheritByDefault)},
+                default: {value: options.defaultValue},
+                hidden: {value: !!hidden},
+                options: {value: options}
+            });
 
-    Wirecloud.PreferenceDef = PreferenceDef;
+            Object.freeze(this);
+        }
+
+    }
 
 })();
-
-

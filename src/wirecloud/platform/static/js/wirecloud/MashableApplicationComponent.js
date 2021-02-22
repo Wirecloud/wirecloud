@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,116 +27,125 @@
 
     "use strict";
 
-    ns.MashableApplicationComponent = function MashableApplicationComponent(desc) {
-        var vendor, name, version, i, inputs, outputs, preference;
+    ns.MashableApplicationComponent = class MashableApplicationComponent {
 
-        // Vendor
-        if (!('vendor' in desc) || desc.vendor.trim() === '') {
-            throw new TypeError(utils.gettext('missing vendor'));
-        }
-        vendor = desc.vendor.trim();
-
-        // Name
-        if (!('name' in desc) || desc.name.trim() === '') {
-            throw new TypeError(utils.gettext('missing name'));
-        }
-        name = desc.name.trim();
-
-        // Version
-        if (!('version' in desc) || desc.version.trim() === '') {
-            throw new TypeError(utils.gettext('missing version'));
-        }
-        version = new Wirecloud.Version(desc.version.trim());
-
-        // Type
-        if (typeof desc.type !== 'string') {
-            throw new TypeError(utils.gettext('missing type'));
-        }
-
-        // Basic info
-        Object.defineProperties(this, {
-            missing: {value: !!desc.missing},
-            vendor: {value: vendor},
-            name: {value: name},
-            version: {value: version},
-            uri: {value: vendor + '/' + name + '/' + version.text},
-            group_id: {value: vendor + '/' + name},
-            type: {value: desc.type},
-            image: {value: desc.image},
-            description: {
-                value: desc.description != null ? desc.description.trim() : ''
-            },
-            doc: {
-                value: desc.doc != null ? desc.doc.trim() : ''
-            },
-            changelog: {
-                value: desc.changelog != null ? desc.changelog.trim() : ''
-            },
-            title: {
-                value: desc.title == null || desc.title.trim() === '' ? name : desc.title
-            },
-            base_url: {
-                value: location.origin + Wirecloud.URLs.MAC_BASE_URL.evaluate({
-                    vendor: vendor,
-                    name: name,
-                    version: version.text,
-                    file_path: ''
-                })
+        constructor(desc) {
+            if (desc == null) {
+                throw new TypeError("missing mashable application component description parameter");
             }
-        });
 
-        // Preferences
-        this.preferences = {};
-        this.preferenceList = [];
-        for (i = 0; i < desc.preferences.length; i++) {
-            preference = new Wirecloud.UserPrefDef(desc.preferences[i]);
-            this.preferences[preference.name] = preference;
-            this.preferenceList.push(preference);
+            // Vendor
+            if (!("vendor" in desc) || desc.vendor.trim() === "") {
+                throw new TypeError("missing vendor");
+            }
+            const vendor = desc.vendor.trim();
+
+            // Name
+            if (!("name" in desc) || desc.name.trim() === "") {
+                throw new TypeError("missing name");
+            }
+            const name = desc.name.trim();
+
+            // Version
+            if (!("version" in desc) || desc.version.trim() === "") {
+                throw new TypeError("missing version");
+            }
+            const version = new Wirecloud.Version(desc.version.trim());
+
+            // Type
+            if (typeof desc.type !== "string") {
+                throw new TypeError("missing type");
+            }
+
+            // Basic info
+            Object.defineProperties(this, {
+                missing: {value: !!desc.missing},
+                vendor: {value: vendor},
+                name: {value: name},
+                version: {value: version},
+                uri: {value: vendor + "/" + name + "/" + version.text},
+                group_id: {value: vendor + "/" + name},
+                type: {value: desc.type},
+                image: {value: desc.image != null ? desc.image : null},
+                description: {
+                    value: desc.description != null ? desc.description.trim() : ""
+                },
+                doc: {
+                    value: desc.doc != null ? desc.doc.trim() : ""
+                },
+                changelog: {
+                    value: desc.changelog != null ? desc.changelog.trim() : ""
+                },
+                title: {
+                    value: desc.title == null || desc.title.trim() === "" ? name : desc.title
+                },
+                base_url: {
+                    value: location.origin + Wirecloud.URLs.MAC_BASE_URL.evaluate({
+                        vendor: vendor,
+                        name: name,
+                        version: version.text,
+                        file_path: ""
+                    })
+                }
+            });
+
+            // Preferences
+            this.preferences = {};
+            this.preferenceList = [];
+            // TODO Mashups provided preferences as an object and
+            // widgets/operators as an array. Currently we are ignoring
+            // mashup preferences.
+            for (let i = 0; i < desc.preferences.length; i++) {
+                const preference = new Wirecloud.UserPrefDef(desc.preferences[i]);
+                this.preferences[preference.name] = preference;
+                this.preferenceList.push(preference);
+            }
+            Object.freeze(this.preferences);
+            Object.freeze(this.preferenceList);
+
+            // Requirements
+            this.requirements = desc.requirements;
+            Object.freeze(this.requirements);
+
+            if (desc.wiring == null) {
+                desc.wiring = {};
+            }
+
+            // Inputs
+            if (desc.wiring.inputs == null) {
+                desc.wiring.inputs = [];
+            }
+            Object.defineProperty(this, 'inputList', {value: desc.wiring.inputs});
+            const inputs = {};
+            this.inputList.forEach((input) => {
+                inputs[input.name] = input;
+            })
+            Object.defineProperty(this, 'inputs', {value: inputs});
+
+            // Outputs
+            if (desc.wiring.outputs == null) {
+                desc.wiring.outputs = [];
+            }
+            Object.defineProperty(this, 'outputList', {value: desc.wiring.outputs});
+            const outputs = {};
+            this.outputList.forEach((output) => {
+                outputs[output.name] = output;
+            });
+            Object.defineProperty(this, 'outputs', {value: outputs});
         }
-        Object.freeze(this.preferences);
-        Object.freeze(this.preferenceList);
 
-        // Requirements
-        this.requirements = desc.requirements;
-        Object.freeze(this.requirements);
-
-        // Inputs
-        if (desc.wiring.inputs == null) {
-            desc.wiring.inputs = [];
-        }
-        Object.defineProperty(this, 'inputList', {value: desc.wiring.inputs});
-        inputs = {};
-        for (i = 0; i < this.inputList.length; i++) {
-            inputs[this.inputList[i].name] = this.inputList[i];
-        }
-        Object.defineProperty(this, 'inputs', {value: inputs});
-
-        // Outputs
-        if (desc.wiring.outputs == null) {
-            desc.wiring.outputs = [];
-        }
-        Object.defineProperty(this, 'outputList', {value: desc.wiring.outputs});
-        outputs = {};
-        for (i = 0; i < this.outputList.length; i++) {
-            outputs[this.outputList[i].name] = this.outputList[i];
-        }
-        Object.defineProperty(this, 'outputs', {value: outputs});
-    };
-
-    ns.MashableApplicationComponent.prototype = {
-
-        hasEndpoints: function hasEndpoints() {
+        hasEndpoints() {
             return (this.inputList.length + this.outputList.length) > 0;
-        },
-
-        hasPreferences: function hasPreferences() {
-            return this.preferenceList.length > 0;
-        },
-
-        is: function is(other) {
-            return other != null && this.type == other.type && this.uri == other.uri;
         }
 
-    };
+        hasPreferences() {
+            return this.preferenceList.length > 0;
+        }
+
+        is(other) {
+            return other != null && this.type === other.type && this.uri === other.uri;
+        }
+
+    }
 
 })(Wirecloud, Wirecloud.Utils);

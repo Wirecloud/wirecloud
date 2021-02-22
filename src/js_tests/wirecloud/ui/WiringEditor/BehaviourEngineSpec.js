@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -77,9 +77,8 @@
             it("should allow to create behaviours", () => {
                 let engine = new ns.BehaviourEngine();
                 engine.enable = true;
-                var dialog;
-                // TODO convert into spyOn
-                Wirecloud.ui.FormWindowMenu = jasmine.createSpy("FormWindowMenu").and.callFake(function () {
+                let dialog;
+                spyOn(Wirecloud.ui, "FormWindowMenu").and.callFake(function () {
                     dialog = this;
                     this.show = jasmine.createSpy("show").and.returnValue(this);
                 });
@@ -482,22 +481,24 @@
 
             it("should work when passing an empty list", () => {
                 let engine = new ns.BehaviourEngine();
-                spyOn(engine, "activate");
+                const listener = jasmine.createSpy("listener");
+                engine.addEventListener("activate", listener);
 
                 expect(engine.loadBehaviours([])).toBe(engine);
 
                 expect(engine.enabled).toBe(false);
-                expect(engine.activate).not.toHaveBeenCalled();
+                expect(listener).not.toHaveBeenCalled();
             });
 
             it("should work when passing a list of behaviours", () => {
                 let engine = new ns.BehaviourEngine();
-                spyOn(engine, "activate");
+                const listener = jasmine.createSpy("listener");
+                engine.addEventListener("activate", listener);
 
                 expect(engine.loadBehaviours([{}])).toBe(engine);
 
                 expect(engine.enabled).toBe(true);
-                expect(engine.activate).toHaveBeenCalledWith();
+                expect(listener).toHaveBeenCalled();
             });
 
         });

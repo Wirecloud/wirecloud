@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,78 +23,70 @@
 /* globals console, StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.LogManager = class LogManager extends se.ObjectWithEvents {
 
-    /**
-     * Creates a new instance of class LogManager.
-     *
-     * @constructor
-     * @extends StyledElements.ObjectWithEvents
-     * @name Wirecloud.LogManager
-     * @since 0.5
-     * @param {Wirecloud.LogManager} [parent] parent log manager
-     */
-    var LogManager = function LogManager(parent) {
-        var entries = [];
-        var priv = {
-            closed: false,
-            entries: entries,
-            errorcount: 0,
-            previouscycles: [],
-            parent: null
+        /**
+         * Creates a new instance of class LogManager.
+         *
+         * @constructor
+         * @extends StyledElements.ObjectWithEvents
+         * @name Wirecloud.LogManager
+         * @since 0.5
+         * @param {Wirecloud.LogManager} [parent] parent log manager
+         */
+        constructor(parent) {
+            var entries = [];
+            var priv = {
+                closed: false,
+                entries: entries,
+                errorcount: 0,
+                previouscycles: [],
+                parent: null
+            };
+
+            super(["newentry"]);
+
+            privates.set(this, priv);
+
+            Object.defineProperties(this, {
+                closed: {
+                    get: function () {
+                        return priv.closed;
+                    }
+                },
+                entries: {
+                    get: function () {
+                        return priv.entries.slice(0);
+                    }
+                },
+                errorCount: {
+                    get: function () {
+                        return priv.errorcount;
+                    }
+                },
+                previouscycles: {
+                    get: function () {
+                        return priv.previouscycles;
+                    }
+                },
+                parent: {
+                    get: function () {
+                        return priv.parent;
+                    }
+                },
+                totalCount: {
+                    get: function () {
+                        return priv.entries.length;
+                    }
+                }
+            });
+
+            setParent.call(this, parent);
         };
-
-        se.ObjectWithEvents.call(this, ["newentry"]);
-
-        privates.set(this, priv);
-
-        Object.defineProperties(this, {
-            closed: {
-                get: function () {
-                    return priv.closed;
-                }
-            },
-            entries: {
-                get: function () {
-                    return priv.entries.slice(0);
-                }
-            },
-            errorCount: {
-                get: function () {
-                    return priv.errorcount;
-                }
-            },
-            previouscycles: {
-                get: function () {
-                    return priv.previouscycles;
-                }
-            },
-            parent: {
-                get: function () {
-                    return priv.parent;
-                }
-            },
-            totalCount: {
-                get: function () {
-                    return priv.entries.length;
-                }
-            }
-        });
-
-        setParent.call(this, parent);
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(LogManager, se.ObjectWithEvents, /** @lends Wirecloud.LogManager.prototype */  {
 
         /**
          * Marks this log manager as closed. Closed log managers are read only
@@ -102,10 +95,10 @@
          *
          * @returns {Wirecloud.LogManager}
          */
-        close: function close() {
+        close() {
             privates.get(this).closed = true;
             return this;
-        },
+        }
 
         /**
          * Formats an exceptions to be used as the details of a log entry.
@@ -113,14 +106,14 @@
          * @param {Error} exception exception to format
          * @returns {StyledElements.Fragment}
          */
-        formatException: function formatException(exception) {
+        formatException(exception) {
             var builder = new StyledElements.GUIBuilder();
 
             return builder.parse(Wirecloud.currentTheme.templates['wirecloud/logs/details'], {
                 message: exception.toString(),
                 stacktrace: exception.stack
             });
-        },
+        }
 
         /**
          * Adds a log entry into this log manager.
@@ -129,7 +122,7 @@
          * @param {Object} [options]
          * @returns {Wirecloud.LogManager}
          */
-        log: function log(message, options) {
+        log(message, options) {
             var entry;
 
             if (this.closed) {
@@ -166,7 +159,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Creates a new cycle moving the current entries into the
@@ -174,7 +167,7 @@
          *
          * @returns {Wirecloud.LogManager}
          */
-        newCycle: function newCycle() {
+        newCycle() {
             var priv = privates.get(this);
 
             if (priv.closed) {
@@ -190,7 +183,7 @@
             priv.errorcount = 0;
 
             return this;
-        },
+        }
 
         /**
          * Parses the error descriptions included in error responses provided by
@@ -202,7 +195,7 @@
          * @param {Response} response server response to parse
          * @returns {String} error description
          */
-        parseErrorResponse: function parseErrorResponse(response) {
+        parseErrorResponse(response) {
             var errorDesc, msg;
 
             try {
@@ -225,7 +218,7 @@
             }
 
             return msg;
-        },
+        }
 
         /**
          * Removes all the log entries stored by this log manager, including all
@@ -233,7 +226,7 @@
          *
          * @returns {Wirecloud.LogManager}
          */
-        reset: function reset() {
+        reset() {
             var priv = privates.get(this);
 
             if (priv.closed) {
@@ -247,7 +240,7 @@
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -291,7 +284,7 @@
     var setParent = function setParent(parent) {
         var priv = privates.get(this);
 
-        if (parent instanceof LogManager) {
+        if (parent instanceof ns.LogManager) {
             if (parent.closed) {
                 throw new Error();
             }
@@ -303,7 +296,6 @@
     // EVENT HANDLERS
     // =========================================================================
 
-    Wirecloud.LogManager = LogManager;
-    Wirecloud.GlobalLogManager = new LogManager();
+    ns.GlobalLogManager = new ns.LogManager();
 
-})(StyledElements, StyledElements.Utils);
+})(Wirecloud, StyledElements, StyledElements.Utils);

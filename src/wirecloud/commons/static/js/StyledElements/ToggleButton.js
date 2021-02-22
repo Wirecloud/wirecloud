@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,52 +23,55 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    StyledElements.ToggleButton = function ToggleButton(options) {
-        var defaultOptions = {
-            'initiallyChecked': false
-        };
-        options = utils.merge(defaultOptions, options);
-
-        StyledElements.Button.call(this, options);
-        this.events.active = new StyledElements.Event(this);
-
-        Object.defineProperty(this, 'active', {
-            get: function get() {
-                return this.hasClassName('active');
-            },
-            set: function set(value) {
-                // Convert value to boolean, just in case
-                value = !!value;
-                let current = this.hasClassName('active');
-                if (current !== value) {
-                    this.toggleClassName('active', value);
-                    this.dispatchEvent('active', value);
-                }
-            }
-        });
-
-        // Init status
-        this.active = options.initiallyChecked;
+    const defaultOptions = {
+        initiallyChecked: false
     };
-    utils.inherit(StyledElements.ToggleButton, StyledElements.Button);
+    Object.freeze(defaultOptions);
 
-    StyledElements.ToggleButton.prototype._clickCallback = function _clickCallback(event) {
-        event.stopPropagation();
-        this.click();
-    };
+    se.ToggleButton = class ToggleButton extends se.Button {
 
-    StyledElements.ToggleButton.prototype.click = function click() {
+        constructor(options) {
+            options = utils.merge({}, defaultOptions, options);
 
-        if (this.enabled) {
-            this.active = !this.active;
-            this.dispatchEvent('click');
+            super(options);
+            this.events.active = new StyledElements.Event(this);
+
+            // Init status
+            this.active = options.initiallyChecked;
         }
 
-        return this;
-    };
+        get active() {
+            return this.hasClassName('active');
+        }
 
-})(StyledElements.Utils);
+        set active(value) {
+            // Convert value to boolean, just in case
+            value = !!value;
+            let current = this.hasClassName('active');
+            if (current !== value) {
+                this.toggleClassName('active', value);
+                this.dispatchEvent('active', value);
+            }
+        }
+
+        _clickCallback(event) {
+            event.stopPropagation();
+            this.click();
+        }
+
+        click() {
+
+            if (this.enabled) {
+                this.active = !this.active;
+                this.dispatchEvent('click');
+            }
+
+            return this;
+        }
+    }
+
+})(StyledElements, StyledElements.Utils);

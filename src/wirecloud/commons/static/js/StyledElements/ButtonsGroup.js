@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,118 +23,108 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
     /**
      * Virtual input field grouping a set of radio buttons or checkboses
      */
-    var ButtonsGroup = function ButtonsGroup(name) {
-        StyledElements.InputElement.call(this, "", ['change']);
+    se.ButtonsGroup = class ButtonsGroup extends se.InputElement {
 
-        Object.defineProperty(this, 'name', {value: name});
-        this.buttons = [];
-    };
-    utils.inherit(ButtonsGroup, StyledElements.InputElement);
+        constructor(name) {
+            super("", ['change']);
 
-    /**
-     * @private
-     */
-    ButtonsGroup.prototype.insertButton = function insertButton(button) {
-        this.buttons[this.buttons.length] = button;
-        button.addEventListener(
-            'change',
-            () => {
-                this.dispatchEvent('change');
-            }
-        );
-
-        return this;
-    };
-
-    ButtonsGroup.prototype.getValue = function getValue() {
-        var i, result = [];
-
-        if (this.buttons[0] instanceof StyledElements.CheckBox) {
-
-            for (i = 0; i < this.buttons.length; i++) {
-                if (this.buttons[i].inputElement.checked) {
-                    result.push(this.buttons[i].getValue());
-                }
-            }
-
-        } else {
-
-            for (i = 0; i < this.buttons.length; i++) {
-                if (this.buttons[i].inputElement.checked) {
-                    return this.buttons[i].getValue();
-                }
-            }
+            Object.defineProperty(this, 'name', {value: name});
+            this.buttons = [];
         }
 
-        return result;
-    };
+        /**
+         * @private
+         */
+        insertButton(button) {
+            this.buttons[this.buttons.length] = button;
+            button.addEventListener(
+                'change',
+                () => {
+                    this.dispatchEvent('change');
+                }
+            );
 
-    ButtonsGroup.prototype.setValue = function setValue(newValue) {
-        if (newValue == null) {
-            newValue = [];
-        } else if (typeof newValue === 'string') {
-            newValue = [newValue];
+            return this;
         }
 
-        for (var i = 0; i < this.buttons.length; i++) {
-            if (newValue.indexOf(this.buttons[i].inputElement.value) !== -1) {
-                this.buttons[i].setValue(true);
+        getValue() {
+            if (this.buttons[0] instanceof StyledElements.CheckBox) {
+                const result = [];
+                this.buttons.forEach((button) => {
+                    if (button.inputElement.checked) {
+                        result.push(button.getValue());
+                    }
+                });
+                return result;
             } else {
-                this.buttons[i].setValue(false);
-            }
-        }
-
-        return this;
-    };
-
-    ButtonsGroup.prototype.reset = function reset() {
-        for (var i = 0; i < this.buttons.length; i++) {
-            this.buttons[i].reset();
-        }
-
-        return this;
-    };
-
-    /**
-     * Devuelve una lista de los elementos CheckBox o RadioButton
-     * seleccionados. En caso de que la selección este vacía, este método devolverá
-     * una lista vacía y en caso de que este ButtonGroup este formado por
-     * RadioButtons, la selección será como mucho de un elemento.
-     */
-    ButtonsGroup.prototype.getSelectedButtons = function getSelectedButtons() {
-        var i;
-
-        if (this.buttons.length === 0) {
-            return [];
-        }
-
-        if (this.buttons[0] instanceof StyledElements.CheckBox) {
-            var result = [];
-
-            for (i = 0; i < this.buttons.length; i++) {
-                if (this.buttons[i].inputElement.checked) {
-                    result[result.length] = this.buttons[i];
+                for (let i = 0; i < this.buttons.length; i++) {
+                    if (this.buttons[i].inputElement.checked) {
+                        return this.buttons[i].getValue();
+                    }
                 }
             }
-
-            return result;
-        } else {
-            for (i = 0; i < this.buttons.length; i++) {
-                if (this.buttons[i].inputElement.checked) {
-                    return [this.buttons[i]];
-                }
-            }
-            return [];
         }
-    };
 
-    StyledElements.ButtonsGroup = ButtonsGroup;
+        setValue(newValue) {
+            if (newValue == null) {
+                newValue = [];
+            } else if (typeof newValue === 'string') {
+                newValue = [newValue];
+            }
 
-})(StyledElements.Utils);
+            this.buttons.forEach((button) => {
+                button.setValue(newValue.indexOf(button.inputElement.value) !== -1);
+            });
+
+            return this;
+        }
+
+        reset() {
+            this.buttons.forEach((button) => {
+                button.reset();
+            });
+
+            return this;
+        }
+
+        /**
+         * Devuelve una lista de los elementos CheckBox o RadioButton
+         * seleccionados. En caso de que la selección este vacía, este método devolverá
+         * una lista vacía y en caso de que este ButtonGroup este formado por
+         * RadioButtons, la selección será como mucho de un elemento.
+         */
+        getSelectedButtons() {
+            if (this.buttons.length === 0) {
+                return [];
+            }
+
+            if (this.buttons[0] instanceof StyledElements.CheckBox) {
+                const result = [];
+
+                for (let i = 0; i < this.buttons.length; i++) {
+                    if (this.buttons[i].inputElement.checked) {
+                        result[result.length] = this.buttons[i];
+                    }
+                }
+
+                return result;
+            } else {
+                for (let i = 0; i < this.buttons.length; i++) {
+                    if (this.buttons[i].inputElement.checked) {
+                        return [this.buttons[i]];
+                    }
+                }
+                return [];
+            }
+        }
+
+    }
+
+})(StyledElements, StyledElements.Utils);

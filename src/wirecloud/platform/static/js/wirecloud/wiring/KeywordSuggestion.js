@@ -27,118 +27,7 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
-
-    /**
-     * Create a new instance of class KeywordSuggestion.
-     *
-     * @constructor
-     */
-    ns.KeywordSuggestion = function KeywordSuggestion() {
-        this.endpoints = {source: {}, target: {}};
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    ns.KeywordSuggestion.prototype = {
-
-        /**
-         * Adds an endpoint into the managed endpoints.
-         *
-         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
-         *      Endpoint to add.
-         * @returns {Wirecloud.wiring.KeywordSuggestion}
-         *      The instance on which the member is called.
-         */
-        appendEndpoint: function appendEndpoint(endpoint) {
-
-            if (endpoint.missing) {
-                return this;
-            }
-
-            endpoint.friendcodeList.forEach(function (friendcode) {
-                updateFriendcode.call(this, friendcode, endpoint);
-            }, this);
-
-            return this;
-        },
-
-        /**
-         * Loop over the suggested endpoints to be connected to the endpoint
-         * provided as reference.
-         *
-         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
-         *      Endpoint to which the engine should search connection
-         *      recommendations
-         * @param {Function} callback
-         *      Function to call for each suggestion
-         * @returns {Wirecloud.wiring.KeywordSuggestion}
-         *      The instance on which the member is called.
-         */
-        forEachSuggestion: function forEachSuggestion(endpoint, callback) {
-            var oppositeType;
-
-            if (endpoint.missing) {
-                return this;
-            }
-
-            oppositeType = getOppositeType(endpoint);
-            this._endpointList = [];
-
-            endpoint.friendcodeList.forEach(function (friendcode) {
-                findEndpoint.call(this, endpoint.component, oppositeType, friendcode, callback);
-            }, this);
-
-            delete this._endpointList;
-
-            return this;
-        },
-
-        /**
-         * Removes an endpoint from the managed ones
-         *
-         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
-         *      Endpoint to remove
-         * @returns {Wirecloud.wiring.KeywordSuggestion}
-         *      The instance on which the member is called.
-         */
-        removeEndpoint: function removeEndpoint(endpoint) {
-
-            if (endpoint.missing) {
-                return this;
-            }
-
-            endpoint.friendcodeList.forEach(function (friendcode) {
-                removeFriendcode.call(this, friendcode, endpoint);
-            }, this);
-
-            return this;
-        },
-
-        /**
-         * Clear the status of this instance.
-         *
-         * @returns {Wirecloud.wiring.KeywordSuggestion}
-         *      The instance on which the member is called.
-         */
-        empty: function empty() {
-
-            this.endpoints = {source: {}, target: {}};
-
-            return this;
-        }
-
-    };
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var findEndpoint = function findEndpoint(component, type, friendcode, callback) {
+    const findEndpoint = function findEndpoint(component, type, friendcode, callback) {
 
         if (!(friendcode in this.endpoints[type])) {
             return this;
@@ -154,12 +43,12 @@
         return this;
     };
 
-    var getOppositeType = function getOppositeType(endpoint) {
+    const getOppositeType = function getOppositeType(endpoint) {
         return endpoint.type === 'source' ? 'target' : 'source';
     };
 
-    var removeFriendcode = function removeFriendcode(friendcode, endpoint) {
-        var list = this.endpoints[endpoint.type][friendcode];
+    const removeFriendcode = function removeFriendcode(friendcode, endpoint) {
+        const list = this.endpoints[endpoint.type][friendcode];
 
         list.splice(list.indexOf(endpoint), 1);
 
@@ -170,7 +59,7 @@
         return this;
     };
 
-    var updateFriendcode = function updateFriendcode(friendcode, endpoint) {
+    const updateFriendcode = function updateFriendcode(friendcode, endpoint) {
 
         if (!(friendcode in this.endpoints[endpoint.type])) {
             this.endpoints[endpoint.type][friendcode] = [];
@@ -180,5 +69,103 @@
 
         return this;
     };
+
+    // =========================================================================
+    // CLASS DEFINITION
+    // =========================================================================
+
+    /**
+     * Create a new instance of class KeywordSuggestion.
+     *
+     * @constructor
+     */
+    ns.KeywordSuggestion = class KeywordSuggestion {
+
+        constructor() {
+            this.endpoints = {source: {}, target: {}};
+        }
+
+        /**
+         * Adds an endpoint into the managed endpoints.
+         *
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Endpoint to add.
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
+         *      The instance on which the member is called.
+         */
+        appendEndpoint(endpoint) {
+            if (endpoint.missing) {
+                return this;
+            }
+
+            endpoint.friendcodeList.forEach(function (friendcode) {
+                updateFriendcode.call(this, friendcode, endpoint);
+            }, this);
+
+            return this;
+        }
+
+        /**
+         * Loop over the suggested endpoints to be connected to the endpoint
+         * provided as reference.
+         *
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Endpoint to which the engine should search connection
+         *      recommendations
+         * @param {Function} callback
+         *      Function to call for each suggestion
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
+         *      The instance on which the member is called.
+         */
+        forEachSuggestion(endpoint, callback) {
+            if (endpoint.missing) {
+                return this;
+            }
+
+            const oppositeType = getOppositeType(endpoint);
+            this._endpointList = [];
+
+            endpoint.friendcodeList.forEach(function (friendcode) {
+                findEndpoint.call(this, endpoint.component, oppositeType, friendcode, callback);
+            }, this);
+
+            delete this._endpointList;
+
+            return this;
+        }
+
+        /**
+         * Removes an endpoint from the managed ones
+         *
+         * @param {Wirecloud.ui.WiringEditor.Endpoint} endpoint
+         *      Endpoint to remove
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
+         *      The instance on which the member is called.
+         */
+        removeEndpoint(endpoint) {
+            if (endpoint.missing) {
+                return this;
+            }
+
+            endpoint.friendcodeList.forEach(function (friendcode) {
+                removeFriendcode.call(this, friendcode, endpoint);
+            }, this);
+
+            return this;
+        }
+
+        /**
+         * Clear the status of this instance.
+         *
+         * @returns {Wirecloud.wiring.KeywordSuggestion}
+         *      The instance on which the member is called.
+         */
+        empty() {
+            this.endpoints = {source: {}, target: {}};
+
+            return this;
+        }
+
+    }
 
 })(Wirecloud.wiring);

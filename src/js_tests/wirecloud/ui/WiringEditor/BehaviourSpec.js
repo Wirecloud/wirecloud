@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,6 +29,8 @@
     describe("Behaviour", () => {
 
         beforeAll(() => {
+            // TODO
+            Wirecloud.ui.InputInterfaceFactory = se.DefaultInputInterfaceFactory;
             ns.BehaviourPrefs = jasmine.createSpy("BehaviourPrefs");
             se.Utils.inherit(ns.BehaviourPrefs, se.DynamicMenuItems);
         });
@@ -41,8 +43,28 @@
                 }).toThrowError(TypeError);
             });
 
+            it("title is required", () => {
+                expect(() => {
+                    new ns.Behaviour(1);
+                }).toThrowError(TypeError);
+            });
+
+            it("does not allow whitespace only titles", () => {
+                expect(() => {
+                    new ns.Behaviour(1, {title: "  "});
+                }).toThrowError(TypeError);
+            });
+
+            it("support whitespace only descriptions", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour", description: "\n \t"});
+
+                expect(behaviour.index).toBe(1);
+                expect(behaviour.title).toEqual("My Behaviour");
+                expect(behaviour.description).toEqual(jasmine.any(String));
+            });
+
             it("it is an styledelement panel", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
 
                 expect(behaviour.index).toBe(1);
                 expect(behaviour.title).toEqual(jasmine.any(String));
@@ -51,41 +73,49 @@
             });
 
             it("index attribute can be modified", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
 
                 behaviour.index = 2;
                 expect(behaviour.index).toBe(2);
             });
 
-            it("provides default values for the title and the description attributes", () => {
-                let behaviour = new ns.Behaviour(2, {
-                    title: "    ",
-                    description: ""
-                });
+            it("index attribute must be a number", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
 
-                expect(behaviour.index).toBe(2);
-                expect(behaviour.title).toEqual(jasmine.any(String));
-                expect(behaviour.title.trim()).not.toBe("");
-                expect(behaviour.description).toEqual(jasmine.any(String));
-                expect(behaviour.description.trim()).not.toBe("");
+                expect(() => {
+                    behaviour.index = "a";
+                }).toThrowError(TypeError);
             });
 
         });
 
         describe("btnRemove", () => {
 
-            it("should send an optremove event if the user like to remove the behaviour", () => {
-                let behaviour = new ns.Behaviour(1);
-                let listener = jasmine.createSpy("listener");
-                var alert_handler;
+            it("should send an optremove event if the behaviour is empty", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("optremove", listener);
-                spyOn(Wirecloud.ui, "AlertWindowMenu").and.callFake(function () {
-                    this.setHandler = jasmine.createSpy("setHandler").and.callFake((listener) => {
-                        alert_handler = listener;
-                        return this;
-                    });
-                    this.show = jasmine.createSpy("show").and.returnValue(this);
+
+                behaviour.btnRemove.click();
+
+                expect(listener).toHaveBeenCalledWith(behaviour);
+                expect(listener.calls.count()).toBe(1);
+            });
+
+            it("should open an alert dialog if the behaviour is not empty", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                behaviour.updateConnection({
+                    sourceId: "sourcename",
+                    targetId: "targetname"
                 });
+                const listener = jasmine.createSpy("listener");
+                let alert_handler;
+                behaviour.addEventListener("optremove", listener);
+                spyOn(Wirecloud.ui.AlertWindowMenu.prototype, "setHandler").and.callFake(function (listener) {
+                    alert_handler = listener;
+                    return this;
+                });
+                spyOn(Wirecloud.ui.AlertWindowMenu.prototype, "show").and.callFake(function () {return this;});
 
                 behaviour.btnRemove.click();
                 alert_handler();
@@ -99,11 +129,11 @@
         describe("click events", () => {
 
             it("should be ignored if the behaviour is active", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
                 behaviour.active = true;
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("click", listener);
-                let event = {
+                const event = {
                     stopPropagation: jasmine.createSpy("stopPropagation")
                 };
 
@@ -114,10 +144,10 @@
             });
 
             it("should be propagated if the behaviour is inactive", () => {
-                let behaviour = new ns.Behaviour(1);
-                let listener = jasmine.createSpy("listener");
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("click", listener);
-                let event = {
+                const event = {
                     stopPropagation: jasmine.createSpy("stopPropagation")
                 };
 
@@ -132,8 +162,8 @@
         describe("clear()", () => {
 
             it("should work with an empty status", () => {
-                let behaviour = new ns.Behaviour(1);
-                let listener = jasmine.createSpy("listener");
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.clear()).toBe(behaviour);
@@ -143,18 +173,18 @@
             });
 
             it("should remove all the components", () => {
-                let behaviour = new ns.Behaviour(1);
-                let component1 = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const component1 = {
                     id: "1",
                     type: "widget"
                 };
                 behaviour.updateComponent(component1);
-                let component2 = {
+                const component2 = {
                     id: "1",
                     type: "operator"
                 };
                 behaviour.updateComponent(component2);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.clear()).toBe(behaviour);
@@ -170,14 +200,14 @@
         describe("equals(other)", () => {
 
             it("should return true if other is the same instance", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
 
                 expect(behaviour.equals(behaviour)).toBe(true);
             });
 
             it("should return false if other is a different instance", () => {
-                let behaviour = new ns.Behaviour(1);
-                let other = new ns.Behaviour(2);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour 1"});
+                const other = new ns.Behaviour(2, {title: "My Behaviour 2"});
 
                 expect(behaviour.equals(other)).toBe(false);
             });
@@ -187,13 +217,13 @@
         describe("getConnectionIndex(connection)", () => {
 
             it("should return -1 if the connection is not present", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection1 = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection1 = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
                 behaviour.updateConnection(connection1);
-                let connection2 = {
+                const connection2 = {
                     sourceId: "othersourcename",
                     targetId: "targetname"
                 };
@@ -202,13 +232,13 @@
             });
 
             it("should return connection index if the connection is present", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection1 = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection1 = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
                 behaviour.updateConnection(connection1);
-                let connection2 = {
+                const connection2 = {
                     sourceId: "othersourcename",
                     targetId: "targetname"
                 };
@@ -222,7 +252,7 @@
         describe("getCurrentStatus()", () => {
 
             it("should return correct values for an empty behaviour", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
 
                 expect(behaviour.getCurrentStatus()).toEqual({
                     title: jasmine.any(String),
@@ -235,7 +265,7 @@
             });
 
             it("should return correct values for behaviours with connections and components", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
                 behaviour.updateConnection({
                     sourceId: "sourcename",
                     targetId: "targetname"
@@ -272,8 +302,8 @@
         describe("hasComponent(component)", () => {
 
             it("should return false if the component is not present", () => {
-                let behaviour = new ns.Behaviour(1);
-                let component = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const component = {
                     id: "1",
                     type: "widget"
                 };
@@ -282,8 +312,8 @@
             });
 
             it("should return false if the component is not present", () => {
-                let behaviour = new ns.Behaviour(1);
-                let component = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const component = {
                     id: "1",
                     type: "widget"
                 };
@@ -297,8 +327,8 @@
         describe("hasConnection(connection)", () => {
 
             it("should return false if the connection is not present", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
@@ -307,8 +337,8 @@
             });
 
             it("should return false if the connection is not present", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
@@ -322,13 +352,13 @@
         describe("removeComponent(component)", () => {
 
             it("should remove components", () => {
-                let behaviour = new ns.Behaviour(1);
-                let component = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const component = {
                     id: "1",
                     type: "widget"
                 };
                 behaviour.updateComponent(component);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.removeComponent(component)).toBe(behaviour);
@@ -339,12 +369,12 @@
             });
 
             it("should do nothing if the component is not in the behaviour", () => {
-                let behaviour = new ns.Behaviour(1);
-                let component = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const component = {
                     id: "1",
                     type: "widget"
                 };
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.removeComponent(component)).toBe(behaviour);
@@ -358,13 +388,13 @@
         describe("removeConnection(connection)", () => {
 
             it("should remove connections", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
                 behaviour.updateConnection(connection);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.removeConnection(connection)).toBe(behaviour);
@@ -375,12 +405,12 @@
             });
 
             it("should do nothing if the connection is not in the behaviour", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.removeConnection(connection)).toBe(behaviour);
@@ -394,8 +424,8 @@
         describe("showLogs()", () => {
 
             it("should present to the user a modal dialog with the logs of the behaviour", () => {
-                let behaviour = new ns.Behaviour(1);
-                var dialog;
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                let dialog;
                 // TODO change to spyOn on LogWindowMenu inclusion to the tested classes
                 Wirecloud.ui.LogWindowMenu = jasmine.createSpy("LogWindowMenu").and.callFake(function () {
                     dialog = this;
@@ -410,15 +440,14 @@
 
         describe("showSettings()", () => {
 
-            it("should send an optremove event if the user like to remove the behaviour", () => {
-                let behaviour = new ns.Behaviour(1);
-                let new_title = "New Title";
-                let new_description = "New description";
-                let listener = jasmine.createSpy("listener");
-                var dialog;
+            it("should send a change event if the user make changes through the form", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const new_title = "New Title";
+                const new_description = "New description";
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
-                // TODO change to spyOn on FormWindowMenu inclusion to the tested classes
-                Wirecloud.ui.FormWindowMenu = jasmine.createSpy("FormWindowMenu").and.callFake(function () {
+                let dialog;
+                spyOn(Wirecloud.ui, "FormWindowMenu").and.callFake(function () {
                     dialog = this;
                     this.setValue = jasmine.createSpy("setValue").and.returnValue(this);
                     this.show = jasmine.createSpy("show").and.returnValue(this);
@@ -436,15 +465,14 @@
                 expect(behaviour.description).toBe(new_description);
             });
 
-            it("should provide default values for empty titles and descriptions", () => {
-                let behaviour = new ns.Behaviour(1);
-                let new_title = "   ";
-                let new_description = "  \n  ";
-                let listener = jasmine.createSpy("listener");
-                var dialog;
+            it("should trim titles", () => {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const new_title = " new title ";
+                const new_description = " a b ";
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
-                // TODO change to spyOn on FormWindowMenu inclusion to the tested classes
-                Wirecloud.ui.FormWindowMenu = jasmine.createSpy("FormWindowMenu").and.callFake(function () {
+                let dialog;
+                spyOn(Wirecloud.ui, "FormWindowMenu").and.callFake(function () {
                     dialog = this;
                     this.setValue = jasmine.createSpy("setValue").and.returnValue(this);
                     this.show = jasmine.createSpy("show").and.returnValue(this);
@@ -458,8 +486,8 @@
 
                 expect(listener).toHaveBeenCalledWith(behaviour);
                 expect(listener.calls.count()).toBe(1);
-                expect(behaviour.title).not.toBe(new_title);
-                expect(behaviour.description).not.toBe(new_description);
+                expect(behaviour.title).toBe(new_title.trim());
+                expect(behaviour.description).toBe(new_description);
             });
 
         });
@@ -467,7 +495,7 @@
         describe("toJSON()", () => {
 
             it("should return correct values for an empty behaviour", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
 
                 expect(behaviour.toJSON()).toEqual({
                     title: behaviour.title,
@@ -482,7 +510,7 @@
             });
 
             it("should return correct values for behaviours with connections and components", () => {
-                let behaviour = new ns.Behaviour(1);
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
                 behaviour.active = true;
                 behaviour.updateConnection({
                     sourceId: "sourcename",
@@ -536,16 +564,16 @@
         describe("updateComponent(component)", () => {
 
             it("should allow to add components", () => {
-                let behaviour = new ns.Behaviour(1);
-                let component1 = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const component1 = {
                     id: "1",
                     type: "widget"
                 };
-                let component2 = {
+                const component2 = {
                     id: "1",
                     type: "operator"
                 };
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.updateComponent(component1)).toBe(behaviour);
@@ -555,26 +583,26 @@
             });
 
             it("should allow to update components", () => {
-                let behaviour = new ns.Behaviour(1);
-                let component1_1 = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const component1_1 = {
                     id: "1",
                     type: "widget"
                 };
-                let component1_2 = {
+                const component1_2 = {
                     id: "1",
                     type: "widget"
                 };
-                let component2_1 = {
+                const component2_1 = {
                     id: "1",
                     type: "operator"
                 };
-                let component2_2 = {
+                const component2_2 = {
                     id: "1",
                     type: "operator"
                 };
                 behaviour.updateComponent(component1_1);
                 behaviour.updateComponent(component2_1);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.updateComponent(component1_2)).toBe(behaviour);
@@ -587,12 +615,12 @@
         describe("updateConnection(connection)", () => {
 
             it("should allow to add connections", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.updateConnection(connection)).toBe(behaviour);
@@ -601,17 +629,17 @@
             });
 
             it("should allow to update connections", () => {
-                let behaviour = new ns.Behaviour(1);
-                let connection1_1 = {
+                const behaviour = new ns.Behaviour(1, {title: "My Behaviour"});
+                const connection1_1 = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
-                let connection1_2 = {
+                const connection1_2 = {
                     sourceId: "sourcename",
                     targetId: "targetname"
                 };
                 behaviour.updateConnection(connection1_1);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 behaviour.addEventListener("change", listener);
 
                 expect(behaviour.updateConnection(connection1_2)).toBe(behaviour);

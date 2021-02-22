@@ -1011,7 +1011,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     test_move_widget_and_restore_touch.tags = tags + ('wirecloud-dragboard',)
 
-    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    @uses_extra_resources(('Wirecloud_context-inspector_1.0.wgt',), shared=True)
     def test_basic_add_and_move_widget(self):
 
         self.login(username="admin", next="/admin/Workspace")
@@ -1162,8 +1162,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     test_move_widget_interchange.tags = tags + ('wirecloud-dragboard',)
 
-    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
-    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
+    @uses_extra_resources(('Wirecloud_context-inspector_1.0.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.1.wgt', shared=True)
     def test_extract_widget_from_grid(self):
 
         self.login(username="admin", next="/admin/GridLayoutTests")
@@ -1178,8 +1178,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(old_size, new_size)
     test_extract_widget_from_grid.tags = tags + ('wirecloud-dragboard',)
 
-    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
-    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_ColumnLayoutTests_1.0.wgt', shared=True)
+    @uses_extra_resources(('Wirecloud_context-inspector_1.0.wgt',), shared=True)
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_ColumnLayoutTests_1.1.wgt', shared=True)
     def test_minimize_widget(self):
 
         self.login(username="user_with_workspaces", next="/user_with_workspaces/ColumnLayoutTests")
@@ -1206,7 +1206,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     test_minimize_widget.tags = tags + ('wirecloud-dragboard',)
 
-    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    @uses_extra_resources(('Wirecloud_context-inspector_1.0.wgt',), shared=True)
     def test_basic_layout_parameter_change(self):
 
         self.login(username="admin", next="/admin/Workspace")
@@ -1262,8 +1262,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         return size_from_context, size_in_pixels_from_context
 
-    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
-    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
+    @uses_extra_resources(('Wirecloud_context-inspector_1.0.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.1.wgt', shared=True)
     def test_basic_layout_parameter_change_several_widgets(self):
 
         self.login(username="admin", next="/admin/GridLayoutTests")
@@ -1299,7 +1299,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # self.assertEqual(new_size_in_pixels_from_context2[1], old_size_in_pixels_from_context2[1])
     test_basic_layout_parameter_change_several_widgets.tags = tags + ('wirecloud-dragboard',)
 
-    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    @uses_extra_resources(('Wirecloud_context-inspector_1.0.wgt',), shared=True)
     def test_layout_type_change(self):
 
         self.login(username="admin", next="/admin/Workspace")
@@ -1325,8 +1325,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     test_layout_type_change.tags = tags + ('wirecloud-dragboard',)
 
-    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
-    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
+    @uses_extra_resources(('Wirecloud_context-inspector_1.0.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.1.wgt', shared=True)
     def test_window_resize(self):
 
         self.login(username="admin", next="/admin/GridLayoutTests")

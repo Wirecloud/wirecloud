@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,33 +23,30 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var VERSION_RE = /^([1-9]\d*|0)(?:\.([1-9]\d*|0))*$/;
+    const VERSION_RE = /^([1-9]\d*|0)(?:\.([1-9]\d*|0))*$/;
 
-    var VersionInputInterface = function VersionInputInterface(fieldId, options) {
-        if (options == null) {
-            options = {};
+    se.VersionInputInterface = class VersionInputInterface extends se.TextInputInterface {
+
+        constructor(fieldId, options) {
+            if (options == null) {
+                options = {};
+            }
+
+            if (options.placeholder == null) {
+                options.placeholder = '1.0';
+            }
+
+            super(fieldId, options);
         }
 
-        if (options.placeholder == null) {
-            options.placeholder = '1.0';
+        _checkValue(newValue) {
+            return se.InputValidationError[newValue.match(VERSION_RE) != null ? "NO_ERROR" : "VERSION_ERROR"];
         }
 
-        StyledElements.TextInputInterface.call(this, fieldId, options);
-    };
-    utils.inherit(VersionInputInterface, StyledElements.TextInputInterface);
+    }
 
-    VersionInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        if (newValue.match(VERSION_RE) != null) {
-            return StyledElements.InputValidationError.NO_ERROR;
-        } else {
-            return StyledElements.InputValidationError.VERSION_ERROR;
-        }
-    };
-
-    StyledElements.VersionInputInterface = VersionInputInterface;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,84 +27,79 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.ComponentSidebar = class ComponentSidebar extends se.StyledElement {
 
-    ns.ComponentSidebar = function ComponentSidebar() {
+        constructor() {
+            super(['add', 'create']);
 
-        se.StyledElement.call(this, ['add', 'create']);
+            this.components = {mashup: {}, widget: {}};
+            this.groups = {};
 
-        this.components = {mashup: {}, widget: {}};
-        this.groups = {};
+            this.mashupButton = new se.ToggleButton({
+                class: 'btn-list-mashup-group wc-filter-type-mashup',
+                state: 'primary',
+                text: utils.gettext('Mashups')
+            });
+            this.mashupButton
+                .addEventListener('click', function () {
+                    this.mashupButton.active = true;
+                    this.widgetButton.active = false;
+                    this.searchComponents.search_scope = 'mashup';
+                    this.searchComponents.refresh();
+                }.bind(this));
 
-        this.mashupButton = new se.ToggleButton({
-            class: 'btn-list-mashup-group wc-filter-type-mashup',
-            state: 'primary',
-            text: utils.gettext('Mashups')
-        });
-        this.mashupButton
-            .addEventListener('click', function () {
-                this.mashupButton.active = true;
-                this.widgetButton.active = false;
-                this.searchComponents.search_scope = 'mashup';
-                this.searchComponents.refresh();
-            }.bind(this));
+            this.widgetButton = new se.ToggleButton({
+                class: 'btn-list-widget-group wc-filter-type-widget',
+                state: 'primary',
+                text: utils.gettext('Widgets')
+            });
+            this.widgetButton
+                .addEventListener('click', function () {
+                    this.mashupButton.active = false;
+                    this.widgetButton.active = true;
+                    this.searchComponents.search_scope = 'widget';
+                    this.searchComponents.refresh();
+                }.bind(this));
 
-        this.widgetButton = new se.ToggleButton({
-            class: 'btn-list-widget-group wc-filter-type-widget',
-            state: 'primary',
-            text: utils.gettext('Widgets')
-        });
-        this.widgetButton
-            .addEventListener('click', function () {
-                this.mashupButton.active = false;
-                this.widgetButton.active = true;
-                this.searchComponents.search_scope = 'widget';
-                this.searchComponents.refresh();
-            }.bind(this));
+            var resource_painter = {
+                paint: function paint(group) {
+                    var id;
 
-        var resource_painter = {
-            paint: function paint(group) {
-                var id;
+                    group = new ns.WiringEditor.ComponentGroup(group, this.searchComponents.search_scope === "widget" ? utils.gettext("Add to workspace") : utils.gettext("Merge"));
+                    group.addEventListener('btncreate.click', createcomponent_onclick.bind(this));
 
-                group = new ns.WiringEditor.ComponentGroup(group, this.searchComponents.search_scope === "widget" ? utils.gettext("Add to workspace") : utils.gettext("Merge"));
-                group.addEventListener('btncreate.click', createcomponent_onclick.bind(this));
-
-                if (this.components.mashup[group.id] != null) {
-                    for (id in this.components.mashup[group.id]) {
-                        group.addComponent(this.components.mashup[group.id][id]);
+                    if (this.components.mashup[group.id] != null) {
+                        for (id in this.components.mashup[group.id]) {
+                            group.addComponent(this.components.mashup[group.id][id]);
+                        }
                     }
-                }
 
-                if (this.components.widget[group.id] != null) {
-                    for (id in this.components.widget[group.id]) {
-                        group.addComponent(this.components.widget[group.id][id]);
+                    if (this.components.widget[group.id] != null) {
+                        for (id in this.components.widget[group.id]) {
+                            group.addComponent(this.components.widget[group.id][id]);
+                        }
                     }
-                }
 
-                this.groups[group.id] = group;
-                return group;
-            }.bind(this)
-        };
+                    this.groups[group.id] = group;
+                    return group;
+                }.bind(this)
+            };
 
-        this.searchComponents = new Wirecloud.ui.MACSearch({
-            template: 'wirecloud/component_sidebar',
-            extra_template_context: {
-                typebuttons: new se.Fragment([this.mashupButton, this.widgetButton])
-            },
-            scope: 'widget',
-            resource_painter: resource_painter
-        });
-        this.searchComponents.addEventListener('search', clearAll.bind(this));
-        this.widgetButton.active = true;
-        this.wrapperElement = this.searchComponents.get();
-        this.wrapperElement.classList.add("wc-resource-list");
-    };
+            this.searchComponents = new Wirecloud.ui.MACSearch({
+                template: 'wirecloud/component_sidebar',
+                extra_template_context: {
+                    typebuttons: new se.Fragment([this.mashupButton, this.widgetButton])
+                },
+                scope: 'widget',
+                resource_painter: resource_painter
+            });
+            this.searchComponents.addEventListener('search', clearAll.bind(this));
+            this.widgetButton.active = true;
+            this.wrapperElement = this.searchComponents.get();
+            this.wrapperElement.classList.add("wc-resource-list");
+        }
 
-    utils.inherit(ns.ComponentSidebar, se.StyledElement, {
-
-        addComponent: function addComponent(wiringComponent) {
+        addComponent(wiringComponent) {
             var group_id = wiringComponent.meta.group_id,
                 type = wiringComponent.meta.type;
 
@@ -124,15 +120,15 @@
             }
 
             return component;
-        },
+        }
 
-        clear: function clear() {
+        clear() {
             this.searchComponents.clear();
             this.components = {mashup: {}, widget: {}};
             return this;
-        },
+        }
 
-        findComponent: function findComponent(type, id) {
+        findComponent(type, id) {
             var group_id;
 
             for (group_id in this.components[type]) {
@@ -142,9 +138,9 @@
             }
 
             return null;
-        },
+        }
 
-        forEachComponent: function forEachComponent(callback) {
+        forEachComponent(callback) {
             var type, id, group_id;
 
             for (type in this.components) {
@@ -156,9 +152,9 @@
             }
 
             return this;
-        },
+        }
 
-        removeComponent: function removeComponent(component) {
+        removeComponent(component) {
             var group_id = component.meta.group_id;
 
             this.components[component.meta.type][group_id][component.id].remove();
@@ -167,7 +163,7 @@
             return this;
         }
 
-    });
+    }
 
     var clearAll = function clearAll() {
         this.groups = {};

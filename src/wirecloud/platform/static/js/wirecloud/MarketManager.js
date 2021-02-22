@@ -19,7 +19,7 @@
  *
  */
 
-/* globals CatalogueView, Wirecloud */
+/* globals Wirecloud */
 
 
 (function (utils) {
@@ -31,7 +31,7 @@
     market_types = {
         'wirecloud': {
             label: 'Wirecloud',
-            view_class: CatalogueView
+            view_class: Wirecloud.ui.CatalogueView
         }
     };
     MarketManager = {};

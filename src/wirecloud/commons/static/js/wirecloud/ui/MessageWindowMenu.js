@@ -22,7 +22,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
@@ -31,51 +31,52 @@
     /**
      * Specific class representing alert dialogs.
      */
-    var MessageWindowMenu = function MessageWindowMenu(message, type) {
-        Wirecloud.ui.WindowMenu.call(this, '', 'message');
+    ns.MessageWindowMenu = class MessageWindowMenu extends ns.WindowMenu {
 
-        this.msgElement = document.createElement('div');
-        this.msgElement.className = "msg";
-        this.windowContent.appendChild(this.msgElement);
+        constructor(message, type) {
+            super('', 'message');
 
-        // Accept button
-        this.button = new se.Button({
-            text: utils.gettext('Accept'),
-            state: 'primary',
-            class: 'btn-accept btn-cancel'
-        });
-        this.button.insertInto(this.windowBottom);
-        this.button.addEventListener("click", this._closeListener);
+            this.msgElement = document.createElement('div');
+            this.msgElement.className = "msg";
+            this.windowContent.appendChild(this.msgElement);
 
-        this.setMsg(message);
-        this.setType(type);
-    };
-    utils.inherit(MessageWindowMenu, Wirecloud.ui.WindowMenu);
+            // Accept button
+            this.button = new se.Button({
+                text: utils.gettext('Accept'),
+                state: 'primary',
+                class: 'btn-accept btn-cancel'
+            });
+            this.button.insertInto(this.windowBottom);
+            this.button.addEventListener("click", this._closeListener);
 
-    /**
-     * Updates the message displayed by this <code>WindowMenu</code>
-     */
-    MessageWindowMenu.prototype.setMsg = function setMsg(msg) {
-
-        if (msg instanceof se.StyledElement) {
-            this.msgElement.innerHTML = '';
-            msg.insertInto(this.msgElement);
-        } else {
-            this.msgElement.textContent = msg;
+            this.setMsg(message);
+            this.setType(type);
         }
 
-        this.repaint();
-    };
+        /**
+         * Updates the message displayed by this <code>WindowMenu</code>
+         */
+        setMsg(msg) {
 
-    MessageWindowMenu.prototype.setFocus = function setFocus() {
-        this.button.focus();
-    };
+            if (msg instanceof se.StyledElement) {
+                this.msgElement.innerHTML = '';
+                msg.insertInto(this.msgElement);
+            } else {
+                this.msgElement.textContent = msg;
+            }
 
-    MessageWindowMenu.prototype.setType = function setType(type) {
-        // Update title
-        this.setTitle(titles[type]);
-    };
+            this.repaint();
+        }
 
-    Wirecloud.ui.MessageWindowMenu = MessageWindowMenu;
+        setFocus() {
+            this.button.focus();
+        }
 
-})(StyledElements, Wirecloud.Utils);
+        setType(type) {
+            // Update title
+            this.setTitle(titles[type]);
+        }
+
+    }
+
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

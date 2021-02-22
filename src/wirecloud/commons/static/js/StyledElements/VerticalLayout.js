@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,36 +23,37 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var VerticalLayout = function VerticalLayout(options) {
-        StyledElements.StyledElement.call(this, []);
+    se.VerticalLayout = class VerticalLayout extends se.StyledElement {
 
-        this.options = utils.merge({
-            'class': ''
-        }, options);
+        constructor(options) {
+            super([]);
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord(this.options.class, "se-vertical-layout");
+            this.options = utils.merge({
+                class: ""
+            }, options);
 
-        this.north = new StyledElements.Container({'class': 'se-vl-north-container'});
-        this.center = new StyledElements.Container({'class': 'se-vl-center-container'});
-        this.south = new StyledElements.Container({'class': 'se-vl-south-container'});
+            this.wrapperElement = document.createElement("div");
+            this.wrapperElement.className = utils.appendWord(this.options.class, "se-vertical-layout");
 
-        this.north.insertInto(this.wrapperElement);
-        this.center.insertInto(this.wrapperElement);
-        this.south.insertInto(this.wrapperElement);
-    };
-    utils.inherit(VerticalLayout, StyledElements.StyledElement);
+            this.north = new StyledElements.Container({class: "se-vl-north-container"});
+            this.center = new StyledElements.Container({class: "se-vl-center-container"});
+            this.south = new StyledElements.Container({class: "se-vl-south-container"});
 
-    VerticalLayout.prototype.repaint = function repaint(temporal) {
-        this.north.repaint(temporal);
-        this.center.repaint(temporal);
-        this.south.repaint(temporal);
-    };
+            this.north.insertInto(this.wrapperElement);
+            this.center.insertInto(this.wrapperElement);
+            this.south.insertInto(this.wrapperElement);
+        }
 
-    StyledElements.VerticalLayout = VerticalLayout;
+        repaint(temporal) {
+            this.north.repaint(temporal);
+            this.center.repaint(temporal);
+            this.south.repaint(temporal);
+        }
 
-})(StyledElements.Utils);
+    }
+
+})(StyledElements, StyledElements.Utils);

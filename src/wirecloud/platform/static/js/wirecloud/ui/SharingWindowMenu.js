@@ -27,90 +27,89 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.SharingWindowMenu = class SharingWindowMenu extends ns.WindowMenu {
 
-    ns.SharingWindowMenu = function SharingWindowMenu(workspace) {
-        var i, options, subtitle1, subtitle2;
+        constructor(workspace) {
+            var i, options, subtitle1, subtitle2;
 
-        ns.WindowMenu.call(this, utils.gettext("Sharing settings"), 'wc-dashboard-share-modal');
+            super(utils.gettext("Sharing settings"), 'wc-dashboard-share-modal');
 
-        this.workspace = workspace;
+            this.workspace = workspace;
 
-        subtitle1 = document.createElement('h4');
-        subtitle1.textContent = utils.gettext("Visibility options");
-        this.windowContent.appendChild(subtitle1);
+            subtitle1 = document.createElement('h4');
+            subtitle1.textContent = utils.gettext("Visibility options");
+            this.windowContent.appendChild(subtitle1);
 
-        options = [
-            {name: 'public', iconClass: "fa fa-globe", title: utils.gettext("Public"), description: utils.gettext("Anyone on the Internet can find and access this dashboard.")},
-            {name: 'public-auth', iconClass: "fas fa-id-card", title: utils.gettext("Registered User"), description: utils.gettext("Anyone on the Internet can find this dashboard. Only registered users can access it.")},
-            {name: 'private', iconClass: "fa fa-lock", title: utils.gettext("Private"), description: utils.gettext("Shared with specific people and organizations.")}
-        ];
+            options = [
+                {name: 'public', iconClass: "fa fa-globe", title: utils.gettext("Public"), description: utils.gettext("Anyone on the Internet can find and access this dashboard.")},
+                {name: 'public-auth', iconClass: "fas fa-id-card", title: utils.gettext("Registered User"), description: utils.gettext("Anyone on the Internet can find this dashboard. Only registered users can access it.")},
+                {name: 'private', iconClass: "fa fa-lock", title: utils.gettext("Private"), description: utils.gettext("Shared with specific people and organizations.")}
+            ];
 
-        this.visibilityOptions = new se.ButtonsGroup('visibility');
+            this.visibilityOptions = new se.ButtonsGroup('visibility');
 
-        for (i = 0; i < options.length; i++) {
-            appendOption.call(this, options[i]);
+            for (i = 0; i < options.length; i++) {
+                appendOption.call(this, options[i]);
+            }
+
+            subtitle2 = document.createElement('h4');
+            subtitle2.textContent = utils.gettext("Users and groups with access");
+            this.windowContent.appendChild(subtitle2);
+
+            this.inputSearch = new se.TextField({placeholder: utils.gettext("Add a person, a group or an organization"), class: "wc-dashboard-share-input"});
+            this.inputSearch.appendTo(this.windowContent);
+
+            this.inputSearchTypeahead = new Wirecloud.ui.UserGroupTypeahead({autocomplete: false});
+
+            this.inputSearchTypeahead.bind(this.inputSearch);
+            this.inputSearchTypeahead.addEventListener('select', (typeahead, menuitem) => {
+                appendUser.call(this, menuitem.context);
+            });
+
+            this.userGroup = new se.Container({class: "wc-dashboard-share-list"});
+            this.userGroup.appendTo(this.windowContent);
+
+            this.users = {};
+            this.groups = {};
+            this.sharelist = [];
+
+            workspace.model.users.forEach((user) => {
+                appendUser.call(this, {
+                    accesslevel: user.accesslevel,
+                    fullname: user.fullname,
+                    name: user.username,
+                    type: user.organization ? "organization" : "user"
+                });
+            });
+            workspace.model.groups.forEach((group) => {
+                appendUser.call(this, {
+                    accesslevel: group.accesslevel,
+                    name: group.name,
+                    organization: false,
+                    type: "group"
+                });
+            });
+
+            // windowmenu - footer
+
+            this.btnAccept = new se.Button({text: utils.gettext("Save"), state: "primary", class: 'btn-accept'});
+            this.btnAccept.appendTo(this.windowBottom);
+            this.btnAccept.addEventListener('click', accept.bind(this));
+
+            this.btnCancel = new se.Button({text: utils.gettext("Cancel"), class: 'btn-cancel'});
+            this.btnCancel.appendTo(this.windowBottom);
+            this.btnCancel.addEventListener('click', this._closeListener);
+
+            if (!workspace.model.preferences.get('public')) {
+                this.visibilityOptions.setValue('private');
+            } else {
+                this.visibilityOptions.setValue(workspace.model.preferences.get('requireauth') ? 'public-auth' : 'public');
+            }
+            this.visibilityOptions.addEventListener('change', on_visibility_option_change.bind(this));
+            on_visibility_option_change.call(this);
         }
 
-        subtitle2 = document.createElement('h4');
-        subtitle2.textContent = utils.gettext("Users and groups with access");
-        this.windowContent.appendChild(subtitle2);
-
-        this.inputSearch = new se.TextField({placeholder: utils.gettext("Add a person, a group or an organization"), class: "wc-dashboard-share-input"});
-        this.inputSearch.appendTo(this.windowContent);
-
-        this.inputSearchTypeahead = new Wirecloud.ui.UserGroupTypeahead({autocomplete: false});
-
-        this.inputSearchTypeahead.bind(this.inputSearch);
-        this.inputSearchTypeahead.addEventListener('select', (typeahead, menuitem) => {
-            appendUser.call(this, menuitem.context);
-        });
-
-        this.userGroup = new se.Container({class: "wc-dashboard-share-list"});
-        this.userGroup.appendTo(this.windowContent);
-
-        this.users = {};
-        this.groups = {};
-        this.sharelist = [];
-
-        workspace.model.users.forEach((user) => {
-            appendUser.call(this, {
-                accesslevel: user.accesslevel,
-                fullname: user.fullname,
-                name: user.username,
-                type: user.organization ? "organization" : "user"
-            });
-        });
-        workspace.model.groups.forEach((group) => {
-            appendUser.call(this, {
-                accesslevel: group.accesslevel,
-                name: group.name,
-                organization: false,
-                type: "group"
-            });
-        });
-
-        // windowmenu - footer
-
-        this.btnAccept = new se.Button({text: utils.gettext("Save"), state: "primary", class: 'btn-accept'});
-        this.btnAccept.appendTo(this.windowBottom);
-        this.btnAccept.addEventListener('click', accept.bind(this));
-
-        this.btnCancel = new se.Button({text: utils.gettext("Cancel"), class: 'btn-cancel'});
-        this.btnCancel.appendTo(this.windowBottom);
-        this.btnCancel.addEventListener('click', this._closeListener);
-
-        if (!workspace.model.preferences.get('public')) {
-            this.visibilityOptions.setValue('private');
-        } else {
-            this.visibilityOptions.setValue(workspace.model.preferences.get('requireauth') ? 'public-auth' : 'public');
-        }
-        this.visibilityOptions.addEventListener('change', on_visibility_option_change.bind(this));
-        on_visibility_option_change.call(this);
-    };
-    utils.inherit(ns.SharingWindowMenu, Wirecloud.ui.WindowMenu);
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

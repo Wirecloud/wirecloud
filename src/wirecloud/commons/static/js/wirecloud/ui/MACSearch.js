@@ -23,115 +23,118 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (se, ns, utils) {
 
     "use strict";
 
-    var builder = new StyledElements.GUIBuilder();
+    const builder = new StyledElements.GUIBuilder();
 
-    var MACSearch = function MACSearch(options) {
+    ns.MACSearch = class MACSearch extends se.StyledElement {
 
-        if (options == null || typeof options !== "object" || (typeof options.resourceButtonListener !== "function" && options.resource_painter == null)) {
-            throw new TypeError();
+        constructor(options) {
+
+            if (options == null || typeof options !== "object" || (typeof options.resourceButtonListener !== "function" && options.resource_painter == null)) {
+                throw new TypeError();
+            }
+
+            options = utils.merge({
+                extra_template_context: null,
+                scope: '',
+                template: 'wirecloud/macsearch/base',
+                resource_painter: null
+            }, options);
+
+            super(['search']);
+
+            this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
+            this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;
+
+
+            var priv = {
+                request: null,
+                search_timeout: null
+            };
+            privates.set(this, priv);
+            this.resource_painter = options.resource_painter;
+
+            var input;
+            var list = new StyledElements.Container({class: 'wc-macsearch-list wc-resource-results loading'});
+
+            var template = Wirecloud.currentTheme.templates[options.template];
+            this.wrapperElement = builder.parse(template, utils.merge({
+                searchinput: () => {
+                    input = new StyledElements.TextField({class: "se-field-search", 'placeholder': utils.gettext('Keywords...')});
+                    input.addEventListener('keydown', _onSearchInputKeyPress.bind(this));
+                    input.addEventListener('change', _onSearchInput.bind(this));
+                    return input;
+                },
+                list: list
+            }, options.extra_template_context)).elements[1];
+            if (this.wrapperElement instanceof StyledElements.StyledElement) {
+                this.wrapperElement = this.wrapperElement.get();
+            }
+
+            Object.defineProperties(this, {
+                'input': {value: input},
+                'list': {value: list},
+                'search_scope': {value: options.scope, writable: true},
+                'resourceButtonIconClass': {value: options.resourceButtonIconClass},
+                'resourceButtonListener': {value: options.resourceButtonListener},
+                'resourceButtonTooltip': {value: options.resourceButtonTooltip}
+            });
         }
 
-        options = utils.merge({
-            extra_template_context: null,
-            scope: '',
-            template: 'wirecloud/macsearch/base',
-            resource_painter: null
-        }, options);
+        paintInfo(message, context) {
+            if (context != null) {
+                message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);
+            }
 
-        StyledElements.StyledElement.call(this, ['search']);
+            this.list.appendChild(builder.parse(this.info_template, {
+                'message': message
+            }));
 
-        this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
-        this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;
-
-
-        var priv = {
-            request: null,
-            search_timeout: null
-        };
-        privates.set(this, priv);
-        this.resource_painter = options.resource_painter;
-
-        var input;
-        var list = new StyledElements.Container({class: 'wc-macsearch-list wc-resource-results loading'});
-
-        var template = Wirecloud.currentTheme.templates[options.template];
-        this.wrapperElement = builder.parse(template, utils.merge({
-            searchinput: () => {
-                input = new StyledElements.TextField({class: "se-field-search", 'placeholder': utils.gettext('Keywords...')});
-                input.addEventListener('keydown', _onSearchInputKeyPress.bind(this));
-                input.addEventListener('change', _onSearchInput.bind(this));
-                return input;
-            },
-            list: list
-        }, options.extra_template_context)).elements[1];
-        if (this.wrapperElement instanceof StyledElements.StyledElement) {
-            this.wrapperElement = this.wrapperElement.get();
+            return this;
         }
 
-        Object.defineProperties(this, {
-            'input': {value: input},
-            'list': {value: list},
-            'search_scope': {value: options.scope, writable: true},
-            'resourceButtonIconClass': {value: options.resourceButtonIconClass},
-            'resourceButtonListener': {value: options.resourceButtonListener},
-            'resourceButtonTooltip': {value: options.resourceButtonTooltip}
-        });
-    };
-    utils.inherit(MACSearch, StyledElements.StyledElement);
+        paintError(message) {
+            this.list.appendChild(builder.parse(this.error_template, {
+                'message': message
+            }));
 
-    MACSearch.prototype.paintInfo = function paintInfo(message, context) {
-        if (context != null) {
-            message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);
+            return this;
         }
 
-        this.list.appendChild(builder.parse(this.info_template, {
-            'message': message
-        }));
+        clear() {
+            this.list.clear();
 
-        return this;
-    };
-
-    MACSearch.prototype.paintError = function paintError(message) {
-        this.list.appendChild(builder.parse(this.error_template, {
-            'message': message
-        }));
-
-        return this;
-    };
-
-    MACSearch.prototype.clear = function clear() {
-        this.list.clear();
-
-        return this;
-    };
-
-    MACSearch.prototype.repaint = function repaint() {
-        this.list.repaint();
-
-        return this;
-    };
-
-    MACSearch.prototype.refresh = function refresh() {
-        var priv = privates.get(this);
-
-        if (priv.search_timeout != null) {
-            clearTimeout(priv.search_timeout);
-            priv.search_timeout = null;
+            return this;
         }
-        _keywordTimeoutHandler.call(this, this.input);
 
-        return this;
-    };
+        repaint() {
+            this.list.repaint();
 
-    MACSearch.prototype.focus = function focus() {
-        this.input.focus();
+            return this;
+        }
 
-        return this;
-    };
+        refresh() {
+            var priv = privates.get(this);
+
+            if (priv.search_timeout != null) {
+                clearTimeout(priv.search_timeout);
+                priv.search_timeout = null;
+            }
+            _keywordTimeoutHandler.call(this, this.input);
+
+            return this;
+        }
+
+        focus() {
+            this.input.focus();
+
+            return this;
+        }
+
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -254,6 +257,4 @@
         }
     };
 
-    Wirecloud.ui.MACSearch = MACSearch;
-
-})(Wirecloud.Utils);
+})(StyledElements, Wirecloud.ui, Wirecloud.Utils);

@@ -23,59 +23,60 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var builder = new se.GUIBuilder();
+    const builder = new se.GUIBuilder();
 
-    var EmbedCodeWindowMenu = function EmbedCodeWindowMenu(title, workspace) {
-        Wirecloud.ui.WindowMenu.call(this, title, 'wc-embed-code-modal');
-
-        this.workspace = workspace;
-
-        this.theme = new se.Select({initialEntries: Wirecloud.constants.AVAILABLE_THEMES});
-        this.theme.setValue(Wirecloud.currentTheme.name);
-        this.lang = new se.Select({initialEntries: [{value: "", label: utils.gettext("Auto")}].concat(Wirecloud.constants.AVAILABLE_LANGUAGES)});
-        this.code = new se.TextArea();
-
-        var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/embed_code'], {
-            'themeselect': this.theme,
-            'langselect': this.lang,
-            'code': this.code
-        });
-        contents.appendTo(this.windowContent);
-
-        this.theme.addEventListener('change', build_embed_code.bind(this));
-        this.lang.addEventListener('change', build_embed_code.bind(this));
-        build_embed_code.call(this);
-
-        // Accept button
-        this.button = new se.Button({
-            text: utils.gettext('Accept'),
-            class: 'btn-primary btn-accept btn-cancel'
-        });
-        this.button.insertInto(this.windowBottom);
-        this.button.addEventListener("click", this._closeListener);
-    };
-    utils.inherit(EmbedCodeWindowMenu, Wirecloud.ui.WindowMenu);
-
-    EmbedCodeWindowMenu.prototype.setFocus = function setFocus() {
-        this.code.select();
-    };
-
-    Wirecloud.ui.EmbedCodeWindowMenu = EmbedCodeWindowMenu;
-
-    var build_embed_code = function build_embed_code() {
-        var workspace_url = this.workspace.model.url + '?mode=embedded';
-        let lang = this.lang.getValue();
-        if (lang != "") {
+    const build_embed_code = function build_embed_code() {
+        let workspace_url = this.workspace.model.url + '?mode=embedded';
+        const lang = this.lang.getValue();
+        if (lang !== "") {
             workspace_url += '&lang=' + encodeURIComponent(lang);
         }
         workspace_url += '&theme=' + encodeURIComponent(this.theme.getValue());
-        var code = '<iframe src="' + workspace_url + '" style="width: 100%; height: 450px; border: 0px none;" frameborder="0" allowfullscreen></iframe>';
+        const code = '<iframe src="' + workspace_url + '" style="width: 100%; height: 450px; border: 0px none;" frameborder="0" allowfullscreen></iframe>';
         this.code.setValue(code);
         this.repaint();
     };
 
-})(StyledElements, Wirecloud.Utils);
+    ns.EmbedCodeWindowMenu = class EmbedCodeWindowMenu extends ns.WindowMenu {
+
+        constructor(title, workspace) {
+            super(title, 'wc-embed-code-modal');
+
+            this.workspace = workspace;
+
+            this.theme = new se.Select({initialEntries: Wirecloud.constants.AVAILABLE_THEMES});
+            this.theme.setValue(Wirecloud.currentTheme.name);
+            this.lang = new se.Select({initialEntries: [{value: "", label: utils.gettext("Auto")}].concat(Wirecloud.constants.AVAILABLE_LANGUAGES)});
+            this.code = new se.TextArea();
+
+            var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud/modals/embed_code'], {
+                'themeselect': this.theme,
+                'langselect': this.lang,
+                'code': this.code
+            });
+            contents.appendTo(this.windowContent);
+
+            this.theme.addEventListener('change', build_embed_code.bind(this));
+            this.lang.addEventListener('change', build_embed_code.bind(this));
+            build_embed_code.call(this);
+
+            // Accept button
+            this.button = new se.Button({
+                text: utils.gettext('Accept'),
+                class: 'btn-primary btn-accept btn-cancel'
+            });
+            this.button.insertInto(this.windowBottom);
+            this.button.addEventListener("click", this._closeListener);
+        }
+
+        setFocus() {
+            this.code.select();
+        }
+
+    }
+
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

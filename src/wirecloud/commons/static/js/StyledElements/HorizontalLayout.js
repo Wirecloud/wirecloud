@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,51 +23,61 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
     /**
      * Permite distribuir contenidos según un border layout.
      */
-    var HorizontalLayout = function HorizontalLayout(options) {
-        StyledElements.StyledElement.call(this, []);
+    se.HorizontalLayout = class HorizontalLayout extends se.StyledElement {
 
-        this.options = utils.merge({
-            'class': ''
-        }, options);
+        constructor(options) {
+            super([]);
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = utils.appendWord(this.options.class, "se-horizontal-layout");
+            this.options = utils.merge({
+                class: ''
+            }, options);
 
-        this.west = new StyledElements.Container({'class': 'se-hl-west-container'});
-        this.center = new StyledElements.Container({'class': 'se-hl-center-container'});
-        this.east = new StyledElements.Container({'class': 'se-hl-east-container'});
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = utils.appendWord(this.options.class, "se-horizontal-layout");
 
-        this.west.insertInto(this.wrapperElement);
-        this.center.insertInto(this.wrapperElement);
-        this.east.insertInto(this.wrapperElement);
-    };
-    utils.inherit(HorizontalLayout, StyledElements.StyledElement);
+            this.west = new StyledElements.Container({class: 'se-hl-west-container'});
+            this.center = new StyledElements.Container({class: 'se-hl-center-container'});
+            this.east = new StyledElements.Container({class: 'se-hl-east-container'});
 
-    HorizontalLayout.prototype.repaint = function repaint(temporal) {
-        this.west.repaint(temporal);
-        this.center.repaint(temporal);
-        this.east.repaint(temporal);
-    };
+            this.west.insertInto(this.wrapperElement);
+            this.center.insertInto(this.wrapperElement);
+            this.east.insertInto(this.wrapperElement);
+        }
 
-    HorizontalLayout.prototype.getWestContainer = function getWestContainer() {
-        return this.west;
-    };
+        repaint(temporal) {
+            this.west.repaint(temporal);
+            this.center.repaint(temporal);
+            this.east.repaint(temporal);
+        }
 
-    HorizontalLayout.prototype.getCenterContainer = function getCenterContainer() {
-        return this.center;
-    };
+        /**
+         * @deprecated
+         */
+        getWestContainer() {
+            return this.west;
+        }
 
-    HorizontalLayout.prototype.getEastContainer = function getEastContainer() {
-        return this.east;
-    };
+        /**
+         * @deprecated
+         */
+        getCenterContainer() {
+            return this.center;
+        }
 
-    StyledElements.HorizontalLayout = HorizontalLayout;
+        /**
+         * @deprecated
+         */
+        getEastContainer() {
+            return this.east;
+        }
 
-})(StyledElements.Utils);
+    }
+
+})(StyledElements, StyledElements.Utils);

@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,36 +20,35 @@
  *
  */
 
-/* globals Wirecloud */
+/* globals StyledElements, Wirecloud */
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var RenameWindowMenu = function RenameWindowMenu(what, title) {
+    ns.RenameWindowMenu = class RenameWindowMenu extends ns.FormWindowMenu {
 
-        var fields = {
-            'title': {
-                label: utils.gettext('New Name'),
-                type: 'text',
-                required: true,
-                initialValue: what.title
-            }
-        };
-        this.what = what;
-        Wirecloud.ui.FormWindowMenu.call(this, fields, title);
+        constructor(what, title) {
+            const fields = {
+                "title": {
+                    label: utils.gettext("New Name"),
+                    type: "text",
+                    required: true,
+                    initialValue: what.title
+                }
+            };
+            super(fields, title);
+            this.what = what;
+        }
 
-    };
-    RenameWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
+        setFocus() {
+            this.form.fieldInterfaces.title.focus();
+        }
 
-    RenameWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.fieldInterfaces.title.focus();
-    };
+        executeOperation(data) {
+            return this.what.rename(data.title);
+        }
 
-    RenameWindowMenu.prototype.executeOperation = function executeOperation(data) {
-        return this.what.rename(data.title);
-    };
+    }
 
-    Wirecloud.ui.RenameWindowMenu = RenameWindowMenu;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

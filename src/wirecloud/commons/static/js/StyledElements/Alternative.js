@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,50 +28,50 @@
     "use strict";
 
     /**
-     * Este compontente representa al contenedor para una alternativa usable por el
-     * componente Alternatives.
-     * @extends {Container}
+     * This component represents the container used as one of the alternatives
+     * of the StyledElements.Alternatives component.
+     *
+     * @extends {StyledElements.Container}
      *
      * @param {Number} id
      *      [TODO: description]
      * @param {PlainObject} [options]
      *      [TODO: description]
      */
-    var Alternative = function Alternative(id, options) {
+    se.Alternative = class Alternative extends se.Container {
 
-        se.Container.call(this, options, ['hide', 'show']);
+        constructor(id, options) {
+            super(options, ['hide', 'show']);
 
-        this.addClassName('hidden');
+            this.addClassName('hidden');
 
-        Object.defineProperties(this, {
-            altId: {
-                value: id
-            }
-        });
-    };
-
-    utils.inherit(Alternative, se.Container);
-
-    /**
-     * @override
-     */
-    Alternative.prototype._onhidden = function _onhidden(hidden) {
-
-        if (!hidden) {
-            this.repaint(false);
+            Object.defineProperties(this, {
+                altId: {
+                    value: id
+                }
+            });
         }
 
-        return se.Container.prototype._onhidden.call(this, hidden);
-    };
+        /**
+         * @override
+         */
+        _onhidden(hidden) {
 
-    Alternative.prototype.setVisible = function setVisible(visible) {
-        return visible ? this.show() : this.hide();
-    };
+            if (!hidden) {
+                this.repaint(false);
+            }
 
-    Alternative.prototype.isVisible = function isVisible() {
-        return !this.hidden;
-    };
+            return se.Container.prototype._onhidden.call(this, hidden);
+        }
 
-    se.Alternative = Alternative;
+        setVisible(visible) {
+            return visible ? this.show() : this.hide();
+        }
+
+        isVisible() {
+            return !this.hidden;
+        }
+
+    }
 
 })(StyledElements, StyledElements.Utils);

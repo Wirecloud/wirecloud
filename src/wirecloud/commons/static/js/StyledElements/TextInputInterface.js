@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,46 +23,43 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
     /**
      *
      */
-    var TextInputInterface = function TextInputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
+    se.TextInputInterface = class TextInputInterface extends se.InputInterface {
+
+        constructor(fieldId, options) {
+            super(fieldId, options);
+
+            this.inputElement = new StyledElements.TextField(options);
+            this.inputElement.addEventListener('change', () => {
+                if (this.timeout != null) {
+                    clearTimeout(this.timeout);
+                }
+
+                this.timeout = setTimeout(this.validate.bind(this), 700);
+            });
+            this.inputElement.addEventListener('blur', this.validate.bind(this));
         }
 
-        StyledElements.InputInterface.call(this, fieldId, options);
+        static parse(value) {
+            return value;
+        }
 
-        this.inputElement = new StyledElements.TextField(options);
-        this.inputElement.addEventListener('change', function () {
-            if (this.timeout != null) {
-                clearTimeout(this.timeout);
-            }
+        static stringify(value) {
+            return value;
+        }
 
-            this.timeout = setTimeout(this.validate.bind(this), 700);
-        }.bind(this));
-        this.inputElement.addEventListener('blur', this.validate.bind(this));
-    };
-    utils.inherit(TextInputInterface, StyledElements.InputInterface);
+        assignDefaultButton(button) {
+            this.inputElement.addEventListener('submit', function () {
+                button.click();
+            });
+        }
 
-    TextInputInterface.parse = function parse(value) {
-        return value;
-    };
+    }
 
-    TextInputInterface.stringify = function stringify(value) {
-        return value;
-    };
-
-    TextInputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
-        this.inputElement.addEventListener('submit', function () {
-            button.click();
-        });
-    };
-
-    StyledElements.TextInputInterface = TextInputInterface;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

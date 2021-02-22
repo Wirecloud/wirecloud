@@ -1,5 +1,6 @@
 /*
  *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,48 +23,47 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    var WorkspaceListItems = function (handler) {
-        StyledElements.DynamicMenuItems.call(this);
+    ns.WorkspaceListItems = class WorkspaceListItems extends se.DynamicMenuItems {
 
-        this.handler = handler;
-    };
-    utils.inherit(WorkspaceListItems, StyledElements.DynamicMenuItems);
+        constructor(handler) {
+            super();
 
-    WorkspaceListItems.prototype.build = function () {
-        var workspace_name, items, workspace, username, user_workspaces;
+            this.handler = handler;
+        }
 
-        items = [];
+        build() {
+            const items = [];
 
-        username = Wirecloud.contextManager.get('username');
-        user_workspaces = Wirecloud.workspacesByUserAndName[username];
+            const username = Wirecloud.contextManager.get('username');
+            const user_workspaces = Wirecloud.workspacesByUserAndName[username];
 
-        if (user_workspaces == null || Object.keys(user_workspaces).length === 0) {
-            items.push(new StyledElements.MenuItem(
-                utils.gettext('Empty workspace list'),
-                this.handler,
-                null
-            ));
-            items[0].disable();
+            if (user_workspaces == null || Object.keys(user_workspaces).length === 0) {
+                items.push(new StyledElements.MenuItem(
+                    utils.gettext('Empty workspace list'),
+                    this.handler,
+                    null
+                ));
+                items[0].disable();
+                return items;
+            }
+
+            for (let workspace_name in user_workspaces) {
+                const workspace = user_workspaces[workspace_name];
+
+                items.push(new StyledElements.MenuItem(
+                    workspace.title,
+                    this.handler,
+                    workspace
+                ));
+            }
+
             return items;
         }
 
-        for (workspace_name in user_workspaces) {
-            workspace = user_workspaces[workspace_name];
+    }
 
-            items.push(new StyledElements.MenuItem(
-                workspace.title,
-                this.handler,
-                workspace
-            ));
-        }
-
-        return items;
-    };
-
-    Wirecloud.ui.WorkspaceListItems = WorkspaceListItems;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

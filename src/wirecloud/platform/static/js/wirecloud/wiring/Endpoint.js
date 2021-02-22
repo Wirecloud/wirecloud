@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,53 +23,46 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var Endpoint = function Endpoint() {
+    ns.Endpoint = class Endpoint {
 
-        if (!('name' in this)) {
-            Object.defineProperty(this, 'name', {value: null});
+        constructor(id, meta) {
+            if (meta == null) {
+                meta = {};
+            }
+
+            Object.defineProperties(this, {
+                name: {value: meta.name},
+                friendcode: {value: meta.friendcode || ""},
+                label: {value: meta.label || ""},
+                description: {value: meta.description || ""},
+                id: {value: id}
+            });
+
+            const friendcodeList = this.friendcode !== '' ? this.friendcode.split(/\s+/) : [];
+            Object.defineProperty(this, 'friendcodeList', {value: friendcodeList});
         }
 
-        if (!('friendcode' in this)) {
-            Object.defineProperty(this, 'friendcode', {value: ""});
+        getReachableEndpoints() {
+            return [];
         }
 
-        var friendcodeList = this.friendcode !== '' ? this.friendcode.split(/\s+/) : [];
-        Object.defineProperty(this, 'friendcodeList', {value: friendcodeList});
-
-        if (!('label' in this)) {
-            Object.defineProperty(this, 'label', {value: ""});
+        /**
+         * Disconnects this <code>Endpoint</code> from all the
+         * <code>Endpoints</code> this is connected to.
+         */
+        /* istanbul ignore next */
+        fullDisconnect() {
+            const funcName = 'fullDisconnect';
+            const msg = utils.gettext("Unimplemented function: %(funcName)s");
+            msg = utils.interpolate(msg, {funcName: funcName}, true);
+            Wirecloud.GlobalLogManager.log(msg);
+            return this;
         }
-        if (!('description' in this)) {
-            Object.defineProperty(this, 'description', {value: ""});
-        }
 
-        if (!('id' in this)) {
-            Object.defineProperty(this, 'id', {value: null});
-        }
+    }
 
-    };
-
-    Endpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
-        return [];
-    };
-
-    /**
-     * Disconnects this <code>Endpoint</code> from all the
-     * <code>Endpoints</code> this is connected to.
-     */
-    /* istanbul ignore next */
-    Endpoint.prototype.fullDisconnect = function fullDisconnect() {
-        var funcName = 'fullDisconnect';
-        var msg = utils.gettext("Unimplemented function: %(funcName)s");
-        msg = utils.interpolate(msg, {funcName: funcName}, true);
-        Wirecloud.GlobalLogManager.log(msg);
-        return;
-    };
-
-    Wirecloud.wiring.Endpoint = Endpoint;
-
-})(Wirecloud.Utils);
+})(Wirecloud.wiring, Wirecloud.Utils);

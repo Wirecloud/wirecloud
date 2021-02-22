@@ -1,5 +1,6 @@
 /*
  *     Copyright 2013-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,23 +23,11 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
-    /**
-     * Specific class for publish windows
-     */
-    var PublishResourceWindowMenu = function PublishResourceWindowMenu(resource) {
-
-        this.resource = resource;
-
-        var fields = this._loadAvailableMarkets();
-        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Upload resource'), 'publish_resource', {legend: false});
-    };
-    PublishResourceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
-
-    PublishResourceWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets() {
+    const loadAvailableMarkets = function loadAvailableMarkets() {
         // Take available marketplaces from the instance of marketplace view
         var views = Wirecloud.UserInterfaceManager.views.marketplace.viewsByName;
         var key, endpoints, secondInput, buttons = [];
@@ -66,48 +55,60 @@
         ];
     };
 
-    PublishResourceWindowMenu.prototype.show = function show(parentWindow) {
-        Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
-    };
-
-    PublishResourceWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.cancelButton.focus();
-    };
-
-    PublishResourceWindowMenu.prototype.executeOperation = function executeOperation(data) {
-        var url = Wirecloud.URLs.PUBLISH_ON_OTHER_MARKETPLACE;
-
-        data.marketplaces = data.marketplaces.map(function (endpoint) {
-            var parts = endpoint.split('#', 2);
-            var result = {
-                'market': parts[0]
-            };
-            if (parts.length === 2) {
-                result.store = parts[1];
-            }
-            return result;
-        });
-        data.resource = this.resource.uri;
-
-        return Wirecloud.io.makeRequest(url, {
-            method: 'POST',
-            contentType: 'application/json',
-            requestHeaders: {'Accept': 'application/json'},
-            postBody: JSON.stringify(data)
-        }).then((response) => {
-            if ([204, 401, 403, 500].indexOf(response.status) === -1) {
-                return Promise.reject(utils.gettext("Unexpected response from server"));
-            } else if ([401, 403, 500].indexOf(response.status) !== -1) {
-                return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
-            }
-            return Promise.resolve();
-        });
-    };
-
-    var assign_endpoint_value = function assign_endpoint_value(endpoint) {
+    const assign_endpoint_value = function assign_endpoint_value(endpoint) {
         endpoint.value = this + '#' + endpoint.value;
     };
 
-    Wirecloud.ui.PublishResourceWindowMenu = PublishResourceWindowMenu;
+    /**
+     * Specific class for publish mashable application components into one of the available marketplaces
+     */
+    ns.PublishResourceWindowMenu = class PublishResourceWindowMenu extends ns.FormWindowMenu {
 
-})(Wirecloud.Utils);
+        constructor(resource) {
+            const fields = loadAvailableMarkets();
+            super(fields, utils.gettext('Upload resource'), 'publish_resource', {legend: false});
+
+            this.resource = resource;
+        }
+
+        show(parentWindow) {
+            Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
+        }
+
+        setFocus() {
+            this.form.cancelButton.focus();
+        }
+
+        executeOperation(data) {
+            var url = Wirecloud.URLs.PUBLISH_ON_OTHER_MARKETPLACE;
+
+            data.marketplaces = data.marketplaces.map(function (endpoint) {
+                var parts = endpoint.split('#', 2);
+                var result = {
+                    'market': parts[0]
+                };
+                if (parts.length === 2) {
+                    result.store = parts[1];
+                }
+                return result;
+            });
+            data.resource = this.resource.uri;
+
+            return Wirecloud.io.makeRequest(url, {
+                method: 'POST',
+                contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
+                postBody: JSON.stringify(data)
+            }).then((response) => {
+                if ([204, 401, 403, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
+                return Promise.resolve();
+            });
+        }
+
+    }
+
+})(Wirecloud.ui, StyledElements, Wirecloud.Utils);

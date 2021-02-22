@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,10 +27,6 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
-
     /**
      * @name Wirecloud.wiring.Operator
      *
@@ -40,159 +37,148 @@
      * @param {Wirecloud.OperatorMeta} meta
      * @param {Object} data
      */
-    ns.Operator = function Operator(wiring, meta, data) {
-        se.ObjectWithEvents.call(this, [
-            'change',
-            'load',
-            'remove',
-            'unload'
-        ]);
+    ns.Operator = class Operator extends se.ObjectWithEvents {
 
-        if (data == null) {
-            throw new TypeError("invalid data parameter");
+        constructor(wiring, meta, data) {
+            super([
+                'change',
+                'load',
+                'remove',
+                'unload'
+            ]);
+
+            if (data == null) {
+                throw new TypeError("invalid data parameter");
+            }
+
+            data = utils.merge({}, ns.Operator.JSON_TEMPLATE, {
+                title: meta.title
+            }, data);
+
+            this.pending_events = [];
+            this.prefCallback = null;
+
+            this.permissions = utils.merge({
+                close: true,
+                configure: true,
+                rename: true,
+                upgrade: true
+            }, data.permissions);
+
+            privates.set(this, {
+                meta: meta,
+                status: STATUS.CREATED
+            });
+
+            Object.defineProperties(this, {
+                /**
+                 * URL pointing to the html view of this operator.
+                 *
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {String}
+                 */
+                codeurl: {
+                    get: function () {
+                        var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
+                        if ('workspaceview' in this.wiring.workspace) {
+                            url += "&workspaceview=" + encodeURIComponent(this.wiring.workspace.workspaceview);
+                        }
+                        return url;
+                    }
+                },
+                /**
+                 * Id of this operator.
+                 *
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {String}
+                 */
+                id: {
+                    value: data.id
+                },
+                /**
+                 * `true` if the operator has been loaded.
+                 *
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {Boolean}
+                 */
+                loaded: {
+                    get: function () {
+                        return privates.get(this).status === STATUS.RUNNING;
+                    }
+                },
+                /**
+                 * Log manager for this operator.
+                 *
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {Wirecloud.LogManager}
+                 */
+                logManager: {
+                    value: new Wirecloud.LogManager(wiring.logManager)
+                },
+                /**
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {Wirecloud.wiring.OperatorMeta}
+                 */
+                meta: {
+                    get: function () {
+                        return privates.get(this).meta;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {Boolean}
+                 */
+                missing: {
+                    get: function () {
+                        return this.meta.missing;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {String}
+                 */
+                title: {
+                    get: function () {
+                        return this.contextManager.get('title');
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {Boolean}
+                 */
+                volatile: {
+                    value: !!data.volatile
+                },
+                /**
+                 * @memberOf Wirecloud.wiring.Operator#
+                 * @type {Wirecloud.Wiring}
+                 */
+                wiring: {
+                    value: wiring
+                }
+            });
+
+            this.contextManager = new Wirecloud.ContextManager(this, {
+                'title': {
+                    label: utils.gettext("Title"),
+                    description: utils.gettext("Widget's title"),
+                    value: data.title
+                }
+            });
+
+            this.wrapperElement = document.createElement('iframe');
+            this.wrapperElement.className = "wc-operator wc-operator-content";
+            this.wrapperElement.setAttribute('type', "application/xhtml+xml");
+            this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+
+            build_endpoints.call(this);
+            build_prefs.call(this, data.preferences);
+            build_props.call(this, data.properties);
+
+            this.logManager.log(utils.gettext("Operator created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
         }
 
-        data = utils.merge({}, ns.Operator.JSON_TEMPLATE, {
-            title: meta.title
-        }, data);
-
-        this.pending_events = [];
-        this.prefCallback = null;
-
-        this.permissions = utils.merge({
-            close: true,
-            configure: true,
-            rename: true,
-            upgrade: true
-        }, data.permissions);
-
-        privates.set(this, {
-            meta: meta,
-            status: STATUS.CREATED
-        });
-
-        Object.defineProperties(this, {
-            /**
-             * URL pointing to the html view of this operator.
-             *
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {String}
-             */
-            codeurl: {
-                get: function () {
-                    var url = this.meta.codeurl + "#id=" + encodeURIComponent(this.id);
-                    if ('workspaceview' in this.wiring.workspace) {
-                        url += "&workspaceview=" + encodeURIComponent(this.wiring.workspace.workspaceview);
-                    }
-                    return url;
-                }
-            },
-            /**
-             * Id of this operator.
-             *
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {String}
-             */
-            id: {
-                value: data.id
-            },
-            /**
-             * `true` if the operator has been loaded.
-             *
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {Boolean}
-             */
-            loaded: {
-                get: function () {
-                    return privates.get(this).status === STATUS.RUNNING;
-                }
-            },
-            /**
-             * Log manager for this operator.
-             *
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {Wirecloud.LogManager}
-             */
-            logManager: {
-                value: new Wirecloud.LogManager(wiring.logManager)
-            },
-            /**
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {Wirecloud.wiring.OperatorMeta}
-             */
-            meta: {
-                get: function () {
-                    return privates.get(this).meta;
-                }
-            },
-            /**
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {Boolean}
-             */
-            missing: {
-                get: function () {
-                    return this.meta.missing;
-                }
-            },
-            /**
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {String}
-             */
-            title: {
-                get: function () {
-                    return this.contextManager.get('title');
-                }
-            },
-            /**
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {Boolean}
-             */
-            volatile: {
-                value: !!data.volatile
-            },
-            /**
-             * @memberOf Wirecloud.wiring.Operator#
-             * @type {Wirecloud.Wiring}
-             */
-            wiring: {
-                value: wiring
-            }
-        });
-
-        this.contextManager = new Wirecloud.ContextManager(this, {
-            'title': {
-                label: utils.gettext("Title"),
-                description: utils.gettext("Widget's title"),
-                value: data.title
-            }
-        });
-
-        this.wrapperElement = document.createElement('iframe');
-        this.wrapperElement.className = "wc-operator wc-operator-content";
-        this.wrapperElement.setAttribute('type', "application/xhtml+xml");
-        this.wrapperElement.addEventListener('load', on_load.bind(this), true);
-
-        build_endpoints.call(this);
-        build_prefs.call(this, data.preferences);
-        build_props.call(this, data.properties);
-
-        this.logManager.log(utils.gettext("Operator created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
-    };
-
-    ns.Operator.JSON_TEMPLATE = {
-        id: "",
-        preferences: {},
-        properties: {},
-        volatile: false
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.Operator, se.ObjectWithEvents, /** @lends Wirecloud.wiring.Operator.prototype */{
-
-        fullDisconnect: function fullDisconnect() {
+        fullDisconnect() {
             var name;
 
             for (name in this.inputs) {
@@ -204,26 +190,26 @@
             }
 
             return this;
-        },
+        }
 
-        hasEndpoints: function hasEndpoints() {
+        hasEndpoints() {
             return this.meta.hasEndpoints();
-        },
+        }
 
-        hasPreferences: function hasPreferences() {
+        hasPreferences() {
             return this.meta.hasPreferences();
-        },
+        }
 
-        is: function is(component) {
+        is(component) {
             return this.meta.type === component.meta.type && this.id === component.id;
-        },
+        }
 
         /**
          * @param {String} name
          *
          * @returns {Boolean}
          */
-        isAllowed: function isAllowed(name) {
+        isAllowed(name) {
 
             if (!(name in this.permissions)) {
                 throw new TypeError("invalid name parameter");
@@ -239,12 +225,12 @@
             } else {
                 return this.permissions[name];
             }
-        },
+        }
 
         /**
          * @returns {Wirecloud.wiring.Operator}
          */
-        load: function load() {
+        load() {
 
             if (privates.get(this).status !== STATUS.CREATED) {
                 return this;
@@ -254,20 +240,20 @@
             this.wrapperElement.setAttribute('src', this.codeurl);
 
             return this;
-        },
+        }
 
         /**
          * @param {Function} callback
          */
-        registerPrefCallback: function registerPrefCallback(callback) {
+        registerPrefCallback(callback) {
             this.prefCallback = callback;
             return this;
-        },
+        }
 
         /**
          * @returns {Promise}
          */
-        remove: function remove() {
+        remove() {
             this.fullDisconnect();
 
             if (this.loaded) {
@@ -276,12 +262,12 @@
 
             this.dispatchEvent('remove');
             return Promise.resolve(this);
-        },
+        }
 
         /**
          * @returns {Wirecloud.wiring.Operator}
          */
-        showLogs: function showLogs() {
+        showLogs() {
             var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager, {
                 title: utils.interpolate(utils.gettext("%(operator_title)s's logs"), {
                     operator_title: this.title
@@ -290,21 +276,21 @@
             dialog.htmlElement.classList.add("wc-component-logs-modal");
             dialog.show();
             return this;
-        },
+        }
 
         /**
          * @returns {Wirecloud.wiring.Operator}
          */
-        showSettings: function showSettings() {
+        showSettings() {
             var dialog = new Wirecloud.ui.OperatorPreferencesWindowMenu();
             dialog.show(this);
             return this;
-        },
+        }
 
         /**
          * @returns {Object}
          */
-        toJSON: function toJSON() {
+        toJSON() {
             var name, preferences = {}, properties = {};
 
             for (name in this.preferences) {
@@ -329,14 +315,14 @@
                 preferences: preferences,
                 properties: properties
             };
-        },
+        }
 
         /**
          * Upgrade/downgrade this operator.
          *
          * @param {Wirecloud.wiring.OperatorMeta} meta
          */
-        upgrade: function upgrade(meta) {
+        upgrade(meta) {
             var message;
 
             if (!is_valid_meta.call(this, meta)) {
@@ -367,7 +353,14 @@
             }
         }
 
-    });
+    }
+
+    ns.Operator.JSON_TEMPLATE = {
+        id: "",
+        preferences: {},
+        properties: {},
+        volatile: false
+    };
 
     // =========================================================================
     // PRIVATE MEMBERS

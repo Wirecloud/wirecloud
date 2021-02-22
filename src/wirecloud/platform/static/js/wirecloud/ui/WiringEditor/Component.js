@@ -26,105 +26,107 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.Component = class Component extends se.Panel {
 
-    /**
-     * Create a new instance of class Component.
-     * @extends StyledElements.Panel
-     *
-     * @constructor
-     * @param {Operator|Widget} wiringComponent
-     *      [TODO: description]
-     */
-    ns.Component = function Component(wiringComponent) {
-        var used = false;
+        /**
+         * Create a new instance of class Component.
+         * @extends {StyledElements.Panel}
+         *
+         * @constructor
+         * @param {Wirecloud.Operator|Wirecloud.Widget} wiringComponent
+         *      [TODO: description]
+         */
+        constructor(wiringComponent) {
+            var used = false;
 
-        this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
+            const btnPrefs = new se.PopupButton({
+                class: "we-prefs-btn",
+                title: utils.gettext("Preferences"),
+                iconClass: "fa fa-reorder"
+            });
 
-        this.btnPrefs = new se.PopupButton({
-            class: "we-prefs-btn",
-            title: utils.gettext("Preferences"),
-            iconClass: "fa fa-reorder"
-        });
-        this.btnPrefs.popup_menu.append(new ns.ComponentPrefs(this));
+            super({
+                state: null,
+                class: "we-component component-" + wiringComponent.meta.type,
+                title: wiringComponent.title,
+                subtitle: "v" + wiringComponent.meta.version,
+                selectable: true,
+                noBody: true,
+                buttons: [btnPrefs]
+            });
 
-        se.Panel.call(this, {
-            state: null,
-            class: "we-component component-" + wiringComponent.meta.type,
-            title: wiringComponent.title,
-            subtitle: "v" + wiringComponent.meta.version,
-            selectable: true,
-            noBody: true,
-            buttons: [this.btnPrefs]
-        });
+            this.btnPrefs = btnPrefs;
+            btnPrefs.popup_menu.append(new ns.ComponentPrefs(this));
 
-        this.heading.title.addClassName('component-title text-truncate');
-        this.heading.subtitle.addClassName("component-version");
+            this.heading.title.addClassName('component-title text-truncate');
+            this.heading.subtitle.addClassName("component-version");
 
-        this.label = document.createElement('span');
+            this.label = document.createElement('span');
 
-        this._component = wiringComponent;
+            this._component = wiringComponent;
 
-        Object.defineProperties(this, {
-            id: {value: wiringComponent.id},
-            type: {value: wiringComponent.meta.type},
-            used: {
-                get: function () {
-                    return used;
-                },
-                set: function (value) {
-                    used = value;
-                    update_enable_status.call(this);
-                    update_component_label.call(this);
+            Object.defineProperties(this, {
+                id: {value: wiringComponent.id},
+                type: {value: wiringComponent.meta.type},
+                used: {
+                    get: function () {
+                        return used;
+                    },
+                    set: function (value) {
+                        used = value;
+                        update_enable_status.call(this);
+                        update_component_label.call(this);
+                    }
                 }
-            }
-        });
-        this.get().setAttribute('data-id', this.id);
+            });
+            this.get().setAttribute('data-id', this.id);
 
-        this._on_change_model = on_change_model.bind(this);
+            this._on_change_model = on_change_model.bind(this);
 
-        wiringComponent.addEventListener('change', this._on_change_model);
-        update_enable_status.call(this);
-        update_component_label.call(this);
-    };
+            wiringComponent.addEventListener('change', this._on_change_model);
+            update_enable_status.call(this);
+            update_component_label.call(this);
+        }
 
-    utils.inherit(ns.Component, se.Panel, {
+        get titletooltip() {
+            const tooltip = new se.Tooltip({placement: ["top", "bottom", "right", "left"]});
+            Object.defineProperty(this, "titletooltip", {value: tooltip});
+            return tooltip;
+        }
 
-        hasSettings: function hasSettings() {
+        hasSettings() {
             return this._component.meta.preferenceList.length > 0;
-        },
+        }
 
         /**
          * @override
          */
-        setTitle: function setTitle(title) {
+        setTitle(title) {
             var span;
 
             span = document.createElement('span');
             span.textContent = title;
-            this.title_tooltip.options.content = title;
-            this.title_tooltip.bind(span);
+            this.titletooltip.options.content = title;
+            this.titletooltip.bind(span);
 
             return se.Panel.prototype.setTitle.call(this, span);
-        },
+        }
 
-        showLogs: function showLogs() {
+        showLogs() {
 
             this._component.showLogs();
 
             return this;
-        },
+        }
 
-        showSettings: function showSettings() {
+        showSettings() {
 
             this._component.showSettings();
 
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -162,12 +164,12 @@
 
         if (changes.indexOf('title') !== -1) {
             this.setTitle(model.title);
-            this.title_tooltip.options.content = model.title;
+            this.titletooltip.options.content = model.title;
         }
 
         if (changes.indexOf('meta') !== -1) {
             this.setTitle(model.title);
-            this.title_tooltip.options.content = model.title;
+            this.titletooltip.options.content = model.title;
             this.setSubtitle("v" + model.meta.version);
 
             update_enable_status.call(this);

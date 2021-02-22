@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,84 +23,82 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    /**
-     *
-     */
-    var RadioButton = function RadioButton(options) {
-        var defaultOptions = {
-            'initiallyChecked': false,
-            'class': '',
-            'group': null,
-            'value': null
-        };
-        options = utils.merge(defaultOptions, options);
+    se.RadioButton = class RadioButton extends se.InputElement {
 
-        StyledElements.InputElement.call(this, options.initiallyChecked, ['change']);
+        constructor(options) {
+            var defaultOptions = {
+                'initiallyChecked': false,
+                'class': '',
+                'group': null,
+                'value': null
+            };
+            options = utils.merge(defaultOptions, options);
 
-        this.wrapperElement = document.createElement("input");
+            super(options.initiallyChecked, ['change']);
 
-        this.wrapperElement.setAttribute("type", "radio");
-        if (options.value != null) {
-            this.wrapperElement.setAttribute("value", options.value);
+            this.wrapperElement = document.createElement("input");
+
+            this.wrapperElement.setAttribute("type", "radio");
+            if (options.value != null) {
+                this.wrapperElement.setAttribute("value", options.value);
+            }
+            this.inputElement = this.wrapperElement;
+
+            if (options.name != null) {
+                this.inputElement.setAttribute("name", options.name);
+            }
+
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
+
+            if (options.initiallyChecked === true) {
+                this.inputElement.setAttribute("checked", true);
+            }
+
+            if (options.group instanceof StyledElements.ButtonsGroup) {
+                this.wrapperElement.setAttribute("name", options.group.name);
+                options.group.insertButton(this);
+            } else if (typeof options.group === 'string') {
+                this.wrapperElement.setAttribute("name", options.group);
+            }
+
+            /* Internal events */
+            this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
+            this.inputElement.addEventListener(
+                'change',
+                () => {
+                    if (this.enabled) {
+                        this.dispatchEvent('change');
+                    }
+                },
+                true
+            );
         }
-        this.inputElement = this.wrapperElement;
 
-        if (options.name != null) {
-            this.inputElement.setAttribute("name", options.name);
+        insertInto(element, refElement) {
+            var checked = this.inputElement.checked; // Necesario para IE
+            StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
+            this.inputElement.checked = checked; // Necesario para IE
         }
 
-        if (options.id != null) {
-            this.wrapperElement.setAttribute("id", options.id);
+        reset() {
+            this.inputElement.checked = this.defaultValue;
+
+            return this;
         }
 
-        if (options.initiallyChecked === true) {
-            this.inputElement.setAttribute("checked", true);
+        setValue(newValue) {
+            this.inputElement.checked = newValue;
+
+            return this;
         }
 
-        if (options.group instanceof StyledElements.ButtonsGroup) {
-            this.wrapperElement.setAttribute("name", options.group.name);
-            options.group.insertButton(this);
-        } else if (typeof options.group === 'string') {
-            this.wrapperElement.setAttribute("name", options.group);
-        }
+    }
 
-        /* Internal events */
-        this.inputElement.addEventListener('mousedown', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', utils.stopPropagationListener, true);
-        this.inputElement.addEventListener(
-            'change',
-            () => {
-                if (this.enabled) {
-                    this.dispatchEvent('change');
-                }
-            },
-            true
-        );
-    };
-    utils.inherit(RadioButton, StyledElements.InputElement);
-
-    RadioButton.prototype.insertInto = function insertInto(element, refElement) {
-        var checked = this.inputElement.checked; // Necesario para IE
-        StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
-        this.inputElement.checked = checked; // Necesario para IE
-    };
-
-    RadioButton.prototype.reset = function reset() {
-        this.inputElement.checked = this.defaultValue;
-
-        return this;
-    };
-
-    RadioButton.prototype.setValue = function setValue(newValue) {
-        this.inputElement.checked = newValue;
-
-        return this;
-    };
-
-    StyledElements.RadioButton = RadioButton;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

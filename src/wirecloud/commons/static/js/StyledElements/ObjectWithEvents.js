@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,29 +27,25 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    se.ObjectWithEvents = class ObjectWithEvents {
 
-    /**
-     * Creates a new instance of class ObjectWithEvents
-     *
-     * @since 0.5
-     *
-     * @mixin
-     *
-     * @name StyledElements.ObjectWithEvents
-     * @param {String[]} names List of event names to handle
-     */
-    se.ObjectWithEvents = function ObjectWithEvents(names) {
-        this.events = {};
+        /**
+         * Creates a new instance of class ObjectWithEvents
+         *
+         * @since 0.5
+         *
+         * @mixin
+         *
+         * @name StyledElements.ObjectWithEvents
+         * @param {String[]} names List of event names to handle
+         */
+        constructor(names) {
+            this.events = {};
 
-        (Array.isArray(names) ? names : []).forEach(function (name) {
-            this.events[name] = new se.Event(this);
-        }, this);
-    };
-
-    se.ObjectWithEvents.prototype = /** @lends StyledElements.ObjectWithEvents.prototype */ {
+            (Array.isArray(names) ? names : []).forEach(function (name) {
+                this.events[name] = new se.Event(this);
+            }, this);
+        }
 
         /**
          * Executes all event handlers attached for the existing event.
@@ -61,7 +58,7 @@
          * @returns {StyledElements.ObjectWithEvents}
          *      The instance on which the member is called.
          */
-        dispatchEvent: function dispatchEvent(name) {
+        dispatchEvent(name) {
             var handlerArgs;
 
             if (!(name in this.events)) {
@@ -74,7 +71,7 @@
             this.events[name].dispatch.apply(this.events[name], handlerArgs);
 
             return this;
-        },
+        }
 
         /**
          * Attaches an event handler to a given event.
@@ -89,7 +86,7 @@
          * @returns {StyledElements.ObjectWithEvents}
          *      The instance on which the member is called
          */
-        addEventListener: function addEventListener(name, handler) {
+        addEventListener(name, handler) {
 
             if (!(name in this.events)) {
                 throw new Error(utils.interpolate("Unhandled event '%(name)s'", {
@@ -100,7 +97,7 @@
             this.events[name].addEventListener(handler);
 
             return this;
-        },
+        }
 
         /**
          * Removes all event handlers for a given event.
@@ -113,7 +110,7 @@
          * @returns {StyledElements.ObjectWithEvents}
          *      The instance on which the member is called
          */
-        clearEventListeners: function clearEventListeners(name) {
+        clearEventListeners(name) {
 
             if (typeof name !== 'string') {
                 for (name in this.events) {
@@ -132,16 +129,16 @@
             this.events[name].clearEventListeners();
 
             return this;
-        },
+        }
 
         /**
          * @deprecated since version 0.6
          */
-        destroy: function destroy() {
+        destroy() {
             this.events = null;
 
             return this;
-        },
+        }
 
         /**
          * Removes an event handler from a given event.
@@ -156,7 +153,7 @@
          * @returns {StyledElements.ObjectWithEvents}
          *      The instance on which the member is called
          */
-        removeEventListener: function removeEventListener(name, handler) {
+        removeEventListener(name, handler) {
 
             if (!(name in this.events)) {
                 throw new Error(utils.interpolate("Unhandled event '%(name)s'", {
@@ -169,7 +166,7 @@
             return this;
         }
 
-    };
+    }
 
     /**
      * Attaches an event handler for a given event. This method is an alias of

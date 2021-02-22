@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,49 +27,81 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    const privates = new WeakMap();
 
-    /**
-     * Creates a new instance of class Container.
-     *
-     * @constructor
-     * @extends StyledElements.StyledElement
-     * @name StyledElements.Container
-     * @since 0.5
-     * @param {Object.<String, *>} options [description]
-     * @param {String[]} events [description]
-     */
-    se.Container = function Container(options, events) {
-        options = utils.merge(utils.clone(defaults), options);
-        se.StyledElement.call(this, events);
+    const defaultOptions = {
+        class: "",
+        id: "",
+        tagname: "div",
+        useFullHeight: false
+    };
 
-        this.wrapperElement = document.createElement(options.tagname);
-        this.wrapperElement.className = 'se-container';
+    const addChild = function addChild(newElement) {
+        const priv = privates.get(this);
+        if (newElement instanceof se.StyledElement) {
+            const index = priv.children.indexOf(newElement);
 
-        if (options.id) {
-            this.wrapperElement.setAttribute('id', options.id);
+            if (index === -1) {
+                priv.children.push(newElement);
+            }
         }
+    };
 
-        this.addClassName(options.class);
+    const orderbyIndex = function orderbyIndex() {
+        const children = [];
+        const priv = privates.get(this);
 
-        var priv = {
-            children: []
-        };
-
-        privates.set(this, priv);
-
-        Object.defineProperties(this, {
-            'children': {
-                get: function () {
-                    return priv.children.slice(0);
+        Array.prototype.forEach.call(this.get().childNodes, function (childNode) {
+            for (let i = 0; i < priv.children.length; i++) {
+                if (priv.children[i].get() === childNode) {
+                    children.push(priv.children.splice(i, 1)[0]);
+                    return;
                 }
             }
         });
+
+        priv.children = children;
     };
 
-    utils.inherit(se.Container, se.StyledElement, /** @lends StyledElements.Container.prototype */ {
+    se.Container = class Container extends se.StyledElement {
+
+        /**
+         * Creates a new instance of class Container.
+         *
+         * @constructor
+         * @extends StyledElements.StyledElement
+         * @name StyledElements.Container
+         * @since 0.5
+         * @param {Object.<String, *>} options [description]
+         * @param {String[]} events [description]
+         */
+        constructor(options, events) {
+            options = utils.merge({}, defaultOptions, options);
+            super(events);
+
+            this.wrapperElement = document.createElement(options.tagname);
+            this.wrapperElement.className = 'se-container';
+
+            if (options.id) {
+                this.wrapperElement.setAttribute('id', options.id);
+            }
+
+            this.addClassName(options.class);
+
+            const priv = {
+                children: []
+            };
+
+            privates.set(this, priv);
+
+            Object.defineProperties(this, {
+                'children': {
+                    get: function () {
+                        return priv.children.slice(0);
+                    }
+                }
+            });
+        }
 
         /**
          * Checks if the given element is a direct descendant of this
@@ -82,16 +115,16 @@
          * @returns {Boolean}
          *      If the given element is a child of this `Container`.
          */
-        has: function has(childElement) {
+        has(childElement) {
 
-            var priv = privates.get(this);
+            const priv = privates.get(this);
 
             if (childElement instanceof se.StyledElement && priv.children.indexOf(childElement) !== -1) {
                 return true;
             }
 
             return childElement.parentElement === this.get();
-        },
+        }
 
         /**
          * Inserts the `newElement` either to the end of this Container
@@ -107,11 +140,11 @@
          * @returns {StyledElements.Container}
          *     The instance on which the member is called.
          */
-        appendChild: function appendChild(newElement, refElement) {
+        appendChild(newElement, refElement) {
             utils.appendChild(this, newElement, refElement).forEach(addChild, this);
             orderbyIndex.call(this);
             return this;
-        },
+        }
 
         /**
          * Inserts the `newElement` to the beginning of this `Container`
@@ -127,11 +160,11 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        prependChild: function prependChild(newElement, refElement) {
+        prependChild(newElement, refElement) {
             utils.prependChild(this, newElement, refElement).forEach(addChild, this);
             orderbyIndex.call(this);
             return this;
-        },
+        }
 
         /**
          * Removes the `childElement` from this `Container`.
@@ -144,16 +177,16 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        removeChild: function removeChild(childElement) {
+        removeChild(childElement) {
             utils.removeChild(this, childElement);
 
             if (childElement instanceof se.StyledElement) {
-                var priv = privates.get(this);
+                const priv = privates.get(this);
                 priv.children.splice(priv.children.indexOf(childElement), 1);
             }
 
             return this;
-        },
+        }
 
         /**
          * Removes the `childElement` from this `Container`.
@@ -166,14 +199,14 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        repaint: function repaint(temporal) {
+        repaint(temporal) {
             temporal = temporal !== undefined ? temporal : false;
 
-            var priv = privates.get(this);
-            for (var i = 0; i < priv.children.length; i++) {
-                priv.children[i].repaint(temporal);
-            }
-        },
+            const priv = privates.get(this);
+            priv.children.forEach((child) => {
+                child.repaint(temporal);
+            });
+        }
 
         /**
          * Removes all children from this `Container`.
@@ -183,8 +216,8 @@
          * @returns {StyledElements.Container}
          *      The instance on which the member is called.
          */
-        clear: function clear() {
-            var priv = privates.get(this);
+        clear() {
+            const priv = privates.get(this);
 
             priv.children = [];
             this.wrapperElement.innerHTML = "";
@@ -195,7 +228,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * Gets the combined text content of this `Container`.
@@ -208,26 +241,24 @@
          *      `newText` parameter is not used. Otherways, the instance on
          *      which the member is called.
          */
-        text: function text(text) {
+        text(text) {
             if (text == null) {
                 return this.get().textContent;
             } else {
                 return this.clear().appendChild("" + text);
             }
-        },
+        }
 
         /**
          * @deprecated since version 0.6.0
          * @see {@link StyledElements.Container#enabled}
          */
-        isDisabled: function isDisabled() {
+        isDisabled() {
             return !this.enabled;
-        },
+        }
 
-        _onenabled: function _onenabled(enabled) {
-            var icon, priv;
-
-            priv = privates.get(this);
+        _onenabled(enabled) {
+            const priv = privates.get(this);
 
             if (enabled) {
                 if (priv.disabledLayer != null) {
@@ -238,7 +269,7 @@
                 priv.disabledLayer = document.createElement('div');
                 priv.disabledLayer.className = 'se-container-disable-layer';
 
-                icon = document.createElement('i');
+                const icon = document.createElement('i');
                 icon.className = 'disable-icon fa fa-spin fa-spinner';
                 priv.disabledLayer.appendChild(icon);
 
@@ -246,48 +277,6 @@
             }
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
-    var defaults = {
-        class: "",
-        id: "",
-        tagname: 'div',
-        useFullHeight: false
-    };
-
-    var addChild = function addChild(newElement) {
-        var priv = privates.get(this);
-        if (newElement instanceof se.StyledElement) {
-            var index = priv.children.indexOf(newElement);
-
-            if (index === -1) {
-                priv.children.push(newElement);
-            }
-        }
-    };
-
-    var orderbyIndex = function orderbyIndex() {
-        var children = [], priv;
-
-        priv = privates.get(this);
-        Array.prototype.forEach.call(this.get().childNodes, function (childNode) {
-            var i, elementFound = false;
-
-            for (i = 0; i < priv.children.length && !elementFound; i++) {
-                if (priv.children[i].get() === childNode) {
-                    children.push(priv.children.splice(i, 1)[0]);
-                    elementFound = true;
-                }
-            }
-        });
-
-        priv.children = children;
-    };
+    }
 
 })(StyledElements, StyledElements.Utils);

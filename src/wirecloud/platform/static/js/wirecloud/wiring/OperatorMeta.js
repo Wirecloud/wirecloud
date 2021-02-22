@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,41 +34,44 @@
      * @extends Wirecloud.MashableApplicationComponent
      * @name Wirecloud.wiring.OperatorMeta
      *
-     * @param {Object} description metadata information of the Operator
+     * @param {Object} desc metadata information of the Operator
      */
-    ns.OperatorMeta = function OperatorMeta(description) {
+    ns.OperatorMeta = class OperatorMeta extends Wirecloud.MashableApplicationComponent {
 
-        if (description.type !== 'operator') {
-            throw new TypeError('Invalid operator description');
-        }
+        constructor(desc) {
+            if (desc.type == null) {
+                desc.type = 'operator';
+            } else if (desc.type !== 'operator') {
+                throw new TypeError(utils.interpolate('Invalid component type for a operator: %(type)s.', {type: desc.type}));
+            }
 
-        Wirecloud.MashableApplicationComponent.call(this, description);
+            super(desc);
 
-        // Properties
-        this.properties = {};
-        this.propertyList = [];
-        for (var i = 0; i < description.properties.length; i++) {
-            var property = new Wirecloud.PersistentVariableDef(description.properties[i]);
-            this.properties[property.name] = property;
-            this.propertyList.push(property);
-        }
-        Object.freeze(this.properties);
-        Object.freeze(this.propertyList);
-
-        if (this.missing) {
-            this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
-        } else {
-            this.codeurl = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({
-                vendor: this.vendor,
-                name: this.name,
-                version: this.version.text
+            // Properties
+            this.properties = {};
+            this.propertyList = [];
+            desc.properties.forEach((property_info) => {
+                const property = new Wirecloud.PersistentVariableDef(property_info);
+                this.properties[property.name] = property;
+                this.propertyList.push(property);
             });
+            Object.freeze(this.properties);
+            Object.freeze(this.propertyList);
+
+            if (this.missing) {
+                this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
+            } else {
+                this.codeurl = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({
+                    vendor: this.vendor,
+                    name: this.name,
+                    version: this.version.text
+                });
+            }
+            this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash');
+
+            Object.freeze(this);
         }
-        this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash');
 
-        Object.freeze(this);
-    };
-
-    utils.inherit(ns.OperatorMeta, Wirecloud.MashableApplicationComponent);
+    }
 
 })(Wirecloud.wiring, Wirecloud.Utils);

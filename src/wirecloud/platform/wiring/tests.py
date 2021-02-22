@@ -3088,7 +3088,7 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
                     self.assertFalse(sidebar.disabled)
                     # Check that there is an initial behaviour
                     self.assertEqual(len(sidebar.find_behaviours()), 1)
-                    sidebar.active_behaviour.check_info("New behaviour", "No description provided.")
+                    sidebar.active_behaviour.check_info("Initial behaviour", "")
 
         # Check the change is correctly persisted
         self.reload()
@@ -3099,7 +3099,7 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
                 with wiring.behaviour_sidebar as sidebar:
                     self.assertFalse(sidebar.disabled)
                     self.assertEqual(len(sidebar.find_behaviours()), 1)
-                    sidebar.active_behaviour.check_info("New behaviour", "No description provided.")
+                    sidebar.active_behaviour.check_info("Initial behaviour", "")
                     behaviour1 = sidebar.active_behaviour
 
                     # Create a new behaviour

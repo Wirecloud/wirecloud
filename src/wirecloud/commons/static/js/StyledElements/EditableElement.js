@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,21 +23,21 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var onFocus = function onFocus(e) {
-        var range = document.createRange();
+    const onFocus = function onFocus(e) {
+        const range = document.createRange();
         range.selectNodeContents(this.wrapperElement);
-        var sel = window.getSelection();
+        const sel = window.getSelection();
         sel.removeAllRanges();
         sel.addRange(range);
 
         document.addEventListener('mousedown', this._onBlur, false);
     };
 
-    var onKeydown = function onKeydown(e) {
+    const onKeydown = function onKeydown(e) {
         if (e.keyCode === 13) { // enter
             this._onBlur();
         } else if (e.keyCode === 27) { // esc
@@ -45,14 +46,14 @@
         }
     };
 
-    var onBlur = function onBlur(e) {
+    const onBlur = function onBlur(e) {
         if (!this.wrapperElement.hasAttribute('contenteditable')) {
             return;
         }
 
         document.removeEventListener('mousedown', this._onBlur, false);
 
-        var new_content = this.wrapperElement.textContent;
+        const new_content = this.wrapperElement.textContent;
         this.wrapperElement.textContent = new_content;
         if (this._prev_content !== new_content) {
             this.dispatchEvent('change', new_content);
@@ -60,60 +61,72 @@
         this.disableEdition();
     };
 
-    var EditableElement = function EditableElement(options) {
-
-        StyledElements.StyledElement.call(this, ['change']);
-
-        this.wrapperElement = document.createElement('span');
-        this.setTextContent(options.initialContent);
-
-        this._onFocus = onFocus.bind(this);
-        this._onKeydown = onKeydown.bind(this);
-        this._onBlur = onBlur.bind(this);
-
-        this.wrapperElement.addEventListener('focus', this._onFocus, true);
-        this.wrapperElement.addEventListener('keydown', this._onKeydown, true);
-        this.wrapperElement.addEventListener('blur', this._onBlur, true);
+    const defaultOptions = {
+        initialContent: ""
     };
-    utils.inherit(EditableElement, StyledElements.StyledElement);
+    Object.freeze(defaultOptions);
 
-    EditableElement.prototype.disableEdition = function disableEdition() {
-        if (this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
-            this.wrapperElement.removeAttribute('contenteditable');
-            this.wrapperElement.blur();
-            this.wrapperElement.scrollLeft = 0;
-            this.wrapperElement.scrollTop = 0;
+    se.EditableElement = class EditableElement extends se.StyledElement {
+
+        constructor(options) {
+
+            super(['change']);
+
+            options = utils.merge({}, defaultOptions, options);
+
+            this.wrapperElement = document.createElement('span');
+            this.setTextContent(options.initialContent);
+
+            this._onFocus = onFocus.bind(this);
+            this._onKeydown = onKeydown.bind(this);
+            this._onBlur = onBlur.bind(this);
+
+            this.wrapperElement.addEventListener('focus', this._onFocus, true);
+            this.wrapperElement.addEventListener('keydown', this._onKeydown, true);
+            this.wrapperElement.addEventListener('blur', this._onBlur, true);
         }
-    };
 
-    EditableElement.prototype.enableEdition = function enableEdition() {
-        if (!this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
-            this.wrapperElement.setAttribute('contenteditable', 'true');
-            this._prev_content = this.wrapperElement.textContent;
+        get editing() {
+            return this.wrapperElement.hasAttribute("contenteditable");
         }
-        this.wrapperElement.focus();
-    };
 
-    EditableElement.prototype.setTextContent = function setTextContent(textContent) {
-        this.wrapperElement.textContent = textContent;
+        disableEdition() {
+            if (this.wrapperElement.hasAttribute('contenteditable')) {
+                this.wrapperElement.removeEventListener('mousedown', utils.stopPropagationListener, true);
+                this.wrapperElement.removeAttribute('contenteditable');
+                this.wrapperElement.blur();
+                this.wrapperElement.scrollLeft = 0;
+                this.wrapperElement.scrollTop = 0;
+            }
+        }
 
-        return this;
-    };
+        enableEdition() {
+            if (!this.wrapperElement.hasAttribute('contenteditable')) {
+                this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+                this.wrapperElement.setAttribute('contenteditable', 'true');
+                this._prev_content = this.wrapperElement.textContent;
+            }
+            this.wrapperElement.focus();
+        }
 
-    EditableElement.prototype.destroy = function destroy() {
-        this.wrapperElement.removeEventListener('focus', this._onFocus, true);
-        this.wrapperElement.removeEventListener('keydown', this._onKeydown, true);
-        this.wrapperElement.removeEventListener('blur', this._onBlur, true);
+        setTextContent(textContent) {
+            this.wrapperElement.textContent = textContent;
 
-        this._onFocus = null;
-        this._onKeydown = null;
-        this._onBlur = null;
+            return this;
+        }
 
-        StyledElements.StyledElement.prototype.destroy.call(this);
-    };
+        destroy() {
+            this.wrapperElement.removeEventListener('focus', this._onFocus, true);
+            this.wrapperElement.removeEventListener('keydown', this._onKeydown, true);
+            this.wrapperElement.removeEventListener('blur', this._onBlur, true);
 
-    StyledElements.EditableElement = EditableElement;
+            this._onFocus = null;
+            this._onKeydown = null;
+            this._onBlur = null;
 
-})(StyledElements.Utils);
+            StyledElements.StyledElement.prototype.destroy.call(this);
+        }
+
+    }
+
+})(StyledElements, StyledElements.Utils);

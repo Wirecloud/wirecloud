@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,9 +27,17 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    const canCustomize = function canCustomize() {
+        return !this.readonly && !this.background;
+    };
+
+    const canRestore = function canRestore() {
+        return !this.readonly && !this.background;
+    };
+
+    const getCustomizeTitle = function getCustomizeTitle() {
+        return this.editable ? utils.gettext("Stop customizing") : utils.gettext("Customize");
+    };
 
     /**
      * Create a new instance of class ConnectionPrefs.
@@ -38,11 +47,12 @@
      * @param {Connection} connection
      *      [TODO: description]
      */
-    ns.ConnectionPrefs = function ConnectionPrefs(connection) {
-        this.connection = connection;
-    };
+    ns.ConnectionPrefs = class ConnectionPrefs extends se.DynamicMenuItems {
 
-    utils.inherit(ns.ConnectionPrefs, se.DynamicMenuItems, {
+        constructor(connection) {
+            super();
+            this.connection = connection;
+        }
 
         /**
          * [TODO: _createMenuItem description]
@@ -59,7 +69,7 @@
          * @returns {MenuItem}
          *      [TODO: description]
          */
-        _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
+        _createMenuItem(title, iconClass, onclick, isEnabled) {
             var item;
 
             item = new se.MenuItem(title, onclick);
@@ -70,12 +80,12 @@
             }
 
             return item;
-        },
+        }
 
         /**
          * @override
          */
-        build: function build() {
+        build() {
             return [
                 this._createMenuItem(getCustomizeTitle.call(this.connection), "magic", function () {
                     this.editable = !this.editable;
@@ -86,22 +96,6 @@
             ];
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var canCustomize = function canCustomize() {
-        return !this.readonly && !this.background;
-    };
-
-    var canRestore = function canRestore() {
-        return !this.readonly && !this.background;
-    };
-
-    var getCustomizeTitle = function getCustomizeTitle() {
-        return this.editable ? utils.gettext("Stop customizing") : utils.gettext("Customize");
-    };
+    }
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -22,43 +22,44 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
     /**
      *
      */
-    var HiddenField = function HiddenField(options) {
-        var defaultOptions = {
-            'initialValue': '',
-            'class': ''
-        };
-        options = utils.merge(defaultOptions, options);
+    se.HiddenField = class HiddenField extends se.InputElement {
 
-        StyledElements.InputElement.call(this, options.initialValue, []);
+        constructor(options) {
+            var defaultOptions = {
+                'initialValue': '',
+                'class': ''
+            };
+            options = utils.merge(defaultOptions, options);
 
-        this.wrapperElement = document.createElement("div");
+            super(options.initialValue, []);
 
-        this.wrapperElement.className = utils.prependWord(options.class, 'styled_hidden_field');
+            this.wrapperElement = document.createElement("div");
 
-        this.inputElement = document.createElement("input");
-        this.inputElement.setAttribute("type", "hidden");
+            this.wrapperElement.className = utils.prependWord(options.class, 'styled_hidden_field');
 
-        if (options.name != null) {
-            this.inputElement.setAttribute("name", options.name);
+            this.inputElement = document.createElement("input");
+            this.inputElement.setAttribute("type", "hidden");
+
+            if (options.name != null) {
+                this.inputElement.setAttribute("name", options.name);
+            }
+
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
+
+            this.inputElement.setAttribute("value", options.initialValue);
+
+            this.wrapperElement.appendChild(this.inputElement);
         }
 
-        if (options.id != null) {
-            this.wrapperElement.setAttribute("id", options.id);
-        }
+    }
 
-        this.inputElement.setAttribute("value", options.initialValue);
-
-        this.wrapperElement.appendChild(this.inputElement);
-    };
-    utils.inherit(HiddenField, StyledElements.InputElement);
-
-    StyledElements.HiddenField = HiddenField;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -23,7 +23,7 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
@@ -32,98 +32,99 @@
      *
      * @extends Wirecloud.ui.DragboardLayout
      */
-    var FullDragboardLayout = function FullDragboardLayout(dragboard, scrollbarSpace) {
-        this.initialized = false;
-        Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
-    };
-    utils.inherit(FullDragboardLayout, Wirecloud.ui.DragboardLayout);
+    ns.FullDragboardLayout = class FullDragboardLayout extends ns.DragboardLayout {
 
-    FullDragboardLayout.prototype.fromPixelsToVCells = function fromPixelsToVCells(pixels) {
-        return 1;
-    };
-
-    FullDragboardLayout.prototype.fromVCellsToPixels = function fromVCellsToPixels(cells) {
-        return this.getHeight();
-    };
-
-    FullDragboardLayout.prototype.getWidthInPixels = function getWidthInPixels(cells) {
-        return null;
-    };
-
-    FullDragboardLayout.prototype.getHeightInPixels = function getHeightInPixels(cells) {
-        return null;
-    };
-
-    FullDragboardLayout.prototype.fromPixelsToHCells = function fromPixelsToHCells(pixels) {
-        return 1;
-    };
-
-    FullDragboardLayout.prototype.fromHCellsToPixels = function fromHCellsToPixels(cells) {
-        return this.getWidth();
-    };
-
-    FullDragboardLayout.prototype.getColumnOffset = function getColumnOffset(position) {
-        return 0;
-    };
-
-    FullDragboardLayout.prototype.getRowOffset = function getRowOffset(position) {
-        return 0;
-    };
-
-    FullDragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {
-        return new Wirecloud.ui.MultiValuedSize(this.dragboard.tab.wrapperElement.getBoundingClientRect().left, 0);
-    };
-
-    FullDragboardLayout.prototype.adaptRowOffset = function adaptRowOffset(size) {
-        return new Wirecloud.ui.MultiValuedSize(this.dragboard.tab.wrapperElement.getBoundingClientRect().top, 0);
-    };
-
-    FullDragboardLayout.prototype.adaptHeight = function adaptHeight(size) {
-        return new Wirecloud.ui.MultiValuedSize(this.getHeight(), 1);
-    };
-
-    FullDragboardLayout.prototype.adaptWidth = function adaptWidth(size) {
-        return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
-    };
-
-    FullDragboardLayout.prototype.initialize = function initialize() {
-        var iWidget, key;
-
-        // Insert iwidgets
-        for (key in this.iWidgets) {
-            iWidget = this.iWidgets[key];
-            iWidget.paint(true);
+        constructor(dragboard, scrollbarSpace) {
+            super(dragboard, scrollbarSpace);
+            this.initialized = false;
         }
 
-        this.initialized = true;
-    };
+        fromPixelsToVCells(pixels) {
+            return 1;
+        }
 
-    /**
-     * Calculate what cell is at a given position in pixels
-     */
-    FullDragboardLayout.prototype.getCellAt = function getCellAt(x, y) {
-        return new Wirecloud.DragboardPosition(0, 0);
-    };
+        fromVCellsToPixels(cells) {
+            return this.getHeight();
+        }
 
-    FullDragboardLayout.prototype.addWidget = function addWidget(iWidget, affectsDragboard) {
-        iWidget.wrapperElement.classList.add('wc-widget-fulldragboard');
+        getWidthInPixels(cells) {
+            return null;
+        }
 
-        Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, iWidget, affectsDragboard);
+        getHeightInPixels(cells) {
+            return null;
+        }
 
-        if (!this.initialized) {
+        fromPixelsToHCells(pixels) {
+            return 1;
+        }
+
+        fromHCellsToPixels(cells) {
+            return this.getWidth();
+        }
+
+        getColumnOffset(position) {
+            return 0;
+        }
+
+        getRowOffset(position) {
+            return 0;
+        }
+
+        adaptColumnOffset(size) {
+            return new Wirecloud.ui.MultiValuedSize(this.dragboard.tab.wrapperElement.getBoundingClientRect().left, 0);
+        }
+
+        adaptRowOffset(size) {
+            return new Wirecloud.ui.MultiValuedSize(this.dragboard.tab.wrapperElement.getBoundingClientRect().top, 0);
+        }
+
+        adaptHeight(size) {
+            return new Wirecloud.ui.MultiValuedSize(this.getHeight(), 1);
+        }
+
+        adaptWidth(size) {
+            return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
+        }
+
+        initialize() {
+            var iWidget, key;
+
+            // Insert iwidgets
+            for (key in this.iWidgets) {
+                iWidget = this.iWidgets[key];
+                iWidget.paint(true);
+            }
+
+            this.initialized = true;
+        }
+
+        /**
+         * Calculate what cell is at a given position in pixels
+         */
+        getCellAt(x, y) {
+            return new Wirecloud.DragboardPosition(0, 0);
+        }
+
+        addWidget(iWidget, affectsDragboard) {
+            iWidget.wrapperElement.classList.add('wc-widget-fulldragboard');
+
+            Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, iWidget, affectsDragboard);
+
+            if (!this.initialized) {
+                return new Set();
+            }
+
+            iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0));
             return new Set();
         }
 
-        iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0));
-        return new Set();
-    };
+        removeWidget(iWidget, affectsDragboard) {
+            iWidget.wrapperElement.classList.remove('wc-widget-fulldragboard');
 
-    FullDragboardLayout.prototype.removeWidget = function removeWidget(iWidget, affectsDragboard) {
-        iWidget.wrapperElement.classList.remove('wc-widget-fulldragboard');
+            return Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, iWidget, affectsDragboard);
+        }
 
-        return Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, iWidget, affectsDragboard);
-    };
+    }
 
-    Wirecloud.ui.FullDragboardLayout = FullDragboardLayout;
-
-})(Wirecloud.Utils);
+})(Wirecloud.ui, Wirecloud.Utils);

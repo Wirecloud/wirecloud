@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,35 +27,25 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.WorkspaceTabViewMenuItems = class WorkspaceTabViewMenuItems extends se.DynamicMenuItems {
 
-    ns.WorkspaceTabViewMenuItems = function WorkspaceTabViewMenuItems(tab) {
-        se.DynamicMenuItems.call(this);
+        constructor(tab) {
+            super();
 
-        Object.defineProperties(this, {
-            tab: {
-                value: tab
-            }
-        });
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.WorkspaceTabViewMenuItems, se.DynamicMenuItems, {
+            Object.defineProperties(this, {
+                tab: {
+                    value: tab
+                }
+            });
+        }
 
         /**
          * @override
          */
-        build: function build() {
-            var item, items;
+        build() {
+            const items = [];
 
-            items = [];
-
-            item = new se.MenuItem(utils.gettext("Rename"), () => {
+            let item = new se.MenuItem(utils.gettext("Rename"), () => {
                 (new Wirecloud.ui.RenameWindowMenu(this.tab.model, utils.gettext('Rename Workspace Tab'))).show();
             });
             item.addIconClass("fa fa-pencil");
@@ -90,10 +81,6 @@
             return items;
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
+    }
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

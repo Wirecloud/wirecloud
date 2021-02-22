@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,9 +27,35 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    const canRename = function canRename() {
+        return !this.component._component.volatile && this.component.type === 'widget';
+    };
+
+    const canUpgrade = function canUpgrade() {
+        return this.component._component.isAllowed('upgrade', 'editor') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this.component._component.meta);
+    };
+
+    const canShowSettings = function canShowSettings() {
+        return this.component.hasSettings() && this.component._component.isAllowed('configure', 'editor');
+    };
+
+    const showRenameModal = function showRenameModal() {
+        const dialog = new Wirecloud.ui.FormWindowMenu(
+            [
+                {name: 'title', label: utils.gettext("Title"), type: 'text', placeholder: this.component.title},
+            ],
+            utils.interpolate(utils.gettext("Rename %(type)s"), this.component),
+            "wc-component-rename-modal");
+
+        dialog.executeOperation = function (data) {
+            if (data.title) {
+                this.component._component.rename(data.title);
+            }
+        }.bind(this);
+
+        dialog.show();
+        dialog.setValue({title: this.component.title});
+    };
 
     /**
      * Create a new instance of class ComponentPrefs.
@@ -36,16 +63,15 @@
      *
      * @constructor
      */
-    ns.ComponentPrefs = function ComponentPrefs(component) {
-        this.component = component;
-    };
+    ns.ComponentPrefs = class ComponentPrefs extends se.DynamicMenuItems {
 
-    utils.inherit(ns.ComponentPrefs, se.DynamicMenuItems, {
+        constructor(component) {
+            super();
+            this.component = component;
+        }
 
-        _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
-            var item;
-
-            item = new se.MenuItem(title, onclick);
+        _createMenuItem(title, iconClass, onclick, isEnabled) {
+            const item = new se.MenuItem(title, onclick);
             item.addIconClass('fa fa-' + iconClass);
 
             if (isEnabled != null) {
@@ -53,12 +79,12 @@
             }
 
             return item;
-        },
+        }
 
         /**
          * @override
          */
-        build: function build() {
+        build() {
             return [
                 this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
                     showRenameModal.call(this);
@@ -76,40 +102,6 @@
             ];
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var canRename = function canRename() {
-        return !this.component._component.volatile && this.component.type == 'widget';
-    };
-
-    var canUpgrade = function canUpgrade() {
-        return this.component._component.isAllowed('upgrade', 'editor') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this.component._component.meta);
-    };
-
-    var canShowSettings = function canShowSettings() {
-        return this.component.hasSettings() && this.component._component.isAllowed('configure', 'editor');
-    };
-
-    var showRenameModal = function showRenameModal() {
-        var dialog = new Wirecloud.ui.FormWindowMenu(
-            [
-                {name: 'title', label: utils.gettext("Title"), type: 'text', placeholder: this.component.title},
-            ],
-            utils.interpolate(utils.gettext("Rename %(type)s"), this.component),
-            "wc-component-rename-modal");
-
-        dialog.executeOperation = function (data) {
-            if (data.title) {
-                this.component._component.rename(data.title);
-            }
-        }.bind(this);
-
-        dialog.show();
-        dialog.setValue({title: this.component.title});
-    };
+    }
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

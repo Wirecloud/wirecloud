@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,48 +27,42 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.EndpointGroup = class EndpointGroup extends se.Container {
 
-    /**
-     * Create a new instance of class EndpointGroup.
-     * @extends {Container}
-     *
-     * @constructor
-     * @param {String} type
-     *      [TODO: description]
-     * @param {ComponentDraggable} component
-     *      [TODO: description]
-     */
-    ns.EndpointGroup = function EndpointGroup(type, component) {
-        se.Container.call(this, {class: "endpoints"});
-        this.addClassName(type + "-endpoints");
+        /**
+         * Create a new instance of class EndpointGroup.
+         * @extends {StyledElements.Container}
+         *
+         * @constructor
+         * @param {String} type
+         *      [TODO: description]
+         * @param {ComponentDraggable} component
+         *      [TODO: description]
+         */
+        constructor(type, component) {
+            super({class: "endpoints"});
+            this.addClassName(type + "-endpoints");
 
-        this.endpoints = {};
-        this.component = component;
+            this.endpoints = {};
+            this.component = component;
 
-        this.originalOrder = [];
+            this.originalOrder = [];
 
-        Object.defineProperties(this, {
-            modified: {
-                get: function get() {
-                    return this.canBeOrdered() && !equalsLists(this.originalOrder, this.children.map(function (endpoint) {
-                        return endpoint.name;
-                    }));
-                }
-            },
-            orderable: {
-                get: function get() {return this.hasClassName('orderable');},
-                set: function set(value) {this.toggleClassName('orderable', value);}
-            },
-            type: {value: type}
-        });
-    };
-
-    ns.EndpointGroup.MIN_LENGTH = 1;
-
-    utils.inherit(ns.EndpointGroup, se.Container, {
+            Object.defineProperties(this, {
+                modified: {
+                    get: function get() {
+                        return this.canBeOrdered() && !equalsLists(this.originalOrder, this.children.map(function (endpoint) {
+                            return endpoint.name;
+                        }));
+                    }
+                },
+                orderable: {
+                    get: function get() {return this.hasClassName('orderable');},
+                    set: function set(value) {this.toggleClassName('orderable', value);}
+                },
+                type: {value: type}
+            });
+        }
 
         /**
          * [TODO: appendEndpoint description]
@@ -78,7 +72,7 @@
          * @returns {EndpointGroup}
          *      The instance on which the member is called.
          */
-        appendEndpoint: function appendEndpoint(wiringEndpoint) {
+        appendEndpoint(wiringEndpoint) {
             var endpoint = new ns.Endpoint(wiringEndpoint, this.component);
             var missingEndpoint = findFirstMissingEndpoint.call(this);
             var i;
@@ -100,7 +94,7 @@
             }
 
             return endpoint;
-        },
+        }
 
         /**
          * [TODO: canBeOrdered description]
@@ -108,9 +102,9 @@
          * @returns {Boolean}
          *      [TODO: description]
          */
-        canBeOrdered: function canBeOrdered() {
+        canBeOrdered() {
             return this.children.length > ns.EndpointGroup.MIN_LENGTH && !hasMissingEndpoints.call(this);
-        },
+        }
 
         /**
          * [TODO: getEndpoint description]
@@ -120,9 +114,9 @@
          * @returns {Endpoint}
          *      [TODO: description]
          */
-        getEndpoint: function getEndpoint(name) {
+        getEndpoint(name) {
             return this.endpoints[name];
-        },
+        }
 
         /**
          * [TODO: refresh description]
@@ -130,7 +124,7 @@
          * @returns {EndpointGroup}
          *      The instance on which the member is called.
          */
-        refresh: function refresh() {
+        refresh() {
             var name;
 
             for (name in this.endpoints) {
@@ -138,7 +132,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * [TODO: orderEndpoints description]
@@ -146,7 +140,7 @@
          * @returns {EndpointGroup}
          *      The instance on which the member is called.
          */
-        orderEndpoints: function orderEndpoints(newOrder) {
+        orderEndpoints(newOrder) {
 
             if (!this.canBeOrdered()) {
                 return this;
@@ -169,9 +163,9 @@
             }, this);
 
             return this;
-        },
+        }
 
-        removeChild: function removeChild(endpoint) {
+        removeChild(endpoint) {
             var index = this.originalOrder.indexOf(endpoint.name);
             var i;
 
@@ -187,7 +181,7 @@
             }
 
             return this;
-        },
+        }
 
         /**
          * [TODO: startOrdering description]
@@ -195,7 +189,7 @@
          * @returns {EndpointGroup}
          *      The instance on which the member is called.
          */
-        startOrdering: function startOrdering() {
+        startOrdering() {
 
             if (!this.canBeOrdered() || this.orderable) {
                 return this;
@@ -207,7 +201,7 @@
             }, this);
 
             return this;
-        },
+        }
 
         /**
          * [TODO: stopOrdering description]
@@ -215,7 +209,7 @@
          * @returns {EndpointGroup}
          *      The instance on which the member is called.
          */
-        stopOrdering: function stopOrdering() {
+        stopOrdering() {
 
             if (!this.orderable) {
                 return this;
@@ -227,7 +221,7 @@
             }, this);
 
             return this;
-        },
+        }
 
         /**
          * [TODO: toJSON description]
@@ -235,7 +229,7 @@
          * @returns {Array.<String>}
          *      [TODO: description]
          */
-        toJSON: function toJSON() {
+        toJSON() {
 
             if (this.modified) {
                 return this.children.map(function (endpoint) {
@@ -246,7 +240,9 @@
             return [];
         }
 
-    });
+    }
+    ns.EndpointGroup.MIN_LENGTH = 1;
+
 
     // =========================================================================
     // PRIVATE MEMBERS
@@ -332,7 +328,7 @@
                     new_index = context.group.children.length - 1;
                 }
 
-                if (new_index != endpoint.index) {
+                if (new_index !== endpoint.index) {
                     moveEndpoint.call(context.group, endpoint, new_index);
                 }
             },

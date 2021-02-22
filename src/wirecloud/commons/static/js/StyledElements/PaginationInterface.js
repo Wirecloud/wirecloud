@@ -22,15 +22,13 @@
 /* globals StyledElements */
 
 
-(function (utils) {
+(function (se, utils) {
 
     "use strict";
 
-    var builder, onPaginationChanged, updateButtons, updateLayout, PaginationInterface;
+    const builder = new StyledElements.GUIBuilder();
 
-    builder = new StyledElements.GUIBuilder();
-
-    onPaginationChanged = function onPaginationChanged(source) {
+    const onPaginationChanged = function onPaginationChanged(source) {
 
         if (this.autoHide && this.source.totalPages === 1) {
             this.wrapperElement.style.display = 'none';
@@ -44,7 +42,7 @@
         updateButtons.call(this);
     };
 
-    updateButtons = function updateButton() {
+    const updateButtons = function updateButton() {
         if (this.source.currentPage <= 1) {
             this.prevBtn.disable();
             this.firstBtn.disable();
@@ -62,72 +60,75 @@
         }
     };
 
-    updateLayout = function updateLayout(pattern) {
 
-        var elements = {
-            'firstBtn': this.firstBtn,
-            'prevBtn': this.prevBtn,
-            'nextBtn': this.nextBtn,
-            'lastBtn': this.lastBtn,
-            'currentPage': this.currentPageLabel,
-            'totalPages': this.totalPagesLabel,
-            'totalCount': this.totalCountLabel
-        };
-        var contents = builder.parse(pattern, elements);
-        this.wrapperContainer.appendChild(contents);
-    };
+    se.PaginationInterface = class PaginationInterface extends se.StyledElement {
 
-    PaginationInterface = function PaginationInterface(source, options) {
-        var defaultOptions = {
-            'layout': utils.gettext(builder.DEFAULT_OPENING + '<div class="se-input-group"><t:firstBtn/><t:prevBtn/><div class="se-box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></div>' + builder.DEFAULT_CLOSING),
-            'autoHide': false
-        };
-        options = utils.merge(defaultOptions, options);
-        this.autoHide = options.autoHide;
+        constructor(source, options) {
+            var defaultOptions = {
+                layout: utils.gettext(builder.DEFAULT_OPENING + '<div class="se-input-group"><t:firstBtn/><t:prevBtn/><div class="se-box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></div>' + builder.DEFAULT_CLOSING),
+                autoHide: false
+            };
+            options = utils.merge(defaultOptions, options);
+            super([]);
 
-        StyledElements.StyledElement.call(this, []);
+            this.autoHide = options.autoHide;
+            this.source = source;
 
-        this.source = source;
+            this.wrapperContainer = new StyledElements.Container({class: 'pagination'});
+            this.wrapperElement = this.wrapperContainer.wrapperElement;
 
-        this.wrapperContainer = new StyledElements.Container({class: 'pagination'});
-        this.wrapperElement = this.wrapperContainer.wrapperElement;
+            this.firstBtn = new StyledElements.Button({class: 'btn-first-page', iconClass: 'fa fa-step-backward fa-fw'});
+            this.firstBtn.addEventListener('click', source.goToFirst.bind(source));
 
-        this.firstBtn = new StyledElements.Button({class: 'btn-first-page', iconClass: 'fa fa-step-backward fa-fw'});
-        this.firstBtn.addEventListener('click', source.goToFirst.bind(source));
+            this.prevBtn = new StyledElements.Button({class: 'btn-previous-page', iconClass: 'fa fa-chevron-left fa-fw'});
+            this.prevBtn.addEventListener('click', source.goToPrevious.bind(source));
 
-        this.prevBtn = new StyledElements.Button({class: 'btn-previous-page', iconClass: 'fa fa-chevron-left fa-fw'});
-        this.prevBtn.addEventListener('click', source.goToPrevious.bind(source));
+            this.nextBtn = new StyledElements.Button({class: 'btn-next-page', iconClass: 'fa fa-chevron-right fa-fw'});
+            this.nextBtn.addEventListener('click', source.goToNext.bind(source));
 
-        this.nextBtn = new StyledElements.Button({class: 'btn-next-page', iconClass: 'fa fa-chevron-right fa-fw'});
-        this.nextBtn.addEventListener('click', source.goToNext.bind(source));
+            this.lastBtn = new StyledElements.Button({class: 'btn-last-page', iconClass: 'fa fa-step-forward fa-fw'});
+            this.lastBtn.addEventListener('click', source.goToLast.bind(source));
 
-        this.lastBtn = new StyledElements.Button({class: 'btn-last-page', iconClass: 'fa fa-step-forward fa-fw'});
-        this.lastBtn.addEventListener('click', source.goToLast.bind(source));
+            this.currentPageLabel = document.createElement('span');
+            this.currentPageLabel.classList.add('current-page');
 
-        this.currentPageLabel = document.createElement('span');
-        this.currentPageLabel.classList.add('current-page');
+            this.totalPagesLabel = document.createElement('span');
+            this.totalPagesLabel.classList.add('total-pages');
 
-        this.totalPagesLabel = document.createElement('span');
-        this.totalPagesLabel.classList.add('total-pages');
+            this.totalCountLabel = document.createElement('span');
+            this.totalCountLabel.classList.add('total-count');
 
-        this.totalCountLabel = document.createElement('span');
-        this.totalCountLabel.classList.add('total-count');
+            this.layout = options.layout;
 
-        updateLayout.call(this, options.layout);
+            this.currentPageLabel.textContent = this.currentPage + 1;
+            this.totalPagesLabel.textContent = this.totalPages;
 
-        this.currentPageLabel.textContent = this.currentPage + 1;
-        this.totalPagesLabel.textContent = this.totalPages;
+            updateButtons.call(this);
 
-        updateButtons.call(this);
+            this.source.addEventListener('requestEnd', onPaginationChanged.bind(this));
+        }
 
-        this.source.addEventListener('requestEnd', onPaginationChanged.bind(this));
-    };
-    utils.inherit(PaginationInterface, StyledElements.StyledElement);
+        set layout(template) {
+            const elements = {
+                firstBtn: this.firstBtn,
+                prevBtn: this.prevBtn,
+                nextBtn: this.nextBtn,
+                lastBtn: this.lastBtn,
+                currentPage: this.currentPageLabel,
+                totalPages: this.totalPagesLabel,
+                totalCount: this.totalCountLabel
+            };
+            const contents = builder.parse(template, elements);
+            this.wrapperContainer.clear().appendChild(contents);
+        }
 
-    PaginationInterface.prototype.changeLayout = function changeLayout(newLayout) {
-        updateLayout.call(this, newLayout);
-    };
+        /**
+         * @deprecated
+         */
+        changeLayout(template) {
+            this.layout = template;
+        }
 
-    StyledElements.PaginationInterface = PaginationInterface;
+    }
 
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

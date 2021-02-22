@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,48 +31,48 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    /**
-     * Creates a new instance of class OffCanvasLayout.
-     * @since 0.6
-     *
-     * @name StyledElements.OffCanvasLayout
-     * @constructor
-     * @extends {StyledElements.StyledElement}
-     *
-     * @param {Object} [options]
-     * @param {String} [options.sideway='left']
-     */
-    se.OffCanvasLayout = function OffCanvasLayout(options) {
-        se.StyledElement.call(this, ['slideIn', 'slideOut']);
+    se.OffCanvasLayout = class OffCanvasLayout extends se.StyledElement {
 
-        options = utils.merge({
-            sideway: 'left'
-        }, options);
+        /**
+         * Creates a new instance of class OffCanvasLayout.
+         * @since 0.6
+         *
+         * @name StyledElements.OffCanvasLayout
+         * @constructor
+         * @extends {StyledElements.StyledElement}
+         *
+         * @param {Object} [options]
+         * @param {String} [options.sideway='left']
+         */
+        constructor(options) {
+            super(['slideIn', 'slideOut']);
 
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'se-offcanvas ' + options.sideway + '-sideway';
+            options = utils.merge({
+                sideway: 'left'
+            }, options);
 
-        Object.defineProperties(this, {
-            slipped: {
-                get: function get() {return this.hasClassName('slipped');}
-            },
-            sidebar: {value: new se.Container({class: 'se-offcanvas-sidebar'})},
-            content: {value: new se.Container({class: 'se-offcanvas-content'})}
-        });
+            this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = 'se-offcanvas ' + options.sideway + '-sideway';
 
-        this.index = -1;
+            Object.defineProperties(this, {
+                slipped: {
+                    get: function get() {return this.hasClassName('slipped');}
+                },
+                sidebar: {value: new se.Container({class: 'se-offcanvas-sidebar'})},
+                content: {value: new se.Container({class: 'se-offcanvas-content'})}
+            });
 
-        this.sidebar.appendTo(this.wrapperElement);
-        this.content.appendTo(this.wrapperElement);
-    };
+            this.index = -1;
 
-    utils.inherit(se.OffCanvasLayout, se.StyledElement, /** @lends StyledElements.OffCanvasLayout.prototype */ {
+            this.sidebar.appendTo(this.wrapperElement);
+            this.content.appendTo(this.wrapperElement);
+        };
 
         /**
          * @param {StyledElements.StyledElement} element
          * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
          */
-        appendChild: function appendChild(element) {
+        appendChild(element) {
             this.sidebar.appendChild(element);
 
             if (this.index < 0) {
@@ -79,9 +80,9 @@
             }
 
             return this;
-        },
+        }
 
-        repaint: function repaint() {
+        repaint() {
 
             if (this.slipped) {
                 this.sidebar.repaint();
@@ -89,13 +90,13 @@
 
             this.content.repaint();
             return this;
-        },
+        }
 
         /**
          * @param {Number} [index]
          * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
          */
-        slideIn: function slideIn(index) {
+        slideIn(index) {
             var element;
 
             if (this.sidebar.children.length) {
@@ -113,13 +114,13 @@
             this.toggleClassName('slipped', true);
 
             return this.dispatchEvent('slideIn', element);
-        },
+        }
 
         /**
          * @param {Number} [index]
          * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
          */
-        slideOut: function slideOut(index) {
+        slideOut(index) {
 
             if (typeof index === 'number') {
                 this.index = index;
@@ -130,6 +131,6 @@
             return this.dispatchEvent('slideOut');
         }
 
-    });
+    }
 
 })(StyledElements, StyledElements.Utils);

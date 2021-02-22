@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,69 +27,65 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.ComponentGroup = class ComponentGroup extends se.StyledElement {
 
-    ns.ComponentGroup = function ComponentGroup(resource, title) {
-        se.StyledElement.call(this, events);
+        constructor(resource, title) {
+            super(events);
 
-        title = title || utils.gettext("Create");
+            title = title || utils.gettext("Create");
 
-        this.titleElement = document.createElement('span');
-        this.tooltip = new se.Tooltip();
-        this.tooltip.bind(this.titleElement);
+            this.titleElement = document.createElement('span');
+            this.tooltip = new se.Tooltip();
+            this.tooltip.bind(this.titleElement);
 
-        this.imageElement = document.createElement('img');
-        this.imageElement.onerror = image_onerror.bind(this);
+            this.imageElement = document.createElement('img');
+            this.imageElement.onerror = image_onerror.bind(this);
 
-        var version = new se.Select({
-            initialValue: resource.version,
-            initialEntries: orderVersions([resource.version].concat(resource.others))
-        });
-        version.addEventListener('change', version_onchange.bind(this));
+            var version = new se.Select({
+                initialValue: resource.version,
+                initialEntries: orderVersions([resource.version].concat(resource.others))
+            });
+            version.addEventListener('change', version_onchange.bind(this));
 
-        var button = new se.Button({
-            class: 'btn-create wc-create-resource-component',
-            title: title,
-            iconClass: 'fa fa-plus'
-        });
-        button.addEventListener('click', function () {
-            this.dispatchEvent('btncreate.click', button);
-        }.bind(this));
+            var button = new se.Button({
+                class: 'btn-create wc-create-resource-component',
+                title: title,
+                iconClass: 'fa fa-plus'
+            });
+            button.addEventListener('click', function () {
+                this.dispatchEvent('btncreate.click', button);
+            }.bind(this));
 
-        this.descriptionElement = document.createElement('div');
-        this.descriptionElement.className = "text-muted";
+            this.descriptionElement = document.createElement('div');
+            this.descriptionElement.className = "text-muted";
 
-        this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/wiring/component_group'], {
-            title: this.titleElement,
-            image: this.imageElement,
-            versionselect: version,
-            createbutton: button,
-            vendor: resource.vendor,
-            description: this.descriptionElement
-        }).children[1];
+            this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates['wirecloud/wiring/component_group'], {
+                title: this.titleElement,
+                image: this.imageElement,
+                versionselect: version,
+                createbutton: button,
+                vendor: resource.vendor,
+                description: this.descriptionElement
+            }).children[1];
 
-        this.components = {};
+            this.components = {};
 
-        Object.defineProperties(this, {
-            id: {value: resource.vendor + "/" + resource.name}
-        });
+            Object.defineProperties(this, {
+                id: {value: resource.vendor + "/" + resource.name}
+            });
 
-        this.wrapperElement.setAttribute('data-id', this.id);
-        version_onchange.call(this, version);
-    };
+            this.wrapperElement.setAttribute('data-id', this.id);
+            version_onchange.call(this, version);
+        }
 
-    utils.inherit(ns.ComponentGroup, se.StyledElement, {
-
-        addComponent: function addComponent(component) {
+        addComponent(component) {
             if (!(component.id in this.components)) {
                 this.components[component.id] = component.appendTo(this.wrapperElement);
             }
             return this;
         }
 
-    });
+    }
 
     // =========================================================================
     // PRIVATE MEMBERS

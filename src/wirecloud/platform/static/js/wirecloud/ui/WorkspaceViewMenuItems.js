@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,33 +27,25 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    ns.WorkspaceViewMenuItems = class WorkspaceViewMenuItems extends se.DynamicMenuItems {
 
-    ns.WorkspaceViewMenuItems = function WorkspaceViewMenuItems(workspace) {
-        se.DynamicMenuItems.call(this);
+        constructor(workspace) {
+            super();
 
-        Object.defineProperties(this, {
-            workspace: {
-                value: workspace
-            }
-        });
-    };
-
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    utils.inherit(ns.WorkspaceViewMenuItems, se.DynamicMenuItems, {
+            Object.defineProperties(this, {
+                workspace: {
+                    value: workspace
+                }
+            });
+        }
 
         /**
          * @override
          */
-        build: function build() {
-            var item, items;
+        build() {
+            let item;
 
-            items = [];
+            const items = [];
 
             item = new se.MenuItem(utils.gettext("New workspace"), function () {
                 (new Wirecloud.ui.NewWorkspaceWindowMenu()).show();
@@ -124,10 +116,6 @@
             return items;
         }
 
-    });
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
+    }
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

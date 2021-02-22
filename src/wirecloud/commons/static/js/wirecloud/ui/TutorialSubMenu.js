@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,20 +27,18 @@
 
     "use strict";
 
-    var TutorialSubMenu = function TutorialSubMenu() {
-        var i, tutorial;
+    Wirecloud.ui.TutorialSubMenu = class TutorialSubMenu extends StyledElements.SubMenuItem {
 
-        StyledElements.SubMenuItem.call(this, utils.gettext('Tutorials'));
+        constructor() {
+            super(utils.gettext('Tutorials'));
 
-        this.menuitem.addIconClass('fa fa-map-o');
+            this.menuitem.addIconClass('far fa-map');
 
-        for (i = 0; i < Wirecloud.TutorialCatalogue.tutorials.length; i++) {
-            tutorial = Wirecloud.TutorialCatalogue.tutorials[i];
-            this.append(new StyledElements.MenuItem(tutorial.label, tutorial.start.bind(tutorial)));
+            Wirecloud.TutorialCatalogue.tutorials.forEach((tutorial) => {
+                this.append(new StyledElements.MenuItem(tutorial.label, tutorial.start.bind(tutorial)));
+            });
         }
-    };
-    TutorialSubMenu.prototype = new StyledElements.SubMenuItem();
 
-    Wirecloud.ui.TutorialSubMenu = TutorialSubMenu;
+    }
 
 })(Wirecloud.Utils);

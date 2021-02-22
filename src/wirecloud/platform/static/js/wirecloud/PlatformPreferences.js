@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,26 +23,29 @@
 /* globals Wirecloud */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
     /**
      *
      */
-    var PlatformPreferences = function PlatformPreferences(definitions, values) {
-        Wirecloud.Preferences.call(this, definitions, values);
-    };
-    utils.inherit(PlatformPreferences, Wirecloud.Preferences);
+    ns.PlatformPreferences = class PlatformPreferences extends ns.Preferences {
 
-    PlatformPreferences.prototype.buildTitle = function buildTitle() {
-        return utils.gettext("Platform Preferences");
-    };
+        /**
+         * @override
+         */
+        buildTitle() {
+            return utils.gettext("Platform Preferences");
+        }
 
-    PlatformPreferences.prototype._build_save_url = function _build_save_url() {
-        return Wirecloud.URLs.PLATFORM_PREFERENCES;
-    };
+        /**
+         * @override
+         */
+        _build_save_url() {
+            return Wirecloud.URLs.PLATFORM_PREFERENCES;
+        }
 
-    Wirecloud.PlatformPreferences = PlatformPreferences;
+    }
 
-})(Wirecloud.Utils);
+})(Wirecloud, Wirecloud.Utils);

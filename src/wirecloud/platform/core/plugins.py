@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
-# Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
+# Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -125,6 +125,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterface.js',
     'js/StyledElements/TextInputInterface.js',
     'js/StyledElements/InputInterfaces.js',
+    'js/StyledElements/MultivaluedInputInterface.js',
     'js/wirecloud/ui/ParametrizableValueInputInterface.js',
     'js/wirecloud/ui/ParametrizedTextInputInterface.js',
     'js/wirecloud/ui/LayoutInputInterface.js',
@@ -531,8 +532,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/WorkspaceTabViewDragboard.js',
                 'js/wirecloud/ui/MyResourcesView.js',
                 'js/wirecloud/ui/MarketplaceView.js',
-                'js/catalogue/CatalogueSearchView.js',
-                'js/catalogue/CatalogueView.js',
+                'js/wirecloud/ui/CatalogueSearchView.js',
+                'js/wirecloud/ui/CatalogueView.js',
                 'js/wirecloud/ui/WidgetViewDraggable.js',
                 'js/wirecloud/DragboardPosition.js',
                 'js/wirecloud/ui/DragboardCursor.js',
@@ -551,7 +552,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js',
                 'js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/AlertWindowMenu.js',
-                'js/wirecloud/ui/ExternalProcessWindowMenu.js',
                 'js/wirecloud/ui/HTMLWindowMenu.js',
                 'js/wirecloud/Widget/PreferencesWindowMenu.js',
                 'js/wirecloud/ui/MissingDependenciesWindowMenu.js',

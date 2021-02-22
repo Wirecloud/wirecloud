@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -1050,7 +1051,7 @@
     };
 
     var mock_meta = function mock_meta(object, name) {
-        object[name] = jasmine.createSpy(name).and.callFake(function (data) {
+        spyOn(object, name).and.callFake(function (data) {
             this.type = data.type;
             this.vendor = data.vendor;
             this.name = data.name;
