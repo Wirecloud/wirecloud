@@ -11,12 +11,30 @@ features.
 
 **Contents**
 
+-   [Ground rules & expectations](#ground-rules--expectations)
 -   [Using the issue tracker](#using-the-issue-tracker)
 -   [Bug reports](#bug-reports)
 -   [Feature requests](#feature-requests)
 -   [Contributing code](#contributing-code)
     -   [Code Guidelines](#code-guidelines)
     -   [Code style git hooks](#code-style-git-hooks)
+
+## Ground rules & expectations
+
+Before we get started, here are a few things we expect from you (and that you should expect from others):
+
+-   Be kind and thoughtful in your conversations around this project. We all come from different backgrounds and
+    projects, which means we likely have different perspectives on "how open source is done." Try to listen to others
+    rather than convince them that your way is correct.
+-   This project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md). By participating in this
+    project, you agree to abide by its terms.
+-   If you open a pull request, you must sign the
+    [Individual Contributor License Agreement](https://fiware.github.io/contribution-requirements/individual-cla.pdf) by
+    stating in a comment _"I have read the CLA Document and I hereby sign the CLA"_
+-   Please ensure that your contribution passes all tests. If there are test failures, you will need to address them
+    before we can merge your contribution.
+-   When adding content, please consider if it is widely valuable. Please don't add references or links to things you or
+    your employer have created as others will do so if they appreciate it.
 
 ## Using the issue tracker
 
@@ -219,3 +237,12 @@ pre-commit install
 ```
 
 Now `pre-commit` will run automatically on `git commit`!
+
+## Community
+
+Discussions about the Open Source Guides take place on this repository's
+[Issues](https://github.com/Wirecloud/wirecloud/issues) and [Pull Requests](https://github.com/Wirecloud/wirecloud/pulls)
+sections. Anybody is welcome to join these conversations.
+
+Wherever possible, do not take these conversations to private channels, including contacting the maintainers directly.
+Keeping communication public means everybody can benefit and learn from the conversation.
