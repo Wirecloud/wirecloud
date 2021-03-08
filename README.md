@@ -16,6 +16,7 @@
 [![Tests](https://github.com/Wirecloud/wirecloud/workflows/Tests/badge.svg)](https://github.com/Wirecloud/wirecloud/actions?query=workflow%3A%22Tests%22)
 [![Coverage Status](https://coveralls.io/repos/github/Wirecloud/wirecloud/badge.svg?branch=develop)](https://coveralls.io/github/Wirecloud/wirecloud?branch=develop)
 ![Status](https://nexus.lab.fiware.org/static/badges/statuses/wirecloud.svg)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4479/badge)](https://bestpractices.coreinfrastructure.org/projects/4479)
 
 WireCloud builds on cutting-edge end-user development, RIA and semantic
 technologies to offer a next-generation end-user centred web application mashup
