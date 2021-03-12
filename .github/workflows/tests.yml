@@ -157,7 +157,7 @@ jobs:
         uses: AndreMiras/coveralls-python-action@develop
         with:
           github-token: ${{ secrets.github_token }}
-          flag-name: django-elasticsearch-tests
+          flag-name: django-search-indexes-tests-${{ matrix.engine }}
           base-path: src
           parallel: true
 
