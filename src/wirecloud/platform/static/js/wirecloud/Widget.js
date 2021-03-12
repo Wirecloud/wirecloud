@@ -280,45 +280,50 @@
             };
 
             this.contextManager = new Wirecloud.ContextManager(this, {
-                'title': {
+                title: {
                     label: utils.gettext("Title"),
                     description: utils.gettext("Widget's title"),
                     value: data.title
                 },
-                'xPosition': {
+                xPosition: {
                     label: utils.gettext("X-Position"),
                     description: utils.gettext("Specifies the x-coordinate at which the widget is placed"),
                     value: data.left
                 },
-                'yPosition': {
+                yPosition: {
                     label: utils.gettext("Y-Position"),
                     description: utils.gettext("Specifies the y-coordinate at which the widget is placed"),
                     value: data.top
                 },
-                'zPosition': {
+                zPosition: {
                     label: utils.gettext("Z-Position"),
                     description: utils.gettext("Specifies the z-coordinate at which the widget is placed"),
                     value: data.zIndex
                 },
-                'height': {
+                height: {
                     label: utils.gettext("Height"),
                     description: utils.gettext("Widget's height in layout cells"),
                     value: data.height
                 },
-                'width': {
+                width: {
                     label: utils.gettext("Width"),
                     description: utils.gettext("Widget's width in layout cells"),
                     value: data.width
                 },
-                'heightInPixels': {
+                heightInPixels: {
                     label: utils.gettext("Height in pixels (deprecated)"),
                     description: utils.gettext("Widget's height in pixels"),
                     value: 0
                 },
-                'widthInPixels': {
+                widthInPixels: {
                     label: utils.gettext("Width in pixels"),
                     description: utils.gettext("Widget's width in pixels"),
                     value: 0
+                },
+                volatile: {
+                    label: utils.gettext("Volatile"),
+                    description: utils.gettext("Volatile status of the widget"),
+                    value: this.volatile
                 }
             });
 
