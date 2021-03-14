@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,20 +23,24 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (ns) {
 
     "use strict";
 
-    var EndpointValueError = function EndpointValueError(message) {
-        this.name = "EndpointValueError";
-        this.message = message || "";
-    };
-    EndpointValueError.prototype = new Error();
-    EndpointValueError.prototype.constructor = EndpointValueError;
+    ns.EndpointValueError = class EndpointValueError extends Error {
 
-    Object.freeze(EndpointValueError.prototype);
-    Object.freeze(EndpointValueError);
+        constructor(message) {
+            super(message);
 
-    Wirecloud.wiring.EndpointValueError = EndpointValueError;
+            this.name = "EndpointValueError";
+            this.message = message || "";
 
-})();
+            // Maintains proper stack trace for where our error was thrown (only available on V8)
+            if (Error.captureStackTrace) {
+                Error.captureStackTrace(this, this.constructor);
+            }
+        }
+
+    }
+
+})(Wirecloud.wiring);

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -135,13 +135,13 @@
                 } else if (this.inputElement.options.length > 0) {
                     newValue = this.inputElement.options[0].value;
                 } else {
-                    StyledElements.InputElement.prototype.setValue.call(this, '');
+                    super.setValue('');
                     this.textDiv.textContent = '';
                     return;
                 }
             }
 
-            StyledElements.InputElement.prototype.setValue.call(this, newValue);
+            super.setValue(newValue);
             this.textDiv.textContent = this.optionsByValue[newValue];
         }
 
@@ -221,7 +221,7 @@
             delete this._onfocus;
             delete this._onblur;
 
-            StyledElements.InputElement.prototype.destroy.call(this);
+            super.destroy();
         }
 
     }

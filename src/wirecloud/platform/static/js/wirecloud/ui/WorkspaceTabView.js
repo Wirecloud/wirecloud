@@ -258,7 +258,7 @@
         }
 
         show() {
-            se.Tab.prototype.show.call(this);
+            super.show(this);
 
             if (this.workspace.editing) {
                 this.dragboard.leftLayout.active = true;

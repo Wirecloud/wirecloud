@@ -1,6 +1,6 @@
 /*
  *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -99,32 +99,36 @@
         return response;
     };
 
-    var Response = function Response(request) {
-        Object.defineProperties(this, {
-            'request': {value: request},
-            'transport': {value: request.transport},
-            'status': {value: request.transport.status},
-            'statusText': {value: request.transport.statusText},
-            'response': {value: request.transport.response}
-        });
+    const Response = class Response {
 
-        if (request.options.responseType == null || request.options.responseType === '') {
+        constructor(request) {
             Object.defineProperties(this, {
-                'responseText': {value: request.transport.responseText},
-                'responseXML': {value: request.transport.responseXML}
+                'request': {value: request},
+                'transport': {value: request.transport},
+                'status': {value: request.transport.status},
+                'statusText': {value: request.transport.statusText},
+                'response': {value: request.transport.response}
             });
+
+            if (request.options.responseType == null || request.options.responseType === '') {
+                Object.defineProperties(this, {
+                    'responseText': {value: request.transport.responseText},
+                    'responseXML': {value: request.transport.responseXML}
+                });
+            }
         }
-    };
 
-    Response.prototype.getHeader = function getHeader(name) {
-        try {
-            return this.transport.getResponseHeader(name);
-        } catch (e) { return null; }
-    };
+        getHeader(name) {
+            try {
+                return this.transport.getResponseHeader(name);
+            } catch (e) { return null; }
+        }
 
-    Response.prototype.getAllResponseHeaders = function getAllResponseHeaders() {
-        return this.transport.getAllResponseHeaders();
-    };
+        getAllResponseHeaders() {
+            return this.transport.getAllResponseHeaders();
+        }
+
+    }
 
     var toQueryString = function toQueryString(parameters) {
         var key, query = [];
@@ -157,7 +161,7 @@
         }
     };
 
-    var Request = class Request extends Wirecloud.Task {
+    const Request = class Request extends Wirecloud.Task {
 
         constructor(url, options) {
             options = utils.merge({
@@ -261,7 +265,7 @@
 
     }
 
-    var io = {};
+    const io = {};
 
     /**
      * Error raised if there are problems connecting to the server. Browsers

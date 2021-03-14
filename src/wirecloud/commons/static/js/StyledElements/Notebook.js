@@ -267,7 +267,7 @@
                         const cont = stepFunc(context.step, context);
 
                         if (cont) {
-                            const timeDiff = stepTimes[context.step] - (new Date()).getTime();
+                            let timeDiff = stepTimes[context.step] - (new Date()).getTime();
                             if (timeDiff < 0) {
                                 timeDiff = 0;
                             }

@@ -73,7 +73,7 @@ Wirecloud.ui = Wirecloud.ui || {};
          */
         _onhidden(hidden) {
 
-            se.Alternative.prototype._onhidden.call(this, hidden);
+            super._onhidden(hidden);
 
             if (hidden) {
                 this.unload();

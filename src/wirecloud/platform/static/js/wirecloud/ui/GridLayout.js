@@ -412,7 +412,7 @@
         addWidget(widget, affectsDragboard) {
             var affectedwidgets = new Set();
 
-            Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, widget, affectsDragboard);
+            super.addWidget(widget, affectsDragboard);
 
             if (!this.initialized) {
                 return affectedwidgets;
@@ -449,7 +449,7 @@
          */
         removeWidget(widget, affectsDragboard) {
             this._removeFromMatrix(this._buffers.base, widget);
-            Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
+            super.removeWidget(widget, affectsDragboard);
             return new Set();
         }
 

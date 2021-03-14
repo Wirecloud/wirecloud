@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -109,7 +110,7 @@
             this.titletooltip.options.content = title;
             this.titletooltip.bind(span);
 
-            return se.Panel.prototype.setTitle.call(this, span);
+            return super.setTitle(span);
         }
 
         showLogs() {

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -285,7 +285,7 @@
                 data[fieldId] = field.getValue();
             }
             return data;
-        };
+        }
 
         /**
          * Sets the value for the fields of this form as a whole. If data is null
@@ -320,7 +320,7 @@
             }
 
             return this;
-        };
+        }
 
         /**
          * Updates the values of the fields managed by this form.
@@ -348,7 +348,7 @@
             }
 
             return this;
-        };
+        }
 
         is_valid() {
             // Validate input fields
@@ -371,7 +371,7 @@
             // Show error message if needed
             setMsgs.call(this, errorMsgs);
             return errorMsgs.length === 0;
-        };
+        }
 
         /**
          * Resets form values using the initial values
@@ -380,7 +380,7 @@
          */
         reset() {
             return this.setData();
-        };
+        }
 
         /**
          * Resets form values using the default values
@@ -397,7 +397,7 @@
             }
 
             return this;
-        };
+        }
 
         destroy() {
             var i = 0;
@@ -426,7 +426,7 @@
                 this.cancelButton.destroy();
                 this.cancelButton = null;
             }
-        };
+        }
 
         /**
          * Enables/disables this Form
@@ -451,7 +451,7 @@
             if (this.cancelButton != null) {
                 this.cancelButton.enabled = enabled;
             }
-        };
+        }
 
         /**
          * Focus this Form
@@ -468,16 +468,16 @@
             }
 
             return this;
-        };
+        }
 
         displayMessage(message) {
             setMsgs.call(this, [message]);
-        };
+        }
 
         insertInto(element, refElement) {
-            StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
+            super.insertInto(element, refElement);
             this.repaint();
-        };
+        }
 
     }
 
