@@ -72,7 +72,6 @@ TUTORIAL_FILES = (
 )
 
 SHIM_FILES = (
-    'js/wirecloud/shims/string.js',
     'js/wirecloud/shims/classList.js',
 )
 
