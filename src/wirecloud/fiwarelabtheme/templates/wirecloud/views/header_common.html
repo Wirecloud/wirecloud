@@ -16,9 +16,8 @@
                 <img alt="FIWARE" class="fiware-logo" src="{% theme_static "images/logos/header.png" %}" />
             </a>
             {% endif %}
-        </div>
-        <div id="wc-user-menu" class="user-menu nav pull-right"></div>
-        <nav class="navbar-collapse collapse">
+        </div><nav class="collapse">
+            <div id="wc-user-menu" class="user-menu nav pull-right"></div>
             <ul class="nav navbar-nav">
                 {% for portal in FIWARE_PORTALS %}{% if portal.display != False %}<li {% ifinternalurl portal.url %}class="active"{% endifinternalurl %}>
                 <a href="{{ portal.url }}">{{ portal.name }}</a>

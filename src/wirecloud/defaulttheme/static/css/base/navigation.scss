@@ -15,12 +15,7 @@ header.navbar .container-fluid {
   box-sizing: border-box;
 }
 
-.navbar-collapse {
-    padding-bottom: $line-height-base;
-}
-
 .navbar-nav {
-    clear: both;
     margin: ($navbar-padding-vertical / 2) -$navbar-padding-horizontal;
 
     > li > a {
@@ -28,6 +23,11 @@ header.navbar .container-fluid {
         padding-bottom: 10px;
         line-height: $line-height-base;
     }
+}
+
+.navbar-nav {
+    float: left;
+    margin: 0;
 }
 
 .navbar-right {
@@ -40,7 +40,6 @@ header.navbar .container-fluid {
     margin-bottom: 0;
     list-style: none;
     display: flex;
-    flex-direction: column;
 
     > li {
         position: relative;
@@ -87,33 +86,4 @@ header.navbar .container-fluid {
     min-height: 1px;
     padding-right: $grid-gutter-width/2;
     padding-left: $grid-gutter-width/2;
-}
-
-.collapse {
-    display: none;
-
-    &.in {
-        display: block;
-    }
-}
-
-@media (min-width: 768px) {
-
-    .collapse {
-        display: block;
-    }
-
-    .navbar-toggle {
-        display: none;
-    }
-
-    .navbar-collapse {
-        padding-bottom: 0px;
-    }
-
-    .navbar-nav {
-        clear: none;
-        flex-direction: row;
-    }
-
 }
