@@ -58,41 +58,6 @@
         this.currentView = null;
         Wirecloud.addEventListener("contextloaded", this._initUserMenu.bind(this));
         Wirecloud.addEventListener("viewcontextchanged", this.refresh.bind(this));
-
-        // Add support for collapsing and expanding the header
-        document.querySelectorAll('.wc-header-collapse').forEach((element) => {
-            element.addEventListener("click", (button) => {
-                this.wrapperElement.style.height = this.wrapperElement.clientHeight + "px";
-                setTimeout(() => {
-                    this.wrapperElement.classList.add('collapsing');
-                    this.wrapperElement.classList.add('collapsed');
-                    document.querySelectorAll("#wc-collapsed-bar").forEach((element) => {
-                        element.classList.add('collapsing');
-                        element.classList.add('collapsed');
-                    });
-                }, 20);
-            });
-        });
-        document.querySelectorAll('.wc-header-expand').forEach((element) => {
-            element.addEventListener("click", (button) => {
-                this.wrapperElement.classList.add('expanding');
-                this.wrapperElement.classList.remove('collapsed');
-                document.querySelectorAll("#wc-collapsed-bar").forEach((element) => {
-                    element.classList.add('expanding');
-                    element.classList.remove('collapsed');
-                });
-            });
-        });
-        this.wrapperElement.addEventListener('transitionend', (e) => {
-            if (!this.wrapperElement.classList.contains("collapsed")) {
-                this.wrapperElement.style.height = "";
-            }
-            document.querySelectorAll('.collapsing, .expanding').forEach((element) => {
-                element.classList.remove("collapsing");
-                element.classList.remove("expanding");
-            });
-            Wirecloud.UserInterfaceManager.alternatives.repaint();
-        }, true);
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
