@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of ngsijs.
  *
@@ -49,7 +49,7 @@
      */
     var NGSI;
 
-    var privates = new WeakMap();
+    const privates = new WeakMap();
 
     /* Detect Node.js */
     /* istanbul ignore if */
@@ -266,11 +266,30 @@
             ENTITY_ATTR_VALUE_ENTRY: 'v2/entities/%(entityId)s/attrs/%(attribute)s/value',
             ENTITY_COLLECTION: 'v2/entities',
             ENTITY_ENTRY: 'v2/entities/%(entityId)s',
+            REGISTRATION_COLLECTION: 'v2/registrations',
+            REGISTRATION_ENTRY: 'v2/registrations/%(registrationId)s',
             SUBSCRIPTION_COLLECTION: 'v2/subscriptions',
             SUBSCRIPTION_ENTRY: 'v2/subscriptions/%(subscriptionId)s',
             TYPE_COLLECTION: 'v2/types',
             TYPE_ENTRY: 'v2/types/%(typeId)s'
+        },
+
+        ld: {
+            ENTITY_ATTR_ENTRY: 'ngsi-ld/v1/entities/%(entityId)s/attrs/%(attribute)s',
+            ENTITY_COLLECTION: 'ngsi-ld/v1/entities',
+            ENTITY_ENTRY: 'ngsi-ld/v1/entities/%(entityId)s',
+            ENTITY_ATTRS_COLLECTION: 'ngsi-ld/v1/entities/%(entityId)s/attrs',
+            SUBSCRIPTION_COLLECTION: 'ngsi-ld/v1/subscriptions',
+            SUBSCRIPTION_ENTRY: 'ngsi-ld/v1/subscriptions/%(subscriptionId)s',
+            TEMPORAL_ENTITY_ATTRS_COLLECTION: 'ngsi-ld/v1/temporal/entities/%(entityId)s/attrs',
+            TEMPORAL_ENTITY_ATTRS_ENTRY: 'ngsi-ld/v1/temporal/entities/%(entityId)s/attrs/%(attribute)s',
+            TEMPORAL_ENTITY_ATTRS_INSTANCE_ENTRY: 'ngsi-ld/v1/temporal/entities/%(entityId)s/attrs/%(attribute)s/%(instanceId)s',
+            TEMPORAL_ENTITY_COLLECTION: 'ngsi-ld/v1/temporal/entities',
+            TEMPORAL_ENTITY_ENTRY: 'ngsi-ld/v1/temporal/entities/%(entityId)s',
+            TYPE_COLLECTION: 'ngsi-ld/v1/types',
+            TYPE_ENTRY: 'ngsi-ld/v1/types/%(typeId)s'
         }
+
     };
 
     NGSI.proxy_endpoints = {
@@ -280,14 +299,14 @@
 
     /* Request utility functions */
 
-    var interpolate = function interpolate(pattern, attributes) {
+    const interpolate = function interpolate(pattern, attributes) {
         return pattern.replace(/%\(\w+\)s/g,
             function (match) {
                 return String(attributes[match.slice(2, -2)]);
             });
     };
 
-    var makeJSONRequest = function makeJSONRequest(url, payload, parse_func, callbacks, parameters) {
+    const makeJSONRequest = function makeJSONRequest(url, payload, parse_func, callbacks, parameters) {
         var body = null, contentType = null, requestHeaders;
 
         if (payload != null) {
@@ -361,7 +380,7 @@
         );
     };
 
-    var deleteHeader = function deleteHeader(headerName, requestHeaders) {
+    const deleteHeader = function deleteHeader(headerName, requestHeaders) {
         var headerNameLow = headerName.trim().toLowerCase();
         var keys = Object.keys(requestHeaders);
         var index = keys.map(function (headerName) {
@@ -372,14 +391,18 @@
         }
     };
 
-    var makeJSONRequest2 = function makeJSONRequest2(url, options) {
+    const makeJSONRequest2 = function makeJSONRequest2(url, options) {
         if (options.postBody != null) {
-            options.contentType = 'application/json';
+            if (options.contentType == null) {
+                options.contentType = 'application/json';
+            }
             options.postBody = JSON.stringify(options.postBody);
         }
 
         var requestHeaders = JSON.parse(JSON.stringify(this.headers));
-        requestHeaders.Accept = 'application/json';
+        if (requestHeaders.Accept == null) {
+            requestHeaders.Accept = 'application/json';
+        }
 
         for (var headerName in options.requestHeaders) {
             if (options.requestHeaders[headerName] != null) {
@@ -406,7 +429,7 @@
         );
     };
 
-    var ngsi_build_entity_id_element_json = function ngsi_build_entity_id_element_json(entity) {
+    const ngsi_build_entity_id_element_json = function ngsi_build_entity_id_element_json(entity) {
         var entityId, isPattern;
 
         isPattern = (typeof entity.isPattern === 'string' && entity.isPattern.trim().toLowerCase() === 'true') || (entity.isPattern === true);
@@ -422,7 +445,7 @@
         return entityId;
     };
 
-    var ngsi_build_scope_restriction_element_json = function ngsi_build_scope_restriction_element_json(scope) {
+    const ngsi_build_scope_restriction_element_json = function ngsi_build_scope_restriction_element_json(scope) {
         var result, i, vertice;
 
         if ('polygon' in scope.value) {
@@ -459,7 +482,7 @@
         return result;
     };
 
-    var ngsi_build_restriction_element_json = function ngsi_build_restriction_element_json(restriction) {
+    const ngsi_build_restriction_element_json = function ngsi_build_restriction_element_json(restriction) {
         var result, i;
 
         result = {
@@ -478,7 +501,7 @@
         return result;
     };
 
-    var ngsi_build_attribute_metadata_element = function ngsi_build_attribute_metadata_element(metadata) {
+    const ngsi_build_attribute_metadata_element = function ngsi_build_attribute_metadata_element(metadata) {
         var result, i;
 
         result = [];
@@ -495,7 +518,7 @@
 
     /* Request builders */
 
-    var ngsi_build_register_context_request = function ngsi_build_register_context_request(e, attr, duration, providingApplication, regId) {
+    const ngsi_build_register_context_request = function ngsi_build_register_context_request(e, attr, duration, providingApplication, regId) {
         var doc, i, attribute, attributeElement;
 
         doc = {
@@ -534,7 +557,7 @@
         return doc;
     };
 
-    var ngsi_build_query_context_request = function ngsi_build_query_context_request(e, attrNames, restriction) {
+    const ngsi_build_query_context_request = function ngsi_build_query_context_request(e, attrNames, restriction) {
         var body, i;
 
         body = {
@@ -560,7 +583,7 @@
         return body;
     };
 
-    var ngsi_build_update_context_request = function ngsi_build_update_context_request(updateAction, update) {
+    const ngsi_build_update_context_request = function ngsi_build_update_context_request(updateAction, update) {
         var body, i, j, contextElement, attributeListElement, attributes,
             attribute, attributeElement, value;
 
@@ -615,7 +638,7 @@
         return body;
     };
 
-    var ngsi_build_discover_context_availability_request = function ngsi_build_discover_context_availability_request(e, attr) {
+    const ngsi_build_discover_context_availability_request = function ngsi_build_discover_context_availability_request(e, attr) {
         var doc, i;
 
         doc = {
@@ -630,7 +653,7 @@
         return doc;
     };
 
-    var ngsi_build_subscribe_update_context_availability_request = function ngsi_build_subscribe_update_context_availability_request(e, attr, duration, restriction, subscriptionId, onNotify) {
+    const ngsi_build_subscribe_update_context_availability_request = function ngsi_build_subscribe_update_context_availability_request(e, attr, duration, restriction, subscriptionId, onNotify) {
         var doc, i;
 
         if (subscriptionId) {
@@ -664,13 +687,13 @@
         return doc;
     };
 
-    var ngsi_build_unsubscribe_context_availability_request = function ngsi_build_unsubscribe_context_availability_request(subId) {
+    const ngsi_build_unsubscribe_context_availability_request = function ngsi_build_unsubscribe_context_availability_request(subId) {
         return {
             "subscriptionId": subId
         };
     };
 
-    var ngsi_build_subscribe_update_context_request = function ngsi_build_subscribe_update_context_request(subscriptionId, e, attr, duration, throttling, conditions, onNotify) {
+    const ngsi_build_subscribe_update_context_request = function ngsi_build_subscribe_update_context_request(subscriptionId, e, attr, duration, throttling, conditions, onNotify) {
         var doc, i, condition, notifyConditionElement;
 
         if (subscriptionId) {
@@ -719,13 +742,13 @@
         return doc;
     };
 
-    var ngsi_build_unsubscribe_context_request = function ngsi_build_unsubscribe_context_request(subId) {
+    const ngsi_build_unsubscribe_context_request = function ngsi_build_unsubscribe_context_request(subId) {
         return {
             'subscriptionId': subId
         };
     };
 
-    var ngsi_build_replace_entity_request = function ngsi_build_replace_entity_request(entity, options, parameters) {
+    const ngsi_build_replace_entity_request = function ngsi_build_replace_entity_request(entity, options, parameters) {
         if (entity.type != null) {
             parameters.type = entity.type;
             delete entity.type;
@@ -740,7 +763,7 @@
 
     /* Response parsers */
 
-    var parse_register_context_response =  function parse_register_context_response(data) {
+    const parse_register_context_response =  function parse_register_context_response(data) {
 
         process_error_code_json(data);
 
@@ -751,7 +774,7 @@
         return [data];
     };
 
-    var parse_context_registration_response_list = function parse_context_registration_response_list(registrationResponses) {
+    const parse_context_registration_response_list = function parse_context_registration_response_list(registrationResponses) {
         var registrationResponse, registration, i, data = [];
 
         for (i = 0; i < registrationResponses.length; i += 1) {
@@ -778,7 +801,7 @@
         return data;
     };
 
-    var parse_discover_context_availability_response = function parse_discover_context_availability_response(data) {
+    const parse_discover_context_availability_response = function parse_discover_context_availability_response(data) {
 
         if (typeof data !== 'object' || Array.isArray(data)) {
             throw new NGSI.InvalidResponseError('The server returned an invalid json structure');
@@ -793,7 +816,7 @@
         return [parse_context_registration_response_list(data.contextRegistrationResponses)];
     };
 
-    var parse_subscribe_update_context_availability_response = function parse_subscribe_update_context_availability_response(data) {
+    const parse_subscribe_update_context_availability_response = function parse_subscribe_update_context_availability_response(data) {
 
         process_error_code_json(data);
 
@@ -808,7 +831,7 @@
         return [data];
     };
 
-    var parse_unsubscribe_context_availability_response = function parse_unsubscribe_context_availability_response(data) {
+    const parse_unsubscribe_context_availability_response = function parse_unsubscribe_context_availability_response(data) {
 
         if (typeof data !== 'object' || Array.isArray(data) || !('subscriptionId' in data)) {
             throw new NGSI.InvalidResponseError('The server returned an invalid json structure');
@@ -820,7 +843,7 @@
         }];
     };
 
-    var parse_context_response_list_json = function parse_context_response_list_json(elements, update_response, options) {
+    const parse_context_response_list_json = function parse_context_response_list_json(elements, update_response, options) {
         var contextResponse, entry, flat, i, j, value, data,
             attribute_info, attribute_entry, status_info, error_data;
 
@@ -902,7 +925,7 @@
         return [data, error_data];
     };
 
-    var parse_available_types_response = function parse_available_types_response(data, options) {
+    const parse_available_types_response = function parse_available_types_response(data, options) {
         var parsed_details, status_info, details;
 
         status_info = process_status_info_json(data);
@@ -940,7 +963,7 @@
         return [data.types, details];
     };
 
-    var parse_type_info_response = function parse_type_info_response(data) {
+    const parse_type_info_response = function parse_type_info_response(data) {
         var status_info;
 
         if (typeof data !== 'object' || Array.isArray(data)) {
@@ -962,7 +985,7 @@
         return [data];
     };
 
-    var process_status_info_json = function process_status_info_json(obj) {
+    const process_status_info_json = function process_status_info_json(obj) {
         if (!("statusCode" in obj)) {
             throw new NGSI.InvalidResponseError('missing response status code info');
         }
@@ -972,16 +995,16 @@
         return obj.statusCode;
     };
 
-    var process_error_code_json = function process_error_code_json(data) {
+    const process_error_code_json = function process_error_code_json(data) {
         if ('errorCode' in data) {
             throw new NGSI.InvalidRequestError(parseInt(data.errorCode.code, 10), data.errorCode.reasonPhrase, data.errorCode.details);
         }
     };
 
-    var NGSI_QUERY_COUNT_RE = new RegExp('Count: (\\d+)');
-    var NGSI_INVALID_OFFSET_RE = new RegExp('Number of matching entities: (\\d+). Offset is (\\d+)');
+    const NGSI_QUERY_COUNT_RE = new RegExp('Count: (\\d+)');
+    const NGSI_INVALID_OFFSET_RE = new RegExp('Number of matching entities: (\\d+). Offset is (\\d+)');
 
-    var parse_query_context_response = function parse_query_context_response(doc, options) {
+    const parse_query_context_response = function parse_query_context_response(doc, options) {
         var details, parsed_details, data;
 
         if (typeof doc !== 'object' || Array.isArray(doc)) {
@@ -1033,14 +1056,14 @@
         return [parse_context_response_list_json(doc.contextResponses, false, options)[0], details];
     };
 
-    var parse_update_context_response = function parse_update_context_response(data, options) {
+    const parse_update_context_response = function parse_update_context_response(data, options) {
 
         process_error_code_json(data);
 
         return parse_context_response_list_json(data.contextResponses, true, options);
     };
 
-    var parse_subscribe_response_element = function parse_subscribe_response_element(data) {
+    const parse_subscribe_response_element = function parse_subscribe_response_element(data) {
 
         process_error_code_json(data);
 
@@ -1059,7 +1082,7 @@
         return data;
     };
 
-    var parse_subscribe_context_response = function parse_subscribe_context_response(data) {
+    const parse_subscribe_context_response = function parse_subscribe_context_response(data) {
 
         process_error_code_json(data);
 
@@ -1070,7 +1093,7 @@
         return [parse_subscribe_response_element(data.subscribeResponse)];
     };
 
-    var parse_update_context_subscription_response = function parse_update_context_subscription_response(data) {
+    const parse_update_context_subscription_response = function parse_update_context_subscription_response(data) {
 
         process_error_code_json(data);
 
@@ -1081,7 +1104,7 @@
         return [parse_subscribe_response_element(data.subscribeResponse)];
     };
 
-    var parse_unsubscribe_context_response = function parse_unsubscribe_context_response(data) {
+    const parse_unsubscribe_context_response = function parse_unsubscribe_context_response(data) {
 
         process_error_code_json(data);
 
@@ -1093,7 +1116,7 @@
         return [data];
     };
 
-    var parse_notify_context_availability_request = function parse_notify_context_availability_request(data, options) {
+    const parse_notify_context_availability_request = function parse_notify_context_availability_request(data, options) {
 
         if (typeof data !== 'object' || Array.isArray(data) || !Array.isArray(data.contextRegistrationResponses)) {
             throw new NGSI.InvalidResponseError('The server returned an invalid json structure');
@@ -1102,7 +1125,7 @@
         return [parse_context_registration_response_list(data.contextRegistrationResponses)];
     };
 
-    var parse_pagination_options = function parse_pagination_options(options, default_details) {
+    const parse_pagination_options = function parse_pagination_options(options, default_details) {
         var parameters = {};
 
         if (options.limit != null) {
@@ -1140,11 +1163,12 @@
         return parameters;
     };
 
-    var parse_pagination_options2 = function parse_pagination_options2(options, optionsparams) {
-        var parameters = {};
+    const parse_pagination_options2 = function parse_pagination_options2(options, optionsparams) {
+        const parameters = {};
+        const ld = optionsparams == null;
 
         if (options.limit != null) {
-            if (typeof options.limit !== 'number' || !Number.isInteger(options.limit) || options.limit < 1) {
+            if (typeof options.limit !== 'number' || !Number.isInteger(options.limit) || options.limit < (ld ? 0 : 1)) {
                 throw new TypeError('invalid value for the limit option');
             }
             parameters.limit = options.limit;
@@ -1165,21 +1189,25 @@
             if (typeof options.count !== 'boolean') {
                 throw new TypeError('invalid value for the count option');
             }
-            optionsparams.push('count');
+            if (ld) {
+                parameters.count = options.count;
+            } else {
+                optionsparams.push('count');
+            }
         }
 
         return parameters;
     };
 
-    var parse_error_response = function parse_error_response(response) {
-        if (response.getHeader('Content-Type') !== 'application/json') {
-            throw new TypeError("Unexpected response mimetype");
+    const parse_error_response = function parse_error_response(response) {
+        if (["application/json", "application/ld+json"].indexOf(response.getHeader('Content-Type')) === -1) {
+            throw new TypeError("Unexpected response mimetype: " + response.getHeader("Content-Type"));
         }
 
         return JSON.parse(response.responseText);
     };
 
-    var parse_bad_request = function parse_bad_request(response, correlator) {
+    const parse_bad_request = function parse_bad_request(response, correlator) {
         try {
             var error = parse_error_response(response);
         } catch (e) {
@@ -1188,7 +1216,7 @@
         return Promise.reject(new NGSI.BadRequestError({message: error.description, correlator: correlator}));
     };
 
-    var parse_not_found_response = function parse_not_found_response(response, correlator) {
+    const parse_not_found_response = function parse_not_found_response(response, correlator) {
         try {
             var error = parse_error_response(response);
         } catch (e) {
@@ -1197,13 +1225,38 @@
         return Promise.reject(new NGSI.NotFoundError({message: error.description, correlator: correlator}));
     };
 
-    var parse_too_many_results = function parse_too_many_results(response, correlator) {
+    const parse_too_many_results = function parse_too_many_results(response, correlator) {
         try {
             var error = parse_error_response(response);
         } catch (e) {
             return Promise.reject(new NGSI.InvalidResponseError(null, correlator));
         }
         return Promise.reject(new NGSI.TooManyResultsError({message: error.description, correlator: correlator}));
+    };
+
+    const parse_not_found_response_ld = function parse_not_found_response_ld(response) {
+        let error;
+        try {
+            error = parse_error_response(response);
+        } catch (e) {
+            return Promise.reject(new NGSI.InvalidResponseError());
+        }
+        return Promise.reject(new NGSI.NotFoundError({message: error.title, details: error.detail}));
+    };
+
+    const parse_bad_request_ld = function parse_bad_request_ld(response) {
+        let error, exc;
+        try {
+            error = parse_error_response(response);
+        } catch (e) {
+            return Promise.reject(new NGSI.InvalidResponseError(e.toString()));
+        }
+        if (error.type === "https://uri.etsi.org/ngsi-ld/errors/InvalidRequest") {
+            exc = new NGSI.InvalidRequestError(undefined, error.title, error.detail);
+        } else {
+            exc = new NGSI.BadRequestError({message: error.title, details: error.detail});
+        }
+        return Promise.reject(exc);
     };
 
     NGSI.parseNotifyContextRequest = function parseNotifyContextRequest(data, options) {
@@ -1214,7 +1267,7 @@
         };
     };
 
-    var init = function init() {
+    const init = function init() {
         return this.makeRequest(new URL(NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, this.url), {
             supportsAccessControl: true,  // required for using CORS on WireCloud
             method: 'POST'
@@ -1249,11 +1302,11 @@
         );
     };
 
-    var connect_to_eventsource = function connect_to_eventsource() {
+    const connect_to_eventsource = function connect_to_eventsource() {
         var priv = privates.get(this);
         return new Promise(function (resolve, reject) {
-            var closeTimeout;
-            var wait_event_source_init = function wait_event_source_init(e) {
+            let closeTimeout, handle_connection_rejected, handle_connection_timeout;
+            const wait_event_source_init = function wait_event_source_init(e) {
                 var data = JSON.parse(e.data);
 
                 clearTimeout(closeTimeout);
@@ -1282,14 +1335,17 @@
 
                 resolve();
             };
-            var abort_event_source = function abort_event_source(message) {
+            const abort_event_source = function abort_event_source(message) {
+                clearTimeout(closeTimeout);
                 priv.promise = null;
+                priv.source.removeEventListener('error', handle_connection_rejected, true);
+                priv.source.removeEventListener('init', wait_event_source_init, true);
                 priv.source.close();
                 priv.source = null;
                 reject(new NGSI.ConnectionError(message));
             };
-            var handle_connection_rejected = abort_event_source.bind(null, "Connection rejected");
-            var handle_connection_timeout = abort_event_source.bind(null, "Connection timeout");
+            handle_connection_rejected = abort_event_source.bind(null, "Connection rejected");
+            handle_connection_timeout = abort_event_source.bind(null, "Connection timeout");
 
             priv.source = new EventSource(priv.source_url);
             priv.source.addEventListener('error', handle_connection_rejected, true);
@@ -1299,7 +1355,7 @@
         });
     };
 
-    var on_callback_subscriptions_get = function on_callback_subscriptions_get() {
+    const on_callback_subscriptions_get = function on_callback_subscriptions_get() {
         var mapping = {};
         var callbacks = privates.get(this).callbacks;
         for (var key in callbacks) {
@@ -1308,7 +1364,7 @@
         return mapping;
     };
 
-    var on_callback_subscriptions_versioned_get = function on_callback_subscriptions_versioned_get() {
+    const on_callback_subscriptions_versioned_get = function on_callback_subscriptions_versioned_get() {
         var mapping = {};
         var callbacks = privates.get(this).callbacks;
         for (var key in callbacks) {
@@ -1317,20 +1373,20 @@
         return mapping;
     };
 
-    var on_connected_get = function on_connected_get() {
+    const on_connected_get = function on_connected_get() {
         var priv = privates.get(this);
         return priv.source != null && priv.connection_id != null
     };
 
-    var on_connecting_get = function on_connecting_get() {
+    const on_connecting_get = function on_connecting_get() {
         return privates.get(this).promise !== null;
     };
 
-    var on_connection_id_get = function on_connection_id_get() {
+    const on_connection_id_get = function on_connection_id_get() {
         return privates.get(this).connection_id;
     };
 
-    var on_subscription_callbacks_get = function on_subscription_callbacks_get() {
+    const on_subscription_callbacks_get = function on_subscription_callbacks_get() {
         var mapping = {};
         var subscriptions = privates.get(this).callbacksBySubscriptionId;
         for (var key in subscriptions) {
@@ -1592,75 +1648,99 @@
 
     /* NGSI Connection Error */
 
+    NGSI.Error = class NGSIError extends Error {
+
+        constructor(name, message) {
+            super(message);
+
+            this.name = name;
+            this.message = message || "";
+
+            // Maintains proper stack trace for where our error was thrown (only available on V8)
+            if (Error.captureStackTrace) {
+                Error.captureStackTrace(this, this.constructor);
+            }
+        }
+
+    };
+
     /**
      * Error raised if there are problems connecting to the context broker
      * server. Browsers doesn't provide details about the connection problem due
      * security concerns, so this exception doesn't provide those details.
      *
      * @class
-     * @extends Error
+     * @extends NGSI.Error
      * @name NGSI.ConnectionError
      * @summary Exception raised for connection problems.
      */
-    NGSI.ConnectionError = function ConnectionError(message) {
-        this.name = 'ConnectionError';
-        this.message = message || 'Connection Error';
-    };
-    NGSI.ConnectionError.prototype = new Error();
-    NGSI.ConnectionError.prototype.constructor = NGSI.ConnectionError;
+    NGSI.ConnectionError = class ConnectionError extends NGSI.Error {
+
+        constructor(message) {
+            super("ConnectionError", message || "Connection Error");
+        };
+
+    }
 
     /**
      * Error raised if the context broker server detected some problems with the
      * data provided in the request.
      *
      * @class
-     * @extends Error
+     * @extends NGSI.Error
      * @name NGSI.InvalidRequestError
      * @summary Exception raised when the context broker server reject the
      * request.
      */
-    NGSI.InvalidRequestError = function InvalidRequestError(code, message, details) {
-        this.name = 'InvalidRequest';
-        this.code = code;
-        this.message = message || '';
-        this.details = details || '';
+    NGSI.InvalidRequestError = class InvalidRequestError extends NGSI.Error {
+
+        constructor(code, message, details) {
+            super("InvalidRequest", message);
+
+            this.code = code;
+            this.details = details || "";
+        }
+
     };
-    NGSI.InvalidRequestError.prototype = new Error();
-    NGSI.InvalidRequestError.prototype.constructor = NGSI.InvalidRequestError;
 
     /**
      * Exception raised when creating an entity that already exists.
      * Error code used by the context broker server: 422 Unprocessable
      *
      * @class
-     * @extends Error
+     * @extends NGSI.Error
      * @name NGSI.AlreadyExistsError
      * @summary Exception raised when creating an entity that already exists.
      */
-    NGSI.AlreadyExistsError = function AlreadyExistsError(options) {
-        this.name = 'AlreadyExists';
-        this.message = options.message || '';
-        this.correlator = options.correlator || null;
+    NGSI.AlreadyExistsError = class AlreadyExistsError extends NGSI.Error {
+
+        constructor(options) {
+            super("AlreadyExists", options.message);
+
+            this.correlator = options.correlator || null;
+        }
+
     };
-    NGSI.AlreadyExistsError.prototype = new Error();
-    NGSI.AlreadyExistsError.prototype.constructor = NGSI.AlreadyExistsError;
 
     /**
      * Exception raised when the provided data has errors.
      * Error code used by the context broker server: 400 Bad Request
      *
      * @class
-     * @extends Error
+     * @extends NGSI.Error
      * @name NGSI.BadRequestError
      * @summary Exception raised when creating an entity that already exists.
      */
-    NGSI.BadRequestError = function BadRequestError(options) {
-        this.name = 'BadRequest';
-        this.message = options.message || '';
-        this.correlator = options.correlator || null;
+    NGSI.BadRequestError = class BadRequestError extends NGSI.Error {
+
+        constructor(options) {
+            super("BadRequest", options.message);
+
+            this.details = options.details || "";
+            this.correlator = options.correlator || null;
+        }
+
     };
-    NGSI.BadRequestError.prototype = new Error();
-    NGSI.BadRequestError.prototype.constructor = NGSI.BadRequestError;
 
     /**
      * Exception raised when the server returns an unexpected response. This
@@ -1677,60 +1757,78 @@
      * ContentLengthRequired.
      *
      * @class
-     * @extends Error
+     * @extends NGSI.Error
      * @name NGSI.InvalidResponseError
      * @summary Exception raised when detecting invalid responses from the
      * server.
      */
-    NGSI.InvalidResponseError = function InvalidResponseError(message, correlator) {
-        this.name = 'InvalidResponse';
-        this.message = message || '';
-        this.correlator = correlator;
+    NGSI.InvalidResponseError = class InvalidResponseError extends NGSI.Error {
+
+        constructor(message, correlator) {
+            super("InvalidResponse", message);
+
+            this.correlator = correlator;
+        }
+
     };
-    NGSI.InvalidResponseError.prototype = new Error();
-    NGSI.InvalidResponseError.prototype.constructor = NGSI.InvalidResponseError;
 
     /**
      * Exception raised when requesting a missing resource (entity, attribute,
      * type, subscription, ...)
      *
      * @class
-     * @extends Error
+     * @extends NGSI.Error
      * @name NGSI.NotFoundError
      * @summary Exception raised when requesting a missing resource
      */
-    NGSI.NotFoundError = function NotFoundError(options) {
-        this.name = 'NotFound';
-        this.message = options.message || '';
-        this.details = options.details || '';
-        this.correlator = options.correlator || null;
+    NGSI.NotFoundError = class NotFoundError extends NGSI.Error {
+
+        constructor(options) {
+            super("NotFound", options.message);
+
+            this.details = options.details || "";
+            this.correlator = options.correlator || null;
+        }
+
     };
-    NGSI.NotFoundError.prototype = new Error();
-    NGSI.NotFoundError.prototype.constructor = NGSI.NotFoundError;
 
     /**
      * Exception raised when making ambiguous query returning more than One
      * entity.
      *
      * @class
-     * @extends Error
+     * @extends NGSI.Error
      * @name NGSI.TooManyResultsError
      * @summary Exception raised when making an ambiguous query
      */
-    NGSI.TooManyResultsError = function TooManyResultsError(options) {
-        this.name = 'TooManyResults';
-        this.message = options.message || '';
-        this.correlator = options.correlator || null;
-    };
-    NGSI.TooManyResultsError.prototype = new Error();
-    NGSI.TooManyResultsError.prototype.constructor = NGSI.TooManyResultsError;
+    NGSI.TooManyResultsError = class TooManyResultsError extends NGSI.Error {
 
-    NGSI.ProxyConnectionError = function ProxyConnectionError(cause) {
-        this.name = 'ProxyConnectionError';
-        this.cause = cause;
+        constructor(options) {
+            super("TooManyResults", options.message);
+            this.correlator = options.correlator || null;
+        }
+
     };
-    NGSI.ProxyConnectionError.prototype = new Error();
-    NGSI.ProxyConnectionError.prototype.constructor = NGSI.ProxyConnectionError;
+
+    /**
+     * Error raised if there are problems connecting to the context broker proxy
+     * server. Browsers doesn't provide details about the connection problem due
+     * security concerns, so this exception doesn't provide those details.
+     *
+     * @class
+     * @extends NGSI.Error
+     * @name NGSI.ConnectionError
+     * @summary Exception raised for connection problems.
+     */
+    NGSI.ProxyConnectionError = class ProxyConnectionError extends NGSI.Error {
+
+        constructor(cause) {
+            super("ProxyConnectionError", cause);
+
+            this.cause = cause;
+        }
+
+    };
 
     /**
      * Creates a new NGSI Connection.
@@ -1820,7 +1918,8 @@
         Object.defineProperties(this, {
             url: {value: url},
             v1: {value: this},
-            v2: {value: new NGSI.Connection.V2(this)}
+            v2: {value: new NGSI.Connection.V2(this)},
+            ld: {value: new NGSI.Connection.LD(this)}
         });
     };
 
@@ -5279,6 +5378,468 @@
     };
 
     /**
+     * Retrieves the available registrations (using pagination).
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.3.0
+     *
+     * @name NGSI.Connection#v2.listRegistrations
+     * @method "v2.listRegistrations"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `count` (`Boolean`; default: `false`): request total count
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of registrations you want to receive from the
+     *   server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given
+     *   number of elements at the beginning
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 registrations from the Context Broker</caption>
+     *
+     * connection.v2.listRegistrations().then(
+     *     (response) => {
+     *         // Registrations retrieved successfully
+     *         // response.results is an array with the retrieved registrations
+     *     }, (error) => {
+     *         // Error retrieving registrations
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve second page from the Context Broker requesting pagination details</caption>
+     *
+     * connection.v2.listRegistrations({offset: 20, count: true}).then(
+     *     (response) => {
+     *         // Registrations retrieved successfully
+     *         // response.correlator transaction id associated with the server response
+     *         // response.limit contains the used page size
+     *         // response.results is an array with the retrieved registrations
+     *         // response.count contains the number of available registrations
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving registrations
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.listRegistrations = function listRegistrations(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var url = new URL(NGSI.endpoints.v2.REGISTRATION_COLLECTION, connection.url);
+        var optionsparams = [];
+        var parameters = parse_pagination_options2(options, optionsparams);
+
+        if (optionsparams.length !== 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
+            }
+
+            var result = {
+                correlator: correlator,
+                limit: options.limit,
+                offset: options.offset,
+                results: JSON.parse(response.responseText),
+            };
+            if (options.count === true) {
+                result.count = parseInt(response.getHeader("Fiware-Total-Count"), 10);
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Creates a new registration.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.3.0
+     *
+     * @name NGSI.Connection#v2.createRegistration
+     * @method "v2.createRegistration"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object}
+     *
+     * registration values to be used for creating it
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     * - `correlator` (`String`): Transaction id
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.v2.createRegistration({
+     *    "description": "One registration to rule them all",
+     *    "dataProvided": {
+     *      "entities": [
+     *        {
+     *          "id": "room1",
+     *          "type": "Room"
+     *        }
+     *      ],
+     *      "attrs": [
+     *        "temperature",
+     *        "humidity"
+     *      ]
+     *    },
+     *    "provider": {
+     *      "http": {
+     *        "url": "http://localhost:1234"
+     *      },
+     *      "legacyForwarding": true,
+     *      "supportedForwardingMode": "all"
+     *    }
+     * }).then(
+     *     (response) => {
+     *         // Registration created successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error creating the registration
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.createRegistration = function createRegistration(registration, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (typeof registration !== 'object' || Array.isArray(registration)) {
+            throw new TypeError('invalid registration parameter');
+        }
+
+        var connection = privates.get(this);
+        var url = new URL(NGSI.endpoints.v2.REGISTRATION_COLLECTION, connection.url);
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            postBody: registration,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status === 400) {
+                return parse_bad_request(response, correlator);
+            } else if (response.status !== 201) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
+            }
+
+            var location_header = response.getHeader('Location');
+            try {
+                var registration_url = new URL(location_header, connection.url);
+                var registration_id = registration_url.pathname.split('/').pop();
+                registration.id = registration_id;
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected location header: ' + location_header, correlator));
+            }
+
+            return Promise.resolve({
+                correlator: correlator,
+                registration: registration,
+                location: location_header
+            });
+        });
+    };
+
+    /**
+     * Gets all the details of a registration.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.3.0
+     *
+     * @name NGSI.Connection#v2.getRegistration
+     * @method "v2.getRegistration"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.v2.getRegistration("abcdef").then(
+     *     (response) => {
+     *         // Registration details retrieved successfully
+     *         // response.registration registration details
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error retrieving registration
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.V2.prototype.getRegistration = function getRegistration(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = new URL(interpolate(NGSI.endpoints.v2.REGISTRATION_ENTRY, {registrationId: encodeURIComponent(options.id)}), connection.url);
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status === 404) {
+                return parse_not_found_response(response, correlator);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
+            }
+            try {
+                var data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content', correlator);
+            }
+            return Promise.resolve({
+                correlator: correlator,
+                registration: data
+            });
+        });
+    };
+
+    /**
+     * Updates a registration.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.3.0
+     *
+     * @name NGSI.Connection#v2.updateRegistration
+     * @method "v2.updateRegistration"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} changes
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Update registration expiration time</caption>
+     *
+     * connection.v2.updateRegistration({
+     *     "id": "abcdef",
+     *     "description": "Context Source"
+     * }).then(
+     *     (response) => {
+     *         // Registration updated successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error updating registration
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Use a custom service path for the update operation</caption>
+     *
+     * connection.v2.updateRegistration({
+     *     "id": "abcdef",
+     *     "description": "Context Source"
+     * }, {
+     *     servicepath: "/Spain/Madrid"
+     * }).then(
+     *     (response) => {
+     *         // Registration updated successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error updating registration
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * Note: PATCH /v2/registration/<id> is not implemented in FIWARE Orion 2.3
+     *       See https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#registrations,
+     *           https://github.com/telefonicaid/fiware-orion/issues/3007
+     *
+     */
+    NGSI.Connection.V2.prototype.updateRegistration = function updateRegistration(changes, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var connection = privates.get(this);
+        var url = new URL(interpolate(NGSI.endpoints.v2.REGISTRATION_ENTRY, {registrationId: encodeURIComponent(changes.id)}), connection.url);
+
+        // Remove id from the payload
+        delete changes.id;
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PATCH",
+            postBody: changes,
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status === 404) {
+                return parse_not_found_response(response, correlator);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
+            }
+            return Promise.resolve({
+                correlator: correlator
+            });
+        });
+    };
+
+    /**
+     * Removes a registration from the orion context broker server.
+     *
+     * > This method uses v2 of the FIWARE's NGSI Specification
+     *
+     * @since 1.3.0
+     *
+     * @name NGSI.Connection#v2.deleteRegistration
+     * @method "v2.deleteRegistration"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options
+     *
+     * String with the id of the registration to remove or an object with
+     * options:
+     *
+     * - `correlator` (`String`): Transaction id
+     * - `id` (`String`): Id of the registration to remove
+     * - `service` (`String`): Service/tenant to use in this operation
+     * - `servicepath` (`String`): Service path to use in this operation
+     *
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example
+     *
+     * connection.v2.deleteRegistration("57f7787a5f817988e4eb3dda").then(
+     *     (response) => {
+     *         // Registration deleted successfully
+     *         // response.correlator transaction id associated with the server response
+     *     }, (error) => {
+     *         // Error deleting registration
+     *         // If the error was reported by Orion, error.correlator will be
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     */
+    NGSI.Connection.V2.prototype.deleteRegistration = function deleteRegistration(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        var connection = privates.get(this);
+        var url = new URL(interpolate(NGSI.endpoints.v2.REGISTRATION_ENTRY, {registrationId: encodeURIComponent(options.id)}), connection.url);
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            requestHeaders: {
+                "FIWARE-Correlator": options.correlator,
+                "FIWARE-Service": options.service,
+                "FIWARE-ServicePath": options.servicepath
+            }
+        }).then(function (response) {
+            var correlator = response.getHeader('Fiware-correlator');
+            if (response.status === 404) {
+                return parse_not_found_response(response, correlator);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status, correlator));
+            }
+            return Promise.resolve({
+                correlator: correlator
+            });
+        });
+    };
+
+    /**
      * This operation allows to create, update and/or delete several entities
      * in a single batch operation.
      *
@@ -5536,6 +6097,2600 @@
         });
     };
 
+    NGSI.Connection.LD = function LD(connection) {
+        privates.set(this, connection);
+    };
+
+    /**
+     * Retrieves the available entities using pagination.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.queryEntities
+     * @method "ld.queryEntities"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `attrs` (`String`|`Array`): String array or comma-separated list of
+     *   attribute names whose data are to be included in the response. The
+     *   attributes are retrieved in the order specified by this parameter. If
+     *   this parameter is not included, the attributes are retrieved in
+     *   arbitrary order.
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when retrieving
+     *   entity details.
+     * - `coordinates` (`String`): Coordinates serialized as a string.
+     * - `count` (`Boolean`; default: `false`): Request total result count
+     *   details
+     * - `csf` (`String`): Context Source filter.
+     * - `id` (`String`|`Array`): String array or a comma-separated list of
+     *   entity ids to retrieve. Incompatible with the `idPattern` option.
+     * - `idPattern` (`String`): A correctly formated regular expression.
+     *   Retrieve entities whose ID matches the regular expression. Incompatible
+     *   with the `id` option
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of entities you want to receive from the server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given number of
+     *   elements at the beginning
+     * - `orderBy` (`String`): Criteria for ordering results
+     * - `q` (`String`): A query expression, composed of a list of statements
+     *   separated by semicolons (`;`)
+     * - `georel` (`String`): Spatial relationship between matching entities and
+     *   a reference shape. See "Geographical Queries" section in NGSIv2 specification
+     *   for details.
+     * - `geometry` (`String`): Geographical area to which the query is restricted.
+     *   See "Geographical Queries" section in NGSIv2 specification for details.
+     * - `geoproperty` (`String`): The name of the Property that contains the
+     *   geospatial data that will be used to resolve the geoquery.
+     * - `sysAttrs` (`Boolean`): Request system-generated attributes (`createdAt`,
+     *   `modifiedAt`).
+     * - `tenant` (`String`): Tenant to use in this operation
+     * - `type` (`String`): A comma-separated list of entity types to retrieve.
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 entities from the Context Broker</caption>
+     *
+     * connection.ld.queryEntities({limit: 20}).then(
+     *     (response) => {
+     *         // Entities retrieved successfully
+     *         // response.results is an array with the retrieved entities
+     *         // response.limit contains the used page size
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving entities
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve second page from the Context Broker requesting pagination details</caption>
+     *
+     * connection.ld.queryEntities({type: "Road"}).then(
+     *     (response) => {
+     *         // Entities retrieved successfully
+     *         // response.results is an array with the retrieved entities
+     *         //   by this query
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving entities
+     *     }
+     * );
+     */
+    NGSI.Connection.LD.prototype.queryEntities = function queryEntities(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (options.id != null && options.idPattern != null) {
+            throw new TypeError('id and idPattern options cannot be used at the same time');
+        }
+
+        if (options.id == null && options.idPattern == null && options.type == null) {
+            options.idPattern = ".*";
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(NGSI.endpoints.ld.ENTITY_COLLECTION, connection.url);
+        const parameters = parse_pagination_options2(options, null);
+
+        const optionsparams = [];
+        if (options.keyValues === true) {
+            optionsparams.push("keyValues");
+        }
+        if (options.sysAttrs === true) {
+            optionsparams.push("sysAttrs");
+        }
+        if (optionsparams.length !== 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        parameters.attrs = Array.isArray(options.attrs) ? options.attrs.join(',') : options.attrs;
+        parameters.csf = options.csf;
+        parameters.id = options.id;
+        parameters.idPattern = options.idPattern;
+        parameters.q = options.q;
+        parameters.type = options.type;
+        parameters.geoproperty = options.geoproperty;
+        parameters.georel = options.georel;
+        parameters.geometry = options.geometry;
+        parameters.coordinates = options.coordinates;
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            let data;
+            try {
+                data = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+            }
+
+            const result = {
+                format: response.getHeader('Content-Type'),
+                limit: options.limit,
+                offset: options.offset,
+                results: data
+            };
+            if (options.count === true) {
+                const count = response.getHeader("NGSILD-Results-Count");
+                result.count = count != null ? parseInt(count, 10) : null;
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Creates a new entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.createEntity
+     * @method "ld.createEntity"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object}
+     *
+     * entity values to be used for creating the new entity. Requires at least
+     * the `id` value for the new entity.
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     *
+     * @throws {NGSI.AlreadyExistsError}
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.ld.createEntity({
+     *     "id": "urn:ngsi-ld:Road:Spain-Road-A62",
+     *     "type": "Road",
+     *     "name": {
+     *          "type": "Property",
+     *          "value": "A-62"
+     *     },
+     *     "alternateName": {
+     *          "type": "Property",
+     *          "value": "E-80"
+     *     },
+     *     "description": {
+     *          "type": "Property",
+     *          "value": "Autovía de Castilla"
+     *     },
+     *     "roadClass": {
+     *          "type": "Property",
+     *          "value": "motorway"
+     *     },
+     *     "length": {
+     *          "type": "Property",
+     *          "value": 355
+     *     },
+     *     "refRoadSegment": {
+     *         "type": "Relationship",
+     *         "object": [
+     *             "urn:ngsi-ld:RoadSegment:Spain-RoadSegment-A62-0-355-forwards",
+     *             "urn:ngsi-ld:RoadSegment:Spain-RoadSegment-A62-0-355-backwards"
+     *         ]
+     *     },
+     *     "responsible": {
+     *          "type": "Property",
+     *          "value": "Ministerio de Fomento - Gobierno de España"
+     *     },
+     *     "@context": [
+     *        "https://schema.lab.fiware.org/ld/context",
+     *        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Entity created successfully
+     *     }, (error) => {
+     *         // Error creating the entity
+     *     }
+     * );
+     *
+     * @example <caption>Using the tenant option</caption>
+     *
+     * connection.ld.createEntity({
+     *     "id": "urn:ngsi-ld:Road:Spain-Road-A62",
+     *     "type": "Road",
+     *     "name": {
+     *          "type": "Property",
+     *          "value": "A-62"
+     *     },
+     *     "alternateName": {
+     *          "type": "Property",
+     *          "value": "E-80"
+     *     },
+     *     "description": {
+     *          "type": "Property",
+     *          "value": "Autovía de Castilla"
+     *     },
+     *     "roadClass": {
+     *          "type": "Property",
+     *          "value": "motorway"
+     *     },
+     *     "length": {
+     *          "type": "Property",
+     *          "value": 355
+     *     },
+     *     "refRoadSegment": {
+     *         "type": "Relationship",
+     *         "object": [
+     *             "urn:ngsi-ld:RoadSegment:Spain-RoadSegment-A62-0-355-forwards",
+     *             "urn:ngsi-ld:RoadSegment:Spain-RoadSegment-A62-0-355-backwards"
+     *         ]
+     *     },
+     *     "responsible": {
+     *          "type": "Property",
+     *          "value": "Ministerio de Fomento - Gobierno de España"
+     *     },
+     *     "@context": [
+     *        "https://schema.lab.fiware.org/ld/context",
+     *        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+     *     ]
+     * }, {tenant: "mytenant"}).then(
+     *     (response) => {
+     *         // Entity created successfully
+     *     }, (error) => {
+     *         // Error creating the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.createEntity = function createEntity(entity, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (entity.id == null) {
+            throw new TypeError('missing entity id');
+        }
+
+        if (entity.type == null) {
+            throw new TypeError('missing entity type');
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(NGSI.endpoints.ld.ENTITY_COLLECTION, connection.url);
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            postBody: entity,
+            contentType: "@context" in entity ? "application/ld+json" : "application/json",
+            requestHeaders: {
+                "NGSILD-Tenant": options.tenant
+            }
+        }).then(function (response) {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 409) {
+                return Promise.reject(new NGSI.AlreadyExistsError({}));
+            } else if (response.status !== 201) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                entity: entity,
+                location: response.getHeader('Location')
+            });
+        });
+    };
+
+    /**
+     * Gets all the details of an entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.getEntity
+     * @method "ld.getEntity"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options
+     *
+     * String with the id of the entity to query or an object with extra
+     * options:
+     *
+     * - `attrs` (`String`): Comma-separated list of attribute names whose data
+     *   are to be included in the response. The attributes are retrieved in the
+     *   order specified by this parameter. If this parameter is not included,
+     *   the attributes are retrieved in arbitrary order.
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when retrieving
+     *   entity details.
+     * - `keyValues` (`Boolean`; default: `false`): Use flat attributes
+     * - `id` (`String`, required): Id of the entity to query
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.ld.getEntity("urn:ngsi-ld:Road:Spain-Road-A62").then(
+     *     (response) => {
+     *         // Entity details retrieved successfully
+     *         // response.entity entity details
+     *     }, (error) => {
+     *         // Error retrieving entity
+     *         // filled with the associated transaction id
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve an entity using the keyValues option</caption>
+     *
+     * connection.ld.getEntity({
+     *     id: "urn:ngsi-ld:Road:Spain-Road-A62",
+     *     keyValues: true
+     * }).then(
+     *     (response) => {
+     *         // Entity details retrieved successfully
+     *         // response.entity entity details
+     *     }, (error) => {
+     *         // Error retrieving entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.getEntity = function getEntity(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        } else if (options.id == null) {
+            throw new TypeError("missing id option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(interpolate(NGSI.endpoints.ld.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)}), connection.url);
+        const parameters = {
+            attrs: options.attrs
+        };
+        if (options.keyValues === true) {
+            parameters.options = "keyValues";
+        }
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: headers
+        }).then(function (response) {
+            if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            let data;
+            try {
+                data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                format: response.getHeader('Content-Type'),
+                entity: data
+            });
+        });
+    };
+
+    /**
+     * Removes an entity from the context broker server.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.deleteEntity
+     * @method "ld.deleteEntity"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options
+     *
+     * String with the entity id to remove or an object providing options:
+     *
+     * - `id` (`String`, required): Id of the entity to remove
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     * @throws {NGSI.TooManyResultsError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Remove entity by Id</caption>
+     *
+     * connection.ld.deleteEntity("Spain-Road-A62").then(
+     *     (response) => {
+     *         // Entity deleted successfully
+     *     }, (error) => {
+     *         // Error deleting the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.deleteEntity = function deleteEntity(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        } else if (options.id == null) {
+            throw new TypeError("missing id option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(interpolate(NGSI.endpoints.ld.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)}), connection.url);
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            requestHeaders: {
+                "NGSILD-Tenant": options.tenant
+            }
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Retrieves the available subscriptions (using pagination).
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.listSubscriptions
+     * @method "ld.listSubscriptions"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when retrieving
+     *   subscription details.
+     * - `count` (`Boolean`; default: `false`): Request total result count
+     *   details
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of subscriptions you want to receive from the
+     *   server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given
+     *   number of elements at the beginning
+     * - `tenant` (`String`): Tenant to use in this operation
+     * - `sysAttrs` (`Boolean`): Request system-generated attributes (`createdAt`,
+     *   `modifiedAt`).
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 subscriptions from the Context Broker</caption>
+     *
+     * connection.ld.listSubscriptions().then(
+     *     (response) => {
+     *         // Subscriptions retrieved successfully
+     *         // response.results is an array with the retrieved subscriptions
+     *     }, (error) => {
+     *         // Error retrieving subscriptions
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.listSubscriptions = function listSubscriptions(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(NGSI.endpoints.ld.SUBSCRIPTION_COLLECTION, connection.url);
+        const parameters = parse_pagination_options2(options, null);
+
+        const optionsparams = [];
+        if (options.sysAttrs === true) {
+            optionsparams.push("sysAttrs");
+        }
+        if (optionsparams.length !== 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            let data;
+            try {
+                data = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+            }
+
+            const result = {
+                format: response.getHeader('Content-Type'),
+                limit: options.limit,
+                offset: options.offset,
+                results: data
+            };
+            if (options.count === true) {
+                const count = response.getHeader("NGSILD-Results-Count");
+                result.count = count != null ? parseInt(count, 10) : null;
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Creates a new subscription.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.createSubscription
+     * @method "ld.createSubscription"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object}
+     *
+     * subscription values to be used for creating it
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.AlreadyExistsError}
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.ld.createSubscription({
+     *     "id": "urn:ngsi-ld:Subscription:mySubscription",
+     *     "type": "Subscription",
+     *     "entities": [
+     *         {
+     *             "type": "Vehicle"
+     *         }
+     *     ],
+     *     "notification": {
+     *         "format": "keyValues",
+     *         "endpoint": {
+     *             "uri": "http://my.endpoint.org/notify",
+     *             "accept": "application/ld+json"
+     *         }
+     *     },
+     *     "@context": [
+     *         "https://fiware.github.io/data-models/context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Subscription created successfully
+     *     }, (error) => {
+     *         // Error creating the subscription
+     *     }
+     * );
+     *
+     * @example <caption>Creating a subscription using a callback and a @context</caption>
+     *
+     * connection.ld.createSubscription({
+     *     "id": "urn:ngsi-ld:Subscription:mySubscription",
+     *     "type": "Subscription",
+     *     "entities": [
+     *         {
+     *             "type": "Vehicle"
+     *         }
+     *     ],
+     *     "watchedAttributes": ["speed"],
+     *     "q": "speed>50",
+     *     "geoQ": {
+     *         "georel": "near;maxDistance==2000",
+     *         "geometry": "Point",
+     *         "coordinates": [-1, 100]
+     *     },
+     *     "notification": {
+     *         "attributes": ["speed"],
+     *         "format": "keyValues",
+     *         "endpoint": {
+     *             "callback": (notification, headers, error) => {
+     *                 // notification.attrsformat provides information about the format used by notification.data
+     *                 // notification.data contains the modified entities
+     *                 // notification.subscriptionId provides the associated subscription id
+     *                 // etc...
+     *
+     *                 // In case of disconnection from the ngsi-proxy, this method
+     *                 // will be called with error = true (the notification and
+     *                 // the header parameters will contain a null value)
+     *             },
+     *             "accept": "application/json"
+     *         }
+     *     },
+     *     "@context": [
+     *         "https://fiware.github.io/data-models/context.jsonld",
+     *         "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Subscription created successfully
+     *     }, (error) => {
+     *         // Error creating the subscription
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.createSubscription = function createSubscription(subscription, options) {
+        let p, proxy_callback;
+        const connection = privates.get(this);
+
+        if (options == null) {
+            options = {};
+        }
+
+        if (typeof subscription !== 'object') {
+            throw new TypeError('invalid subscription parameter');
+        }
+
+        if (subscription.type !== "Subscription") {
+            throw new TypeError("invalid subscription type, it should be 'Subscription' for NGSI-LD v1");
+        }
+
+        if (!Array.isArray(subscription.entities) && !Array.isArray(subscription.watchedAttributes)) {
+            throw new TypeError("at least one of 'entities' and 'watchedAttributes' must be provided");
+        }
+
+        if (subscription.notification == null) {
+            throw new TypeError("missing notification attribute");
+        } else if (typeof subscription.notification !== "object") {
+            throw new TypeError("invalid notification attribute");
+        }
+
+        if (subscription.notification.endpoint == null) {
+            throw new TypeError("missing notification.endpoint attribute");
+        } else if (typeof subscription.notification.endpoint !== "object") {
+            throw new TypeError("invalid notification.endpoint attribute");
+        }
+
+        if ('callback' in subscription.notification.endpoint) {
+            if (typeof subscription.notification.endpoint.callback !== "function") {
+                throw new TypeError('invalid callback configuration');
+            }
+
+            const callback = subscription.notification.endpoint.callback;
+            const format = subscription.notification.format || "normalized";
+            const onNotify = (payload, headers) => {
+                const notification = JSON.parse(payload);
+                notification.format = format;
+                notification.contentType = headers['content-type'];
+                callback(notification);
+            };
+
+            p = connection.ngsi_proxy.requestCallback(onNotify).then(
+                (response) => {
+                    proxy_callback = response;
+                    delete subscription.notification.endpoint.callback;
+                    subscription.notification.endpoint.uri = proxy_callback.url;
+                }
+            );
+        } else {
+            p = Promise.resolve();
+        }
+
+        const url = new URL(NGSI.endpoints.ld.SUBSCRIPTION_COLLECTION, connection.url);
+        return p.then(() => {
+            return makeJSONRequest2.call(connection, url, {
+                method: "POST",
+                contentType: "@context" in subscription ? "application/ld+json" : "application/json",
+                postBody: subscription,
+                requestHeaders: {
+                    "NGSILD-Tenant": options.tenant,
+                }
+            });
+        }).then(
+            (response) => {
+                if (response.status === 400) {
+                    return parse_bad_request_ld(response);
+                } else if (response.status === 409) {
+                    return Promise.reject(new NGSI.AlreadyExistsError({}));
+                } else if (response.status !== 201) {
+                    return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+                }
+
+                const location_header = response.getHeader('Location');
+                try {
+                    const subscription_url = new URL(location_header, connection.url);
+                    subscription.id = subscription_url.pathname.split('/').pop();
+                } catch (e) {
+                    return Promise.reject(new NGSI.InvalidResponseError(
+                        'Unexpected location header: ' + location_header
+                    ));
+                }
+
+                if (proxy_callback) {
+                    connection.ngsi_proxy.associateSubscriptionId(proxy_callback.callback_id, subscription.id, "ld");
+                }
+
+                return Promise.resolve({
+                    subscription: subscription,
+                    location: location_header
+                });
+            },
+            (error) => {
+                if (proxy_callback) {
+                    connection.ngsi_proxy.closeCallback(proxy_callback.callback_id);
+                }
+                return Promise.reject(error);
+            }
+        );
+    };
+
+    /**
+     * Removes a subscription from the orion context broker server.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.deleteSubscription
+     * @method "ld.deleteSubscription"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options
+     *
+     * String with the id of the subscription to remove or an object with
+     * options:
+     *
+     * - `id` (`String`): Id of the subscription to remove
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example
+     *
+     * connection.ld.deleteSubscription("57f7787a5f817988e4eb3dda").then(
+     *     (response) => {
+     *         // Subscription deleted successfully
+     *     }, (error) => {
+     *         // Error deleting subscription
+     *     }
+     * );
+     */
+    NGSI.Connection.LD.prototype.deleteSubscription = function deleteSubscription(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.SUBSCRIPTION_ENTRY,
+                {subscriptionId: encodeURIComponent(options.id)}
+            ),
+            connection.url
+        );
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            requestHeaders: {
+                "NGSILD-Tenant": options.tenant
+            }
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Gets all the details of a subscription.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.getSubscription
+     * @method "ld.getSubscription"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options
+     *
+     * String with the id of the subscription to retrieve or an object with
+     * options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when retrieving
+     *   subscription details.
+     * - `id` (`String`): Id of the subscription to retrieve
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.ld.getSubscription("urn:ngsi-ld:Subscription:abcdef").then(
+     *     (response) => {
+     *         // Subscription details retrieved successfully
+     *         // response.subscription subscription details
+     *     }, (error) => {
+     *         // Error retrieving subscription
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.getSubscription = function getSubscription(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        } else if (options.id == null) {
+            throw new TypeError("missing id option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.SUBSCRIPTION_ENTRY,
+                {subscriptionId: encodeURIComponent(options.id)}
+            ),
+            connection.url
+        );
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            let data;
+            try {
+                data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                format: response.getHeader('Content-Type'),
+                subscription: data
+            });
+        });
+    };
+
+    /**
+     * Updates a subscription.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.updateSubscription
+     * @method "ld.updateSubscription"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} changes
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when updating
+     *   subscription details.
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Update subscription expiration time</caption>
+     *
+     * connection.ld.updateSubscription({
+     *     "id": "abcdef",
+     *     "expires": "2016-04-05T14:00:00.00Z"
+     * }).then(
+     *     (response) => {
+     *         // Subscription updated successfully
+     *     }, (error) => {
+     *         // Error updating subscription
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.updateSubscription = function updateSubscription(changes, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        const id = options.id != null ? options.id : changes.id;
+        if (id == null) {
+            throw new TypeError('missing subscription id');
+        } else if (changes.id != null) {
+            // Remove id from the payload
+            delete changes.id;
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(interpolate(NGSI.endpoints.ld.SUBSCRIPTION_ENTRY, {subscriptionId: encodeURIComponent(id)}), connection.url);
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PATCH",
+            contentType: "application/merge-patch+json",
+            postBody: changes,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Updates or appends attributes to an entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.appendEntityAttributes
+     * @method "ld.appendEntityAttributes"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} changes
+     *
+     * New values for the attributes. Must contain the `id` of the entity to
+     * update if not provided using the options parameter.
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when updating
+     *   entity details.
+     * - `id` (`String`, required): Id of the entity to update
+     * - `noOverwrite` (`Boolean`): `true` if no attribute overwrite shall be
+     *   performed.
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Append or update the temperature attribute</caption>
+     *
+     * connection.ld.appendEntityAttributes({
+     *     "id": "urn:ngsi-ld:Vehicle:A4567",
+     *     "name": {
+     *         "type": "Property",
+     *         "value": "Bus 1"
+     *     },
+     *     "@context": [
+     *         "https://fiware.github.io/data-models/context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Request ended correctly
+     *         // response.updated will contain the list of appended attributes
+     *         // while response.notUpdated will contain the list with the
+     *         // attributes that were not updated
+     *     }, (error) => {
+     *         // Error appending attributes to the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.appendEntityAttributes = function appendEntityAttributes(changes, options) {
+        if (changes == null || typeof changes !== "object") {
+            throw new TypeError('changes parameter should be an object');
+        }
+
+        if (options == null) {
+            options = {};
+        }
+
+        const id = options.id != null ? options.id : changes.id;
+        if (id == null) {
+            throw new TypeError('missing entity id');
+        } else if (changes.id != null) {
+            // Remove id from the payload
+            delete changes.id;
+        }
+
+        let parameters = {};
+        if (options.noOverwrite === true) {
+            parameters.options = "noOverwrite";
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.ENTITY_ATTRS_COLLECTION,
+                {entityId: encodeURIComponent(id)}
+            ),
+            connection.url
+        );
+
+        const headers = {
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            parameters: parameters,
+            contentType: "application/merge-patch+json",
+            postBody: changes,
+            requestHeaders: headers
+        }).then((response) => {
+            let data;
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 207) {
+                try {
+                    data = JSON.parse(response.responseText);
+                } catch (e) {
+                    throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                }
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                updated: data ? data.updated : Object.keys(changes),
+                notUpdated: data ? data.notUpdated : []
+            });
+        });
+    };
+
+    /**
+     * Updates one attribute of an entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.updateEntityAttribute
+     * @method "ld.updateEntityAttribute"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} changes
+     *
+     * Changes to apply to the attribute.
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when updating
+     *   entity details.
+     * - `id` (`String`, required): Id of the entity to update
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Append or update the temperature attribute</caption>
+     *
+     * connection.ld.updateEntityAttribute({
+     *     "type": "Property",
+     *     "value": "Bus 1"
+     * }, {
+     *     id: "urn:ngsi-ld:Vehicle:A4567",
+     *     attribute: "name",
+     *     "@context": [
+     *         "https://fiware.github.io/data-models/context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Attribute updated correctly
+     *     }, (error) => {
+     *         // Error updating the attribute of the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.updateEntityAttribute = function updateEntityAttribute(changes, options) {
+        if (changes == null || typeof changes !== "object") {
+            throw new TypeError('changes parameter should be an object');
+        }
+
+        if (options == null) {
+            options = {};
+        }
+
+        const id = options.id;
+        if (id == null) {
+            throw new TypeError('missing entity id');
+        }
+
+        const attribute = options.attribute;
+        if (attribute == null) {
+            throw new TypeError('missing entity attribute to update');
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.ENTITY_ATTR_ENTRY,
+                {
+                    entityId: encodeURIComponent(id),
+                    attribute: encodeURIComponent(attribute)
+                }
+            ),
+            connection.url
+        );
+
+        const headers = {
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PATCH",
+            postBody: changes,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Updates the attributes of an entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.updateEntityAttributes
+     * @method "ld.updateEntityAttributes"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} changes
+     *
+     * New values for the attributes. Must contain the `id` of the entity to
+     * update if not provided using the options parameter.
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when updating
+     *   entity details.
+     * - `id` (`String`, required): Id of the entity to update
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Append or update the temperature attribute</caption>
+     *
+     * connection.ld.updateEntityAttributes({
+     *     "id": "urn:ngsi-ld:Vehicle:A4567",
+     *     "name": {
+     *         "type": "Property",
+     *         "value": "Bus 1"
+     *     },
+     *     "@context": [
+     *         "https://fiware.github.io/data-models/context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Request ended correctly
+     *         // response.updated will contain the list of updated attributes
+     *         // while response.notUpdated will contain the list with the
+     *         // attributes that were not updated
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.updateEntityAttributes = function updateEntityAttributes(changes, options) {
+        if (changes == null || typeof changes !== "object") {
+            throw new TypeError('changes parameter should be an object');
+        }
+
+        if (options == null) {
+            options = {};
+        }
+
+        const id = options.id != null ? options.id : changes.id;
+        if (id == null) {
+            throw new TypeError('missing entity id');
+        } else if (changes.id != null) {
+            // Remove id from the payload
+            delete changes.id;
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.ENTITY_ATTRS_COLLECTION,
+                {entityId: encodeURIComponent(id)}
+            ),
+            connection.url
+        );
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PATCH",
+            postBody: changes,
+            requestHeaders: {
+                "NGSILD-Tenant": options.tenant
+            }
+        }).then((response) => {
+            let data;
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 207) {
+                try {
+                    data = JSON.parse(response.responseText);
+                } catch (e) {
+                    throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+                }
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({
+                updated: data ? data.updated : Object.keys(changes),
+                notUpdated: data ? data.notUpdated : []
+            });
+        });
+    };
+
+    /**
+     * Delete an attribute from a given entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.deleteEntityAttribute
+     * @method "ld.deleteEntityAttribute"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} options
+     *
+     * Object with options:
+     *
+     * - `id` (`String`, required): Id of the entity to update
+     * - `attribute` (`String`, required): Target Attribute (Property or
+     *   Relationship) to be delete.
+     * - `datasetId` (`String`): Specifies the *datasetId* of the attribute to be deleted.
+     * - `deleteAll` (`Boolean`): If `true` all attribute instances are deleted, otherwise
+     *    (default) only attribute instances without a *datasetId* are deleted
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand attribute name.the terms associated with
+     *   the changes.
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Deletes the name attribute</caption>
+     *
+     * connection.ld.deleteEntityAttribute({
+     *     "id": "urn:ngsi-ld:Vehicle:A4567",
+     *     "attribute": "name"
+     *     "@context": "https://fiware.github.io/data-models/context.jsonld"
+     * }).then(
+     *     (response) => {
+     *         // Request ended correctly
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.deleteEntityAttribute = function deleteEntityAttribute(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.ENTITY_ATTR_ENTRY,
+                {
+                    entityId: encodeURIComponent(options.id),
+                    attribute: encodeURIComponent(options.attribute)
+                }
+            ),
+            connection.url
+        );
+
+        const parameters = {
+            datasetId: options.datasetId,
+            deleteAll: options.deleteAll
+        };
+
+        const headers = {
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            parameters: parameters,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Retrieves the available entity types (using pagination).
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.listTypes
+     * @method "ld.listTypes"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when retrieving
+     *   subscription details.
+     * - `count` (`Boolean`; default: `false`): Request total result count
+     *   details
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of subscriptions you want to receive from the
+     *   server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given
+     *   number of elements at the beginning
+     * - `tenant` (`String`): Tenant to use in this operation
+     * - `details` (`Boolean`): If `true`, then detailed entity type information
+     *   represented as an array with elements of the Entity Type data structure
+     *   will be returned by the server
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 types from the Context Broker</caption>
+     *
+     * connection.ld.listTypes().then(
+     *     (response) => {
+     *         // Types retrieved successfully
+     *         // response.results is an array with the retrieved subscriptions
+     *     }, (error) => {
+     *         // Error retrieving subscriptions
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.listTypes = function listTypes(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(NGSI.endpoints.ld.TYPE_COLLECTION, connection.url);
+        const parameters = parse_pagination_options2(options, null);
+        parameters.details = options.details;
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            let data;
+            try {
+                data = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+            }
+
+            const result = {
+                format: response.getHeader('Content-Type'),
+                limit: options.limit,
+                offset: options.offset,
+                results: data
+            };
+            if (options.count === true) {
+                const count = response.getHeader("NGSILD-Results-Count");
+                result.count = count != null ? parseInt(count, 10) : null;
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Retrieves entity type information.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.getType
+     * @method "ld.getTypes"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options String with the name of the type to query
+     * or an object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when retrieving
+     *   subscription details.
+     * - `tenant` (`String`): Tenant to use in this operation
+     * - `type` (`String`): Name of the type to query
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve type information using FQN</caption>
+     *
+     * connection.ld.getType("https://uri.fiware.org/ns/data-models#Vehicle").then(
+     *     (information) => {
+     *         // Types retrieved successfully
+     *         // response.type type details
+     *     }, (error) => {
+     *         // Error retrieving type information
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve type information using short name</caption>
+     *
+     * const await details = connection.ld.getType({
+     *     type: "Vehicle",
+     *     "@context": "https://fiware.github.io/data-models/context.jsonld"
+     * }).type;
+     *
+     */
+    NGSI.Connection.LD.prototype.getType = function getType(options) {
+        if (typeof options === "string") {
+            options = {type: options};
+        } else if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.type == null) {
+            throw new TypeError("missing type option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.TYPE_ENTRY,
+                {
+                    typeId: encodeURIComponent(options.type)
+                }
+            ),
+            connection.url
+        );
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            let data;
+            try {
+                data = JSON.parse(response.responseText);
+            } catch (e) {
+                throw new NGSI.InvalidResponseError('Server returned invalid JSON content');
+            }
+            return Promise.resolve({
+                format: response.getHeader('Content-Type'),
+                type: data
+            });
+        });
+    };
+
+    /**
+     * Retrieves the temporal evolution of entities from a NGSI-LD server.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.queryTemporalEntities
+     * @method "ld.queryTemporalEntities"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `attrs` (`String`|`Array`): String array or comma-separated list of
+     *   attribute names whose data are to be included in the response. The
+     *   attributes are retrieved in the order specified by this parameter. If
+     *   this parameter is not included, the attributes are retrieved in
+     *   arbitrary order.
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when retrieving
+     *   entity details.
+     * - `coordinates` (`String`): Coordinates serialized as a string.
+     * - `count` (`Boolean`; default: `false`): Request total result count
+     *   details
+     * - `csf` (`String`): Context Source filter.
+     * - `endTimeAt` (`String`): DateTime to use as final date when `timerel` is
+     *   `between`.
+     * - `id` (`String`): A comma-separated list of entity ids to retrieve.
+     *   Incompatible with the `idPattern` option.
+     * - `idPattern` (`String`): A correctly formated regular expression.
+     *   Retrieve entities whose ID matches the regular expression. Incompatible
+     *   with the `id` option
+     * - `lastN` (`Number`): Only the last n instances, per Attribute, per
+     *   Entity (under the specified time interval) shall be retrieved
+     * - `limit` (`Number`; default: `20`): This option allow you to specify
+     *   the maximum number of entities you want to receive from the server
+     * - `offset` (`Number`; default: `0`): Allows you to skip a given number of
+     *   elements at the beginning
+     * - `orderBy` (`String`): Criteria for ordering results
+     * - `q` (`String`): A query expression, composed of a list of statements
+     *   separated by semicolons (`;`)
+     * - `georel` (`String`): Spatial relationship between matching entities and
+     *   a reference shape. See "Geographical Queries" section in NGSIv2 specification
+     *   for details.
+     * - `geometry` (`String`): Geographical area to which the query is restricted.
+     *   See "Geographical Queries" section in NGSIv2 specification for details.
+     * - `geoproperty` (`String`): The name of the Property that contains the
+     *   geospatial data that will be used to resolve the geoquery.
+     * - `temporalValues` (`Boolean'): Request information using the simplified
+     *   temporal representation of entities.
+     * - `timeAt` (`String`): DateTime representing the comparison point for the
+     *   before and after relation and the starting point for the between relation.
+     * - `timerel` (`String`): Allowed values: "before", "after", "between".
+     * - `timeproperty` (`String`): The name of the Property that contains the
+     *   temporal data that will be used to resolve the temporal query. By default,
+     *   will be `observedAt`.
+     * - `tenant` (`String`): Tenant to use in this operation
+     * - `type` (`String`): A comma-separated list of entity types to retrieve.
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Retrieve first 20 entities from the Context Broker</caption>
+     *
+     * connection.ld.queryTemporalEntities({limit: 20}).then(
+     *     (response) => {
+     *         // Entities retrieved successfully
+     *         // response.results is an array with the retrieved entities
+     *         // response.limit contains the used page size
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving entities
+     *     }
+     * );
+     *
+     * @example <caption>Retrieve second page from the Context Broker requesting pagination details</caption>
+     *
+     * connection.ld.queryTemporalEntities({type: "Road"}).then(
+     *     (response) => {
+     *         // Entities retrieved successfully
+     *         // response.results is an array with the retrieved entities
+     *         //   by this query
+     *         // response.offset contains the offset used in the request
+     *     }, (error) => {
+     *         // Error retrieving entities
+     *     }
+     * );
+     */
+    NGSI.Connection.LD.prototype.queryTemporalEntities = function queryTemporalEntities(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (Array.isArray(options.attrs) && options.attrs.length === 0) {
+            options.attrs = null;
+        }
+
+        if (options.id != null && options.idPattern != null) {
+            throw new TypeError("id and idPattern options cannot be used at the same time");
+        }
+
+        if (options.attrs == null && options.type == null) {
+            throw new TypeError("type option is required if attrs option is not provided");
+        }
+
+        if (options.timerel == null) {
+            options.timerel = "before";
+        }
+
+        if (options.timeAt == null) {
+            options.timeAt = new Date();
+        }
+
+        if (options.timerel === "between" && options.endTimeAt == null) {
+            throw new TypeError("endTimeAt option is required if timerel is equal to \"between\"");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(NGSI.endpoints.ld.TEMPORAL_ENTITY_COLLECTION, connection.url);
+        const parameters = parse_pagination_options2(options, null);
+
+        const optionsparams = [];
+        if (options.temporalValues === true) {
+            optionsparams.push("temporalValues");
+        }
+        if (optionsparams.length !== 0) {
+            parameters.options = optionsparams.join(',');
+        }
+
+        parameters.attrs = Array.isArray(options.attrs) ? options.attrs.join(',') : options.attrs;
+        parameters.endTimeAt = options.endTimeAt != null ? (
+            typeof(options.endTimeAt.toISOString) === "function" ? options.endTimeAt.toISOString() : options.endTimeAt
+        ) : undefined;
+        parameters.csf = options.csf;
+        parameters.id = options.id;
+        parameters.idPattern = options.idPattern;
+        parameters.lastN = options.lastN;
+        parameters.q = options.q;
+        parameters.timeAt = typeof(options.timeAt.toISOString) === "function" ? options.timeAt.toISOString() : options.timeAt;
+        parameters.timerel = options.timerel;
+        parameters.timeproperty = options.timeproperty;
+        parameters.type = options.type;
+        parameters.geoproperty = options.geoproperty;
+        parameters.georel = options.georel;
+        parameters.geometry = options.geometry;
+        parameters.coordinates = options.coordinates;
+
+        const headers = {
+            "Accept": "application/ld+json, application/json",
+            "NGSILD-Tenant": options.tenant
+        };
+
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "GET",
+            parameters: parameters,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status !== 200) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+
+            let data;
+            try {
+                data = JSON.parse(response.responseText);
+            } catch (e) {
+                return Promise.reject(new NGSI.InvalidResponseError('Server returned invalid JSON content'));
+            }
+
+            const result = {
+                format: response.getHeader('Content-Type'),
+                limit: options.limit,
+                offset: options.offset,
+                results: data
+            };
+            if (options.count === true) {
+                const count = response.getHeader("NGSILD-Results-Count");
+                result.count = count != null ? parseInt(count, 10) : null;
+            }
+
+            return Promise.resolve(result);
+        });
+    };
+
+    /**
+     * Creates a new temporal entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.createTemporalEntity
+     * @method "ld.createTemporalEntity"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object}
+     *
+     * entity values to be used for creating the new entity. Requires at least
+     * the `id` value for the new entity.
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     *
+     * @throws {NGSI.AlreadyExistsError}
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Basic usage</caption>
+     *
+     * connection.ld.createTemporalEntity({
+     *     "id": "urn:ngsi-ld:Road:Spain-Road-A62",
+     *     "type": "Road",
+     *     "name": {
+     *          "type": "Property",
+     *          "value": "A-62"
+     *     },
+     *     "alternateName": {
+     *          "type": "Property",
+     *          "value": "E-80"
+     *     },
+     *     "description": {
+     *          "type": "Property",
+     *          "value": "Autovía de Castilla"
+     *     },
+     *     "roadClass": {
+     *          "type": "Property",
+     *          "value": "motorway"
+     *     },
+     *     "length": {
+     *          "type": "Property",
+     *          "value": 355
+     *     },
+     *     "refRoadSegment": {
+     *         "type": "Relationship",
+     *         "object": [
+     *             "urn:ngsi-ld:RoadSegment:Spain-RoadSegment-A62-0-355-forwards",
+     *             "urn:ngsi-ld:RoadSegment:Spain-RoadSegment-A62-0-355-backwards"
+     *         ]
+     *     },
+     *     "responsible": {
+     *          "type": "Property",
+     *          "value": "Ministerio de Fomento - Gobierno de España"
+     *     },
+     *     "@context": [
+     *        "https://schema.lab.fiware.org/ld/context",
+     *        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Entity created successfully
+     *     }, (error) => {
+     *         // Error creating the entity
+     *     }
+     * );
+     *
+     * @example <caption>Using the tenant option</caption>
+     *
+     * connection.ld.createTemporalEntity({
+     *     "id": "urn:ngsi-ld:Vehicle:B9211",
+     *     "type": "Vehicle",
+     *     "brandName": [
+     *         {
+     *             "type": "Property",
+     *             "value": "Volvo"
+     *         }
+     *     ],
+     *     "speed": [
+     *         {
+     *             "type": "Property",
+     *             "value": 120,
+     *             "observedAt": "2018-08-01T12:03:00Z"
+     *         }, {
+     *             "type": "Property",
+     *             "value": 80,
+     *             "observedAt": "2018-08-01T12:05:00Z"
+     *         }, {
+     *             "type": "Property",
+     *             "value": 100,
+     *             "observedAt": "2018-08-01T12:07:00Z"
+     *         }
+     *     ],
+     *     "@context": [
+     *        "https://schema.lab.fiware.org/ld/context",
+     *        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+     *     ]
+     * }, {tenant: "mytenant"}).then(
+     *     (response) => {
+     *         // Entity created successfully
+     *     }, (error) => {
+     *         // Error creating the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.createTemporalEntity = function createTemporalEntity(entity, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (entity.id == null) {
+            throw new TypeError("missing entity id");
+        }
+
+        if (entity.type == null) {
+            throw new TypeError("missing entity type");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(NGSI.endpoints.ld.TEMPORAL_ENTITY_COLLECTION, connection.url);
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            postBody: entity,
+            contentType: "@context" in entity ? "application/ld+json" : "application/json",
+            requestHeaders: {
+                "NGSILD-Tenant": options.tenant
+            }
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 409) {
+                return Promise.reject(new NGSI.AlreadyExistsError({}));
+            } else if ([201, 204].indexOf(response.status) === -1) {
+                return Promise.reject(new NGSI.InvalidResponseError("Unexpected error code: " + response.status));
+            }
+            return Promise.resolve({
+                entity: entity,
+                created: response.status === 201,
+                location: response.getHeader("Location")
+            });
+        });
+    };
+
+    /**
+     * Removes a temporal entity from the context broker server.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.deleteTemporalEntity
+     * @method "ld.deleteTemporalEntity"
+     * @memberof NGSI.Connection
+     *
+     * @param {String|Object} options
+     *
+     * String with the entity id to remove or an object providing options:
+     *
+     * - `id` (`String`, required): Id of the entity to remove
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     * @throws {NGSI.TooManyResultsError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Remove entity by Id</caption>
+     *
+     * connection.ld.deleteTemporalEntity("urn:ngsi-ld:RoadSegment:Spain-Road-A62").then(
+     *     (response) => {
+     *         // Temporal entity deleted successfully
+     *     }, (error) => {
+     *         // Error deleting the temporal entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.deleteTemporalEntity = function deleteTemporalEntity(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (typeof options === "string") {
+            options = {
+                id: options
+            };
+        } else if (options.id == null) {
+            throw new TypeError("missing id option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(interpolate(NGSI.endpoints.ld.TEMPORAL_ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)}), connection.url);
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            requestHeaders: {
+                "NGSILD-Tenant": options.tenant
+            }
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError("Unexpected error code: " + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Adds attributes to the Temporal Representation of an Entity
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.addTemporalEntityAttributes
+     * @method "ld.addTemporalEntityAttributes"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} changes
+     *
+     * New values for the attributes. Must contain the `id` of the entity to
+     * update if not provided using the options parameter.
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when updating
+     *   entity details.
+     * - `id` (`String`, required): Id of the entity to update
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Adding attributes values</caption>
+     *
+     * connection.ld.addTemporalEntityAttributes({
+     *     "speed": [
+     *         {
+     *             "type": "Property",
+     *             "value": 120,
+     *             "observedAt": "2018-08-01T12:09:00Z"
+     *         }, {
+     *             "type": "Property",
+     *             "value": 80,
+     *             "observedAt": "2018-08-01T12:11:00Z"
+     *         }, {
+     *             "type": "Property",
+     *             "value": 100,
+     *             "observedAt": "2018-08-01T12:13:00Z"
+     *         }
+     *     ],
+     *     "@context": [
+     *        "https://schema.lab.fiware.org/ld/context",
+     *        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+     *     ]
+     * }, {
+     *     id: "urn:ngsi-ld:Vehicle:B9211"
+     * }).then(
+     *     (response) => {
+     *         // Request ended correctly
+     *         // response.updated will contain the list of updated attributes
+     *         // while response.notUpdated will contain the list with the
+     *         // attributes that were not updated
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *     }
+     * );
+     *
+     * @example <caption>Add attributes values (inserting the id into the payload)</caption>
+     *
+     * connection.ld.addTemporalEntityAttributes({
+     *     "id": "urn:ngsi-ld:Vehicle:B9211",
+     *     "speed": [
+     *         {
+     *             "type": "Property",
+     *             "value": 120,
+     *             "observedAt": "2018-08-01T12:09:00Z"
+     *         }, {
+     *             "type": "Property",
+     *             "value": 80,
+     *             "observedAt": "2018-08-01T12:11:00Z"
+     *         }, {
+     *             "type": "Property",
+     *             "value": 100,
+     *             "observedAt": "2018-08-01T12:13:00Z"
+     *         }
+     *     ],
+     *     "@context": [
+     *        "https://schema.lab.fiware.org/ld/context",
+     *        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Request ended correctly
+     *         // response.updated will contain the list of updated attributes
+     *         // while response.notUpdated will contain the list with the
+     *         // attributes that were not updated
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.addTemporalEntityAttributes = function addTemporalEntityAttributes(changes, options) {
+        if (changes == null || typeof changes !== "object") {
+            throw new TypeError("changes parameter should be an object");
+        }
+
+        if (options == null) {
+            options = {};
+        }
+
+        const id = options.id != null ? options.id : changes.id;
+        if (id == null) {
+            throw new TypeError("missing entity id");
+        } else if (changes.id != null) {
+            // Remove id from the payload
+            delete changes.id;
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.TEMPORAL_ENTITY_ATTRS_COLLECTION,
+                {entityId: encodeURIComponent(id)}
+            ),
+            connection.url
+        );
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "POST",
+            postBody: changes,
+            requestHeaders: {
+                "NGSILD-Tenant": options.tenant
+            }
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError("Unexpected error code: " + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Delete a temporal attribute from a given temporal entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.deleteTemporalEntityAttribute
+     * @method "ld.deleteTempporalEntityAttribute"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} options
+     *
+     * Object with options:
+     *
+     * - `id` (`String`, required): Id of the entity to update
+     * - `attribute` (`String`, required): Target Attribute (Property or
+     *   Relationship) to be delete.
+     * - `datasetId` (`String`): Specifies the *datasetId* of the attribute to be deleted.
+     * - `deleteAll` (`Boolean`): If `true` all attribute instances are deleted, otherwise
+     *    (default) only attribute instances without a *datasetId* are deleted
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand attribute name.the terms associated with
+     *   the changes.
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Deletes the name attribute</caption>
+     *
+     * connection.ld.deleteTemporalEntityAttribute({
+     *     "id": "urn:ngsi-ld:Vehicle:A4567",
+     *     "attribute": "name"
+     *     "@context": "https://fiware.github.io/data-models/context.jsonld"
+     * }).then(
+     *     (response) => {
+     *         // Request ended correctly
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.deleteTemporalEntityAttribute = function deleteTemporalEntityAttribute(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.TEMPORAL_ENTITY_ATTRS_ENTRY,
+                {
+                    entityId: encodeURIComponent(options.id),
+                    attribute: encodeURIComponent(options.attribute)
+                }
+            ),
+            connection.url
+        );
+
+        const parameters = {
+            datasetId: options.datasetId,
+            deleteAll: options.deleteAll
+        };
+
+        const headers = {
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            parameters: parameters,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Updates an attribute instance from Temporal Representation of an Entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.updateTemporalEntityAttributeInstance
+     * @method "ld.updateTemporalEntityAttributeInstance"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} changes
+     *
+     * Changes to apply to the attribute.
+     *
+     * @param {Object} [options]
+     *
+     * Object with extra options:
+     *
+     * - `attribute` (`String`, required): Target Attribute (Property or
+     *   Relationship) to be updated.
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand the terms when updating
+     *   entity details.
+     * - `id` (`String`, required): Id of the entity to update
+     * - `instance` (`String`, required): Entity Attribute instance to be
+     *   modified, identified by its *instanceId*.
+     * - `attribute` (`String`, required): Target Attribute (Property or
+     *   Relationship) to be updated.
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Append or update the temperature attribute</caption>
+     *
+     * connection.ld.updateEntityAttribute({
+     *     "type": "Property",
+     *     "value": "Bus 1"
+     * }, {
+     *     id: "urn:ngsi-ld:Vehicle:A4567",
+     *     attribute: "name",
+     *     "@context": [
+     *         "https://fiware.github.io/data-models/context.jsonld"
+     *     ]
+     * }).then(
+     *     (response) => {
+     *         // Attribute updated correctly
+     *     }, (error) => {
+     *         // Error updating the attribute of the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.updateTemporalEntityAttributeInstance = function updateTemporalEntityAttributeInstance(changes, options) {
+        if (changes == null || typeof changes !== "object") {
+            throw new TypeError('changes parameter should be an object');
+        }
+
+        if (options == null) {
+            options = {};
+        }
+
+        const id = options.id;
+        if (id == null) {
+            throw new TypeError('missing entity id');
+        }
+
+        const attribute = options.attribute;
+        if (attribute == null) {
+            throw new TypeError('missing entity attribute to update');
+        }
+
+        const instance = options.instance;
+        if (instance == null) {
+            throw new TypeError('missing attribute instance id');
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.TEMPORAL_ENTITY_ATTRS_INSTANCE_ENTRY,
+                {
+                    entityId: encodeURIComponent(id),
+                    attribute: encodeURIComponent(attribute),
+                    instanceId: encodeURIComponent(instance)
+                }
+            ),
+            connection.url
+        );
+
+        const headers = {
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "PATCH",
+            postBody: changes,
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
+
+    /**
+     * Deletes an attribute instance from a Temporal Representation of Entity.
+     *
+     * > This method is aligned with NGSI-LD (CIM 009 v1.3.1 Specification)
+     *
+     * @since 1.4
+     *
+     * @name NGSI.Connection#ld.deleteTemporalEntityAttribute
+     * @method "ld.deleteTempporalEntityAttribute"
+     * @memberof NGSI.Connection
+     *
+     * @param {Object} options
+     *
+     * Object with options:
+     *
+     * - `id` (`String`, required): Id of the entity to update
+     * - `attribute` (`String`, required): Target Attribute (Property or
+     *   Relationship) to be delete.
+     * - `@context` (`String`): URI pointing to the JSON-LD document which
+     *   contains the `@context` to be used to expand attribute name.the terms associated with
+     *   the changes.
+     * - `instance` (`String`, required): Entity Attribute instance to be
+     *   deleted, identified by its *instanceId*.
+     * - `tenant` (`String`): Tenant to use in this operation
+     *
+     * @throws {NGSI.BadRequestError}
+     * @throws {NGSI.ConnectionError}
+     * @throws {NGSI.InvalidResponseError}
+     * @throws {NGSI.NotFoundError}
+     *
+     * @returns {Promise}
+     *
+     * @example <caption>Deletes the name attribute</caption>
+     *
+     * connection.ld.deleteTemporalEntityAttribute({
+     *     "id": "urn:ngsi-ld:Vehicle:A4567",
+     *     "attribute": "name"
+     *     "@context": "https://fiware.github.io/data-models/context.jsonld"
+     * }).then(
+     *     (response) => {
+     *         // Request ended correctly
+     *     }, (error) => {
+     *         // Error updating the attributes of the entity
+     *     }
+     * );
+     *
+     */
+    NGSI.Connection.LD.prototype.deleteTemporalEntityAttributeInstance = function deleteTemporalEntityAttributeInstance(options) {
+        if (options == null) {
+            throw new TypeError("missing options parameter");
+        }
+
+        if (options.id == null) {
+            throw new TypeError("missing id option");
+        } else if (options.attribute == null) {
+            throw new TypeError("missing attribute option");
+        } else if (options.instance == null) {
+            throw new TypeError("missing instance option");
+        }
+
+        const connection = privates.get(this);
+        const url = new URL(
+            interpolate(
+                NGSI.endpoints.ld.TEMPORAL_ENTITY_ATTRS_INSTANCE_ENTRY,
+                {
+                    entityId: encodeURIComponent(options.id),
+                    attribute: encodeURIComponent(options.attribute),
+                    instanceId: encodeURIComponent(options.instance)
+                }
+            ),
+            connection.url
+        );
+
+        const headers = {
+            "NGSILD-Tenant": options.tenant
+        };
+        if (typeof options["@context"] === "string") {
+            headers.Link = '<' + encodeURI(options["@context"]) + '>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"';
+        }
+
+        return makeJSONRequest2.call(connection, url, {
+            method: "DELETE",
+            requestHeaders: headers
+        }).then((response) => {
+            if (response.status === 400) {
+                return parse_bad_request_ld(response);
+            } else if (response.status === 404) {
+                return parse_not_found_response_ld(response);
+            } else if (response.status !== 204) {
+                return Promise.reject(new NGSI.InvalidResponseError('Unexpected error code: ' + response.status));
+            }
+            return Promise.resolve({});
+        });
+    };
 
     /* istanbul ignore else */
     if (typeof window !== 'undefined') {
