@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var ContextManager = function ContextManager(contextInstance, context_description) {
+    const ContextManager = function ContextManager(contextInstance, context_description) {
 
         if (context_description == null || typeof context_description !== 'object') {
             throw new TypeError('invalid context_description parameter');
@@ -35,10 +35,10 @@
         context_description = utils.clone(context_description, true);
         Object.defineProperty(this, 'instance', {value: contextInstance});
 
-        var context = {};
-        var handlers = [];
+        const context = {};
+        const handlers = [];
 
-        for (var key in context_description) {
+        for (const key in context_description) {
             if (context_description == null || typeof context_description[key] !== 'object') {
                 delete context_description[key];
             }
@@ -72,13 +72,11 @@
 
         Object.defineProperty(this, 'removeCallback', {
             value: function removeCallback(handler) {
-                var index;
-
                 if (typeof handler !== 'function') {
                     throw new TypeError();
                 }
 
-                index = handlers.indexOf(handler);
+                const index = handlers.indexOf(handler);
                 if (index !== -1) {
                     handlers.splice(index, 1);
                 }
@@ -93,19 +91,19 @@
 
         Object.defineProperty(this, 'modify', {
             value: function get(values) {
-                var key, i, updated_values = {};
+                const updated_values = {};
 
                 if (typeof values !== 'object') {
                     throw new TypeError();
                 }
 
-                for (key in values) {
+                for (const key in values) {
                     if (!context.hasOwnProperty(key)) {
                         throw new TypeError(key);
                     }
                 }
 
-                for (key in values) {
+                for (const key in values) {
                     if (context[key] !== values[key]) {
                         context[key] = values[key];
                         updated_values[key] = values[key];
@@ -113,7 +111,7 @@
                 }
 
                 if (!utils.isEmpty(updated_values)) {
-                    for (i = 0; i < handlers.length; i += 1) {
+                    for (let i = 0; i < handlers.length; i += 1) {
                         try {
                             handlers[i](updated_values);
                         } catch (e) {}

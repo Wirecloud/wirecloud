@@ -27,6 +27,32 @@
 
     "use strict";
 
+    const _acceptListener = function _acceptListener(e) {
+        const task = this.acceptHandler();
+        if (task != null && typeof task.then === "function") {
+            this.acceptButton.addClassName("busy").disable();
+            this.cancelButton.disable();
+            task.then(
+                () => {
+                    this.hide();
+                },
+                (error) => {
+                    this.acceptButton.removeClassName("busy").enable();
+                    this.cancelButton.enable();
+                }
+            );
+        } else {
+            this.hide();
+        }
+    };
+
+    const _closeListener = function _closeListener(e) {
+        Wirecloud.ui.WindowMenu.prototype._closeListener.call(this, e);
+        if (this.cancelHandler) {
+            this.cancelHandler();
+        }
+    };
+
     /**
      * Specific class representing alert dialogs
      *
@@ -112,31 +138,5 @@
         }
 
     }
-
-    var _acceptListener = function _acceptListener(e) {
-        var task = this.acceptHandler();
-        if (task != null && typeof task.then === "function") {
-            this.acceptButton.addClassName("busy").disable();
-            this.cancelButton.disable();
-            task.then(
-                () => {
-                    this.hide();
-                },
-                (error) => {
-                    this.acceptButton.removeClassName("busy").enable();
-                    this.cancelButton.enable();
-                }
-            );
-        } else {
-            this.hide();
-        }
-    };
-
-    var _closeListener = function _closeListener(e) {
-        Wirecloud.ui.WindowMenu.prototype._closeListener.call(this, e);
-        if (this.cancelHandler) {
-            this.cancelHandler();
-        }
-    };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

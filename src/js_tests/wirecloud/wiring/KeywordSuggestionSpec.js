@@ -26,24 +26,24 @@
 
     "use strict";
 
-    var equals = function equals(other) {
+    const equals = function equals(other) {
         if (other.missing) {
             return false;
         }
         return this.id === other.id;
     };
 
-    var SourceEndpoint = function (options) {
+    const SourceEndpoint = function (options) {
         Object.assign(this, options);
     };
     utils.inherit(SourceEndpoint, Wirecloud.wiring.SourceEndpoint);
 
-    var TargetEndpoint = function (options) {
+    const TargetEndpoint = function (options) {
         Object.assign(this, options);
     };
     utils.inherit(TargetEndpoint, Wirecloud.wiring.TargetEndpoint);
 
-    var BASIC_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const BASIC_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new TargetEndpoint({
             id: "widget/19/condition-list",
             friendcodeList: ["list"],
@@ -58,7 +58,7 @@
         }
     );
 
-    var BASIC_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const BASIC_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new SourceEndpoint({
             id: "widget/19/condition-list",
             friendcodeList: ["list"],
@@ -73,7 +73,7 @@
         }
     );
 
-    var EXTRA_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const EXTRA_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new TargetEndpoint({
             id: "widget/22/other-endpoint",
             friendcodeList: ["other"],
@@ -88,7 +88,7 @@
         }
     );
 
-    var EXTRA_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const EXTRA_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new SourceEndpoint({
             id: "widget/22/other-endpoint",
             friendcodeList: ["other"],
@@ -103,7 +103,7 @@
         }
     );
 
-    var MISSING_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const MISSING_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new TargetEndpoint({
             id: "widget/20/condition-list",
             friendcodeList: ["list"],
@@ -119,7 +119,7 @@
         }
     );
 
-    var MISSING_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const MISSING_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new SourceEndpoint({
             id: "widget/20/condition-list",
             friendcodeList: ["list"],
@@ -136,7 +136,7 @@
         }
     );
 
-    var OPERATOR_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const OPERATOR_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new TargetEndpoint({
             id: "operator/1/list",
             friendcodeList: ["list"],
@@ -151,7 +151,7 @@
         }
     );
 
-    var OPERATOR_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const OPERATOR_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new SourceEndpoint({
             id: "operator/1/list",
             friendcodeList: ["list"],
@@ -166,7 +166,7 @@
         }
     );
 
-    var WIDGET_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const WIDGET_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new TargetEndpoint({
             id: "widget/21/other-endpoint",
             friendcodeList: ["list"],
@@ -181,7 +181,7 @@
         }
     );
 
-    var WIDGET_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const WIDGET_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new SourceEndpoint({
             id: "widget/21/other-outputendpoint",
             friendcodeList: ["list"],
@@ -196,7 +196,7 @@
         }
     );
 
-    var FRIENDCODES_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const FRIENDCODES_OUTPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new SourceEndpoint({
             id: "operator/1/query",
             friendcodeList: ["query", "string"],
@@ -211,7 +211,7 @@
         }
     );
 
-    var FRIENDCODES_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
+    const FRIENDCODES_INPUT_ENDPOINT = new Wirecloud.ui.WiringEditor.Endpoint(
         new TargetEndpoint({
             id: "widget/21/keywords",
             friendcodeList: ["keywords", "query", "input-text"],
@@ -232,14 +232,14 @@
         describe("new KeywordSuggestion([options])", function () {
 
             it("can be created without passing any option", function () {
-                var element = new ns.KeywordSuggestion();
+                const element = new ns.KeywordSuggestion();
                 expect(element).not.toEqual(null);
             });
 
         });
 
         describe("appendEndpoint()", function () {
-            var engine;
+            let engine;
 
             beforeEach(function () {
                 // Provide a clean instance for each test
@@ -264,7 +264,7 @@
         });
 
         describe("removeEndpoint(endpoint)", function () {
-            var engine;
+            let engine;
 
             beforeEach(function () {
                 // Provide a clean instance for each test
@@ -298,7 +298,7 @@
                 expect(engine.removeEndpoint(BASIC_OUTPUT_ENDPOINT)).toBe(engine);
 
                 // Check other endpoints are not affected
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 expect(engine.forEachSuggestion(OPERATOR_INPUT_ENDPOINT, callback)).toBe(engine);
                 expect(callback.calls.count()).toBe(1);
@@ -315,7 +315,7 @@
         });
 
         describe("forEachSuggestion(endpoint, callback)", function () {
-            var engine;
+            let engine;
 
             beforeEach(function () {
                 // Provide a clean instance for each test
@@ -323,7 +323,7 @@
             });
 
             it("should do nothing if there are no endpoints to suggest (when querying form a valid input endpoint)", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine.appendEndpoint(OPERATOR_INPUT_ENDPOINT);
@@ -334,7 +334,7 @@
             });
 
             it("should do nothing if there are no endpoints to suggest (when querying form a valid output endpoint)", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine.appendEndpoint(OPERATOR_OUTPUT_ENDPOINT);
@@ -345,7 +345,7 @@
             });
 
             it("should ignore non-matching input endpoints", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -358,7 +358,7 @@
             });
 
             it("should ignore non-matching output endpoints", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -371,7 +371,7 @@
             });
 
             it("should find input endpoints", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -387,7 +387,7 @@
             });
 
             it("should find output endpoints", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -403,7 +403,7 @@
             });
 
             it("should ignore endpoints of the same component (when querying form a valid input endpoint)", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -416,7 +416,7 @@
             });
 
             it("should ignore endpoints of the same component (when querying form a valid output endpoint)", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -429,7 +429,7 @@
             });
 
             it("should do nothing when the endpoint parameter is a missing input endpoint", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -444,7 +444,7 @@
             });
 
             it("should do nothing when the endpoint parameter is a missing output endpoint", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -459,7 +459,7 @@
             });
 
             it("should ignore missing endpoints (when querying from a valid input endpoint)", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -475,7 +475,7 @@
             });
 
             it("should ignore missing endpoints (when querying from a valid output endpoint)", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -491,7 +491,7 @@
             });
 
             it("should find input endpoints using friendcode list", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -505,7 +505,7 @@
             });
 
             it("should find output endpoints using friendcode list", function () {
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 // Prepare the engine
                 engine
@@ -520,7 +520,7 @@
         });
 
         describe("empty()", function () {
-            var engine;
+            let engine;
 
             beforeEach(function () {
                 // Provide a clean instance for each test
@@ -545,7 +545,7 @@
                 expect(engine.empty()).toBe(engine);
 
                 // Check endpoints are not suggested
-                var callback = jasmine.createSpy('callback');
+                const callback = jasmine.createSpy('callback');
 
                 expect(engine.forEachSuggestion(OPERATOR_INPUT_ENDPOINT, callback)).toBe(engine);
                 expect(callback.calls.count()).toBe(0);

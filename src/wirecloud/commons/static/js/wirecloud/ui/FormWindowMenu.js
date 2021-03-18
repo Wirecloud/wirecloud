@@ -45,8 +45,9 @@
             this.form.addEventListener('submit', function (form, data) {
                 this.form.acceptButton.disable();
                 this.form.cancelButton.disable();
+                let operation;
                 try {
-                    var operation = this.executeOperation(data);
+                    operation = this.executeOperation(data);
                 } catch (e) {}
                 if (operation != null && typeof operation.then === "function") {
                     this.form.acceptButton.addClassName('busy');

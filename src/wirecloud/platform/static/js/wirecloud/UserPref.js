@@ -29,7 +29,7 @@
     /**
      * @author aarranz
      */
-    var UserPref = function UserPref(meta, readonly, hidden, currentValue) {
+    const UserPref = function UserPref(meta, readonly, hidden, currentValue) {
         if (meta == null || !(meta instanceof Wirecloud.UserPrefDef)) {
             throw new TypeError("invalid meta parameter");
         }
@@ -50,9 +50,9 @@
     };
 
     UserPref.prototype.getInterfaceDescription = function getInterfaceDescription() {
-        var type = this.meta.type;
+        const type = this.meta.type;
 
-        var desc = {
+        const desc = {
             type: type,
             label: this.meta.label,
             description: this.meta.description,

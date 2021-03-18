@@ -47,12 +47,12 @@
             const btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 class: "we-prefs-btn",
-                iconClass: "fa fa-reorder"
+                iconClass: "fas fa-bars"
             });
             const btnRemove = new se.Button({
                 title: utils.gettext("Remove"),
                 class: "btn-remove",
-                iconClass: "fa fa-times-circle"
+                iconClass: "fas fa-times-circle"
             });
 
             super({

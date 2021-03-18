@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var OPERATOR = Object.freeze({
+    const OPERATOR = Object.freeze({
         id: "1",
         name: "operator1",
         meta: {
@@ -40,13 +40,13 @@
         describe("new OperatorSourceEndpoint(operatorModel, [endpointDesc])", function () {
 
             it("should create a new instance", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     description: "description",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.component).toBe(OPERATOR);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -57,12 +57,12 @@
             });
 
             it("should create a new instance with no description", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.component).toBe(OPERATOR);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -74,7 +74,7 @@
 
             it("should create a new instance with no endpointDesc", function () {
                 /* The Dashboard Management API doesn't provide a endpointDesc */
-                var endpoint = new ns.OperatorSourceEndpoint(OPERATOR);
+                const endpoint = new ns.OperatorSourceEndpoint(OPERATOR);
 
                 expect(endpoint.component).toBe(OPERATOR);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -85,12 +85,12 @@
             });
 
             it("should handle empty friendcodes", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: ""
                 };
-                var endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.friendcodeList).toEqual([]);
             });
@@ -99,12 +99,12 @@
 
         describe("toString()", function () {
             it("should convert the endpoint into a string", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.toString()).toEqual(["operator", OPERATOR.id, endpointDesc.name].join("/"));
             });
@@ -112,17 +112,17 @@
 
         describe("toJSON()", function () {
             it("should convert the endpoint into a JSON object", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var expected_result = {
+                const expected_result = {
                     id: OPERATOR.id,
                     type: "operator",
                     endpoint: endpointDesc.name
                 };
-                var endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorSourceEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.toJSON()).toEqual(expected_result);
             });

@@ -143,7 +143,7 @@
                     "width": "fit-content(0)",
                     "sortable": false,
                     "contentBuilder": function (entry) {
-                        var button = new se.Button({iconClass: "fa fa-remove", plain: true, title: utils.gettext("Remove this file")});
+                        var button = new se.Button({iconClass: "fas fa-times", plain: true, title: utils.gettext("Remove this file")});
                         button.addEventListener("click", this.removeFile.bind(this, entry.file));
                         return button;
                     }.bind(this)

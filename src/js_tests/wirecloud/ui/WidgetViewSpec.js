@@ -48,7 +48,7 @@
         });
 
         const callEventListener = function callEventListener(instance, event) {
-            var largs = Array.prototype.slice.call(arguments, 2);
+            const largs = Array.prototype.slice.call(arguments, 2);
             largs.unshift(instance);
             instance.addEventListener.calls.allArgs().some(function (args) {
                 if (args[0] === event) {
@@ -59,7 +59,7 @@
         };
 
         const create_layout_mock = function create_layout_mock(tab, klass) {
-            let layout = Object.create(klass.prototype);
+            const layout = Object.create(klass.prototype);
             Object.assign(layout, {
                 dragboard: tab.dragboard,
                 tab: tab,
@@ -89,7 +89,7 @@
         };
 
         const create_tab_mock = function create_tab_mock() {
-            let tab = {
+            const tab = {
                 id: "123",
                 model: {},
                 workspace: {
@@ -178,9 +178,9 @@
             });
 
             it("should work by providing options", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 // Check initial values
                 expect(widget.tab).toBe(tab);
@@ -198,18 +198,18 @@
         describe("moveToLayout(newLayout)", () => {
 
             it("should do nothing if target layout is the current one", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({layout: 0});
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 0});
+                const widget = new ns.WidgetView(tab, model);
 
                 widget.moveToLayout(widget.layout);
             });
 
             it("should work when not affecting other widgets", (done) => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({layout: 1});
-                let widget = new ns.WidgetView(tab, model);
-                let newLayout = create_layout_mock(tab, ns.FreeLayout);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 1});
+                const widget = new ns.WidgetView(tab, model);
+                const newLayout = create_layout_mock(tab, ns.FreeLayout);
 
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {
@@ -219,10 +219,10 @@
             });
 
             it("should work when affecting other widgets", (done) => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({layout: 3});
-                let widget = new ns.WidgetView(tab, model);
-                let newLayout = create_layout_mock(tab, ns.FreeLayout);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 3});
+                const widget = new ns.WidgetView(tab, model);
+                const newLayout = create_layout_mock(tab, ns.FreeLayout);
                 widget.layout.removeWidget.and.callFake(function () {
                     widget.layout = null;
                     return new Set(["1"]);
@@ -241,12 +241,12 @@
             });
 
             it("should split updates when moving widget between tabs", (done) => {
-                let tab1 = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab1, model);
-                let tab2 = create_tab_mock();
-                let oldLayout = widget.layout;
-                let newLayout = create_layout_mock(tab2, ns.FreeLayout);
+                const tab1 = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab1, model);
+                const tab2 = create_tab_mock();
+                const oldLayout = widget.layout;
+                const newLayout = create_layout_mock(tab2, ns.FreeLayout);
                 widget.layout.removeWidget.and.callFake(function () {
                     widget.layout = null;
                     return new Set(["1"]);
@@ -268,13 +268,13 @@
             });
 
             it("should manage minimized widgets", (done) => {
-                let tab1 = create_tab_mock();
-                let model = create_widget_mock();
+                const tab1 = create_tab_mock();
+                const model = create_widget_mock();
                 model.minimized = true;
-                let widget = new ns.WidgetView(tab1, model);
-                let tab2 = create_tab_mock();
-                let oldLayout = widget.layout;
-                let newLayout = create_layout_mock(tab2, ns.FreeLayout);
+                const widget = new ns.WidgetView(tab1, model);
+                const tab2 = create_tab_mock();
+                const oldLayout = widget.layout;
+                const newLayout = create_layout_mock(tab2, ns.FreeLayout);
                 widget.layout.removeWidget.and.callFake(function () {
                     widget.layout = null;
                     return new Set(["1"]);
@@ -294,12 +294,12 @@
             });
 
             it("should relocate widgets if target layout is not a free layout", (done) => {
-                let tab1 = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab1, model);
-                let tab2 = create_tab_mock();
-                let oldLayout = widget.layout;
-                let newLayout = create_layout_mock(tab2, ns.SmartColumnLayout);
+                const tab1 = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab1, model);
+                const tab2 = create_tab_mock();
+                const oldLayout = widget.layout;
+                const newLayout = create_layout_mock(tab2, ns.SmartColumnLayout);
                 widget.layout.removeWidget.and.callFake(function () {
                     widget.layout = null;
                     return new Set(["1"]);
@@ -320,10 +320,10 @@
             });
 
             it("should restore widget shape when coming back from a full dragboard layout", (done) => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({fulldragboard: true});
-                let widget = new ns.WidgetView(tab, model);
-                let newLayout = create_layout_mock(tab, ns.SmartColumnLayout);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({fulldragboard: true});
+                const widget = new ns.WidgetView(tab, model);
+                const newLayout = create_layout_mock(tab, ns.SmartColumnLayout);
                 newLayout.addWidget.and.callFake(function () {
                     widget.layout = this;
                     return new Set(["3", "5"]);
@@ -342,23 +342,23 @@
         describe("togglePermission(permission, persitence)", () => {
 
             it("should work for enabling a permission", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
                 model.permissions.viewer.move = false;
-                let widget = new ns.WidgetView(tab, model);
+                const widget = new ns.WidgetView(tab, model);
 
-                let t = widget.togglePermission("move", false);
+                const t = widget.togglePermission("move", false);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 expect(model.setPermissions).toHaveBeenCalledWith({move: true}, false);
             });
 
             it("should work for disabling a permission", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
                 model.permissions.viewer.move = true;
-                let widget = new ns.WidgetView(tab, model);
+                const widget = new ns.WidgetView(tab, model);
 
-                let t = widget.togglePermission("move", true);
+                const t = widget.togglePermission("move", true);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 expect(model.setPermissions).toHaveBeenCalledWith({move: false}, true);
             });
@@ -368,23 +368,23 @@
         describe("toggleTitleVisibility(persitence)", () => {
 
             it("should work for enabling a title visibility", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
                 model.titlevisible = false;
-                let widget = new ns.WidgetView(tab, model);
+                const widget = new ns.WidgetView(tab, model);
 
-                let t = widget.toggleTitleVisibility(false);
+                const t = widget.toggleTitleVisibility(false);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 expect(model.setTitleVisibility).toHaveBeenCalledWith(true, false);
             });
 
             it("should work for disabling a permission", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
                 model.titlevisible = true;
-                let widget = new ns.WidgetView(tab, model);
+                const widget = new ns.WidgetView(tab, model);
 
-                let t = widget.toggleTitleVisibility(true);
+                const t = widget.toggleTitleVisibility(true);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 expect(model.setTitleVisibility).toHaveBeenCalledWith(false, true);
             });
@@ -394,9 +394,9 @@
         describe("persist()", () => {
 
             it("should update model data on normal widgets", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.persist()).toBe(widget);
 
@@ -405,9 +405,9 @@
             });
 
             it("should ignore volatile widgets", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({volatile: true});
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({volatile: true});
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.persist()).toBe(widget);
 
@@ -420,9 +420,9 @@
         describe("reload()", () => {
 
             it("should work", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.reload()).toBe(widget);
                 expect(widget.model.reload).toHaveBeenCalledWith();
@@ -433,9 +433,9 @@
         describe("setFullDragboardMode(enable)", () => {
 
             it("should work for moving a widget into full dragboard mode", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.setFullDragboardMode(true)).toBe(widget);
 
@@ -445,9 +445,9 @@
             });
 
             it("should work for extracting a widget from full dragboard mode", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({fulldragboard: true});
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({fulldragboard: true});
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.setFullDragboardMode(false)).toBe(widget);
 
@@ -457,9 +457,9 @@
             });
 
             it("do nothing if widget is already in full dragboard mode", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({fulldragboard: true});
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({fulldragboard: true});
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.setFullDragboardMode(true)).toBe(widget);
 
@@ -469,9 +469,9 @@
             });
 
             it("do nothing if widget is already not in full dragboard mode", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.setFullDragboardMode(false)).toBe(widget);
 
@@ -485,9 +485,9 @@
         describe("showLogs()", () => {
 
             it("should work", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.showLogs()).toBe(widget);
                 expect(widget.model.showLogs).toHaveBeenCalledWith();
@@ -498,9 +498,9 @@
         describe("repaint()", () => {
 
             it("should work", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.repaint()).toBe(widget);
             });
@@ -510,9 +510,9 @@
         describe("remove()", () => {
 
             it("should work", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.remove()).toBe(widget);
             });
@@ -522,9 +522,9 @@
         describe("showSettings()", () => {
 
             it("should work", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock();
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock();
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.showSettings()).toBe(widget);
                 expect(widget.model.showSettings).toHaveBeenCalledWith();
@@ -535,9 +535,9 @@
         describe("toJSON()", () => {
 
             it("should work on normal widgets", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({layout: 0});
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 0});
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.toJSON()).toEqual({
                     id: "23",
@@ -560,9 +560,9 @@
             });
 
             it("should work on fulldragboard widgets", () => {
-                let tab = create_tab_mock();
-                let model = create_widget_mock({layout: 0, fulldragboard: true});
-                let widget = new ns.WidgetView(tab, model);
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 0, fulldragboard: true});
+                const widget = new ns.WidgetView(tab, model);
 
                 expect(widget.toJSON()).toEqual({
                     id: "23",
@@ -604,7 +604,7 @@
             });
 
             it("should manage changes on widget title", () => {
-                let newTitle = "New Title";
+                const newTitle = "New Title";
                 spyOn(widget.titleelement, "setTextContent");
                 model.title = newTitle;
                 callEventListener(model, "change", ["title"]);

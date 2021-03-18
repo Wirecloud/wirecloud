@@ -59,7 +59,7 @@
     };
 
     const calculatePages = function calculatePages() {
-        var priv = privates.get(this);
+        const priv = privates.get(this);
         if (priv.options.pageSize === 0) {
             priv.totalPages = 1;
         } else {
@@ -89,7 +89,7 @@
          *      The options to be used
          */
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'pageSize': 25,
                 'requestFunc': null,
                 'processFunc': null
@@ -191,8 +191,8 @@
          *      The new options to be used.
          */
         changeOptions(options) {
-            var new_page_size, old_offset, key, changed = false;
-            var priv = privates.get(this);
+            let new_page_size, old_offset, key, changed = false;
+            const priv = privates.get(this);
 
             if (typeof options !== 'object') {
                 return;
@@ -238,7 +238,7 @@
          * @since 0.5
          */
         goToPrevious() {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             return this.changePage(priv.currentPage - 1);
         }
 
@@ -248,7 +248,7 @@
          * @since 0.5
          */
         goToNext() {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             return this.changePage(priv.currentPage + 1);
         }
 
@@ -258,7 +258,7 @@
          * @since 0.5
          */
         goToLast() {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             this.changePage(priv.totalPages);
         }
 
@@ -268,7 +268,7 @@
          * @since 0.5
          */
         refresh() {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             this.dispatchEvent('requestStart');
             priv.options.requestFunc(priv.currentPage, priv.options, onSuccessCallback.bind(this), onErrorCallback.bind(this));
         }
@@ -282,7 +282,7 @@
          *      The number of the target page.
          */
         changePage(idx) {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             if (idx < 1) {
                 idx = 1;
             } else if (idx > priv.totalPages) {

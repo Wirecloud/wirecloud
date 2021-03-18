@@ -31,24 +31,24 @@
         describe("WirecloudCatalogue(options)", () => {
 
             it("options parameter is optional", () => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 expect(catalogue.url).toBe(ns.URLs.LOCAL_REPOSITORY);
             });
 
             it("all options are optional", () => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 expect(catalogue.url).toBe(ns.URLs.LOCAL_REPOSITORY);
             });
 
             it("url is taken as root", () => {
-                let catalogue = new ns.WirecloudCatalogue({
+                const catalogue = new ns.WirecloudCatalogue({
                     url: "http://server.com"
                 });
                 expect(catalogue.url).toBe("http://server.com/");
             });
 
             it("url is taken as root", () => {
-                let catalogue = new ns.WirecloudCatalogue({
+                const catalogue = new ns.WirecloudCatalogue({
                     url: "http://server.com/"
                 });
                 expect(catalogue.url).toBe("http://server.com/");
@@ -57,7 +57,7 @@
 
         describe("isAllow(action)", () => {
 
-            var catalogue;
+            let catalogue;
 
             beforeEach(() => {
                 catalogue = new ns.WirecloudCatalogue({
@@ -85,7 +85,7 @@
         describe("getResourceDetails(vendor, name)", () => {
 
             it("should request resource details", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {fullfill({responseText: "{}"});}
@@ -93,7 +93,7 @@
                 // TODO needed before adding ResourceDetails to the tested code
                 ns.WirecloudCatalogue.ResourceDetails = function () {};
 
-                let t = catalogue.getResourceDetails();
+                const t = catalogue.getResourceDetails();
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then((details) => {
@@ -106,7 +106,7 @@
 
         describe("addComponent(options)", () => {
 
-            var catalogue;
+            let catalogue;
 
             beforeEach(() => {
                 catalogue = new ns.WirecloudCatalogue();
@@ -141,11 +141,11 @@
                         fullfill({status: 201, responseText: "{}"});
                     }
                 ));
-                let file = new File(["foo"], "foo.txt", {
+                const file = new File(["foo"], "foo.txt", {
                     type: "text/plain",
                 });
 
-                let t = catalogue.addComponent({file: file});
+                const t = catalogue.addComponent({file: file});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -167,7 +167,7 @@
                     }
                 ));
 
-                let t = catalogue.addComponent({market_endpoint: {}});
+                const t = catalogue.addComponent({market_endpoint: {}});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -189,7 +189,7 @@
                     }
                 ));
 
-                let t = catalogue.addComponent({url: "https://static.example.org/widget.wgt"});
+                const t = catalogue.addComponent({url: "https://static.example.org/widget.wgt"});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -214,11 +214,11 @@
                         fullfill({status: 201, responseText: "{}"});
                     }
                 ));
-                let file = new File(["foo"], "foo.txt", {
+                const file = new File(["foo"], "foo.txt", {
                     type: "text/plain",
                 });
 
-                let t = catalogue.addComponent({file: file});
+                const t = catalogue.addComponent({file: file});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -239,11 +239,11 @@
                         fullfill({status: 201, responseText: "{}"});
                     }
                 ));
-                let file = new File(["foo"], "foo.txt", {
+                const file = new File(["foo"], "foo.txt", {
                     type: "text/plain",
                 });
 
-                let t = catalogue.addComponent({file: file, install_embedded_resources: false});
+                const t = catalogue.addComponent({file: file, install_embedded_resources: false});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -264,11 +264,11 @@
                         fullfill({status: 201, responseText: "{}"});
                     }
                 ));
-                let file = new File(["foo"], "foo.txt", {
+                const file = new File(["foo"], "foo.txt", {
                     type: "text/plain",
                 });
 
-                let t = catalogue.addComponent({file: file, force_create: true});
+                const t = catalogue.addComponent({file: file, force_create: true});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -283,9 +283,9 @@
             });
 
             describe("should manage expected error responses", () => {
-                let test = function test(status_code) {
+                const test = function test(status_code) {
                     return (done) => {
-                        let catalogue = new ns.WirecloudCatalogue();
+                        const catalogue = new ns.WirecloudCatalogue();
                         spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                             'making request',
                             (fullfill) => {
@@ -293,7 +293,7 @@
                             }
                         ));
 
-                        let t = catalogue.addComponent({market_endpoint: {}});
+                        const t = catalogue.addComponent({market_endpoint: {}});
 
                         expect(t).toEqual(jasmine.any(ns.Task));
                         t.then(
@@ -321,11 +321,11 @@
                         fullfill({status: 404, responseText: "Not Found"});
                     }
                 ));
-                let file = new File(["foo"], "foo.txt", {
+                const file = new File(["foo"], "foo.txt", {
                     type: "text/plain",
                 });
 
-                let t = catalogue.addComponent({file: file});
+                const t = catalogue.addComponent({file: file});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -344,7 +344,7 @@
         describe("deleteResource(resource, options)", () => {
 
             it("should remove current version by default", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -352,7 +352,7 @@
                     }
                 ));
 
-                let t = catalogue.deleteResource({
+                const t = catalogue.deleteResource({
                     vendor: "Wirecloud",
                     name: "MyWidget",
                     version: {
@@ -375,7 +375,7 @@
             });
 
             it("should manage unexpected responses", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -383,7 +383,7 @@
                     }
                 ));
 
-                let t = catalogue.deleteResource({
+                const t = catalogue.deleteResource({
                     vendor: "Wirecloud",
                     name: "MyWidget",
                     version: "0.1"
@@ -402,7 +402,7 @@
             });
 
             it("should manage unexpected responses (invalid payload)", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -410,7 +410,7 @@
                     }
                 ));
 
-                let t = catalogue.deleteResource({
+                const t = catalogue.deleteResource({
                     vendor: "Wirecloud",
                     name: "MyWidget",
                     version: "0.1"
@@ -429,7 +429,7 @@
             });
 
             it("should support removing all versions of the component", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -440,7 +440,7 @@
                     }
                 ));
 
-                let t = catalogue.deleteResource({
+                const t = catalogue.deleteResource({
                     vendor: "Wirecloud",
                     name: "MyWidget",
                     version: "0.1"
@@ -467,7 +467,7 @@
         describe("search(resource, options)", () => {
 
             it("should allow empty searches", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -475,7 +475,7 @@
                     }
                 ));
 
-                let t = catalogue.search();
+                const t = catalogue.search();
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -494,7 +494,7 @@
             });
 
             it("should support lang option", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.callFake((url, options) => {
                     expect(options.parameters.lang).toBe("es");
                     done();
@@ -505,7 +505,7 @@
             });
 
             it("should support searching by criteria", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -513,7 +513,7 @@
                     }
                 ));
 
-                let t = catalogue.search({search_criteria: "keyword"});
+                const t = catalogue.search({search_criteria: "keyword"});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -532,7 +532,7 @@
             });
 
             it("should support searching by criteria (corrected_query)", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -540,7 +540,7 @@
                     }
                 ));
 
-                let t = catalogue.search({search_criteria: "keyworkd"});
+                const t = catalogue.search({search_criteria: "keyworkd"});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -560,7 +560,7 @@
             });
 
             it("should support limiting search scope", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -568,7 +568,7 @@
                     }
                 ));
 
-                let t = catalogue.search({scope: "widget"});
+                const t = catalogue.search({scope: "widget"});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -587,7 +587,7 @@
             });
 
             it("should validate search scope", () => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -601,7 +601,7 @@
             });
 
             it("should support limiting search results", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -609,7 +609,7 @@
                     }
                 ));
 
-                let t = catalogue.search({maxresults: 50});
+                const t = catalogue.search({maxresults: 50});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -628,7 +628,7 @@
             });
 
             it("should validate search maxresults", () => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -643,7 +643,7 @@
 
             it("should support providing a page offset", (done) => {
                 // TODO improve server response
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -651,7 +651,7 @@
                     }
                 ));
 
-                let t = catalogue.search({pagenum: 2});
+                const t = catalogue.search({pagenum: 2});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -670,7 +670,7 @@
             });
 
             it("should validate pagenum option", () => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -684,7 +684,7 @@
             });
 
             it("should support the order_by option", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -692,7 +692,7 @@
                     }
                 ));
 
-                let t = catalogue.search({order_by: "creation_date"});
+                const t = catalogue.search({order_by: "creation_date"});
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -711,7 +711,7 @@
             });
 
             it("should manage unexpected responses", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -719,7 +719,7 @@
                     }
                 ));
 
-                let t = catalogue.search();
+                const t = catalogue.search();
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(
@@ -734,16 +734,16 @@
             });
 
             describe("should manage expected error responses", () => {
-                let test = function test(status_code) {
+                const test = function test(status_code) {
                     return (done) => {
-                        let catalogue = new ns.WirecloudCatalogue();
+                        const catalogue = new ns.WirecloudCatalogue();
                         spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                             'making request',
                             (fullfill) => {
                                 fullfill({status: status_code, responseText: 'Not Found'});
                             }
                         ));
-                        let t = catalogue.search();
+                        const t = catalogue.search();
 
                         expect(t).toEqual(jasmine.any(ns.Task));
                         t.then(
@@ -763,7 +763,7 @@
             });
 
             it("should manage unexpected responses (invalid payload)", (done) => {
-                let catalogue = new ns.WirecloudCatalogue();
+                const catalogue = new ns.WirecloudCatalogue();
                 spyOn(ns.io, 'makeRequest').and.returnValue(new ns.Task(
                     'making request',
                     (fullfill) => {
@@ -771,7 +771,7 @@
                     }
                 ));
 
-                let t = catalogue.search();
+                const t = catalogue.search();
 
                 expect(t).toEqual(jasmine.any(ns.Task));
                 t.then(

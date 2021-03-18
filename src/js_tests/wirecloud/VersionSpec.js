@@ -59,19 +59,19 @@
         describe("compareTo(version)", function () {
 
             it("should allow passing strings to the version parameter", function () {
-                var version1 = new Wirecloud.Version('1.0');
+                const version1 = new Wirecloud.Version('1.0');
                 expect(version1.compareTo("2.0")).toBeLessThan(0);
             });
 
             it("should throw TypeError exception if the version strings cannot be parsed as a version", function () {
-                var version1 = new Wirecloud.Version('1.0');
+                const version1 = new Wirecloud.Version('1.0');
                 expect(function () {
                     version1.compareTo("invalid version");
                 }).toThrowError(TypeError);
             });
 
             describe("should return a number less than zero", function () {
-                var test = function test(version1, version2) {
+                const test = function test(version1, version2) {
                     expect(version1.compareTo(version2)).toBeLessThan(0);
                 };
 
@@ -87,7 +87,7 @@
             });
 
             describe("should return zero for equivalent versions", function () {
-                var test = function test(version1, version2) {
+                const test = function test(version1, version2) {
                     expect(version1.compareTo(version2)).toBe(0);
                 };
 
@@ -101,7 +101,7 @@
             });
 
             describe("should return a positive number if the version is greater than the specified version", function () {
-                var test = function test(version1, version2) {
+                const test = function test(version1, version2) {
                     expect(version1.compareTo(version2)).toBeGreaterThan(0);
                 };
 
@@ -117,7 +117,7 @@
             });
 
             it("should return a non-zero value for different dev versions", function () {
-                var version1 = new Wirecloud.Version('1.0-deva');
+                const version1 = new Wirecloud.Version('1.0-deva');
                 expect(version1.compareTo("1.0-devb")).not.toBe(0);
             });
 
@@ -126,7 +126,7 @@
         describe("toString()", function () {
 
             it("should simplify dev versions", function () {
-                var version = new Wirecloud.Version("1.0-devadmin");
+                const version = new Wirecloud.Version("1.0-devadmin");
                 expect(version.toString()).toEqual("1.0-dev");
             });
 

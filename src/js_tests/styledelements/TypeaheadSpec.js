@@ -198,7 +198,7 @@
 
             it("should support customizing empty search message", (done) => {
                 typeahead = new StyledElements.Typeahead({build: build, lookup: lookup, notFoundMessage: "not found"});
-                let textfield = new StyledElements.TextField();
+                const textfield = new StyledElements.TextField();
                 typeahead.bind(textfield);
 
                 spyOn(typeahead.popupMenu, "show");

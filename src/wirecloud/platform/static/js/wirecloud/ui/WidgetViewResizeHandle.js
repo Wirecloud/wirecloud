@@ -61,7 +61,7 @@
         }
 
         canDrag(resizableElement, data, role) {
-            let editing = data.widget.tab.workspace.editing;
+            const editing = data.widget.tab.workspace.editing;
             if (role == null) {
                 role = editing ? "editor" : "viewer";
             }
@@ -88,7 +88,7 @@
         }
 
         onresize(resizableElement, handleElement, data, xDelta, yDelta) {
-            let widget = data.widget;
+            const widget = data.widget;
             if (widget.position.anchor.endsWith("center")) {
                 xDelta *= 2;
             }
@@ -101,7 +101,7 @@
                     width = MIN_WIDTH;
                 }
 
-                let newwidth = widget.layout.adaptWidth(width + 'px');
+                const newwidth = widget.layout.adaptWidth(width + 'px');
                 data.width = widget.shape.relwidth ? newwidth.inLU : newwidth.inPixels;
             } else {
                 data.width = widget.shape.width;
@@ -115,7 +115,7 @@
                     height = MIN_HEIGTH;
                 }
 
-                let newheight = widget.layout.adaptHeight(height + 'px');
+                const newheight = widget.layout.adaptHeight(height + 'px');
                 data.height = widget.shape.relheight ? newheight.inLU : newheight.inPixels;
             } else {
                 data.height = widget.shape.height;
@@ -127,7 +127,7 @@
         }
 
         onresizeend(resizableElement, handleElement, data) {
-            var widget = data.widget;
+            const widget = data.widget;
             data.widget.wrapperElement.classList.remove('dragging');
             data.widget.setPosition({z: data.oldZIndex});
 

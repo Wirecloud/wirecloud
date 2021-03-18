@@ -27,6 +27,16 @@
 
     "use strict";
 
+    const privates = new WeakMap();
+
+    const on_label_get = function on_label_get() {
+        return privates.get(this).tabElement.textContent;
+    };
+
+    const on_tabelement_get = function on_tabelement_get() {
+        return privates.get(this).tabElement;
+    };
+
     const defaultOptions = Object.freeze({
         closable: true,
         containerOptions: {},
@@ -103,7 +113,7 @@
                 }
             });
 
-            var priv = {
+            const priv = {
                 labelElement: document.createElement('span'),
                 tabElement: document.createElement("li")
             };
@@ -124,8 +134,8 @@
 
             /* Process options */
             if (options.closable) {
-                var closeButton = new this.Button({
-                    iconClass: "fa fa-remove",
+                const closeButton = new this.Button({
+                    iconClass: "fas fa-times",
                     plain: true,
                     class: "close_button"
                 });
@@ -266,19 +276,5 @@
 
     se.Tab.prototype.Tooltip = se.Tooltip;
     se.Tab.prototype.Button = se.Button;
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
-    var on_label_get = function on_label_get() {
-        return privates.get(this).tabElement.textContent;
-    };
-
-    var on_tabelement_get = function on_tabelement_get() {
-        return privates.get(this).tabElement;
-    };
 
 })(StyledElements, StyledElements.Utils);

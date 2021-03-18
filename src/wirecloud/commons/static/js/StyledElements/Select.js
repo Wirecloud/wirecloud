@@ -29,7 +29,7 @@
 
     const onchange = function onchange(event) {
         if (this.enabled) {
-            var optionList = event.target;
+            const optionList = event.target;
             this.textDiv.textContent = optionList[optionList.selectedIndex].text;
             this.dispatchEvent('change');
         }
@@ -69,7 +69,7 @@
             this.wrapperElement.className = "se-select";
             this.addClassName(options.class);
 
-            var div =  document.createElement("div");
+            const div =  document.createElement("div");
             div.className = "se-select-arrow fas fa-caret-down";
             this.inputElement = document.createElement("select");
 
@@ -105,7 +105,7 @@
             this.inputElement.addEventListener('blur', this._onblur, true);
 
             // initialize the textDiv with the initial selection
-            var selectedIndex = this.inputElement.options.selectedIndex;
+            const selectedIndex = this.inputElement.options.selectedIndex;
             if (selectedIndex !== -1) {
                 this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
             }
@@ -150,18 +150,18 @@
          * newEntries is null.
          */
         addEntries(newEntries) {
-            var oldSelectedIndex, optionValue, optionLabel, newEntry, defaultValue;
+            let optionValue, optionLabel, newEntry;
 
-            oldSelectedIndex = this.inputElement.options.selectedIndex;
-            defaultValue = this.defaultValue !== undefined ? this.idFunc(this.defaultValue) : null;
+            const oldSelectedIndex = this.inputElement.options.selectedIndex;
+            const defaultValue = this.defaultValue !== undefined ? this.idFunc(this.defaultValue) : null;
 
             if (newEntries == null || newEntries.length === 0) {
                 return;
             }
 
-            for (var i = 0; i < newEntries.length; i++) {
+            for (let i = 0; i < newEntries.length; i++) {
                 newEntry = newEntries[i];
-                var option = document.createElement("option");
+                const option = document.createElement("option");
 
                 if (Array.isArray(newEntry)) {
                     optionValue = newEntry[0];
@@ -175,7 +175,7 @@
                 }
                 optionLabel = optionLabel ? optionLabel : optionValue;
 
-                var realValue = optionValue;
+                const realValue = optionValue;
                 if (typeof optionValue !== 'string') {
                     optionValue = this.idFunc(optionValue);
                 }
@@ -192,7 +192,7 @@
             }
 
             // initialize the textDiv with the initial selection
-            var selectedIndex = this.inputElement.options.selectedIndex;
+            const selectedIndex = this.inputElement.options.selectedIndex;
             if (oldSelectedIndex !== selectedIndex) {
                 this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
             }

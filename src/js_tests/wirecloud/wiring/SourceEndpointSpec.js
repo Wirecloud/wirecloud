@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var CONNECTION = Object.freeze({
+    const CONNECTION = Object.freeze({
         _connect: function () {},
         _disconnect: function () {},
         logManager: {
@@ -44,8 +44,8 @@
         describe("connect(targetEndpoint, connection)", function () {
 
             it("should connect to target-endpoints", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 expect(endpoint1.connections.length).toEqual(1);
@@ -53,8 +53,8 @@
 
             describe("throws a TypeError exception when targetEndpoint is not instance of TargetEndpoint", function () {
 
-                var test = function test(value) {
-                    var endpoint = new ns.SourceEndpoint();
+                const test = function test(value) {
+                    const endpoint = new ns.SourceEndpoint();
 
                     expect(function () {
                         endpoint.connect(value, CONNECTION);
@@ -72,8 +72,8 @@
             });
 
             it("should not connect to target-endpoints more than once", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 endpoint1.connect(endpoint2, CONNECTION);
@@ -85,8 +85,8 @@
         describe("disconnect(targetEndpoint)", function () {
 
             it("should disconnect target-endpoints", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 endpoint1.disconnect(endpoint2);
@@ -94,8 +94,8 @@
             });
 
             it("should not throw error when targetEndpoint does not exist", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
 
                 endpoint1.disconnect(endpoint2);
                 expect(endpoint1.connections.length).toEqual(0);
@@ -103,8 +103,8 @@
 
             describe("should throw error when targetEndpoint is not instance of TargetEndpoint", function () {
 
-                var test = function test(value) {
-                    var endpoint1 = new ns.SourceEndpoint();
+                const test = function test(value) {
+                    const endpoint1 = new ns.SourceEndpoint();
 
                     expect(function () {
                         endpoint1.disconnect(null);
@@ -125,9 +125,9 @@
         describe("fullDisconnect()", function () {
 
             it("should disconnect target-endpoints", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
-                var endpoint3 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
+                const endpoint3 = new ns.TargetEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 endpoint1.connect(endpoint3, CONNECTION);
@@ -140,17 +140,17 @@
         describe("getReachableEndpoints()", function () {
 
             it("should return an empty list if the endpoint is not connected", function () {
-                var endpoint1 = new ns.SourceEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
                 expect(endpoint1.getReachableEndpoints()).toEqual([]);
             });
 
             it("should return a list with the reachable endpoints", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
                 spyOn(endpoint2, 'getReachableEndpoints').and.returnValue(['endpoint2']);
-                var endpoint3 = new ns.TargetEndpoint();
+                const endpoint3 = new ns.TargetEndpoint();
                 spyOn(endpoint3, 'getReachableEndpoints').and.returnValue(['endpoint3']);
-                var endpoint4 = new ns.TargetEndpoint();
+                const endpoint4 = new ns.TargetEndpoint();
                 spyOn(endpoint4, 'getReachableEndpoints').and.returnValue([]);
 
                 endpoint1.connect(endpoint2, CONNECTION);
@@ -165,8 +165,8 @@
         describe("propagate(event, [options])", function () {
 
             it("should catch EndpointTypeError errors", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
                 spyOn(endpoint2, 'propagate').and.throwError(new ns.EndpointTypeError());
 
                 endpoint1.connect(endpoint2, CONNECTION);
@@ -176,8 +176,8 @@
             });
 
             it("should catch EndpointValueError errors", function () {
-                var endpoint1 = new ns.SourceEndpoint();
-                var endpoint2 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.SourceEndpoint();
+                const endpoint2 = new ns.TargetEndpoint();
                 spyOn(endpoint2, 'propagate').and.throwError(new ns.EndpointValueError());
 
                 endpoint1.connect(endpoint2, CONNECTION);

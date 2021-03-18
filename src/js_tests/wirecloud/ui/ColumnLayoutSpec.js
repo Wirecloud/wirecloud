@@ -31,8 +31,8 @@
         describe("new ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace)", () => {
 
             it("should work by providing options", () => {
-                var dragboard = {};
-                let layout = new ns.ColumnLayout(
+                const dragboard = {};
+                const layout = new ns.ColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -51,8 +51,8 @@
             });
 
             it("should work by providing odd margins", () => {
-                var dragboard = {};
-                let layout = new ns.ColumnLayout(
+                const dragboard = {};
+                const layout = new ns.ColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -73,7 +73,7 @@
 
         describe("initialize()", () => {
 
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data, insert) {
                 return {
@@ -94,7 +94,7 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.ColumnLayout(
@@ -112,7 +112,7 @@
             });
 
             it("should not save widget positions if is not needed to move widgets", () => {
-                var widget = createWidgetMock({
+                const widget = createWidgetMock({
                     id: "1", x: 0, y: 0, width: 1, height: 1
                 });
                 layout.addWidget(widget);
@@ -122,11 +122,11 @@
             });
 
             it("should shrink widgets that are too wide", () => {
-                var widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     id: "1", x: 0, y: 0, width: 5, height: 1
                 });
                 layout.addWidget(widget1);
-                var widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     id: "2", x: 1, y: 1, width: 5, height: 1
                 });
                 layout.addWidget(widget2);
@@ -140,11 +140,11 @@
             });
 
             it("should move colliding widgets", () => {
-                var widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     id: "1", x: 0, y: 0, width: 3, height: 2
                 });
                 layout.addWidget(widget1);
-                var widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     id: "2", x: 1, y: 1, width: 2, height: 1
                 });
                 layout.addWidget(widget2);
@@ -159,7 +159,7 @@
 
             const return_this = function () {return this;};
             const draggable = {setXOffset: return_this, setYOffset: return_this};
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data) {
                 return new Wirecloud.ui.WidgetView(data);
@@ -187,7 +187,7 @@
                     this.tab.wrapperElement.appendChild(this.wrapperElement);
                 });
 
-                var dragboard = {
+                const dragboard = {
                     _notifyWindowResizeEvent: jasmine.createSpy("_notifyWindowResizeEvent"),
                     update: jasmine.createSpy("update"),
                     getWidth: jasmine.createSpy("getWidth").and.returnValue(800)
@@ -219,7 +219,7 @@
             });
 
             it("should cancel current move operation", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 spyOn(layout, "cancelMove");
@@ -230,14 +230,14 @@
 
 
             it("should work on empty layouts (no real move)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.acceptMove();
             });
 
             it("should work on empty layouts (basic move)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 3, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 3, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(200, 0);
@@ -249,7 +249,7 @@
             });
 
             it("should work on empty layouts (move outside layout - right side)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 2, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 2, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1000, 0);
@@ -260,8 +260,8 @@
             });
 
             it("should work on empty layouts (move outside layout - top left side)", () => {
-                let width = 700 * layout.MAX_HLU / 800;
-                let widget = createWidgetMock({id: "1", x: 400, y: 600, width: width, height: 1});
+                const width = 700 * layout.MAX_HLU / 800;
+                const widget = createWidgetMock({id: "1", x: 400, y: 600, width: width, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(-100, -100);
@@ -272,7 +272,7 @@
             });
 
             it("should work on empty layouts (move between tabs)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.disableCursor();
@@ -281,7 +281,7 @@
             });
 
             it("should work on empty layouts (cancel move)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
@@ -293,22 +293,22 @@
         describe("adaptColumnOffset(size)", () => {
 
             it("should return 0 LU as minimum", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(0);
 
-                let value = layout.adaptColumnOffset(0);
+                const value = layout.adaptColumnOffset(0);
 
                 expect(value.inPixels).toBe(0);
                 expect(value.inLU).toBe(0);
             });
 
             it("should take into account left margin", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(80);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(0);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(0);
 
-                let value = layout.adaptColumnOffset("2px");
+                const value = layout.adaptColumnOffset("2px");
 
                 expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(0);
                 expect(value.inPixels).toBe(0);
@@ -316,12 +316,12 @@
             });
 
             it("should handle pixels offsets", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(80);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(200);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(1);
 
-                let value = layout.adaptColumnOffset("204px");
+                const value = layout.adaptColumnOffset("204px");
 
                 expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(200);
                 expect(value.inPixels).toBe(200);
@@ -329,12 +329,12 @@
             });
 
             it("should support percentages", () => {
-                let layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(60);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(3);
 
-                let value = layout.adaptColumnOffset("75%");
+                const value = layout.adaptColumnOffset("75%");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(3);
@@ -345,58 +345,58 @@
         describe("adaptRowOffset(value)", () => {
 
             it("should return 0 LU as minimum", () => {
-                let layout = new ns.ColumnLayout({topMargin: 4}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({topMargin: 4}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(0);
 
-                let value = layout.adaptRowOffset("2px");
+                const value = layout.adaptRowOffset("2px");
 
                 expect(value.inPixels).toBe(0);
                 expect(value.inLU).toBe(0);
             });
 
             it("should manage cell values", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(0);
 
-                let value = layout.adaptRowOffset(0);
+                const value = layout.adaptRowOffset(0);
 
                 expect(value.inPixels).toBe(0);
                 expect(value.inLU).toBe(0);
             });
 
             it("should floor cells", () => {
-                let layout = new ns.ColumnLayout({}, 4, 20, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 20, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(80);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(60);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(3.2);
 
-                let value = layout.adaptRowOffset("65px");
+                const value = layout.adaptRowOffset("65px");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(3);
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(80);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(60);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(2.5);
 
-                let value = layout.adaptRowOffset("55px");
+                const value = layout.adaptRowOffset("55px");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(3);
             });
 
             it("should support percentages", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(80);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(60);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(3);
 
-                let value = layout.adaptRowOffset("75%");
+                const value = layout.adaptRowOffset("75%");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(3);
@@ -433,7 +433,7 @@
             });
 
             it("should add widgets", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
 
                 expect(layout.addWidget(widget, true)).toEqual(new Set());
 
@@ -442,7 +442,7 @@
             });
 
             it("should shrink widgets that are too wide", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 5, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 5, height: 1});
 
                 expect(layout.addWidget(widget, true)).toEqual(new Set());
 
@@ -452,7 +452,7 @@
             });
 
             it("should make widgets fit current column scheme", () => {
-                let widget = createWidgetMock({id: "1", x: 1, y: 0, width: 4, height: 1});
+                const widget = createWidgetMock({id: "1", x: 1, y: 0, width: 4, height: 1});
                 layout.addWidget(widget, true);
 
                 expect(Wirecloud.ui.DragboardLayout.prototype.addWidget).toHaveBeenCalledWith(widget, true);
@@ -464,7 +464,7 @@
         describe("disableCursor()", () => {
 
             it("should work when the cursor is already disabled", () => {
-                let layout = new ns.ColumnLayout({}, 20, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 20, 13, 4, 4, 10);
                 layout.disableCursor();
             });
 
@@ -531,14 +531,14 @@
         describe("getCellAt(x, y)", () => {
 
             it("should be able to return origin position", () => {
-                let layout = new ns.ColumnLayout({}, 4, 10, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 10, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
 
                 expect(layout.getCellAt(0, 0)).toEqual(new Wirecloud.DragboardPosition(0, 0));
             });
 
             it("should be able to return intermediate positions", () => {
-                let layout = new ns.ColumnLayout({}, 4, 10, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 10, 4, 4, 10);
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
 
                 expect(layout.getCellAt(38, 12)).toEqual(new Wirecloud.DragboardPosition(3, 1));
@@ -549,8 +549,8 @@
         describe("getHeightInPixels(cells)", () => {
 
             it("should work", () => {
-                let dragboard = {};
-                let layout = new ns.ColumnLayout(
+                const dragboard = {};
+                const layout = new ns.ColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -566,11 +566,11 @@
         describe("getColumnOffset(cells)", () => {
 
             it("should work", () => {
-                let dragboard = {
+                const dragboard = {
                     getWidth: jasmine.createSpy("getWidth").and.returnValue(800),
                     leftMargin: 4
                 };
-                let layout = new ns.ColumnLayout(
+                const layout = new ns.ColumnLayout(
                     dragboard,
                     4,
                     13,
@@ -584,10 +584,10 @@
 
         describe("insertAt(widget, x, y, matrix)", () => {
 
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data, insert) {
-                let widget = {
+                const widget = {
                     position: {
                         x: data.x,
                         y: data.y
@@ -611,7 +611,7 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.ColumnLayout(
@@ -625,7 +625,7 @@
             });
 
             it("should support adding widgets on free space", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0,
                     y: 0,
                     width: 2,
@@ -639,13 +639,13 @@
             });
 
             it("should move affected widgets", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 1,
                     y: 1,
                     width: 2,
                     height: 2
                 }, true);
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0,
                     y: 0,
                     width: 2,
@@ -666,7 +666,7 @@
             let layout;
 
             const createWidgetMock = function createWidgetMock(data) {
-                let widget = {
+                const widget = {
                     id: data.id,
                     position: {
                         x: data.x,
@@ -690,7 +690,7 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.ColumnLayout(
@@ -704,13 +704,13 @@
             });
 
             it("should work on layouts with widgets", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     id: "1", x: 0, y: 0, width: 2, height: 2
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     id: "2", x: 0, y: 2, width: 1, height: 1
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     id: "3", x: 0, y: 3, width: 2, height: 1
                 });
 
@@ -737,7 +737,7 @@
             let layout;
 
             const createWidgetMock = function createWidgetMock(data) {
-                let widget = {
+                const widget = {
                     id: data.id,
                     position: {
                         x: data.x,
@@ -761,7 +761,7 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.ColumnLayout(
@@ -780,16 +780,16 @@
                 // |  2 |     |  2 |
                 // |333 |     |333 |
                 // |44  |     |44  |
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     id: "1", x: 0, y: 1, width: 2, height: 1
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     id: "2", x: 2, y: 0, width: 1, height: 3
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     id: "3", x: 0, y: 3, width: 3, height: 1
                 });
-                let widget4 = createWidgetMock({
+                const widget4 = createWidgetMock({
                     id: "4", x: 0, y: 4, width: 2, height: 1
                 });
 
@@ -819,7 +819,7 @@
 
             const destLayout = "destLayout";
 
-            var layout;
+            let layout;
 
             beforeEach(() => {
                 layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
@@ -830,13 +830,13 @@
             });
 
             it("should work on layouts with widgets", () => {
-                let widget1 = {
+                const widget1 = {
                     moveToLayout: jasmine.createSpy("moveToLayout")
                 };
-                let widget2 = {
+                const widget2 = {
                     moveToLayout: jasmine.createSpy("moveToLayout")
                 };
-                let widget3 = {
+                const widget3 = {
                     moveToLayout: jasmine.createSpy("moveToLayout")
                 };
                 layout.matrix[0][0] = widget1;
@@ -850,10 +850,10 @@
 
         describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist)", () => {
 
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data) {
-                let widget = {
+                const widget = {
                     position: {
                         x: data.x,
                         y: data.y
@@ -875,7 +875,7 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.ColumnLayout(
@@ -889,7 +889,7 @@
             });
 
             it("should work on empty layouts (width increase - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
 
@@ -904,13 +904,13 @@
                 // 1        11
                 // 1        11
                 //          3333
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 1
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 1, y: 1, width: 3, height: 1
                 });
 
@@ -923,7 +923,7 @@
             });
 
             it("should work on empty layouts (width decrease - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
 
@@ -938,10 +938,10 @@
                 // |11  |     |1   |
                 // |11  |     |1   |
                 // | 22 |     | 22 |
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 1, y: 4, width: 2, height: 4
                 });
 
@@ -953,7 +953,7 @@
             });
 
             it("should work on empty layouts (height increase - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
 
@@ -967,13 +967,13 @@
                 // |3333| => |1   |
                 // |    |    |1   |
                 // |    |    |3333|
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 2, y: 0, width: 1, height: 2
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 2, width: 4, height: 1
                 });
 
@@ -984,7 +984,7 @@
             });
 
             it("should work on empty layouts (height decrease - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
 
@@ -993,7 +993,7 @@
             });
 
             it("should work on empty layouts (width increase - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -1008,13 +1008,13 @@
                 // |   1| => |  11|
                 // |   1|    |  11|
                 // |    |    |333 |
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 1, width: 3, height: 1
                 });
 
@@ -1027,7 +1027,7 @@
             });
 
             it("should work on empty layouts (width decrease - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 2, y: 0, width: 2, height: 4
                 });
 
@@ -1043,10 +1043,10 @@
                 // |  11| => |   1|
                 // |  11|    |   1|
                 // | 22 |    | 22 |
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 2, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 1, y: 4, width: 2, height: 4
                 });
 
@@ -1059,7 +1059,7 @@
             });
 
             it("should work on empty layouts (height decrease - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -1074,13 +1074,13 @@
                 // |   1| => |    |
                 // |   1|    |    |
                 // |3333|    |3333|
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 2
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 4, width: 4, height: 1
                 });
 
@@ -1094,7 +1094,7 @@
             });
 
             it("should work on empty layouts (height increase - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 1
                 });
 
@@ -1103,7 +1103,7 @@
             });
 
             it("should persist changes if required", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
 
@@ -1117,7 +1117,7 @@
         describe("_notifyWindowResizeEvent(widthChanged, heightChanged)", () => {
 
             it("should call parent on width change", () => {
-                var layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
 
                 layout._notifyWindowResizeEvent(true, false);
@@ -1126,7 +1126,7 @@
             });
 
             it("should ignore changes not affecting view width", () => {
-                var layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
 
                 layout._notifyWindowResizeEvent(false, false);
@@ -1139,7 +1139,7 @@
         describe("padHeight(height)", () => {
 
             it("should pad height", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 5, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 5, 4, 10);
                 expect(layout.padHeight(20)).toBe(25);
             });
 
@@ -1148,7 +1148,7 @@
         describe("padWidth(width)", () => {
 
             it("should pad width", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 5, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 5, 4, 10);
                 expect(layout.padWidth(20)).toBe(24);
             });
 
@@ -1157,8 +1157,8 @@
         describe("_removeFromMatrix(matrix, widget)", () => {
 
             it("should call _clearSpace", () => {
-                var dragboard = {};
-                var layout = new ns.ColumnLayout(
+                const dragboard = {};
+                const layout = new ns.ColumnLayout(
                     dragboard,
                     4,
                     13,
@@ -1166,7 +1166,7 @@
                     4,
                     10
                 );
-                var widget = {}, matrix = {};
+                const widget = {}, matrix = {};
                 spyOn(layout, "_clearSpace");
 
                 expect(layout._removeFromMatrix(matrix, widget)).toEqual(new Set());
@@ -1179,8 +1179,8 @@
         describe("removeWidget(widget, affectsDragboard)", () => {
 
             it("should call _removeFromMatrix and removeWidget from DragboardLayout", () => {
-                let widget = {}, affectsDragboard = {}, result = {};
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const widget = {}, affectsDragboard = {}, result = {};
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 spyOn(layout, "_removeFromMatrix").and.returnValue(result);
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "removeWidget").and.returnValue(result);
 
@@ -1195,7 +1195,7 @@
         describe("_setPositions()", () => {
 
             it("works on empty layouts", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 layout._buffers.shadow = {
                     positions: {}
                 };
@@ -1205,7 +1205,7 @@
             });
 
             it("works on layouts with widgets", () => {
-                let layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
+                const layout = new ns.ColumnLayout({}, 4, 13, 4, 4, 10);
                 layout._buffers.shadow = {
                     positions: {}
                 };

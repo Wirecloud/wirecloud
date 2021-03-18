@@ -26,21 +26,21 @@
 
     "use strict";
 
-    var OPERATOR = Object.freeze({
+    const OPERATOR = Object.freeze({
         id: "1",
         meta: {
             type: 'operator'
         }
     });
 
-    var WIDGET = Object.freeze({
+    const WIDGET = Object.freeze({
         id: "1",
         meta: {
             type: 'widget'
         }
     });
 
-    var DEFAULT_ENDPOINT_NAME = "source";
+    const DEFAULT_ENDPOINT_NAME = "source";
 
 
     describe("GhostTargetEndpoint", function () {
@@ -48,7 +48,7 @@
         describe("new GhostTargetEndpoint(widgetModel, endpointName)", function () {
 
             it("should allow to create operator endpoints", function () {
-                var endpoint = new ns.GhostTargetEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.component).toBe(OPERATOR);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -60,7 +60,7 @@
             });
 
             it("should allow to create widget endpoints", function () {
-                var endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -76,7 +76,7 @@
         describe("getReachableEndpoints()", function () {
 
             it("should return a empty list", function () {
-                var endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.getReachableEndpoints()).toEqual([]);
             });
@@ -86,7 +86,7 @@
         describe("propagate(event, [options])", function () {
 
             it("should do nothing", function () {
-                var endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
                 endpoint.propagate("test");
             });
 
@@ -95,13 +95,13 @@
         describe("toString()", function () {
 
             it("should convert operator endpoints into a strings", function () {
-                var endpoint = new ns.GhostTargetEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.toString()).toEqual(["operator", WIDGET.id, DEFAULT_ENDPOINT_NAME].join("/"));
             });
 
             it("should convert widget endpoints into a strings", function () {
-                var endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.toString()).toEqual(["widget", WIDGET.id, DEFAULT_ENDPOINT_NAME].join("/"));
             });
@@ -111,23 +111,23 @@
         describe("toJSON()", function () {
 
             it("should convert operator endpoints into a JSON objects", function () {
-                var expected_result = {
+                const expected_result = {
                     id: OPERATOR.id,
                     type: "operator",
                     endpoint: DEFAULT_ENDPOINT_NAME
                 };
-                var endpoint = new ns.GhostTargetEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.toJSON()).toEqual(expected_result);
             });
 
             it("should convert widget endpoints into a JSON objects", function () {
-                var expected_result = {
+                const expected_result = {
                     id: WIDGET.id,
                     type: "widget",
                     endpoint: DEFAULT_ENDPOINT_NAME
                 };
-                var endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostTargetEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.toJSON()).toEqual(expected_result);
             });

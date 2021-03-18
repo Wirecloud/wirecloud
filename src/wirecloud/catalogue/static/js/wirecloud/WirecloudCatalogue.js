@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -89,7 +89,7 @@
                 options = {};
             }
 
-            var params = {};
+            const params = {};
 
             if (options.lang != null) {
                 params.lang = options.lang;
@@ -135,8 +135,8 @@
                     return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
 
-                var raw_data = JSON.parse(response.responseText);
-                var data = {
+                const raw_data = JSON.parse(response.responseText);
+                const data = {
                     'resources': raw_data.results,
                     'current_page': parseInt(raw_data.pagenum, 10),
                     'total_count': parseInt(raw_data.total, 10)
@@ -150,7 +150,7 @@
 
         getResourceDetails(vendor, name) {
 
-            var url = this.RESOURCE_UNVERSIONED_ENTRY.evaluate({vendor: vendor, name: name});
+            const url = this.RESOURCE_UNVERSIONED_ENTRY.evaluate({vendor: vendor, name: name});
             return Wirecloud.io.makeRequest(url, {
                 method: 'GET'
             }).then((response) => {
@@ -166,7 +166,7 @@
          * @returns {Wirecloud.Task}
          */
         addComponent(options) {
-            var url, parameters, requestHeaders, contentType, body;
+            let url, parameters, contentType, body;
 
             if (options == null) {
                 throw new TypeError("missing options parameter");
@@ -182,7 +182,7 @@
                 throw new TypeError("at least one of the following options has to be used: file or market_endpoint");
             }
 
-            requestHeaders = {
+            const requestHeaders = {
                 'Accept': 'application/json'
             };
 
@@ -197,8 +197,9 @@
                 */
             }
 
+            let task_title;
             if (options.file != null) {
-                var task_title = utils.interpolate(
+                task_title = utils.interpolate(
                     utils.gettext('Uploading packaged component %(filename)s'),
                     {
                         filename: options.file.name
@@ -218,7 +219,7 @@
                 }
 
             } else {
-                var task_title = utils.interpolate(
+                task_title = utils.interpolate(
                     utils.gettext('Installing component from %(url)s'),
                     {
                         url: options.url
@@ -246,7 +247,7 @@
                 } else if (response.status !== 201) {
                     return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
-                var response_data = JSON.parse(response.responseText);
+                const response_data = JSON.parse(response.responseText);
                 return Promise.resolve(response_data);
             }).toTask(task_title);
         }
@@ -257,7 +258,7 @@
          * @returns {Wirecloud.Task}
          */
         deleteResource(resource, options) {
-            var url, msg;
+            let url, msg;
 
             options = utils.merge({
                 allversions: false
@@ -284,7 +285,7 @@
                 requestHeaders: {'Accept': 'application/json'}
             }).then(function (response) {
                 return new Promise(function (resolve, reject) {
-                    var result;
+                    let result;
                     if (response.status !== 200) {
                         return reject(new Error("Unexpected response from server"));
                     }

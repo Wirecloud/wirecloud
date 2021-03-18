@@ -26,11 +26,17 @@
 
     "use strict";
 
+    const equals_entries = function equals_entries(entryA, entryB) {
+        expect(entryA.msg).toEqual(entryB.msg);
+        expect(entryA.level).toEqual(entryB.level);
+        expect(entryA.logManager).toEqual(entryB.logManager);
+    };
+
     describe("LogManager", function () {
 
         describe("new LogManager([parent])", function () {
 
-            var check_initial_props = function check_initial_props(logManager, parent) {
+            const check_initial_props = function check_initial_props(logManager, parent) {
                 expect(logManager.parent).toEqual(parent);
                 expect(logManager.closed).toBe(false);
                 expect(logManager.entries.length).toBe(0);
@@ -40,22 +46,22 @@
             };
 
             it("should create an instance", function () {
-                var manager = new ns.LogManager();
+                const manager = new ns.LogManager();
 
                 expect(manager instanceof ns.LogManager).toBe(true);
                 check_initial_props(manager, null);
             });
 
             it("should create an instance given a parent", function () {
-                var parent = new ns.LogManager();
+                const parent = new ns.LogManager();
 
-                var manager = new ns.LogManager(parent);
+                const manager = new ns.LogManager(parent);
 
                 check_initial_props(manager, parent);
             });
 
             it("should throw an error given a closed parent", function () {
-                var parent = new ns.LogManager();
+                const parent = new ns.LogManager();
 
                 expect(function () {
                     new ns.LogManager(parent.close());
@@ -66,7 +72,7 @@
         describe("close()", function () {
 
             it("should make manager state the new status", function () {
-                var manager = new ns.LogManager();
+                const manager = new ns.LogManager();
 
                 expect(manager.close()).toEqual(manager);
 
@@ -74,7 +80,7 @@
             });
 
             it("should do nothing if it is already closed", function () {
-                var manager = new ns.LogManager();
+                const manager = new ns.LogManager();
                 manager.close();
 
                 expect(manager.close()).toEqual(manager);
@@ -83,12 +89,12 @@
             });
 
             it("should keep previous entries", function () {
-                var manager = new ns.LogManager();
+                const manager = new ns.LogManager();
                 manager.log("error1");
                 manager.newCycle();
                 manager.log("info1", {level: Wirecloud.constants.LOGGING.INFO_MSG});
-                var entries = manager.entries;
-                var cycles = manager.previouscycles;
+                const entries = manager.entries;
+                const cycles = manager.previouscycles;
 
                 expect(manager.close()).toEqual(manager);
                 expect(manager.entries).toEqual(entries);
@@ -96,8 +102,8 @@
             });
 
             it("should maintain the parent", function () {
-                var parent = new ns.LogManager();
-                var manager = new ns.LogManager(parent);
+                const parent = new ns.LogManager();
+                const manager = new ns.LogManager(parent);
 
                 expect(manager.close()).toEqual(manager);
 
@@ -108,7 +114,7 @@
 
         describe("formatException(exception)", function () {
 
-            var manager;
+            let manager;
 
             beforeEach(function () {
                 manager = new ns.LogManager();
@@ -116,7 +122,7 @@
 
             it("should format exceptions", function () {
 
-                var details = manager.formatException(new Error("error message"));
+                const details = manager.formatException(new Error("error message"));
 
                 expect(details).toEqual(jasmine.any(StyledElements.Fragment));
 
@@ -126,7 +132,7 @@
 
         describe("log(message, [options])", function () {
 
-            var manager;
+            let manager;
 
             beforeEach(function () {
                 manager = new ns.LogManager();
@@ -170,7 +176,7 @@
                 manager.log("error1");
                 manager.log("error2");
                 manager.newCycle();
-                var cycles = manager.previouscycles;
+                const cycles = manager.previouscycles;
 
                 expect(manager.log("test")).toEqual(manager);
 
@@ -230,7 +236,7 @@
 
             describe("throws a TypeError exception when using an invalid value for the level option:", function () {
 
-                var test = function test(level) {
+                const test = function test(level) {
                     expect(function () {
                         manager.log("test", {
                             level: level
@@ -261,7 +267,7 @@
             });
 
             it("should run on console-less environments", function () {
-                var _old_console = window.console;
+                const _old_console = window.console;
                 window.console = null;
 
                 try {
@@ -291,7 +297,7 @@
 
         describe("newCycle()", function () {
 
-            var manager;
+            let manager;
 
             beforeEach(function () {
                 manager = new ns.LogManager();
@@ -308,7 +314,7 @@
 
             it("should keep previous entries", function () {
                 manager.log("error1");
-                var previouscycle = manager.entries;
+                const previouscycle = manager.entries;
 
                 expect(manager.newCycle()).toEqual(manager);
 
@@ -328,7 +334,7 @@
 
         describe("parseErrorResponse(response)", function () {
 
-            var manager;
+            let manager;
 
             beforeEach(function () {
                 manager = new ns.LogManager();
@@ -336,11 +342,11 @@
 
             it("should extract error message from WireCloud's error responses", function () {
 
-                var response = {
+                const response = {
                     responseText: '{"description": "error description"}'
                 }
 
-                var msg = manager.parseErrorResponse(response);
+                const msg = manager.parseErrorResponse(response);
 
                 expect(msg).toBe("error description");
 
@@ -348,13 +354,13 @@
 
             it("should provide an error description for responses using an unexpected json format", function () {
 
-                var response = {
+                const response = {
                     status: 503,
                     statusText: "Status text for Service Unavailable",
                     responseText: '{"message": "error description coming form another service (e.g. a load balancer)"}'
                 }
 
-                var msg = manager.parseErrorResponse(response);
+                const msg = manager.parseErrorResponse(response);
 
                 expect(msg).toContain(response.status);
                 expect(msg).toContain(response.statusText);
@@ -363,13 +369,13 @@
 
             it("should provide an error description for responses not using json responses at all", function () {
 
-                var response = {
+                const response = {
                     status: 503,
                     statusText: "",
                     responseText: '<html><body>Error description coming form another service (e.g. a load balancer)</body></html>'
                 }
 
-                var msg = manager.parseErrorResponse(response);
+                const msg = manager.parseErrorResponse(response);
 
                 expect(msg).toContain(response.status);
                 expect(msg).toContain("Service Unavailable");
@@ -378,13 +384,13 @@
 
             it("should provide an error description for responses not using json responses at all", function () {
 
-                var response = {
+                const response = {
                     status: 600,
                     statusText: "",
                     responseText: '<html><body>Error description coming form another service (e.g. a load balancer)</body></html>'
                 }
 
-                var msg = manager.parseErrorResponse(response);
+                const msg = manager.parseErrorResponse(response);
 
                 expect(msg).toContain(response.status);
                 expect(msg).toContain("Unknown status code");
@@ -395,7 +401,7 @@
 
         describe("reset()", function () {
 
-            var manager;
+            let manager;
 
             beforeEach(function () {
                 manager = new ns.LogManager();
@@ -420,7 +426,7 @@
             });
 
             it("throws an Error if the LogManager is already closed", function () {
-                var manager = new ns.LogManager();
+                const manager = new ns.LogManager();
                 manager.log("error1");
                 manager.close();
 
@@ -432,11 +438,5 @@
             });
         });
     });
-
-    var equals_entries = function equals_entries(entryA, entryB) {
-        expect(entryA.msg).toEqual(entryB.msg);
-        expect(entryA.level).toEqual(entryB.level);
-        expect(entryA.logManager).toEqual(entryB.logManager);
-    };
 
 })(Wirecloud);

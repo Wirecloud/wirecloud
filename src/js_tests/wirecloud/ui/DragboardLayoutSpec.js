@@ -31,8 +31,8 @@
         describe("new DragboardLayout(dragboard)", () => {
 
             it("should init state", () => {
-                var dragboard = {};
-                let layout = new ns.DragboardLayout(dragboard);
+                const dragboard = {};
+                const layout = new ns.DragboardLayout(dragboard);
 
                 // Check initial values
                 expect(layout.dragboard).toBe(dragboard);
@@ -44,7 +44,7 @@
         describe("adaptColumnOffset(value)", () => {
 
             it("should throw a non-implemented error", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 expect(() => {
                     layout.adaptColumnOffset(1);
                 }).toThrowError(Error);
@@ -55,47 +55,47 @@
         describe("adaptHeight(value)", () => {
 
             it("should return 1 LU as minimum", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(40);
 
-                let value = layout.adaptHeight(0.3);
+                const value = layout.adaptHeight(0.3);
 
                 expect(value.inPixels).toBe(layout.getHeight());
                 expect(value.inLU).toBe(1);
             });
 
             it("should floor cells", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(40);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(2.2);
 
-                let value = layout.adaptHeight("60px");
+                const value = layout.adaptHeight("60px");
 
                 expect(value.inPixels).toBe(40);
                 expect(value.inLU).toBe(2);
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(60);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(2.5);
 
-                let value = layout.adaptHeight("60px");
+                const value = layout.adaptHeight("60px");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(3);
             });
 
             it("should support percentages", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getHeight = jasmine.createSpy("getHeight").and.returnValue(40);
                 layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(40);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(2);
 
-                let value = layout.adaptHeight("60%");
+                const value = layout.adaptHeight("60%");
 
                 expect(value.inPixels).toBe(40);
                 expect(value.inLU).toBe(2);
@@ -106,12 +106,12 @@
         describe("_adaptIWidget(widget)", () => {
 
             it("should do nothing for non-in-DOM widgets", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout._adaptIWidget({});
             });
 
             it("should do nothing for big enough widgets", () => {
-                let widget = {
+                const widget = {
                     element: document.createElement('div'),
                     shape: {
                         width: 1,
@@ -119,7 +119,7 @@
                     },
                     setShape: jasmine.createSpy('setShape')
                 };
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(1);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(1);
                 layout._adaptIWidget(widget);
@@ -128,7 +128,7 @@
             });
 
             it("should be able to adapt widget width", () => {
-                let widget = {
+                const widget = {
                     element: document.createElement('div'),
                     shape: {
                         width: 1,
@@ -136,7 +136,7 @@
                     },
                     setShape: jasmine.createSpy('setShape')
                 };
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(2);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(1);
                 layout._adaptIWidget(widget);
@@ -145,7 +145,7 @@
             });
 
             it("should be able to adapt widget height", () => {
-                let widget = {
+                const widget = {
                     element: document.createElement('div'),
                     shape: {
                         width: 1,
@@ -153,7 +153,7 @@
                     },
                     setShape: jasmine.createSpy('setShape')
                 };
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(1);
                 layout.fromPixelsToVCells = jasmine.createSpy("fromPixelsToVCells").and.returnValue(2);
                 layout._adaptIWidget(widget);
@@ -166,7 +166,7 @@
         describe("adaptRowOffset(value)", () => {
 
             it("should throw a non-implemented error", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 expect(() => {
                     layout.adaptRowOffset(1);
                 }).toThrowError(Error);
@@ -177,47 +177,47 @@
         describe("adaptWidth(value)", () => {
 
             it("should return 1 LU as minimum", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
                 layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(40);
 
-                let value = layout.adaptWidth(0.3);
+                const value = layout.adaptWidth(0.3);
 
                 expect(value.inPixels).toBe(layout.getWidth());
                 expect(value.inLU).toBe(1);
             });
 
             it("should floor cells", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
                 layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(40);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(2.2);
 
-                let value = layout.adaptWidth("60px");
+                const value = layout.adaptWidth("60px");
 
                 expect(value.inPixels).toBe(40);
                 expect(value.inLU).toBe(2);
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
                 layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(60);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(2.5);
 
-                let value = layout.adaptWidth("60px");
+                const value = layout.adaptWidth("60px");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(3);
             });
 
             it("should support percentages", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getWidth = jasmine.createSpy("getWidth").and.returnValue(40);
                 layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(40);
                 layout.fromPixelsToHCells = jasmine.createSpy("fromPixelsToHCells").and.returnValue(2);
 
-                let value = layout.adaptWidth("60%");
+                const value = layout.adaptWidth("60%");
 
                 expect(value.inPixels).toBe(40);
                 expect(value.inLU).toBe(2);
@@ -227,7 +227,7 @@
 
         describe("addWidget(widget, affectsDragboard)", () => {
 
-            var widget;
+            let widget;
 
             beforeEach(() => {
                 widget = {
@@ -238,7 +238,7 @@
             });
 
             it("should add widgets", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
                 layout.addWidget(widget);
 
@@ -249,7 +249,7 @@
             });
 
             it("should throw and Error if the widget is already associated with a layout", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 widget.layout = {};
 
                 expect(() => {
@@ -260,10 +260,10 @@
             });
 
             it("should add widgets (affecting dragboard)", () => {
-                var dragboard = {
+                const dragboard = {
                     _addWidget: jasmine.createSpy("_addWidget")
                 };
-                let layout = new ns.DragboardLayout(dragboard);
+                const layout = new ns.DragboardLayout(dragboard);
 
                 layout.addWidget(widget, true);
 
@@ -279,12 +279,12 @@
         describe("getHeight()", () => {
 
             it("should return getHeight() from dragboard", () => {
-                var dragboard = {
+                const dragboard = {
                     getHeight: jasmine.createSpy("getHeight").and.returnValue(30)
                 };
-                let layout = new ns.DragboardLayout(dragboard);
+                const layout = new ns.DragboardLayout(dragboard);
 
-                let value = layout.getHeight();
+                const value = layout.getHeight();
 
                 expect(value).toBe(30);
             });
@@ -294,12 +294,12 @@
         describe("getWidth()", () => {
 
             it("should return getWidth() from dragboard", () => {
-                var dragboard = {
+                const dragboard = {
                     getWidth: jasmine.createSpy("getWidth").and.returnValue(30)
                 };
-                let layout = new ns.DragboardLayout(dragboard);
+                const layout = new ns.DragboardLayout(dragboard);
 
-                let value = layout.getWidth();
+                const value = layout.getWidth();
 
                 expect(value).toBe(30);
             });
@@ -308,7 +308,7 @@
 
         describe("isInside(x, y)", () => {
 
-            var layout;
+            let layout;
 
             beforeAll(() => {
                 layout = new ns.DragboardLayout({
@@ -345,18 +345,18 @@
         describe("moveTo(newlayout)", () => {
 
             it("should work on empty layouts", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
                 layout.moveTo({});
             });
 
             it("should work on layouts with widgets", () => {
-                let widget = {
+                const widget = {
                     moveToLayout: jasmine.createSpy('moveToLayout')
                 };
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.widgets["1"] = widget;
-                let newlayout = {};
+                const newlayout = {};
 
                 layout.moveTo(newlayout);
 
@@ -368,22 +368,22 @@
         describe("_notifyWindowResizeEvent(widthChanged, heightChanged)", () => {
 
             it("should work on empty layouts", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
                 layout._notifyWindowResizeEvent(false, true);
             });
 
             it("should work without changes", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
                 layout._notifyWindowResizeEvent(false, false);
             });
 
             it("should work on layouts with widgets", () => {
-                let widget = {
+                const widget = {
                     repaint: jasmine.createSpy('repaint')
                 };
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.widgets["1"] = widget;
 
                 layout._notifyWindowResizeEvent(true, false);
@@ -396,40 +396,40 @@
         describe("parseSize(value)", () => {
 
             it("should be able to parse numbers", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
-                let value = layout.parseSize(1);
+                const value = layout.parseSize(1);
 
                 expect(value).toEqual([1, "cells"]);
             });
 
             it("should be able to parse pixel sizes", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
-                let value = layout.parseSize("1px");
+                const value = layout.parseSize("1px");
 
                 expect(value).toEqual([1, "px"]);
             });
 
             it("should be able to parse percentage sizes", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
-                let value = layout.parseSize("50%");
+                const value = layout.parseSize("50%");
 
                 expect(value).toEqual([50, "%"]);
             });
 
             it("should treat values without unit as cell values", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
 
-                let value = layout.parseSize("1");
+                const value = layout.parseSize("1");
 
                 expect(value).toEqual([1, "cells"]);
             });
 
             ["potato", true, false, null, undefined].forEach((value) => {
                 it("should raise a TypeError exception on invalid values (" + JSON.stringify(value) + ")", () => {
-                    let layout = new ns.DragboardLayout({});
+                    const layout = new ns.DragboardLayout({});
                     expect(() => {
                         layout.parseSize(value);
                     }).toThrowError(TypeError);
@@ -440,7 +440,7 @@
 
         describe("removeWidget(widget, affectsDragboard)", () => {
 
-            var widget;
+            let widget;
 
             beforeEach(() => {
                 widget = {
@@ -450,7 +450,7 @@
             });
 
             it("should remove widgets", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.widgets["1"] = widget;
 
                 layout.removeWidget(widget);
@@ -461,10 +461,10 @@
             });
 
             it("should remove widgets (affecting dragboard)", () => {
-                var dragboard = {
+                const dragboard = {
                     _removeWidget: jasmine.createSpy("_removeWidget")
                 };
-                let layout = new ns.DragboardLayout(dragboard);
+                const layout = new ns.DragboardLayout(dragboard);
                 layout.widgets["1"] = widget;
 
                 layout.removeWidget(widget, true);
@@ -480,10 +480,10 @@
         describe("updatePosition(widget, element)", () => {
 
             it("should update widget css", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getColumnOffset = jasmine.createSpy("getColumnOffset").and.returnValue(10);
                 layout.getRowOffset = jasmine.createSpy("getRowOffset").and.returnValue(20);
-                let widget = {position: {x: 1, y: 3}, element: document.createElement('div')};
+                const widget = {position: {x: 1, y: 3}, element: document.createElement('div')};
 
                 layout.updatePosition(widget, widget.element);
 
@@ -496,10 +496,10 @@
         describe("updateShape(widget, element)", () => {
 
             it("should update widget css", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(10);
                 layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(20);
-                let widget = {
+                const widget = {
                     element: document.createElement('div'),
                     minimized: false,
                     shape: {width: 1, height: 3}
@@ -512,10 +512,10 @@
             });
 
             it("should update widget css (minimized)", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(10);
                 layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(20);
-                let widget = {
+                const widget = {
                     element: document.createElement('div'),
                     minimized: true,
                     shape: {width: 1, height: 3}
@@ -528,10 +528,10 @@
             });
 
             it("should update widget css (null sizes)", () => {
-                let layout = new ns.DragboardLayout({});
+                const layout = new ns.DragboardLayout({});
                 layout.getWidthInPixels = jasmine.createSpy("getWidthInPixels").and.returnValue(null);
                 layout.getHeightInPixels = jasmine.createSpy("getHeightInPixels").and.returnValue(null);
-                let widget = {
+                const widget = {
                     element: document.createElement('div'),
                     minimized: false,
                     shape: {width: 1, height: 3}
@@ -548,7 +548,7 @@
         describe("provides basic implementations of", () => {
             ["_notifyResizeEvent", "initializeMove", "moveTemporally", "acceptMove", "cancelMove", "disableCursor"].forEach((method) => {
                 it("", () => {
-                    let layout = new ns.DragboardLayout({});
+                    const layout = new ns.DragboardLayout({});
 
                     layout[method]();
                 });
@@ -559,12 +559,12 @@
         describe("widget remove event", () => {
 
             it("handles widget removals", () => {
-                let widget = {
+                const widget = {
                     id: "1",
                     addEventListener: jasmine.createSpy("addEventListener"),
                     repaint: jasmine.createSpy("repaint")
                 };
-                let layout = new ns.DragboardLayout({
+                const layout = new ns.DragboardLayout({
                     update: jasmine.createSpy("update")
                 });
                 layout.addWidget(widget);

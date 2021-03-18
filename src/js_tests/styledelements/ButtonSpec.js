@@ -29,7 +29,7 @@
 
     describe("Styled Buttons", function () {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -46,7 +46,7 @@
         describe("new Button([options])", function () {
 
             it("can be created without passing any option", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.wrapperElement.textContent).toBe("");
                 expect(element.state).toBe("");
                 expect(element.depth).toBe(null);
@@ -54,17 +54,17 @@
             });
 
             it("can be created only with a text label", function () {
-                var element = new StyledElements.Button({text: "hello world!!"});
+                const element = new StyledElements.Button({text: "hello world!!"});
                 expect(element.wrapperElement.textContent).toBe("hello world!!");
             });
 
             it("should support the id option", function () {
-                var element = new StyledElements.Button({id: "my-button"});
+                const element = new StyledElements.Button({id: "my-button"});
                 expect(element.wrapperElement.getAttribute('id')).toBe("my-button");
             });
 
             it("should handle initial depth", function () {
-                var element = new StyledElements.Button({text: "hello world!!", depth: 2});
+                const element = new StyledElements.Button({text: "hello world!!", depth: 2});
                 expect(element.depth).toBe(2);
                 expect(element.hasClassName('z-depth-2')).toBeTruthy();
             });
@@ -73,7 +73,7 @@
 
         it("should handle depth changes", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", depth: 2});
+            const element = new StyledElements.Button({text: "hello world!!", depth: 2});
             element.depth = 1;
             expect(element.depth).toBe(1);
 
@@ -81,7 +81,7 @@
 
         it("should handle depth changes with the same value", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", depth: 2});
+            const element = new StyledElements.Button({text: "hello world!!", depth: 2});
             element.depth = 2;
             expect(element.depth).toBe(2);
 
@@ -89,7 +89,7 @@
 
         it("should handle depth cleaning", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", depth: 3});
+            const element = new StyledElements.Button({text: "hello world!!", depth: 3});
             element.depth = null;
             expect(element.depth).toBe(null);
 
@@ -97,7 +97,7 @@
 
         it("should handle bad depth values", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
+            const element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
             expect(element.depth = "bad", null);
             expect(element.depth).toBe(null);
 
@@ -105,14 +105,14 @@
 
         it("should handle initial state", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
+            const element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
             expect(element.state).toBe("primary");
 
         });
 
         it("should handle state changes", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
+            const element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
             element.state = "danger";
             expect(element.state).toBe("danger");
 
@@ -120,7 +120,7 @@
 
         it("should handle state changes with the same value", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
+            const element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
             element.state = "primary";
             expect(element.state).toBe("primary");
 
@@ -128,7 +128,7 @@
 
         it("should handle state cleaning", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
+            const element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
             element.state = "";
             expect(element.state).toBe("");
 
@@ -136,7 +136,7 @@
 
         it("should handle bad state values", function () {
 
-            var element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
+            const element = new StyledElements.Button({text: "hello world!!", state: 'primary'});
             element.state = "bad";
             expect(element.state).toBe("");
 
@@ -144,7 +144,7 @@
 
         it("should trigger blur events", function (done) {
 
-            var element = new StyledElements.Button();
+            const element = new StyledElements.Button();
             element.addEventListener('blur', function (button) {
                 expect(button).toBe(element);
                 done();
@@ -156,7 +156,7 @@
 
         it("should trigger click events", function (done) {
 
-            var element = new StyledElements.Button();
+            const element = new StyledElements.Button();
             element.addEventListener('click', function (button) {
                 expect(button).toBe(element);
                 done();
@@ -167,7 +167,7 @@
 
         it("should trigger focus events", function (done) {
 
-            var element = new StyledElements.Button();
+            const element = new StyledElements.Button();
             element.addEventListener('focus', function (button) {
                 expect(button).toBe(element);
                 done();
@@ -178,7 +178,7 @@
 
         it("should trigger click events when the user press the Enter key", function (done) {
 
-            var element = new StyledElements.Button();
+            const element = new StyledElements.Button();
             element.addEventListener('click', function (button) {
                 expect(button).toBe(element);
                 done();
@@ -189,7 +189,7 @@
 
         it("should trigger click events when the user press the Space key", function (done) {
 
-            var element = new StyledElements.Button();
+            const element = new StyledElements.Button();
             element.addEventListener('click', function (button) {
                 expect(button).toBe(element);
                 done();
@@ -200,8 +200,8 @@
 
         it("should trigger click events when the user press the Space key", function () {
 
-            var element = new StyledElements.Button();
-            var listener = jasmine.createSpy();
+            const element = new StyledElements.Button();
+            const listener = jasmine.createSpy();
             element.addEventListener('click', listener);
             element.wrapperElement.dispatchEvent(new KeyboardEvent("keydown", {"key": "a"}));
             expect(listener).not.toHaveBeenCalled();
@@ -210,7 +210,7 @@
 
         it("should trigger mouseenter events", function (done) {
 
-            var element = new StyledElements.Button();
+            const element = new StyledElements.Button();
             element.addEventListener('mouseenter', function (button) {
                 expect(button).toBe(element);
                 done();
@@ -221,7 +221,7 @@
 
         it("should trigger mouseleave events", function (done) {
 
-            var element = new StyledElements.Button();
+            const element = new StyledElements.Button();
             element.addEventListener('mouseleave', function (button) {
                 expect(button).toBe(element);
                 done();
@@ -232,7 +232,7 @@
 
         describe("addIconClassName(classList)", function () {
 
-            var element;
+            let element;
 
             beforeEach(function () {
                 // Provide a default instance of Button for testing
@@ -272,7 +272,7 @@
         });
 
         describe("blur()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 // Provide a default instance of Button for testing
@@ -288,7 +288,7 @@
         });
 
         describe("click()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 // Provide a default instance of Button for testing
@@ -312,7 +312,7 @@
         });
 
         describe('destroy() [deprecated]', function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 // Provide a default instance of Button for testing
@@ -331,7 +331,7 @@
         });
 
         describe("focus()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 // Provide a default instance of Button for testing
@@ -349,22 +349,22 @@
         describe("hasIconClassName(className)", () => {
 
             it("should return false for undefined class name", () => {
-                let element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.hasIconClassName()).toBe(false);
             });
 
             it("should return false for empty class name", () => {
-                let element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.hasIconClassName("")).toBe(false);
             });
 
             it("should return false if the class name is not present", () => {
-                let element = new StyledElements.Button({class: "fas fa-bars", iconClass: "icon"});
+                const element = new StyledElements.Button({class: "fas fa-bars", iconClass: "icon"});
                 expect(element.hasIconClassName("fa-bars")).toBe(false);
             });
 
             it("should return true if the class name is present", () => {
-                let element = new StyledElements.Button({iconClass: "fas fa-bars"});
+                const element = new StyledElements.Button({iconClass: "fas fa-bars"});
                 expect(element.hasIconClassName("fa-bars")).toBe(true);
             });
 
@@ -373,37 +373,37 @@
         describe("removeIconClassName(classList)", function () {
 
             it("should remove the icon element when passing null", function () {
-                var element = new StyledElements.Button({iconClass: "fa fa-ok"});
+                const element = new StyledElements.Button({iconClass: "fa fa-ok"});
                 expect(element.removeIconClassName()).toBe(element);
                 expect(element.icon).toBe(null);
             });
 
             it("should do nothing when the button has no icon and passing an empty class list", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.removeIconClassName()).toBe(element);
                 expect(element.icon).toBe(null);
             });
 
             it("should do nothing when removing an inexistent class name", function () {
-                var element = new StyledElements.Button({iconClass: "fa fa-ok"});
+                const element = new StyledElements.Button({iconClass: "fa fa-ok"});
                 expect(element.removeIconClassName("fa-bell")).toBe(element);
                 expect(element.icon.className).toBe("se-icon fa fa-ok");
             });
 
             it("should support class lists", function () {
-                var element = new StyledElements.Button({iconClass: "fa fa-ok fa-2x"});
+                const element = new StyledElements.Button({iconClass: "fa fa-ok fa-2x"});
                 expect(element.removeIconClassName(["fa-ok", "inexistent", "fa-2x"])).toBe(element);
                 expect(element.icon.className).toBe("se-icon fa");
             });
 
             it("should support whitespace separated class lists", function () {
-                var element = new StyledElements.Button({iconClass: "fa fa-ok fa-2x"});
+                const element = new StyledElements.Button({iconClass: "fa fa-ok fa-2x"});
                 expect(element.removeIconClassName("fa-ok inexistent fa-2x")).toBe(element);
                 expect(element.icon.className).toBe("se-icon fa");
             });
 
             it("should remove the icon element when removing all the CSS classes", function () {
-                var element = new StyledElements.Button({iconClass: "fa fa-ok"});
+                const element = new StyledElements.Button({iconClass: "fa fa-ok"});
                 expect(element.removeIconClassName("fa fa-ok")).toBe(element);
                 expect(element.icon).toBe(null);
             });
@@ -413,11 +413,9 @@
         describe("replaceIconClassName(removeList, addList)", function () {
 
             it("should call removeIconClassName and addIconClassName", function () {
-                var element, removeList, addList;
-
-                element = new StyledElements.Button();
-                removeList = [];
-                addList = [];
+                const element = new StyledElements.Button();
+                const removeList = [];
+                const addList = [];
                 spyOn(element, "addIconClassName").and.callThrough();
                 spyOn(element, "removeIconClassName").and.callThrough();
                 expect(element.replaceIconClassName(removeList, addList)).toBe(element);
@@ -431,7 +429,7 @@
 
         describe("setBadge([content, state, isAlert])", function () {
 
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Button();
@@ -480,7 +478,7 @@
 
         describe("setLabel([text])", function () {
 
-            var element;
+            let element;
 
             it("should add labels", function () {
                 element = new StyledElements.Button();
@@ -506,7 +504,7 @@
 
         describe("setTitle(title)", function () {
 
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Button();

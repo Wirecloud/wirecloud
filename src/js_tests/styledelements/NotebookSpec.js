@@ -28,7 +28,7 @@
     "use strict";
 
     describe("Notebook", function () {
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -43,9 +43,9 @@
         });
 
         it("should support adding new tabs through a user interface button", function () {
-            var element, tabs = [];
+            const tabs = [];
 
-            element = new StyledElements.Notebook();
+            const element = new StyledElements.Notebook();
             element.appendTo(dom);
             element.addEventListener('newTab', (notebook) => {tabs.push(notebook.createTab({label: "DynamicTab"}));});
             element.tabArea.style({width: "25px"});
@@ -82,24 +82,24 @@
         });
 
         it("should provide fullscreen status through the fullscreen property", function () {
-            var element = new StyledElements.Notebook();
+            const element = new StyledElements.Notebook();
             expect(element.fullscreen).toBe(false);
         });
 
         it("should support the full option", function () {
-            var element = new StyledElements.Notebook({full: false});
+            const element = new StyledElements.Notebook({full: false});
             expect(element.hasClassName('full')).toBe(false);
         });
 
         it("should support the id option", function () {
-            var element = new StyledElements.Notebook({id: 'myid'});
+            const element = new StyledElements.Notebook({id: 'myid'});
             expect(element.wrapperElement.id).toBe('myid');
         });
 
         describe("destroy()", () => {
 
             it("works on empty notebooks", () => {
-                let element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 spyOn(element, "remove");
 
                 expect(element.destroy()).toBe(undefined);
@@ -108,7 +108,7 @@
             });
 
             it("works on non-empty notebooks", () => {
-                let element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 element.createTab();
                 element.createTab();
                 spyOn(element, "remove");
@@ -122,7 +122,7 @@
 
         describe("createTab([options])", function () {
 
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
@@ -130,12 +130,10 @@
             });
 
             it("should support create new tabs without passing options", function () {
-                var tab1, tab2;
-
                 expect(element.visibleTab).toBe(null);
-                tab1 = element.createTab();
+                const tab1 = element.createTab();
                 expect(element.visibleTab).toBe(tab1);
-                tab2 = element.createTab();
+                const tab2 = element.createTab();
 
                 expect(element.visibleTab).toBe(tab1);
                 expect(element.tabs).toEqual([tab1, tab2]);
@@ -144,10 +142,8 @@
             });
 
             it("should support create new tabs passing normal tab options", function () {
-                var tab1;
-
                 expect(element.visibleTab).toBe(null);
-                tab1 = element.createTab({label: "Tab label"});
+                const tab1 = element.createTab({label: "Tab label"});
                 expect(tab1.label).toBe("Tab label");
 
                 expect(element.visibleTab).toBe(tab1);
@@ -156,12 +152,10 @@
             });
 
             it("should support create new tabs using the initiallyVisible option", function () {
-                var tab1, tab2;
-
                 expect(element.visibleTab).toBe(null);
-                tab1 = element.createTab({initiallyVisible: true});
+                const tab1 = element.createTab({initiallyVisible: true});
                 expect(element.visibleTab).toBe(tab1);
-                tab2 = element.createTab({initiallyVisible: true});
+                const tab2 = element.createTab({initiallyVisible: true});
                 expect(element.visibleTab).toBe(tab2);
 
                 expect(element.tabs).toEqual([tab1, tab2]);
@@ -172,7 +166,7 @@
             it("should allow to create new tabs using custom classes", () => {
                 const MyTab = class MyTab extends StyledElements.Tab {};
 
-                let tab = element.createTab({tab_constructor: MyTab});
+                const tab = element.createTab({tab_constructor: MyTab});
 
                 expect(element.tabs).toEqual([tab]);
                 expect(tab).toEqual(jasmine.any(MyTab));
@@ -190,7 +184,7 @@
 
         describe("enable events", () => {
 
-            var element;
+            let element;
 
             beforeEach(() => {
                 element = new StyledElements.Notebook();
@@ -217,7 +211,7 @@
         // Deprecated
         describe("getTab(id)", () => {
 
-            var element, tab;
+            let element, tab;
 
             beforeEach(() => {
                 element = new StyledElements.Notebook();
@@ -239,7 +233,7 @@
         // Deprecated
         describe("getTabByIndex(index)", () => {
 
-            var element, tab;
+            let element, tab;
 
             beforeEach(() => {
                 element = new StyledElements.Notebook();
@@ -260,7 +254,7 @@
 
         describe("getTabIndex(id)", () => {
 
-            var element, tab;
+            let element, tab;
 
             beforeEach(() => {
                 element = new StyledElements.Notebook();
@@ -281,7 +275,7 @@
         });
 
         describe("goToTab(tab)", function () {
-            var element, tab1, tab2, tab3, changelistener, changedlistener;
+            let element, tab1, tab2, tab3, changelistener, changedlistener;
 
             beforeEach(() => {
                 element = new StyledElements.Notebook();
@@ -309,8 +303,8 @@
             });
 
             it("should raise an exception if the passed tab is not owned by the notebook", function () {
-                var other_notebook = new StyledElements.Notebook();
-                var other_tab = other_notebook.createTab();
+                const other_notebook = new StyledElements.Notebook();
+                const other_tab = other_notebook.createTab();
                 expect(function () {element.goToTab(other_tab);}).toThrow(jasmine.any(TypeError));
                 expect(changelistener).not.toHaveBeenCalled();
                 expect(changedlistener).not.toHaveBeenCalled();
@@ -385,7 +379,7 @@
         });
 
         describe("removeTab(tab)", function () {
-            var element, tab1, tab2, tab3;
+            let element, tab1, tab2, tab3;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
@@ -430,8 +424,8 @@
             });
 
             it("should raise an exception if the passed tab is not owned by the notebook", function () {
-                var other_notebook = new StyledElements.Notebook();
-                var other_tab = other_notebook.createTab();
+                const other_notebook = new StyledElements.Notebook();
+                const other_tab = other_notebook.createTab();
                 expect(function () {element.removeTab(other_tab);}).toThrow(jasmine.any(TypeError));
                 expect(element.tabs).toEqual([tab1, tab2, tab3]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.getTabElement());
@@ -475,7 +469,7 @@
         });
 
         describe("addButton(button, position)", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
@@ -486,26 +480,26 @@
             });
 
             it("place buttons on the right by default", function () {
-                var button = new StyledElements.Button();
+                const button = new StyledElements.Button();
                 element.addButton(button);
                 expect(element.tabWrapper.east.children).toEqual([element.moveRightButton, button]);
             });
 
             it("place buttons on the right by default", function () {
-                var button = new StyledElements.Button();
+                const button = new StyledElements.Button();
                 element.addButton(button, 'right');
                 expect(element.tabWrapper.east.children).toEqual([element.moveRightButton, button]);
             });
 
             it("should allow to add buttons on the left side", function () {
-                var button = new StyledElements.Button();
+                const button = new StyledElements.Button();
                 element.addButton(button, 'left');
                 expect(element.tabWrapper.west.children).toEqual([button, element.moveLeftButton]);
             });
         });
 
         describe("repaint(temporal)", function () {
-            var element, tab1, tab2, tab3;
+            let element, tab1, tab2, tab3;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
@@ -541,7 +535,7 @@
         });
 
         describe("clear()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
@@ -559,7 +553,7 @@
 
         describe("focus(tab)", () => {
 
-            var element;
+            let element;
 
             beforeEach(() => {
                 element = new StyledElements.Notebook();
@@ -575,20 +569,20 @@
             });
 
             it("should raise an exception if the passed tab is not owned by the notebook", function () {
-                var other_notebook = new StyledElements.Notebook();
-                var other_tab = other_notebook.createTab();
+                const other_notebook = new StyledElements.Notebook();
+                const other_tab = other_notebook.createTab();
                 expect(function () {element.focus(other_tab);}).toThrow(jasmine.any(TypeError));
             });
 
             it("should scroll to the left if the tab is located on the left side", (done) => {
                 element.appendTo(dom);
-                var tab = element.createTab({name: "Tab 1"});
+                const tab = element.createTab({name: "Tab 1"});
                 element.createTab({name: "mytab"});
 
                 // scroll to mytab
                 dom.querySelector('.se-notebook-tab-area').scrollLeft = 53;
 
-                var p = element.focus(tab);
+                const p = element.focus(tab);
 
                 p.then(() => {
                     // this number depends on CSS
@@ -600,9 +594,9 @@
             it("should scroll to the right if the tab is located on the right side", (done) => {
                 element.appendTo(dom);
                 element.createTab({name: "Tab 1"});
-                var tab = element.createTab({name: "mytab"});
+                const tab = element.createTab({name: "mytab"});
 
-                var p = element.focus(tab.tabId);
+                const p = element.focus(tab.tabId);
 
                 p.then(() => {
                     // this number depends on CSS
@@ -613,22 +607,22 @@
 
             xit("should do nothing if the tab to focus is removed before processing the focus command", (done) => {
                 element.appendTo(dom);
-                var tab1 = element.createTab({name: "Tab 1"});
-                var tab2 = element.createTab({name: "mytab"});
+                const tab1 = element.createTab({name: "Tab 1"});
+                const tab2 = element.createTab({name: "mytab"});
                 element.focus(tab2);
-                var p = element.focus(tab1);
+                element.focus(tab1);
                 element.removeTab(tab1);
 
-                p.then(() => {
+                element.transitionsQueue.addEventListener("stop", () => {
                     // this number depends on CSS
-                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(0);
+                    expect(dom.querySelector('.se-notebook-tab-area').scrollLeft).toBe(1);
                     done();
                 });
             });
         });
 
         describe("requestFullscreen()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
@@ -645,7 +639,7 @@
         });
 
         describe("exitFullscreen()", function () {
-            var element, backward;
+            let element, backward;
 
             beforeAll(() => {
                 // Check if current browser implements exitFullscreen method
@@ -693,7 +687,7 @@
         });
 
         describe("getTabByLabel(label)", function () {
-            var element, tab1, tab2;
+            let element, tab1, tab2;
 
             beforeEach(function () {
                 element = new StyledElements.Notebook();
@@ -720,21 +714,21 @@
         describe("shiftLeftTabs()", function () {
 
             it("should no crash if there are no tabs", () => {
-                var element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 element.appendTo(dom);
-                let p = element.shiftLeftTabs();
+                const p = element.shiftLeftTabs();
                 expect(p).toEqual(jasmine.any(Promise));
             });
 
             it("should no crash if there are only one tab", () => {
-                var element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 element.appendTo(dom).createTab();
-                let p = element.shiftLeftTabs();
+                const p = element.shiftLeftTabs();
                 expect(p).toEqual(jasmine.any(Promise));
             });
 
             it("should move tabs to the left", (done) => {
-                var element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 element.appendTo(dom);
                 element.createTab({name: "Tab 1"});
                 element.createTab({name: "mytab"});
@@ -742,7 +736,7 @@
                 // scroll to mytab
                 dom.querySelector('.se-notebook-tab-area').scrollLeft = 53;
 
-                var p = element.shiftLeftTabs();
+                const p = element.shiftLeftTabs();
 
                 p.then(() => {
                     // this number depends on CSS
@@ -754,26 +748,26 @@
 
         describe("shiftRightTabs()", function () {
             it("should no crash if there are no tabs", () => {
-                var element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 element.appendTo(dom);
-                let p = element.shiftRightTabs();
+                const p = element.shiftRightTabs();
                 expect(p).toEqual(jasmine.any(Promise));
             });
 
             it("should no crash if there are only one tab", () => {
-                var element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 element.appendTo(dom).createTab();
-                let p = element.shiftRightTabs();
+                const p = element.shiftRightTabs();
                 expect(p).toEqual(jasmine.any(Promise));
             });
 
             it("should move tabs to the right", (done) => {
-                var element = new StyledElements.Notebook();
+                const element = new StyledElements.Notebook();
                 element.appendTo(dom);
                 element.createTab({name: "Tab 1"});
                 element.createTab({name: "mytab"});
 
-                var p = element.shiftRightTabs();
+                const p = element.shiftRightTabs();
 
                 p.then(() => {
                     // this number depends on CSS

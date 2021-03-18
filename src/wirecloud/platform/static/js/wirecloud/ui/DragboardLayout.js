@@ -157,9 +157,9 @@
         }
 
         adaptWidth(size) {
-            var parsedSize, pixels, sizeInLU;
+            let pixels, sizeInLU;
 
-            parsedSize = this.parseSize(size);
+            const parsedSize = this.parseSize(size);
             if (parsedSize[1] === 'cells') {
                 sizeInLU = Math.round(parsedSize[0]);
             } else {
@@ -182,14 +182,14 @@
         }
 
         updateShape(widget, element) {
-            let width = this.getWidthInPixels(widget.shape.width);
+            const width = this.getWidthInPixels(widget.shape.width);
             if (width != null) {
                 element.style.width = width + 'px';
             } else {
                 element.style.width = "";
             }
 
-            let height = widget.minimized ? null : this.getHeightInPixels(widget.shape.height);
+            const height = widget.minimized ? null : this.getHeightInPixels(widget.shape.height);
             if (height != null) {
                 element.style.height = height + 'px';
             } else {
@@ -237,7 +237,7 @@
 
         addWidget(widget, affectsDragboard) {
             if (widget.layout != null) {
-                var msg = utils.gettext("the widget could not be associated with this layout as it already has an associated layout.");
+                const msg = utils.gettext("the widget could not be associated with this layout as it already has an associated layout.");
                 throw new Error(msg);
             }
             widget.layout = this;

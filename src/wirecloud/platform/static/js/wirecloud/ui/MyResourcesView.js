@@ -27,10 +27,22 @@
 
     "use strict";
 
+    const keydown_listener = function keydown_listener(key, modifiers) {
+        const subview = this.alternatives.getCurrentAlternative();
+        if (typeof subview.handleKeydownEvent === "function") {
+            return subview.handleKeydownEvent(key, modifiers);
+        }
+    };
+
+    const logerror = function logerror(msg) {
+        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+        Wirecloud.GlobalLogManager.log(msg);
+    };
+
     ns.MyResourcesView = class MyResourcesView extends se.Alternative {
 
         constructor(id, options) {
-            var resource_extra_context;
+            let resource_extra_context;
 
             options.class = 'catalogue myresources';
             super(id, options);
@@ -39,7 +51,7 @@
             this.alternatives = new StyledElements.Alternatives();
             this.appendChild(this.alternatives);
 
-            var search_options = {
+            const search_options = {
                 catalogue: this,
                 resource_painter: Wirecloud.ui.ResourcePainter,
                 resource_extra_context: resource_extra_context,
@@ -54,16 +66,16 @@
 
             this.uploadButton = new StyledElements.Button({
                 class: "wc-upload-mac-button",
-                iconClass: 'fa fa-cloud-upload',
+                iconClass: 'fas fa-cloud-upload-alt',
                 title: utils.gettext('Upload')
             });
-            var upload_dialog = new Wirecloud.ui.WirecloudCatalogue.UploadWindowMenu({catalogue: this.catalogue, mainview: this});
+            const upload_dialog = new Wirecloud.ui.WirecloudCatalogue.UploadWindowMenu({catalogue: this.catalogue, mainview: this});
             this.uploadButton.addEventListener('click', function () {
                 upload_dialog.show();
             });
 
             this.marketButton = new StyledElements.Button({
-                iconClass: 'fa fa-shopping-cart',
+                iconClass: 'fas fa-shopping-cart',
                 class: "wc-show-marketplace-button",
                 title: utils.gettext('Get more components')
             });
@@ -85,17 +97,15 @@
         }
 
         buildStateData() {
-            var currentState, data, subview;
-
-            currentState = Wirecloud.HistoryManager.getCurrentState();
-            data = {
+            const currentState = Wirecloud.HistoryManager.getCurrentState();
+            const data = {
                 workspace_owner: currentState.workspace_owner,
                 workspace_name: currentState.workspace_name,
                 view: 'myresources',
                 subview: 'search'
             };
 
-            subview = this.alternatives.getCurrentAlternative();
+            const subview = this.alternatives.getCurrentAlternative();
             if (subview.view_name != null) {
                 data.subview = subview.view_name;
                 if ('buildStateData' in subview) {
@@ -107,7 +117,7 @@
         }
 
         onHistoryChange(state) {
-            var details, parts, currentResource;
+            let details, parts, currentResource;
 
             if (state.subview === 'search') {
                 this.changeCurrentView(state.subview, {});
@@ -134,7 +144,7 @@
         }
 
         getBreadcrumb() {
-            var breadcrum = [utils.gettext('My Resources')];
+            const breadcrum = [utils.gettext('My Resources')];
 
             if (this.alternatives.getCurrentAlternative() === this.viewsByName.details && this.viewsByName.details.currentEntry != null) {
                 breadcrum.push(this.viewsByName.details.currentEntry.title);
@@ -144,7 +154,7 @@
         }
 
         getTitle() {
-            var currentResource;
+            let currentResource;
 
             if (this.alternatives.getCurrentAlternative() === this.viewsByName.details) {
                 currentResource = this.viewsByName.details.currentEntry;
@@ -172,7 +182,7 @@
                 options = {
                     onComplete: function (alternatives, out_alternative) {
                         this.refresh_if_needed();
-                        var new_status = this.buildStateData();
+                        const new_status = this.buildStateData();
                         Wirecloud.HistoryManager.pushState(new_status);
                         Wirecloud.dispatchEvent('viewcontextchanged');
                     }.bind(this)
@@ -260,12 +270,12 @@
 
     ns.MyResourcesView.prototype.ui_commands.publishOtherMarket = function publishOtherMarket(resource) {
         return function () {
-            var marketplaceview = Wirecloud.UserInterfaceManager.views.marketplace;
+            const marketplaceview = Wirecloud.UserInterfaceManager.views.marketplace;
             marketplaceview.waitMarketListReady({
                 include_markets: true,
                 onComplete: function () {
-                    var dialog, msg, key;
-                    var views = Wirecloud.UserInterfaceManager.views.marketplace.viewsByName;
+                    let dialog, msg, key;
+                    const views = Wirecloud.UserInterfaceManager.views.marketplace.viewsByName;
 
                     for (key in views) {
                         if (views[key].getPublishEndpoints() != null) {
@@ -289,7 +299,7 @@
         }, options);
 
         return function (e) {
-            var onSuccess = function onSuccess(resource_details) {
+            const onSuccess = function onSuccess(resource_details) {
                 if (options.version != null) {
                     resource_details.changeVersion(options.version);
                 }
@@ -297,9 +307,9 @@
                     tab: options.tab
                 });
             };
-            var viewChanged = false, dataLoaded = false;
-            var onComplete = function onComplete() {
-                var new_status = this.buildStateData();
+            let viewChanged = false, dataLoaded = false;
+            const onComplete = function onComplete() {
+                const new_status = this.buildStateData();
                 if (options.history === "push") {
                     Wirecloud.HistoryManager.pushState(new_status);
                 } else {
@@ -307,7 +317,7 @@
                 }
                 utils.callCallback(options.onComplete);
             };
-            var onCompleteRequest = function onCompleteRequest() {
+            const onCompleteRequest = function onCompleteRequest() {
                 this.viewsByName.details.enable();
                 dataLoaded = true;
                 if (viewChanged && dataLoaded) {
@@ -345,9 +355,7 @@
     };
 
     ns.MyResourcesView.prototype.ui_commands.delete = function (resource) {
-        var doRequest, msg;
-
-        doRequest = function () {
+        const doRequest = function () {
             Wirecloud.UserInterfaceManager.monitorTask(
                 this.catalogue.deleteResource(resource, {allusers: true}).then(
                     () => {
@@ -360,23 +368,21 @@
         };
 
         // First ask the user
-        msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
+        let msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
         msg = utils.interpolate(msg, resource, true);
         return function () {
-            var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
+            const dialog = new Wirecloud.ui.AlertWindowMenu(msg);
             dialog.setHandler(doRequest.bind(this)).show();
         }.bind(this);
     };
 
     ns.MyResourcesView.prototype.ui_commands.deleteall = function deleteall(resource) {
-        var success_callback, doRequest, msg, context;
-
-        success_callback = function (response) {
+        const success_callback = function (response) {
             this.home();
             this.refresh_search_results();
         }.bind(this);
 
-        doRequest = function () {
+        const doRequest = function () {
             Wirecloud.UserInterfaceManager.monitorTask(
                 this.catalogue.deleteResource(resource, {allusers: true, allversions: true}).then(
                     success_callback,
@@ -386,29 +392,17 @@
         };
 
         // First ask the user
-        msg = utils.gettext('Do you really want to remove all versions of the (vendor: "%(vendor)s", name: "%(name)s") resource?');
-        context = {
+        let msg = utils.gettext('Do you really want to remove all versions of the (vendor: "%(vendor)s", name: "%(name)s") resource?');
+        const context = {
             vendor: resource.vendor,
             name: resource.name
         };
 
         msg = utils.interpolate(msg, context, true);
         return function () {
-            var dialog = new Wirecloud.ui.AlertWindowMenu(msg);
+            const dialog = new Wirecloud.ui.AlertWindowMenu(msg);
             dialog.setHandler(doRequest.bind(this)).show();
         }.bind(this);
-    };
-
-    var keydown_listener = function keydown_listener(key, modifiers) {
-        var subview = this.alternatives.getCurrentAlternative();
-        if (typeof subview.handleKeydownEvent === "function") {
-            return subview.handleKeydownEvent(key, modifiers);
-        }
-    };
-
-    var logerror = function logerror(msg) {
-        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-        Wirecloud.GlobalLogManager.log(msg);
     };
 
 })(Wirecloud.ui, StyledElements, Wirecloud.Utils);

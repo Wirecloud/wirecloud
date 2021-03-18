@@ -27,6 +27,303 @@
 
     "use strict";
 
+    const events = ['activate', 'change', 'enable'];
+
+    const builder = new se.GUIBuilder();
+
+    const behaviour_list_component = function behaviour_list_component(options) {
+        this.body = new se.Container({class: options.class});
+        return this.body;
+    };
+
+    const _removeConnection = function _removeConnection(index, connection) {
+        this.description.connections.splice(index, 1);
+        connection.remove();
+
+        return this;
+    };
+
+    const disabled_removeComponent = function disabled_removeComponent(component) {
+        delete this.description.components[component.type][component.id];
+        delete this.components[component.type][component.id];
+
+        removeConnections.call(this, component, false);
+        component.remove();
+
+        this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
+
+        return this;
+    };
+
+    const deactivateAllExcept = function deactivateAllExcept(behaviour) {
+        for (let found = false, i = 0; i < this.behaviours.length; i++) {
+            this.behaviours[i].active = false;
+
+            if (!found && this.behaviours[i].equals(behaviour)) {
+                this.behaviour = this.behaviours[i];
+                found = true;
+            }
+        }
+
+        this.behaviour.active = true;
+        this.dispatchEvent('activate', this.behaviour, this.viewpoint);
+
+        return this;
+    };
+
+    const enableToRemoveBehaviour = function enableToRemoveBehaviour() {
+        const enabled = this.behaviours.length > 1;
+
+        this.behaviours.forEach(function (behaviour) {
+            behaviour.btnRemove.enabled = enabled;
+        });
+
+        return this;
+    };
+
+    const btncreate_onclick = function btncreate_onclick() {
+        const dialog = new Wirecloud.ui.FormWindowMenu(
+            [
+                {name: "title", label: utils.gettext("Title"), required: true, initialValue: utils.gettext("New behaviour"), type: "text"},
+                {name: "description", label: utils.gettext("Description"), type: "longtext"}
+            ],
+            utils.gettext("New behaviour"),
+            "we-new-behaviour-modal"
+        );
+
+        dialog.executeOperation = this.createBehaviour.bind(this);
+        dialog.show();
+    };
+
+    const btnenable_onclick = function btnenable_onclick() {
+        if (this.enabled) {
+            const message = utils.gettext("The behaviours will be removed but the components and connections will still exist, would you like to continue?");
+
+            const dialog = new Wirecloud.ui.AlertWindowMenu({
+                acceptLabel: utils.gettext("Continue"),
+                cancelLabel: utils.gettext("Cancel"),
+                message: message
+            });
+            dialog.setHandler(() => {
+                this.enabled = false;
+            }).show();
+        } else {
+            this.createBehaviour({title: utils.gettext("Initial behaviour")});
+            this.enabled = true;
+        }
+    };
+
+    const insertBehaviour = function insertBehaviour(behaviour) {
+        this.body.appendChild(behaviour);
+        this.behaviours.push(behaviour);
+
+        if (behaviour.active || !this.behaviour) {
+            deactivateAllExcept.call(this, behaviour);
+        }
+
+        enableToRemoveBehaviour.call(this);
+        onchange_ordering.call(this);
+
+        return behaviour;
+    };
+
+    const onchange_ordering = function onchange_ordering() {
+        this.btnOrder.enabled = this.enabled && this.behaviours.length >= 2;
+
+        if (!this.btnOrder.enabled) {
+            this.btnCreate.enable();
+            this.btnOrder.active = false;
+        }
+    };
+
+    const _removeComponent = function _removeComponent(component, cascade) {
+        if (cascade) {
+            this.behaviours.forEach(function (behaviour) {
+                behaviour.removeComponent(component);
+            });
+        } else {
+            this.behaviour.removeComponent(component);
+
+            if (this.hasComponent(component)) {
+                removeConnections.call(this, component, false);
+                component.background = true;
+
+                return this;
+            }
+        }
+
+        delete this.description.components[component.type][component.id];
+        delete this.components[component.type][component.id];
+
+        removeConnections.call(this, component, true);
+        component.remove();
+
+        return this;
+    };
+
+    const showComponentRemoveModal = function showComponentRemoveModal(component) {
+        const message = builder.parse(
+            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING,
+            {
+                type: component.type,
+                title: component.title
+            }
+        );
+
+        const modal = new Wirecloud.ui.AlertWindowMenu(message);
+        modal.setHandler(_removeComponent.bind(this, component, false)).show();
+
+        return this;
+    };
+
+    const showComponentListRemoveModal = function showComponentListRemoveModal(componentList) {
+        const message = new se.Fragment();
+        const components = new se.Fragment();
+
+        for (let i = 0; i < componentList.length; i++) {
+            components.appendChild(builder.parse(builder.DEFAULT_OPENING + utils.gettext("<li>The <strong><t:title/></strong> <t:type/>.</li>") + builder.DEFAULT_CLOSING, {
+                type: componentList[i].type,
+                title: componentList[i].title
+            }));
+        }
+
+        message.appendChild(builder.parse(builder.DEFAULT_OPENING + utils.gettext("<p>These components only exist within the current behaviour <strong><t:title/></strong>:</p><ul><t:components/></ul><p>Would you like to continue?</p>") + builder.DEFAULT_CLOSING, {
+            title: this.behaviour.title,
+            components: components
+        }));
+
+        const modal = new Wirecloud.ui.AlertWindowMenu(message);
+        modal.setHandler(() => {
+            for (let i = 0; i < componentList.length; i++) {
+                _removeComponent.call(this, componentList[i], false);
+            }
+        }).show();
+
+        return this;
+    };
+
+    const showComponentDeleteCascadeModal = function showComponentDeleteCascadeModal(component) {
+        const message = builder.parse(
+            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING,
+            {
+                type: component.type,
+                title: component.title
+            }
+        );
+
+        const modal = new Wirecloud.ui.AlertWindowMenu(message);
+        modal.setHandler(_removeComponent.bind(this, component, true)).show();
+
+        return this;
+    };
+
+    const removeConnections = function removeConnections(component, cascade) {
+        component.forEachConnection((connection) => {
+            this.removeConnection(connection, cascade);
+        });
+    };
+
+    const btnorder_onclick = function btnorder_onclick(button) {
+        let i;
+
+        if (button.active) {
+            for (i = 0; i < this.behaviours.length; i++) {
+                this.behaviours[i].btnPrefs.disable();
+                this.behaviours[i].btnRemove.disable();
+                makeBehaviourDraggable.call(this, this.behaviours[i]);
+            }
+            this.btnCreate.disable();
+        } else {
+            for (i = 0; i < this.behaviours.length; i++) {
+                this.behaviours[i].draggable.destroy();
+                this.behaviours[i].btnPrefs.enable();
+                this.behaviours[i].btnRemove.enable();
+            }
+
+            this.btnCreate.enable();
+        }
+    };
+
+    const makeBehaviourDraggable = function makeBehaviourDraggable(behaviour) {
+
+        behaviour.draggable = new Wirecloud.ui.Draggable(behaviour.get(), {container: this.body},
+            function dragstart(draggable, context, event) {
+                const layout = context.container.get();
+
+                context.layout = layout;
+
+                const behaviourBCR = behaviour.getBoundingClientRect();
+                const layoutBCR = context.layout.getBoundingClientRect();
+
+                context.y = (event.clientY + layout.scrollTop) - (layoutBCR.top + (behaviourBCR.height / 2));
+
+                context.tmpBehaviour = behaviour.get().cloneNode(true);
+                context.tmpBehaviour.classList.add("dragging");
+
+                behaviour.addClassName("temporal");
+
+                const firstBehaviour = this.behaviours[0].get();
+                const lastBehaviour = this.behaviours[this.behaviours.length - 1].get();
+
+                context.upperLimit = firstBehaviour.offsetTop;
+                context.lowerLimit = lastBehaviour.offsetTop;
+                context.ratio = behaviourBCR.height;
+
+                context.layout.appendChild(context.tmpBehaviour);
+                context.tmpBehaviour.style.left = behaviour.get().offsetLeft + 'px';
+                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
+                if (context.y < context.upperLimit) {
+                    context.tmpBehaviour.style.top = context.upperLimit + 'px';
+                } else if (context.y > context.lowerLimit) {
+                    context.tmpBehaviour.style.top = context.lowerLimit + 'px';
+                } else {
+                    context.tmpBehaviour.style.top = context.y + 'px';
+                }
+            }.bind(this),
+            // drag
+            (e, draggable, context, xDelta, yDelta) => {
+                let yPos = Math.round(context.y + yDelta);
+
+                if (yPos < context.upperLimit) {
+                    yPos = context.upperLimit;
+                } else if (yPos > context.lowerLimit) {
+                    yPos = context.lowerLimit;
+                }
+
+                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
+                context.tmpBehaviour.style.top = yPos + 'px';
+
+                const new_index = Math.round((yPos - context.upperLimit) / context.ratio);
+
+                if (new_index !== behaviour.index) {
+                    moveBehaviour.call(this, behaviour, new_index);
+                }
+            },
+            function dragend(draggable, context) {
+                behaviour.removeClassName("temporal");
+                context.layout.removeChild(context.tmpBehaviour);
+            }
+        );
+
+        return this;
+    };
+
+    const moveBehaviour = function moveBehaviour(behaviour, new_index) {
+        this.behaviours.splice(this.behaviours.indexOf(behaviour), 1);
+        const refElement = this.behaviours[new_index];
+        this.behaviours.splice(new_index, 0, behaviour);
+
+        if (refElement) {
+            behaviour.parent().insertBefore(behaviour.get(), refElement.get());
+        } else {
+            behaviour.parent().insertBefore(behaviour.get(), null);
+        }
+
+        this.behaviours.forEach((behaviour, index) => {
+            behaviour.index = index;
+        });
+    };
+
     ns.BehaviourEngine = class BehaviourEngine extends se.StyledElement {
 
         /**
@@ -36,28 +333,26 @@
          * @constructor
          */
         constructor() {
-            var note;
-
             super(events);
 
             this.btnEnable = new se.Button({
                 title: utils.gettext("Enable"),
                 class: "btn-enable",
-                iconClass: "fa fa-lock"
+                iconClass: "fas fa-lock"
             });
             this.btnEnable.addEventListener('click', btnenable_onclick.bind(this));
 
             this.btnCreate = new se.Button({
                 title: utils.gettext("Create behaviour"),
                 class: "btn-create",
-                iconClass: "fa fa-plus"
+                iconClass: "fas fa-plus"
             });
             this.btnCreate.addEventListener('click', btncreate_onclick.bind(this));
 
             this.btnOrder = new se.ToggleButton({
                 title: utils.gettext("Order behaviours"),
                 class: "btn-order",
-                iconClass: "fa fa-sort"
+                iconClass: "fas fa-sort"
             });
             this.btnOrder.addEventListener('click', btnorder_onclick.bind(this));
             this.btnOrder.disable();
@@ -83,7 +378,7 @@
                 message: utils.gettext("Enable the behaviours to enjoy with a new way to handle connections.")
             });
 
-            note = this.disabledAlert.addNote(utils.gettext("<a>Click here</a> for a quick guide/tutorial on how to use this new feature."));
+            const note = this.disabledAlert.addNote(utils.gettext("<a>Click here</a> for a quick guide/tutorial on how to use this new feature."));
             note.firstElementChild.addEventListener('click', () => {
                 Wirecloud.TutorialCatalogue.get('mashup-wiring-design').start();
             });
@@ -109,7 +404,7 @@
                 this.body.removeChild(this.disabledAlert);
                 this.btnCreate.get().parentElement.classList.remove('hidden');
             } else {
-                for (var i = this.behaviours.length - 1; i >= 0; i--) {
+                for (let i = this.behaviours.length - 1; i >= 0; i--) {
                     this.body.removeChild(this.behaviours[i]);
                 }
 
@@ -187,7 +482,7 @@
          *      The instance on which the member is called.
          */
         clear() {
-            var i;
+            let i;
 
             if (this.enabled) {
 
@@ -224,7 +519,7 @@
          *      The instance on which the member is called.
          */
         emptyBehaviour(behaviour) {
-            var _behaviour;
+            let _behaviour;
 
             if (!this.enabled) {
                 return this;
@@ -286,7 +581,7 @@
          *      The instance on which the member is called.
          */
         forEachComponent(callback) {
-            var id, type;
+            let id, type;
 
             for (type in this.components) {
                 for (id in this.components[type]) {
@@ -298,7 +593,7 @@
         }
 
         getConnectionIndex(connection) {
-            var _connection, found, i, index = -1;
+            let _connection, found, i, index = -1;
 
             for (found = false, i = 0; !found && i < this.description.connections.length; i++) {
                 _connection = this.description.connections[i];
@@ -333,7 +628,7 @@
          *      true if the component is in any of the managed behaviours
          */
         hasComponent(component) {
-            var found;
+            let found;
 
             if (this.enabled) {
                 found = this.behaviours.some(function (behaviour) {
@@ -365,7 +660,7 @@
          *      [TODO: description]
          */
         hasConnection(connection) {
-            var found;
+            let found;
 
             if (this.enabled) {
                 found = this.behaviours.some(function (behaviour) {
@@ -391,7 +686,7 @@
         loadBehaviours(behaviours) {
 
             behaviours.forEach((info) => {
-                var behaviour = this.createBehaviour(info);
+                const behaviour = this.createBehaviour(info);
 
                 behaviour.logManager.log(utils.interpolate(utils.gettext("The behaviour (%(title)s) was loaded."), behaviour), Wirecloud.constants.LOGGING.DEBUG_MSG);
             });
@@ -415,7 +710,7 @@
          *      The instance on which the member is called.
          */
         removeBehaviour(behaviour) {
-            var i, _behaviour;
+            let i, _behaviour;
 
             if (!this.enabled) {
                 return this;
@@ -489,10 +784,10 @@
          *      The instance on which the member is called.
          */
         removeComponentList(componentList) {
-            var i, componentsForModal = [];
+            const componentsForModal = [];
 
             if (this.enabled) {
-                for (i = 0; i < componentList.length; i++) {
+                for (let i = 0; i < componentList.length; i++) {
                     if (this.filterByComponent(componentList[i]).length > 1) {
                         _removeComponent.call(this, componentList[i], false);
                     } else {
@@ -504,7 +799,7 @@
                     showComponentListRemoveModal.call(this, componentsForModal);
                 }
             } else {
-                for (i = 0; i < componentList.length; i++) {
+                for (let i = 0; i < componentList.length; i++) {
                     disabled_removeComponent.call(this, componentList[i]);
                 }
             }
@@ -525,7 +820,7 @@
          *      The instance on which the member is called.
          */
         removeConnection(connection, cascade) {
-            var index = this.getConnectionIndex(connection);
+            const index = this.getConnectionIndex(connection);
 
             if (this.enabled) {
                 if (cascade) {
@@ -585,7 +880,7 @@
          *      The instance on which the member is called.
          */
         updateComponent(component, beShared) {
-            var name, view = component.toJSON();
+            const view = component.toJSON();
 
             if (this.enabled && (!component.background || beShared)) {
                 this.behaviour.updateComponent(component);
@@ -597,7 +892,7 @@
                 this.description.components[component.type][component.id] = {};
             }
 
-            for (name in view) {
+            for (const name in view) {
                 this.description.components[component.type][component.id][name] = view[name];
             }
 
@@ -621,8 +916,8 @@
          *      The instance on which the member is called.
          */
         updateConnection(connection, beShared) {
-            var index = this.getConnectionIndex(connection);
-            var view = connection.toJSON();
+            const index = this.getConnectionIndex(connection);
+            const view = connection.toJSON();
 
             if (this.enabled && (!connection.background || beShared)) {
                 this.behaviour.updateConnection(connection);
@@ -650,317 +945,5 @@
     // TODO
     ns.BehaviourEngine.GLOBAL = 0;
     ns.BehaviourEngine.INDEPENDENT = 1;
-
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var events = ['activate', 'change', 'enable'];
-
-    var builder = new se.GUIBuilder();
-
-    var behaviour_list_component = function behaviour_list_component(options) {
-        this.body = new se.Container({class: options.class});
-        return this.body;
-    };
-
-    var _removeConnection = function _removeConnection(index, connection) {
-        this.description.connections.splice(index, 1);
-        connection.remove();
-
-        return this;
-    };
-
-    var disabled_removeComponent = function disabled_removeComponent(component) {
-        delete this.description.components[component.type][component.id];
-        delete this.components[component.type][component.id];
-
-        removeConnections.call(this, component, false);
-        component.remove();
-
-        this.dispatchEvent('change', this.getCurrentStatus(), this.enabled);
-
-        return this;
-    };
-
-    const deactivateAllExcept = function deactivateAllExcept(behaviour) {
-        for (let found = false, i = 0; i < this.behaviours.length; i++) {
-            this.behaviours[i].active = false;
-
-            if (!found && this.behaviours[i].equals(behaviour)) {
-                this.behaviour = this.behaviours[i];
-                found = true;
-            }
-        }
-
-        this.behaviour.active = true;
-        this.dispatchEvent('activate', this.behaviour, this.viewpoint);
-
-        return this;
-    };
-
-    var enableToRemoveBehaviour = function enableToRemoveBehaviour() {
-        var enabled = this.behaviours.length > 1;
-
-        this.behaviours.forEach(function (behaviour) {
-            behaviour.btnRemove.enabled = enabled;
-        });
-
-        return this;
-    };
-
-    var btncreate_onclick = function btncreate_onclick() {
-        const dialog = new Wirecloud.ui.FormWindowMenu(
-            [
-                {name: "title", label: utils.gettext("Title"), required: true, initialValue: utils.gettext("New behaviour"), type: "text"},
-                {name: "description", label: utils.gettext("Description"), type: "longtext"}
-            ],
-            utils.gettext("New behaviour"),
-            "we-new-behaviour-modal"
-        );
-
-        dialog.executeOperation = this.createBehaviour.bind(this);
-        dialog.show();
-    };
-
-    var btnenable_onclick = function btnenable_onclick() {
-        if (this.enabled) {
-            const message = utils.gettext("The behaviours will be removed but the components and connections will still exist, would you like to continue?");
-
-            const dialog = new Wirecloud.ui.AlertWindowMenu({
-                acceptLabel: utils.gettext("Continue"),
-                cancelLabel: utils.gettext("Cancel"),
-                message: message
-            });
-            dialog.setHandler(() => {
-                this.enabled = false;
-            }).show();
-        } else {
-            this.createBehaviour({title: utils.gettext("Initial behaviour")});
-            this.enabled = true;
-        }
-    };
-
-    var insertBehaviour = function insertBehaviour(behaviour) {
-        this.body.appendChild(behaviour);
-        this.behaviours.push(behaviour);
-
-        if (behaviour.active || !this.behaviour) {
-            deactivateAllExcept.call(this, behaviour);
-        }
-
-        enableToRemoveBehaviour.call(this);
-        onchange_ordering.call(this);
-
-        return behaviour;
-    };
-
-    var onchange_ordering = function onchange_ordering() {
-        this.btnOrder.enabled = this.enabled && this.behaviours.length >= 2;
-
-        if (!this.btnOrder.enabled) {
-            this.btnCreate.enable();
-            this.btnOrder.active = false;
-        }
-    };
-
-    var _removeComponent = function _removeComponent(component, cascade) {
-        if (cascade) {
-            this.behaviours.forEach(function (behaviour) {
-                behaviour.removeComponent(component);
-            });
-        } else {
-            this.behaviour.removeComponent(component);
-
-            if (this.hasComponent(component)) {
-                removeConnections.call(this, component, false);
-                component.background = true;
-
-                return this;
-            }
-        }
-
-        delete this.description.components[component.type][component.id];
-        delete this.components[component.type][component.id];
-
-        removeConnections.call(this, component, true);
-        component.remove();
-
-        return this;
-    };
-
-    var showComponentRemoveModal = function showComponentRemoveModal(component) {
-        var modal, message;
-
-        message = builder.parse(
-            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING,
-            {
-                type: component.type,
-                title: component.title
-            }
-        );
-
-        modal = new Wirecloud.ui.AlertWindowMenu(message);
-        modal.setHandler(_removeComponent.bind(this, component, false)).show();
-
-        return this;
-    };
-
-    var showComponentListRemoveModal = function showComponentListRemoveModal(componentList) {
-        var i, modal, message, components;
-
-        message = new se.Fragment();
-        components = new se.Fragment();
-
-        for (i = 0; i < componentList.length; i++) {
-            components.appendChild(builder.parse(builder.DEFAULT_OPENING + utils.gettext("<li>The <strong><t:title/></strong> <t:type/>.</li>") + builder.DEFAULT_CLOSING, {
-                type: componentList[i].type,
-                title: componentList[i].title
-            }));
-        }
-
-        message.appendChild(builder.parse(builder.DEFAULT_OPENING + utils.gettext("<p>These components only exist within the current behaviour <strong><t:title/></strong>:</p><ul><t:components/></ul><p>Would you like to continue?</p>") + builder.DEFAULT_CLOSING, {
-            title: this.behaviour.title,
-            components: components
-        }));
-
-        modal = new Wirecloud.ui.AlertWindowMenu(message);
-        modal.setHandler(() => {
-            var i;
-
-            for (i = 0; i < componentList.length; i++) {
-                _removeComponent.call(this, componentList[i], false);
-            }
-        }).show();
-
-        return this;
-    };
-
-    var showComponentDeleteCascadeModal = function showComponentDeleteCascadeModal(component) {
-        var modal, message;
-
-        message = builder.parse(
-            builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING,
-            {
-                type: component.type,
-                title: component.title
-            }
-        );
-
-        modal = new Wirecloud.ui.AlertWindowMenu(message);
-        modal.setHandler(_removeComponent.bind(this, component, true)).show();
-
-        return this;
-    };
-
-    var removeConnections = function removeConnections(component, cascade) {
-        component.forEachConnection((connection) => {
-            this.removeConnection(connection, cascade);
-        });
-    };
-
-    var btnorder_onclick = function btnorder_onclick(button) {
-        var i;
-
-        if (button.active) {
-            for (i = 0; i < this.behaviours.length; i++) {
-                this.behaviours[i].btnPrefs.disable();
-                this.behaviours[i].btnRemove.disable();
-                makeBehaviourDraggable.call(this, this.behaviours[i]);
-            }
-            this.btnCreate.disable();
-        } else {
-            for (i = 0; i < this.behaviours.length; i++) {
-                this.behaviours[i].draggable.destroy();
-                this.behaviours[i].btnPrefs.enable();
-                this.behaviours[i].btnRemove.enable();
-            }
-
-            this.btnCreate.enable();
-        }
-    };
-
-    var makeBehaviourDraggable = function makeBehaviourDraggable(behaviour) {
-
-        behaviour.draggable = new Wirecloud.ui.Draggable(behaviour.get(), {container: this.body},
-            function dragstart(draggable, context, event) {
-                var behaviourBCR, layout, layoutBCR;
-
-                layout = context.container.get();
-
-                context.layout = layout;
-
-                behaviourBCR = behaviour.getBoundingClientRect();
-                layoutBCR = context.layout.getBoundingClientRect();
-
-                context.y = (event.clientY + layout.scrollTop) - (layoutBCR.top + (behaviourBCR.height / 2));
-
-                context.tmpBehaviour = behaviour.get().cloneNode(true);
-                context.tmpBehaviour.classList.add("dragging");
-
-                behaviour.addClassName("temporal");
-
-                var firstBehaviour = this.behaviours[0].get();
-                var lastBehaviour = this.behaviours[this.behaviours.length - 1].get();
-
-                context.upperLimit = firstBehaviour.offsetTop;
-                context.lowerLimit = lastBehaviour.offsetTop;
-                context.ratio = behaviourBCR.height;
-
-                context.layout.appendChild(context.tmpBehaviour);
-                context.tmpBehaviour.style.left = behaviour.get().offsetLeft + 'px';
-                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
-                if (context.y < context.upperLimit) {
-                    context.tmpBehaviour.style.top = context.upperLimit + 'px';
-                } else if (context.y > context.lowerLimit) {
-                    context.tmpBehaviour.style.top = context.lowerLimit + 'px';
-                } else {
-                    context.tmpBehaviour.style.top = context.y + 'px';
-                }
-            }.bind(this),
-            // drag
-            (e, draggable, context, xDelta, yDelta) => {
-                var yPos = Math.round(context.y + yDelta);
-
-                if (yPos < context.upperLimit) {
-                    yPos = context.upperLimit;
-                } else if (yPos > context.lowerLimit) {
-                    yPos = context.lowerLimit;
-                }
-
-                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
-                context.tmpBehaviour.style.top = yPos + 'px';
-
-                let new_index = Math.round((yPos - context.upperLimit) / context.ratio);
-
-                if (new_index !== behaviour.index) {
-                    moveBehaviour.call(this, behaviour, new_index);
-                }
-            },
-            function dragend(draggable, context) {
-                behaviour.removeClassName("temporal");
-                context.layout.removeChild(context.tmpBehaviour);
-            }
-        );
-
-        return this;
-    };
-
-    var moveBehaviour = function moveBehaviour(behaviour, new_index) {
-        this.behaviours.splice(this.behaviours.indexOf(behaviour), 1);
-        let refElement = this.behaviours[new_index];
-        this.behaviours.splice(new_index, 0, behaviour);
-
-        if (refElement) {
-            behaviour.parent().insertBefore(behaviour.get(), refElement.get());
-        } else {
-            behaviour.parent().insertBefore(behaviour.get(), null);
-        }
-
-        this.behaviours.forEach((behaviour, index) => {
-            behaviour.index = index;
-        });
-    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

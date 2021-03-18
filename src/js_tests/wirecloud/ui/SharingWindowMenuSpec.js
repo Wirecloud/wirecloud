@@ -26,6 +26,17 @@
 
     "use strict";
 
+    const callEventListener = function callEventListener(instance, event) {
+        const largs = Array.prototype.slice.call(arguments, 2);
+        largs.unshift(instance);
+        instance.addEventListener.calls.allArgs().some(function (args) {
+            if (args[0] === event) {
+                args[1].apply(instance, largs);
+                return true;
+            }
+        });
+    };
+
     describe("Wirecloud.ui.SharingWindowMenu", () => {
 
         beforeAll(() => {
@@ -58,7 +69,7 @@
             });
 
             it("load sharing configuration from workspaces (public)", () => {
-                let workspace = {
+                const workspace = {
                     model: {
                         groups: [],
                         users: [
@@ -87,14 +98,14 @@
                     return pref === "public";
                 });
 
-                let dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
+                const dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
 
                 expect(dialog.visibilityOptions.getValue()).toBe("public");
                 expect(dialog.sharelist.length).toBe(3);
             });
 
             it("load sharing configuration from workspaces (public-auth)", () => {
-                let workspace = {
+                const workspace = {
                     model: {
                         groups: [
                             {
@@ -121,7 +132,7 @@
                 };
                 workspace.model.preferences.get.and.returnValue(true);
 
-                let dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
+                const dialog = new Wirecloud.ui.SharingWindowMenu(workspace);
 
                 expect(dialog.visibilityOptions.getValue()).toBe("public-auth");
                 expect(dialog.sharelist.length).toBe(3);
@@ -131,10 +142,10 @@
 
         describe("inputSearchTypeahead", () => {
 
-            var dialog;
+            let dialog;
 
             beforeEach(() => {
-                let workspace = {
+                const workspace = {
                     model: {
                         groups: [
                             {
@@ -193,7 +204,7 @@
             });
 
             it("should ignore already present users", () => {
-                let initialShareList = utils.clone(dialog.sharelist);
+                const initialShareList = utils.clone(dialog.sharelist);
 
                 callEventListener(dialog.inputSearchTypeahead, "select", {
                     context: {
@@ -208,7 +219,7 @@
             });
 
             it("should ignore already present groups", () => {
-                let initialShareList = utils.clone(dialog.sharelist);
+                const initialShareList = utils.clone(dialog.sharelist);
 
                 callEventListener(dialog.inputSearchTypeahead, "select", {
                     context: {
@@ -222,7 +233,7 @@
             });
 
             it("should be possible to remove added users", () => {
-                var button;
+                let button;
                 spyOn(StyledElements, "Button").and.callFake(function () {
                     button = this;
                     this.addEventListener = jasmine.createSpy("addEventListener");
@@ -243,7 +254,7 @@
             });
 
             it("should be possible to remove added groups", () => {
-                var button;
+                let button;
                 spyOn(StyledElements, "Button").and.callFake(function () {
                     button = this;
                     this.addEventListener = jasmine.createSpy("addEventListener");
@@ -267,7 +278,7 @@
 
         describe("btnAccept", () => {
 
-            var dialog, workspace;
+            let dialog, workspace;
 
             beforeEach(() => {
                 workspace = {
@@ -329,16 +340,5 @@
         });
 
     });
-
-    var callEventListener = function callEventListener(instance, event) {
-        var largs = Array.prototype.slice.call(arguments, 2);
-        largs.unshift(instance);
-        instance.addEventListener.calls.allArgs().some(function (args) {
-            if (args[0] === event) {
-                args[1].apply(instance, largs);
-                return true;
-            }
-        });
-    };
 
 })(StyledElements.Utils);

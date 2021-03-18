@@ -27,6 +27,55 @@
 
     "use strict";
 
+    const events = ['btncreate.click'];
+
+    const version_onchange = function version_onchange(element) {
+        const version = element.getValue();
+
+        this.meta = Wirecloud.LocalCatalogue.getResourceId(this.id + "/" + version.text);
+
+        this.titleElement.textContent = this.meta.title;
+        this.tooltip.options.content = this.meta.title;
+        this.descriptionElement.textContent = this.meta.description ? this.meta.description : utils.gettext("No description provided");
+        setImage.call(this, this.meta.image);
+    };
+
+    const setImage = function setImage(imageURL) {
+        const thumbnailElement = this.imageElement.parentElement;
+
+        thumbnailElement.classList.remove('se-thumbnail-missing');
+        thumbnailElement.innerHTML = "";
+        thumbnailElement.appendChild(this.imageElement);
+
+        this.imageElement.removeAttribute('src');
+
+        if (imageURL) {
+            this.imageElement.src = imageURL;
+        } else {
+            image_onerror.call(this);
+        }
+    };
+
+    const image_onerror = function image_onerror() {
+        this.imageElement.parentElement.classList.add('se-thumbnail-missing');
+        this.imageElement.parentElement.appendChild(document.createTextNode(utils.gettext("No image available")));
+    };
+
+    const orderVersions = function orderVersions(versions) {
+        versions = versions.sort(function (version1, version2) {
+            return -version1.compareTo(version2);
+        });
+
+        versions[0] = {
+            label: utils.interpolate(utils.gettext("%(version)s (latest)"), {
+                version: versions[0]
+            }),
+            value: versions[0]
+        };
+
+        return versions;
+    };
+
     ns.ComponentGroup = class ComponentGroup extends se.StyledElement {
 
         constructor(resource, title) {
@@ -41,16 +90,16 @@
             this.imageElement = document.createElement('img');
             this.imageElement.onerror = image_onerror.bind(this);
 
-            var version = new se.Select({
+            const version = new se.Select({
                 initialValue: resource.version,
                 initialEntries: orderVersions([resource.version].concat(resource.others))
             });
             version.addEventListener('change', version_onchange.bind(this));
 
-            var button = new se.Button({
+            const button = new se.Button({
                 class: 'btn-create wc-create-resource-component',
                 title: title,
-                iconClass: 'fa fa-plus'
+                iconClass: 'fas fa-plus'
             });
             button.addEventListener('click', function () {
                 this.dispatchEvent('btncreate.click', button);
@@ -86,58 +135,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var events = ['btncreate.click'];
-
-    var version_onchange = function version_onchange(element) {
-        var version = element.getValue();
-
-        this.meta = Wirecloud.LocalCatalogue.getResourceId(this.id + "/" + version.text);
-
-        this.titleElement.textContent = this.meta.title;
-        this.tooltip.options.content = this.meta.title;
-        this.descriptionElement.textContent = this.meta.description ? this.meta.description : utils.gettext("No description provided");
-        setImage.call(this, this.meta.image);
-    };
-
-    var setImage = function setImage(imageURL) {
-        var thumbnailElement = this.imageElement.parentElement;
-
-        thumbnailElement.classList.remove('se-thumbnail-missing');
-        thumbnailElement.innerHTML = "";
-        thumbnailElement.appendChild(this.imageElement);
-
-        this.imageElement.removeAttribute('src');
-
-        if (imageURL) {
-            this.imageElement.src = imageURL;
-        } else {
-            image_onerror.call(this);
-        }
-    };
-
-    var image_onerror = function image_onerror() {
-        this.imageElement.parentElement.classList.add('se-thumbnail-missing');
-        this.imageElement.parentElement.appendChild(document.createTextNode(utils.gettext("No image available")));
-    };
-
-    var orderVersions = function orderVersions(versions) {
-        versions = versions.sort(function (version1, version2) {
-            return -version1.compareTo(version2);
-        });
-
-        versions[0] = {
-            label: utils.interpolate(utils.gettext("%(version)s (latest)"), {
-                version: versions[0]
-            }),
-            value: versions[0]
-        };
-
-        return versions;
-    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

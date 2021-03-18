@@ -37,7 +37,7 @@
     se.FileButton = class FileButton extends se.Button {
 
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'multiple': true
             };
             options = utils.merge(defaultOptions, options);

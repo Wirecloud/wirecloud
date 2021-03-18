@@ -66,7 +66,7 @@
                         "fulldragboard": Wirecloud.ui.FullDragboardLayout
                     };
                     Layout = layoutMapping[Layout];
-                    let widget = Object.assign({
+                    const widget = Object.assign({
                         heading: document.createElement("div"),
                         layout: Layout != null ? new Layout() : null,
                         model: {
@@ -79,7 +79,7 @@
                             }
                         }
                     });
-                    var draggable = new Wirecloud.ui.WidgetViewDraggable(widget);
+                    const draggable = new Wirecloud.ui.WidgetViewDraggable(widget);
 
                     expect(draggable.canDrag(null, {widget: widget})).toBe(result);
                 });
@@ -144,7 +144,7 @@
             it("should handle mouseenter events on other tabs", () => {
                 spyOn(widget.layout, "disableCursor");
                 widget.tab.workspace.findTab = jasmine.createSpy("findTab").and.returnValue(widget.tab.workspace.tabs[1]);
-                let context = Wirecloud.ui.Draggable.calls.argsFor(0)[1];
+                const context = Wirecloud.ui.Draggable.calls.argsFor(0)[1];
 
                 context._on_mouseenter_tab({
                     target: {
@@ -158,7 +158,7 @@
             it("should handle mouseleave events on selected tabs", () => {
                 spyOn(widget.layout, "disableCursor");
                 widget.tab.workspace.findTab = jasmine.createSpy("findTab").and.returnValue(widget.tab.workspace.tabs[1]);
-                let context = Wirecloud.ui.Draggable.calls.argsFor(0)[1];
+                const context = Wirecloud.ui.Draggable.calls.argsFor(0)[1];
                 context.tab = widget.tab.workspace.tabs[1];
 
                 context._on_mouseleave_tab({
@@ -173,7 +173,7 @@
             it("should handle mouseleave events on non selected tabs", () => {
                 spyOn(widget.layout, "disableCursor");
                 widget.tab.workspace.findTab = jasmine.createSpy("findTab").and.returnValue(widget.tab.workspace.tabs[1]);
-                let context = Wirecloud.ui.Draggable.calls.argsFor(0)[1];
+                const context = Wirecloud.ui.Draggable.calls.argsFor(0)[1];
                 context.tab = null;
 
                 context._on_mouseleave_tab({
@@ -312,7 +312,7 @@
         });
 
         it("setXOffset()", () => {
-            let draggable = new Wirecloud.ui.WidgetViewDraggable({
+            const draggable = new Wirecloud.ui.WidgetViewDraggable({
                 heading: document.createElement("div")
             });
 
@@ -320,7 +320,7 @@
         });
 
         it("setYOffset()", () => {
-            let draggable = new Wirecloud.ui.WidgetViewDraggable({
+            const draggable = new Wirecloud.ui.WidgetViewDraggable({
                 heading: document.createElement("div")
             });
 

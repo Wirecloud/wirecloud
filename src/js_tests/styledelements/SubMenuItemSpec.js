@@ -43,7 +43,7 @@
             });
 
             it("should work only by providing a title", () => {
-                let item = new se.SubMenuItem("item");
+                const item = new se.SubMenuItem("item");
                 expect(item).not.toEqual(null);
             });
 
@@ -54,7 +54,7 @@
             const test = function test(eventId, menuitem) {
                 it("should " + (menuitem ? "shortcut" : "handle") + " " + eventId + " events", () => {
                     item = new se.SubMenuItem("submenu");
-                    let listener = jasmine.createSpy("listener");
+                    const listener = jasmine.createSpy("listener");
                     spyOn(item.menuitem, "addEventListener");
                     spyOn(StyledElements.PopupMenuBase.prototype, "addEventListener").and.returnValue(item);
 
@@ -150,7 +150,7 @@
                     hide: jasmine.createSpy("hide"),
                     _context: "ab"
                 };
-                let child = {
+                const child = {
                     run: jasmine.createSpy("run")
                 };
 
@@ -166,7 +166,7 @@
                     hide: jasmine.createSpy("hide"),
                     _context: "abc"
                 };
-                let child = {
+                const child = {
                     run: jasmine.createSpy("run")
                 };
 

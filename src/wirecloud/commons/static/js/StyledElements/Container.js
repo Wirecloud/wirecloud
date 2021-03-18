@@ -270,7 +270,7 @@
                 priv.disabledLayer.className = 'se-container-disable-layer';
 
                 const icon = document.createElement('i');
-                icon.className = 'disable-icon fa fa-spin fa-spinner';
+                icon.className = 'disable-icon fas fa-spin fa-spinner';
                 priv.disabledLayer.appendChild(icon);
 
                 this.wrapperElement.appendChild(priv.disabledLayer);

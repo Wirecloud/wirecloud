@@ -27,6 +27,90 @@
 
     "use strict";
 
+    const get_widgets = function get_widgets() {
+        return Array.prototype.concat.apply([], this.notebook.tabs.map(function (tab) {
+            return tab.widgets;
+        }));
+    };
+
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
+
+    const showHideTabBar = function showHideTabBar(editing) {
+        this.layout.content.toggleClassName("wc-workspace-editing", editing);
+
+        this.walletButton.enabled = editing && this.model.isAllowed('edit');
+        this.wiringButton.enabled = editing && this.model.isAllowed('edit');
+        this.notebook.tabWrapper.toggleClassName("hidden", !(editing || this.tabs.length > 1));
+        if (this.addTabButton) {
+            this.addTabButton.toggleClassName("hidden", !editing);
+        }
+    };
+
+    const on_workspace_createoperator = function on_workspace_createoperator(workspace_model, operator) {
+        this.layout.content.appendChild(operator.wrapperElement);
+    };
+
+    const on_workspace_removeoperator = function on_workspace_removeoperator(workspace_model, operator) {
+        this.layout.content.removeChild(operator.wrapperElement);
+    };
+
+    const on_workspace_change = function on_workspace_change(workspace) {
+        const state = {
+            workspace_owner: this.model.owner,
+            workspace_name: this.model.name,
+            workspace_title: this.model.title,
+            view: "workspace",
+            tab: Wirecloud.HistoryManager.getCurrentState().tab
+        };
+        Wirecloud.HistoryManager.replaceState(state);
+
+        Wirecloud.UserInterfaceManager.header.refresh();
+    };
+
+    const on_workspace_remove = function on_workspace_remove(workspace) {
+        // Go to the wirecloud/home dashboard
+        Wirecloud.UserInterfaceManager.monitorTask(
+            Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'})
+        );
+    };
+
+    const on_workspace_unload = function on_workspace_unload(workspace) {
+        // This must be always the case
+        // if (this.model === workspace) {
+        this.model = null;
+        this.editButton.enabled = false;
+        this.editButton.active = false;
+        this.walletButton.enabled = false;
+        this.wiringButton.enabled = false;
+        this.layout.content.clear();
+        workspace.removeEventListener('remove', this.on_workspace_remove_bound);
+        workspace.removeEventListener('change', this.on_workspace_change_bound);
+        workspace.removeEventListener('unload', this.on_workspace_unload_bound);
+        workspace.removeEventListener('createoperator', this.on_workspace_createoperator_bound);
+        workspace.removeEventListener('removeoperator', this.on_workspace_removeoperator_bound);
+        this.model = null;
+        showHideTabBar.call(this, false);
+    };
+
+    const on_click_createtab = function on_click_createtab(button) {
+        button.disable();
+        this.model.createTab().then(
+            (tab) => {
+                this.notebook.createTab({
+                    tab_constructor: Wirecloud.ui.WorkspaceTabView,
+                    model: tab,
+                    workspace: this
+                });
+                button.enable();
+            },
+            () => {
+                button.enable();
+            }
+        );
+    };
+
     ns.WorkspaceView = class WorkspaceView extends se.Alternative {
 
         constructor(id, options) {
@@ -44,7 +128,7 @@
 
             this.editButton = new se.ToggleButton({
                 class: "wc-edit-mode-button",
-                iconClass: "fa fa-pencil"
+                iconClass: "fas fa-pencil-alt"
             });
             this.editButton.addEventListener("click", (button) => {
                 showHideTabBar.call(this, button.active);
@@ -71,7 +155,7 @@
 
             this.wiringButton = new StyledElements.Button({
                 class: "wc-show-wiring-button",
-                iconClass: 'fa fa-puzzle-piece',
+                iconClass: 'fas fa-puzzle-piece',
                 title: utils.gettext('Wiring')
             });
             this.wiringButton.addEventListener('click', function () {
@@ -79,7 +163,7 @@
             });
 
             this.myresourcesButton = new StyledElements.Button({
-                iconClass: 'fa fa-archive',
+                iconClass: 'fas fa-archive',
                 class: "wc-show-myresources-button",
                 title: utils.gettext('My Resources')
             });
@@ -88,7 +172,7 @@
             });
 
             this.marketButton = new StyledElements.Button({
-                iconClass: 'fa fa-shopping-cart',
+                iconClass: 'fas fa-shopping-cart',
                 class: "wc-show-marketplace-button",
                 title: utils.gettext('Get more components')
             });
@@ -167,7 +251,7 @@
                                 },
                                 (error) => {
                                     button.enable();
-                                    var dialog;
+                                    let dialog;
                                     if (error.details != null && 'missingDependencies' in error.details) {
                                         // Show missing dependencies
                                         dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(null, error.details);
@@ -184,7 +268,7 @@
         }
 
         findTab(id) {
-            var i;
+            let i;
 
             for (i = 0; i < this.notebook.tabs.length; i++) {
                 if (this.notebook.tabs[i].id === id) {
@@ -196,7 +280,7 @@
         }
 
         findWidget(id) {
-            var i, widget;
+            let i, widget;
 
             for (i = 0; i < this.notebook.tabs.length; i++) {
                 if (!(this.notebook.tabs[i] instanceof ns.WorkspaceTabView)) {
@@ -217,8 +301,6 @@
         }
 
         loadWorkspace(workspace, options) {
-            var loadingTab;
-
             options = utils.merge({
                 initialtab: null
             }, options);
@@ -231,7 +313,7 @@
             this.layout.slideOut().content.clear();
             this.notebook.appendTo(this.layout.content);
 
-            loadingTab = this.notebook.createTab();
+            const loadingTab = this.notebook.createTab();
             loadingTab.disable();
             loadingTab.addClassName('loading');
 
@@ -247,11 +329,11 @@
                 this.layout.content.appendChild(operator.wrapperElement);
             });
 
-            var initialTab = null;
-            var requestedTab = null;
+            let initialTab = null;
+            let requestedTab = null;
 
             this.model.tabs.forEach(function (model) {
-                var tab = this.notebook.createTab({
+                const tab = this.notebook.createTab({
                     tab_constructor: Wirecloud.ui.WorkspaceTabView,
                     model: model,
                     workspace: this
@@ -277,7 +359,7 @@
             if (this.model.isAllowed('edit')) {
                 this.addTabButton = new StyledElements.Button({
                     title: utils.gettext("New tab"),
-                    iconClass: "fa fa-plus",
+                    iconClass: "fas fa-plus",
                     class: "wc-create-workspace-tab"
                 });
                 this.notebook.addButton(this.addTabButton);
@@ -290,7 +372,7 @@
 
             if (Wirecloud.Utils.isFullscreenSupported()) {
                 this.fullscreenButton = new StyledElements.Button({
-                    iconClass: 'fa fa-expand',
+                    iconClass: 'fas fa-expand',
                     title: utils.gettext('Full screen')
                 });
                 this.notebook.addButton(this.fullscreenButton);
@@ -321,7 +403,7 @@
                 });
                 this.notebook.addButton(this.seeOnWirecloudButton);
                 this.seeOnWirecloudButton.addEventListener('click', () => {
-                    var url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.model.owner), name: encodeURIComponent(this.model.name)});
+                    const url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.model.owner), name: encodeURIComponent(this.model.name)});
                     window.open(url, '_blank');
                 });
             } else {
@@ -337,11 +419,11 @@
         }
 
         buildAddWidgetButton() {
-            var button = new se.ToggleButton({
+            const button = new se.ToggleButton({
                 title: utils.gettext("Add components"),
                 class: "btn-primary wc-show-component-sidebar-button",
-                iconClass: "fa fa-archive",
-                stackedIconClass: "fa fa-plus-circle"
+                iconClass: "fas fa-archive",
+                stackedIconClass: "fas fa-plus-circle"
             });
             button.addEventListener('click', (button) => {
                 if (button.active) {
@@ -356,7 +438,7 @@
         }
 
         buildStateData() {
-            var currentState = Wirecloud.HistoryManager.getCurrentState();
+            const currentState = Wirecloud.HistoryManager.getCurrentState();
             return {
                 workspace_owner: currentState.workspace_owner,
                 workspace_name: currentState.workspace_name,
@@ -375,10 +457,9 @@
         }
 
         getBreadcrumb() {
-            var entries, current_state;
+            const current_state = Wirecloud.HistoryManager.getCurrentState();
 
-            current_state = Wirecloud.HistoryManager.getCurrentState();
-
+            let entries;
             if (this.model != null) {
                 entries = [
                     {
@@ -405,7 +486,7 @@
         }
 
         getTitle() {
-            var current_state = Wirecloud.HistoryManager.getCurrentState();
+            const current_state = Wirecloud.HistoryManager.getCurrentState();
             if (this.model != null) {
                 return this.model.owner + '/' + this.model.title;
             } else if ('workspace_owner' in current_state) {
@@ -416,10 +497,9 @@
         }
 
         getToolbarMenu() {
-            var context, current_state;
-            current_state = Wirecloud.HistoryManager.getCurrentState();
+            const current_state = Wirecloud.HistoryManager.getCurrentState();
             if ('workspace_owner' in current_state) {
-                context = Wirecloud.contextManager;
+                const context = Wirecloud.contextManager;
                 if (context && context.get('username') !== 'anonymous') {
                     return this.wsMenu;
                 }
@@ -437,7 +517,7 @@
         }
 
         onHistoryChange(newState) {
-            var target_tab, nextWorkspace, alert_msg;
+            let target_tab, nextWorkspace, alert_msg;
 
             if (newState.workspace_owner in Wirecloud.workspacesByUserAndName) {
                 nextWorkspace = Wirecloud.workspacesByUserAndName[newState.workspace_owner][newState.workspace_name];
@@ -471,7 +551,7 @@
          * @returns {Wirecloud.ui.WorkspaceView}
          **/
         drawAttention(id) {
-            var widget = this.findWidget(id);
+            const widget = this.findWidget(id);
 
             if (widget !== null) {
                 widget.tab.dragboard.raiseToTop(widget);
@@ -486,93 +566,5 @@
 
     }
     ns.WorkspaceView.prototype.view_name = 'workspace';
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var get_widgets = function get_widgets() {
-        return Array.prototype.concat.apply([], this.notebook.tabs.map(function (tab) {
-            return tab.widgets;
-        }));
-    };
-
-    // =========================================================================
-    // EVENT HANDLERS
-    // =========================================================================
-
-    const showHideTabBar = function showHideTabBar(editing) {
-        this.layout.content.toggleClassName("wc-workspace-editing", editing);
-
-        this.walletButton.enabled = editing && this.model.isAllowed('edit');
-        this.wiringButton.enabled = editing && this.model.isAllowed('edit');
-        this.notebook.tabWrapper.toggleClassName("hidden", !(editing || this.tabs.length > 1));
-        if (this.addTabButton) {
-            this.addTabButton.toggleClassName("hidden", !editing);
-        }
-    };
-
-    const on_workspace_createoperator = function on_workspace_createoperator(workspace_model, operator) {
-        this.layout.content.appendChild(operator.wrapperElement);
-    };
-
-    const on_workspace_removeoperator = function on_workspace_removeoperator(workspace_model, operator) {
-        this.layout.content.removeChild(operator.wrapperElement);
-    };
-
-    var on_workspace_change = function on_workspace_change(workspace) {
-        var state = {
-            workspace_owner: this.model.owner,
-            workspace_name: this.model.name,
-            workspace_title: this.model.title,
-            view: "workspace",
-            tab: Wirecloud.HistoryManager.getCurrentState().tab
-        };
-        Wirecloud.HistoryManager.replaceState(state);
-
-        Wirecloud.UserInterfaceManager.header.refresh();
-    };
-
-    var on_workspace_remove = function on_workspace_remove(workspace) {
-        // Go to the wirecloud/home dashboard
-        Wirecloud.UserInterfaceManager.monitorTask(
-            Wirecloud.changeActiveWorkspace({owner: 'wirecloud', name: 'home'})
-        );
-    };
-
-    var on_workspace_unload = function on_workspace_unload(workspace) {
-        // This must be always the case
-        // if (this.model === workspace) {
-        this.model = null;
-        this.editButton.enabled = false;
-        this.editButton.active = false;
-        this.walletButton.enabled = false;
-        this.wiringButton.enabled = false;
-        this.layout.content.clear();
-        workspace.removeEventListener('remove', this.on_workspace_remove_bound);
-        workspace.removeEventListener('change', this.on_workspace_change_bound);
-        workspace.removeEventListener('unload', this.on_workspace_unload_bound);
-        workspace.removeEventListener('createoperator', this.on_workspace_createoperator_bound);
-        workspace.removeEventListener('removeoperator', this.on_workspace_removeoperator_bound);
-        this.model = null;
-        showHideTabBar.call(this, false);
-    };
-
-    var on_click_createtab = function on_click_createtab(button) {
-        button.disable();
-        this.model.createTab().then(
-            (tab) => {
-                this.notebook.createTab({
-                    tab_constructor: Wirecloud.ui.WorkspaceTabView,
-                    model: tab,
-                    workspace: this
-                });
-                button.enable();
-            },
-            () => {
-                button.enable();
-            }
-        );
-    };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

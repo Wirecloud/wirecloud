@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,14 +30,14 @@
     const privates = new WeakMap();
 
     const doInit = function doInit(priv) {
-        var element, action;
 
-        element = priv.elements.shift();
+        const element = priv.elements.shift();
         if (element === undefined) {
             priv.running = false;
             this.dispatchEvent("stop");
             return;
         }
+        let action;
         try {
             action = priv.callback(priv.context, element.command);
         } catch (error) {

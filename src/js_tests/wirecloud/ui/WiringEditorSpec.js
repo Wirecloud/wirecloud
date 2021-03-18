@@ -28,10 +28,10 @@
 
     describe("WiringEditor", () => {
 
-        var alert_handler;
+        let alert_handler;
 
         const callEventListener = function callEventListener(instance, event) {
-            var largs = Array.prototype.slice.call(arguments, 2);
+            const largs = Array.prototype.slice.call(arguments, 2);
             largs.unshift(instance);
             instance.addEventListener.calls.allArgs().some(function (args) {
                 if (args[0] === event) {
@@ -42,7 +42,7 @@
         };
 
         const createWorkspaceMock = function createWorkspaceMock() {
-            let workspace = {};
+            const workspace = {};
             Object.defineProperties(workspace, {
                 id: {value: "1"},
                 owner: {value: "owner"},
@@ -69,7 +69,7 @@
                         if (options == null) {
                             options = {};
                         }
-                        let operator = {
+                        const operator = {
                             id: "" + (this.wiring.operators.length + 1),
                             volatile: options.volatile,
                             meta: {
@@ -91,7 +91,7 @@
                         if (options == null) {
                             options = {};
                         }
-                        let widget = {
+                        const widget = {
                             id: "" + (this.widgets.length + 1),
                             volatile: options.volatile,
                             meta: {
@@ -131,10 +131,10 @@
                                 endpoint: "input1"
                             };
                         }
-                        let sourceid = [options.source.type, options.source.id, options.source.endpoint].join("/");
-                        let targetid = [options.target.type, options.target.id, options.target.endpoint].join("/");
+                        const sourceid = [options.source.type, options.source.id, options.source.endpoint].join("/");
+                        const targetid = [options.target.type, options.target.id, options.target.endpoint].join("/");
 
-                        let connection = {
+                        const connection = {
                             volatile: !!options.volatile,
                             source: {
                                 id: sourceid,
@@ -288,7 +288,7 @@
         describe("new WiringEditor(id[, options])", () => {
 
             it("should work without providing options", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
 
                 Wirecloud.dispatchEvent('loaded');
 
@@ -296,7 +296,7 @@
             });
 
             it("should handle show events", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 spyOn(editor, "load");
                 spyOn(editor, "unload");
 
@@ -307,7 +307,7 @@
             });
 
             it("should handle hide events", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 spyOn(editor, "load");
                 spyOn(editor, "unload");
                 // We need to show the editor before being able to hide it
@@ -325,13 +325,13 @@
 
         describe("getToolbarButtons()", () => {
 
-            var editor;
+            let editor;
 
             beforeEach(() => {
                 spyOn(se.OffCanvasLayout.prototype, "addEventListener").and.callFake(function () {return this;});
                 editor = new ns.WiringEditor(1);
                 spyOn(editor.layout, "slideIn").and.callFake((panelid) => {
-                    let panel = {
+                    const panel = {
                         hasClassName: jasmine.createSpy("hasClassName")
                     };
                     callEventListener(editor.layout, "slideIn", panel);
@@ -392,7 +392,7 @@
             });
 
             it("should return an string", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
 
                 expect(typeof editor.getTitle()).toBe("string");
                 expect(Wirecloud.UserInterfaceManager.views.workspace.getTitle).toHaveBeenCalledWith();
@@ -403,7 +403,7 @@
         describe("goUp()", () => {
 
             it("should go to the workspace view", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 spyOn(Wirecloud.UserInterfaceManager, "changeCurrentView");
 
                 editor.goUp();
@@ -415,9 +415,9 @@
         describe("load(workspace)", () => {
 
             it("should support loading an empty wiring", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
 
                 editor.load(workspace);
 
@@ -430,11 +430,11 @@
             it("should let component manager which is the current wiring engine", () => {
                 ns.WiringEditor.ConnectionEngine.calls.reset();
 
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace1 = createWorkspaceMock();
-                let workspace2 = createWorkspaceMock();
-                let provider = ns.WiringEditor.ConnectionEngine.calls.argsFor(0)[1];
+                const workspace1 = createWorkspaceMock();
+                const workspace2 = createWorkspaceMock();
+                const provider = ns.WiringEditor.ConnectionEngine.calls.argsFor(0)[1];
 
                 editor.load(workspace1);
                 expect(provider()).toBe(workspace1.wiring);
@@ -444,9 +444,9 @@
             });
 
             it("should support loading a basic wiring (without visualdescription)", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
                 workspace._addWidget()._addOperator();
                 workspace._addConnection();
                 editor.load(workspace);
@@ -465,9 +465,9 @@
             });
 
             it("should support loading a basic wiring (with broken visualdescription)", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
                 workspace._addWidget({visual: true})._addOperator({visual: true});
                 workspace._addConnection({visual: true});
 
@@ -495,9 +495,9 @@
             });
 
             it("should support loading a wiring configuration with missing components (without visualdescription)", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
                 workspace._addOperator()._addWidget();
                 workspace._addConnection();
                 editor.behaviourEngine.components = {
@@ -514,9 +514,9 @@
             });
 
             it("should support loading a wiring configuration with volatile connections and components", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
                 workspace._addWidget({visual: true})._addOperator({visual: true});
                 workspace._addConnection({visual: true});
                 workspace._addWidget({volatile: true})._addOperator({volatile: true});
@@ -539,13 +539,13 @@
             });
 
             it("should handle component updates", () => {
-                let editor = new ns.WiringEditor(1);
-                let workspace = createWorkspaceMock();
+                const editor = new ns.WiringEditor(1);
+                const workspace = createWorkspaceMock();
                 workspace._addWidget({visual: true});
                 Wirecloud.dispatchEvent('loaded');
                 editor.load(workspace);
 
-                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+                const component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
 
                 callEventListener(component, "change", {title: "new title"});
 
@@ -553,13 +553,13 @@
             });
 
             it("should handle optshare events on components", () => {
-                let editor = new ns.WiringEditor(1);
-                let workspace = createWorkspaceMock();
+                const editor = new ns.WiringEditor(1);
+                const workspace = createWorkspaceMock();
                 workspace._addWidget({visual: true});
                 Wirecloud.dispatchEvent('loaded');
                 editor.load(workspace);
 
-                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+                const component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
 
                 callEventListener(component, "optshare");
 
@@ -567,13 +567,13 @@
             });
 
             it("should handle optremove events on components", () => {
-                let editor = new ns.WiringEditor(1);
-                let workspace = createWorkspaceMock();
+                const editor = new ns.WiringEditor(1);
+                const workspace = createWorkspaceMock();
                 workspace._addWidget({visual: true});
                 Wirecloud.dispatchEvent('loaded');
                 editor.load(workspace);
 
-                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+                const component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
 
                 callEventListener(component, "optremove");
 
@@ -581,13 +581,13 @@
             });
 
             it("should handle optremovecascade events on components", () => {
-                let editor = new ns.WiringEditor(1);
-                let workspace = createWorkspaceMock();
+                const editor = new ns.WiringEditor(1);
+                const workspace = createWorkspaceMock();
                 workspace._addWidget({visual: true});
                 Wirecloud.dispatchEvent('loaded');
                 editor.load(workspace);
 
-                let component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
+                const component = editor.behaviourEngine.updateComponent.calls.argsFor(0)[0];
 
                 callEventListener(component, "optremovecascade");
 
@@ -595,12 +595,12 @@
             });
 
             it("should handle connection updates", () => {
-                let editor = new ns.WiringEditor(1);
-                let workspace = createWorkspaceMock();
+                const editor = new ns.WiringEditor(1);
+                const workspace = createWorkspaceMock();
                 Wirecloud.dispatchEvent('loaded');
                 editor.load(workspace);
 
-                let connection = {
+                const connection = {
                     addEventListener: jasmine.createSpy("addEventListener")
                 };
                 connection.addEventListener.and.returnValue(connection);
@@ -613,12 +613,12 @@
             });
 
             it("should handle optshare events on connections", () => {
-                let editor = new ns.WiringEditor(1);
-                let workspace = createWorkspaceMock();
+                const editor = new ns.WiringEditor(1);
+                const workspace = createWorkspaceMock();
                 Wirecloud.dispatchEvent('loaded');
                 editor.load(workspace);
 
-                let connection = {
+                const connection = {
                     addEventListener: jasmine.createSpy("addEventListener")
                 };
                 connection.addEventListener.and.returnValue(connection);
@@ -631,12 +631,12 @@
             });
 
             it("should handle optremove events on connections", () => {
-                let editor = new ns.WiringEditor(1);
-                let workspace = createWorkspaceMock();
+                const editor = new ns.WiringEditor(1);
+                const workspace = createWorkspaceMock();
                 Wirecloud.dispatchEvent('loaded');
                 editor.load(workspace);
 
-                let connection = {
+                const connection = {
                     addEventListener: jasmine.createSpy("addEventListener")
                 };
                 connection.addEventListener.and.returnValue(connection);
@@ -650,11 +650,11 @@
 
             describe("should handle order events on components", () => {
 
-                var editor, component1, component2;
+                let editor, component1, component2;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator();
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
@@ -720,11 +720,11 @@
 
             describe("should handle endpoint events on components", () => {
 
-                var editor, widget, operator;
+                let editor, widget, operator;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     workspace._addWidget({visual: true})._addOperator({visual: true});
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
@@ -734,7 +734,7 @@
                 });
 
                 it("endpointadded", () => {
-                    let endpoint = {
+                    const endpoint = {
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
                     endpoint.addEventListener.and.returnValue(endpoint);
@@ -749,7 +749,7 @@
                 });
 
                 it("endpointremoved", () => {
-                    let endpoint = {};
+                    const endpoint = {};
                     spyOn(editor.suggestionManager, "removeEndpoint");
 
                     callEventListener(widget, "endpointremoved", endpoint);
@@ -760,7 +760,7 @@
                 });
 
                 it("should freeze endpoint recommendation while editing/creating connections", () => {
-                    let endpoint = {
+                    const endpoint = {
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
                     endpoint.addEventListener.and.returnValue(endpoint);
@@ -778,7 +778,7 @@
                 });
 
                 it("should show/hide endpoint suggestions on mouseenter/mouseleave", () => {
-                    let endpoint = {
+                    const endpoint = {
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
                     endpoint.addEventListener.and.returnValue(endpoint);
@@ -799,11 +799,11 @@
 
             describe("should handle remove events on components", () => {
 
-                var editor, component1, component2;
+                let editor, component1, component2;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
@@ -859,11 +859,11 @@
 
             describe("should handle behaviour engine events", () => {
 
-                var editor;
+                let editor;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
                 });
@@ -871,7 +871,7 @@
                 it("should refresh behaviour and connection engine on enable", () => {
                     editor.behaviourEngine.updateComponent = jasmine.createSpy("updateComponent");
                     editor.connectionEngine.forEachConnection.and.callFake((listener) => {
-                        let connection = {};
+                        const connection = {};
                         listener(connection);
                         expect(connection.removeAllowed).toBe(true);
                         expect(connection.background).toBe(false);
@@ -879,7 +879,7 @@
                     });
 
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
-                        let component = {};
+                        const component = {};
                         listener(component);
                         expect(component.removeCascadeAllowed).toBe(true);
                         expect(component.removeAllowed).toBe(true);
@@ -893,7 +893,7 @@
                 it("should refresh behaviour and connection engine on disable", () => {
                     editor.behaviourEngine.updateComponent = jasmine.createSpy("updateComponent");
                     editor.connectionEngine.forEachConnection.and.callFake((listener) => {
-                        let connection = {};
+                        const connection = {};
                         listener(connection);
                         expect(connection.removeAllowed).toBe(true);
                         expect(connection.background).toBe(false);
@@ -901,7 +901,7 @@
                     });
 
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
-                        let component = {};
+                        const component = {};
                         listener(component);
                         expect(component.removeCascadeAllowed).toBe(false);
                         expect(component.removeAllowed).toBe(true);
@@ -913,7 +913,7 @@
                 });
 
                 it("should refresh editor footer on updates (engine disabled)", () => {
-                    let currentstatus = {
+                    const currentstatus = {
                         title: "",
                         connections: 5,
                         components: {
@@ -925,7 +925,7 @@
                 });
 
                 it("should refresh editor footer on updates (engine enabled)", () => {
-                    let currentstatus = {
+                    const currentstatus = {
                         title: "My Behaviour",
                         connections: 5,
                         components: {
@@ -937,7 +937,7 @@
                 });
 
                 it("should refresh the view when changing the active behaviour", () => {
-                    let currentstatus = {
+                    const currentstatus = {
                         title: "My Behaviour",
                         connections: 5,
                         components: {
@@ -945,13 +945,13 @@
                             widget: 1
                         }
                     };
-                    let behaviour = {
+                    const behaviour = {
                         hasComponent: jasmine.createSpy("hasComponent"),
                         hasConnection: jasmine.createSpy("hasConnection"),
                         getCurrentStatus: jasmine.createSpy("getCurrentStatus").and.returnValue(currentstatus)
                     };
                     editor.connectionEngine.forEachConnection.and.callFake((listener) => {
-                        let connection1 = {
+                        const connection1 = {
                             show: jasmine.createSpy("show")
                         };
                         editor.behaviourEngine.filterByConnection.and.returnValue([1]);
@@ -963,7 +963,7 @@
                         expect(connection1.removeAllowed).toBe(true);
                         expect(connection1.background).toBe(false);
 
-                        let connection2 = {
+                        const connection2 = {
                             show: jasmine.createSpy("show")
                         };
                         editor.behaviourEngine.filterByConnection.and.returnValue([1, 2]);
@@ -979,7 +979,7 @@
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         editor.behaviourEngine.filterByComponent.and.returnValue([1]);
                         behaviour.hasComponent.and.returnValue(true);
-                        let component1 = {};
+                        const component1 = {};
                         listener(component1);
                         expect(component1.removeCascadeAllowed).toBe(true);
                         expect(component1.removeAllowed).toBe(true);
@@ -987,7 +987,7 @@
 
                         editor.behaviourEngine.filterByComponent.and.returnValue([1, 2]);
                         behaviour.hasComponent.and.returnValue(false);
-                        let component2 = {};
+                        const component2 = {};
                         listener(component2);
                         expect(component2.removeCascadeAllowed).toBe(true);
                         expect(component2.removeAllowed).toBe(false);
@@ -1001,11 +1001,11 @@
 
             describe("should handle component manager events", () => {
 
-                var editor, operator_task, widget_task;
+                let editor, operator_task, widget_task;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     operator_task = jasmine.createSpy("then");
                     widget_task = jasmine.createSpy("then");
                     workspace.wiring.createOperator = jasmine.createSpy("createOperator").and.returnValue({
@@ -1023,16 +1023,16 @@
                 });
 
                 it("should manage widget create events", () => {
-                    let group = {
+                    const group = {
                         meta: {
                             type: "widget",
                         }
                     };
-                    let button = {
+                    const button = {
                         enable: jasmine.createSpy("enable"),
                         disable: jasmine.createSpy("disable")
                     };
-                    let component = {};
+                    const component = {};
                     widget_task.and.callFake((fulfill, reject) => {
                         fulfill({model: component});
                     })
@@ -1045,12 +1045,12 @@
                 });
 
                 it("should manage  create events (error creating)", () => {
-                    let group = {
+                    const group = {
                         meta: {
                             type: "widget",
                         }
                     };
-                    let button = {
+                    const button = {
                         enable: jasmine.createSpy("enable"),
                         disable: jasmine.createSpy("disable")
                     };
@@ -1066,16 +1066,16 @@
                 });
 
                 it("should manage operator create events", () => {
-                    let group = {
+                    const group = {
                         meta: {
                             type: "operator",
                         }
                     };
-                    let button = {
+                    const button = {
                         enable: jasmine.createSpy("enable"),
                         disable: jasmine.createSpy("disable")
                     };
-                    let component = {};
+                    const component = {};
                     operator_task.and.callFake((fulfill, reject) => {
                         fulfill(component);
                     })
@@ -1088,12 +1088,12 @@
                 });
 
                 it("should manage operator create events (error creating)", () => {
-                    let group = {
+                    const group = {
                         meta: {
                             type: "operator",
                         }
                     };
-                    let button = {
+                    const button = {
                         enable: jasmine.createSpy("enable"),
                         disable: jasmine.createSpy("disable")
                     };
@@ -1109,7 +1109,7 @@
                 });
 
                 it("should manage component additions", () => {
-                    let context = {
+                    const context = {
                         component: {
                             _component: {
                                 meta: {
@@ -1136,11 +1136,11 @@
 
             describe("should handle click events on components", () => {
 
-                var editor, component1, component2, component3;
+                let editor, component1, component2, component3;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
@@ -1295,21 +1295,21 @@
 
             describe("should handle drag events on connections", () => {
 
-                var editor;
+                let editor;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
                 });
 
                 it("should temporally expand collapsed components", () => {
-                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
-                    let component2 = {type: "operator", id: "2", collapsed: true, _component: "operator1"};
-                    let initialEndpoint = {};
-                    let realEndpoint = {};
+                    const component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    const component2 = {type: "operator", id: "2", collapsed: true, _component: "operator1"};
+                    const initialEndpoint = {};
+                    const realEndpoint = {};
                     spyOn(editor.suggestionManager, "hideSuggestions");
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         listener(component1);
@@ -1329,18 +1329,18 @@
                 });
 
                 it("should work when editing a connection", () => {
-                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
-                    let component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
-                    let initialEndpoint = {};
-                    let realEndpoint = {};
+                    const component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    const component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
+                    const initialEndpoint = {};
+                    const realEndpoint = {};
                     spyOn(editor.suggestionManager, "hideSuggestions");
                     spyOn(editor.suggestionManager, "showSuggestions");
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         listener(component1);
                         listener(component2);
                     });
-                    let backup = {};
-                    let connection = {
+                    const backup = {};
+                    const connection = {
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
                     connection.addEventListener.and.returnValue(connection);
@@ -1371,16 +1371,16 @@
                 });
 
                 it("should allow creating new connections", () => {
-                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
-                    let component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
-                    let initialEndpoint = {};
-                    let realEndpoint = {};
+                    const component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    const component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
+                    const initialEndpoint = {};
+                    const realEndpoint = {};
                     spyOn(editor.suggestionManager, "hideSuggestions");
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         listener(component1);
                         listener(component2);
                     });
-                    let connection = {
+                    const connection = {
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
                     connection.addEventListener.and.returnValue(connection);
@@ -1408,16 +1408,16 @@
                 });
 
                 it("should discard connections when creating a connection already exiting in the current behaviour or when the behaviour engine is disabled", () => {
-                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
-                    let component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
-                    let initialEndpoint = {};
-                    let realEndpoint = {};
+                    const component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    const component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
+                    const initialEndpoint = {};
+                    const realEndpoint = {};
                     spyOn(editor.suggestionManager, "hideSuggestions");
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         listener(component1);
                         listener(component2);
                     });
-                    let connection = {
+                    const connection = {
                         background: false,
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
@@ -1443,16 +1443,16 @@
                 });
 
                 it("should add connections to the active behaviour when creating a connection already existing in another behaviour", () => {
-                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
-                    let component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
-                    let initialEndpoint = {};
-                    let realEndpoint = {};
+                    const component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    const component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
+                    const initialEndpoint = {};
+                    const realEndpoint = {};
                     spyOn(editor.suggestionManager, "hideSuggestions");
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         listener(component1);
                         listener(component2);
                     });
-                    let connection = {
+                    const connection = {
                         background: true,
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
@@ -1479,18 +1479,18 @@
                 });
 
                 it("should merge connections when editing a connection and converting it into an already existing connection in another behaviour", () => {
-                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
-                    let component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
-                    let initialEndpoint = {};
-                    let realEndpoint = {};
+                    const component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    const component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
+                    const initialEndpoint = {};
+                    const realEndpoint = {};
                     spyOn(editor.suggestionManager, "hideSuggestions");
                     spyOn(editor.suggestionManager, "showSuggestions");
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         listener(component1);
                         listener(component2);
                     });
-                    let backup = {};
-                    let connection = {
+                    const backup = {};
+                    const connection = {
                         background: true,
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
@@ -1521,18 +1521,18 @@
                 });
 
                 it("should create a new connecion when editing a connection that is also on other behaviours", () => {
-                    let component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
-                    let component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
-                    let initialEndpoint = {};
-                    let realEndpoint = {};
+                    const component1 = {type: "widget", id: "1", collapsed: false, _component: "widget1"};
+                    const component2 = {type: "operator", id: "2", collapsed: false, _component: "operator1"};
+                    const initialEndpoint = {};
+                    const realEndpoint = {};
                     spyOn(editor.suggestionManager, "hideSuggestions");
                     spyOn(editor.suggestionManager, "showSuggestions");
                     editor.behaviourEngine.forEachComponent.and.callFake((listener) => {
                         listener(component1);
                         listener(component2);
                     });
-                    let backup = {};
-                    let connection = {
+                    const backup = {};
+                    const connection = {
                         addEventListener: jasmine.createSpy("addEventListener")
                     };
                     connection.addEventListener.and.returnValue(connection);
@@ -1571,11 +1571,11 @@
 
             describe("should handle drag events on components", () => {
 
-                var editor, component1, component2, component3;
+                let editor, component1, component2, component3;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator({visual: true});
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
@@ -1635,11 +1635,11 @@
 
             describe("should handle keydown events", () => {
 
-                var editor, component1, component2, handler;
+                let editor, component1, component2, handler;
 
                 beforeEach(() => {
                     editor = new ns.WiringEditor(1);
-                    let workspace = createWorkspaceMock();
+                    const workspace = createWorkspaceMock();
                     workspace._addWidget({visual: true})._addWidget({visual: true})._addOperator();
                     Wirecloud.dispatchEvent('loaded');
                     editor.load(workspace);
@@ -1689,9 +1689,9 @@
                     "workspace_name": "workspace_name",
                     "view": "workspace"
                 });
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
 
-                let state = editor.buildStateData();
+                const state = editor.buildStateData();
 
                 expect(state).toEqual({
                     "workspace_owner": "workspace_owner",
@@ -1721,9 +1721,9 @@
             });
 
             it("should use current state as base", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
 
-                let breadcrum = editor.getBreadcrumb();
+                const breadcrum = editor.getBreadcrumb();
 
                 expect(breadcrum).toEqual(jasmine.any(Array));
             });
@@ -1733,9 +1733,9 @@
         describe("toJSON()", () => {
 
             it("should support serializing an empty wiring", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
                 editor.load(workspace);
 
                 expect(editor.toJSON()).toEqual({
@@ -1751,9 +1751,9 @@
             });
 
             it("should support serializing a wiring configuration with connections and components", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
                 editor.load(workspace);
                 editor.connectionEngine.forEachConnection.and.callFake((listener) => {
                     listener({_connection: "connection1"});
@@ -1781,9 +1781,9 @@
         describe("unload()", () => {
 
             it("should support serializing an empty wiring", () => {
-                let editor = new ns.WiringEditor(1);
+                const editor = new ns.WiringEditor(1);
                 Wirecloud.dispatchEvent('loaded');
-                let workspace = createWorkspaceMock();
+                const workspace = createWorkspaceMock();
                 editor.load(workspace);
                 editor.behaviourEngine.clear.calls.reset();
                 editor.behaviourEngine.disable.calls.reset();

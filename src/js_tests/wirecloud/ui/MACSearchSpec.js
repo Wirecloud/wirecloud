@@ -80,15 +80,15 @@
         });
 
         it("should work when only passing the resourceButtonListener option", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             expect(element.input).toEqual(jasmine.any(se.TextField));
             expect(element.list).toEqual(jasmine.any(se.Container));
             expect(element.resource_painter).toBe(null);
         });
 
         it("should work when only passing the resource_painter option", () => {
-            let rp = {paint: jasmine.createSpy()};
-            let element = new ns.MACSearch({resource_painter: rp});
+            const rp = {paint: jasmine.createSpy()};
+            const element = new ns.MACSearch({resource_painter: rp});
             expect(element.input).toEqual(jasmine.any(se.TextField));
             expect(element.list).toEqual(jasmine.any(se.Container));
             expect(element.resource_painter).toBe(rp);
@@ -96,14 +96,14 @@
 
         it("supports custom templates", () => {
             // TODO current implementation requires that the root element be the one at index 1
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy(), template: "wirecloud/component_sidebar"});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy(), template: "wirecloud/component_sidebar"});
             expect(element.input).toEqual(jasmine.any(se.TextField));
             expect(element.list).toEqual(jasmine.any(se.Container));
             expect(element.resource_painter).toBe(null);
         });
 
         it("should search on text input", (done) => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.resolve({total_count: 1, resources: [Object.assign({}, component)]})
             );
@@ -120,9 +120,9 @@
         });
 
         it("should support searching with custom resource_painter", (done) => {
-            let rp = {paint: jasmine.createSpy()};
-            let element = new ns.MACSearch({resource_painter: rp});
-            let parsed_component = Object.assign({}, component);
+            const rp = {paint: jasmine.createSpy()};
+            const element = new ns.MACSearch({resource_painter: rp});
+            const parsed_component = Object.assign({}, component);
             parsed_component.version = new Wirecloud.Version(component.version);
             parsed_component.others = component.others.map((version) => {return new Wirecloud.Version(version);});
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
@@ -142,8 +142,8 @@
         });
 
         it("should support the resourceButtonTooltip option", (done) => {
-            let tooltip = jasmine.createSpy();
-            let element = new ns.MACSearch({resourceButtonTooltip: tooltip, resourceButtonListener: jasmine.createSpy()});
+            const tooltip = jasmine.createSpy();
+            const element = new ns.MACSearch({resourceButtonTooltip: tooltip, resourceButtonListener: jasmine.createSpy()});
             expect(element.resourceButtonTooltip).toBe(tooltip);
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.resolve({total_count: 1, resources: [Object.assign({}, component)]})
@@ -161,7 +161,7 @@
         });
 
         it("should handle corrected queries", (done) => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.resolve({corrected_query: "other", total_count: 1, resources: [Object.assign({}, component)]})
             );
@@ -180,7 +180,7 @@
         });
 
         it("empty search", (done) => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.resolve({total_count: 0, resources: []})
             );
@@ -196,7 +196,7 @@
         });
 
         it("should ignore text input on a given time period", (done) => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy(), scope: "widget"});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy(), scope: "widget"});
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.resolve({total_count: 0, resources: []})
             );
@@ -215,7 +215,7 @@
         });
 
         it("should handle connection errors", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.reject("Error")
             );
@@ -228,7 +228,7 @@
         });
 
         it("should handle keydown events", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.reject("Error")
             );
@@ -238,9 +238,9 @@
             expect(Wirecloud.LocalCatalogue.search).not.toHaveBeenCalled();
         });
 
-        var empty_result = (scope) => {
+        const empty_result = (scope) => {
             return (done) => {
-                let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy(), scope: scope});
+                const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy(), scope: scope});
                 spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                     Promise.resolve({total_count: 0, resources: []})
                 );
@@ -265,7 +265,7 @@
     describe("clear()", () => {
 
         it("should clear the list container", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(element.list, "clear");
 
             expect(element.clear()).toBe(element);
@@ -277,7 +277,7 @@
 
     describe("paintInfo(message[, context])", () => {
 
-        var element;
+        let element;
 
         beforeEach(() => {
             element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
@@ -296,7 +296,7 @@
     describe("paintError(message)", () => {
 
         it("should support simple messages", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             element.paintError("info message");
         });
 
@@ -305,7 +305,7 @@
     describe("focus()", () => {
 
         it("should focus the input text box", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(element.input, "focus");
 
             expect(element.focus()).toBe(element);
@@ -332,7 +332,7 @@
         });
 
         it("should make an immediate request", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
 
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.resolve({total_count: 0, resources: []})
@@ -345,7 +345,7 @@
         });
 
         it("should cancel previous pending searches", (done) => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
 
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(
                 Promise.resolve({total_count: 0, resources: []})
@@ -366,8 +366,8 @@
         });
 
         it("should abort current requests", (done) => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
-            let promise = new Wirecloud.Task("request", () => {});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const promise = new Wirecloud.Task("request", () => {});
 
             spyOn(promise, "abort");
             spyOn(Wirecloud.LocalCatalogue, "search").and.returnValue(promise);
@@ -391,7 +391,7 @@
     describe("repaint()", () => {
 
         it("should repaint the list container", () => {
-            let element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
+            const element = new ns.MACSearch({resourceButtonListener: jasmine.createSpy()});
             spyOn(element.list, "repaint");
 
             expect(element.repaint()).toBe(element);

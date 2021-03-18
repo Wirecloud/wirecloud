@@ -28,7 +28,7 @@
 
     describe("Addons", function () {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -45,18 +45,18 @@
         describe("new Addon([options])", function () {
 
             it("can be created without passing any option", function () {
-                var element = new StyledElements.Addon();
+                const element = new StyledElements.Addon();
                 expect(element.wrapperElement.textContent).toBe("");
                 expect(element.wrapperElement.className).toBe("se-add-on");
             });
 
             it("should suport the text option", function () {
-                var element = new StyledElements.Addon({text: "%"});
+                const element = new StyledElements.Addon({text: "%"});
                 expect(element.wrapperElement.textContent).toBe("%");
             });
 
             it("should suport the title option", function () {
-                var element = new StyledElements.Addon({title: "percentage"});
+                const element = new StyledElements.Addon({title: "percentage"});
                 expect(element.wrapperElement.textContent).toBe("");
             });
 
@@ -65,8 +65,8 @@
         describe("assignInput(input)", function () {
 
             it("should allow to set the initial input", function () {
-                var element = new StyledElements.Addon();
-                var input = new StyledElements.TextField();
+                const element = new StyledElements.Addon();
+                const input = new StyledElements.TextField();
                 expect(element.assignInput(input)).toBe(element);
             });
 
@@ -75,13 +75,13 @@
         describe("setLabel(label)", function () {
 
             it("should allow to set the initial label", function () {
-                var element = new StyledElements.Addon();
+                const element = new StyledElements.Addon();
                 expect(element.setLabel("€")).toBe(element);
                 expect(element.wrapperElement.textContent).toBe("€");
             });
 
             it("should replace previous labels", function () {
-                var element = new StyledElements.Addon({text: "%"});
+                const element = new StyledElements.Addon({text: "%"});
                 expect(element.setLabel("€")).toBe(element);
                 expect(element.wrapperElement.textContent).toBe("€");
             });
@@ -91,20 +91,20 @@
         describe("setTitle(title)", function () {
 
             it("should allow to set the initial title", function () {
-                var element = new StyledElements.Addon();
+                const element = new StyledElements.Addon();
                 expect(element.setTitle("euros")).toBe(element);
             });
 
             it("should replace previous labels", function () {
-                var element = new StyledElements.Addon({title: "percentage"});
+                const element = new StyledElements.Addon({title: "percentage"});
                 expect(element.setTitle("euros")).toBe(element);
             });
 
         });
 
         it("should stop propagation and the default action of click events", function () {
-            var element = new StyledElements.Addon({text: "%"});
-            var event = new MouseEvent("click");
+            const element = new StyledElements.Addon({text: "%"});
+            const event = new MouseEvent("click");
             spyOn(event, "stopPropagation");
             spyOn(event, "preventDefault");
 
@@ -114,8 +114,8 @@
         });
 
         it("should focus associated input on click events", function () {
-            var element = new StyledElements.Addon({text: "%"});
-            var textfield = new StyledElements.TextField();
+            const element = new StyledElements.Addon({text: "%"});
+            const textfield = new StyledElements.TextField();
             spyOn(textfield, "focus");
             element.assignInput(textfield);
             element.wrapperElement.dispatchEvent(new MouseEvent("click"));
@@ -123,8 +123,8 @@
         });
 
         it("should no focus the associated input on click events if the addon is disabled", function () {
-            var element = new StyledElements.Addon({text: "%"});
-            var textfield = new StyledElements.TextField();
+            const element = new StyledElements.Addon({text: "%"});
+            const textfield = new StyledElements.TextField();
             spyOn(textfield, "focus");
             element.assignInput(textfield);
             element.enabled = false;
@@ -139,7 +139,7 @@
         describe('destroy() [deprecated]', function () {
 
             it("should remove the addon from the DOM", function () {
-                var element = new StyledElements.Addon({text: "%"});
+                const element = new StyledElements.Addon({text: "%"});
                 element.appendTo(dom);
 
                 expect(element.destroy()).toEqual(undefined);

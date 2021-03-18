@@ -26,10 +26,10 @@
 
     "use strict";
 
-    var tutorials = [];
-    var tutorialsById = {};
+    const tutorials = [];
+    const tutorialsById = {};
 
-    var TutorialCatalogue = {};
+    const TutorialCatalogue = {};
 
     TutorialCatalogue.add = function add(id, tutorial) {
         if (!(tutorial instanceof Wirecloud.ui.Tutorial)) {
@@ -48,14 +48,14 @@
     });
     Object.defineProperty(TutorialCatalogue, 'buildTutorialReferences', {
         value: function buildTutorialReferences(tutorial_list) {
-            var description = document.createElement('p');
+            const description = document.createElement('p');
             description.textContent = utils.gettext('If you prefer, you can follow some of these tutorials:');
 
-            var list = document.createElement('ul');
-            for (var i = 0; i < tutorial_list.length; i++) {
-                var tutorial = this.get(tutorial_list[i]);
-                var item = document.createElement('li');
-                var link = document.createElement('a');
+            const list = document.createElement('ul');
+            for (let i = 0; i < tutorial_list.length; i++) {
+                const tutorial = this.get(tutorial_list[i]);
+                const item = document.createElement('li');
+                const link = document.createElement('a');
                 link.textContent = tutorial.label;
                 link.addEventListener('click', function (e) {
                     e.stopPropagation();

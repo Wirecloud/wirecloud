@@ -79,7 +79,7 @@
          *      The instance on which the method has been called
          */
         setValue(newValue) {
-            var oldValue = this.inputElement.value;
+            const oldValue = this.inputElement.value;
 
             this.inputElement.value = newValue;
 

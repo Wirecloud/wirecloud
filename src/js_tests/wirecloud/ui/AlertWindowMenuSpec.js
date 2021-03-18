@@ -58,7 +58,7 @@
     describe("setFocus()", () => {
 
         it("should focus cancel button", () => {
-            let dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
+            const dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
             spyOn(dialog.cancelButton, "focus");
             expect(dialog.cancelButton.focus).not.toHaveBeenCalled();
 
@@ -72,8 +72,8 @@
     describe("setHandler(acceptHandler[, cancelHandler])", () => {
 
         it("should support simple success actions", () => {
-            let dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
-            let listener = jasmine.createSpy('listener');
+            const dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
+            const listener = jasmine.createSpy('listener');
             spyOn(dialog, 'hide');
 
             dialog.setHandler(listener);
@@ -84,9 +84,9 @@
         });
 
         it("should support asynchronous success actions", () => {
-            let dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
-            let then_mock = jasmine.createSpy('then');
-            let listener = jasmine.createSpy('listener').and.callFake(() => {
+            const dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
+            const then_mock = jasmine.createSpy('then');
+            const listener = jasmine.createSpy('listener').and.callFake(() => {
                 return {
                     then: then_mock
                 };
@@ -107,9 +107,9 @@
         });
 
         it("should handle errors in asynchronous success actions", () => {
-            let dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
-            let then_mock = jasmine.createSpy('then');
-            let listener = jasmine.createSpy('listener').and.callFake(() => {
+            const dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
+            const then_mock = jasmine.createSpy('then');
+            const listener = jasmine.createSpy('listener').and.callFake(() => {
                 return {
                     then: then_mock
                 };
@@ -131,8 +131,8 @@
         });
 
         it("cancel should be optional", () => {
-            let dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
-            let slistener = jasmine.createSpy('listener');
+            const dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
+            const slistener = jasmine.createSpy('listener');
             spyOn(dialog, 'hide');
 
             dialog.setHandler(slistener);
@@ -143,9 +143,9 @@
         });
 
         it("should support simple cancel actions", () => {
-            let dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
-            let slistener = jasmine.createSpy('listener');
-            let listener = jasmine.createSpy('listener');
+            const dialog = new ns.AlertWindowMenu(new se.Fragment("<div>hello world!</div>"));
+            const slistener = jasmine.createSpy('listener');
+            const listener = jasmine.createSpy('listener');
             spyOn(dialog, 'hide');
 
             dialog.setHandler(slistener, listener);

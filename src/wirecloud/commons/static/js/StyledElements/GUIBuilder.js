@@ -22,21 +22,30 @@
 /* globals Document, StyledElements */
 
 
-(function (utils) {
+(function (ns, utils) {
 
     "use strict";
 
-    var GUIBuilder, processTComponent, processChildren, processTree, processRoot, extractOptionsFromTextNode, extractOptions, extractOptionsFromAttributes, populateContainer, NAMESPACE, TEMPLATE_NAMESPACE;
+    const NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/StyledElements';
+    const TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
 
-    NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/StyledElements';
-    TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
+    const extractOptionsFromAttributes = function extractOptionsFromAttributes(element) {
+        const options = {};
 
-    processTComponent = function processTComponent(element, tcomponents, context) {
-        var options, tcomponent, new_component;
+        // We cannot use forEach for walking an attribute list :(
+        for (let i = 0; i < element.attributes.length; i++) {
+            options[element.attributes[i].localName] = element.attributes[i].nodeValue;
+        }
 
-        tcomponent = tcomponents[element.localName];
+        return options;
+    };
+
+    const processTComponent = function processTComponent(element, tcomponents, context) {
+        let new_component;
+
+        const tcomponent = tcomponents[element.localName];
         if (typeof tcomponent === 'function') {
-            options = extractOptionsFromTextNode(element);
+            const options = extractOptionsFromTextNode(element);
             utils.merge(options, extractOptionsFromAttributes(element));
 
             new_component = tcomponent(options, tcomponents, context);
@@ -55,11 +64,11 @@
         return new_component;
     };
 
-    extractOptionsFromTextNode = function (element) {
-        var options = {};
+    const extractOptionsFromTextNode = function extractOptionsFromTextNode(element) {
+        let options = {};
 
-        for (var i = 0; i < element.childNodes.length; i++) {
-            var curNode = element.childNodes[i];
+        for (let i = 0; i < element.childNodes.length; i++) {
+            const curNode = element.childNodes[i];
             // find the first non-empty text node
             if (curNode.nodeType === Node.TEXT_NODE && !(/^\s*$/.test(curNode.nodeValue))) {
 
@@ -78,7 +87,7 @@
         return options;
     };
 
-    processChildren = function processChildren(new_element, builder, element, tcomponents, context) {
+    const processChildren = function processChildren(new_element, builder, element, tcomponents, context) {
         if (element.childNodes.length > 0) {
             processTree(builder, element, tcomponents, context);
 
@@ -91,7 +100,7 @@
                 }
                 // because we modify the DOM and childNodes is a live collection
                 // we cannot use a regular for loop
-                var prevChild = null;
+                let prevChild = null;
                 while (element.firstChild !== null) {
                     // safety check, if for some unexpected reason no modification takes place
                     if (prevChild === element.firstChild) {
@@ -104,8 +113,8 @@
         }
     }
 
-    processTree = function processTree(builder, element, tcomponents, context) {
-        var i, child, component, new_component;
+    const processTree = function processTree(builder, element, tcomponents, context) {
+        let i, child, component, new_component;
 
         for (i = 0; i < element.childNodes.length; i += 1) {
             child = element.childNodes[i];
@@ -132,19 +141,17 @@
         }
     };
 
-    processRoot = function processRoot(builder, element, tcomponents, context) {
-        var i, children, child, component;
+    const processRoot = function processRoot(builder, element, tcomponents, context) {
+        const children = Array.prototype.slice.call(element.childNodes, 0);
 
-        children = Array.prototype.slice.call(element.childNodes, 0);
-
-        for (i = 0; i < children.length; i += 1) {
-            child = children[i];
+        for (let i = 0; i < children.length; i += 1) {
+            const child = children[i];
             if (!(child instanceof Element)) {
                 continue;
             }
 
             if (child.namespaceURI === NAMESPACE) {
-                component = builder.build(child, tcomponents, context);
+                const component = builder.build(child, tcomponents, context);
                 children[i] = component;
             } else if (child.namespaceURI === TEMPLATE_NAMESPACE) {
                 children[i] = processTComponent(child, tcomponents, context);
@@ -157,22 +164,9 @@
         return new StyledElements.Fragment(children);
     };
 
-    extractOptionsFromAttributes = function extractOptionsFromAttributes(element) {
-        var i, options = {};
-
-        // We cannot use forEach for walking an attribute list :(
-        for (i = 0; i < element.attributes.length; i++) {
-            options[element.attributes[i].localName] = element.attributes[i].nodeValue;
-        }
-
-        return options;
-    };
-
-    extractOptions = function extractOptions(element) {
-        var options, options_element;
-
-        options = {};
-        options_element = element.ownerDocument.evaluate('s:options', element, function () { return NAMESPACE; }, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    const extractOptions = function extractOptions(element) {
+        let options = {};
+        const options_element = element.ownerDocument.evaluate('s:options', element, function () { return NAMESPACE; }, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         if (options_element != null) {
             options_element.parentNode.removeChild(options_element);
             try {
@@ -184,90 +178,88 @@
         return options;
     };
 
-    populateContainer = function populateContainer(builder, element, tag_name, container, tcomponents, context) {
-        var container_element, fragment, options;
-
-        container_element = element.getElementsByTagNameNS(NAMESPACE, tag_name)[0];
+    const populateContainer = function populateContainer(builder, element, tag_name, container, tcomponents, context) {
+        const container_element = element.getElementsByTagNameNS(NAMESPACE, tag_name)[0];
 
         if (container_element != null) {
-            options = utils.merge(extractOptions(container_element), extractOptionsFromAttributes(container_element));
+            const options = utils.merge(extractOptions(container_element), extractOptionsFromAttributes(container_element));
             if (options != null && 'class' in options) {
                 container.addClassName(options.class);
             }
 
-            fragment = processRoot(builder, container_element, tcomponents, context);
+            const fragment = processRoot(builder, container_element, tcomponents, context);
             container.appendChild(fragment);
         }
     };
 
-    GUIBuilder = function GUIBuilder() {
-        var mapping = {
-            'borderlayout': function (builder, element, options, tcomponents, context) {
-                var layout = new StyledElements.BorderLayout(options);
+    ns.GUIBuilder = class GUIBuilder {
 
-                populateContainer(builder, element, 'northcontainer', layout.north, tcomponents, context);
-                populateContainer(builder, element, 'westcontainer', layout.west, tcomponents, context);
-                populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
-                populateContainer(builder, element, 'eastcontainer', layout.east, tcomponents, context);
-                populateContainer(builder, element, 'southcontainer', layout.south, tcomponents, context);
+        constructor() {
+            const mapping = {
+                'borderlayout': function (builder, element, options, tcomponents, context) {
+                    const layout = new StyledElements.BorderLayout(options);
 
-                return layout;
-            },
-            'button': function (builder, element, options) {
-                options = utils.merge({}, options);
-                options.text = element.textContent;
-                return new StyledElements.Button(options);
-            },
-            'horizontallayout': function (builder, element, options, tcomponents, context) {
-                var layout = new StyledElements.HorizontalLayout(options);
+                    populateContainer(builder, element, 'northcontainer', layout.north, tcomponents, context);
+                    populateContainer(builder, element, 'westcontainer', layout.west, tcomponents, context);
+                    populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
+                    populateContainer(builder, element, 'eastcontainer', layout.east, tcomponents, context);
+                    populateContainer(builder, element, 'southcontainer', layout.south, tcomponents, context);
 
-                populateContainer(builder, element, 'westcontainer', layout.west, tcomponents, context);
-                populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
-                populateContainer(builder, element, 'eastcontainer', layout.east, tcomponents, context);
+                    return layout;
+                },
+                'button': function (builder, element, options) {
+                    options = utils.merge({}, options);
+                    options.text = element.textContent;
+                    return new StyledElements.Button(options);
+                },
+                'horizontallayout': function (builder, element, options, tcomponents, context) {
+                    const layout = new StyledElements.HorizontalLayout(options);
 
-                return layout;
-            },
-            'select': function (builder, element, options) {
-                return new StyledElements.Select(options);
-            },
-            'verticallayout': function (builder, element, options, tcomponents, context) {
-                var layout = new StyledElements.VerticalLayout(options);
+                    populateContainer(builder, element, 'westcontainer', layout.west, tcomponents, context);
+                    populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
+                    populateContainer(builder, element, 'eastcontainer', layout.east, tcomponents, context);
 
-                populateContainer(builder, element, 'northcontainer', layout.north, tcomponents, context);
-                populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
-                populateContainer(builder, element, 'southcontainer', layout.south, tcomponents, context);
+                    return layout;
+                },
+                'select': function (builder, element, options) {
+                    return new StyledElements.Select(options);
+                },
+                'verticallayout': function (builder, element, options, tcomponents, context) {
+                    const layout = new StyledElements.VerticalLayout(options);
 
-                return layout;
+                    populateContainer(builder, element, 'northcontainer', layout.north, tcomponents, context);
+                    populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
+                    populateContainer(builder, element, 'southcontainer', layout.south, tcomponents, context);
+
+                    return layout;
+                }
+            };
+
+            this.build = function build(element, tcomponents, context) {
+                const builder = mapping[element.localName];
+                const options = utils.merge(extractOptions(element), extractOptionsFromAttributes(element));
+                return builder(this, element, options, tcomponents, context);
+            };
+        }
+
+        parse(document, tcomponents, context) {
+            let parser;
+
+            if (typeof document === 'string') {
+                parser = new DOMParser();
+                document = parser.parseFromString(document, 'application/xml');
             }
-        };
 
-        this.build = function build(element, tcomponents, context) {
-            var builder, options;
+            if (!(document instanceof Document)) {
+                throw new TypeError('document is not a Document or cannot be parsed into a Document');
+            }
 
-            builder = mapping[element.localName];
-            options = utils.merge(extractOptions(element), extractOptionsFromAttributes(element));
-            return builder(this, element, options, tcomponents, context);
-        };
-    };
-
-    GUIBuilder.prototype.DEFAULT_OPENING = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">';
-    GUIBuilder.prototype.DEFAULT_CLOSING = '</s:styledgui>';
-
-    GUIBuilder.prototype.parse = function parse(document, tcomponents, context) {
-        var parser;
-
-        if (typeof document === 'string') {
-            parser = new DOMParser();
-            document = parser.parseFromString(document, 'application/xml');
+            return processRoot(this, document.documentElement, tcomponents, context);
         }
 
-        if (!(document instanceof Document)) {
-            throw new TypeError('document is not a Document or cannot be parsed into a Document');
-        }
+    }
 
-        return processRoot(this, document.documentElement, tcomponents, context);
-    };
+    ns. GUIBuilder.prototype.DEFAULT_OPENING = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">';
+    ns.GUIBuilder.prototype.DEFAULT_CLOSING = '</s:styledgui>';
 
-    StyledElements.GUIBuilder = GUIBuilder;
-
-})(StyledElements.Utils);
+})(StyledElements, StyledElements.Utils);

@@ -28,14 +28,14 @@
     "use strict";
 
     // Internal variables
-    var coverLayerElement = null;
-    var currentWindowMenu = null;
+    let coverLayerElement = null;
+    let currentWindowMenu = null;
     const currentPopups = [];
-    var currentTooltip = null;
-    var alternatives = null;
+    let currentTooltip = null;
+    let alternatives = null;
 
     // Public interface
-    var UserInterfaceManager = {
+    const UserInterfaceManager = {
         rootKeydownHandler: null,
         workspaceviews: {}
     };
@@ -47,18 +47,110 @@
     /**
      * @private
      */
-    var fadeInCover = function fadeInCover() {
+    const fadeInCover = function fadeInCover() {
         coverLayerElement.classList.add('in');
     };
 
-    var showCover = function showCover() {
+    const showCover = function showCover() {
         coverLayerElement.style.display = "block";
         setTimeout(fadeInCover, 0);
     };
 
-    var hideCover = function hideCover() {
+    const hideCover = function hideCover() {
         coverLayerElement.classList.remove('in');
         coverLayerElement.style.display = "none";
+    };
+
+    const on_keydown = function (event) {
+        const modifiers = {
+            altKey: event.altKey,
+            ctrlKey: event.ctrlKey,
+            metaKey: event.metaKey,
+            shiftKey: event.shiftKey
+        };
+        const key = utils.normalizeKey(event);
+
+        // if there are not modals, check if the current view can consume this keydown event
+        let consumed;
+        if (currentWindowMenu == null) {
+            consumed = utils.callCallback(UserInterfaceManager.rootKeydownHandler, key, modifiers);
+        } else if (key === "Backspace") {
+            // Ignore backspace keydown events if we are in a modals
+            consumed = true;
+        }
+
+        // Handle default shortcuts
+        if (!consumed && key === "Escape") {
+            UserInterfaceManager.handleEscapeEvent();
+        }
+
+        if (consumed) {
+            event.preventDefault();
+        }
+    };
+
+    const updateTaskProgress = function updateTaskProgress(task, progress) {
+        let msg;
+
+        msg = utils.gettext("%(task)s %(percentage)s%");
+        msg = utils.interpolate(msg, {task: task.title, percentage: Math.round(progress)}, true);
+        document.getElementById("loading-task-title").textContent = msg;
+
+        const list = document.createElement('ul');
+        task.subtasks.forEach(function (subtask) {
+            if (subtask.type === "then") {
+                if (subtask.subtasks.length === 0) {
+                    return;
+                }
+                subtask = subtask.subtasks[0];
+            }
+
+            if (subtask.title !== "") {
+                const msg = utils.interpolate(utils.gettext("%(subTask)s: %(percentage)s%"), {
+                    subTask: subtask.title,
+                    percentage: Math.round(subtask.progress)
+                }, true);
+                const li = document.createElement('li');
+                li.textContent = msg;
+                list.appendChild(li);
+            }
+        });
+
+        document.getElementById("loading-subtask-title").innerHTML = '';
+        document.getElementById("loading-subtask-title").appendChild(list);
+    };
+
+    const resizeUI = function resizeUI() {
+        alternatives.repaint();
+        // Recalculate menu positions
+        currentPopups.forEach((popup) => {
+            popup.repaint();
+        });
+
+        if (currentTooltip != null) {
+            currentTooltip.repaint();
+        }
+    };
+
+    const notifyPlatformReady = function notifyPlatformReady() {
+        const loadingElement = document.getElementById("loading-window");
+        if (loadingElement.classList.contains("in")) {
+            loadingElement.classList.remove("in");
+        } else {
+            loadingElement.classList.remove("fade");
+        }
+    };
+
+    const on_click = function on_click(event) {
+        const loadingElement = document.getElementById("loading-window");
+        if (!(loadingElement.classList.contains("in"))) {
+            loadingElement.classList.remove("fade");
+        }
+    };
+
+    const on_fullscreen_change = function on_fullscreen_change(event) {
+        const baseelement = utils.getFullscreenElement() || document.body;
+        baseelement.insertBefore(coverLayerElement, baseelement.firstChild);
     };
 
     UserInterfaceManager.init = function init() {
@@ -114,16 +206,14 @@
 
             // Check if the workspace needs to ask some values before loading this workspace
             if (workspace.emptyparams.length > 0) {
-                var preferences, preferenceValues, dialog;
-
-                preferenceValues = {};
+                const preferenceValues = {};
                 workspace.emptyparams.forEach((emptyparam) => {
                     if (workspace.preferences[emptyparam] != null) {
                         preferenceValues[emptyparam] = workspace.preferences[emptyparam];
                     }
                 });
 
-                preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, workspace, workspace.extraprefs, workspace.emptyparams);
+                const preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, workspace, workspace.extraprefs, workspace.emptyparams);
                 preferences.addEventListener('post-commit', function () {
                     setTimeout(function () {
                         Wirecloud.UserInterfaceManager.monitorTask(
@@ -132,13 +222,13 @@
                     }, 0);
                 }.bind(this));
 
-                dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
+                const dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
                 dialog.show();
                 return;
             }
 
             // init new active workspace
-            var state = Wirecloud.HistoryManager.getCurrentState();
+            const state = Wirecloud.HistoryManager.getCurrentState();
             try {
                 this.loadWorkspace(workspace, {initialtab: state.tab});
             } catch (error) {
@@ -161,8 +251,8 @@
 
             // Handle tab changes
             this.notebook.addEventListener("changed", function (notebook, oldTab, newTab) {
-                var currentState = Wirecloud.HistoryManager.getCurrentState();
-                var newState = utils.merge({}, currentState, {
+                const currentState = Wirecloud.HistoryManager.getCurrentState();
+                const newState = utils.merge({}, currentState, {
                     tab: newTab.model.name,
                     tab_id: newTab.model.id
                 });
@@ -174,7 +264,7 @@
 
             // Init wiring error badge
             this._updateWiringErrors = function (entry) {
-                var errorCount = workspace.wiring.errorCount;
+                const errorCount = workspace.wiring.errorCount;
                 this.wiringButton.setBadge(errorCount ? errorCount : null, 'danger');
             }.bind(this);
 
@@ -245,7 +335,7 @@
             };
         }
 
-        var main_alts = [this.views.wiring, this.views.workspace];
+        const main_alts = [this.views.wiring, this.views.workspace];
         if (main_alts.indexOf(alternatives.visibleAlt) !== -1 && main_alts.indexOf(newView) !== -1) {
             options.effect = StyledElements.Alternatives.HORIZONTAL_SLIDE;
         } else {
@@ -309,7 +399,7 @@
     };
 
     UserInterfaceManager._unregisterPopup = function _unregisterPopup(popup) {
-        var index = currentPopups.indexOf(popup);
+        const index = currentPopups.indexOf(popup);
         if (index !== -1) {
             currentPopups.splice(index, 1);
         }
@@ -341,7 +431,7 @@
     };
 
     UserInterfaceManager.monitorTask = function monitorTask(task) {
-        var element = document.getElementById("loading-window");
+        const element = document.getElementById("loading-window");
         element.classList.add("in");
         element.classList.add("fade");
 
@@ -357,104 +447,11 @@
 
     UserInterfaceManager.onHistoryChange = function onHistoryChange(state) {
         this.changeCurrentView(state.view, true).then((info) => {
-            let nextView = info.in;
+            const nextView = info.in;
             if ('onHistoryChange' in nextView) {
                 nextView.onHistoryChange(state);
             }
         });
-    };
-
-    const on_keydown = function (event) {
-        var modifiers, key, consumed;
-
-        modifiers = {
-            altKey: event.altKey,
-            ctrlKey: event.ctrlKey,
-            metaKey: event.metaKey,
-            shiftKey: event.shiftKey
-        };
-        key = utils.normalizeKey(event);
-
-        // if there are not modals, check if the current view can consume this keydown event
-        if (currentWindowMenu == null) {
-            consumed = utils.callCallback(UserInterfaceManager.rootKeydownHandler, key, modifiers);
-        } else if (key === "Backspace") {
-            // Ignore backspace keydown events if we are in a modals
-            consumed = true;
-        }
-
-        // Handle default shortcuts
-        if (!consumed && key === "Escape") {
-            UserInterfaceManager.handleEscapeEvent();
-        }
-
-        if (consumed) {
-            event.preventDefault();
-        }
-    };
-
-    var updateTaskProgress = function updateTaskProgress(task, progress) {
-        var msg;
-
-        msg = utils.gettext("%(task)s %(percentage)s%");
-        msg = utils.interpolate(msg, {task: task.title, percentage: Math.round(progress)}, true);
-        document.getElementById("loading-task-title").textContent = msg;
-
-        var list = document.createElement('ul');
-        task.subtasks.forEach(function (subtask) {
-            if (subtask.type === "then") {
-                if (subtask.subtasks.length === 0) {
-                    return;
-                }
-                subtask = subtask.subtasks[0];
-            }
-
-            if (subtask.title !== "") {
-                var msg = utils.interpolate(utils.gettext("%(subTask)s: %(percentage)s%"), {
-                    subTask: subtask.title,
-                    percentage: Math.round(subtask.progress)
-                }, true);
-                var li = document.createElement('li');
-                li.textContent = msg;
-                list.appendChild(li);
-            }
-        });
-
-        document.getElementById("loading-subtask-title").innerHTML = '';
-        document.getElementById("loading-subtask-title").appendChild(list);
-    };
-
-    var resizeUI = function resizeUI() {
-        alternatives.repaint();
-        // Recalculate menu positions
-        currentPopups.forEach((popup) => {
-            popup.repaint();
-        });
-
-        if (currentTooltip != null) {
-            currentTooltip.repaint();
-        }
-    };
-
-    var notifyPlatformReady = function notifyPlatformReady() {
-        var loadingElement = document.getElementById("loading-window");
-        if (loadingElement.classList.contains("in")) {
-            loadingElement.classList.remove("in");
-        } else {
-            loadingElement.classList.remove("fade");
-        }
-    };
-
-    var on_click = function on_click(event) {
-        var loadingElement = document.getElementById("loading-window");
-        if (!(loadingElement.classList.contains("in"))) {
-            loadingElement.classList.remove("fade");
-        }
-    };
-
-    var on_fullscreen_change = function on_fullscreen_change(event) {
-        var baseelement = utils.getFullscreenElement() || document.body;
-        baseelement.insertBefore(coverLayerElement, baseelement.firstChild);
     };
 
     Wirecloud.UserInterfaceManager = UserInterfaceManager;

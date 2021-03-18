@@ -57,7 +57,7 @@
 
         privates.get(this).active = newstatus;
 
-        let icon = this.active ? ICON[this.position] : OPPOSITE[this.position];
+        const icon = this.active ? ICON[this.position] : OPPOSITE[this.position];
         this.handleicon.className = "fas fa-caret-" + icon;
 
         this._notifyWindowResizeEvent(true, true);
@@ -189,7 +189,7 @@
         }
 
         initialize() {
-            let modified = super.initialize();
+            const  modified = super.initialize();
             const firstWidget = getFirstWidget(this.matrix);
             if (firstWidget != null) {
                 firstWidget.wrapperElement.appendChild(this.handle);

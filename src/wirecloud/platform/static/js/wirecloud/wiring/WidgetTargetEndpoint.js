@@ -71,14 +71,14 @@
 
         getReachableEndpoints() {
 
-            var result, actionlabel = this.meta.actionlabel;
+            let actionlabel = this.meta.actionlabel;
 
             if (!actionlabel || actionlabel === '') {
                 actionlabel = utils.gettext('Use in %(endpointName)s');
                 actionlabel = utils.interpolate(actionlabel, {endpointName: this.meta.label}, true);
             }
 
-            result = this.toJSON();
+            const result = this.toJSON();
             result.actionlabel = actionlabel;
             result.iWidgetName = this.component.title;
 
@@ -86,7 +86,7 @@
         }
 
         propagate(newValue, options) {
-            var msg, details;
+            let msg, details;
 
             if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
                 if (this.component.loaded) {

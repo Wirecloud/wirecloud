@@ -98,21 +98,21 @@
         describe("new WorkspaceTabViewDragboard", () => {
 
             it("should start empty", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 expect(dragboard.tab).toBe(tab);
                 expect(dragboard.widgets).toEqual([]);
                 expect(dragboard.baseLayout).toEqual(jasmine.any(Wirecloud.ui.GridLayout));
             });
 
             it("should configure base layout", () => {
-                let tab = create_tab();
+                const tab = create_tab();
                 tab.model.preferences.get.and.returnValue({
                     "type": "columnlayout",
                     "smart": true,
                     "columns": 20
                 })
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 expect(dragboard.tab).toBe(tab);
                 expect(dragboard.widgets).toEqual([]);
                 expect(dragboard.baseLayout).toEqual(jasmine.any(Wirecloud.ui.SmartColumnLayout));
@@ -123,9 +123,9 @@
         describe("_addWidget(widget)", () => {
 
             it("should add widget on top if widget is not z-positioned", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
-                let widget = create_widget();
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const widget = create_widget();
 
                 dragboard._addWidget(widget);
 
@@ -138,15 +138,15 @@
             });
 
             it("should move widgets when z position is already taken", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
-                let widget1 = create_widget({z: 0});
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const widget1 = create_widget({z: 0});
                 dragboard._addWidget(widget1);
-                let widget2 = create_widget({z: 1});
+                const widget2 = create_widget({z: 1});
                 dragboard._addWidget(widget2);
-                let widget3 = create_widget({z: 2});
+                const widget3 = create_widget({z: 2});
                 dragboard._addWidget(widget3);
-                let newwidget = create_widget({z: 1});
+                const newwidget = create_widget({z: 1});
                 widget1.setPosition.calls.reset();
                 widget2.setPosition.calls.reset();
                 widget3.setPosition.calls.reset();
@@ -171,15 +171,15 @@
 
             it("should move widgets when z position is already taken (should work with holes)", () => {
                 // Holes are only accepted while loading the dashboard as widgets can be loaded without taking into account the z-index order, once loaded, holes are not accepted
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
-                let widget1 = create_widget({z: 0});
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const widget1 = create_widget({z: 0});
                 dragboard._addWidget(widget1);
-                let widget2 = create_widget({z: 1});
+                const widget2 = create_widget({z: 1});
                 dragboard._addWidget(widget2);
-                let widget3 = create_widget({z: 4});
+                const widget3 = create_widget({z: 4});
                 dragboard._addWidget(widget3);
-                let newwidget = create_widget({z: 1});
+                const newwidget = create_widget({z: 1});
                 widget1.setPosition.calls.reset();
                 widget2.setPosition.calls.reset();
                 widget3.setPosition.calls.reset();
@@ -189,7 +189,7 @@
                 expect(dragboard.tab).toBe(tab);
                 // property 3 and 4 should not exist (this is different to be
                 // undefined)
-                let expected_array = [widget1, widget2, newwidget];
+                const expected_array = [widget1, widget2, newwidget];
                 expected_array[5] = widget3;
                 expect(dragboard.widgets).toEqual(expected_array);
                 expect(widget1.setPosition).toHaveBeenCalledWith({
@@ -207,14 +207,14 @@
             });
 
             it("should add the fixed class when restricted", () => {
-                let tab = create_tab();
+                const tab = create_tab();
                 tab.wrapperElement = {
                     classList: {
                         add: jasmine.createSpy("fixed")
                     }
                 };
                 tab.workspace.restricted = true;
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 expect(dragboard.tab).toBe(tab);
                 expect(tab.wrapperElement.classList.add).toHaveBeenCalledWith("fixed");
             });
@@ -224,15 +224,15 @@
         describe("getWidth() & getHeight()", () => {
 
             it("getHeight()", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 dragboard.dragboardHeight = 20;
                 expect(dragboard.getHeight()).toBe(20);
             });
 
             it("getWidth()", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 dragboard.dragboardWidth = 20;
                 expect(dragboard.getWidth()).toBe(20);
             });
@@ -241,10 +241,10 @@
 
         describe("lower(widget)", () => {
 
-            var dragboard, widget1, widget2, widget3;
+            let dragboard, widget1, widget2, widget3;
 
             beforeEach(() => {
-                let tab = create_tab();
+                const tab = create_tab();
                 dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 widget1 = create_widget();
                 dragboard._addWidget(widget1);
@@ -281,10 +281,10 @@
 
         describe("lowerToBottom(widget)", () => {
 
-            var dragboard, widget1, widget2, widget3;
+            let dragboard, widget1, widget2, widget3;
 
             beforeEach(() => {
-                let tab = create_tab();
+                const tab = create_tab();
                 dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 widget1 = create_widget();
                 dragboard._addWidget(widget1);
@@ -327,11 +327,11 @@
         describe("paint()", () => {
 
             it("should compress z indexes", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
-                let widget1 = create_widget({z: 0});
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const widget1 = create_widget({z: 0});
                 dragboard._addWidget(widget1);
-                let widget3 = create_widget({z: 2});
+                const widget3 = create_widget({z: 2});
                 dragboard._addWidget(widget3);
                 widget1.setPosition.calls.reset();
                 widget3.setPosition.calls.reset();
@@ -349,11 +349,11 @@
             });
 
             it("should do nothing if already painted", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
-                let widget1 = create_widget({z: 0});
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const widget1 = create_widget({z: 0});
                 dragboard._addWidget(widget1);
-                let widget3 = create_widget({z: 2});
+                const widget3 = create_widget({z: 2});
                 dragboard._addWidget(widget3);
                 spyOn(dragboard, "_recomputeSize");
 
@@ -370,10 +370,10 @@
 
         describe("raise(widget)", () => {
 
-            var dragboard, widget1, widget2, widget3;
+            let dragboard, widget1, widget2, widget3;
 
             beforeEach(() => {
-                let tab = create_tab();
+                const tab = create_tab();
                 dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 widget1 = create_widget();
                 dragboard._addWidget(widget1);
@@ -410,10 +410,10 @@
 
         describe("raiseToTop(widget)", () => {
 
-            var dragboard, widget1, widget2, widget3;
+            let dragboard, widget1, widget2, widget3;
 
             beforeEach(() => {
-                let tab = create_tab();
+                const tab = create_tab();
                 dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 widget1 = create_widget();
                 dragboard._addWidget(widget1);
@@ -456,13 +456,13 @@
         describe("_removeWidget(widget)", () => {
 
             it("should add widget on top if widget is not z-positioned", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
-                let widget1 = create_widget({"id": "1"});
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const widget1 = create_widget({"id": "1"});
                 dragboard._addWidget(widget1);
-                let widget2 = create_widget({"id": "2"});
+                const widget2 = create_widget({"id": "2"});
                 dragboard._addWidget(widget2);
-                let widget3 = create_widget({"id": "3"});
+                const widget3 = create_widget({"id": "3"});
                 dragboard._addWidget(widget3);
 
                 dragboard._removeWidget(widget2);
@@ -476,8 +476,8 @@
         describe("_recomputeSize()", () => {
 
             it("DEPRECATED recompute size (display: none)", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 spyOn(document.defaultView, "getComputedStyle").and.returnValue({
                     getPropertyValue: jasmine.createSpy("getPropertyValue").and.returnValue("none"),
                 });
@@ -486,11 +486,11 @@
             });
 
             it("DEPRECATED recompute size", () => {
-                let parentElement = document.createElement('div');
-                let tab = create_tab();
+                const parentElement = document.createElement('div');
+                const tab = create_tab();
                 tab.wrapperElement = document.createElement('div');
                 parentElement.appendChild(tab.wrapperElement);
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 spyOn(document.defaultView, "getComputedStyle").and.returnValue({
                     getPropertyValue: jasmine.createSpy("getPropertyValue").and.returnValue("block"),
                     getPropertyCSSValue: () => {
@@ -508,8 +508,8 @@
         describe("_notifyWindowResizeEvent()", () => {
 
             it("DEPRECATED resize event", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 spyOn(dragboard, "_recomputeSize").and.callFake(function () {
                     this.dragboardWidth = 50;
                     this.dragboardHeight = 20;
@@ -523,8 +523,8 @@
             });
 
             it("DEPRECATED resize event (no change)", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 spyOn(dragboard, "_recomputeSize");
 
                 dragboard._notifyWindowResizeEvent();
@@ -537,9 +537,9 @@
         describe("_updateBaseLayout()", () => {
 
             it("should update base layout", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
-                let initial_base_layout = dragboard.baseLayout;
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const initial_base_layout = dragboard.baseLayout;
                 tab.model.preferences.get.and.returnValue({
                     "type": "columnlayout",
                     "smart": false,
@@ -558,8 +558,8 @@
         describe("_updateIWidgetSizes(widthChanged, heightChanged)", () => {
 
             it("should update all the layouts", () => {
-                let tab = create_tab();
-                let dragboard = new ns.WorkspaceTabViewDragboard(tab);
+                const tab = create_tab();
+                const dragboard = new ns.WorkspaceTabViewDragboard(tab);
 
                 dragboard._updateIWidgetSizes(true, false);
 
@@ -572,10 +572,10 @@
 
         describe("update([ids])", () => {
 
-            var dragboard, widget1, widget2, widget3;
+            let dragboard, widget1, widget2, widget3;
 
             beforeEach(() => {
-                let tab = create_tab();
+                const tab = create_tab();
                 dragboard = new ns.WorkspaceTabViewDragboard(tab);
                 widget1 = create_widget({"id": "1"});
                 dragboard._addWidget(widget1);
@@ -592,11 +592,11 @@
 
             it("should do nothing when no passing the ids parameter and not editing", (done) => {
                 spyOn(Wirecloud.io, "makeRequest");
-                let tab = create_tab();
+                const tab = create_tab();
                 tab.workspace.editing = false;
                 dragboard = new ns.WorkspaceTabViewDragboard(tab);
 
-                let p = dragboard.update();
+                const p = dragboard.update();
 
                 p.then(() => {
                     expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
@@ -606,11 +606,11 @@
 
             it("should do nothing when passing the ids parameter and not editing", (done) => {
                 spyOn(Wirecloud.io, "makeRequest");
-                let tab = create_tab();
+                const tab = create_tab();
                 tab.workspace.editing = false;
                 dragboard = new ns.WorkspaceTabViewDragboard(tab);
 
-                let p = dragboard.update(["1"]);
+                const p = dragboard.update(["1"]);
 
                 p.then(() => {
                     expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
@@ -623,11 +623,11 @@
                     return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});});
                 });
 
-                let p = dragboard.update();
+                const p = dragboard.update();
 
                 p.then(() => {
                     expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
-                    let body = JSON.parse(Wirecloud.io.makeRequest.calls.argsFor(0)[1].postBody);
+                    const body = JSON.parse(Wirecloud.io.makeRequest.calls.argsFor(0)[1].postBody);
                     expect(body.length).toBe(3);
                     done();
                 }, fail);
@@ -638,11 +638,11 @@
                     return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});});
                 });
 
-                let p = dragboard.update(["1"]);
+                const p = dragboard.update(["1"]);
 
                 p.then(() => {
                     expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
-                    let body = JSON.parse(Wirecloud.io.makeRequest.calls.argsFor(0)[1].postBody);
+                    const body = JSON.parse(Wirecloud.io.makeRequest.calls.argsFor(0)[1].postBody);
                     expect(body.length).toBe(1);
                     done();
                 }, fail);
@@ -653,7 +653,7 @@
                     return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});});
                 });
 
-                let p = dragboard.update(["4", "5"]);
+                const p = dragboard.update(["4", "5"]);
 
                 p.then(() => {
                     expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
@@ -672,7 +672,7 @@
                     });
                 });
 
-                let task = dragboard.update();
+                const task = dragboard.update();
 
                 task.then(
                     (value) => {
@@ -697,7 +697,7 @@
                     });
                 });
 
-                let task = dragboard.update();
+                const task = dragboard.update();
 
                 task.then(
                     (value) => {

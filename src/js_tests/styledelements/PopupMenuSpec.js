@@ -28,12 +28,12 @@
     "use strict";
 
     describe("Styled PopupMenuBase", function () {
-        var popupMenu;
+        let popupMenu;
 
         describe("PopupMenuBase(options)", () => {
 
             it("Should be createdwith no options", function () {
-                let popupMenu = new StyledElements.PopupMenu();
+                const popupMenu = new StyledElements.PopupMenu();
                 expect(popupMenu).toBeTruthy();
                 expect(popupMenu.wrapperElement.classList[1]).toEqual("hidden");
             });
@@ -43,8 +43,8 @@
         describe("append(child)", function () {
 
             describe("Should work with MenuItem instances", function () {
-                var menuItem1, menuItem2;
-                var empty = function empty() {
+                let menuItem1, menuItem2;
+                const empty = function empty() {
                 };
                 beforeAll(function () {
                     popupMenu = new StyledElements.PopupMenu();
@@ -104,7 +104,7 @@
             describe("Should work with MenuItem instances", () => {
 
                 it("Should work", function () {
-                    let menu = new StyledElements.PopupMenu();
+                    const menu = new StyledElements.PopupMenu();
                     menu.destroy();
                 });
 
@@ -115,8 +115,8 @@
         describe("events", () => {
 
             it("should hide menu when clicking outside the menu", (done) => {
-                let ref_element = new se.Button();
-                let menu = new se.PopupMenu();
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenu();
                 spyOn(menu, "hide").and.callThrough();
                 expect(menu.show(ref_element)).toBe(menu);
 
@@ -129,8 +129,8 @@
             });
 
             it("should ignore click events outside the menu when the not using the main button", (done) => {
-                let ref_element = new se.Button();
-                let menu = new se.PopupMenu();
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenu();
                 spyOn(menu, "hide").and.callThrough();
                 expect(menu.show(ref_element)).toBe(menu);
 
@@ -143,8 +143,8 @@
             });
 
             it("should ignore click events inside the menu", (done) => {
-                let ref_element = new se.Button();
-                let menu = new se.PopupMenu();
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenu();
                 spyOn(menu, "hide").and.callThrough();
                 expect(menu.show(ref_element)).toBe(menu);
                 spyOn(menu.wrapperElement, "getBoundingClientRect").and.returnValue({top: 0, left: 0, right: 10, bottom: 10});

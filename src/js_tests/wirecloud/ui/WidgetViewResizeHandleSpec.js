@@ -47,7 +47,7 @@
             });
 
             it("should work passing a widget", () => {
-                let handle = new Wirecloud.ui.WidgetViewResizeHandle({
+                const handle = new Wirecloud.ui.WidgetViewResizeHandle({
                     heading: document.createElement("div")
                 });
                 expect(handle).toEqual(jasmine.any(se.StyledElement));
@@ -84,7 +84,7 @@
                         "fulldragboard": Wirecloud.ui.FullDragboardLayout
                     };
                     Layout = layoutMapping[Layout];
-                    let widget = Object.assign({
+                    const widget = Object.assign({
                         heading: document.createElement("div"),
                         layout: Layout != null ? new Layout() : null,
                         model: {
@@ -97,7 +97,7 @@
                             }
                         }
                     });
-                    var draggable = new Wirecloud.ui.WidgetViewResizeHandle(widget);
+                    const draggable = new Wirecloud.ui.WidgetViewResizeHandle(widget);
 
                     expect(draggable.canDrag(null, {widget: widget}, role)).toBe(result);
                 });

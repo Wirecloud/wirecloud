@@ -27,7 +27,7 @@
     "use strict";
 
     const callEventListener = function callEventListener(instance, event) {
-        var largs = Array.prototype.slice.call(arguments, 2);
+        const largs = Array.prototype.slice.call(arguments, 2);
         largs.unshift(instance);
         instance.addEventListener.calls.allArgs().some(function (args) {
             if (args[0] === event) {
@@ -52,7 +52,7 @@
     };
 
     const create_workspace = function create_workspace(options) {
-        let workspace = utils.merge({
+        const workspace = utils.merge({
             id: "1",
             owner: "user",
             name: "empty",
@@ -145,9 +145,9 @@
             */
 
             it("should load empty tabs", () => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -159,11 +159,11 @@
             });
 
             it("should load tabs with widgets", () => {
-                let workspace = create_workspace();
-                let model = create_tab({
+                const workspace = create_workspace();
+                const model = create_tab({
                     widgets: [{id: "9"}, {id: "5"}]
                 });
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -181,13 +181,13 @@
             });
 
             it("should load empty editable tabs", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.model.isAllowed.and.returnValue(true);
-                let model = create_tab({
+                const model = create_tab({
                     widgets: []
                 });
                 ns.WorkspaceTabViewMenuItems.calls.reset();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -197,13 +197,13 @@
             });
 
             it("should load editable tabs", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.model.isAllowed.and.returnValue(true);
-                let model = create_tab({
+                const model = create_tab({
                     widgets: [{id: "9"}, {id: "5"}]
                 });
                 ns.WorkspaceTabViewMenuItems.calls.reset();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -216,15 +216,15 @@
         describe("createWidget(resource[, options])", () => {
 
             it("should commit changes by default", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
@@ -235,7 +235,7 @@
                 tab.dragboard.freeLayout.columns = 20;
                 // END TODO
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -256,15 +256,15 @@
             });
 
             it("should allow commit false", () => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(widgetmodel);
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
@@ -272,7 +272,7 @@
                 tab.dragboard.baseLayout.adaptWidth.and.returnValue({inLU: 15});
                 tab.dragboard.baseLayout.columns = 20;
 
-                let created_widget = tab.createWidget(
+                const created_widget = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -285,22 +285,22 @@
             });
 
             it("should support the refposition option", () => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(widgetmodel);
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
                 tab.dragboard.freeLayout.searchBestPosition = jasmine.createSpy("searchBestPosition").and.returnValue({x: 1, y: 2});
 
-                let created_widget = tab.createWidget(
+                const created_widget = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -316,27 +316,27 @@
             });
 
             it("should honour initiallayout preference", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
+                const workspace = create_workspace();
+                const model = create_tab();
                 model.preferences.get.and.returnValue("Free");
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.callFake((resource, options) => {
                     expect(options.left).toEqual(1);
                     expect(options.top).toEqual(2);
                     return Promise.resolve(widgetmodel);
                 });
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
                 tab.dragboard.freeLayout._searchFreeSpace = jasmine.createSpy("_searchFreeSpace").and.returnValue({x: 1, y: 2});
 
-                let p = tab.createWidget({
+                const p = tab.createWidget({
                     default_height: "120px",
                     default_width: "33%"
                 });
@@ -348,25 +348,25 @@
             });
 
             it("should allow to create widgets on the left sidebar layout", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.callFake((resource, options) => {
                     expect(options.left).toEqual(0);
                     expect(options.top).toEqual(0);
                     return Promise.resolve(widgetmodel);
                 });
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -382,21 +382,21 @@
             });
 
             it("should allow to create widgets on the right sidebar layout", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -412,21 +412,21 @@
             });
 
             it("should allow to create widgets using the relx option", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -444,21 +444,21 @@
             });
 
             it("should allow to create widgets using the rely option", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -476,21 +476,21 @@
             });
 
             it("should allow to create widgets using the relwidth option", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -508,21 +508,21 @@
             });
 
             it("should allow to create widgets using the relheight option", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -540,21 +540,21 @@
             });
 
             it("should allow to create widgets with fixed position (left and top)", (done) => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: 80};
+                const widgetmodel = {id: 80};
                 model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
-                let widget = {id: 80};
+                const widget = {id: 80};
                 spyOn(tab, "findWidget").and.callFake((id) => {
                     expect(id).toBe(80);
                     return widget;
                 });
 
-                let p = tab.createWidget(
+                const p = tab.createWidget(
                     {
                         default_height: "120px",
                         default_width: "33%"
@@ -576,9 +576,9 @@
         describe("highlight()", () => {
 
             it("should add the highlight CSS class", () => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -591,11 +591,11 @@
         describe("show()", () => {
 
             it("should load all the widgets from the tab", () => {
-                let workspace = create_workspace();
-                let model = create_tab({
+                const workspace = create_workspace();
+                const model = create_tab({
                     widgets: [{}, {}]
                 });
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -606,10 +606,10 @@
             });
 
             it("should expand side layouts when editing", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.editing = true;
-                let model = create_tab({});
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const model = create_tab({});
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -625,16 +625,16 @@
         describe("showSettings()", () => {
 
             it("should display the settings dialog", () => {
-                var show;
+                let show;
                 // TODO
                 ns.PreferencesWindowMenu = jasmine.createSpy("PreferencesWindowMenu").and.callFake(function () {
                     this.show = show = jasmine.createSpy("show");
                 });
-                let workspace = create_workspace();
-                let model = create_tab({
+                const workspace = create_workspace();
+                const model = create_tab({
                     widgets: [{}, {}]
                 });
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -649,7 +649,7 @@
 
         describe("tab events", () => {
 
-            var workspace, model, tab;
+            let workspace, model, tab;
 
             beforeEach(() => {
                 workspace = create_workspace();
@@ -674,7 +674,7 @@
 
             it("should handle title changes", () => {
                 spyOn(StyledElements.Tab.prototype, "rename");
-                let newtitle = "NewTitle";
+                const newtitle = "NewTitle";
                 model.title = newtitle;
 
                 callEventListener(model, "change", ['title']);
@@ -690,7 +690,7 @@
                     tab: "oldname"
                 });
                 spyOn(Wirecloud.HistoryManager, "replaceState");
-                let newname = "new-name";
+                const newname = "new-name";
                 model.name = newname;
                 tab.hidden = false;
 
@@ -708,7 +708,7 @@
                 spyOn(StyledElements.Tab.prototype, "rename");
                 spyOn(Wirecloud.HistoryManager, "getCurrentState");
                 spyOn(Wirecloud.HistoryManager, "replaceState");
-                let newname = "new-name";
+                const newname = "new-name";
                 model.name = newname;
                 tab.hidden = true;
 
@@ -727,14 +727,14 @@
             });
 
             it("should handle addwidget events (visible tab)", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.model.isAllowed.and.returnValue(true);
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: "20"};
+                const widgetmodel = {id: "20"};
                 tab.hidden = false;
 
                 callEventListener(model, "addwidget", widgetmodel, null);
@@ -750,14 +750,14 @@
             });
 
             it("should handle addwidget events (hidden tab)", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.model.isAllowed.and.returnValue(true);
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: "20"};
+                const widgetmodel = {id: "20"};
                 tab.hidden = true;
 
                 callEventListener(model, "addwidget", widgetmodel, null);
@@ -773,14 +773,14 @@
             });
 
             it("should handle addwidget events related to move widgets between tabs", () => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widgetmodel = {id: "20"};
-                let widgetview = new ns.WidgetView(null, widgetmodel);
+                const widgetmodel = {id: "20"};
+                const widgetview = new ns.WidgetView(null, widgetmodel);
                 ns.WidgetView.calls.reset();
                 tab.hidden = true;
 
@@ -795,16 +795,16 @@
             });
 
             it("should handle removewidget events", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.model.isAllowed.and.returnValue(true);
-                let model = create_tab({
+                const model = create_tab({
                     widgets: [{id: "9"}, {id: "5"}]
                 });
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widget = tab.findWidget("5");
+                const widget = tab.findWidget("5");
 
                 callEventListener(model, "removewidget", widget);
 
@@ -818,16 +818,16 @@
             });
 
             it("should display empty message when adequated on removewidget events", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.model.isAllowed.and.returnValue(true);
-                let model = create_tab({
+                const model = create_tab({
                     widgets: [{id: "5"}]
                 });
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
-                let widget = tab.findWidget("5");
+                const widget = tab.findWidget("5");
 
                 callEventListener(model, "removewidget", widget);
 
@@ -837,12 +837,12 @@
             });
 
             it("should handle edit mode change events", () => {
-                let workspace = create_workspace();
+                const workspace = create_workspace();
                 workspace.model.isAllowed.and.returnValue(true);
-                let model = create_tab({
+                const model = create_tab({
                     widgets: [{id: "9"}, {id: "5"}]
                 });
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
@@ -859,9 +859,9 @@
         describe("unhighlight()", () => {
 
             it("should remove the highlight CSS class", () => {
-                let workspace = create_workspace();
-                let model = create_tab();
-                let tab = new ns.WorkspaceTabView("1", notebook, {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });

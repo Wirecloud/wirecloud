@@ -26,8 +26,8 @@
 
     "use strict";
 
-    var loaded = false;
-    var OPERATOR = {
+    let loaded = false;
+    const OPERATOR = {
         id: "1",
         load: jasmine.createSpy('load'),
         logManager: {
@@ -59,13 +59,13 @@
         describe("new OperatorTargetEndpoint(operatorModel, [endpointDesc])", function () {
 
             it("should create a new instance", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     description: "description",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.component).toBe(OPERATOR);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -76,19 +76,19 @@
             });
 
             it("should create a new instance with no endpointDesc.description", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.description).toBe("");
             });
 
             it("should create a new instance with no endpointDesc", function () {
                 /* The Dashboard Management API doesn't provide a endpointDesc */
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR);
 
                 expect(endpoint.component).toBe(OPERATOR);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -97,12 +97,12 @@
             });
 
             it("should handle empty friendcodes", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: ""
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.friendcodeList).toEqual([]);
             });
@@ -112,13 +112,13 @@
         describe("getReachableEndpoints()", function () {
 
             it("should return the info for targeting this endpoint in a list", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     actionlabel: "Send tweet",
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var expected_result = [
+                const expected_result = [
                     {
                         actionlabel: "Send tweet",
                         endpoint: "source",
@@ -126,18 +126,18 @@
                         type: OPERATOR.meta.type
                     }
                 ];
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.getReachableEndpoints()).toEqual(expected_result);
             });
 
             it("should provide a default action label if the endpoint does not provide it", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var expected_result = [
+                const expected_result = [
                     {
                         actionlabel: "Use in title",
                         endpoint: "source",
@@ -145,7 +145,7 @@
                         type: OPERATOR.meta.type
                     }
                 ];
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.getReachableEndpoints()).toEqual(expected_result);
             });
@@ -155,24 +155,24 @@
         describe("propagate(event, [options])", function () {
 
             it("should add the event to the pending_events list if the operator is currently unloaded", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 endpoint.propagate("test");
                 expect(OPERATOR.pending_events.push.calls.count()).toBe(1);
                 expect(OPERATOR.load.calls.count()).toBe(0);
             });
 
             it("should call endpoint listener", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -183,12 +183,12 @@
             });
 
             it("should propagate EndpointValueError errors", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 spyOn(endpoint, "callback").and.throwError(new ns.EndpointValueError("test"));
                 loaded = true;
 
@@ -200,12 +200,12 @@
             });
 
             it("should propagate EndpointTypeError errors", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 spyOn(endpoint, "callback").and.throwError(new ns.EndpointTypeError("test"));
                 loaded = true;
 
@@ -217,12 +217,12 @@
             });
 
             it("should log an error if the widget has not provided a listener", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 loaded = true;
 
                 endpoint.propagate("test");
@@ -231,12 +231,12 @@
             });
 
             it("should catch any other error calling the endpoint listener", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 spyOn(endpoint, "callback").and.throwError(new TypeError("test"));
                 loaded = true;
 
@@ -247,12 +247,12 @@
             });
 
             it("should call the callback if the event targets this endpoint", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -262,12 +262,12 @@
             });
 
             it("should ignore any event not targeting this endpoint", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -277,12 +277,12 @@
             });
 
             it("should ignore third-party options", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -295,12 +295,12 @@
 
         describe("toString()", function () {
             it("should convert the endpoint into a string", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.toString()).toEqual(["operator", OPERATOR.id, endpointDesc.name].join("/"));
             });
@@ -308,17 +308,17 @@
 
         describe("toJSON()", function () {
             it("should convert the endpoint into a JSON object", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var expected_result = {
+                const expected_result = {
                     id: OPERATOR.id,
                     type: "operator",
                     endpoint: endpointDesc.name
                 };
-                var endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
+                const endpoint = new ns.OperatorTargetEndpoint(OPERATOR, endpointDesc);
 
                 expect(endpoint.toJSON()).toEqual(expected_result);
             });

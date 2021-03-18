@@ -36,7 +36,7 @@
      * @param iWidget iWidget that is going to be represented by the new dragboard
      *                cursor
      */
-    var DragboardCursor = function DragboardCursor(widget) {
+    const DragboardCursor = function DragboardCursor(widget) {
         this.widget = widget;
 
         this.id = 'cursor';

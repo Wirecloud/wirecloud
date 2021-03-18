@@ -41,7 +41,7 @@
             describe("process boolean values", () => {
 
                 it("boolean: false", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "boolean", default: "true"}),
                         false,
                         false,
@@ -51,7 +51,7 @@
                 });
 
                 it("boolean: true", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "boolean", default: "false"}),
                         false,
                         false,
@@ -61,7 +61,7 @@
                 });
 
                 it("string: false", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "boolean", default: "true"}),
                         false,
                         false,
@@ -71,7 +71,7 @@
                 });
 
                 it("string: true", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "boolean", default: "false"}),
                         false,
                         false,
@@ -85,7 +85,7 @@
             describe("process number values", () => {
 
                 it("number: 5", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "number"}),
                         false,
                         false,
@@ -95,7 +95,7 @@
                 });
 
                 it("number: -25.3434", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "number"}),
                         false,
                         false,
@@ -105,7 +105,7 @@
                 });
 
                 it("string: 5", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "number"}),
                         false,
                         false,
@@ -115,7 +115,7 @@
                 });
 
                 it("string: true", () => {
-                    var pref = new Wirecloud.UserPref(
+                    const pref = new Wirecloud.UserPref(
                         new Wirecloud.UserPrefDef({name: "pref", type: "number"}),
                         false,
                         false,
@@ -131,7 +131,7 @@
         describe("getInterfaceDescription()", () => {
 
             it("support text preferences", () => {
-                var pref = new Wirecloud.UserPref(
+                const pref = new Wirecloud.UserPref(
                     new Wirecloud.UserPrefDef({name: "pref", type: "text"}),
                     false,
                     false,
@@ -141,7 +141,7 @@
             });
 
             it("support number preferences", () => {
-                var pref = new Wirecloud.UserPref(
+                const pref = new Wirecloud.UserPref(
                     new Wirecloud.UserPrefDef({name: "pref", type: "text"}),
                     false,
                     false,
@@ -151,7 +151,7 @@
             });
 
             it("support list preferences", () => {
-                var pref = new Wirecloud.UserPref(
+                const pref = new Wirecloud.UserPref(
                     new Wirecloud.UserPrefDef({
                         name: "pref",
                         type: "list",

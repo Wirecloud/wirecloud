@@ -26,8 +26,8 @@
 
     "use strict";
 
-    var build_disable_elements_list = function build_disable_elements_list(list) {
-        var i, elements, result = [];
+    const build_disable_elements_list = function build_disable_elements_list(list) {
+        let i, elements, result = [];
 
         for (i = 0; i < list.length; i++) {
             if (typeof list[i] === 'object') {
@@ -47,7 +47,7 @@
         return result;
     };
 
-    var get_simple_element = function get_simple_element(element, fallback) {
+    const get_simple_element = function get_simple_element(element, fallback) {
         if (element == null) {
             element = fallback;
         }
@@ -59,8 +59,8 @@
         }
     };
 
-    var configure_next_step_phase = function configure_next_step_phase() {
-        var msg, targetElement;
+    const configure_next_step_phase = function configure_next_step_phase() {
+        let msg, targetElement;
 
         if (this.popup) {
             this.popup.destroy();
@@ -100,7 +100,7 @@
         }
     };
 
-    var configure_start_phase = function configure_start_phase() {
+    const configure_start_phase = function configure_start_phase() {
         if (this.popup) {
             this.popup.destroy();
         }
@@ -122,8 +122,8 @@
         this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial));
     };
 
-    var clear_restart_handlers = function clear_restart_handlers() {
-        var i, restart_handler;
+    const clear_restart_handlers = function clear_restart_handlers() {
+        let i, restart_handler;
 
         for (i = 0; i < this.restart_handlers.length; i++) {
             restart_handler = this.restart_handlers[i];
@@ -132,8 +132,8 @@
         this.restart_handlers = [];
     };
 
-    var restartStep = function restartStep() {
-        var i;
+    const restartStep = function restartStep() {
+        let i;
 
         this.next_element.removeEventListener(this.event, this.nextHandler, this.options.eventCapture);
         this.next_element = null;
@@ -147,7 +147,32 @@
         configure_start_phase.call(this);
     };
 
-    var UserAction = function UserAction(tutorial, options) {
+    /**
+     * set next handler
+     */
+    const nextHandler = function nextHandler() {
+        if (this.isWaitingForDeactivateLayerEvent) {
+            return;
+        }
+
+        this.next_element.removeEventListener(this.event, this.nextHandler, this.options.eventCapture);
+        this.next_element = null;
+        this.tutorial.nextStep();
+    };
+
+    const _activate = function _activate(element) {
+        if (element != null) {
+            this.start_element = element;
+        }
+
+        if (this.options.eventToDeactivateLayer != null) {
+            configure_start_phase.call(this);
+        } else {
+            configure_next_step_phase.call(this);
+        }
+    };
+
+    const UserAction = function UserAction(tutorial, options) {
         this.options = options;
         // Normalize asynchronous option
         this.options.asynchronous = !!this.options.asynchronous;
@@ -215,7 +240,7 @@
      * set next handler
      */
     UserAction.prototype.deactivateLayer = function deactivateLayer() {
-        var i, restart_handler, element;
+        let i, restart_handler, element;
 
         this.isWaitingForDeactivateLayerEvent = false;
         this.start_element.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, true);
@@ -228,7 +253,7 @@
             this.restart_handlers.push({'element': element, 'event': restart_handler.event, 'func': this.restartStep});
         }
 
-        var disableElems = build_disable_elements_list(this.disableElems);
+        const disableElems = build_disable_elements_list(this.disableElems);
         for (i = 0; i < disableElems.length; i++) {
             this.disableLayer[i] = this.disable(disableElems[i]);
         }
@@ -240,10 +265,8 @@
      * disable html element
      */
     UserAction.prototype.disable = function disable(elem) {
-        var pos, disableLayer;
-
-        pos = elem.getBoundingClientRect();
-        disableLayer = document.createElement("div");
+        const pos = elem.getBoundingClientRect();
+        const disableLayer = document.createElement("div");
         disableLayer.className = 'disableLayer';
         disableLayer.style.top = pos.top + 'px';
         disableLayer.style.left = pos.left + 'px';
@@ -251,31 +274,6 @@
         disableLayer.style.height = pos.height + 'px';
         this.layer.appendChild(disableLayer);
         return disableLayer;
-    };
-
-    /**
-     * set next handler
-     */
-    var nextHandler = function nextHandler() {
-        if (this.isWaitingForDeactivateLayerEvent) {
-            return;
-        }
-
-        this.next_element.removeEventListener(this.event, this.nextHandler, this.options.eventCapture);
-        this.next_element = null;
-        this.tutorial.nextStep();
-    };
-
-    var _activate = function _activate(element) {
-        if (element != null) {
-            this.start_element = element;
-        }
-
-        if (this.options.eventToDeactivateLayer != null) {
-            configure_start_phase.call(this);
-        } else {
-            configure_next_step_phase.call(this);
-        }
     };
 
     /**
@@ -293,7 +291,7 @@
      * Destroy
      */
     UserAction.prototype.destroy = function destroy() {
-        var i;
+        let i;
 
         if (this.start_element) {
             this.start_element.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, true);

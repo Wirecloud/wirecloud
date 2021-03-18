@@ -54,13 +54,13 @@
     };
 
     const standsOut = function standsOut(options) {
-        var width_in_pixels = this.getWidthInPixels(options.width);
-        var height_in_pixels = options.height;
+        const width_in_pixels = this.getWidthInPixels(options.width);
+        const height_in_pixels = options.height;
 
-        var visible_width = width_in_pixels - Math.max(options.left + width_in_pixels - this.getWidth(), 0) - Math.max(-options.left, 0);
-        var visible_height = height_in_pixels - Math.max(options.top + height_in_pixels - this.getHeight(), 0) - Math.max(-options.top, 0);
-        var element_area = width_in_pixels * height_in_pixels;
-        var visible_area = visible_width * visible_height;
+        const visible_width = width_in_pixels - Math.max(options.left + width_in_pixels - this.getWidth(), 0) - Math.max(-options.left, 0);
+        const visible_height = height_in_pixels - Math.max(options.top + height_in_pixels - this.getHeight(), 0) - Math.max(-options.top, 0);
+        const element_area = width_in_pixels * height_in_pixels;
+        const visible_area = visible_width * visible_height;
         return element_area - visible_area;
     };
 
@@ -104,10 +104,10 @@
         }
 
         getColumnOffset(position, css) {
-            let margin = position.anchor.endsWith("left") ? this.dragboard.leftMargin : this.dragboard.rightMargin;
+            const margin = position.anchor.endsWith("left") ? this.dragboard.leftMargin : this.dragboard.rightMargin;
             if (css) {
                 if (position.relx) {
-                    let percentage = position.x / this.MAX_HLU_PERCENTAGE;
+                    const percentage = position.x / this.MAX_HLU_PERCENTAGE;
                     return "calc(" + percentage + "% + " + (margin - (percentage * (this.dragboard.leftMargin + this.dragboard.rightMargin) / 100)) + "px)";
                 } else {
                     return (margin + position.x) + "px";
@@ -118,10 +118,10 @@
         }
 
         getRowOffset(position, css) {
-            let margin = position.anchor.startsWith("bottom") ? this.dragboard.bottomMargin : this.dragboard.topMargin;
+            const margin = position.anchor.startsWith("bottom") ? this.dragboard.bottomMargin : this.dragboard.topMargin;
             if (css) {
                 if (position.rely) {
-                    let percentage = position.y / this. MAX_HLU_PERCENTAGE;
+                    const percentage = position.y / this. MAX_HLU_PERCENTAGE;
                     return "calc(" + percentage + "% + " + (margin - (percentage * (this.dragboard.topMargin + this.dragboard.bottomMargin) / 100)) + "px)";
                 } else {
                     return (margin + position.y) + "px";
@@ -132,9 +132,9 @@
         }
 
         adaptColumnOffset(size) {
-            var offsetInLU, offsetInPixels, pixels, parsedSize;
+            let offsetInLU, pixels;
 
-            parsedSize = this.parseSize(size);
+            const parsedSize = this.parseSize(size);
             if (parsedSize[1] === 'cells') {
                 offsetInLU = Math.round(parsedSize[0]);
             } else {
@@ -145,21 +145,21 @@
                 }
                 offsetInLU = Math.round(this.fromPixelsToHCells(pixels));
             }
-            offsetInPixels = this.fromHCellsToPixels(offsetInLU);
+            const offsetInPixels = this.fromHCellsToPixels(offsetInLU);
             return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
         }
 
         adaptRowOffset(size) {
             let newsize = this.adaptHeight(size).inPixels;
             newsize = newsize >= this.dragboard.topMargin ? newsize - this.dragboard.topMargin : 0;
-            let offsetLU = Math.round(this.fromPixelsToVCells(newsize));
+            const offsetLU = Math.round(this.fromPixelsToVCells(newsize));
             return new Wirecloud.ui.MultiValuedSize(newsize, offsetLU);
         }
 
         adaptHeight(size) {
-            var pixels, parsedSize;
+            let pixels;
 
-            parsedSize = this.parseSize(size);
+            const parsedSize = this.parseSize(size);
             switch (parsedSize[1]) {
             case "%":
                 pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
@@ -170,7 +170,7 @@
                 pixels = parsedSize[0];
                 break;
             }
-            let heightLU = Math.round(this.fromPixelsToVCells(pixels));
+            const heightLU = Math.round(this.fromPixelsToVCells(pixels));
             return new Wirecloud.ui.MultiValuedSize(pixels, heightLU);
         }
 
@@ -181,17 +181,17 @@
         }
 
         _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
-            let position = {};
+            const position = {};
             if (
                 (resizeLeftSide && widget.position.anchor.endsWith("left"))
                 || (!resizeLeftSide && widget.position.anchor.endsWith("right"))
             ) {
-                let widthDiff = newWidth - oldWidth;
+                const widthDiff = newWidth - oldWidth;
                 if (widthDiff !== 0) {
                     position.x = widget.position.x - widthDiff;
                 }
             } else if (resizeLeftSide && widget.position.anchor.endsWith("center")) {
-                let widthDiff = newWidth - oldWidth;
+                const widthDiff = newWidth - oldWidth;
                 if (widthDiff !== 0) {
                     position.x = widget.position.x - widthDiff / 2;
                 }
@@ -201,7 +201,7 @@
                 (resizeTopSide && widget.position.anchor.startsWith("top"))
                 || (!resizeTopSide && widget.position.anchor.startsWith("bottom"))
             ) {
-                let heightDiff = newHeight - oldHeight;
+                const heightDiff = newHeight - oldHeight;
                 if (heightDiff !== 0) {
                     position.y = widget.position.y - heightDiff;
                 }
@@ -247,7 +247,7 @@
         }
 
         initializeMove(widget, draggable) {
-            var msg;
+            let msg;
 
             if (widget == null || !(widget instanceof Wirecloud.ui.WidgetView)) {
                 throw new TypeError("widget must be an WidgetView instance");
@@ -271,7 +271,7 @@
 
         moveTemporally(x, y) {
             if (this.iwidgetToMove == null) {
-                var msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
+                const msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
                 Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
                 return;
             }
@@ -282,7 +282,7 @@
             if (x < 0) {
                 x = 0;
             } else {
-                var maxX = this.MAX_HLU - this.iwidgetToMove.shape.width;
+                const maxX = this.MAX_HLU - this.iwidgetToMove.shape.width;
                 if (x > maxX) {
                     x = maxX;
                 }
@@ -294,7 +294,7 @@
 
         acceptMove() {
             if (this.iwidgetToMove == null) {
-                var msg = "Dragboard: Function acceptMove called when there is not an started iwidget move.";
+                const msg = "Dragboard: Function acceptMove called when there is not an started iwidget move.";
                 Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
                 return;
             }
@@ -365,7 +365,7 @@
                 element.style.left = this.getColumnOffset(widget.position, true);
                 element.style.right = "";
                 if (widget.shape.relwidth) {
-                    let percentage = widget.shape.width / 2 / this.MAX_HLU_PERCENTAGE;
+                    const percentage = widget.shape.width / 2 / this.MAX_HLU_PERCENTAGE;
                     element.style.marginLeft = "calc(-" + percentage + '% + ' + (percentage * (this.dragboard.leftMargin + this.dragboard.rightMargin) / 100) + 'px)';
                 } else {
                     element.style.marginLeft = '-' + (widget.shape.width / 2) + 'px';
@@ -379,7 +379,7 @@
 
         updateShape(widget, element) {
             if (widget.shape.relwidth) {
-                let percentage = widget.shape.width / this.MAX_HLU_PERCENTAGE;
+                const percentage = widget.shape.width / this.MAX_HLU_PERCENTAGE;
                 element.style.width = "calc(" + percentage + '% - ' + (percentage * (this.dragboard.leftMargin + this.dragboard.rightMargin) / 100) + 'px)';
             } else {
                 element.style.width = widget.shape.width + 'px';
@@ -387,7 +387,7 @@
             if (widget.minimized) {
                 element.style.height = "";
             } else if (widget.shape.relheight) {
-                let percentage = widget.shape.height / this.MAX_HLU_PERCENTAGE;
+                const percentage = widget.shape.height / this.MAX_HLU_PERCENTAGE;
                 element.style.height = "calc(" + percentage + '% - ' + (percentage * (this.dragboard.topMargin + this.dragboard.bottomMargin) / 100) + 'px)';
             } else {
                 element.style.height = widget.shape.height + 'px';
@@ -411,14 +411,15 @@
         }
 
         searchBestPosition(options) {
-            var offset = {x: 0, y: 0};
+            let offset = {x: 0, y: 0};
             if (options.refiframe != null) {
                 offset = Wirecloud.Utils.getRelativePosition(options.refiframe, this.dragboard.tab.wrapperElement);
             }
 
-            var i = 0, weights = [];
+            const weights = [];
 
-            var placements = ["bottom-right", "bottom-left", "top-right", "top-left"];
+            const placements = ["bottom-right", "bottom-left", "top-right", "top-left"];
+            let i = 0;
             do {
                 setPosition.call(this, placements[i], options, offset);
                 weights.push(standsOut.call(this, options));
@@ -426,9 +427,9 @@
             } while (weights[i - 1] > 0 && i < placements.length);
 
             if (weights[i - 1] > 0) {
-                let best_weight = Math.min.apply(Math, weights);
-                let index = weights.indexOf(best_weight);
-                let placement = placements[index];
+                const best_weight = Math.min.apply(Math, weights);
+                const index = weights.indexOf(best_weight);
+                const placement = placements[index];
                 setPosition.call(this, placement, options, offset);
 
                 options.top = this.adaptRowOffset(options.top + "px").inPixels;

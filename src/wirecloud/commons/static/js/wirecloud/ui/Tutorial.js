@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var Tutorial = function Tutorial(label, instructions) {
+    const Tutorial = function Tutorial(label, instructions) {
         this.label = label;
         this.stepActive = null;
         this.steps = [];
@@ -54,9 +54,7 @@
 
     Tutorial.prototype.start = function start() {
 
-        var i;
-
-        var mapping = {
+        const mapping = {
             'simpleDescription': Wirecloud.ui.Tutorial.SimpleDescription,
             'userAction': Wirecloud.ui.Tutorial.UserAction,
             'formAction': Wirecloud.ui.Tutorial.FormAction,
@@ -71,11 +69,11 @@
         this.msgLayer.classList.add("msgLayer");
         document.body.appendChild(this.msgLayer);
 
-        for (i = 0; i < this.instructions.length; i++) {
-            var Constructor = mapping[this.instructions[i].type];
+        for (let i = 0; i < this.instructions.length; i++) {
+            const Constructor = mapping[this.instructions[i].type];
             this.steps[i] = new Constructor(this, this.instructions[i]);
 
-            if (i == (this.instructions.length - 1)) {
+            if (i === (this.instructions.length - 1)) {
                 this.steps[i].setLast();
             } else {
                 this.steps[i].setNext();
@@ -91,7 +89,7 @@
      */
     Tutorial.prototype.nextStep = function nextStep() {
 
-        var current_step_index = this.steps.indexOf(this.stepActive);
+        const current_step_index = this.steps.indexOf(this.stepActive);
         if (current_step_index < (this.steps.length - 1)) {
             this.stepActive.destroy();
             this.stepActive = this.steps[current_step_index + 1];
@@ -147,15 +145,13 @@
      * set controlLayers positions
      */
     Tutorial.prototype.setControlLayer = function setControlLayer(element, disable_center) {
-        var pos;
-
         if (typeof element !== 'object') {
             return;
         }
 
         this.controlLayer.classList.remove("hidden");
         this.controlLayer.classList.remove('transparent');
-        pos = element.getBoundingClientRect();
+        const pos = element.getBoundingClientRect();
 
         // Up
         this.controlLayerUp.style.height = pos.top + 'px';
@@ -200,9 +196,8 @@
      * find the element that content the text
      */
     Tutorial.prototype.findElementByTextContent = function findElementByTextContent(nodes, text) {
-        var i;
-        for (i = 0; i < nodes.length; i++) {
-            if (nodes[i].textContent.toLowerCase() == text.toLowerCase()) {
+        for (let i = 0; i < nodes.length; i++) {
+            if (nodes[i].textContent.toLowerCase() === text.toLowerCase()) {
                 return nodes[i];
             }
         }
@@ -213,10 +208,8 @@
      * Destroy
      */
     Tutorial.prototype.destroy = function destroy() {
-        var stepActivePos, i;
-
-        stepActivePos = this.steps.indexOf(this.stepActive);
-        for (i = stepActivePos; i < this.steps.length; i++) {
+        const stepActivePos = this.steps.indexOf(this.stepActive);
+        for (let i = stepActivePos; i < this.steps.length; i++) {
             this.steps[i].destroy();
         }
         document.body.removeChild(this.controlLayer);

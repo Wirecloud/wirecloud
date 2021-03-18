@@ -32,7 +32,7 @@
     se.HiddenField = class HiddenField extends se.InputElement {
 
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'initialValue': '',
                 'class': ''
             };

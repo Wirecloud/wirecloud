@@ -55,7 +55,7 @@
                         value: data.username,
                         title: data.fullname,
                         description: data.username,
-                        iconClass: data.organization ? "fa fa-building" : "fa fa-user",
+                        iconClass: data.organization ? "fas fa-building" : "fa fa-user",
                         context: data
                     };
                 }

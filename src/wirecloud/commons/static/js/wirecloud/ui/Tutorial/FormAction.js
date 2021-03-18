@@ -27,7 +27,7 @@
     "use strict";
 
     /*     {'type': 'formAction', 'mainMsg': "Complete the form ", 'form': windowForm, 'actionElements': [newName, newUrl], 'actionMsgs': ["chose a new name for the Catalogue.", "Complete the url. for example: 'https://wirecloud.conwet.fi.upm.es'"], 'endElement': acceptButton, 'asynchronous': true},*/
-    var FormAction = function FormAction(tutorial, options) {
+    const FormAction = function FormAction(tutorial, options) {
 
         this.options = options;
         // Normalize asynchronous option
@@ -79,12 +79,12 @@
     /**
      * Next handler
      */
-    var nextHandler = function nextHandler() {
+    const nextHandler = function nextHandler() {
         this.tutorial.nextStep();
     };
 
-    var _activate = function _activate(form) {
-        var pos, i, tempElem;
+    const _activate = function _activate(form) {
+        let pos, i, tempElem;
 
         this.element = form;
 
@@ -117,16 +117,16 @@
         this.endAction.activate();
 
         // substeps in this form action
-        var activateSubFormAction = function (index) {
+        const activateSubFormAction = function (index) {
             this.subSteps[index].wrapperElement.classList.add('activate');
             validateInput.call(this, index);
         };
-        var deActivateSubFormAction = function (index) {
+        const deActivateSubFormAction = function (index) {
             this.subSteps[index].wrapperElement.classList.remove('activate');
         };
 
         // validate function
-        var validateInput = function (index) {
+        const validateInput = function (index) {
             if (!this.actionElementsValidators[index](this.actionElements[index]()) && !this.subSteps[index].wrapperElement.classList.contains('invalid')) {
                 this.subSteps[index].wrapperElement.classList.add('invalid');
                 this.form.acceptButton.disable();
@@ -186,10 +186,8 @@
      * disable html element
      */
     FormAction.prototype.disable = function disable(elem) {
-        var pos, disableLayer;
-
-        pos = elem.getBoundingClientRect();
-        disableLayer = document.createElement("div");
+        const pos = elem.getBoundingClientRect();
+        const disableLayer = document.createElement("div");
         disableLayer.classList.add('disableLayer');
         disableLayer.style.top = pos.top + 'px';
         disableLayer.style.left = pos.left + 'px';
@@ -203,7 +201,7 @@
      * Destroy
      */
     FormAction.prototype.destroy = function destroy() {
-        var i;
+        let i;
 
         for (i = 0; i < this.disableLayer.length; i++) {
             this.layer.removeChild(this.disableLayer[i]);

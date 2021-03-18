@@ -27,7 +27,7 @@
 
     "use strict";
 
-    var WIRING = {
+    const WIRING = {
         workspace: {
             isAllowed: jasmine.createSpy('isAllowed').and.returnValue(true),
             restricted: false,
@@ -36,7 +36,7 @@
     };
     Object.freeze(WIRING);
 
-    var LOCKED_WIRING = {
+    const LOCKED_WIRING = {
         workspace: {
             isAllowed: jasmine.createSpy('isAllowed').and.returnValue(false),
             restricted: true,
@@ -45,7 +45,7 @@
     };
     Object.freeze(LOCKED_WIRING);
 
-    var EMPTY_OPERATOR_META = {
+    const EMPTY_OPERATOR_META = {
         title: "My Operator",
         hasEndpoints: jasmine.createSpy("hasEndpoints").and.returnValue(false),
         hasPreferences: jasmine.createSpy("hasPreferences").and.returnValue(false),
@@ -59,9 +59,9 @@
     };
     Object.freeze(EMPTY_OPERATOR_META);
 
-    var PREF = new Wirecloud.UserPrefDef({name: "pref", type: "text", default: "other"});
-    var PROP = new Wirecloud.PersistentVariableDef({name: "prop", type: "text"});
-    var OPERATOR_META = {
+    const PREF = new Wirecloud.UserPrefDef({name: "pref", type: "text", default: "other"});
+    const PROP = new Wirecloud.PersistentVariableDef({name: "prop", type: "text"});
+    const OPERATOR_META = {
         uri: "Vendor/Operator/1.0",
         title: "My Operator",
         inputList: [
@@ -123,7 +123,7 @@
             });
 
             it("allow to instantiate operators from partial persistence", () => {
-                var operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
                     id: "2",
                     preferences: {},
                     propeties: {}
@@ -144,7 +144,7 @@
             });
 
             it("allow to instantiate operators from persistence", () => {
-                var operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
                     id: "2",
                     title: "title",
                     preferences: {
@@ -192,7 +192,7 @@
 
             it("is a shortcut for calling fullDisconnect on every endpoint", () => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
                     id: "2",
                     preferences: {},
                     propeties: {}
@@ -213,7 +213,7 @@
         describe("hasEndpoints()", () => {
 
             it("is a shortcut", () => {
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
                 expect(operator.hasEndpoints()).toBe(false);
                 expect(operator.meta.hasEndpoints).toHaveBeenCalled();
             });
@@ -223,7 +223,7 @@
         describe("hasPreferences()", () => {
 
             it("is a shortcut", () => {
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
                 expect(operator.hasPreferences()).toBe(false);
                 expect(operator.meta.hasPreferences).toHaveBeenCalled();
             });
@@ -233,14 +233,14 @@
         describe("is(component)", () => {
 
             it("return true for the same component", () => {
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
 
                 expect(operator.is(operator)).toBe(true);
             });
 
             it("return false for the different operators", () => {
-                var operator1 = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
-                var operator2 = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "2"});
+                const operator1 = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
+                const operator2 = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "2"});
 
                 expect(operator1.is(operator2)).toBe(false);
             });
@@ -252,7 +252,7 @@
             describe("close", () => {
 
                 it("normal operator on unlocked workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                         id: "1",
                         permissions: {
                             close: true
@@ -262,7 +262,7 @@
                 });
 
                 it("normal operator on locked workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                         id: "1",
                         permissions: {
                             close: true
@@ -272,7 +272,7 @@
                 });
 
                 it("normal operator on shared workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                         id: "1",
                         permissions: {
                             // This should contain a false value as this user is
@@ -285,7 +285,7 @@
                 });
 
                 it("volatile operator on shared workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                         id: "1/1",
                         volatile: true
                     });
@@ -297,7 +297,7 @@
             describe("rename", () => {
 
                 it("normal operator on unlocked workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                         id: "1",
                         permissions: {
                             rename: true
@@ -307,7 +307,7 @@
                 });
 
                 it("normal operator on locked workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                         id: "1",
                         permissions: {
                             rename: true
@@ -317,7 +317,7 @@
                 });
 
                 it("normal operator on shared workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                         id: "1",
                         permissions: {
                             // This should contain a false value as this user is
@@ -330,7 +330,7 @@
                 });
 
                 it("volatile operator on shared workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                         id: "1/1",
                         volatile: true
                     });
@@ -342,21 +342,21 @@
             describe("invalid permission name", () => {
 
                 it("normal operator", () => {
-                    var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
+                    const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {id: "1"});
                     expect(() => {
                         operator.isAllowed("invalid");
                     }).toThrowError(TypeError);
                 });
 
                 it("normal operator on shared workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {id: "1"});
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {id: "1"});
                     expect(() => {
                         operator.isAllowed("invalid");
                     }).toThrowError(TypeError);
                 });
 
                 it("volatile operator on shared workspace", () => {
-                    var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                    const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                         id: "1/1",
                         volatile: true
                     });
@@ -372,15 +372,15 @@
         describe("remove()", () => {
 
             it("support renaming volatile operators", (done) => {
-                var listener = jasmine.createSpy("listener");
-                var operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
+                const listener = jasmine.createSpy("listener");
+                const operator = new Wirecloud.wiring.Operator(LOCKED_WIRING, EMPTY_OPERATOR_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
 
                 operator.addEventListener("remove", listener);
-                var p = operator.remove();
+                const p = operator.remove();
                 p.then((value) => {
                     expect(value).toBe(value);
                     expect(listener).toHaveBeenCalled();
@@ -390,7 +390,7 @@
 
             it("removes operator from persistence", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
                 /* TODO
@@ -403,7 +403,7 @@
                     });
                 }); */
 
-                var p = operator.remove();
+                const p = operator.remove();
                 p.then((value) => {
                     expect(value).toBe(value);
                     // expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -416,7 +416,7 @@
 
 
         describe("upgrade(meta)", () => {
-            var failOnVariables = false;
+            let failOnVariables = false;
 
             beforeEach(() => {
                 failOnVariables = false;
@@ -461,7 +461,7 @@
                         this.preferences = {};
                         this.missing = true;
                     } else {
-                        var PREF = new Wirecloud.UserPrefDef({
+                        const PREF = new Wirecloud.UserPrefDef({
                             name: "npref",
                             type: "text",
                             default: "other"
@@ -480,7 +480,7 @@
 
             it("throws an exception when passing an invalid meta", () => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
                 expect(() => {
@@ -491,13 +491,13 @@
 
             it("save operator meta changes into the server (upgrade)", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
 
-                var new_meta = new Wirecloud.wiring.OperatorMeta();
+                const new_meta = new Wirecloud.wiring.OperatorMeta();
                 new_meta.version.compareTo.and.returnValue(1);
-                var p = operator.upgrade(new_meta);
+                const p = operator.upgrade(new_meta);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -516,13 +516,13 @@
 
             it("save operator meta changes into the server (downgrade)", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
 
-                var new_meta = new Wirecloud.wiring.OperatorMeta();
+                const new_meta = new Wirecloud.wiring.OperatorMeta();
                 new_meta.version.compareTo.and.returnValue(-1);
-                var p = operator.upgrade(new_meta);
+                const p = operator.upgrade(new_meta);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -541,13 +541,13 @@
 
             it("save operator meta changes into the server (replace)", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
 
-                var new_meta = new Wirecloud.wiring.OperatorMeta();
+                const new_meta = new Wirecloud.wiring.OperatorMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = operator.upgrade(new_meta);
+                const p = operator.upgrade(new_meta);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -566,12 +566,12 @@
 
             it("allows switching to missing state", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
                     id: "1"
                 });
 
-                var MISSING_OPERATOR_META = new Wirecloud.wiring.OperatorMeta(true);
-                var p = operator.upgrade(MISSING_OPERATOR_META);
+                const MISSING_OPERATOR_META = new Wirecloud.wiring.OperatorMeta(true);
+                const p = operator.upgrade(MISSING_OPERATOR_META);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
@@ -587,7 +587,7 @@
 
             it("handle error saving meta change into the server", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
                 Wirecloud.io.makeRequest.and.callFake(function (url, options) {
@@ -600,7 +600,7 @@
                     });
                 });
 
-                var p = operator.upgrade(new Wirecloud.wiring.OperatorMeta());
+                const p = operator.upgrade(new Wirecloud.wiring.OperatorMeta());
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -615,15 +615,15 @@
 
             it("handle error requesting new variable values", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
 
                 failOnVariables = true;
 
-                var new_meta = new Wirecloud.wiring.OperatorMeta();
+                const new_meta = new Wirecloud.wiring.OperatorMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = operator.upgrade(new_meta);
+                const p = operator.upgrade(new_meta);
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -638,15 +638,15 @@
 
             it("handle invalid response content while requesting new variable values", (done) => {
 
-                var operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
+                const operator = new Wirecloud.wiring.Operator(WIRING, EMPTY_OPERATOR_META, {
                     id: "1"
                 });
 
                 failOnVariables = "invalid";
 
-                var new_meta = new Wirecloud.wiring.OperatorMeta();
+                const new_meta = new Wirecloud.wiring.OperatorMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = operator.upgrade(new_meta);
+                const p = operator.upgrade(new_meta);
                 p.then(
                     (value) => {
                         fail("success callback called");

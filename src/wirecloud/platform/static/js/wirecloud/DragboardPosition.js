@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var DragboardPosition = function DragboardPosition(x, y) {
+    const DragboardPosition = function DragboardPosition(x, y) {
         Object.defineProperties(this, {
             x: {
                 enumerable: true,

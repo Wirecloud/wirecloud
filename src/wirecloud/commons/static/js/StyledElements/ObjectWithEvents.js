@@ -59,15 +59,13 @@
          *      The instance on which the member is called.
          */
         dispatchEvent(name) {
-            var handlerArgs;
-
             if (!(name in this.events)) {
                 throw new Error(utils.interpolate("Unhandled event '%(name)s'", {
                     name: name
                 }));
             }
 
-            handlerArgs = [this].concat(Array.prototype.slice.call(arguments, 1));
+            const handlerArgs = [this].concat(Array.prototype.slice.call(arguments, 1));
             this.events[name].dispatch.apply(this.events[name], handlerArgs);
 
             return this;

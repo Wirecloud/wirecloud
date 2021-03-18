@@ -28,7 +28,7 @@
 
     describe("Styled ToggleButtons", function () {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -45,7 +45,7 @@
         describe("new ToggleButton(options)", function () {
 
             it("options are optional", function () {
-                var element = new StyledElements.ToggleButton();
+                const element = new StyledElements.ToggleButton();
                 expect(element).toEqual(jasmine.any(StyledElements.Button));
                 expect(element.wrapperElement.textContent).toBe("");
                 expect(element.state).toBe("");
@@ -55,14 +55,14 @@
             });
 
             it("supports the initiallyChecked option", function () {
-                var element = new StyledElements.ToggleButton({initiallyChecked: true});
+                const element = new StyledElements.ToggleButton({initiallyChecked: true});
                 expect(element.active).toBe(true);
             });
 
         });
 
         describe("active property", function () {
-            var element;
+            let element;
 
             it("should allow to activate the button", function () {
                 element = new StyledElements.ToggleButton();
@@ -81,7 +81,7 @@
 
         describe("click()", function () {
 
-            var element;
+            let element;
 
             it("activates the button when currently deactivated", function () {
                 element = new StyledElements.ToggleButton();

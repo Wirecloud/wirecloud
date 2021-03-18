@@ -113,12 +113,13 @@
 
     const searchBestPosition = function searchBestPosition(refPosition, positions) {
         const priv = privates.get(this);
-        var i = 0, weights = [];
+        const weights = [];
 
         if ('getBoundingClientRect' in refPosition) {
             refPosition = refPosition.getBoundingClientRect();
         }
 
+        let i = 0;
         do {
             setPosition(priv.element, refPosition, positions[i]);
             weights.push(standsOut(priv.element));
@@ -230,7 +231,7 @@
         }
 
         repaint() {
-            let priv = privates.get(this);
+            const priv = privates.get(this);
 
             if (priv.refPosition) {
                 searchBestPosition.call(this, priv.refPosition, this.options.placement);

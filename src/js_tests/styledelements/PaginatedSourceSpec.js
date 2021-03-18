@@ -27,8 +27,8 @@
     "use strict";
 
     describe("Paginated source", function () {
-        var paginatedSource;
-        var elements;
+        let paginatedSource;
+        let elements;
 
         afterEach(function () {
             paginatedSource.goToFirst();

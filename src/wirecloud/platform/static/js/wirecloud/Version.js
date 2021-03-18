@@ -119,7 +119,7 @@
          *     less than, equal to, or greater than the specified version.
          */
         compareTo(version) {
-            var len, value1, value2, pre_version1, pre_version2, i;
+            let value1, value2, pre_version1, pre_version2, i;
 
             if (!(version instanceof Version)) {
                 // Try to parse version
@@ -130,7 +130,7 @@
                 }
             }
 
-            len = Math.max(this.array.length, version.array.length);
+            const len = Math.max(this.array.length, version.array.length);
 
             for (i = 0; i < len; i += 1) {
                 value1 = this.array[i] != null ? this.array[i] : 0;

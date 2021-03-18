@@ -26,37 +26,36 @@
 
     "use strict";
 
-    var anchor_element = document.createElement('a');
+    const anchor_element = document.createElement('a');
     anchor_element.href = Wirecloud.URLs.LOCAL_REPOSITORY;
-    var base_url = anchor_element.href;
+    let base_url = anchor_element.href;
     if (base_url[base_url.length - 1] !== '/') {
         base_url += '/';
     }
     base_url += 'static/';
 
-    var build_static_url = function build_static_url(path) {
+    const build_static_url = function build_static_url(path) {
         return base_url + path;
     };
 
-    var append_character = function append_character(element, character) {
+    const append_character = function append_character(element, character) {
         element.value += character;
     };
 
-    var fill_input = function fill_input(element, new_value) {
+    const fill_input = function fill_input(element, new_value) {
         element.value = new_value;
     };
 
-    var findElementByTextContent = function findElementByTextContent(nodes, text) {
-        var i;
-        for (i = 0; i < nodes.length; i++) {
-            if (nodes[i].textContent.trim().toLowerCase() == text.toLowerCase()) {
+    const findElementByTextContent = function findElementByTextContent(nodes, text) {
+        for (let i = 0; i < nodes.length; i++) {
+            if (nodes[i].textContent.trim().toLowerCase() === text.toLowerCase()) {
                 return nodes[i];
             }
         }
         return null;
     };
 
-    var Utils = {
+    const Utils = {
         basic_actions: {
             sleep: function sleep(milliseconds) {
                 return function (autoAction, element) {
@@ -96,7 +95,7 @@
                 }, options);
 
                 return function (autoAction, element) {
-                    var timeout, i;
+                    let timeout, i;
 
                     if (['input', 'textarea'].indexOf(element.tagName) === -1) {
                         element = element.querySelector('input, textarea');
@@ -108,7 +107,7 @@
                         timeout += options.step;
                         setTimeout(append_character.bind(null, element, text[i]), timeout);
                     }
-                    if (i != text.length) {
+                    if (i !== text.length) {
                         setTimeout(fill_input.bind(null, element, text), options.timeout);
                         timeout = options.timeout;
                     }
@@ -134,7 +133,7 @@
             },
             scrollIntoView: function scrollIntoView(selector) {
                 return function (autoAction) {
-                    var element = selector();
+                    const element = selector();
                     element.scrollIntoView();
                     autoAction.nextHandler();
                 };
@@ -161,8 +160,8 @@
             },
             wait_transitions: function wait_transitions() {
                 return function (autoAction, element) {
-                    var interval = setInterval(function () {
-                        var element = document.querySelector(".se-on-transition");
+                    const interval = setInterval(function () {
+                        const element = document.querySelector(".se-on-transition");
                         if (element == null) {
                             clearInterval(interval);
                             autoAction.nextHandler();
@@ -173,8 +172,8 @@
             editorView: {
                 wait_mac_wallet_ready: function wait_mac_wallet_ready() {
                     return function (autoAction, element) {
-                        var interval = setInterval(function () {
-                            var widget_list = document.querySelector(".wc-workspace .wc-resource-results:not(.disabled)");
+                        const interval = setInterval(function () {
+                            const widget_list = document.querySelector(".wc-workspace .wc-resource-results:not(.disabled)");
                             if (widget_list) {
                                 clearInterval(interval);
                                 autoAction.nextHandler();
@@ -187,11 +186,11 @@
             wiringView: {
                 open_component_sidebar: function open_component_sidebar(type) {
                     return function (autoAction, element) {
-                        var sidebar_button = Utils.basic_selectors.toolbar_button('we-show-component-sidebar-button')();
+                        const sidebar_button = Utils.basic_selectors.toolbar_button('we-show-component-sidebar-button')();
                         if (!sidebar_button.classList.contains('active')) {
                             sidebar_button.click();
                         }
-                        var component_type_button = Utils.basic_selectors.button('.wiring-sidebar .btn-list-' + type + '-group')();
+                        const component_type_button = Utils.basic_selectors.button('.wiring-sidebar .btn-list-' + type + '-group')();
                         if (!component_type_button.classList.contains('active')) {
                             component_type_button.click();
                         }
@@ -200,8 +199,8 @@
                 },
                 wait_sidebar_ready: function wait_sidebar_ready() {
                     return function (autoAction, element) {
-                        var interval = setInterval(function () {
-                            var widget_list = document.querySelector(".we-panel-components .wc-resource-results:not(.disabled)");
+                        const interval = setInterval(function () {
+                            const widget_list = document.querySelector(".we-panel-components .wc-resource-results:not(.disabled)");
                             if (widget_list) {
                                 clearInterval(interval);
                                 autoAction.nextHandler();
@@ -217,7 +216,7 @@
             },
             button: function button(selector) {
                 return function () {
-                    var element = document.querySelector(selector);
+                    const element = document.querySelector(selector);
                     if (element != null) {
                         if (element.classList.contains('se-btn')) {
                             return element;
@@ -235,7 +234,7 @@
             },
             form_field: function form_field(fieldName) {
                 return function () {
-                    var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
+                    const currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
                     return currentWindowMenu.form.fieldInterfaces[fieldName].inputElement.inputElement;
                 };
             },
@@ -244,25 +243,23 @@
             },
             mac_wallet_resource: function mac_wallet_resource(resource_title) {
                 return function () {
-                    var resources, widget;
-
-                    resources = document.querySelectorAll('.wc-workspace .we-component-meta .panel-heading');
-                    widget = findElementByTextContent(resources, resource_title);
+                    const resources = document.querySelectorAll('.wc-workspace .we-component-meta .panel-heading');
+                    const widget = findElementByTextContent(resources, resource_title);
                     return widget.parentNode;
                 };
             },
             mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
                 return function () {
-                    var widget = Utils.basic_selectors.mac_wallet_resource(resource_title)();
+                    const widget = Utils.basic_selectors.mac_wallet_resource(resource_title)();
                     return widget.querySelector(".panel-body .wc-create-resource-component");
                 };
             },
             menu_item: function menu_item(title) {
                 return function () {
-                    var i, items = document.querySelectorAll(".se-popup-menu-item");
+                    const items = document.querySelectorAll(".se-popup-menu-item");
 
-                    for (i = items.length - 1; i >= 0; i--) {
-                        if (items[i].textContent == title) {
+                    for (let i = items.length - 1; i >= 0; i--) {
+                        if (items[i].textContent === title) {
                             return items[i];
                         }
                     }
@@ -276,11 +273,9 @@
             workspaceView: {
                 widget_by_title: function widget_by_title(title) {
                     return function () {
-                        var i, widgetList;
+                        const widgetList = document.querySelectorAll('.wc-workspace .wc-widget');
 
-                        widgetList = document.querySelectorAll('.wc-workspace .wc-widget');
-
-                        for (i = 0; i < widgetList.length; i++) {
+                        for (let i = 0; i < widgetList.length; i++) {
                             if (widgetList[i].querySelector('.wc-widget-heading span').textContent === title) {
                                 return widgetList[i];
                             }
@@ -291,8 +286,8 @@
                 },
                 widget_element: function widget_element(index, selector) {
                     return function () {
-                        var widget = Wirecloud.activeWorkspace.widgets[index];
-                        var element = widget.wrapperElement.contentDocument.querySelector(selector);
+                        const widget = Wirecloud.activeWorkspace.widgets[index];
+                        const element = widget.wrapperElement.contentDocument.querySelector(selector);
                         return new Wirecloud.ui.Tutorial.WidgetElement(widget, element);
                     };
                 }
@@ -314,14 +309,12 @@
                 },
                 component_by_id: function component_by_id(type, id_) {
                     return function () {
-                        var query, id;
-
                         // TODO
-                        id = "" + id_;
+                        let id = "" + id_;
                         if (type === 'widget') {
                             id = "" + Wirecloud.activeWorkspace.widgets[id_].id;
                         }
-                        query = Wirecloud.Utils.interpolate(
+                        const query = Wirecloud.Utils.interpolate(
                             '.wiring-diagram .component-%(type)s[data-id="%(id)s"]',
                             {
                                 type: type,
@@ -338,11 +331,11 @@
                 },
                 endpoint_by_name: function endpoint_by_name(component_type, component_id, endpoint_type, endpoint_name) {
                     return function () {
-                        var component = Utils.basic_selectors.wiringView.component_by_id(component_type, component_id)();
+                        const component = Utils.basic_selectors.wiringView.component_by_id(component_type, component_id)();
                         if (component != null) {
-                            var endpoints = component.querySelectorAll('.' + endpoint_type + '-endpoints .endpoint');
+                            const endpoints = component.querySelectorAll('.' + endpoint_type + '-endpoints .endpoint');
 
-                            for (var i = 0; i < endpoints.length; i++) {
+                            for (let i = 0; i < endpoints.length; i++) {
                                 if (endpoints[i].getAttribute('data-name') === endpoint_name) {
                                     return endpoints[i].querySelector('.endpoint-anchor');
                                 }
@@ -354,7 +347,7 @@
                 },
                 show_behaviour_prefs_button: function show_behaviour_prefs_button(behaviourId) {
                     return function () {
-                        var behaviour = document.querySelectorAll(".we-panel-behaviours .behaviour")[behaviourId];
+                        const behaviour = document.querySelectorAll(".we-panel-behaviours .behaviour")[behaviourId];
 
                         return behaviour.querySelector(".we-prefs-btn");
                     };
@@ -364,17 +357,15 @@
                 },
                 sidebarcomponentgroup_by_id: function sidecomponentgroup(id) {
                     return function () {
-                        var query = Wirecloud.Utils.interpolate('.wc-workspace-wiring .we-panel-components .we-component-group[data-id="%(id)s"]', {id: id});
+                        const query = Wirecloud.Utils.interpolate('.wc-workspace-wiring .we-panel-components .we-component-group[data-id="%(id)s"]', {id: id});
                         return document.querySelector(query);
                     };
                 },
                 sidebarcomponent_by_id: function sidebarcomponent_by_id(component_meta_id, component_id) {
                     return function () {
-                        var componentgroup, components;
-
-                        componentgroup = Utils.basic_selectors.wiringView.sidebarcomponentgroup_by_id(component_meta_id)();
+                        const componentgroup = Utils.basic_selectors.wiringView.sidebarcomponentgroup_by_id(component_meta_id)();
                         if (componentgroup != null) {
-                            components = componentgroup.querySelectorAll('.we-component');
+                            const components = componentgroup.querySelectorAll('.we-component');
                             return components[component_id]; // TODO use real id
                         }
                         return null;

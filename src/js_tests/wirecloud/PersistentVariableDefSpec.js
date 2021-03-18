@@ -56,7 +56,7 @@
 
             it("exposes variable details", () => {
 
-                var meta = new Wirecloud.PersistentVariableDef({
+                const meta = new Wirecloud.PersistentVariableDef({
                     name: "prop",
                     type: "text",
                     label: "label content",

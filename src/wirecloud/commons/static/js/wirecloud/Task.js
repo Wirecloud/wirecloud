@@ -107,6 +107,61 @@
         }
     };
 
+    const on_task_finish = function on_task_finish() {
+        const priv = privates.get(this);
+        let status = null;
+
+        priv.subtasks.some(function (task) {
+            if (task.status === "pending") {
+                status = "pending";
+                // Stop looping
+                return true;
+            } else if (task.status === "aborted") {
+                status = "aborted";
+            } else if (task.status === "resolved" && status === null) {
+                status = "resolved";
+            } else if (task.status === "rejected" && status !== "aborted") {
+                status = "rejected";
+            }
+        });
+
+        if (status !== "pending") {
+            priv.value = priv.subtasks.map(function (task) {return task.value});
+            priv.status = status;
+            switch (status) {
+            case "resolved":
+                this.dispatchEvent("finish");
+                break;
+            case "rejected":
+            case "aborted":
+                this.dispatchEvent("fail");
+                break;
+            }
+        }
+    };
+
+    const addAggregatedTask = function addAggregatedTask(task) {
+        const priv = privates.get(this);
+
+        priv.subtasks.push(task);
+        task.addEventListener('progress', updateAggregatedTaskProgress.bind(this));
+        task.addEventListener('finish', on_task_finish.bind(this));
+        task.addEventListener('fail', on_task_finish.bind(this));
+        task.addEventListener('abort', on_task_finish.bind(this));
+    };
+
+    const updateAggregatedTaskProgress = function updateAggregatedTaskProgress() {
+        const priv = privates.get(this);
+
+        let accumulated_progress = 0;
+        priv.subtasks.forEach((subtask) => {
+            accumulated_progress += subtask.progress;
+        });
+        priv.progress = accumulated_progress / priv.subtasks.length;
+
+        this.dispatchEvent("progress", priv.progress);
+    };
+
     ns.Task = class Task extends se.ObjectWithEvents {
 
         /**
@@ -209,7 +264,7 @@
          */
         toTask(title) {
             title = title != null ? title : this.title;
-            var task = new Task(title, (resolve, reject, update) => {
+            const task = new Task(title, (resolve, reject, update) => {
                 this.addEventListener("progress", function (task, progress) {
                     update(progress);
                 });
@@ -265,9 +320,9 @@
                 }
             });
 
-            var internal_resolve = resolve.bind(this);
-            var internal_reject = reject.bind(this);
-            var internal_abort = this.abort.bind(this);
+            const internal_resolve = resolve.bind(this);
+            const internal_reject = reject.bind(this);
+            const internal_abort = this.abort.bind(this);
             if (parent.status === 'resolved') {
                 resolve_then.call(parent, this, onFulfilled, internal_resolve, internal_resolve, internal_reject);
             } else if (parent.status === 'rejected') {
@@ -324,61 +379,5 @@
         }
 
     }
-
-    var on_task_finish = function on_task_finish() {
-        var priv = privates.get(this);
-        var status = null;
-
-        priv.subtasks.some(function (task) {
-            if (task.status === "pending") {
-                status = "pending";
-                // Stop looping
-                return true;
-            } else if (task.status === "aborted") {
-                status = "aborted";
-            } else if (task.status === "resolved" && status === null) {
-                status = "resolved";
-            } else if (task.status === "rejected" && status !== "aborted") {
-                status = "rejected";
-            }
-        });
-
-        if (status !== "pending") {
-            priv.value = priv.subtasks.map(function (task) {return task.value});
-            priv.status = status;
-            switch (status) {
-            case "resolved":
-                this.dispatchEvent("finish");
-                break;
-            case "rejected":
-            case "aborted":
-                this.dispatchEvent("fail");
-                break;
-            }
-        }
-    };
-
-    var addAggregatedTask = function addAggregatedTask(task) {
-        var priv = privates.get(this);
-
-        priv.subtasks.push(task);
-        task.addEventListener('progress', updateAggregatedTaskProgress.bind(this));
-        task.addEventListener('finish', on_task_finish.bind(this));
-        task.addEventListener('fail', on_task_finish.bind(this));
-        task.addEventListener('abort', on_task_finish.bind(this));
-    };
-
-    var updateAggregatedTaskProgress = function updateAggregatedTaskProgress() {
-        var priv, accumulated_progress = 0;
-
-        priv = privates.get(this);
-
-        priv.subtasks.forEach((subtask) => {
-            accumulated_progress += subtask.progress;
-        });
-        priv.progress = accumulated_progress / priv.subtasks.length;
-
-        this.dispatchEvent("progress", priv.progress);
-    };
 
 })(Wirecloud, StyledElements, Wirecloud.Utils);

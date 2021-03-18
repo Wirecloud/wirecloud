@@ -97,7 +97,7 @@
          * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
          */
         slideIn(index) {
-            var element;
+            let element;
 
             if (this.sidebar.children.length) {
                 this.sidebar.children.forEach(function (element) {

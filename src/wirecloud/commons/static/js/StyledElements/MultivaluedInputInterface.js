@@ -42,11 +42,11 @@
         }
 
         addEntry() {
-            let entry = {
+            const entry = {
                 wrapper: document.createElement('div')
             };
 
-            let fields = {
+            const fields = {
                 '': {
                     type: 'lineLayout',
                     fields: this.fields
@@ -114,7 +114,7 @@
             }
 
             newValue.forEach((item) => {
-                let entry = this.addEntry();
+                const entry = this.addEntry();
                 entry.form.setData(item);
             });
 

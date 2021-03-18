@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var _canBeDragged = function () {
+    const _canBeDragged = function () {
         return true;
     };
 
@@ -35,13 +35,13 @@
      * @param handler {HTMLElement} Element where the drag & drop operation must to be started
      * @param data {Object} context
      */
-    var Draggable = function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScroll) {
-        var lastClientX, lastClientY;
-        var xStart = 0, yStart = 0, xScrollStart = 0, yScrollStart = 0;
-        var xScrollDelta, yScrollDelta;
-        var dragboardCover;
-        var draggable = this;
-        var enddrag, drag, startdrag, scroll;
+    const Draggable = function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScroll) {
+        let lastClientX, lastClientY;
+        let xStart = 0, yStart = 0, xScrollStart = 0, yScrollStart = 0;
+        let xScrollDelta, yScrollDelta;
+        let dragboardCover;
+        let draggable = this;
+        let enddrag, drag, startdrag, scroll;
         canBeDragged = canBeDragged ? canBeDragged : _canBeDragged;
 
         // remove the events
@@ -86,8 +86,8 @@
                 lastClientX = e.clientX;
                 lastClientY = e.clientY;
             }
-            var xDelta = lastClientX - xStart - xScrollDelta;
-            var yDelta = lastClientY - yStart - yScrollDelta;
+            const xDelta = lastClientX - xStart - xScrollDelta;
+            const yDelta = lastClientY - yStart - yScrollDelta;
 
             onDrag(e, draggable, data, xDelta, yDelta);
         };
@@ -128,10 +128,10 @@
             yScrollDelta = 0;
             xScrollDelta = 0;
 
-            var options = onStart(draggable, data, e);
+            const options = onStart(draggable, data, e);
             // TODO
             if (options != null && options.dragboard) {
-                var dragboard = options.dragboard;
+                const dragboard = options.dragboard;
                 dragboardCover = document.createElement("div");
                 dragboardCover.className = "cover";
                 dragboardCover.addEventListener("mouseup", enddrag, true);
@@ -160,17 +160,17 @@
         // fire each time the dragboard is scrolled while dragging
         scroll = function scroll(e) {
 
-            var dragboard = dragboardCover.parentNode;
+            const dragboard = dragboardCover.parentNode;
             dragboardCover.style.height = dragboard.scrollHeight + "px";
 
-            var scrollTop = parseInt(dragboard.scrollTop, 10);
+            const scrollTop = parseInt(dragboard.scrollTop, 10);
             yScrollDelta = yScrollStart - scrollTop;
 
-            var scrollLeft = parseInt(dragboard.scrollLeft, 10);
+            const scrollLeft = parseInt(dragboard.scrollLeft, 10);
             xScrollDelta = xScrollStart - scrollLeft;
 
-            var xDelta = lastClientX - xStart - xScrollDelta;
-            var yDelta = lastClientY - yStart - yScrollDelta;
+            const xDelta = lastClientX - xStart - xScrollDelta;
+            const yDelta = lastClientY - yStart - yScrollDelta;
 
             onDrag(e, draggable, data, xDelta, yDelta);
         };

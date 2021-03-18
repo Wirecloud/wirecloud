@@ -47,7 +47,7 @@
             Object.defineProperty(this, 'preferences', {value: {}});
 
             let inherit, value;
-            for (let key in preferencesDef.preferences) {
+            for (const key in preferencesDef.preferences) {
                 const definition = preferencesDef.preferences[key];
 
                 if (key in values) {
@@ -84,12 +84,12 @@
          * @param {Object} newValues a hash with preferenceName/changes pairs
          */
         set(newValues) {
-            var modifiedValues = {};
+            const modifiedValues = {};
             let persist = false;
 
-            for (let name in newValues) {
-                let preference = this.preferences[name];
-                let changes = utils.clone(newValues[name]);
+            for (const name in newValues) {
+                const preference = this.preferences[name];
+                const changes = utils.clone(newValues[name]);
                 let changed = false;
 
                 if ('inherit' in changes) {
@@ -132,11 +132,11 @@
                     return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
 
-                let newEffectiveValues = {};
-                for (let name in modifiedValues) {
-                    let preference = this.preferences[name];
-                    let previousValue = preference.getEffectiveValue();
-                    let changes = modifiedValues[name];
+                const newEffectiveValues = {};
+                for (const name in modifiedValues) {
+                    const preference = this.preferences[name];
+                    const previousValue = preference.getEffectiveValue();
+                    const changes = modifiedValues[name];
 
                     if ('inherit' in changes) {
                         preference.inherit = changes.inherit;
@@ -146,7 +146,7 @@
                         preference.value = newValues[name].value;
                     }
 
-                    let newValue = preference.getEffectiveValue();
+                    const newValue = preference.getEffectiveValue();
                     if (previousValue !== newValue) {
                         newEffectiveValues[name] = newValue;
                     }
@@ -157,10 +157,10 @@
         }
 
         _handleParentChanges(parentPreferences, modifiedValues) {
-            var valuesToPropagate = {};
-            var propagate = false;
+            const valuesToPropagate = {};
+            let propagate = false;
 
-            for (var preferenceName in modifiedValues) {
+            for (const preferenceName in modifiedValues) {
                 if (preferenceName in this.preferences && this.preferences[preferenceName].inherit) {
                     propagate = true;
                     valuesToPropagate[preferenceName] = modifiedValues[preferenceName];

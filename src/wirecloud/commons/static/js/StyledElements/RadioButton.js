@@ -30,7 +30,7 @@
     se.RadioButton = class RadioButton extends se.InputElement {
 
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'initiallyChecked': false,
                 'class': '',
                 'group': null,
@@ -82,7 +82,7 @@
         }
 
         insertInto(element, refElement) {
-            var checked = this.inputElement.checked; // Necesario para IE
+            const checked = this.inputElement.checked; // Necesario para IE
             StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
             this.inputElement.checked = checked; // Necesario para IE
         }

@@ -26,9 +26,9 @@
 
     "use strict";
 
-    var currentState = {};
+    let currentState = {};
 
-    var onpopstate = function onpopstate(event) {
+    const onpopstate = function onpopstate(event) {
         if (event.state === null) {
             return;
         }
@@ -38,27 +38,25 @@
         Wirecloud.UserInterfaceManager.onHistoryChange(event.state);
     };
 
-    var prepareData = function prepareData(data) {
-        var header, key;
-
+    const prepareData = function prepareData(data) {
         data = utils.merge({
             view: "workspace"
         }, data);
 
-        header = Wirecloud.UserInterfaceManager.header;
+        const header = Wirecloud.UserInterfaceManager.header;
         if (header != null && header.currentView != null) {
             data.title = header.currentView.getTitle();
         } else {
             data.title = document.title;
         }
-        for (key in data) {
+        for (const key in data) {
             data[key] = "" + data[key];
         }
         return data;
     };
 
-    var buildURL = function buildURL(data) {
-        var url, key, hash = '';
+    const buildURL = function buildURL(data) {
+        let url, key, hash = '';
 
         if (data.workspace_owner !== "wirecloud" || data.workspace_name !== "landing") {
             url = new URL("/" + encodeURIComponent(data.workspace_owner) + '/' + encodeURIComponent(data.workspace_name), Wirecloud.location.base);
@@ -78,10 +76,10 @@
         return url;
     };
 
-    var HistoryManager = {};
+    const HistoryManager = {};
 
     HistoryManager.init = function init() {
-        var initialState = this._parseStateFromHash(window.location.hash);
+        let initialState = this._parseStateFromHash(window.location.hash);
         this._parseWorkspaceFromPathName(window.location.pathname, initialState);
 
         window.addEventListener(
@@ -90,14 +88,14 @@
             true);
 
         initialState = prepareData(initialState);
-        var url = buildURL(initialState);
+        const url = buildURL(initialState);
 
         history.replaceState(initialState, document.title, url);
         currentState = initialState;
     };
 
     HistoryManager._parseStateFromHash = function _parseStateFromHash(hash) {
-        var definitions, i, pair, key, value, data = {};
+        const data = {};
 
         if (hash.charAt(0) === '#') {
             hash = hash.substr(1);
@@ -106,20 +104,20 @@
             return data;
         }
 
-        definitions = hash.split('&');
-        for (i = 0; i < definitions.length; i += 1) {
-            pair = definitions[i].split('=');
-            key = decodeURIComponent(pair[0]);
-            value = decodeURIComponent(pair[1]);
+        const definitions = hash.split('&');
+        definitions.forEach((definition) => {
+            const pair = definition.split('=');
+            const key = decodeURIComponent(pair[0]);
+            const value = decodeURIComponent(pair[1]);
             data[key] = value;
-        }
+        });
 
         return data;
     };
 
     HistoryManager._parseWorkspaceFromPathName = function _parseWorkspaceFromPathName(pathname, status) {
-        var index = pathname.lastIndexOf('/');
-        var index2 = pathname.lastIndexOf('/', index - 1);
+        const index = pathname.lastIndexOf('/');
+        const index2 = pathname.lastIndexOf('/', index - 1);
 
         if (index !== index2) {
             status.workspace_owner = decodeURIComponent(pathname.substring(index2 + 1, index));
@@ -131,11 +129,9 @@
     };
 
     HistoryManager.pushState = function pushState(data) {
-        var url, key, equal;
-
         data = prepareData(data);
-        equal = true;
-        for (key in data) {
+        let equal = true;
+        for (const key in data) {
             if (data[key] !== currentState[key]) {
                 equal = false;
                 break;
@@ -144,7 +140,7 @@
         if (equal) {
             return;
         }
-        url = buildURL(data);
+        const url = buildURL(data);
 
         history.pushState(data, null, url);
         document.title = data.title;
@@ -152,11 +148,9 @@
     };
 
     HistoryManager.replaceState = function replaceState(data) {
-        var url, key, equal;
-
         data = prepareData(data);
-        equal = true;
-        for (key in data) {
+        let equal = true;
+        for (const key in data) {
             if (data[key] !== currentState[key]) {
                 equal = false;
                 break;
@@ -165,7 +159,7 @@
         if (equal) {
             return;
         }
-        url = buildURL(data);
+        const url = buildURL(data);
 
         history.replaceState(data, null, url);
         document.title = data.title;

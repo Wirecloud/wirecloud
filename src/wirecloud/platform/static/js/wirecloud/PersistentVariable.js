@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2014-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,48 +23,45 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (ns) {
 
     "use strict";
 
-    var PersistentVariable = function PersistentVariable(meta, commiter, readonly, value) {
-        if (meta == null || !(meta instanceof Wirecloud.PersistentVariableDef)) {
-            throw new TypeError("invalid meta parameter");
-        }
+    const privates = new WeakMap();
 
-        Object.defineProperties(this, {
-            meta: {value: meta},
-            readonly: {value: readonly},
-            commiter: {value: commiter},
-            value: {get: property_value_get}
-        });
-
-        privates.set(this, value);
-    };
-
-    PersistentVariable.prototype.get = function get() {
-        return this.value;
-    };
-
-    PersistentVariable.prototype.set = function set(new_value) {
-        if (this.readonly) {
-            throw new Error('Read only properties cannot be modified');
-        }
-
-        privates.set(this, new_value);
-        this.commiter.add(this.meta.name, new_value);
-    };
-
-    Wirecloud.PersistentVariable = PersistentVariable;
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
-    var property_value_get = function property_value_get() {
+    const property_value_get = function property_value_get() {
         return privates.get(this);
     };
 
-})();
+    ns.PersistentVariable = class PersistentVariable {
+
+        constructor(meta, commiter, readonly, value) {
+            if (meta == null || !(meta instanceof Wirecloud.PersistentVariableDef)) {
+                throw new TypeError("invalid meta parameter");
+            }
+
+            Object.defineProperties(this, {
+                meta: {value: meta},
+                readonly: {value: readonly},
+                commiter: {value: commiter},
+                value: {get: property_value_get}
+            });
+
+            privates.set(this, value);
+        }
+
+        get() {
+            return this.value;
+        }
+
+        set(new_value) {
+            if (this.readonly) {
+                throw new Error('Read only properties cannot be modified');
+            }
+
+            privates.set(this, new_value);
+            this.commiter.add(this.meta.name, new_value);
+        }
+    }
+
+})(Wirecloud);
