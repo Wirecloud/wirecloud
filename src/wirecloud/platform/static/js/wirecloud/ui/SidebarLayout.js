@@ -28,10 +28,19 @@
 
     const privates = new WeakMap();
 
-    const OPPOSITE = {
+    const ICON = Object.freeze({
+        "right": "right",
+        "left": "left",
+        "top": "up",
+        "bottom": "down"
+    });
+    const OPPOSITE = Object.freeze({
         "right": "left",
-        "left": "right"
-    };
+        "left": "right",
+        "bottom": "up",
+        "top": "down"
+    });
+    const POSITIONS = Object.freeze(["top", "right", "bottom", "left"]);
 
     const on_active_get = function on_active_get() {
         return privates.get(this).active;
@@ -48,10 +57,22 @@
 
         privates.get(this).active = newstatus;
 
-        let position = this.active ? this.position : OPPOSITE[this.position];
-        this.handleicon.className = "fas fa-caret-" + position;
+        let icon = this.active ? ICON[this.position] : OPPOSITE[this.position];
+        this.handleicon.className = "fas fa-caret-" + icon;
 
         this._notifyWindowResizeEvent(true, true);
+    };
+
+    const getFirstWidget = function getFirstWidget(matrix) {
+        const rows = Math.max(...matrix.map((column) => column.length));
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < matrix.length; x++) {
+                if (matrix[x][y] != null) {
+                    return matrix[x][y];
+                }
+            }
+        }
+        return null;
     };
 
     ns.SidebarLayout = class SidebarLayout extends ns.SmartColumnLayout {
@@ -61,10 +82,15 @@
                 position: "left"
             }, options);
 
+            if (POSITIONS.indexOf(options.position) === -1) {
+                throw new TypeError("Invalid position option: " + options.position);
+            }
+            const vertical = options.position === "right" || options.position === "left";
+
             super(
                 dragboard,
-                1,
-                12,
+                vertical ? 1 : 10,
+                vertical ? 12 : 497,
                 4,
                 3,
                 12
@@ -75,6 +101,9 @@
             });
 
             Object.defineProperties(this, {
+                vertical: {
+                    value: vertical
+                },
                 position: {
                     value: options.position
                 },
@@ -101,7 +130,7 @@
                 this.handle.classList.remove("hidden");
             }
             if (this.initialized) {
-                this.matrix[0][0].wrapperElement.appendChild(this.handle);
+                getFirstWidget(this.matrix).wrapperElement.appendChild(this.handle);
             }
 
             return result;
@@ -114,47 +143,101 @@
                 this.handle.classList.add("hidden");
                 this.handle.remove();
             } else {
-                this.matrix[0][0].wrapperElement.appendChild(this.handle);
+                getFirstWidget(this.matrix).wrapperElement.appendChild(this.handle);
             }
             return result;
         }
 
-        adaptColumnOffset(value) {
-            return new Wirecloud.ui.MultiValuedSize(0, 0);
+        adaptColumnOffset(size) {
+            if (this.vertical) {
+                return new Wirecloud.ui.MultiValuedSize(0, 0);
+            } else {
+                return super.adaptColumnOffset(size);
+            }
+        }
+
+        adaptRowOffset(size) {
+            if (this.vertical) {
+                return super.adaptRowOffset(size);
+            } else {
+                return new Wirecloud.ui.MultiValuedSize(0, 0);
+            }
+        }
+
+        adaptHeight(size) {
+            if (this.vertical) {
+                return super.adaptHeight(size);
+            } else {
+                return new Wirecloud.ui.MultiValuedSize(this.getHeight(), 1);
+            }
         }
 
         adaptWidth(size) {
-            return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
+            if (this.vertical) {
+                return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
+            } else {
+                return super.adaptWidth(size);
+            }
+        }
+
+        getHeight() {
+            return !this.vertical ? 497 : super.getHeight();
         }
 
         getWidth() {
-            return 497;
+            return this.vertical ? 497 : super.getWidth();
         }
 
         initialize() {
             let modified = Wirecloud.ui.SmartColumnLayout.prototype.initialize.call(this);
-            if (this.matrix[0][0] != null) {
-                this.matrix[0][0].wrapperElement.appendChild(this.handle);
+            const firstWidget = getFirstWidget(this.matrix);
+            if (firstWidget != null) {
+                firstWidget.wrapperElement.appendChild(this.handle);
             }
             return modified;
         }
 
         updatePosition(widget, element) {
-            var offset;
-            if (!this.active) {
-                offset = -this.getWidth() - this.leftMargin + this.dragboard.leftMargin;
-            } else {
-                offset = 0;
-            }
-
-            element.style.top = this.getRowOffset(widget.position) + "px";
-            element.style.bottom = "";
-            if (this.position === "left") {
-                element.style.left = offset + "px";
+            if (!this.vertical) {
+                let offset;
+                if (!this.active) {
+                    offset = -this.getHeight() - 1;
+                } else {
+                    offset = 0;
+                }
+                element.style.left = this.getColumnOffset(widget.position, true);
                 element.style.right = "";
+                if (this.position === "top") {
+                    element.style.top = offset + "px";
+                    element.style.bottom = "";
+                } else {
+                    element.style.bottom = offset + "px";
+                    element.style.top = "";
+                }
+            } else /* if (this.vertical) */ {
+                let offset;
+                if (!this.active) {
+                    offset = -this.getWidth() - this.leftMargin + this.dragboard.leftMargin;
+                } else {
+                    offset = 0;
+                }
+                element.style.top = this.getRowOffset(widget.position, true);
+                element.style.bottom = "";
+                if (this.position === "left") {
+                    element.style.left = offset + "px";
+                    element.style.right = "";
+                } else {
+                    element.style.right = offset + "px";
+                    element.style.left = "";
+                }
+            }
+        }
+
+        getHeightInPixels(cells) {
+            if (this.vertical) {
+                return super.getHeightInPixels(cells);
             } else {
-                element.style.right = offset + "px";
-                element.style.left = "";
+                return this.getHeight();
             }
         }
 

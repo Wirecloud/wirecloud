@@ -120,6 +120,12 @@
                         },
                         rightLayout: {
                             active: false
+                        },
+                        bottomLayout: {
+                            active: false
+                        },
+                        topLayout: {
+                            active: false
                         }
                     };
                 }

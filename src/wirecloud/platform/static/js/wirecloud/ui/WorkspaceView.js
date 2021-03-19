@@ -56,8 +56,10 @@
             });
             this.editButton.addEventListener("active", (button) => {
                 if (this.editing) {
-                    this.activeTab.dragboard.leftLayout.active = true;
+                    this.activeTab.dragboard.topLayout.active = true;
                     this.activeTab.dragboard.rightLayout.active = true;
+                    this.activeTab.dragboard.bottomLayout.active = true;
+                    this.activeTab.dragboard.leftLayout.active = true;
                 }
                 if (this.model != null) {
                     this.model.contextManager.modify({editing: this.editing});
