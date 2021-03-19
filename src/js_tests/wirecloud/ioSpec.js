@@ -339,6 +339,45 @@
             });
         });
 
+        describe("ConnectionError()", () => {
+
+            let error_captureStackTrace;
+
+            beforeAll(() => {
+                error_captureStackTrace = Error.captureStackTrace;
+            });
+
+            beforeEach(() => {
+                Error.captureStackTrace = null;
+            });
+
+            afterAll(() => {
+                if (error_captureStackTrace != null) {
+                    Error.captureStackTrace = error_captureStackTrace;
+                }
+            });
+
+            it("should extend Error", () => {
+                const error = new Wirecloud.io.ConnectionError();
+
+                expect(error).toEqual(jasmine.any(Error));
+            })
+
+            it("should use the captureStackTrace method if available", () => {
+                Error.captureStackTrace = jasmine.createSpy("captureStackTrace");
+                const error = new Wirecloud.io.ConnectionError();
+
+                expect(Error.captureStackTrace).toHaveBeenCalledWith(error, error.constructor);
+            })
+
+            it("toString()", () => {
+                const error = new Wirecloud.io.ConnectionError();
+
+                expect(error.toString()).toBe(error.message);
+            });
+
+        });
+
         describe("makeRequest(url, options)", function () {
 
             it("should work with normal urls", function () {

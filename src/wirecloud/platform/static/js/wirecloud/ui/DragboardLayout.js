@@ -127,14 +127,20 @@
         }
 
         adaptColumnOffset(pixels) {
-            const msg = "method \"%(method)s\" must be implemented.";
-            msg = utils.interpolate(msg, {method: "adaptColumnOffset"}, true);
+            const msg = utils.interpolate(
+                "method \"%(method)s\" must be implemented.",
+                {method: "adaptColumnOffset"},
+                true
+            );
             throw new Error(msg);
         }
 
         adaptRowOffset(pixels) {
-            const msg = "method \"%(method)s\" must be implemented.";
-            msg = utils.interpolate(msg, {method: "adaptRowOffset"}, true);
+            const msg = utils.interpolate(
+                "method \"%(method)s\" must be implemented.",
+                {method: "adaptRowOffset"},
+                true
+            );
             throw new Error(msg);
         }
 

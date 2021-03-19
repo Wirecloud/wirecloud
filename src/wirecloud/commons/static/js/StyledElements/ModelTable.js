@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -472,9 +472,6 @@
             let source;
             if (options.source != null) {
                 source = options.source;
-            } else if (options.pagination != null) {
-                // Backwards compatilibity
-                source = options.pagination;
             } else {
                 sort_info = {};
                 columns.forEach((column) => {
@@ -494,34 +491,6 @@
                 emptyMessage: {
                     writable: true,
                     value: options.emptyMessage
-                },
-                selection: {
-                    get: function () {
-                        return priv.selection;
-                    },
-                    set: function (value) {
-                        // Check if selection is ignored
-                        if (!isSelectionEnabled(priv.selectionType)) {
-                            throw new Error("Selection is disabled");
-                        }
-                        if (!Array.isArray(value)) {
-                            throw new TypeError();
-                        }
-                        if (priv.selectionType === "single" && value.length > 1) {
-                            throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
-                        }
-                        // Unhighlihgt previous selection
-                        priv.selection.forEach(function (id) {
-                            if (id in priv.current_elements) {
-                                priv.current_elements[id].row.classList.remove('highlight');
-                            }
-                        }, this);
-
-                        priv.selection = value;
-
-                        // Highlight the new selection
-                        highlight_selection.call(this);
-                    }
                 },
                 source: {
                     writable: false,
@@ -570,8 +539,6 @@
 
             priv.sortColumn = null;
 
-            Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
-
             this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
             if (this.source.options.pageSize !== 0) {
@@ -618,6 +585,36 @@
             } else {
                 priv.stateFunc = function () {};
             }
+        }
+
+        get selection() {
+            return privates.get(this).selection;
+        }
+
+        set selection(value) {
+            const priv = privates.get(this);
+
+            // Check if selection is ignored
+            if (!isSelectionEnabled(priv.selectionType)) {
+                throw new Error("Selection is disabled");
+            }
+            if (!Array.isArray(value)) {
+                throw new TypeError();
+            }
+            if (priv.selectionType === "single" && value.length > 1) {
+                throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
+            }
+            // Unhighlihgt previous selection
+            priv.selection.forEach((id) => {
+                if (id in priv.current_elements) {
+                    priv.current_elements[id].row.classList.remove('highlight');
+                }
+            });
+
+            priv.selection = value;
+
+            // Highlight the new selection
+            highlight_selection.call(this);
         }
 
         /**

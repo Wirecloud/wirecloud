@@ -79,7 +79,8 @@
         }
 
         dispatch() {
-            privates.get(this).dispatching = true;
+            const priv = privates.get(this);
+            priv.dispatching = true;
 
             for (let i = 0; i < this.handlers.length; i++) {
                 if (this.handlers[i] == null) {
@@ -100,7 +101,7 @@
                 }
             }
 
-            privates.get(this).dispatching = false;
+            priv.dispatching = false;
         }
 
     }

@@ -563,7 +563,7 @@
 
         });
 
-        describe("getColumnOffset(cells)", () => {
+        describe("getColumnOffset(cells[, css])", () => {
 
             it("should work", () => {
                 const dragboard = {
@@ -579,7 +579,29 @@
                     10
                 );
                 expect(layout.getColumnOffset({x: 2})).toBe(400 + 4 + 2);
+                expect(layout.getColumnOffset({x: 2}, true)).toBe("406px");
             });
+
+        });
+
+        describe("getRowOffset(value[, css])", () => {
+
+            it("should work", () => {
+                const dragboard = {
+                    topMargin: 4
+                };
+                const layout = new ns.ColumnLayout(
+                    dragboard,
+                    4,
+                    13,
+                    4,
+                    4,
+                    10
+                );
+                expect(layout.getRowOffset({y: 2})).toBe((2 * 13) + 4 + 2);
+                expect(layout.getRowOffset({y: 2}, true)).toBe("32px");
+            });
+
         });
 
         describe("insertAt(widget, x, y, matrix)", () => {

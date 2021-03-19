@@ -275,17 +275,28 @@
      * @name Wirecloud.io.ConnectionError
      * @summary Exception raised for connection problems.
      */
-    io.ConnectionError = function ConnectionError() {
-        this.name = 'ConnectionError';
-        this.message = 'Connection Error';
-    };
+    io.ConnectionError = class ConnectionError extends Error {
 
-    io.ConnectionError.prototype = new Error();
-    io.ConnectionError.prototype.constructor = io.ConnectionError;
+        constructor() {
+            const message = "Connection Error";
 
-    io.ConnectionError.prototype.toString = function toString() {
-        return this.message;
-    };
+            super(message);
+
+            this.name = "ConnectionError";
+            this.message = message;
+
+            // Maintains proper stack trace for where our error was thrown (only available on V8)
+            if (Error.captureStackTrace) {
+                Error.captureStackTrace(this, this.constructor);
+            }
+        }
+
+        toString() {
+            return this.message;
+        }
+
+    }
+
 
     io.buildProxyURL = function buildProxyURL(url, options) {
         options = utils.merge({
