@@ -63,6 +63,18 @@
         this._notifyWindowResizeEvent(true, true);
     };
 
+    const getFirstWidget = function getFirstWidget(matrix) {
+        const rows = Math.max(...matrix.map((column) => column.length));
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < matrix.length; x++) {
+                if (matrix[x][y] != null) {
+                    return matrix[x][y];
+                }
+            }
+        }
+        return null;
+    };
+
     ns.SidebarLayout = class SidebarLayout extends ns.SmartColumnLayout {
 
         constructor(dragboard, options) {
@@ -70,24 +82,28 @@
                 position: "left"
             }, options);
 
+            if (POSITIONS.indexOf(options.position) === -1) {
+                throw new TypeError("Invalid position option: " + options.position);
+            }
+            const vertical = options.position === "right" || options.position === "left";
+
             super(
                 dragboard,
-                1,
-                12,
+                vertical ? 1 : 10,
+                vertical ? 12 : 497,
                 4,
                 3,
                 12
             );
-
-            if (POSITIONS.indexOf(options.position) === -1) {
-                throw new TypeError("Invalid position option: " + options.position);
-            }
 
             privates.set(this, {
                 active: false
             });
 
             Object.defineProperties(this, {
+                vertical: {
+                    value: vertical
+                },
                 position: {
                     value: options.position
                 },
@@ -114,7 +130,7 @@
                 this.handle.classList.remove("hidden");
             }
             if (this.initialized) {
-                this.matrix[0][0].wrapperElement.appendChild(this.handle);
+                getFirstWidget(this.matrix).wrapperElement.appendChild(this.handle);
             }
 
             return result;
@@ -127,40 +143,65 @@
                 this.handle.classList.add("hidden");
                 this.handle.remove();
             } else {
-                this.matrix[0][0].wrapperElement.appendChild(this.handle);
+                getFirstWidget(this.matrix).wrapperElement.appendChild(this.handle);
             }
             return result;
         }
 
-        adaptColumnOffset(value) {
-            return new Wirecloud.ui.MultiValuedSize(0, 0);
+        adaptColumnOffset(size) {
+            if (this.vertical) {
+                return new Wirecloud.ui.MultiValuedSize(0, 0);
+            } else {
+                return super.adaptColumnOffset(size);
+            }
+        }
+
+        adaptRowOffset(size) {
+            if (this.vertical) {
+                return super.adaptRowOffset(size);
+            } else {
+                return new Wirecloud.ui.MultiValuedSize(0, 0);
+            }
+        }
+
+        adaptHeight(size) {
+            if (this.vertical) {
+                return super.adaptHeight(size);
+            } else {
+                return new Wirecloud.ui.MultiValuedSize(this.getHeight(), 1);
+            }
         }
 
         adaptWidth(size) {
-            return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
+            if (this.vertical) {
+                return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
+            } else {
+                return super.adaptWidth(size);
+            }
         }
 
         getHeight() {
-            return this.position === "top" || this.position === "bottom" ? 497 : super.getHeight();
+            return !this.vertical ? 497 : super.getHeight();
         }
 
         getWidth() {
-            return this.position === "left" || this.position === "right" ? 497 : super.getWidth();
+            return this.vertical ? 497 : super.getWidth();
         }
 
         initialize() {
             let modified = Wirecloud.ui.SmartColumnLayout.prototype.initialize.call(this);
-            if (this.matrix[0][0] != null) {
-                this.matrix[0][0].wrapperElement.appendChild(this.handle);
+            const firstWidget = getFirstWidget(this.matrix);
+            if (firstWidget != null) {
+                firstWidget.wrapperElement.appendChild(this.handle);
             }
             return modified;
         }
 
         updatePosition(widget, element) {
-            if (this.position === "top" || this.position === "bottom") {
+            if (!this.vertical) {
                 let offset;
                 if (!this.active) {
-                    offset = -this.getHeight();
+                    offset = -this.getHeight() - 1;
                 } else {
                     offset = 0;
                 }
@@ -173,7 +214,7 @@
                     element.style.bottom = offset + "px";
                     element.style.top = "";
                 }
-            } else /* if (this.position === "left" || this.position === "right") */ {
+            } else /* if (this.vertical) */ {
                 let offset;
                 if (!this.active) {
                     offset = -this.getWidth() - this.leftMargin + this.dragboard.leftMargin;
@@ -193,10 +234,10 @@
         }
 
         getHeightInPixels(cells) {
-            if (this.position === "top" || this.position === "bottom") {
-                return this.getHeight();
-            } else {
+            if (this.vertical) {
                 return super.getHeightInPixels(cells);
+            } else {
+                return this.getHeight();
             }
         }
 

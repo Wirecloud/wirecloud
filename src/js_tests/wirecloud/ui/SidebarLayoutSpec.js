@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -43,6 +43,12 @@
                 // Check initial values
                 expect(layout.active).toBe(false);
                 expect(layout.position).toBe("left");
+            });
+
+            it("should validate the position option", () => {
+                expect(() => {
+                    new ns.SidebarLayout({}, {position: "invalid"});
+                }).toThrowError(TypeError);
             });
 
             it("should allow to provide a custom position", () => {
@@ -109,10 +115,41 @@
 
         describe("adaptColumnOffset(value)", () => {
 
-            it("should always return 0 cell size", () => {
-                let layout = new ns.SidebarLayout({});
+            it("should call parent method for top sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptColumnOffset").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "top"});
 
-                let value = layout.adaptColumnOffset(50);
+                const value = layout.adaptColumnOffset(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptColumnOffset).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should call parent method for bottom sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptColumnOffset").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "bottom"});
+
+                const value = layout.adaptColumnOffset(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptColumnOffset).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should always return 0 cell size for left sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "left"});
+
+                const value = layout.adaptColumnOffset(50);
+
+                expect(value.inLU).toBe(0);
+                expect(value.inPixels).toBe(0);
+            });
+
+            it("should always return 0 cell size for right sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "right"});
+
+                const value = layout.adaptColumnOffset(50);
 
                 expect(value.inLU).toBe(0);
                 expect(value.inPixels).toBe(0);
@@ -120,12 +157,131 @@
 
         });
 
+        describe("adaptRowOffset(value)", () => {
+
+            it("should call parent method for left sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptRowOffset").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "left"});
+
+                const value = layout.adaptRowOffset(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptRowOffset).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should call parent method for right sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptRowOffset").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "right"});
+
+                const value = layout.adaptRowOffset(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptRowOffset).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should always return 0 cell size for top sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "top"});
+
+                const value = layout.adaptRowOffset(50);
+
+                expect(value.inLU).toBe(0);
+                expect(value.inPixels).toBe(0);
+            });
+
+            it("should always return 0 cell size for bottom sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "bottom"});
+
+                const value = layout.adaptRowOffset(50);
+
+                expect(value.inLU).toBe(0);
+                expect(value.inPixels).toBe(0);
+            });
+
+        });
+
+        describe("adaptHeight(size)", () => {
+
+            it("should call parent method for left sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptHeight").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "left"});
+
+                const value = layout.adaptHeight(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptHeight).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should call parent method for right sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptHeight").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "right"});
+
+                const value = layout.adaptHeight(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptHeight).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should always return 1 cell size for top sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "top"});
+
+                const value = layout.adaptHeight(50);
+
+                expect(value.inLU).toBe(1);
+                expect(value.inPixels).toBe(layout.getHeight());
+            });
+
+            it("should always return 1 cell size for bottom sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "bottom"});
+
+                const value = layout.adaptHeight(50);
+
+                expect(value.inLU).toBe(1);
+                expect(value.inPixels).toBe(layout.getHeight());
+            });
+
+        });
+
         describe("adaptWidth(size)", () => {
 
-            it("should always return 1 cell size", () => {
-                let layout = new ns.SidebarLayout({});
+            it("should call parent method for top sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptWidth").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "top"});
 
-                let value = layout.adaptWidth(50);
+                const value = layout.adaptWidth(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptWidth).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should call parent method for bottom sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "adaptWidth").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "bottom"});
+
+                const value = layout.adaptWidth(50);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptWidth).toHaveBeenCalledWith(50);
+                expect(value).toBe(result);
+            });
+
+            it("should always return 1 cell size for left sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "left"});
+
+                const value = layout.adaptWidth(50);
+
+                expect(value.inLU).toBe(1);
+                expect(value.inPixels).toBe(layout.getWidth());
+            });
+
+            it("should always return 1 cell size for right sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "left"});
+
+                const value = layout.adaptWidth(50);
 
                 expect(value.inLU).toBe(1);
                 expect(value.inPixels).toBe(layout.getWidth());
@@ -179,6 +335,92 @@
 
         });
 
+        describe("getHeight()", () => {
+
+            it("should call parent method for left sidebars", () => {
+                const result = 600;
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "getHeight").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "left"});
+
+                const value = layout.getHeight();
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.getHeight).toHaveBeenCalledWith();
+                expect(value).toBe(result);
+            });
+
+            it("should call parent method for right sidebars", () => {
+                const result = 600;
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "getHeight").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "right"});
+
+                const value = layout.getHeight();
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.getHeight).toHaveBeenCalledWith();
+                expect(value).toBe(result);
+            });
+
+            it("should always return 1 cell size for top sidebars", () => {
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "getHeight");
+                const layout = new ns.SidebarLayout({}, {position: "top"});
+
+                const value = layout.getHeight();
+
+                expect(value).toEqual(jasmine.any(Number));
+            });
+
+            it("should always return 1 cell size for bottom sidebars", () => {
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "getHeight");
+                const layout = new ns.SidebarLayout({}, {position: "bottom"});
+
+                const value = layout.getHeight(2);
+
+                expect(value).toEqual(jasmine.any(Number));
+            });
+
+        });
+
+        describe("getHeightInPixels(size)", () => {
+
+            it("should call parent method for left sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "getHeightInPixels").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "left"});
+
+                const value = layout.getHeightInPixels(2);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.getHeightInPixels).toHaveBeenCalledWith(2);
+                expect(value).toBe(result);
+            });
+
+            it("should call parent method for right sidebars", () => {
+                const result = {};
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "getHeightInPixels").and.returnValue(result);
+                const layout = new ns.SidebarLayout({}, {position: "right"});
+
+                const value = layout.getHeightInPixels(2);
+
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.getHeightInPixels).toHaveBeenCalledWith(2);
+                expect(value).toBe(result);
+            });
+
+            it("should always return 1 cell size for top sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "top"});
+
+                const value = layout.getHeightInPixels(2);
+
+                expect(value).toBe(layout.getHeight());
+            });
+
+            it("should always return 1 cell size for bottom sidebars", () => {
+                const layout = new ns.SidebarLayout({}, {position: "bottom"});
+
+                const value = layout.getHeightInPixels(2);
+
+                expect(value).toBe(layout.getHeight());
+            });
+
+        });
+
         describe("initialize()", () => {
 
             it("should work on empty layouts", () => {
@@ -188,7 +430,7 @@
                 layout.initialize();
             });
 
-            it("should enable layout handle if there are widget", () => {
+            it("should enable layout handle if there is a widget in the first position", () => {
                 spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "initialize");
                 let layout = new ns.SidebarLayout({});
                 let widget = {
@@ -196,6 +438,17 @@
                 };
 
                 layout.matrix[0][0] = widget;
+                layout.initialize();
+            });
+
+            it("should enable layout handle if there is a widget", () => {
+                spyOn(Wirecloud.ui.SmartColumnLayout.prototype, "initialize");
+                let layout = new ns.SidebarLayout({}, {position: "top"});
+                let widget = {
+                    wrapperElement: document.createElement('div')
+                };
+
+                layout.matrix[4][0] = widget;
                 layout.initialize();
             });
 
@@ -239,7 +492,9 @@
                     tab: {
                         workspace: {
                         }
-                    }
+                    },
+                    getWidth: jasmine.createSpy("getWidth").and.returnValue(800),
+                    getHeight: jasmine.createSpy("getHeight").and.returnValue(600)
                 };
                 element = document.createElement('div');
             });
@@ -300,6 +555,68 @@
                 expect(element.style.top).toBe("2px");
                 expect(element.style.left).toBe("");
                 expect(element.style.right).toBe("0px");
+            });
+
+            it("should work on top position (inactive)", () => {
+                layout = new ns.SidebarLayout(dragboard, {position: "top"});
+                let widget = {
+                    position: {
+                        y: 0
+                    }
+                };
+                layout.updatePosition(widget, element);
+
+                expect(element.style.bottom).toBe("");
+                expect(element.style.top).toBe("-498px");
+                expect(element.style.left).toBe("");
+                expect(element.style.right).toBe("");
+            });
+
+            it("should work on top position (active)", () => {
+                layout = new ns.SidebarLayout(dragboard, {position: "top"});
+                let widget = {
+                    position: {
+                        y: 0
+                    }
+                };
+                layout.active = true;
+                layout.updatePosition(widget, element);
+
+                expect(element.style.bottom).toBe("");
+                expect(element.style.top).toBe("0px");
+                expect(element.style.left).toBe("");
+                expect(element.style.right).toBe("");
+            });
+
+            it("should work on bottom position (inactive)", () => {
+                layout = new ns.SidebarLayout(dragboard, {position: "bottom"});
+                let widget = {
+                    position: {
+                        y: 0
+                    }
+                };
+                layout.updatePosition(widget, element);
+
+                expect(element.style.bottom).toBe("-498px");
+                expect(element.style.top).toBe("");
+                expect(element.style.left).toBe("");
+                expect(element.style.right).toBe("");
+            });
+
+            it("should work on bottom position (active)", () => {
+                layout = new ns.SidebarLayout(dragboard, {position: "bottom"});
+                let widget = {
+                    position: {
+                        y: 0
+                    }
+                };
+                layout.active = true;
+                layout.updatePosition(widget, element);
+
+                expect(element.style.bottom).toBe("0px");
+                expect(element.style.top).toBe("");
+                expect(element.style.left).toBe("");
+                expect(element.style.right).toBe("");
             });
 
         });
