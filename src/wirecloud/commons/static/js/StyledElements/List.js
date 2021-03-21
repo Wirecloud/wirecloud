@@ -193,7 +193,7 @@
             }
 
             const addedValues = [];
-            const removedValues = [];
+            let removedValues = [];
 
             if (!this.multivalued) {
                 if (selection[0] === this.currentSelection[0]) {

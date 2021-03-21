@@ -57,8 +57,13 @@
         /* istanbul ignore next */
         fullDisconnect() {
             const funcName = 'fullDisconnect';
-            const msg = utils.gettext("Unimplemented function: %(funcName)s");
-            msg = utils.interpolate(msg, {funcName: funcName}, true);
+            const msg = utils.interpolate(
+                utils.gettext("Unimplemented function: %(funcName)s"),
+                {
+                    funcName: funcName
+                },
+                true
+            );
             Wirecloud.GlobalLogManager.log(msg);
             return this;
         }

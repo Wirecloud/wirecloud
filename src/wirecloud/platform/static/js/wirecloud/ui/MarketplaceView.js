@@ -264,7 +264,7 @@
                 return utils.gettext('Marketplace');
             } else {
                 const marketname = current_alternative.getLabel();
-                const title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
+                let title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
                 // Deprecated code, currently used for WireCloud and for the deprecated FIWARE Marketplace (now replaced by the BAE)
                 if (current_alternative.alternatives) {
                     const subalternative = current_alternative.alternatives.getCurrentAlternative();

@@ -134,6 +134,9 @@
     ],
     "no-var": [
       "error"
+    ],
+    "no-const-assign": [
+      "error"
     ]
   }
 }
